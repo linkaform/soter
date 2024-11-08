@@ -17,7 +17,7 @@ export const Header = () => {
   const currentPath = usePathname();
 
   return (
-    <header className="w-full shadow py-1 px-6">
+    <header className="w-full shadow py-3 px-12">
       <div className="mx-auto flex flex-col lg:flex-row items-center justify-between">
         {/* Logo */}
 

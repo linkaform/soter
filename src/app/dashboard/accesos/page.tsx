@@ -1,15 +1,15 @@
-
 import React from "react";
 import { Header } from "@/components/header";
 
 const AccesosPage = () => {
   return (
-    <div>
+    <div className="">
       <Header />
 
-
-      <h1 className="m-10 font-bold">Accesos</h1>
+      <div className="w-1/3">
+        <h1 className="m-10 font-bold">Accesos</h1>
       </div>
+    </div>
   );
 };
 
