@@ -25,9 +25,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Checkbox } from "@/components/ui/checkbox";
+import { AddGuardModal } from "@/components/modals/add-guard-modal";
+import Exit from "@/components/icon/exit";
+import { ExitGuardModal } from "@/components/modals/exit-guard-modal";
 
-const data: GuardiaApoyo[] = [
+const initialData: GuardiaApoyo[] = [
   {
     id: "a1b2c3d4",
     empleado: "Juan Pérez",
@@ -75,64 +77,95 @@ const data: GuardiaApoyo[] = [
   },
 ];
 
+
 export type GuardiaApoyo = {
   id: string;
   empleado: string;
   avatar: string;
 };
 
-export const columns: ColumnDef<GuardiaApoyo>[] = [
-  {
-    id: "avatar",
-    header: "",
-    cell: ({ row }) => (
-      <div className="flex items-center space-x-4">
-        <Avatar className="w-14 h-14">
-          <AvatarImage
-            src={row.original.avatar}
-            alt={`${row.original.empleado} avatar`}
-          />
-          <AvatarFallback>CN</AvatarFallback>
-        </Avatar>
-      </div>
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "empleado",
-    header: "Empleado",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("empleado")}</div>
-    ),
-  },
-  {
-    id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
 
 
-];
+
 
 export function GuardiasApoyoTable() {
+
+
+
+  const columns: ColumnDef<GuardiaApoyo>[] = [
+    {
+      id: "avatar",
+      header: "",
+      cell: ({ row }) => (
+        <div className="flex items-center space-x-4">
+          <Avatar className="w-14 h-14">
+            <AvatarImage
+              src={row.original.avatar}
+              alt={`${row.original.empleado} avatar`}
+            />
+            <AvatarFallback>CN</AvatarFallback>
+          </Avatar>
+        </div>
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: "empleado",
+      header: "Empleado",
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("empleado")}</div>
+      ),
+    },
+  /*   {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    }, */
+    {
+      id: "actions",
+      header: "",
+      cell: ({ row }) => (
+        <ExitGuardModal
+          title="Confirmación"
+          empleado={row.original.empleado} // Pasamos el nombre del guardia al modal
+          onConfirm={() => handleDeleteGuard(row.original.id)}
+          >
+          <div className="cursor-pointer">
+            <Exit /> {/* El ícono que abre el modal */}
+          </div>
+        </ExitGuardModal>
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+  
+  
+  ];
+
+
+
+
+
+  const [guardias, setGuardias] = React.useState<GuardiaApoyo[]>(initialData);
+
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -145,8 +178,11 @@ export function GuardiasApoyoTable() {
     pageSize: 3,
   });
 
+
+  const [empleadoFilter, setEmpleadoFilter] = React.useState("");
+
   const table = useReactTable({
-    data,
+    data: guardias,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -167,9 +203,46 @@ export function GuardiasApoyoTable() {
     },
   });
 
+
+
+  React.useEffect(() => {
+    setColumnFilters([{ id: "empleado", value: empleadoFilter }]);
+  }, [empleadoFilter]);
+
+  
+  
+
+
+
+  const handleAddGuardias = (selectedGuardias: GuardiaApoyo[]) => {
+    setGuardias((prevGuardias) => [...selectedGuardias, ...prevGuardias]);
+  };
+
+
+   const handleDeleteGuard = (id: string) => {
+    setGuardias((prevGuardias) => prevGuardias.filter((guardia) => guardia.id !== id));
+  };
+
   return (
     <div className="w-full">
-      <div className="flex items-center justify-end space-x-6"></div>
+
+      
+   
+<div className="flex justify-between items-center mb-5">
+        <input
+          type="text"
+          placeholder="Buscar por empleado..."
+          value={empleadoFilter}
+          onChange={(e) => setEmpleadoFilter(e.target.value)}
+          className="border border-gray-300 rounded-md p-2 h-12 w-full max-w-xs"
+        />
+
+        <AddGuardModal title="Guardias" onAddGuardias={handleAddGuardias}>
+          <Button className="bg-green-600 text-white hover:bg-green-700 px-4 py-2 rounded-md flex items-center">
+            + Guardia apoyo
+          </Button>
+        </AddGuardModal>
+      </div>
       <div className="">
         <Table>
           <TableHeader>

@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/header";
-import { GuardiasTable } from "@/components/table/guardias/table";
+import { GuardiasTable } from "@/components/table/notas/table";
 import Guest from "@/components/icon/guests";
 import Fails from "@/components/icon/fails";
 import Concessioned from "@/components/icon/concessioned";
@@ -8,6 +8,7 @@ import Vehicles from "@/components/icon/vehicles";
 import Badges from "@/components/icon/badges";
 import { GuardiasApoyoTable } from "@/components/table/guardias-apoyo/table";
 import Sidebar from "@/components/pages/turnos/sidebar";
+import { StartShiftModal } from "@/components/modals/start-shift-modal";
 
 export default function Home() {
   const items = [
@@ -51,9 +52,11 @@ export default function Home() {
             </div>
 
             <div className="">
+              <StartShiftModal title="Confirmación">
               <Button className="w-[520px]  md:w-[300px] bg-button-primary hover:bg-bg-button-primary">
                 Iniciar turno
               </Button>
+              </StartShiftModal>
             </div>
           </div>
 
@@ -95,7 +98,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="w-full flex flex-col  border border-[#F0F2F5]">
+          <div className="w-full flex flex-col">
 
             <p className="font-bold text-2xl mt-5">Notas</p>
 

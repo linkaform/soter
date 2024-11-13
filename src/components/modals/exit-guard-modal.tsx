@@ -8,14 +8,18 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 
-interface ForceExitModalProps {
+interface ExitGuardModalProps {
   title: string;
   children: React.ReactNode;
+  empleado: string;
+  onConfirm: () => void;
 }
 
-export const ForceExitModal: React.FC<ForceExitModalProps> = ({
+export const ExitGuardModal: React.FC<ExitGuardModalProps> = ({
   title,
   children,
+  empleado,
+  onConfirm
 }) => {
   return (
     <Dialog>
@@ -28,36 +32,29 @@ export const ForceExitModal: React.FC<ForceExitModalProps> = ({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="px-16">
+        <div className="px-16 mb-5">
           <p className="text-center mb-3">
-            La caseta actual fue abierta por el guardia
-            <span className="font-semibold"> Jacinto Martínez Sánchez </span>
-            el día
-            <span className="font-semibold"> 24 de Junio del 2024 </span>a las
-            <span className="font-semibold"> 11:03:25 horas. </span>
+            ¿Estas seguro que quieres registrar la salida del guardia{" "}
+            <span className="font-semibold">{empleado}?</span>
           </p>
 
           <p className="text-center">
-            ¿Desea proceder con el cierre forzado de la caseta? Una vez
-            confirmado, la acción no podrá deshacerse.
+            Una vez confirmada, la acción no se podrá deshacer.{" "}
           </p>
         </div>
 
         <div className="flex gap-5">
           <DialogClose asChild>
-            <Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700">
+            <Button className="w-full h-12 bg-gray-100 hover:bg-gray-200 text-gray-700">
               Cancelar
             </Button>
           </DialogClose>
 
-
-          <DialogClose asChild>
-
-          <Button className="w-full  bg-blue-500 hover:bg-blue-600 text-white ">
+          <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white"
+           onClick={onConfirm}
+          >
             Confirmar
           </Button>
-          </DialogClose>
-
         </div>
       </DialogContent>
     </Dialog>
