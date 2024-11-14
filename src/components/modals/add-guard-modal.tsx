@@ -10,6 +10,7 @@ import {
 } from "../ui/dialog";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
+import SearchInput from "../search-input";
 
 interface AddGuardModalProps {
   title: string;
@@ -29,6 +30,11 @@ export const AddGuardModal: React.FC<AddGuardModalProps> = ({
   children,
   onAddGuardias,
 }) => {
+
+
+
+ 
+ 
   const data: GuardiaApoyo[] = [
     {
       id: "a1b2c3d4",
@@ -98,10 +104,14 @@ export const AddGuardModal: React.FC<AddGuardModalProps> = ({
 
       <DialogContent className="max-w-xl">
         <DialogHeader>
-          <DialogTitle className="text-3xl text-center font-bold my-5">
+          <DialogTitle className="text-2xl text-center font-bold my-5">
             {title}
           </DialogTitle>
         </DialogHeader>
+
+
+        <SearchInput />
+
 
         <div className="space-y-4">
           {data.map((guardia) => (

@@ -32,7 +32,7 @@ export const StartShiftModal: React.FC<StartShiftModalProps> = ({
 
       <DialogContent className="max-w-xl">
         <DialogHeader>
-          <DialogTitle className="text-3xl	 text-center  font-bold my-5">
+          <DialogTitle className="text-2xl text-center  font-bold my-5">
             {title}
           </DialogTitle>
         </DialogHeader>

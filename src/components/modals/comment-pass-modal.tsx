@@ -1,3 +1,4 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -7,7 +8,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-
 import {
   Form,
   FormControl,
@@ -15,38 +15,30 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "../ui/input";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+} from "../ui/form";
 import { Textarea } from "../ui/textarea";
-import Camera from "../icon/camera";
-import Upload from "../ui/upload";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
-interface AddNoteModalProps {
+interface CommentPassModalProps {
   title: string;
   children: React.ReactNode;
 }
 
 const formSchema = z.object({
-  title: z.string().min(2, {
-    message: "Campo requerido.",
-  }),
-  description: z.string().min(2, {
+  comment: z.string().min(2, {
     message: "Campo requerido.",
   }),
 });
 
-export const AddNoteModal: React.FC<AddNoteModalProps> = ({
+export const CommentPassModal: React.FC<CommentPassModalProps> = ({
   title,
   children,
 }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: "",
-      description: "",
+      comment: "",
     },
   });
 
@@ -71,25 +63,10 @@ export const AddNoteModal: React.FC<AddNoteModalProps> = ({
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
               control={form.control}
-              name="title"
+              name="comment"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>* Titulo</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Texto" {...field} />
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>* Descripción</FormLabel>
+                  <FormLabel>* Comentario</FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="Texto"
@@ -103,22 +80,7 @@ export const AddNoteModal: React.FC<AddNoteModalProps> = ({
               )}
             />
 
-            <div className="flex justify-between">
-              <p>Agregar foto</p>
-
-              <Camera />
-            </div>
-
-            <div className="flex justify-between">
-              <p>Subir un archivo</p>
-
-              <Upload />
-
-            </div>
-
-
-            <p className="text-gray-400">
-            **Campos requeridos            </p>
+            <p className="text-gray-400">**Campos requeridos </p>
 
             <div className="flex gap-5">
               <DialogClose asChild>
@@ -127,12 +89,17 @@ export const AddNoteModal: React.FC<AddNoteModalProps> = ({
                 </Button>
               </DialogClose>
 
+
+
+
               <Button
                 type="submit"
                 className="w-full  bg-blue-500 hover:bg-blue-600 text-white "
               >
                 Agregar
               </Button>
+
+
             </div>
           </form>
         </Form>

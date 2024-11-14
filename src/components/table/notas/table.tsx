@@ -213,11 +213,8 @@ export function GuardiasTable() {
               + Nota
             </Button>
           </AddNoteModal>
-          <Button
-            size="icon"
-            className="h-12 bg-blue-500 text-white hover:bg-blue-600 p-0 flex items-center justify-center rounded-md"
-          >
-            <List />
+          <Button className="bg-blue-500 text-white hover:text-white hover:bg-blue-600" variant="outline" size="icon">
+          <List size={36} />
           </Button>
         </div>
       </div>

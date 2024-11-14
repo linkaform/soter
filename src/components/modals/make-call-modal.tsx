@@ -1,3 +1,4 @@
+import { Separator } from "@radix-ui/react-dropdown-menu";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -8,18 +9,16 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 
-interface ExitGuardModalProps {
+interface MakeCallModalProps {
   title: string;
+  description: string;
   children: React.ReactNode;
-  empleado: string;
-  onConfirm: () => void;
 }
 
-export const ExitGuardModal: React.FC<ExitGuardModalProps> = ({
+export const MakeCallModal: React.FC<MakeCallModalProps> = ({
   title,
   children,
-  empleado,
-  onConfirm
+  description
 }) => {
   return (
     <Dialog>
@@ -30,31 +29,31 @@ export const ExitGuardModal: React.FC<ExitGuardModalProps> = ({
           <DialogTitle className="text-2xl text-center  font-bold my-5">
             {title}
           </DialogTitle>
+
+          <Separator />
         </DialogHeader>
 
-        <div className="px-16 mb-5">
-          <p className="text-center mb-3">
-            ¿Estas seguro que quieres registrar la salida del guardia{" "}
-            <span className="font-semibold">{empleado}?</span>
-          </p>
+        <div className="text-center px-16 my-10">
 
-          <p className="text-center">
-            Una vez confirmada, la acción no se podrá deshacer.{" "}
-          </p>
+            {description}
+          
         </div>
 
         <div className="flex gap-5">
           <DialogClose asChild>
-            <Button className="w-full h-12 bg-gray-100 hover:bg-gray-200 text-gray-700">
+            <Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700">
               Cancelar
             </Button>
           </DialogClose>
 
-          <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white"
-           onClick={onConfirm}
-          >
+
+          <DialogClose asChild>
+
+          <Button className="w-full  bg-blue-500 hover:bg-blue-600 text-white ">
             Confirmar
           </Button>
+          </DialogClose>
+
         </div>
       </DialogContent>
     </Dialog>

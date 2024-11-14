@@ -54,7 +54,7 @@ export const CloseNoteModal: React.FC<CloseNoteModalProps> = ({
 
       <DialogContent className="max-w-xl">
         <DialogHeader>
-          <DialogTitle className="text-3xl	 text-center  font-bold my-5">
+          <DialogTitle className="text-2xl	 text-center  font-bold my-5">
             {title}
           </DialogTitle>
         </DialogHeader>
@@ -89,12 +89,17 @@ export const CloseNoteModal: React.FC<CloseNoteModalProps> = ({
                 </Button>
               </DialogClose>
 
+
+
+
               <Button
                 type="submit"
                 className="w-full  bg-blue-500 hover:bg-blue-600 text-white "
               >
                 Agregar
               </Button>
+
+
             </div>
           </form>
         </Form>
