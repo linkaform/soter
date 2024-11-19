@@ -286,8 +286,7 @@ export function GuardiasApoyoTable() {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No resultados.
-                </TableCell>
+No hay registros disponibles                </TableCell>
               </TableRow>
             )}
           </TableBody>

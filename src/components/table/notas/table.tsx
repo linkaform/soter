@@ -262,8 +262,8 @@ export function GuardiasTable() {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No results.
-                </TableCell>
+No hay registros disponibles                
+</TableCell>
               </TableRow>
             )}
           </TableBody>

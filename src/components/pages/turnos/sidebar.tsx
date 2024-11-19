@@ -2,6 +2,8 @@ import { ChangeBoothModal } from '@/components/modals/change-booth-modal'
 import { ForceExitModal } from '@/components/modals/force-exit-modal'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import React from 'react'
 
 const Sidebar = () => {
@@ -31,6 +33,9 @@ const Sidebar = () => {
       <Button className="bg-gray-100 hover:bg-gray-200 text-gray-700">
         Cambiar Imagen
       </Button>
+
+  
+
     </div>
 
     <div className="flex flex-col space-y-5 mb-10">

@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { Header } from "@/components/header";
 
 import {
   Select,
@@ -10,6 +9,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
+
 
 import Vehicles from "@/components/icon/vehicles";
 import Exit from "@/components/icon/exit";
@@ -37,12 +44,17 @@ import { CommentPassModal } from "@/components/modals/comment-pass-modal";
 const AccesosPage = () => {
   return (
     <div className="">
-      <Header />
 
       <div className="flex flex-col">
         <div className="p-6 space-y-6 w-full mx-auto">
+        <Accordion type="single" collapsible>
+        {/* Información de la Caseta */}
+        <AccordionItem value="informacion-caseta">
+          <AccordionTrigger>
+            <h1 className="text-2xl font-semibold">Información de la Caseta</h1>
+          </AccordionTrigger>
+          <AccordionContent>
           <div className="space-y-4">
-            <h1 className="text-2xl font-semibold">Información de la caseta</h1>
 
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
@@ -148,6 +160,10 @@ const AccesosPage = () => {
               </CardContent>
             </Card>
           </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+
 
           <div className="flex flex-col sm:flex-row">
             <div className="flex mb-5 mr-5 w-full md:max-w-lg  mx-auto">
@@ -195,6 +211,15 @@ const AccesosPage = () => {
             </div>
           </div>
         </div>
+
+
+        
+
+
+        
+
+
+        
 
         <div className="flex flex-row">
           <div className="max-w-3xl p-4">

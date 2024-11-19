@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Header } from "@/components/header";
 import { GuardiasTable } from "@/components/table/notas/table";
 import Guest from "@/components/icon/guests";
 import Fails from "@/components/icon/fails";
@@ -21,7 +20,6 @@ export default function Home() {
 
   return (
     <div className="">
-      <Header />
 
       <div className="flex flex-col lg:flex-row">
         <div className="w-full lg:w-1/4 h-screen px-6 py-6 border border-[#F0F2F5]">

@@ -12,6 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { DoorOpen, LogOut, Settings, StickyNote, User } from "lucide-react";
 
 export const Header = () => {
   const currentPath = usePathname();
@@ -129,14 +130,20 @@ export const Header = () => {
 
               <Link href="/">
 
-              <DropdownMenuItem>Turno</DropdownMenuItem>
-
+              <DropdownMenuItem>
+              <DoorOpen />      
+                  Turno
+          </DropdownMenuItem>
               </Link>
 
 
               <Link href="/dashboard/notas">
 
-              <DropdownMenuItem>Notas</DropdownMenuItem>
+              <DropdownMenuItem>
+              <StickyNote />
+
+                Notas
+                </DropdownMenuItem>
               </Link>
               
 
@@ -144,13 +151,19 @@ export const Header = () => {
               <Link href="/dashboard/configuracion">
 
 
-              <DropdownMenuItem>Configuración</DropdownMenuItem>
+              <DropdownMenuItem>
+              <Settings />
+                Configuración
+                </DropdownMenuItem>
               </Link>
 
 
               <Link href="/auth/login">
 
-              <DropdownMenuItem>Salir</DropdownMenuItem>
+              <DropdownMenuItem>
+              <LogOut />
+                Salir
+                </DropdownMenuItem>
               </Link>
 
             </DropdownMenuContent>
