@@ -1,7 +1,10 @@
 "use client";
 
 import * as React from "react";
+
+
 import {
+
   ColumnFiltersState,
   SortingState,
   VisibilityState,
@@ -12,10 +15,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import {ChevronDown, FileX2} from "lucide-react";
-
 import { Button } from "@/components/ui/button";
-
 import {
   Table,
   TableBody,
@@ -25,100 +25,72 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Locker, lockerColumns } from "./locker-columns";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { ChevronDown,  FileX2,  Plus } from "lucide-react";
+import { Label } from "@/components/ui/label";
+import { ArticuloEntregado, entregadosColumns } from "./entregados-columns";
 
 
 
 
-
-const data: Locker[] = [
+const data: ArticuloEntregado[] = [
     {
-      id: "1",
-      locker: 'Locker 1',
-      libre: false,
-      visitante: 'Rodolfo Peña Gonzales',
-      documento: 'INE',
-      numeroGafete: 'A58',
-      planta: 'Planta 1',
-    },
-    {
-      id: "2",
-      locker: 'Locker 1',
-      libre: true,
-      visitante: 'Rodolfo Peña Gonzales',
-      documento: 'INE',
-      numeroGafete: 'A58',
-      planta: 'Planta 1',
-    },
-    {
-      id: "3",
-      locker: 'Locker 1',
-      libre: false,
-      visitante: 'Rodolfo Peña Gonzales',
-      documento: 'INE',
-      numeroGafete: 'A58',
-      planta: 'Planta 1',
-    },
-    {
-      id: "4",
-      locker: 'Locker 1',
-      libre: true,
-      visitante: 'Rodolfo Peña Gonzales',
-      documento: 'Pasaporte',
-      numeroGafete: 'A58',
-      planta: 'Planta 1',
-    },
-    {
-      id: "5",
-      locker: 'Locker 1',
-      libre: true,
-      visitante: 'Rodolfo Peña Gonzales',
-      documento: 'INE',
-      numeroGafete: 'A58',
-      planta: 'Planta 1',
-    },
-    {
-      id: "6",
-      locker: 'Locker 1',
-      libre: true,
-      visitante: 'Rodolfo Peña Gonzales',
-      documento: 'Pasaporte',
-      numeroGafete: 'A58',
-      planta: 'Planta 1',
-    },
-    {
-      id: "7",
-      locker: 'Locker 1',
-      libre: false,
-      visitante: 'Rodolfo Peña Gonzales',
-      documento: 'INE',
-      numeroGafete: 'A58',
-      planta: 'Planta 1',
-    },
-    {
-      id: "8",
-      locker: 'Locker 1',
-      libre: false,
-      visitante: 'Rodolfo Peña Gonzales',
-      documento: 'Pasaporte',
-      numeroGafete: 'A58',
-      planta: 'Planta 1',
-    },
-    {
-      id: "9",
-      locker: 'Locker 1',
-      libre: false,
-      visitante: 'Rodolfo Peña Gonzales',
-      documento: 'INE',
-      numeroGafete: 'A58',
-      planta: 'Planta 1',
-    },
-  ];
+          id: "1",
+          nombre: "Caseta 6 Poniente",
+          articulo: "chamarra",
+          fotografia: "/image/articulo1.png",
+          color: "Negro",
+          categoria: "Categoría 1",
+          fechaHallazgo: "2024-11-05 17:55",
+          areaResguardo: "L4",
+          reporta: "Carlos",
+          fechaDevolucion: "2024-11-06 15:00",
+          comentarios: ["test"],  
+        },
+        {
+          id: "2",
+          nombre: "Caseta Principal",
+          articulo: "Peluche",
+          fotografia: "/image/articulo2.png",
+          color: "Gris",
+          categoria: "Categoría 2",
+          fechaHallazgo: "2024-09-17 13:54",
+          areaResguardo: "L6",
+          reporta: "Juan Escutia",
+          fechaDevolucion: "2024-09-26 12:42:52",
+          comentarios: ["sdfa"],
+        },
+        {
+          id: "3",
+          nombre: "Caseta Principal",
+          articulo: "bálsamo labial",
+          fotografia: "/image/articulo3.png",
+          color: "Café",
+          categoria: "Categoría 3",
+          fechaHallazgo: "2024-09-14 15:51",
+          areaResguardo: "L10",
+          reporta: "Juan Escutia",
+          fechaDevolucion: "2024-09-25 15:12:12",
+          comentarios: ["Se entregó al propietario", "Se encontro roto"],
+        },        
+      ];
+      
 
 
 
+   
 
-export function LockerTable() {
+
+
+export function ArticulosEntregadosTable() {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -135,7 +107,7 @@ export function LockerTable() {
 
   const table = useReactTable({
     data,
-    columns: lockerColumns,
+    columns: entregadosColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
@@ -170,8 +142,41 @@ export function LockerTable() {
         />
 
         {/* Botones a la derecha */}
-        <div className="flex items-center justify-end space-x-4">
- 
+        <div className="flex items-center justify-end space-x-6">
+
+
+
+          <div className="flex items-center space-x-5">
+
+
+          <Label className=""  htmlFor="terms">Estado:</Label>
+
+            
+
+
+        <Select defaultValue="Pendiente">
+        <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="Seleccione un estado" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectGroup>
+          <SelectLabel>Estado</SelectLabel>
+          <SelectItem value="Pendiente">Pendiente</SelectItem>
+          <SelectItem value="Entregado">Entregado</SelectItem>
+          <SelectItem value="Donado">Donado</SelectItem>
+       
+        </SelectGroup>
+      </SelectContent>
+    </Select>
+    </div>  
+      
+
+      <Button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2">
+      <Plus />        
+        Nuevo Artículo
+      </Button>
+
+
       <Button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2">
       <FileX2 />
         
@@ -251,11 +256,10 @@ export function LockerTable() {
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={lockerColumns.length}
+                  colSpan={entregadosColumns.length}
                   className="h-24 text-center"
                 >
-             No hay registros disponibles  
-                           </TableCell>
+           No hay registros disponibles                </TableCell>
               </TableRow>
             )}
           </TableBody>

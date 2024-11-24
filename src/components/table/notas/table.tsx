@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import {
-  ColumnDef,
   ColumnFiltersState,
   SortingState,
   VisibilityState,
@@ -26,10 +25,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { AddNoteModal } from "@/components/modals/add-note-modal";
-import Check from "@/components/icon/check";
-import Eye from "@/components/icon/eye";
-import { NoteDetailsModal } from "@/components/modals/note-details-modal";
-import { CloseNoteModal } from "@/components/modals/close-note-modal";
+import { Guardia, notasColumns } from "./notas-columns";
+
 
 const data: Guardia[] = [
   {
@@ -97,63 +94,7 @@ const data: Guardia[] = [
   },
 ];
 
-export type Guardia = {
-  id: string;
-  empleado: string;
-  cierre: string;
-  nota: string;
-  comentarios: string;
-};
 
-export const columns: ColumnDef<Guardia>[] = [
-  {
-    id: "select",
-    header: "",
-    cell: ({ row }) => (
-      <div className="flex space-x-4">
-        <CloseNoteModal title="Cerrar nota">
-          <div className="cursor-pointer">
-            <Check />
-          </div>
-        </CloseNoteModal>
-
-        <NoteDetailsModal title={row.original.nota}>
-          <div className="cursor-pointer">
-            <Eye />
-          </div>
-        </NoteDetailsModal>
-      </div>
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "empleado",
-    header: "Empleado",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("empleado")}</div>
-    ),
-  },
-  {
-    accessorKey: "cierre",
-    header: "Cierre",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("cierre")}</div>
-    ),
-  },
-  {
-    accessorKey: "nota",
-    header: "Nota",
-    cell: ({ row }) => <div className="capitalize">{row.getValue("nota")}</div>,
-  },
-  {
-    accessorKey: "comentarios",
-    header: "Comentarios",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("comentarios")}</div>
-    ),
-  },
-];
 
 export function GuardiasTable() {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -172,7 +113,7 @@ export function GuardiasTable() {
 
   const table = useReactTable({
     data,
-    columns,
+    columns: notasColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
@@ -213,8 +154,12 @@ export function GuardiasTable() {
               + Nota
             </Button>
           </AddNoteModal>
-          <Button className="bg-blue-500 text-white hover:text-white hover:bg-blue-600" variant="outline" size="icon">
-          <List size={36} />
+          <Button
+            className="bg-blue-500 text-white hover:text-white hover:bg-blue-600"
+            variant="outline"
+            size="icon"
+          >
+            <List size={36} />
           </Button>
         </div>
       </div>
@@ -259,11 +204,11 @@ export function GuardiasTable() {
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length}
+                  colSpan={notasColumns.length}
                   className="h-24 text-center"
                 >
-No hay registros disponibles                
-</TableCell>
+                  No hay registros disponibles
+                </TableCell>
               </TableRow>
             )}
           </TableBody>

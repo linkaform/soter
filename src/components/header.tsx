@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { DoorOpen, LogOut, Settings, StickyNote, User } from "lucide-react";
+import { DoorOpen, LogOut, Settings, StickyNote} from "lucide-react";
 
 export const Header = () => {
   const currentPath = usePathname();
@@ -22,7 +22,7 @@ export const Header = () => {
       <div className="mx-auto flex flex-col lg:flex-row items-center justify-between">
         {/* Logo */}
 
-        <div className="flex mb-5 lg:mb-0 justify-center items-center">
+        <div className="flex  mb-5 lg:mb-0 justify-center items-center">
           <Link href="/">
             <Image
               className="dark:invert"
@@ -50,7 +50,7 @@ export const Header = () => {
 
         <div className="flex">
           {/* Navegación */}
-          <nav className="flex space-x-3 mr-5">
+          <nav className="flex  space-x-3 mr-5">
             <Link href="/dashboard/accesos">
               <Button
                 className={`${

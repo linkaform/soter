@@ -10,13 +10,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import Vehicles from "@/components/icon/vehicles";
-import Exit from "@/components/icon/exit";
 import {
-  Home, 
   TriangleAlert, 
-  UndoDot, 
-  Users,
+  UndoDot,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -35,8 +31,8 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
-import { IncidenciasTable } from "@/components/table/incidencias/page";
-import { FallasTable } from "@/components/table/incidencias/fallas/page";
+import { IncidenciasTable } from "@/components/table/incidencias/table";
+import { FallasTable } from "@/components/table/incidencias/fallas/table";
 
 const IncidenciasPage = () => {
 

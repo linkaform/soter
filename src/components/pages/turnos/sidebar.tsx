@@ -2,8 +2,6 @@ import { ChangeBoothModal } from '@/components/modals/change-booth-modal'
 import { ForceExitModal } from '@/components/modals/force-exit-modal'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
 import React from 'react'
 
 const Sidebar = () => {

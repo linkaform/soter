@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 
 import {
   Select,
@@ -32,10 +32,15 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
-import { ArticulosTable } from "@/components/table/articulos/page";
+import { ArticulosPendientesTable } from "@/components/table/articulos/pendientes/page";
 import { ConcecionadosTable } from "@/components/table/articulos/concecionados/page";
+import { ArticulosDonadosTable } from "@/components/table/articulos/donados/page";
+import { ArticulosEntregadosTable } from "@/components/table/articulos/entregados/page";
 
 const ArticulosPage = () => {
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [stateArticle, setStateArticle] = useState("Pendientes");
 
   return (
 
@@ -141,9 +146,25 @@ const ArticulosPage = () => {
       <TabsTrigger value="Concecionados">Artículos concecionados</TabsTrigger>
       </TabsList>
      <TabsContent value="Perdidos">
-     <div className="">
-      <ArticulosTable />
-      </div>
+
+
+      {  stateArticle === "Pendientes" &&   <div className="">
+        <ArticulosPendientesTable />
+        </div>
+      }
+
+     {  stateArticle === "Entregados" &&   <div className="">
+      <ArticulosEntregadosTable />
+        </div>
+      }
+
+    {  stateArticle === "Donados" &&   <div className="">
+      <ArticulosDonadosTable />
+        </div>
+      }
+
+      
+
 
       </TabsContent>
       <TabsContent value="Concecionados">

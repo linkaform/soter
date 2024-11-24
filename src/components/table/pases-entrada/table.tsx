@@ -12,7 +12,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import {ChevronDown, FileX2} from "lucide-react";
+import { ChevronDown, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -24,101 +24,70 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Locker, lockerColumns } from "./locker-columns";
+
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { PaseEntrada, pasesEntradaColumns } from "./pases-entrada-columns";
 
 
 
-
-
-const data: Locker[] = [
+export const data: PaseEntrada[] = [
     {
-      id: "1",
-      locker: 'Locker 1',
-      libre: false,
-      visitante: 'Rodolfo Peña Gonzales',
-      documento: 'INE',
-      numeroGafete: 'A58',
-      planta: 'Planta 1',
+      folio: "1254-54",
+      fechaHora: "14/11/2024 12:54:45 hrs",
+      visitante: "Julian Alonso Pérez Torres",
+      tipoDePase: "Visita General",
+      motivo: "Reunión",
+      estatus: "Activo",
     },
     {
-      id: "2",
-      locker: 'Locker 1',
-      libre: true,
-      visitante: 'Rodolfo Peña Gonzales',
-      documento: 'INE',
-      numeroGafete: 'A58',
-      planta: 'Planta 1',
+      folio: "3262-45",
+      fechaHora: "14/11/2024 12:54:45 hrs",
+      visitante: "Julian Alonso Pérez Torres",
+      tipoDePase: "Visita General",
+      motivo: "Reunión",
+      estatus: "Activo",
     },
     {
-      id: "3",
-      locker: 'Locker 1',
-      libre: false,
-      visitante: 'Rodolfo Peña Gonzales',
-      documento: 'INE',
-      numeroGafete: 'A58',
-      planta: 'Planta 1',
+      folio: "2013-45",
+      fechaHora: "14/11/2024 12:54:45 hrs",
+      visitante: "Julian Alonso Pérez Torres",
+      tipoDePase: "Invitado",
+      motivo: "Reunión",
+      estatus: "Activo",
     },
     {
-      id: "4",
-      locker: 'Locker 1',
-      libre: true,
-      visitante: 'Rodolfo Peña Gonzales',
-      documento: 'Pasaporte',
-      numeroGafete: 'A58',
-      planta: 'Planta 1',
+      folio: "8524-65",
+      fechaHora: "14/11/2024 12:54:45 hrs",
+      visitante: "Julian Alonso Pérez Torres",
+      tipoDePase: "Invitado",
+      motivo: "Reunión",
+      estatus: "Activo",
     },
     {
-      id: "5",
-      locker: 'Locker 1',
-      libre: true,
-      visitante: 'Rodolfo Peña Gonzales',
-      documento: 'INE',
-      numeroGafete: 'A58',
-      planta: 'Planta 1',
+      folio: "6154-91",
+      fechaHora: "14/11/2024 12:54:45 hrs",
+      visitante: "Julian Alonso Pérez Torres",
+      tipoDePase: "Familia de Empleado",
+      motivo: "Personal",
+      estatus: "Vencido",
     },
     {
-      id: "6",
-      locker: 'Locker 1',
-      libre: true,
-      visitante: 'Rodolfo Peña Gonzales',
-      documento: 'Pasaporte',
-      numeroGafete: 'A58',
-      planta: 'Planta 1',
-    },
-    {
-      id: "7",
-      locker: 'Locker 1',
-      libre: false,
-      visitante: 'Rodolfo Peña Gonzales',
-      documento: 'INE',
-      numeroGafete: 'A58',
-      planta: 'Planta 1',
-    },
-    {
-      id: "8",
-      locker: 'Locker 1',
-      libre: false,
-      visitante: 'Rodolfo Peña Gonzales',
-      documento: 'Pasaporte',
-      numeroGafete: 'A58',
-      planta: 'Planta 1',
-    },
-    {
-      id: "9",
-      locker: 'Locker 1',
-      libre: false,
-      visitante: 'Rodolfo Peña Gonzales',
-      documento: 'INE',
-      numeroGafete: 'A58',
-      planta: 'Planta 1',
+      folio: "1632-45",
+      fechaHora: "14/11/2024 12:54:45 hrs",
+      visitante: "Julian Alonso Pérez Torres",
+      tipoDePase: "Familia de Empleado",
+      motivo: "Personal",
+      estatus: "Vencido",
     },
   ];
+  
 
-
-
-
-export function LockerTable() {
+export function PasesEntradaTable() {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -135,7 +104,7 @@ export function LockerTable() {
 
   const table = useReactTable({
     data,
-    columns: lockerColumns,
+    columns: pasesEntradaColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
@@ -159,6 +128,12 @@ export function LockerTable() {
 
   return (
     <div className="w-full">
+
+
+      <div className="">
+        <h1 className="text-2xl font-bold">Historial de Pases</h1>
+      </div>
+
       <div className="flex justify-between items-center my-5">
         {/* Campo de búsqueda a la izquierda */}
         <input
@@ -171,44 +146,38 @@ export function LockerTable() {
 
         {/* Botones a la derecha */}
         <div className="flex items-center justify-end space-x-4">
- 
-      <Button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2">
-      <FileX2 />
-        
-        Descargar
-      </Button>
+          <Button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2">
+            <Plus />
+            Nuevo Pase
+          </Button>
 
-      <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columnas <ChevronDown />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-      
-    </div>
-
-
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="ml-auto">
+                Columnas <ChevronDown />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  );
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
       <div className="">
@@ -251,11 +220,11 @@ export function LockerTable() {
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={lockerColumns.length}
+                  colSpan={pasesEntradaColumns.length}
                   className="h-24 text-center"
                 >
-             No hay registros disponibles  
-                           </TableCell>
+                  No hay registros disponibles{" "}
+                </TableCell>
               </TableRow>
             )}
           </TableBody>

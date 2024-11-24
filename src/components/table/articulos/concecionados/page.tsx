@@ -2,10 +2,8 @@
 
 import * as React from "react";
 
-import Image from "next/image";
 
 import {
-  ColumnDef,
   ColumnFiltersState,
   SortingState,
   VisibilityState,
@@ -26,33 +24,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { ArrowLeftRight,  ChevronDown, Clock, Eye, FileX2,  Pencil, Plus } from "lucide-react";
-import { Label } from "@/components/ui/label";
+import { ChevronDown, Clock,  FileX2, Plus } from "lucide-react";
+import { Concecionado, concecionadosColumns } from "./concecionados-columns";
 
 
 
-export type Concecionado = {
-  id: string;
-  articulo: string;
-  fecha: string;
-  tipo: string;
-  noSerie: string
-  reporta: string;
-  observaciones: string[]
-  recibe: string;
-  devolucion: string;
-  estado: string;
-  area: string;
-};
+
 
 
 const data: Concecionado[] = [
@@ -73,127 +50,13 @@ const data: Concecionado[] = [
       ];
     
       
-      export const columns: ColumnDef<Concecionado>[] = [
-        {
-          id: "options",
-          header: "Opciones",
-          cell: ({ row }) => (
-            <div className="flex space-x-2">
-              {/* Ícono de visualizar */}
-              <div className="cursor-pointer">
-                <Eye />
-              </div>
-              {/* Ícono de devolver */}
-              <div className="cursor-pointer">
-                <ArrowLeftRight />
-              </div>
-              {/* Ícono de editar */}
-              <div className="cursor-pointer">
-                <Pencil />
-              </div>
-            </div>
-          ),
-          enableSorting: false,
-          enableHiding: false,
-        },
-        {
-          accessorKey: "id",
-          header: "ID",
-          cell: ({ row }) => <div>{row.getValue("id")}</div>,
-          enableSorting: true,
-        },
-        {
-          accessorKey: "articulo",
-          header: "Artículo",
-          cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("articulo")}</div>
-          ),
-          enableSorting: true,
-        },
-        {
-          accessorKey: "fecha",
-          header: "Fecha",
-          cell: ({ row }) => <div>{row.getValue("fecha")}</div>,
-          enableSorting: true,
-        },
-        {
-          accessorKey: "tipo",
-          header: "Tipo",
-          cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("tipo")}</div>
-          ),
-          enableSorting: true,
-        },
-        {
-          accessorKey: "noSerie",
-          header: "No. Serie",
-          cell: ({ row }) => <div>{row.getValue("noSerie")}</div>,
-          enableSorting: true,
-        },
-        {
-          accessorKey: "reporta",
-          header: "Reporta",
-          cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("reporta")}</div>
-          ),
-          enableSorting: true,
-        },
-        {
-          accessorKey: "observaciones",
-          header: "Observaciones",
-          cell: ({ row }) => {
-            const observaciones = row.getValue("observaciones") as string[];
-            return (
-              <div className="capitalize">
-                {Array.isArray(observaciones) ? (
-                  <ul className="list-disc pl-5">
-                    {observaciones.map((obs, index) => (
-                      <li key={index}>{obs}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <span>{observaciones}</span>
-                )}
-              </div>
-            );
-          },
-          enableSorting: true,
-        },
-        {
-          accessorKey: "recibe",
-          header: "Recibe",
-          cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("recibe")}</div>
-          ),
-          enableSorting: true,
-        },
-        {
-          accessorKey: "devolucion",
-          header: "Devolución",
-          cell: ({ row }) => <div>{row.getValue("devolucion")}</div>,
-          enableSorting: true,
-        },
-        {
-          accessorKey: "estado",
-          header: "Estado",
-          cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("estado")}</div>
-          ),
-          enableSorting: true,
-        },
-        {
-          accessorKey: "area",
-          header: "Área",
-          cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("area")}</div>
-          ),
-          enableSorting: true,
-        },
-      ];   
-
+    
 
 
 export function ConcecionadosTable() {
+
+
+  
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -210,7 +73,7 @@ export function ConcecionadosTable() {
 
   const table = useReactTable({
     data,
-    columns,
+    columns: concecionadosColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
@@ -234,6 +97,12 @@ export function ConcecionadosTable() {
 
   return (
     <div className="w-full">
+
+<div className="my-5">
+      <h1 className="text-2xl font-bold">Registro de incidencias y fallas
+      </h1>
+      </div>  
+
       <div className="flex justify-between items-center my-5">
         {/* Campo de búsqueda a la izquierda */}
         <input
@@ -249,29 +118,7 @@ export function ConcecionadosTable() {
 
 
 
-          <div className="flex items-center space-x-5">
-
-
-          <Label className=""  htmlFor="terms">Estado:</Label>
-
-            
-
-
-        <Select defaultValue="Pendiente">
-        <SelectTrigger className="w-[180px]">
-        <SelectValue placeholder="Seleccione un estado" />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectGroup>
-          <SelectLabel>Estado</SelectLabel>
-          <SelectItem value="Pendiente">Pendiente</SelectItem>
-          <SelectItem value="Entregado">Entregado</SelectItem>
-          <SelectItem value="Donado">Donado</SelectItem>
-       
-        </SelectGroup>
-      </SelectContent>
-    </Select>
-    </div>  
+          
       
 
       <Button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2">
@@ -365,7 +212,7 @@ export function ConcecionadosTable() {
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length}
+                  colSpan={concecionadosColumns.length}
                   className="h-24 text-center"
                 >
            No hay registros disponibles                </TableCell>

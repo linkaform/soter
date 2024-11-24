@@ -2,10 +2,8 @@
 
 import * as React from "react";
 
-import Image from "next/image";
 
 import {
-  ColumnDef,
   ColumnFiltersState,
   SortingState,
   VisibilityState,
@@ -35,27 +33,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { ArrowLeftRight,  ChevronDown, Eye, FileX2,  Pencil, Plus } from "lucide-react";
+import {ChevronDown, FileX2,  Plus } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import { ArticuloPendiente, pendientesColumns } from "./pendientes-columns";
 
 
 
-export type Articulo = {
-  id: string;
-  nombre: string;
-  articulo: string;
-  fotografia: string;
-  color: string;
-  categoria: string;
-  fechaHallazgo: string;
-  areaResguardo: string;
-  reporta: string;
-  fechaDevolucion: string;
-  comentarios: string[]
-};
 
 
-const data: Articulo[] = [
+const data: ArticuloPendiente[] = [
     {
           id: "1",
           nombre: "Caseta 6 Poniente",
@@ -100,135 +86,11 @@ const data: Articulo[] = [
 
 
 
-      export const columns: ColumnDef<Articulo>[] = [
-        {
-          id: "options",
-          header: "Opciones",
-          cell: ({ row }) => (
-            <div className="flex space-x-2">
-              {/* Ícono de visualizar */}
-              <div className="cursor-pointer">
-                <Eye />
-              </div>
-              {/* Ícono de devolver */}
-              <div className="cursor-pointer">
-                <ArrowLeftRight />
-              </div>
-              {/* Ícono de editar */}
-              <div className="cursor-pointer">
-                <Pencil />
-              </div>
-            </div>
-          ),
-          enableSorting: false,
-          enableHiding: false,
-        },     
-        {
-          accessorKey: "nombre",
-          header: "Nombre",
-          cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("nombre")}</div>
-          ),
-          enableSorting: true,
-        },
-        {
-          accessorKey: "articulo",
-          header: "Artículo",
-          cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("articulo")}</div>
-          ),
-          enableSorting: true,
-        },
-        {
-            accessorKey: "fotografia",
-            header: "Fotografía",
-            cell: ({ row }) => (
-              <div className="relative h-24 w-28">
-              <Image
-                src={row.getValue("fotografia")}
-                alt="Fotografía"
-                fill
-                className="object-cover"
-              />
-            </div>
-            ),
-            enableSorting: false,
-          },
-        {
-          accessorKey: "color",
-          header: "Color",
-          cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("color")}</div>
-          ),
-          enableSorting: true,
-        },
-        {
-          accessorKey: "categoria",
-          header: "Categoría",
-          cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("categoria")}</div>
-          ),
-          enableSorting: true,
-        },
-        {
-          accessorKey: "fechaHallazgo",
-          header: "Fecha del hallazgo",
-          cell: ({ row }) => (
-            <div>{row.getValue("fechaHallazgo")}</div>
-          ),
-          enableSorting: true,
-        },
-        {
-          accessorKey: "areaResguardo",
-          header: "Área de Resguardo",
-          cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("areaResguardo")}</div>
-          ),
-          enableSorting: true,
-        },
-        {
-          accessorKey: "reporta",
-          header: "Reporta",
-          cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("reporta")}</div>
-          ),
-          enableSorting: true,
-        },
-        {
-          accessorKey: "fechaDevolucion",
-          header: "Fecha de Devolución",
-          cell: ({ row }) => (
-            <div>{row.getValue("fechaDevolucion")}</div>
-          ),
-          enableSorting: true,
-        },
-        {
-          accessorKey: "comentarios",
-          header: "Comentarios",
-          cell: ({ row }) => {
-            const comentarios = row.getValue("comentarios") as string[];
-            return (
-              <div className="capitalize">
-                {Array.isArray(comentarios) ? (
-                  <ul className="list-disc pl-5">
-                    {comentarios.map((comentario, index) => (
-                      <li key={index}>{comentario}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <span>{comentarios}</span>
-                )}
-              </div>
-            );
-          },
-          enableSorting: true,
-        },
-      ];
-      
 
 
 
-export function ArticulosTable() {
+
+export function ArticulosPendientesTable() {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -245,7 +107,7 @@ export function ArticulosTable() {
 
   const table = useReactTable({
     data,
-    columns,
+    columns: pendientesColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
@@ -269,6 +131,15 @@ export function ArticulosTable() {
 
   return (
     <div className="w-full">
+
+
+<div className="my-5">
+      <h1 className="text-2xl font-bold">Registro de incidencias y fallas
+      </h1>
+      </div>  
+
+
+ 
       <div className="flex justify-between items-center my-5">
         {/* Campo de búsqueda a la izquierda */}
         <input
@@ -394,7 +265,7 @@ export function ArticulosTable() {
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length}
+                  colSpan={pendientesColumns.length}
                   className="h-24 text-center"
                 >
            No hay registros disponibles                </TableCell>

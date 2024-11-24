@@ -51,15 +51,6 @@ export const ActivePassesModal: React.FC<ActivePassesModalProps> = ({
 
 
 
-
-/*   const handleAgregar = () => {
-    const selectedData = data.filter((guardia) =>
-      selectedGuardias.includes(guardia.id)
-    );
-    onAddGuardias(selectedData);
-    setSelectedGuardias([]);
-  };
- */
   return (
     <Dialog>
   <DialogTrigger asChild>{children}</DialogTrigger>

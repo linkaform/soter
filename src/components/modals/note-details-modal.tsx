@@ -39,7 +39,7 @@ export const NoteDetailsModal: React.FC<NoteDetailsModalProps> = ({
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
 
-      <DialogContent className="max-w-xl">
+      <DialogContent className="max-w-xl max-h-[90vh] overflow-scroll">
         <DialogHeader>
           <DialogTitle className="text-2xl	 text-center  font-bold my-5">
             {title}

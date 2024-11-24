@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import {
-  ColumnDef,
   ColumnFiltersState,
   SortingState,
   VisibilityState,
@@ -13,7 +12,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { CarFront, ChevronDown, FileX2, Hammer, IdCard, List, LogOut, User } from "lucide-react";
+import { ChevronDown, FileX2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -25,27 +24,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { AddNoteModal } from "@/components/modals/add-note-modal";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-
-
-
-export type Bitacora = {
-  id: string;
-  folio: string;
-  entrada: string;
-  salida: string;
-  visitante: string;
-  tipo: string;
-  contratista: string;
-  gafete?: string;
-  visitaA: string;
-  casetaEntrada: string;
-  casetaSalida: string,
-  comentarios: string[]
-};
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Bitacora, bitacorasColumns } from "./bitacoras-columns";
 
 const data: Bitacora[] = [
   {
@@ -60,8 +47,7 @@ const data: Bitacora[] = [
     casetaEntrada: "Caseta Principal",
     casetaSalida: "---",
     gafete: "GAF-001",
-    comentarios:   ["Sin incidencias reportadas"],
-
+    comentarios: ["Sin incidencias reportadas"],
   },
   {
     id: "2",
@@ -75,8 +61,7 @@ const data: Bitacora[] = [
     casetaEntrada: "Caseta Principal",
     casetaSalida: "---",
     gafete: "GAF-002",
-    comentarios:   ["Entrega de materiales", "Revisar nuevamente en dos días"],
-
+    comentarios: ["Entrega de materiales", "Revisar nuevamente en dos días"],
   },
   {
     id: "3",
@@ -90,7 +75,7 @@ const data: Bitacora[] = [
     casetaEntrada: "Caseta Principal",
     casetaSalida: "---",
     gafete: "GAF-003",
-    comentarios:   ["Reparación de equipo", "Material instalado correctamente"],
+    comentarios: ["Reparación de equipo", "Material instalado correctamente"],
   },
   {
     id: "4",
@@ -105,8 +90,7 @@ const data: Bitacora[] = [
     casetaSalida: "---",
 
     gafete: "GAF-004",
-    comentarios:   ["Trabajo nocturno",  "Sin interrupciones"],
-
+    comentarios: ["Trabajo nocturno", "Sin interrupciones"],
   },
   {
     id: "5",
@@ -121,8 +105,7 @@ const data: Bitacora[] = [
     casetaSalida: "---",
 
     gafete: "GAF-005",
-    comentarios:   ["Descarga completada", "Operación normal"],
-
+    comentarios: ["Descarga completada", "Operación normal"],
   },
   {
     id: "6",
@@ -136,8 +119,7 @@ const data: Bitacora[] = [
     casetaEntrada: "Caseta Principal",
     casetaSalida: "---",
     gafete: "GAF-006",
-    comentarios:   ["Revisión rápida", "Todo en orden"],
-
+    comentarios: ["Revisión rápida", "Todo en orden"],
   },
   {
     id: "7",
@@ -180,9 +162,8 @@ const data: Bitacora[] = [
     casetaSalida: "---",
 
     gafete: "GAF-008",
-    comentarios:   ["Trabajo realizado con éxito"],
-
-    },
+    comentarios: ["Trabajo realizado con éxito"],
+  },
   {
     id: "10",
     folio: "1586-10",
@@ -195,8 +176,7 @@ const data: Bitacora[] = [
     casetaEntrada: "Caseta Principal",
     casetaSalida: "---",
     gafete: "GAF-009",
-    comentarios:   ["Sin incidencias"],
-
+    comentarios: ["Sin incidencias"],
   },
   {
     id: "11",
@@ -210,7 +190,7 @@ const data: Bitacora[] = [
     casetaEntrada: "Caseta Principal",
     casetaSalida: "---",
     gafete: "GAF-010",
-    comentarios:["Carga pesada", "Revisar capacidad para futuras operaciones"],
+    comentarios: ["Carga pesada", "Revisar capacidad para futuras operaciones"],
   },
   {
     id: "12",
@@ -224,7 +204,7 @@ const data: Bitacora[] = [
     casetaEntrada: "Caseta Principal",
     casetaSalida: "---",
     gafete: "MYT-12",
-    comentarios:  ["Se encontraron áreas a mejorar"],
+    comentarios: ["Se encontraron áreas a mejorar"],
   },
   {
     id: "13",
@@ -238,7 +218,7 @@ const data: Bitacora[] = [
     casetaEntrada: "Caseta Principal",
     casetaSalida: "---",
     gafete: "MTY-10",
-    comentarios:["Material entregado", "Documentación firmada"],
+    comentarios: ["Material entregado", "Documentación firmada"],
   },
   {
     id: "14",
@@ -266,7 +246,7 @@ const data: Bitacora[] = [
     casetaEntrada: "Caseta Principal",
     casetaSalida: "---",
     gafete: "GAF-011",
-    comentarios:  ["Inspección completada", "Sin observaciones"],
+    comentarios: ["Inspección completada", "Sin observaciones"],
   },
   {
     id: "16",
@@ -308,7 +288,7 @@ const data: Bitacora[] = [
     casetaEntrada: "Caseta Principal",
     casetaSalida: "---",
     gafete: "GAF-013",
-    comentarios:  ["Acceso autorizado", "Sin retrasos"],
+    comentarios: ["Acceso autorizado", "Sin retrasos"],
   },
   {
     id: "19",
@@ -322,8 +302,7 @@ const data: Bitacora[] = [
     casetaEntrada: "Caseta Principal",
     casetaSalida: "---",
     gafete: "MTY-11",
-    comentarios:   ["Equipo en condiciones óptimas"],
-
+    comentarios: ["Equipo en condiciones óptimas"],
   },
   {
     id: "20",
@@ -337,146 +316,10 @@ const data: Bitacora[] = [
     casetaEntrada: "Caseta Principal",
     casetaSalida: "---",
     gafete: "GAF-014",
-    comentarios:  ["Operación completada sin contratiempos"],
+    comentarios: ["Operación completada sin contratiempos"],
   },
-]
-
-
-export const columns: ColumnDef<Bitacora>[] = [
-  {
-    id: "options",
-    header: "Opciones",
-    cell: ({ row }) => (
-      <div className="flex space-x-2">
-        {/* Ícono de usuario */}
-        <div className="cursor-pointer">
-        <User />
-                </div>
-        {/* Ícono de credenciales */}
-        <div className="cursor-pointer">
-        <IdCard />
-                </div>
-        {/* Ícono de herramienta */}
-        <div className="cursor-pointer">
-        <Hammer />
-          </div>
-        {/* Ícono de automóvil */}
-        <div className="cursor-pointer">
-        <CarFront />
-          </div>
-        {/* Ícono de flecha */}
-        <div className="cursor-pointer">
-          <LogOut />
-        </div>
-      </div>
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: "folio",
-    header: "Folio",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("folio")}</div>
-    ),
-    enableSorting: true,
-    enableHiding: true,
-  },
-  {
-    accessorKey: "entrada",
-    header: "Entrada",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("entrada")}</div>
-    ),
-    enableSorting: true,
-  },
-  {
-    accessorKey: "visitante",
-    header: "Visitante",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("visitante")}</div>
-    ),
-    enableSorting: true,
-  },
-  {
-    accessorKey: "salida",
-    header: "Salida",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("salida")}</div>
-    ),
-    enableSorting: true,
-  },
-
-  {
-    accessorKey: "tipo",
-    header: "Tipo",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("tipo")}</div>
-    ),
-    enableSorting: true,
-  },
-  {
-    accessorKey: "contratista",
-    header: "Contratista",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("contratista")}</div>
-    ),
-    enableSorting: true,
-  },
-  {
-    accessorKey: "visitaA",
-    header: "Visita a",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("visitaA")}</div>
-    ),
-    enableSorting: true,
-  },
-  {
-    accessorKey: "casetaEntrada",
-    header: "Caseta Entrada",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("casetaEntrada")}</div>
-    ),
-    enableSorting: true,
-  },
-  {
-    accessorKey: "casetaSalida",
-    header: "Caseta Salida",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("casetaSalida")}</div>
-    ),
-    enableSorting: true,
-  },
-  {
-    accessorKey: "gafete",
-    header: "Gafete",
-    cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("gafete")}</div>
-    ),
-    enableSorting: true,
-  },
-  {
-    accessorKey: "comentarios",
-    header: "Comentarios",
-    cell: ({ row }) => {
-      const comentarios = row.getValue("comentarios") as string[];
-      return (
-        <div className="capitalize">
-          {Array.isArray(comentarios) ? (
-            <ul className="list-disc pl-5">
-              {comentarios.map((comentario, index) => (
-                <li key={index}>{comentario}</li>
-              ))}
-            </ul>
-          ) : (
-            <span>{comentarios}</span>
-          )}
-        </div>
-      );
-    },
-    enableSorting: true,
-  }
 ];
+
 export function BitacorasTable() {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -494,7 +337,7 @@ export function BitacorasTable() {
 
   const table = useReactTable({
     data,
-    columns,
+    columns: bitacorasColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
@@ -518,6 +361,11 @@ export function BitacorasTable() {
 
   return (
     <div className="w-full">
+        
+      <div className="my-5">
+      <h1 className="text-2xl font-bold">Registro y Seguimiento de Recorridos</h1>
+      </div>  
+
       <div className="flex justify-between items-center my-5">
         {/* Campo de búsqueda a la izquierda */}
         <input
@@ -530,58 +378,53 @@ export function BitacorasTable() {
 
         {/* Botones a la derecha */}
         <div className="flex items-center justify-end space-x-6">
-      <div className="flex items-center space-x-4">
-        <Label htmlFor="entrada">
-          <span className="text-lg font-semibold">Tipo de Movimiento:</span>
-        </Label>
+          <div className="flex items-center space-x-4">
+            <Label htmlFor="entrada">
+              <span className="text-lg font-semibold">Tipo de Movimiento:</span>
+            </Label>
 
-        <div className="flex items-center space-x-2">
-          <Checkbox id="entrada" defaultChecked />
-          <Label htmlFor="entrada">Entrada</Label>
+            <div className="flex items-center space-x-2">
+              <Checkbox id="entrada" defaultChecked />
+              <Label htmlFor="entrada">Entrada</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox id="salida" />
+              <Label htmlFor="salida">Salida</Label>
+            </div>
+          </div>
+
+          <Button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2">
+            <FileX2 />
+            Descargar
+          </Button>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="ml-auto">
+                Columnas <ChevronDown />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  );
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-        <div className="flex items-center space-x-2">
-          <Checkbox id="salida" />
-          <Label htmlFor="salida">Salida</Label>
-        </div>
-      </div>
-
-      <Button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2">
-      <FileX2 />
-        
-        Descargar
-      </Button>
-
-      <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columnas <ChevronDown />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-      
-    </div>
-
-
       </div>
 
       <div className="">
@@ -624,10 +467,11 @@ export function BitacorasTable() {
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length}
+                  colSpan={bitacorasColumns.length}
                   className="h-24 text-center"
                 >
-No hay registros disponibles                </TableCell>
+                  No hay registros disponibles{" "}
+                </TableCell>
               </TableRow>
             )}
           </TableBody>

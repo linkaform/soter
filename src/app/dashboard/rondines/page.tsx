@@ -20,21 +20,13 @@ import {
 
 import Vehicles from "@/components/icon/vehicles";
 import Exit from "@/components/icon/exit";
-import { Button } from "@/components/ui/button";
-import { ActivePassesModal } from "@/components/modals/active-passes-modal";
 import {
   Home,
-  Menu, 
-  Search,
   Users,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ErrorModal } from "@/components/modals/error-modal";
-import { CommentPassModal } from "@/components/modals/comment-pass-modal";
-import { BitacorasTable } from "@/components/table/bitacoras/table";
-import { RondinesTable } from "@/components/table/rondines/page";
+import { RondinesTable } from "@/components/table/rondines/table";
 
 
 const RondinesPage = () => {

@@ -40,6 +40,8 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ErrorModal } from "@/components/modals/error-modal";
 import { CommentPassModal } from "@/components/modals/comment-pass-modal";
+import { AssingBadgeModal } from "@/components/modals/asign-badge-modal";
+import CalendarDays from "@/components/calendar-days";
 
 const AccesosPage = () => {
   return (
@@ -199,12 +201,18 @@ const AccesosPage = () => {
                 </Button>
               </ErrorModal>
 
+              <AssingBadgeModal title={"Recibir Gafete"} description={"Al recibir el gafete, se liberará el espacio y se retirarán los documentos del locker asignado."} >
+
+
               <Button
                 className="bg-blue-500 hover:bg-blue-600 text-white"
                 variant="secondary"
               >
                 Asignar Gafete
               </Button>
+
+              </AssingBadgeModal>
+
               <CommentPassModal title="Comentario al Pase">
                 <Button variant="outline">+ Agregar Comentario</Button>
               </CommentPassModal>
@@ -261,7 +269,7 @@ const AccesosPage = () => {
                       </div>
 
                       <div>
-                        <Label>Estatus</Label>
+                        <Label>Estatus  </Label>
                         <Badge variant="destructive">Vencido</Badge>
                       </div>
 
@@ -274,21 +282,9 @@ const AccesosPage = () => {
                       </div>
 
                       <div>
-                        <Label>Dias disponible:</Label>
-                        <div className="grid grid-cols-7 gap-1 text-center">
-                          {["L", "M", "M", "J", "V", "S", "D"].map((day, i) => (
-                            <div
-                              key={i}
-                              className={`p-2 rounded ${
-                                ["L", "M", "M", "J"].includes(day)
-                                  ? "bg-primary text-primary-foreground"
-                                  : "bg-muted"
-                              }`}
-                            >
-                              {day}
-                            </div>
-                          ))}
-                        </div>
+                        
+                      <CalendarDays />
+
                       </div>
                     </div>
                   </div>
@@ -362,12 +358,12 @@ const AccesosPage = () => {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label>Gafete:</Label>
-                        <Input />
+                        <p>Gafete:</p>
+                        <p className="text-purple-500">MTY-10</p>
                       </div>
                       <div>
-                        <Label>Locker:</Label>
-                        <Input />
+                        <p>Locker:</p>
+                        <p className="text-purple-500">L-03 </p>
                       </div>
                     </div>
                   </div>
