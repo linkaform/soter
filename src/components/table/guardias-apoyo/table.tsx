@@ -28,6 +28,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { AddGuardModal } from "@/components/modals/add-guard-modal";
 import Exit from "@/components/icon/exit";
 import { ExitGuardModal } from "@/components/modals/exit-guard-modal";
+import { Plus } from "lucide-react";
 
 const initialData: GuardiaApoyo[] = [
   {
@@ -239,7 +240,8 @@ export function GuardiasApoyoTable() {
 
         <AddGuardModal title="Guardias" onAddGuardias={handleAddGuardias}>
           <Button className="bg-green-600 text-white hover:bg-green-700 px-4 py-2 rounded-md flex items-center">
-            + Guardia apoyo
+          <Plus />
+            Guardia apoyo
           </Button>
         </AddGuardModal>
       </div>

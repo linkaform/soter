@@ -36,6 +36,8 @@ export const EntryPassModal: React.FC<EntryPassModalProps> = ({
   isSuccess,
   setIsSuccess,
 }) => {
+
+  
   const items = data?.fechaFija
     ? [
         {

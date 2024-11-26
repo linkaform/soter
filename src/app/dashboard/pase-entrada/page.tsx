@@ -2,12 +2,13 @@
 
 import React, { useState } from "react";
 import PhoneInput from "react-phone-number-input";
-import 'react-phone-number-input/style.css'
-
+import "react-phone-number-input/style.css";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import Link from "next/link";
+
 
 import { Button } from "@/components/ui/button";
 import {
@@ -30,9 +31,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+
+
+
+
+
 import { EntryPassModal } from "@/components/modals/entry-pass-modal";
 import { List } from "lucide-react";
-import Link from "next/link";
 
 const formSchema = z
   .object({
@@ -43,8 +48,8 @@ const formSchema = z
       message: "Por favor, ingresa un correo electrónico válido.",
     }),
     telefono: z
-    .string()
-    .regex(/^\+\d{1,4}\d{7,14}$/, "Ingrese un número de teléfono válido."),
+      .string()
+      .regex(/^\+\d{1,4}\d{7,14}$/, "Ingrese un número de teléfono válido."),
     metodo: z.enum(["email", "sms"], {
       required_error: "Seleccione un método de envío.",
     }),
@@ -244,7 +249,7 @@ const PaseEntradaPage = () => {
                 name="telefono"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Teléfono</FormLabel>
+                    <FormLabel> <span className="text-red-500">*</span> Teléfono</FormLabel>
                     <FormControl>
                       <PhoneInput
                         {...field}
@@ -352,7 +357,11 @@ const PaseEntradaPage = () => {
                         Visita:
                       </FormLabel>
                       <FormControl>
-                        <Input type="datetime-local" {...field} />
+                        <Input
+                          type="datetime-local"
+                          {...field}
+                          min={new Date().toISOString().slice(0, 16)}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -372,7 +381,11 @@ const PaseEntradaPage = () => {
                           de Visita:
                         </FormLabel>
                         <FormControl>
-                          <Input type="datetime-local" {...field} />
+                          <Input
+                            type="datetime-local"
+                            {...field}
+                            min={new Date().toISOString().slice(0, 16)} // Corta el exceso de datos
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -388,7 +401,11 @@ const PaseEntradaPage = () => {
                           Hasta:
                         </FormLabel>
                         <FormControl>
-                          <Input type="datetime-local" {...field} />
+                          <Input
+                            type="datetime-local"
+                            {...field}
+                            min={new Date().toISOString().slice(0, 16)} // Corta el exceso de datos
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -479,6 +496,8 @@ const PaseEntradaPage = () => {
               />
             </div>
 
+
+         
             <h1 className="font-bold text-xl">Areas de acceso</h1>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -528,6 +547,9 @@ const PaseEntradaPage = () => {
                 )}
               />
             </div>
+
+
+       
             <div className="text-center">
               <Button
                 className="bg-blue-500 hover:bg-blue-600 text-white"

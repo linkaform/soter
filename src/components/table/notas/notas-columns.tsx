@@ -5,15 +5,16 @@ import {
   } from "@tanstack/react-table";
 import { Check, Eye } from "lucide-react";
 
-export type Guardia = {
+export type Nota = {
     id: string;
     empleado: string;
+    apertura: string;
     cierre: string;
     nota: string;
     comentarios: string;
   };
   
-  export const notasColumns: ColumnDef<Guardia>[] = [
+  export const notasColumns: ColumnDef<Nota>[] = [
     {
       id: "select",
       header: "",

@@ -1,10 +1,11 @@
 import { ColumnDef } from "@tanstack/react-table";
-import { Eye, Pencil, Star, Trash2 } from "lucide-react";
+import { Eye, Forward, Pencil, Star} from "lucide-react";
 import { useState } from "react";
 
 export interface PaseEntrada {
   folio: string;
   fechaHora: string;
+  vigenciaPase: string;
   visitante: string;
   tipoDePase: string;
   motivo: string;
@@ -20,24 +21,36 @@ const OptionsCell: React.FC = () => {
 
   return (
     <div className="flex space-x-2">
-      <div className="cursor-pointer">
-        <Pencil /> {/* Ícono de editar */}
-      </div>
-      <div className="cursor-pointer">
-        <Eye /> {/* Ícono de visualizar */}
-      </div>
-      <div
+
+       {/* Ícono de favoritos */}
+       <div
         className="cursor-pointer"
         onClick={toggleFavorite} // Cambia el estado al hacer clic
       >
         <Star
           className={`${
-            isFavorite ? "text-blue-500 fill-current" : ""
-          }`} // Solo azul si está seleccionado
-        /> {/* Ícono de favoritos */}
+            isFavorite ? "text-yellow-500 fill-current" : ""
+          }`} 
+        /> 
       </div>
+
+        {/* Ícono de visualizar */}
+        <div className="cursor-pointer">
+        <Eye />
+      </div>
+
+      
+      {/* Ícono de editar */}
       <div className="cursor-pointer">
-        <Trash2 /> {/* Ícono de eliminar */}
+        <Pencil /> 
+      </div>
+
+     
+     
+
+      {/* Ícono de reenviar */}
+      <div className="cursor-pointer">
+        <Forward />
       </div>
     </div>
   );
@@ -61,6 +74,12 @@ export const pasesEntradaColumns: ColumnDef<PaseEntrada>[] = [
     accessorKey: "fechaHora",
     header: "Fecha y Hora de Creación",
     cell: ({ row }) => <div>{row.getValue("fechaHora")}</div>,
+    enableSorting: true,
+  },
+  {
+    accessorKey: "vigenciaPase",
+    header: "Vigencia del Pase",
+    cell: ({ row }) => <div>{row.getValue("vigenciaPase")}</div>,
     enableSorting: true,
   },
   {

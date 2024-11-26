@@ -107,12 +107,12 @@ const ArticulosPage = () => {
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <Card>
                 <CardContent className="pt-6">
-                  <div className="flex justify-between items-start">
+                  <div className="flex flex-col justify-between items-start">
                     <div className="space-y-1">
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-muted-foreground">
                       Articulos consesionados pendientes
                       </p>
-                      <p className="text-2xl font-bold">23</p>
+                      <p className="text-3xl font-bold">23</p>
                     </div>
                     <Archive />
                                       </div>
@@ -123,12 +123,12 @@ const ArticulosPage = () => {
 
               <Card>
                 <CardContent className="pt-6">
-                  <div className="flex justify-between items-start">
+                  <div className="flex flex-col justify-between items-start">
                     <div className="space-y-1">
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-muted-foreground">
                       Articulos perdidos
                       </p>
-                      <p className="text-2xl font-bold">23</p>
+                      <p className="text-3xl font-bold">23</p>
                     </div>
                     <CircleHelp />
                                       </div>

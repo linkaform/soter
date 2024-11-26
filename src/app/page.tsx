@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { GuardiasTable } from "@/components/table/notas/table";
+import {NotasTable } from "@/components/table/notas/table";
 import Guest from "@/components/icon/guests";
 import Fails from "@/components/icon/fails";
 import Concessioned from "@/components/icon/concessioned";
@@ -100,7 +100,7 @@ export default function Home() {
 
             <p className="font-bold text-2xl mt-5">Notas</p>
 
-            <GuardiasTable />
+            <NotasTable />
           </div>
         </div>
       </div>

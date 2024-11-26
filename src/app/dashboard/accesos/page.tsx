@@ -108,12 +108,12 @@ const AccesosPage = () => {
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Card>
               <CardContent className="pt-6">
-                <div className="flex justify-between items-start">
+                <div className="flex flex-col justify-between items-start">
                   <div className="space-y-1">
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-muted-foreground">
                       Visitas en el Día
                     </p>
-                    <p className="text-2xl font-bold">23</p>
+                    <p className="text-3xl font-bold">23</p>
                   </div>
                   <Home className="text-primary h-5 w-5" />
                 </div>
@@ -122,12 +122,12 @@ const AccesosPage = () => {
 
             <Card>
               <CardContent className="pt-6">
-                <div className="flex justify-between items-start">
+                <div className="flex flex-col justify-between items-start">
                   <div className="space-y-1">
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-muted-foreground">
                       Visitas Dentro
                     </p>
-                    <p className="text-2xl font-bold">23</p>
+                    <p className="text-3xl font-bold">23</p>
                   </div>
                   <Users className="text-primary h-5 w-5" />
                 </div>
@@ -136,12 +136,12 @@ const AccesosPage = () => {
 
             <Card>
               <CardContent className="pt-6">
-                <div className="flex justify-between items-start">
+                <div className="flex flex-col justify-between items-start">
                   <div className="space-y-1">
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-muted-foreground">
                       Vehículos Estacionados
                     </p>
-                    <p className="text-2xl font-bold">23</p>
+                    <p className="text-3xl font-bold">23</p>
                   </div>
                   <Vehicles />
                 </div>
@@ -150,12 +150,12 @@ const AccesosPage = () => {
 
             <Card>
               <CardContent className="pt-6">
-                <div className="flex justify-between items-start">
+                <div className="flex flex-col justify-between items-start">
                   <div className="space-y-1">
                     <p className="text-sm text-muted-foreground">
                       Salidas Registradas
                     </p>
-                    <p className="text-2xl font-bold">23</p>
+                    <p className="text-3xl font-bold">23</p>
                   </div>
                   <Exit />
                 </div>

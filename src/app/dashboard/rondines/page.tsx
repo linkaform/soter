@@ -18,12 +18,7 @@ import {
 } from "@/components/ui/accordion"
 
 
-import Vehicles from "@/components/icon/vehicles";
-import Exit from "@/components/icon/exit";
-import {
-  Home,
-  Users,
-} from "lucide-react";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RondinesTable } from "@/components/table/rondines/table";
@@ -92,58 +87,42 @@ const RondinesPage = () => {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+       
           <Card>
             <CardContent className="pt-6">
-              <div className="flex justify-between items-start">
+              <div className="flex flex-col justify-between items-start">
                 <div className="space-y-1">
                   <p className="text-sm text-muted-foreground">
-                    Visitas en el Día
+                    Recorridos Pendientes
                   </p>
-                  <p className="text-2xl font-bold">23</p>
+                  <p className="text-3xl font-bold">00</p>
                 </div>
-                <Home className="text-primary h-5 w-5" />
               </div>
             </CardContent>
           </Card>
 
           <Card>
             <CardContent className="pt-6">
-              <div className="flex justify-between items-start">
+              <div className="flex flex-col justify-between items-start">
                 <div className="space-y-1">
                   <p className="text-sm text-muted-foreground">
-                    Visitas Dentro
+                    Guardias en Recorrido
                   </p>
-                  <p className="text-2xl font-bold">23</p>
+                  <p className="text-3xl font-bold">00</p>
                 </div>
-                <Users className="text-primary h-5 w-5" />
               </div>
             </CardContent>
           </Card>
 
           <Card>
             <CardContent className="pt-6">
-              <div className="flex justify-between items-start">
+              <div className="flex flex-col justify-between items-start">
                 <div className="space-y-1">
                   <p className="text-sm text-muted-foreground">
-                    Vehículos Estacionados
+                    Guardias disponibles / En Turno
                   </p>
-                  <p className="text-2xl font-bold">23</p>
+                  <p className="text-3xl font-bold">6</p>
                 </div>
-                <Vehicles />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex justify-between items-start">
-                <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">
-                    Salidas Registradas
-                  </p>
-                  <p className="text-2xl font-bold">23</p>
-                </div>
-                <Exit />
               </div>
             </CardContent>
           </Card>

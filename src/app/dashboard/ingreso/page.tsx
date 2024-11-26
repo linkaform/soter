@@ -205,7 +205,7 @@ const PaseEntradaPage = () => {
   name="telefono"
   render={({ field }) => (
     <FormItem>
-      <FormLabel>Teléfono</FormLabel>
+      <FormLabel> <span className="text-red-500">*</span> Teléfono</FormLabel>
       <FormControl
        >
         <PhoneInput
@@ -388,7 +388,7 @@ const PaseEntradaPage = () => {
 
                 <div className="flex justify-between mt-3">
                   <p>Equipo 1</p>
-                  <div className="">
+                  <div className="flex">
                     <Plus className="cursor-pointer" />
                     <Minus className="cursor-pointer" />
                   </div>
@@ -589,7 +589,7 @@ const PaseEntradaPage = () => {
 
                 <div className="flex justify-between mt-3">
                   <p>Vehiculo 1</p>
-                  <div className="">
+                  <div className="flex">
                     <Plus className="cursor-pointer" />
                     <Minus className="cursor-pointer" />
                   </div>
