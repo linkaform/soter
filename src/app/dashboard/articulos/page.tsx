@@ -32,10 +32,10 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs"
-import { ArticulosPendientesTable } from "@/components/table/articulos/pendientes/page";
-import { ConcecionadosTable } from "@/components/table/articulos/concecionados/page";
-import { ArticulosDonadosTable } from "@/components/table/articulos/donados/page";
-import { ArticulosEntregadosTable } from "@/components/table/articulos/entregados/page";
+import { ArticulosPendientesTable } from "@/components/table/articulos/pendientes/table";
+import { ConcecionadosTable } from "@/components/table/articulos/concecionados/table";
+import { ArticulosDonadosTable } from "@/components/table/articulos/donados/table";
+import { ArticulosEntregadosTable } from "@/components/table/articulos/entregados/table";
 
 const ArticulosPage = () => {
 

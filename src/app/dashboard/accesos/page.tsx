@@ -15,157 +15,156 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion"
-
+} from "@/components/ui/accordion";
 
 import Vehicles from "@/components/icon/vehicles";
 import Exit from "@/components/icon/exit";
 import { Button } from "@/components/ui/button";
 import { ActivePassesModal } from "@/components/modals/active-passes-modal";
-import Image from "next/image";
-import {
-  Home,
-  Menu,
-  MessageSquare,
-  Phone,
-  Search,
-  Users,
-} from "lucide-react";
-import { MakeCallModal } from "@/components/modals/make-call-modal";
-import { SendMessageModal } from "@/components/modals/send-message-modal";
+import { Eraser, Home, Menu, Search, Users } from "lucide-react";
+
 import { Card, CardContent } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ErrorModal } from "@/components/modals/error-modal";
 import { CommentPassModal } from "@/components/modals/comment-pass-modal";
 import { AssingBadgeModal } from "@/components/modals/asign-badge-modal";
-import CalendarDays from "@/components/calendar-days";
+import { ComentariosAccesosTable } from "@/components/table/accesos/comentarios/table";
+import Credentials from "@/components/pages/accesos/credential";
+import { AccesosPermitidosTable } from "@/components/table/accesos/accesos-permitidos/table";
+import { UltimosAccesosTable } from "@/components/table/accesos/ultimos-accesos/table";
+import { AccesosPermisosTable } from "@/components/table/accesos/permisos-certificaciones/table";
+import { VehiculosAutorizadosTable } from "@/components/table/accesos/vehiculos-autorizados/table";
+import { EquiposAutorizadosTable } from "@/components/table/accesos/equipos-autorizados/table";
 
 const AccesosPage = () => {
   return (
     <div className="">
-
       <div className="flex flex-col">
         <div className="p-6 space-y-6 w-full mx-auto">
-        <Accordion type="single" collapsible>
-        {/* Información de la Caseta */}
-        <AccordionItem value="informacion-caseta">
-          <AccordionTrigger>
-            <h1 className="text-2xl font-semibold">Información de la Caseta</h1>
-          </AccordionTrigger>
-          <AccordionContent>
-          <div className="space-y-4">
+          <Accordion type="single" collapsible>
+            {/* Información de la Caseta */}
+            <AccordionItem value="informacion-caseta">
+              <AccordionTrigger>
+                <h1 className="text-2xl font-semibold">
+                  Información de la Caseta
+                </h1>
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="space-y-4">
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <label className="text-sm text-muted-foreground">
+                        Ubicación:
+                      </label>
+                      <Select defaultValue="planta-monterrey">
+                        <SelectTrigger>
+                          <SelectValue placeholder="Seleccionar ubicación" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="planta-monterrey">
+                            Planta Monterrey
+                          </SelectItem>
+                          <SelectItem value="planta-saltillo">
+                            Planta Saltillo
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <label className="text-sm text-muted-foreground">
-                  Ubicación:
-                </label>
-                <Select defaultValue="planta-monterrey">
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccionar ubicación" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="planta-monterrey">
-                      Planta Monterrey
-                    </SelectItem>
-                    <SelectItem value="planta-saltillo">
-                      Planta Saltillo
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm text-muted-foreground">Caseta:</label>
-                <Select defaultValue="caseta-6">
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccionar caseta" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="caseta-6">Caseta 6 Poniente</SelectItem>
-                    <SelectItem value="caseta-5">Caseta 5 Norte</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <Checkbox id="todas-casetas" />
-              <label htmlFor="todas-casetas" className="text-sm">
-                Todas las casetas
-              </label>
-            </div>
-
-            <div className="p-4 bg-muted/40 rounded-lg">
-              <h2 className="font-medium">Jefe en Guardia:</h2>
-              <p className="text-lg">Emiliano Zapata</p>
-            </div>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex flex-col justify-between items-start">
-                  <div className="space-y-1">
-                    <p className="text-muted-foreground">
-                      Visitas en el Día
-                    </p>
-                    <p className="text-3xl font-bold">23</p>
+                    <div className="space-y-2">
+                      <label className="text-sm text-muted-foreground">
+                        Caseta:
+                      </label>
+                      <Select defaultValue="caseta-6">
+                        <SelectTrigger>
+                          <SelectValue placeholder="Seleccionar caseta" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="caseta-6">
+                            Caseta 6 Poniente
+                          </SelectItem>
+                          <SelectItem value="caseta-5">
+                            Caseta 5 Norte
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
-                  <Home className="text-primary h-5 w-5" />
-                </div>
-              </CardContent>
-            </Card>
 
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex flex-col justify-between items-start">
-                  <div className="space-y-1">
-                    <p className="text-muted-foreground">
-                      Visitas Dentro
-                    </p>
-                    <p className="text-3xl font-bold">23</p>
+                  <div className="flex items-center gap-2">
+                    <Checkbox id="todas-casetas" />
+                    <label htmlFor="todas-casetas" className="text-sm">
+                      Todas las casetas
+                    </label>
                   </div>
-                  <Users className="text-primary h-5 w-5" />
-                </div>
-              </CardContent>
-            </Card>
 
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex flex-col justify-between items-start">
-                  <div className="space-y-1">
-                    <p className="text-muted-foreground">
-                      Vehículos Estacionados
-                    </p>
-                    <p className="text-3xl font-bold">23</p>
+                  <div className="p-4 bg-muted/40 rounded-lg">
+                    <h2 className="font-medium">Jefe en Guardia:</h2>
+                    <p className="text-lg">Emiliano Zapata</p>
                   </div>
-                  <Vehicles />
                 </div>
-              </CardContent>
-            </Card>
 
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex flex-col justify-between items-start">
-                  <div className="space-y-1">
-                    <p className="text-sm text-muted-foreground">
-                      Salidas Registradas
-                    </p>
-                    <p className="text-3xl font-bold">23</p>
-                  </div>
-                  <Exit />
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                  <Card>
+                    <CardContent className="pt-6">
+                      <div className="flex flex-col justify-between items-start">
+                        <div className="space-y-1">
+                          <p className="text-muted-foreground">
+                            Visitas en el Día
+                          </p>
+                          <p className="text-3xl font-bold">23</p>
+                        </div>
+                        <Home className="text-primary h-5 w-5" />
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardContent className="pt-6">
+                      <div className="flex flex-col justify-between items-start">
+                        <div className="space-y-1">
+                          <p className="text-muted-foreground">
+                            Visitas Dentro
+                          </p>
+                          <p className="text-3xl font-bold">23</p>
+                        </div>
+                        <Users className="text-primary h-5 w-5" />
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardContent className="pt-6">
+                      <div className="flex flex-col justify-between items-start">
+                        <div className="space-y-1">
+                          <p className="text-muted-foreground">
+                            Vehículos Estacionados
+                          </p>
+                          <p className="text-3xl font-bold">23</p>
+                        </div>
+                        <Vehicles />
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardContent className="pt-6">
+                      <div className="flex flex-col justify-between items-start">
+                        <div className="space-y-1">
+                          <p className="text-sm text-muted-foreground">
+                            Salidas Registradas
+                          </p>
+                          <p className="text-3xl font-bold">23</p>
+                        </div>
+                        <Exit />
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
-
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
 
           <div className="flex flex-col sm:flex-row">
             <div className="flex mb-5 mr-5 w-full md:max-w-lg  mx-auto">
@@ -201,178 +200,76 @@ const AccesosPage = () => {
                 </Button>
               </ErrorModal>
 
-              <AssingBadgeModal title={"Recibir Gafete"} description={"Al recibir el gafete, se liberará el espacio y se retirarán los documentos del locker asignado."} >
+              <AssingBadgeModal
+                title={"Recibir Gafete"}
+                description={
+                  "Al recibir el gafete, se liberará el espacio y se retirarán los documentos del locker asignado."
+                }
+              >
+                <Button
+                  className="bg-blue-500 hover:bg-blue-600 text-white"
+                  variant="secondary"
+                >
+                  Asignar Gafete
+                </Button>
+              </AssingBadgeModal>
 
 
               <Button
-                className="bg-blue-500 hover:bg-blue-600 text-white"
+            className="bg-yellow-500 hover:bg-yellow-600 text-black"
+            variant="outline"
+          >
+            <Eraser/>
+          </Button>
+
+
+
+
+              <Button
                 variant="secondary"
+                className="bg-blue-500 hover:bg-blue-600 text-white"
               >
-                Asignar Gafete
+                Pases Temporales
               </Button>
 
-              </AssingBadgeModal>
-
               <CommentPassModal title="Comentario al Pase">
-                <Button variant="outline">+ Agregar Comentario</Button>
+                <Button       className="bg-gray-700 text-white hover:bg-gray-600"
+
+                 variant="secondary">
+                  + Agregar Comentario</Button>
               </CommentPassModal>
             </div>
           </div>
         </div>
 
-
-        
-
-
-        
-
-
-        
-
-        <div className="flex flex-row">
-          <div className="max-w-3xl p-4">
-            <Card className="">
-              <CardContent className="p-6">
-                <div className="flex justify-end">
-                  <Badge className="bg-blue-600 hover:bg-blue-600 text-white">
-                    Entrada
-                  </Badge>
-                </div>
-
-                <div className="grid md:grid-cols-[350px_1fr] gap-6">
-                  <div className="space-y-4">
-                    <div className="flex">
-                      <Image
-                        src="/image/credencial1.png"
-                        alt="Descripción de la imagen"
-                        width={108}
-                        height={108}
-                      />
-
-                      <Image
-                        src="/image/credencial2.png"
-                        alt="Descripción de la imagen"
-                        width={162}
-                        height={108}
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <div>
-                        <Label>Folio</Label>
-                        <div>PE/2408/039</div>
-                      </div>
-
-                      <div>
-                        <Label>Tipo de pase</Label>
-                        <div>Chófer</div>
-                      </div>
-
-                      <div>
-                        <Label>Estatus  </Label>
-                        <Badge variant="destructive">Vencido</Badge>
-                      </div>
-
-                      <div>
-                        <Label>Vigencia del pase</Label>
-                        <div className="flex justify-between">
-                          <span>20/09/2024</span>
-                          <span>11:25:12 hrs</span>
-                        </div>
-                      </div>
-
-                      <div>
-                        
-                      <CalendarDays />
-
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-6">
-                    <div className="space-y-4">
-                      <div>
-                        <p>Nombre:</p>
-                        <p>Smantha Chávez Juárez:</p>
-                      </div>
-
-                      <div>
-                        <p>Empresa:</p>
-                        <p>Linkaform:</p>
-                      </div>
-
-                      <div>
-                        <p>Motivo de visita:</p>
-                        <p>Carga de material reciclable:</p>
-                      </div>
-
-                      <div>
-                        <Label>Visita a:</Label>
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <span>Laura Perez Nuria</span>
-                            <div className="space-x-2">
-                              <MakeCallModal
-                                title={"¿Realizar llamada?"}
-                                description={
-                                  "Al realizar la llamada, se contactará al número de la persona seleccionada."
-                                }
-                              >
-                                <Button size="icon" variant="outline">
-                                  <Phone className="h-4 w-4" />
-                                </Button>
-                              </MakeCallModal>
-
-                              <SendMessageModal title="Enviar Recordatorio">
-                                <Button size="icon" variant="outline">
-                                  <MessageSquare className="h-4 w-4" />
-                                </Button>
-                              </SendMessageModal>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center justify-between">
-                            <span>Sebastián Chávez Pérez</span>
-                            <div className="space-x-2">
-                              <MakeCallModal
-                                title={"¿Realizar llamada?"}
-                                description={
-                                  "Al realizar la llamada, se contactará al número de la persona seleccionada."
-                                }
-                              >
-                                <Button size="icon" variant="outline">
-                                  <Phone className="h-4 w-4" />
-                                </Button>
-                              </MakeCallModal>
-
-                              <SendMessageModal title="Enviar Recordatorio">
-                                <Button size="icon" variant="outline">
-                                  <MessageSquare className="h-4 w-4" />
-                                </Button>
-                              </SendMessageModal>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p>Gafete:</p>
-                        <p className="text-purple-500">MTY-10</p>
-                      </div>
-                      <div>
-                        <p>Locker:</p>
-                        <p className="text-purple-500">L-03 </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+        <div className="grid grid-cols-1 md:grid-cols-2">
+          <div className="w-full p-4">
+            <Credentials />
           </div>
 
-          <div className=""></div>
+          <div className="w-full p-4">
+            <ComentariosAccesosTable />
+          </div>
+
+          <div className="w-full p-4">
+            <UltimosAccesosTable />
+          </div>
+
+          <div className="w-full p-4">
+            <AccesosPermisosTable />
+          </div>
+
+          <div className="w-full p-4">
+            <AccesosPermitidosTable />
+          </div>
+
+          <div className="w-full p-4">
+            <EquiposAutorizadosTable />
+          </div>
+
+          <div className="w-full p-4">
+            <VehiculosAutorizadosTable />
+          </div>
         </div>
       </div>
     </div>
