@@ -7,7 +7,7 @@ import {
   DialogTitle,
 } from "../ui/dialog";
 import { Separator } from "../ui/separator";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 
 import Image from "next/image";
 import { QrCode } from "lucide-react";
@@ -17,6 +17,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
+import { Label } from "../ui/label";
 
 interface RegisterIncomeModalProps {
   title: string;
@@ -30,10 +31,33 @@ interface RegisterIncomeModalProps {
     empresa: string;
     aQuienVisita: string;
     motivoVisita: string;
+
+    // Campos adicionales para equipos
+    agregarEquipo: boolean;
+    equipos?: {
+      tipoEquipo?: string;
+      equipo?: string;
+      marcaEquipo?: string;
+      modeloEquipo?: string;
+      numeroSerieEquipo?: string;
+      colorEquipo?: string;
+    }[];
+
+    // Campos adicionales para vehículos
+    agregarVehiculo: boolean;
+    vehiculos?: {
+      tipoVehiculo?: string;
+      marcaVehiculo?: string;
+      modeloVehiculo?: string;
+      estadoVehiculo?: string;
+      placasVehiculo?: string;
+      colorVehiculo?: string;
+    }[];
   };
   isSuccess: boolean;
   setIsSuccess: Dispatch<SetStateAction<boolean>>;
 }
+
 
 export const RegisterIncomeModal: React.FC<RegisterIncomeModalProps> = ({
   title,
@@ -41,6 +65,8 @@ export const RegisterIncomeModal: React.FC<RegisterIncomeModalProps> = ({
   isSuccess,
   setIsSuccess,
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <Dialog open={isSuccess} onOpenChange={setIsSuccess}>
       <DialogContent className="max-w-md max-h-[90vh] overflow-scroll">
@@ -136,52 +162,103 @@ export const RegisterIncomeModal: React.FC<RegisterIncomeModalProps> = ({
 
         <div className="">
           <p>Motivo de Visita</p>
-          <p>{data?.motivoVisita}</p>
+          <p className="text-sm">{data?.motivoVisita}</p>
         </div>
 
-        {/* Equipos */}
+   
 
-        <div className="">
-          <p className="text-2xl font-bold">Equipos</p>
+        {data?.agregarEquipo && data?.equipos && (
+  <div className="">
+    <p className="text-2xl font-bold mb-2">Equipos</p>
+    <Accordion type="single" collapsible>
+      {data.equipos.map((equipo, index) => (
+        <AccordionItem key={index} value={`equipo-${index}`}>
+          <AccordionTrigger>{`Equipo ${index + 1}`}</AccordionTrigger>
+          <AccordionContent>
+            <p className="font-medium mb-1">
+              Tipo: <span className="">{equipo.tipoEquipo || "N/A"}</span>
+            </p>
+            <p className="font-medium mb-1">
+              Equipo: <span className="">{equipo.equipo || "N/A"}</span>
+            </p>
+            <p className="font-medium mb-1">
+              Marca: <span className="">{equipo.marcaEquipo || "N/A"}</span>
+            </p>
+            <p className="font-medium mb-1">
+              Modelo: <span className="">{equipo.modeloEquipo || "N/A"}</span>
+            </p>
+            <p className="font-medium mb-1">
+              Número de Serie:{" "}
+              <span className="">{equipo.numeroSerieEquipo || "N/A"}</span>
+            </p>
+            <p className="font-medium mb-1">
+              Color: <span className="">{equipo.colorEquipo || "N/A"}</span>
+            </p>
+          </AccordionContent>
+        </AccordionItem>
+      ))}
+    </Accordion>
+  </div>
+)}
 
-          <Accordion type="single" collapsible>
-            <AccordionItem value="item-1">
-              <AccordionTrigger>Equipo 1</AccordionTrigger>
-              <AccordionContent>
-                Yes. It adheres to the WAI-ARIA design pattern.
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </div>
 
-            {/* Vehiculos */}
+{data?.agregarVehiculo && data?.vehiculos && (
+  <div className="">
+    <p className="text-2xl font-bold mb-2">Vehículos</p>
+    <Accordion type="single" collapsible>
+      {data.vehiculos.map((vehiculo, index) => (
+        <AccordionItem key={index} value={`vehiculo-${index}`}>
+          <AccordionTrigger>{`Vehículo ${index + 1}`}</AccordionTrigger>
+          <AccordionContent>
+            <p className="font-medium mb-1">
+              Tipo de Vehículo:{" "}
+              <span className="">{vehiculo.tipoVehiculo || "N/A"}</span>
+            </p>
+            <p className="font-medium mb-1">
+              Marca:{" "}
+              <span className="">{vehiculo.marcaVehiculo || "N/A"}</span>
+            </p>
+            <p className="font-medium mb-1">
+              Modelo:{" "}
+              <span className="">{vehiculo.modeloVehiculo || "N/A"}</span>
+            </p>
+            <p className="font-medium mb-1">
+              Estado:{" "}
+              <span className="">{vehiculo.estadoVehiculo || "N/A"}</span>
+            </p>
+            <p className="font-medium mb-1">
+              Placas:{" "}
+              <span className="">{vehiculo.placasVehiculo || "N/A"}</span>
+            </p>
+            <p className="font-medium mb-1">
+              Color:{" "}
+              <span className="">{vehiculo.colorVehiculo || "N/A"}</span>
+            </p>
+          </AccordionContent>
+        </AccordionItem>
+      ))}
+    </Accordion>
+  </div>
+)}
 
-            <div className="">
-          <p className="text-2xl font-bold">Vehiculos</p>
-
-          <Accordion type="single" collapsible>
-            <AccordionItem value="item-1">
-              <AccordionTrigger>Vehiculo 1</AccordionTrigger>
-              <AccordionContent>
-                Yes. It adheres to the WAI-ARIA design pattern.
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </div>
 
 
-        <div className="flex gap-5 my-5">
-          <DialogClose asChild>
-            <Button className="w-full h-12 bg-gray-100 hover:bg-gray-200 text-gray-700">
-              Cancelar
-            </Button>
-          </DialogClose>
+     
 
-          <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white">
-            <QrCode />
-            Generar QR
-          </Button>
-        </div>
+
+            
+         <div className="flex gap-5 my-5">
+              <DialogClose asChild>
+                <Button className="w-full h-12 bg-gray-100 hover:bg-gray-200 text-gray-700">
+                  Cancelar
+                </Button>
+              </DialogClose>
+
+              <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white">
+                <QrCode />
+                Generar QR
+              </Button>
+            </div>
       </DialogContent>
     </Dialog>
   );

@@ -40,7 +40,6 @@ const RondinesPage = () => {
         <div className="space-y-4">
 
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="space-y-2">
               <label className="text-sm text-muted-foreground">
                 Ubicación:
               </label>
@@ -57,7 +56,6 @@ const RondinesPage = () => {
                   </SelectItem>
                 </SelectContent>
               </Select>
-            </div>
 
             <div className="space-y-2">
               <label className="text-sm text-muted-foreground">Caseta:</label>
