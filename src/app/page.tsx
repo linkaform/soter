@@ -8,6 +8,7 @@ import Badges from "@/components/icon/badges";
 import { GuardiasApoyoTable } from "@/components/table/guardias-apoyo/table";
 import Sidebar from "@/components/pages/turnos/sidebar";
 import { StartShiftModal } from "@/components/modals/start-shift-modal";
+import { MainLayout } from "@/components/Layout/MainLayout";
 
 export default function Home() {
   const items = [
@@ -19,7 +20,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="">
+    <MainLayout>
 
       <div className="flex flex-col lg:flex-row">
         <div className="w-full lg:w-1/4 h-screen px-6 py-6 border border-[#F0F2F5]">
@@ -104,6 +105,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-    </div>
-  );
+      </MainLayout>
+    );
 }

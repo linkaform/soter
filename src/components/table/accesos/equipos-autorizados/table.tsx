@@ -30,6 +30,7 @@ import {
   EquipoAutorizadoColumns,
 } from "./equipos-autorizados-columns";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { AddEquipmentModal } from "@/components/modals/add-equipment-modal";
 
 const data: EquipoAutorizado[] = [
   {
@@ -122,10 +123,16 @@ export function EquiposAutorizadosTable() {
     
         {/* Botones a la derecha */}
         <div className="flex justify-end mb-3 space-x-3">
+
+        <AddEquipmentModal title="Nuevo Equipo">
+
             <Button className="bg-green-600 hover:bg-green-700 text-white">
               <Plus />
               Agregar Equipo
             </Button>
+
+      </AddEquipmentModal>
+   
 
           <Button
             className="bg-blue-500 text-white hover:text-white hover:bg-blue-600"

@@ -9,7 +9,6 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import Link from "next/link";
 
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -31,10 +30,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-
-
-
-
 
 import { EntryPassModal } from "@/components/modals/entry-pass-modal";
 import { List } from "lucide-react";
@@ -249,7 +244,10 @@ const PaseEntradaPage = () => {
                 name="telefono"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel> <span className="text-red-500">*</span> Teléfono</FormLabel>
+                    <FormLabel>
+                      {" "}
+                      <span className="text-red-500">*</span> Teléfono
+                    </FormLabel>
                     <FormControl>
                       <PhoneInput
                         {...field}
@@ -453,7 +451,7 @@ const PaseEntradaPage = () => {
               {tipoAcceso === "limitar" && (
                 <div>
                   <FormLabel>Seleccione los días de acceso:</FormLabel>
-                  <div className="grid grid-cols-3 gap-4 mt-2">
+                  <div className="grid grid-cols-2 gap-4 mt-2">
                     {[
                       "Lunes",
                       "Martes",
@@ -477,27 +475,25 @@ const PaseEntradaPage = () => {
                       </FormItem>
                     ))}
                   </div>
+
+                  {/* Límite de Accesos */}
+                  <FormField
+                    control={form.control}
+                    name="limiteAccesos"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Limitar número de accesos:</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Ejemplo: 5" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
               )}
-
-              {/* Límite de Accesos */}
-              <FormField
-                control={form.control}
-                name="limiteAccesos"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Limitar número de accesos:</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Ejemplo: 5" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
             </div>
 
-
-         
             <h1 className="font-bold text-xl">Areas de acceso</h1>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -548,8 +544,6 @@ const PaseEntradaPage = () => {
               />
             </div>
 
-
-       
             <div className="text-center">
               <Button
                 className="bg-blue-500 hover:bg-blue-600 text-white"

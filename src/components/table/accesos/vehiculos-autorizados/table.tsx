@@ -30,6 +30,7 @@ import {
   VehiculoAutorizadoColumns,
 } from "./vehiculos-autorizados-columns";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { AddVehicleModal } from "@/components/modals/add-vehicle-modal";
 
 const data: VehiculoAutorizado[] = [
   {
@@ -113,16 +114,22 @@ export function VehiculosAutorizadosTable() {
      
      
       <div className="mb-3">
-        <h1 className="text-2xl font-bold">Vehiculos Autorizados</h1>
+        <h1 className="text-2xl font-bold">Vehículos Autorizados</h1>
       </div>
 
     
         {/* Botones a la derecha */}
         <div className="flex justify-end mb-3 space-x-2">
+
+          <AddVehicleModal title={"Nuevo Vehículo"}>
+
             <Button className="bg-green-600 hover:bg-green-700 text-white">
               <Plus />
-              Agregar Vehiculo
+              Agregar Vehículo
             </Button>
+
+          </AddVehicleModal>
+  
 
           <Button
             className="bg-blue-500 text-white hover:text-white hover:bg-blue-600"
