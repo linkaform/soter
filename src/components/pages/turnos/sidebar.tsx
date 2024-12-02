@@ -1,6 +1,7 @@
 import { ChangeBoothModal } from '@/components/modals/change-booth-modal'
 import { ForceExitModal } from '@/components/modals/force-exit-modal'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import React from 'react'
 
@@ -75,11 +76,10 @@ const Sidebar = () => {
       </ChangeBoothModal>
     </div>
     <div className="flex  flex-col space-y-5 mb-10">
-      <div className="">
-        <p>Estatus de la caseta:</p>
-        <p className="text-red-600">Ocupado</p>
-      </div>
-
+    <div className="">
+  <p>Estatus de la caseta:</p>
+  <Badge className="bg-red-600 text-white">Ocupado</Badge>
+</div>
       <div className="">
         <p>Guardia en turno:</p>
         <p className="">Jacinto Martínez Sánchez</p>

@@ -1,3 +1,4 @@
+import { ResendPassModal } from "@/components/modals/resend-pass-modal";
 import { ColumnDef } from "@tanstack/react-table";
 import { Eye, Forward, Pencil, Star} from "lucide-react";
 import { useState } from "react";
@@ -49,9 +50,15 @@ const OptionsCell: React.FC = () => {
      
 
       {/* Ícono de reenviar */}
+
+      <ResendPassModal title="Reenviar Pase">
+
       <div className="cursor-pointer">
         <Forward />
       </div>
+
+      </ResendPassModal>
+
     </div>
   );
 };

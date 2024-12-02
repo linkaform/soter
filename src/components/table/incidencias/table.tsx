@@ -295,8 +295,8 @@ export function IncidenciasTable() {
 
       <div className="">
         <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
+        <TableHeader className="bg-[#F0F2F5]">
+        {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (

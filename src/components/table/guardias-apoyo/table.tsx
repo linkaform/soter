@@ -227,6 +227,12 @@ export function GuardiasApoyoTable() {
   return (
     <div className="w-full">
 
+
+    <div className="my-5">
+      <h1 className="text-2xl font-bold">Guardias de Apoyo</h1>
+      </div> 
+
+
       
    
 <div className="flex justify-between items-center mb-5">
@@ -247,7 +253,7 @@ export function GuardiasApoyoTable() {
       </div>
       <div className="">
         <Table>
-          <TableHeader>
+        <TableHeader className="bg-[#F0F2F5]">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {

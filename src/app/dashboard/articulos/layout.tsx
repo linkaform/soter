@@ -9,9 +9,11 @@ export const metadata: Metadata = {
 export default function ArticulosLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
+      {/* Favicon directamente */}
+      <link rel="icon" href="/articulos.svg" type="image/svg+xml" />
       
-
+      {/* Layout principal */}
       <MainLayout>{children}</MainLayout>
     </>
-  )
+  );
 }

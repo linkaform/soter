@@ -12,7 +12,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import {ChevronDown, FileX2} from "lucide-react";
+import { ChevronDown, FileX2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -24,99 +24,97 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Locker, lockerColumns } from "./locker-columns";
 
-
-
-
-
 const data: Locker[] = [
-    {
-      id: "1",
-      locker: 'Locker 1',
-      libre: false,
-      visitante: 'Rodolfo Peña Gonzales',
-      documento: 'INE',
-      numeroGafete: 'A58',
-      planta: 'Planta 1',
-    },
-    {
-      id: "2",
-      locker: 'Locker 1',
-      libre: true,
-      visitante: 'Rodolfo Peña Gonzales',
-      documento: 'INE',
-      numeroGafete: 'A58',
-      planta: 'Planta 1',
-    },
-    {
-      id: "3",
-      locker: 'Locker 1',
-      libre: false,
-      visitante: 'Rodolfo Peña Gonzales',
-      documento: 'INE',
-      numeroGafete: 'A58',
-      planta: 'Planta 1',
-    },
-    {
-      id: "4",
-      locker: 'Locker 1',
-      libre: true,
-      visitante: 'Rodolfo Peña Gonzales',
-      documento: 'Pasaporte',
-      numeroGafete: 'A58',
-      planta: 'Planta 1',
-    },
-    {
-      id: "5",
-      locker: 'Locker 1',
-      libre: true,
-      visitante: 'Rodolfo Peña Gonzales',
-      documento: 'INE',
-      numeroGafete: 'A58',
-      planta: 'Planta 1',
-    },
-    {
-      id: "6",
-      locker: 'Locker 1',
-      libre: true,
-      visitante: 'Rodolfo Peña Gonzales',
-      documento: 'Pasaporte',
-      numeroGafete: 'A58',
-      planta: 'Planta 1',
-    },
-    {
-      id: "7",
-      locker: 'Locker 1',
-      libre: false,
-      visitante: 'Rodolfo Peña Gonzales',
-      documento: 'INE',
-      numeroGafete: 'A58',
-      planta: 'Planta 1',
-    },
-    {
-      id: "8",
-      locker: 'Locker 1',
-      libre: false,
-      visitante: 'Rodolfo Peña Gonzales',
-      documento: 'Pasaporte',
-      numeroGafete: 'A58',
-      planta: 'Planta 1',
-    },
-    {
-      id: "9",
-      locker: 'Locker 1',
-      libre: false,
-      visitante: 'Rodolfo Peña Gonzales',
-      documento: 'INE',
-      numeroGafete: 'A58',
-      planta: 'Planta 1',
-    },
-  ];
-
-
-
+  {
+    id: "1",
+    locker: "Locker 1",
+    libre: false,
+    visitante: "Rodolfo Peña Gonzales",
+    documento: "INE",
+    numeroGafete: "A58",
+    planta: "Planta 1",
+  },
+  {
+    id: "2",
+    locker: "Locker 1",
+    libre: true,
+    visitante: "Rodolfo Peña Gonzales",
+    documento: "INE",
+    numeroGafete: "A58",
+    planta: "Planta 1",
+  },
+  {
+    id: "3",
+    locker: "Locker 1",
+    libre: false,
+    visitante: "Rodolfo Peña Gonzales",
+    documento: "INE",
+    numeroGafete: "A58",
+    planta: "Planta 1",
+  },
+  {
+    id: "4",
+    locker: "Locker 1",
+    libre: true,
+    visitante: "Rodolfo Peña Gonzales",
+    documento: "Pasaporte",
+    numeroGafete: "A58",
+    planta: "Planta 1",
+  },
+  {
+    id: "5",
+    locker: "Locker 1",
+    libre: true,
+    visitante: "Rodolfo Peña Gonzales",
+    documento: "INE",
+    numeroGafete: "A58",
+    planta: "Planta 1",
+  },
+  {
+    id: "6",
+    locker: "Locker 1",
+    libre: true,
+    visitante: "Rodolfo Peña Gonzales",
+    documento: "Pasaporte",
+    numeroGafete: "A58",
+    planta: "Planta 1",
+  },
+  {
+    id: "7",
+    locker: "Locker 1",
+    libre: false,
+    visitante: "Rodolfo Peña Gonzales",
+    documento: "INE",
+    numeroGafete: "A58",
+    planta: "Planta 1",
+  },
+  {
+    id: "8",
+    locker: "Locker 1",
+    libre: false,
+    visitante: "Rodolfo Peña Gonzales",
+    documento: "Pasaporte",
+    numeroGafete: "A58",
+    planta: "Planta 1",
+  },
+  {
+    id: "9",
+    locker: "Locker 1",
+    libre: false,
+    visitante: "Rodolfo Peña Gonzales",
+    documento: "INE",
+    numeroGafete: "A58",
+    planta: "Planta 1",
+  },
+];
 
 export function LockerTable() {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -159,6 +157,11 @@ export function LockerTable() {
 
   return (
     <div className="w-full">
+      <div className="my-5">
+        <h1 className="text-2xl font-bold">
+          Registro y Seguimiento de Recorridos
+        </h1>
+      </div>
       <div className="flex justify-between items-center my-5">
         {/* Campo de búsqueda a la izquierda */}
         <input
@@ -171,49 +174,43 @@ export function LockerTable() {
 
         {/* Botones a la derecha */}
         <div className="flex items-center justify-end space-x-4">
- 
-      <Button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2">
-      <FileX2 />
-        
-        Descargar
-      </Button>
+          <Button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2">
+            <FileX2 />
+            Descargar
+          </Button>
 
-      <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columnas <ChevronDown />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-      
-    </div>
-
-
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="ml-auto">
+                Columnas <ChevronDown />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className="capitalize"
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  );
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
       <div className="">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-[#F0F2F5]">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -254,8 +251,8 @@ export function LockerTable() {
                   colSpan={lockerColumns.length}
                   className="h-24 text-center"
                 >
-             No hay registros disponibles  
-                           </TableCell>
+                  No hay registros disponibles
+                </TableCell>
               </TableRow>
             )}
           </TableBody>

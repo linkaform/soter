@@ -429,7 +429,7 @@ export function BitacorasTable() {
 
       <div className="">
         <Table>
-          <TableHeader>
+        <TableHeader className="bg-[#F0F2F5]">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {

@@ -1,35 +1,28 @@
 import { Button } from "@/components/ui/button";
-import {NotasTable } from "@/components/table/notas/table";
-import Guest from "@/components/icon/guests";
-import Fails from "@/components/icon/fails";
-import Concessioned from "@/components/icon/concessioned";
-import Vehicles from "@/components/icon/vehicles";
-import Badges from "@/components/icon/badges";
+import { NotasTable } from "@/components/table/notas/table";
+
 import { GuardiasApoyoTable } from "@/components/table/guardias-apoyo/table";
 import Sidebar from "@/components/pages/turnos/sidebar";
 import { StartShiftModal } from "@/components/modals/start-shift-modal";
 import { MainLayout } from "@/components/Layout/MainLayout";
+import { Metadata } from "next";
+import ActivitySummary from "@/components/pages/turnos/activity-summary";
+
+export const metadata: Metadata = {
+  title: "Portal de Turnos",
+};
 
 export default function Home() {
-  const items = [
-    { icon: <Guest />, title: "Invitados Dentro", count: 11 },
-    { icon: <Fails />, title: "Fallas Pendientes", count: 13 },
-    { icon: <Concessioned />, title: "Equipos Concesionados", count: 24 },
-    { icon: <Vehicles />, title: "Vehículos Estacionados", count: 35 },
-    { icon: <Badges />, title: "Gafetes Pendientes", count: 14 },
-  ];
+
 
   return (
     <MainLayout>
-
       <div className="flex flex-col lg:flex-row">
         <div className="w-full lg:w-1/4 h-screen px-6 py-6 border border-[#F0F2F5]">
           <Sidebar />
         </div>
 
         <div className="w-full lg:w-3/4 p-8 flex flex-col">
-          
-          
           <div className="flex items-center flex-col md:flex-row justify-between mb-10 md:mb-5">
             <div className="flex">
               <div className="flex space-x-10">
@@ -52,59 +45,29 @@ export default function Home() {
 
             <div className="">
               <StartShiftModal title="Confirmación">
-              <Button className="w-[520px]  md:w-[300px] bg-button-primary hover:bg-bg-button-primary">
-                Iniciar turno
-              </Button>
+                <Button className="w-[520px]  md:w-[300px] bg-button-primary hover:bg-bg-button-primary">
+                  Iniciar turno
+                </Button>
               </StartShiftModal>
             </div>
           </div>
 
           <div className="flex flex-col sm:flex-row justify-between">
-            <div className="w-full">
-              <p className="font-bold text-2xl mb-5">Resumen de actividad</p>
-
-              <div className="">
-
-                <div className="max-w-[520px]">
-                {items.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center space-x-4 rounded-md p-3"
-                  >
-                    <div className="mr-4 bg-gray-100 p-3 rounded-lg">
-                      {item.icon}
-                    </div>
-
-                    <div className="flex-1 space-y-1">
-                      <p className="font-medium leading-none">{item.title}</p>
-                      <p className="font-bold text-2xl">{item.count}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              </div>
-            </div>
+             <ActivitySummary />
 
             <div className="w-full">
-              <p className="font-bold text-2xl mb-5">Guardias de Apoyo</p>
-
-
               <GuardiasApoyoTable />
-
-
-
-
             </div>
+            
           </div>
 
-          <div className="w-full flex flex-col">
-
-            <p className="font-bold text-2xl mt-5">Notas</p>
-
+          {/* Notas Table */}
+          <div className="w-full">
             <NotasTable />
           </div>
+
         </div>
       </div>
-      </MainLayout>
-    );
+    </MainLayout>
+  );
 }

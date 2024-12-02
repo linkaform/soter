@@ -34,10 +34,10 @@ export const Header = () => {
             />
           </Link>
 
-          <Link href="/dashboard/pase-entrada">
+          <Link href="/dashboard/mis-pases-entrada">
             <Button
               className={`${
-                currentPath === "/dashboard/pase-entrada"
+                currentPath === "/dashboard/mis-pases-entrada"
                   ? "bg-button-primary hover:bg-button-primary text-white hover:text-white"
                   : "hover:text-white hover:bg-button-primary"
               }`}

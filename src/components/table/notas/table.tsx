@@ -107,6 +107,14 @@ export function NotasTable() {
 
   return (
     <div className="w-full">
+
+
+
+     <div className="my-5">
+      <h1 className="text-2xl font-bold">Notas</h1>
+      </div> 
+
+
       <div className="flex justify-between items-center my-5">
         {/* Campo de búsqueda a la izquierda */}
         <input
@@ -141,7 +149,7 @@ export function NotasTable() {
 
       <div className="">
         <Table>
-          <TableHeader>
+        <TableHeader className="bg-[#F0F2F5]">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
