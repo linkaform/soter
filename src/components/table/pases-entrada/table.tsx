@@ -120,24 +120,7 @@ export const data: PaseEntrada[] = [
       motivo: "Personal",
       estatus: "Vencido",
     },
-    {
-      folio: "3265-44",
-      fechaHora: "14/11/2024 14:00:00 hrs",
-      vigenciaPase: "14/11/2024 16:00:00 hrs",
-      visitante: "Roberto Álvarez Pérez",
-      tipoDePase: "Invitado",
-      motivo: "Reunión",
-      estatus: "Activo",
-    },
-    {
-      folio: "5587-77",
-      fechaHora: "14/11/2024 08:15:00 hrs",
-      vigenciaPase: "14/11/2024 10:15:00 hrs",
-      visitante: "Luis Eduardo Torres",
-      tipoDePase: "Visita General",
-      motivo: "Capacitación",
-      estatus: "Vencido",
-    },
+
   ];
   
 
@@ -184,9 +167,7 @@ export function PasesEntradaTable() {
     <div className="w-full">
 
 
-      <div className="">
-        <h1 className="text-2xl font-bold">Historial de Pases</h1>
-      </div>
+     
 
       <div className="flex justify-between items-center my-5">
         {/* Campo de búsqueda a la izquierda */}

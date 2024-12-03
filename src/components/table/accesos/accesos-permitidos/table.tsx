@@ -71,16 +71,7 @@ const data: AccesosPermitidos[] = [
     estatus: "Autorizado",
     comentario: "S/N",
   },
-  {
-    acceso: "Laboratorio",
-    estatus: "No Autorizado",
-    comentario: "Acceso restringido",
-  },
-  {
-    acceso: "Área de carga",
-    estatus: "Autorizado",
-    comentario: "S/N",
-  },
+
 ];
 
 

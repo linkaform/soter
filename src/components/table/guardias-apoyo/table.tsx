@@ -29,6 +29,7 @@ import { AddGuardModal } from "@/components/modals/add-guard-modal";
 import Exit from "@/components/icon/exit";
 import { ExitGuardModal } from "@/components/modals/exit-guard-modal";
 import { Plus } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const initialData: GuardiaApoyo[] = [
   {
@@ -78,22 +79,36 @@ const initialData: GuardiaApoyo[] = [
   },
 ];
 
-
 export type GuardiaApoyo = {
   id: string;
   empleado: string;
   avatar: string;
 };
 
-
-
-
-
 export function GuardiasApoyoTable() {
-
-
-
   const columns: ColumnDef<GuardiaApoyo>[] = [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
     {
       id: "avatar",
       header: "",
@@ -118,28 +133,7 @@ export function GuardiasApoyoTable() {
         <div className="capitalize">{row.getValue("empleado")}</div>
       ),
     },
-  /*   {
-      id: "select",
-      header: ({ table }) => (
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false,
-    }, */
+
     {
       id: "actions",
       header: "",
@@ -148,7 +142,7 @@ export function GuardiasApoyoTable() {
           title="Confirmación"
           empleado={row.original.empleado} // Pasamos el nombre del guardia al modal
           onConfirm={() => handleDeleteGuard(row.original.id)}
-          >
+        >
           <div className="cursor-pointer">
             <Exit /> {/* El ícono que abre el modal */}
           </div>
@@ -157,13 +151,7 @@ export function GuardiasApoyoTable() {
       enableSorting: false,
       enableHiding: false,
     },
-  
-  
   ];
-
-
-
-
 
   const [guardias, setGuardias] = React.useState<GuardiaApoyo[]>(initialData);
 
@@ -178,7 +166,6 @@ export function GuardiasApoyoTable() {
     pageIndex: 0,
     pageSize: 3,
   });
-
 
   const [empleadoFilter, setEmpleadoFilter] = React.useState("");
 
@@ -204,38 +191,27 @@ export function GuardiasApoyoTable() {
     },
   });
 
-
-
   React.useEffect(() => {
     setColumnFilters([{ id: "empleado", value: empleadoFilter }]);
   }, [empleadoFilter]);
-
-  
-  
-
-
 
   const handleAddGuardias = (selectedGuardias: GuardiaApoyo[]) => {
     setGuardias((prevGuardias) => [...selectedGuardias, ...prevGuardias]);
   };
 
-
-   const handleDeleteGuard = (id: string) => {
-    setGuardias((prevGuardias) => prevGuardias.filter((guardia) => guardia.id !== id));
+  const handleDeleteGuard = (id: string) => {
+    setGuardias((prevGuardias) =>
+      prevGuardias.filter((guardia) => guardia.id !== id)
+    );
   };
 
   return (
     <div className="w-full">
+      <div className="my-5">
+        <h1 className="text-2xl font-bold">Guardias de Apoyo</h1>
+      </div>
 
-
-    <div className="my-5">
-      <h1 className="text-2xl font-bold">Guardias de Apoyo</h1>
-      </div> 
-
-
-      
-   
-<div className="flex justify-between items-center mb-5">
+      <div className="flex flex-row justify-between items-center mb-5 gap-2">
         <input
           type="text"
           placeholder="Buscar por empleado..."
@@ -245,15 +221,15 @@ export function GuardiasApoyoTable() {
         />
 
         <AddGuardModal title="Guardias" onAddGuardias={handleAddGuardias}>
-          <Button className="bg-green-600 text-white hover:bg-green-700 px-4 py-2 rounded-md flex items-center">
-          <Plus />
+          <Button className="w-auto bg-green-600 hover:bg-green-700">
+            <Plus />
             Guardia apoyo
           </Button>
         </AddGuardModal>
       </div>
       <div className="">
         <Table>
-        <TableHeader className="bg-[#F0F2F5]">
+          <TableHeader className="bg-[#F0F2F5]">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -294,7 +270,8 @@ export function GuardiasApoyoTable() {
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-No hay registros disponibles                </TableCell>
+                  No hay registros disponibles{" "}
+                </TableCell>
               </TableRow>
             )}
           </TableBody>

@@ -101,71 +101,7 @@ const data: Incidencia[] = [
     fechaDevolucion: "2024-10-10 14:37",
     comentarios: ["Prueba de entrega", "No se reportaron daños"],
   },
-  {
-    id: "6",
-    nombre: "SDF",
-    articulo: "Collar de perlas",
-    fotografia: "/image/incidencia3.png",
-    color: "Gris",
-    categoria: "Accesorios",
-    fechaHallazgo: "2024-09-17 13:54",
-    areaResguardo: "L6",
-    reporta: "Juan Escutia",
-    fechaDevolucion: "2024-09-26 12:42",
-    comentarios: ["Perdido cerca del área de juegos", "Propietario satisfecho"],
-  },
-  {
-    id: "7",
-    nombre: "Llavero Unicornio",
-    articulo: "Llavero",
-    fotografia: "/image/incidencia1.png",
-    color: "Rosa",
-    categoria: "Accesorios",
-    fechaHallazgo: "2024-08-20 11:30",
-    areaResguardo: "L2",
-    reporta: "María Pérez",
-    fechaDevolucion: "2024-08-25 15:00",
-    comentarios: ["Se devolvió al propietario", "No se reportaron quejas"],
-  },
-  {
-    id: "8",
-    nombre: "Botella Misteriosa",
-    articulo: "Botella de agua",
-    fotografia: "/image/incidencia2.png",
-    color: "Verde",
-    categoria: "Accesorios",
-    fechaHallazgo: "2024-07-15 09:50",
-    areaResguardo: "L7",
-    reporta: "Carlos López",
-    fechaDevolucion: "2024-07-18 16:10",
-    comentarios: ["Encontrada en la sala de espera", "Propietario agradecido"],
-  },
-  {
-    id: "9",
-    nombre: "Gafas Sol",
-    articulo: "Gafas de sol",
-    fotografia: "/image/incidencia3.png",
-    color: "Negro",
-    categoria: "Accesorios",
-    fechaHallazgo: "2024-06-12 13:40",
-    areaResguardo: "L1",
-    reporta: "Ana García",
-    fechaDevolucion: "2024-06-14 18:00",
-    comentarios: ["Objeto valioso", "Sin daños evidentes"],
-  },
-  {
-    id: "10",
-    nombre: "Cartera Azul",
-    articulo: "Cartera",
-    fotografia: "/image/incidencia1.png",
-    color: "Azul",
-    categoria: "Documentos",
-    fechaHallazgo: "2024-05-05 12:20",
-    areaResguardo: "L8",
-    reporta: "Luis Torres",
-    fechaDevolucion: "2024-05-07 14:35",
-    comentarios: ["Contenía identificaciones", "Se devolvió todo intacto"],
-  },
+  
 ];
 
 export function IncidenciasTable() {
@@ -210,10 +146,7 @@ export function IncidenciasTable() {
   return (
     <div className="w-full">
 
-     <div className="my-5">
-      <h1 className="text-2xl font-bold">Registro de incidencias y fallas
-      </h1>
-      </div>  
+    
       <div className="flex justify-between items-center my-5">
         {/* Campo de búsqueda a la izquierda */}
         <input

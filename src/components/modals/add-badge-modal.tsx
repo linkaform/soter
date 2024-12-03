@@ -66,10 +66,24 @@ export const AddBadgeModal: React.FC<AddBadgeModalProps> = ({
     },
   });
 
+
   function onSubmit(data: z.infer<typeof FormSchema>) {
     console.log(data);
-    setOpen(true)
+    setOpen(true); // Trigger the success modal
   }
+
+  // Return the SuccessModal if open is true
+  if (open) {
+    return (
+      <SuccessModal
+        title={"Gafete Recibido"}
+        description={"El gafete ha sido recibido correctamente."}
+        open={open}
+        setOpen={setOpen}
+      />
+    );
+  }
+
 
   return (
     <Dialog>
@@ -213,15 +227,7 @@ export const AddBadgeModal: React.FC<AddBadgeModalProps> = ({
             </div>
           </form>
         </Form>
-      </DialogContent>
-
-      <SuccessModal 
-        title={"Gafete Recibido"} 
-        description={"El gafete ha sido recibido correctamente."}
-        open={open}
-        setOpen={setOpen}
-         />
-        
+      </DialogContent>        
     </Dialog>
   );
 };

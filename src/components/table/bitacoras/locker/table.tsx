@@ -69,51 +69,7 @@ const data: Locker[] = [
     numeroGafete: "A58",
     planta: "Planta 1",
   },
-  {
-    id: "5",
-    locker: "Locker 1",
-    libre: true,
-    visitante: "Rodolfo Peña Gonzales",
-    documento: "INE",
-    numeroGafete: "A58",
-    planta: "Planta 1",
-  },
-  {
-    id: "6",
-    locker: "Locker 1",
-    libre: true,
-    visitante: "Rodolfo Peña Gonzales",
-    documento: "Pasaporte",
-    numeroGafete: "A58",
-    planta: "Planta 1",
-  },
-  {
-    id: "7",
-    locker: "Locker 1",
-    libre: false,
-    visitante: "Rodolfo Peña Gonzales",
-    documento: "INE",
-    numeroGafete: "A58",
-    planta: "Planta 1",
-  },
-  {
-    id: "8",
-    locker: "Locker 1",
-    libre: false,
-    visitante: "Rodolfo Peña Gonzales",
-    documento: "Pasaporte",
-    numeroGafete: "A58",
-    planta: "Planta 1",
-  },
-  {
-    id: "9",
-    locker: "Locker 1",
-    libre: false,
-    visitante: "Rodolfo Peña Gonzales",
-    documento: "INE",
-    numeroGafete: "A58",
-    planta: "Planta 1",
-  },
+ 
 ];
 
 export function LockerTable() {

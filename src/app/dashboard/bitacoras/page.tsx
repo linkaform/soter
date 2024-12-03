@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LockerTable } from "@/components/table/bitacoras/locker/table";
 import ReusableAccordion from "@/components/resuable-accordion";
 import { BitacorasTable } from "@/components/table/bitacoras/table";
+import PageTitle from "@/components/page-title";
 
 const BitacorasPage = () => {
   return (
@@ -51,6 +52,11 @@ const BitacorasPage = () => {
             ]}
           />
 
+
+        <PageTitle title="Registro y seguimiento de entradas y salidas" />
+
+
+   
           <Tabs defaultValue="Personal" className="w-full">
             <TabsList>
               <TabsTrigger value="Personal">Personal</TabsTrigger>

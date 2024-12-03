@@ -31,8 +31,8 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-import { EntryPassModal } from "@/components/modals/entry-pass-modal";
-import { List } from "lucide-react";
+import { EntryPassModal } from "@/components/modals/add-pass-modal";
+import { List, Mail, MessageCircleMore } from "lucide-react";
 
 const formSchema = z
   .object({
@@ -119,19 +119,6 @@ const PaseEntradaPage = () => {
     },
   });
 
-  const areasDisponibles = [
-    "Almacén de inventario",
-    "Almacén de Materia Prima",
-    "Antenas",
-    "Caseta 1 - Mty",
-    "Caseta 2 - Mty",
-    "Caseta 6 Poniente",
-    "Caseta Principal",
-    "Recursos de agua potable",
-    "Recursos eléctricos",
-    "Sala de Juntas Planta Baja",
-  ];
-
   const toggleDia = (dia: string) => {
     setDiasSeleccionados((prev) => {
       const updatedDias = prev.includes(dia)
@@ -186,7 +173,7 @@ const PaseEntradaPage = () => {
           <h1 className="font-medium text-2xl">Pase de entrada</h1>
         </div>
 
-        <Link href="/dashboard/mis-pases-entrada">
+        <Link href="/dashboard/historial-de-pases">
           <Button
             className="bg-blue-500 text-white hover:text-white hover:bg-blue-600"
             variant="outline"
@@ -216,7 +203,7 @@ const PaseEntradaPage = () => {
                       <span className="text-red-500">*</span> Nombre Completo:
                     </FormLabel>{" "}
                     <FormControl>
-                      <Input placeholder="Nombre Completo:" {...field} />
+                      <Input placeholder="Nombre Completo" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -273,7 +260,6 @@ const PaseEntradaPage = () => {
                 )}
               />
             </div>
-
             <FormField
               control={form.control}
               name="metodo"
@@ -288,15 +274,22 @@ const PaseEntradaPage = () => {
                     >
                       <FormItem className="flex items-center space-x-3 space-y-0">
                         <FormControl>
-                          <RadioGroupItem value="email" />
+                          <div className="flex flex items-center ">
+                            <Mail className="mr-3" />
+
+                            <RadioGroupItem value="email" />
+                          </div>
                         </FormControl>
-                        <FormLabel className="font-normal">
+                        <FormLabel className="font-normal ">
                           Enviar correo
                         </FormLabel>
                       </FormItem>
                       <FormItem className="flex items-center space-x-3 space-y-0">
                         <FormControl>
-                          <RadioGroupItem value="sms" />
+                          <div className="flex flex items-center ">
+                            <MessageCircleMore  className="mr-3"/>
+                            <RadioGroupItem value="sms" />
+                          </div>
                         </FormControl>
                         <FormLabel className="font-normal">
                           Enviar sms
@@ -308,9 +301,7 @@ const PaseEntradaPage = () => {
                 </FormItem>
               )}
             />
-
             <h1 className="font-bold text-xl">Sobre vigencia y acceso</h1>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <FormField
                 control={form.control}
@@ -412,7 +403,6 @@ const PaseEntradaPage = () => {
                 </div>
               )}
             </div>
-
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {/* Días de Acceso */}
               <FormField
@@ -493,9 +483,7 @@ const PaseEntradaPage = () => {
                 </div>
               )}
             </div>
-
-            <h1 className="font-bold text-xl">Areas de acceso</h1>
-
+     
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <FormField
                 control={form.control}
@@ -512,11 +500,17 @@ const PaseEntradaPage = () => {
                           <SelectValue placeholder="Selecciona un área" />
                         </SelectTrigger>
                         <SelectContent>
-                          {areasDisponibles.map((area) => (
-                            <SelectItem key={area} value={area}>
-                              {area}
-                            </SelectItem>
-                          ))}
+                          <SelectItem value="Almacén de inventario">
+                            Almacén de inventario
+                          </SelectItem>
+                          <SelectItem value="Almacén de Materia Prima">
+                            Almacén de Materia Prima
+                          </SelectItem>
+                          <SelectItem value="Antenas">Antenas</SelectItem>
+                          <SelectItem value="Caseta 1 - Mty">
+                            Caseta 1 - Mty
+                          </SelectItem>
+                      
                         </SelectContent>
                       </Select>
                     </FormControl>
@@ -543,7 +537,6 @@ const PaseEntradaPage = () => {
                 )}
               />
             </div>
-
             <div className="text-center">
               <Button
                 className="bg-blue-500 hover:bg-blue-600 text-white"

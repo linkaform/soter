@@ -25,6 +25,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
+
+
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -35,148 +47,77 @@ import { Recorrido, rondinesColumns } from "./rondines-columns";
 
 export const data: Recorrido[] = [
   {
-    id: "1",
-    ubicacion: "Planta Monterrey",
-    recorrido: "Revisión de oficinas",
-    guardiaResponsable: "Carlos Rodríguez Sánchez",
-    fechaHoraProgramada: "14/05/2024 09:30 hrs",
-  },
-  {
-    id: "2",
-    ubicacion: "Planta Saltillo",
-    recorrido: "Inspección de almacenes",
-    guardiaResponsable: "María López Hernández",
-    fechaHoraProgramada: "14/05/2024 10:00 hrs",
-  },
-  {
-    id: "3",
-    ubicacion: "Planta Guadalajara",
-    recorrido: "Supervisión de accesos",
-    guardiaResponsable: "Juan Pérez Martínez",
-    fechaHoraProgramada: "14/05/2024 11:00 hrs",
-  },
-  {
-    id: "4",
-    ubicacion: "Planta Monterrey",
-    recorrido: "Monitoreo de cámaras",
-    guardiaResponsable: "Luisa Fernández Torres",
-    fechaHoraProgramada: "14/05/2024 08:30 hrs",
-  },
-  {
-    id: "5",
-    ubicacion: "Planta Saltillo",
-    recorrido: "Revisión de perímetros",
-    guardiaResponsable: "José García Ruiz",
-    fechaHoraProgramada: "14/05/2024 09:45 hrs",
-  },
-  {
-    id: "6",
-    ubicacion: "Planta Guadalajara",
-    recorrido: "Inspección de vehículos",
-    guardiaResponsable: "Ana Rodríguez Vega",
-    fechaHoraProgramada: "14/05/2024 10:15 hrs",
-  },
-  {
-    id: "7",
-    ubicacion: "Planta Monterrey",
-    recorrido: "Supervisión de trabajadores",
-    guardiaResponsable: "Carlos Rodríguez Sánchez",
-    fechaHoraProgramada: "14/05/2024 09:15 hrs",
-  },
-  {
-    id: "8",
-    ubicacion: "Planta Saltillo",
-    recorrido: "Inspección de maquinaria",
-    guardiaResponsable: "Laura Ramírez Gómez",
-    fechaHoraProgramada: "14/05/2024 10:30 hrs",
-  },
-  {
-    id: "9",
-    ubicacion: "Planta Guadalajara",
-    recorrido: "Revisión de inventarios",
-    guardiaResponsable: "Miguel Ángel Torres",
-    fechaHoraProgramada: "14/05/2024 11:30 hrs",
-  },
-  {
-    id: "10",
-    ubicacion: "Planta Monterrey",
-    recorrido: "Supervisión de limpieza",
-    guardiaResponsable: "Patricia González Núñez",
-    fechaHoraProgramada: "14/05/2024 08:00 hrs",
-  },
-  {
-    id: "11",
-    ubicacion: "Planta Saltillo",
-    recorrido: "Control de entrada de visitantes",
-    guardiaResponsable: "Luis Ramírez López",
-    fechaHoraProgramada: "14/05/2024 09:50 hrs",
-  },
-  {
-    id: "12",
-    ubicacion: "Planta Guadalajara",
-    recorrido: "Monitoreo de carga y descarga",
-    guardiaResponsable: "Rosa Elena Díaz",
-    fechaHoraProgramada: "14/05/2024 10:40 hrs",
-  },
-  {
-    id: "13",
-    ubicacion: "Planta Monterrey",
-    recorrido: "Inspección de áreas comunes",
-    guardiaResponsable: "Carlos Rodríguez Sánchez",
-    fechaHoraProgramada: "14/05/2024 09:20 hrs",
-  },
-  {
-    id: "14",
-    ubicacion: "Planta Saltillo",
-    recorrido: "Revisión de equipos electrónicos",
-    guardiaResponsable: "Fernando Ruiz García",
-    fechaHoraProgramada: "14/05/2024 10:50 hrs",
-  },
-  {
-    id: "15",
-    ubicacion: "Planta Guadalajara",
-    recorrido: "Supervisión de protocolos de seguridad",
-    guardiaResponsable: "Luisa Pérez Santos",
-    fechaHoraProgramada: "14/05/2024 11:45 hrs",
-  },
-  {
-    id: "16",
-    ubicacion: "Planta Monterrey",
-    recorrido: "Monitoreo de puntos críticos",
-    guardiaResponsable: "María López Hernández",
-    fechaHoraProgramada: "14/05/2024 09:40 hrs",
-  },
-  {
-    id: "17",
-    ubicacion: "Planta Saltillo",
-    recorrido: "Revisión de instalaciones eléctricas",
-    guardiaResponsable: "Carlos Rodríguez Sánchez",
-    fechaHoraProgramada: "14/05/2024 10:10 hrs",
-  },
-  {
-    id: "18",
-    ubicacion: "Planta Guadalajara",
-    recorrido: "Supervisión de protocolos contra incendios",
-    guardiaResponsable: "Ana Rodríguez Vega",
-    fechaHoraProgramada: "14/05/2024 11:10 hrs",
-  },
-  {
-    id: "19",
-    ubicacion: "Planta Monterrey",
-    recorrido: "Inspección de accesos principales",
-    guardiaResponsable: "Luis Ramírez López",
-    fechaHoraProgramada: "14/05/2024 09:10 hrs",
-  },
-  {
-    id: "20",
-    ubicacion: "Planta Saltillo",
-    recorrido: "Control de áreas restringidas",
-    guardiaResponsable: "José García Ruiz",
-    fechaHoraProgramada: "14/05/2024 10:20 hrs",
-  },
+    folio: 1,
+    status: true,
+    ubi: 'Planta Monterrey',
+    area: 'Caseta Vigilancia Norte 3',
+    nameGuard: 'Juan Pérez',
+    dateHourStart: '14-05-2024 09:30',
+    dateHourFin: '14-05-2024 09:30',
+    nameRoute: 'Soy una ruta',
+    pointsRoute: 'puntos d ela una ruta',
+    observations: 'observaciones de la ruta',
+    evidence: 'evidencias',
+    durationRoute: 'durationRoute'
+}, {
+    folio: 2,
+    status: false,
+    ubi: 'Planta Monterrey',
+    area: 'Caseta Vigilancia Norte 3',
+    nameGuard: 'María Rodríguez',
+    dateHourStart: '10-05-2024 14:45',
+    dateHourFin: '10-05-2024 14:45',
+    nameRoute: 'Soy una ruta',
+    pointsRoute: 'puntos d ela una ruta',
+    observations: 'Soy una ruta',
+    evidence: 'evidencias',
+    durationRoute: 'durationRoute'
+}, {
+    folio: 3,
+    status: true,
+    ubi: 'Planta Monterrey',
+    area: 'Caseta Vigilancia Norte 3',
+    nameGuard: 'Pedro Gómez',
+    dateHourStart: '12-05-2024 11:20',
+    dateHourFin: '12-05-2024 11:20',
+    nameRoute: 'Soy una ruta',
+    pointsRoute: 'puntos d ela una ruta',
+    observations: 'observaciones de la ruta',
+    evidence: 'evidencias',
+    durationRoute: 'durationRoute'
+}, {
+    folio: 4,
+    status: false,
+    ubi: 'Planta Monterrey',
+    area: 'Caseta Vigilancia Norte 3',
+    nameGuard: 'Ana López',
+    dateHourStart: '08-06-2024 08:00',
+    dateHourFin: '08-06-2024 08:00',
+    nameRoute: 'Soy una ruta',
+    pointsRoute: 'puntos d ela una ruta',
+    observations: 'observaciones de la ruta',
+    evidence: 'evidencias',
+    durationRoute: 'durationRoute'
+}, {
+    folio: 5,
+    status: true,
+    ubi: 'Planta Monterrey',
+    area: 'Caseta Vigilancia Norte 3',
+    nameGuard: 'David Martínez',
+    dateHourStart: '13-06-2024 15:10',
+    dateHourFin: '13-06-2024 15:10',
+    nameRoute: 'Soy una ruta',
+    pointsRoute: 'puntos d ela una ruta',
+    observations: 'observaciones de la ruta',
+    evidence: 'evidencias',
+    durationRoute: 'durationRoute'
+}
 ];
 
 export function RondinesTable() {
+
+ 
+
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -190,6 +131,8 @@ export function RondinesTable() {
   });
 
   const [globalFilter, setGlobalFilter] = React.useState("");
+
+
 
   const table = useReactTable({
     data,
@@ -215,13 +158,15 @@ export function RondinesTable() {
     },
   });
 
+
+  const totalPages = table.getPageCount(); 
+  const currentPage = pagination.pageIndex + 1; 
+
+
+
+
   return (
     <div className="w-full">
-
-
-     <div className="">
-        <h1 className="text-2xl font-bold">Registro y Seguimiento de Recorridos</h1>
-      </div>
 
 
 
@@ -341,6 +286,8 @@ export function RondinesTable() {
           </Button>
         </div>
       </div>
+
+    
     </div>
   );
 }

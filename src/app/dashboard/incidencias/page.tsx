@@ -2,15 +2,13 @@
 
 import React from "react";
 
-
-
 import { TriangleAlert, UndoDot } from "lucide-react";
-
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { IncidenciasTable } from "@/components/table/incidencias/table";
 import { FallasTable } from "@/components/table/incidencias/fallas/table";
 import ReusableAccordion from "@/components/resuable-accordion";
+import PageTitle from "@/components/page-title";
 
 const IncidenciasPage = () => {
   return (
@@ -41,6 +39,12 @@ const IncidenciasPage = () => {
             ]}
           />
 
+
+
+       <PageTitle title="Registro de incidencias y fallas" />
+
+
+      
           <Tabs defaultValue="Perdidos" className="w-full">
             <TabsList>
               <TabsTrigger value="Perdidos">Incidencias</TabsTrigger>

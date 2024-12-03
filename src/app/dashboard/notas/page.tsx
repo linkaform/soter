@@ -6,6 +6,7 @@ import { FolderOpen, Package, Sun } from "lucide-react";
 
 import { ListaNotasTable } from "@/components/table/notas/lista-notas/table";
 import ReusableAccordion from "@/components/resuable-accordion";
+import PageTitle from "@/components/page-title";
 
 const NotasPage = () => {
   return (
@@ -40,6 +41,14 @@ const NotasPage = () => {
               },
             ]}
           />
+
+
+      <PageTitle title="Listado de Notas" />
+
+
+
+
+   
 
           <div className="">
             <ListaNotasTable />

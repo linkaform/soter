@@ -2,12 +2,11 @@
 
 import React from "react";
 
-
 import Vehicles from "@/components/icon/vehicles";
 import Exit from "@/components/icon/exit";
 import { Button } from "@/components/ui/button";
 import { ActivePassesModal } from "@/components/modals/active-passes-modal";
-import { Eraser, Home, Menu, Search, Users } from "lucide-react";
+import { Eraser, Home, Menu, Search, Trash, Trash2, Users } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { ErrorModal } from "@/components/modals/error-modal";
 import { CommentPassModal } from "@/components/modals/comment-pass-modal";
@@ -19,11 +18,7 @@ import { UltimosAccesosTable } from "@/components/table/accesos/ultimos-accesos/
 import { AccesosPermisosTable } from "@/components/table/accesos/permisos-certificaciones/table";
 import { VehiculosAutorizadosTable } from "@/components/table/accesos/vehiculos-autorizados/table";
 import { EquiposAutorizadosTable } from "@/components/table/accesos/equipos-autorizados/table";
-import { GeneratedPassModal } from "@/components/modals/generated-pass-modal";
 import ReusableAccordion from "@/components/resuable-accordion";
-
-
-
 
 const AccesosPage = () => {
   return (
@@ -107,17 +102,12 @@ const AccesosPage = () => {
                 </Button>
               </AddBadgeModal>
 
-              <GeneratedPassModal
-                title="Pase de Entrada Generado"
-                description="El pase de entrada se ha generado correctamente. Por favor, copie el siguiente enlace y compártalo con el visitante para completar el proceso."
+              <Button
+                className="bg-red-500 hover:bg-red-600 text-black"
+                variant="secondary"
               >
-                <Button
-                  className="bg-yellow-500 hover:bg-yellow-600 text-black"
-                  variant="outline"
-                >
-                  <Eraser />
-                </Button>
-              </GeneratedPassModal>
+                <Trash2 className="text-white"/>
+              </Button>
 
               <Button
                 variant="secondary"

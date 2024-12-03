@@ -10,6 +10,7 @@ import { Separator } from "../ui/separator";
 import CalendarDays from "../calendar-days";
 import { Dispatch, SetStateAction } from "react";
 import { CalendarClock } from "lucide-react";
+import { GeneratedPassModal } from "./generated-pass-modal";
 
 interface EntryPassModalProps {
   title: string;
@@ -36,8 +37,6 @@ export const EntryPassModal: React.FC<EntryPassModalProps> = ({
   isSuccess,
   setIsSuccess,
 }) => {
-
-  
   const items = data?.fechaFija
     ? [
         {
@@ -162,7 +161,7 @@ export const EntryPassModal: React.FC<EntryPassModalProps> = ({
                   <p className="font-medium text-gray-700">{item?.title}</p>
                   <div className="flex justify-between items-center">
                     <p className="text-sm text-gray-500">
-                    {item?.date?.replace('T', ' ').slice(0, 16)}
+                      {item?.date?.replace("T", " ").slice(0, 16)}
                     </p>
                   </div>
                 </div>
@@ -173,10 +172,10 @@ export const EntryPassModal: React.FC<EntryPassModalProps> = ({
           <Separator className="my-4" />
         </div>
 
-         {/* Días Seleccionados */} 
-         <div className="flex flex-col space-y-5">
-         <CalendarDays />
-         </div>
+        {/* Días Seleccionados */}
+        <div className="flex flex-col space-y-5">
+          <CalendarDays />
+        </div>
 
         <div className="flex gap-5 my-5">
           <DialogClose asChild>
@@ -185,9 +184,14 @@ export const EntryPassModal: React.FC<EntryPassModalProps> = ({
             </Button>
           </DialogClose>
 
-          <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white">
-            Confirmar
-          </Button>
+          <GeneratedPassModal
+            title="Pase de Entrada Generado"
+            description="El pase de entrada se ha generado correctamente. Por favor, copie el siguiente enlace y compártalo con el visitante para completar el proceso."
+          >
+            <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white">
+              Confirmar
+            </Button>
+          </GeneratedPassModal>
         </div>
       </DialogContent>
     </Dialog>

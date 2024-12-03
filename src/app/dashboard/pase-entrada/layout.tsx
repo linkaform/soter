@@ -7,5 +7,13 @@ export const metadata: Metadata = {
 }
 
 export default function PaseEntradaLayout({ children }: { children: React.ReactNode }) {
-  return <MainLayout>{children}</MainLayout>
+  return (
+    <>
+      {/* Favicon directamente */}
+      <link rel="icon" href="/pases.svg" type="image/svg+xml" />
+      
+      {/* Layout principal */}
+      <MainLayout>{children}</MainLayout>
+    </>
+  );
 }

@@ -98,10 +98,7 @@ export function ConcecionadosTable() {
   return (
     <div className="w-full">
 
-<div className="my-5">
-      <h1 className="text-2xl font-bold">Registro de incidencias y fallas
-      </h1>
-      </div>  
+
 
       <div className="flex justify-between items-center my-5">
         {/* Campo de búsqueda a la izquierda */}

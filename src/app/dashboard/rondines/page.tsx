@@ -1,8 +1,13 @@
 "use client";
 
 import React from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 import { RondinesTable } from "@/components/table/rondines/table";
 import ReusableAccordion from "@/components/resuable-accordion";
+import RondinesCalendar from "@/components/pages/rondines/calendar";
+import PageTitle from "@/components/page-title";
+import { GuardiasRondinesTable } from "@/components/table/rondines/guardias/table";
 
 const RondinesPage = () => {
   return (
@@ -23,23 +28,71 @@ const RondinesPage = () => {
               {
                 label: "Recorridos Pendientes",
                 value: 0,
-                icon: null, // No hay ícono en este caso.
+                icon: null,
               },
               {
                 label: "Guardias en Recorrido",
                 value: 0,
-                icon: null, // No hay ícono en este caso.
+                icon: null,
               },
               {
                 label: "Guardias disponibles / En Turno",
                 value: 6,
-                icon: null, // No hay ícono en este caso.
+                icon: null,
               },
             ]}
           />
 
+          <PageTitle title="Registro y Seguimiento de Recorridos" />
+
           <div className="">
-            <RondinesTable />
+            <Tabs defaultValue="Pendientes" className="w-full">
+              <TabsList>
+                <TabsTrigger value="Pendientes">Pendientes</TabsTrigger>
+                <TabsTrigger value="Realizados">Realizados</TabsTrigger>
+                <TabsTrigger value="Cancelados">Cancelados</TabsTrigger>
+                <TabsTrigger value="Todos">Todos</TabsTrigger>
+              </TabsList>
+              <TabsContent value="Pendientes">
+                <div className="flex">
+                  <div className="w-1/4 px-4">
+                    <div className="space-y-4">
+                      <GuardiasRondinesTable />
+                    </div>
+                  </div>
+
+                  <div className="w-3/4">
+                    <RondinesCalendar />
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="Realizados">
+                <div className="flex">
+                  <div className="w-1/4">
+                    <div className="space-y-4">
+                      <GuardiasRondinesTable />
+                    </div>
+                  </div>
+
+                  <div className="w-3/4 px-4">
+                    <RondinesCalendar />
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="Cancelados">
+                <div className="">
+                  <RondinesTable />
+                </div>
+              </TabsContent>
+
+              <TabsContent value="Todos">
+                <div className="">
+                  <RondinesTable />
+                </div>
+              </TabsContent>
+            </Tabs>
           </div>
         </div>
       </div>

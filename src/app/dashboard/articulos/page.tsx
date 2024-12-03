@@ -12,6 +12,7 @@ import { ConcecionadosTable } from "@/components/table/articulos/concecionados/t
 import { ArticulosDonadosTable } from "@/components/table/articulos/donados/table";
 import { ArticulosEntregadosTable } from "@/components/table/articulos/entregados/table";
 import ReusableAccordion from "@/components/resuable-accordion";
+import PageTitle from "@/components/page-title";
 
 const ArticulosPage = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -43,6 +44,11 @@ const ArticulosPage = () => {
             ]}
           />
 
+
+       <PageTitle title="Registro y seguimiento de artículos" />
+
+
+   
           <Tabs defaultValue="Perdidos" className="w-full">
             <TabsList>
               <TabsTrigger value="Perdidos">Artículos perdidos</TabsTrigger>
