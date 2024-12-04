@@ -32,12 +32,12 @@ const BitacorasPage = () => {
               {
                 label: "Visitas en el Día",
                 value: 23,
-                icon: <Home className="text-primary h-5 w-5" />,
+                icon: <Home className="text-primary" />,
               },
               {
                 label: "Personal Dentro",
                 value: 23,
-                icon: <Users className="text-primary h-5 w-5" />,
+                icon: <Users className="text-primary" />,
               },
               {
                 label: "Vehículos Dentro",

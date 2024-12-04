@@ -123,25 +123,25 @@ export function ListaNotasTable() {
 
     
 
-      <div className="flex justify-between items-center my-5">
+      <div className="flex flex-col md:flex-row justify-between items-center my-5">
         {/* Campo de búsqueda a la izquierda */}
         <input
           type="text"
           placeholder="Buscar en todos los campos..."
           value={globalFilter}
           onChange={(e) => setGlobalFilter(e.target.value)}
-          className="border border-gray-300 rounded-md p-2 h-12 w-full max-w-xs"
+          className="w-full border border-gray-300 rounded-md p-2 h-12  max-w-xs mb-5"
         />
 
         {/* Botones a la derecha */}
-        <div className="flex items-center space-x-2">
+        <div className="w-full md:w-auto flex flex-col md:flex-row  items-center gap-2">
           <AddNoteModal title="Nueva nota">
-            <Button className="bg-blue-500  text-white hover:bg-blue-600 px-4 py-2 rounded-md flex items-center">
+            <Button className="w-full md:w-auto bg-blue-500  text-white hover:bg-blue-600 px-4 py-2 rounded-md flex items-center">
             <Plus />
               Nota
             </Button>
           </AddNoteModal>
-          <Button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2">
+          <Button className="w-full  md:w-auto  bg-blue-500 hover:bg-blue-600 text-white px-4 py-2">
             <FileX2 />
         
             Descargar

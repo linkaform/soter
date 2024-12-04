@@ -30,6 +30,7 @@ import {
   AccesosComentarioColumns,
 } from "./accesos-comentarios-columns";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { CommentPassModal } from "@/components/modals/comment-pass-modal";
 
 export const data: AccesosComentario[] = [
   {
@@ -103,10 +104,15 @@ export function ComentariosAccesosTable() {
     
         {/* Botones a la derecha */}
         <div className="flex justify-end mb-3">
+        <CommentPassModal title="Comentario al Pase">
+
+
             <Button className="bg-green-600 hover:bg-green-700 text-white">
               <Plus />
               Agregar Comentario
             </Button>
+        </CommentPassModal>
+    
         </div>
 
       <div className="w-full">

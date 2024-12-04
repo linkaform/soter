@@ -12,7 +12,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { Eraser, List, Plus } from "lucide-react";
+import { Eraser, List, Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -120,36 +120,31 @@ export function EquiposAutorizadosTable() {
         <h1 className="text-2xl font-bold">Equipos Autorizados</h1>
       </div>
 
-    
-        {/* Botones a la derecha */}
-        <div className="flex justify-end mb-3 space-x-3">
-
+      {/* Botones a la derecha */}
+      <div className="flex justify-end mb-3 space-x-3">
         <AddEquipmentModal title="Nuevo Equipo">
-
-            <Button className="bg-green-600 hover:bg-green-700 text-white">
-              <Plus />
-              Agregar Equipo
-            </Button>
-
-      </AddEquipmentModal>
-   
-
-          <Button
-            className="bg-blue-500 text-white hover:text-white hover:bg-blue-600"
-            variant="outline"
-            size="icon"
-          >
-            <List size={36} />
+          <Button className="bg-green-600 hover:bg-green-700 text-white">
+            <Plus />
+            Agregar Equipo
           </Button>
+        </AddEquipmentModal>
 
-          <Button
-            className="bg-yellow-500 hover:bg-yellow-600 text-black"
-            variant="outline"
-            size="icon"
-          >
-            <Eraser size={36} />
-          </Button>
-        </div>
+        <Button
+          className="bg-blue-500 text-white hover:text-white hover:bg-blue-600"
+          variant="outline"
+          size={"icon"}
+        >
+          <List size={36} />
+        </Button>
+      
+      
+        <Button
+          className="bg-red-500 hover:bg-red-600 text-black"
+          variant="outline"
+          size={"icon"}        >
+          <Trash2 className="text-white" />
+        </Button>
+      </div>
 
       <div className="w-full">
         <ScrollArea className="h-60 w-full border rounded-md">
@@ -202,7 +197,7 @@ export function EquiposAutorizadosTable() {
             </TableBody>
           </Table>
         </ScrollArea>
-      </div>   
+      </div>
     </div>
   );
 }

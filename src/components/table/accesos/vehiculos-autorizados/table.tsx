@@ -12,7 +12,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { Eraser, List, Plus } from "lucide-react";
+import { Eraser, List, Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -141,11 +141,11 @@ export function VehiculosAutorizadosTable() {
 
 
           <Button
-            className="bg-yellow-500 hover:bg-yellow-600 text-black"
+            className="bg-red-500 hover:bg-red-600 text-black"
             variant="outline"
             size="icon"
           >
-            <Eraser size={36} />
+            <Trash2 className="text-white" size={36} />
           </Button>
         </div>
 

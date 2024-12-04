@@ -181,7 +181,7 @@ export function BitacorasTable() {
     <div className="w-full">
         
     
-      <div className="flex justify-between items-center my-5">
+      <div className="flex flex-col md:flex-row gap-3 justify-between items-center my-5">
         {/* Campo de búsqueda a la izquierda */}
         <input
           type="text"
@@ -192,7 +192,7 @@ export function BitacorasTable() {
         />
 
         {/* Botones a la derecha */}
-        <div className="flex items-center justify-end space-x-6">
+        <div className="flex flex-col md:flex-row gap-3 items-center justify-end space-x-6">
           <div className="flex items-center space-x-4">
             <Label htmlFor="entrada">
               <span className="text-lg font-semibold">Tipo de Movimiento:</span>
@@ -208,14 +208,14 @@ export function BitacorasTable() {
             </div>
           </div>
 
-          <Button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2">
+          <Button className="bg-blue-500 w-full md:w-auto hover:bg-blue-600 text-white px-4 py-2">
             <FileX2 />
             Descargar
           </Button>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto">
+              <Button variant="outline" className="ml-auto w-full md:w-auto ">
                 Columnas <ChevronDown />
               </Button>
             </DropdownMenuTrigger>

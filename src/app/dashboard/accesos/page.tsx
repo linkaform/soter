@@ -6,10 +6,9 @@ import Vehicles from "@/components/icon/vehicles";
 import Exit from "@/components/icon/exit";
 import { Button } from "@/components/ui/button";
 import { ActivePassesModal } from "@/components/modals/active-passes-modal";
-import { Eraser, Home, Menu, Search, Trash, Trash2, Users } from "lucide-react";
+import { Home, IdCard, List, Menu, Search, Trash2, Users } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { ErrorModal } from "@/components/modals/error-modal";
-import { CommentPassModal } from "@/components/modals/comment-pass-modal";
 import { AddBadgeModal } from "@/components/modals/add-badge-modal";
 import { ComentariosAccesosTable } from "@/components/table/accesos/comentarios/table";
 import Credentials from "@/components/pages/accesos/credential";
@@ -39,12 +38,12 @@ const AccesosPage = () => {
               {
                 label: "Visitas en el Día",
                 value: 23,
-                icon: <Home className="text-primary h-5 w-5" />,
+                icon: <Home className="text-primary " />,
               },
               {
                 label: "Visitas Dentro",
                 value: 23,
-                icon: <Users className="text-primary h-5 w-5" />,
+                icon: <Users className="text-primary" />,
               },
               {
                 label: "Vehículos Estacionados",
@@ -59,13 +58,13 @@ const AccesosPage = () => {
             ]}
           />
 
-          <div className="flex flex-col sm:flex-row">
+          <div className="flex flex-col md:flex-row gap-3">
             <div className="flex mb-5 mr-5 w-full md:max-w-lg  mx-auto">
               <div className="relative w-full flex items-center">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
                   type="text"
-                  placeholder="Buscar usuario"
+                  placeholder="código de acceso"
                   className="pl-10 pr-10 w-full"
                 />
 
@@ -98,9 +97,14 @@ const AccesosPage = () => {
                   className="bg-blue-500 hover:bg-blue-600 text-white"
                   variant="secondary"
                 >
+              <IdCard />
+                  
                   Asignar Gafete
                 </Button>
               </AddBadgeModal>
+
+
+              
 
               <Button
                 className="bg-red-500 hover:bg-red-600 text-black"
@@ -113,17 +117,10 @@ const AccesosPage = () => {
                 variant="secondary"
                 className="bg-blue-500 hover:bg-blue-600 text-white"
               >
-                Pases Temporales
-              </Button>
+              <List className="text-white"/>
 
-              <CommentPassModal title="Comentario al Pase">
-                <Button
-                  className="bg-gray-700 text-white hover:bg-gray-600"
-                  variant="secondary"
-                >
-                  + Agregar Comentario
-                </Button>
-              </CommentPassModal>
+                Pases Temporales
+              </Button>              
             </div>
           </div>
         </div>

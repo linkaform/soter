@@ -147,18 +147,18 @@ export function IncidenciasTable() {
     <div className="w-full">
 
     
-      <div className="flex justify-between items-center my-5">
+      <div className="flex flex-col md:flex-row justify-between items-center my-5">
         {/* Campo de búsqueda a la izquierda */}
         <input
           type="text"
           placeholder="Buscar en todos los campos..."
           value={globalFilter}
           onChange={(e) => setGlobalFilter(e.target.value)}
-          className="border border-gray-300 rounded-md p-2 h-12 w-full max-w-xs"
+          className="w-full border border-gray-300 mb-5 rounded-md p-2 h-12  max-w-xs"
         />
 
         {/* Botones a la derecha */}
-        <div className="flex items-center justify-start space-x-3">
+        <div className="flex flex-col-reverse items-center justify-start space-x-3">
           <div className="flex items-center space-x-4">
             <Label htmlFor="prioridad">
               <span className="text-lg font-semibold">Prioridad:</span>
@@ -182,17 +182,19 @@ export function IncidenciasTable() {
             </div>
           </div>
 
-          <Button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2">
+          <div className="w-full md:w-auto flex flex-col md:flex-row  gap-3 mb-5">
+
+          <Button className="w-full md:w-auto bg-blue-500 hover:bg-blue-600">
             <Plus />
             Nuevo Incidente
           </Button>
 
-          <Button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2">
+          <Button className="w-full md:w-auto bg-blue-500 hover:bg-blue-600">
             <FileX2 />
             Descargar
           </Button>
 
-          <Button className="w-full bg-red-500 text-white hover:bg-red-600">
+          <Button className="w-full md:w-auto bg-red-500 hover:bg-red-600">
             <Trash2 />
             Eliminar
           </Button>
@@ -223,6 +225,7 @@ export function IncidenciasTable() {
                 })}
             </DropdownMenuContent>
           </DropdownMenu>
+          </div>
         </div>
       </div>
 

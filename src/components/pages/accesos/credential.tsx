@@ -22,9 +22,12 @@ const Credentials = () => {
           </Badge>
         </div>
 
-        <div className="grid md:grid-cols-[350px_1fr] gap-6">
-          <div className="space-y-4">
-            <div className="flex">
+
+
+
+        <div className="flex flex-wrap gap-6">
+        <div className="space-y-6">
+        <div className="flex">
               <Image
                 src="/image/credencial1.png"
                 alt="Descripción de la imagen"
