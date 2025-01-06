@@ -60,6 +60,10 @@ export const EntryPassModal: React.FC<EntryPassModalProps> = ({
 
   return (
     <Dialog open={isSuccess} onOpenChange={setIsSuccess}>
+
+        
+
+
       <DialogContent className="max-w-xl max-h-[90vh] overflow-scroll">
         <DialogHeader>
           <DialogTitle className="text-2xl text-center  font-bold my-5">
@@ -184,14 +188,21 @@ export const EntryPassModal: React.FC<EntryPassModalProps> = ({
             </Button>
           </DialogClose>
 
+
+
           <GeneratedPassModal
             title="Pase de Entrada Generado"
             description="El pase de entrada se ha generado correctamente. Por favor, copie el siguiente enlace y compártalo con el visitante para completar el proceso."
           >
-            <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white">
-              Confirmar
-            </Button>
+
+
+          <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white">
+                Confirmar
+          </Button>
           </GeneratedPassModal>
+
+
+      
         </div>
       </DialogContent>
     </Dialog>

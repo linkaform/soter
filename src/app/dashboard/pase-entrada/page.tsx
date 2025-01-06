@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useState } from "react";
@@ -86,7 +87,7 @@ const formSchema = z
       (data.diasSeleccionados && data.diasSeleccionados.length > 0),
     {
       message: "Seleccione al menos un día si limita el acceso.",
-      path: ["diasSeleccionados"], // Apunta al campo correspondiente
+      path: ["diasSeleccionados"], 
     }
   );
 
@@ -95,7 +96,6 @@ const PaseEntradaPage = () => {
   const [diasSeleccionados, setDiasSeleccionados] = useState<string[]>([]);
   const [tipoAcceso, setTipoAcceso] = useState("cualquierDia");
   const [isSuccess, setIsSuccess] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [modalData, setModalData] = useState<any>(null);
 
   console.log(diasSeleccionados);
@@ -168,6 +168,15 @@ const PaseEntradaPage = () => {
 
   return (
     <div className="p-8">
+
+      {/* Confirmar Pase de entrada modal */}
+      <EntryPassModal
+          title={"Confirmación"}
+          data={modalData}
+          isSuccess={isSuccess}
+          setIsSuccess={setIsSuccess}
+        />
+
       <div className="flex flex-col space-y-5 max-w-3xl mx-auto">
         <div className="text-center">
           <h1 className="font-medium text-2xl">Pase de entrada</h1>
@@ -232,7 +241,6 @@ const PaseEntradaPage = () => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      {" "}
                       <span className="text-red-500">*</span> Teléfono
                     </FormLabel>
                     <FormControl>
@@ -549,12 +557,7 @@ const PaseEntradaPage = () => {
           </form>
         </Form>
 
-        <EntryPassModal
-          title={"Confirmación"}
-          data={modalData}
-          isSuccess={isSuccess}
-          setIsSuccess={setIsSuccess}
-        />
+     
       </div>
     </div>
   );

@@ -258,7 +258,7 @@ const PaseEntradaPage = () => {
     setVehiculos((prev) => [...prev, { ...defaultVehiculo, id: uuidv4() }]);
   };
 
-  const eliminarVehiculo = (id: any) => {
+  const eliminarVehiculo = (id: string) => {
     if (vehiculos.length > 1) {
       setVehiculos((prev) => prev.filter((v) => v.id !== id));
     }
@@ -268,7 +268,7 @@ const PaseEntradaPage = () => {
     setEquipos((prev) => [...prev, { ...defaultEquipo, id: uuidv4() }]);
   };
 
-  const eliminarEquipo = (id: any) => {
+  const eliminarEquipo = (id: string) => {
     if (equipos.length > 1) {
       setEquipos((prev) => prev.filter((e) => e.id !== id));
     }
@@ -653,7 +653,7 @@ const PaseEntradaPage = () => {
                                   Dell XPS 13
                                 </SelectItem>
                                 <SelectItem value="macbook-pro-16">
-                                  MacBook Pro 16"
+                                  MacBook Pro 16
                                 </SelectItem>
                                 <SelectItem value="hp-spectre-x360">
                                   HP Spectre x360
