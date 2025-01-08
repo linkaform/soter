@@ -1,0 +1,19 @@
+services:
+  soter: 
+    image: linkaform/soter:develop
+    container_name: soter
+    build: 
+      context: ./ 
+      dockerfile: Dockerfile
+      target: develop
+
+    volumes:
+      # - ./:/srv
+      - ./src:/srv/src/
+      - ./public:/srv/public/
+      - ./cache:/srv/cache/
+    ports:
+      - "3000:3000"
+    stdin_open: true
+    command: yarn dev
+    tty: true
