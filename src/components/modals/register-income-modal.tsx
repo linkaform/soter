@@ -17,7 +17,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
-import { Label } from "../ui/label";
 
 interface RegisterIncomeModalProps {
   title: string;
@@ -65,7 +64,7 @@ export const RegisterIncomeModal: React.FC<RegisterIncomeModalProps> = ({
   isSuccess,
   setIsSuccess,
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  // const [setIsOpen] = useState(false);
 
   return (
     <Dialog open={isSuccess} onOpenChange={setIsSuccess}>
