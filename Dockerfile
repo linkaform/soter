@@ -9,6 +9,7 @@ RUN apt-get update && \
     vim
 
 npm install -g yarn
+npm install -g next
 
 RUN mkdir -p /srv
 RUN chown 1000:1000 -R /srv/
