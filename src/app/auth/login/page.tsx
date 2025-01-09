@@ -40,8 +40,8 @@ export default function LoginPage() {
     resolver: zodResolver(formSchema),
     mode: "onSubmit",
     defaultValues: {
-      username: "seguridad@linkaform.com",
-      password: "linkaform",
+      username: "",
+      password: "",
     },
   });
 
