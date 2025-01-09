@@ -1,17 +1,34 @@
-import { NotasTable } from "@/components/table/notas/table";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+"use client"
 
+import { NotasTable } from "@/components/table/notas/table";
 import { GuardiasApoyoTable } from "@/components/table/guardias-apoyo/table";
 import Sidebar from "@/components/pages/turnos/sidebar";
-import { Metadata } from "next";
 import ActivitySummary from "@/components/pages/turnos/activity-summary";
 import TurnStatus from "@/components/pages/turnos/turn-status";
 
+import { useGetShift } from "@/hooks/useGetShift";
 
-export const metadata: Metadata = {
-  title: "Portal de Turnos",
-};
+
 
 export default function Home() {
+
+
+
+    const { shift } = useGetShift()
+
+
+
+    console.log("shift", shift)
+
+
+
+
+
+
+
+   
+    
 
 
   return (

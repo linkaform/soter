@@ -13,9 +13,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { DoorOpen, LogOut, Settings, StickyNote} from "lucide-react";
+import useAuthStore from "@/store/useAuthStore";
 
 export const Header = () => {
   const currentPath = usePathname();
+  const { logout } = useAuthStore()
+
 
   return (
     <header className="w-full shadow py-3 px-12">
@@ -170,13 +173,11 @@ export const Header = () => {
               </Link>
 
 
-              <Link href="/auth/login">
 
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={logout}>
               <LogOut />
                 Salir
                 </DropdownMenuItem>
-              </Link>
 
             </DropdownMenuContent>
           </DropdownMenu>
