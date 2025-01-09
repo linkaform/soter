@@ -98,7 +98,7 @@ export function ComentariosAccesosTable() {
   return (
     <div className="w-full">
       <div className="mb-3">
-        <h1 className="text-2xl font-bold">Comentarios/Instrucciones de visita</h1>
+        <h1 className="text-2xl font-bold">Comentarios/Instrucciones de visita AA</h1>
       </div>
 
     

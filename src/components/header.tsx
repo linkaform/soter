@@ -63,6 +63,18 @@ export const Header = () => {
                 Accesos
               </Button>
             </Link>
+            <Link href="/dashboard/turnos">
+              <Button
+                className={`${
+                  currentPath === "/dashboard/turnos"
+                    ? "bg-button-primary hover:text-white hover:bg-button-primary text-white"
+                    : "hover:text-white hover:bg-button-primary"
+                }`}
+                variant="ghost"
+              >
+                Turnos
+              </Button>
+            </Link>
             <Link href="/dashboard/bitacoras">
               <Button
                 className={`${
