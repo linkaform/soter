@@ -23,12 +23,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
   Select,
   SelectContent,
   SelectGroup,
@@ -37,7 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ChevronDown, FileX2, Plus } from "lucide-react";
+import { FileX2, Plus } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { ArticuloPendiente, pendientesColumns } from "./pendientes-columns";
 
