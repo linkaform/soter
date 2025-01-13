@@ -55,8 +55,7 @@ export const GuardiasRondinesColumns: ColumnDef<GuardiaRondines>[] = [
       {
         id: "actions",
         enableHiding: false,
-        cell: ({ row }) => {
-          const payment = row.original
+        cell: () => {
      
           return (
             <DropdownMenu>

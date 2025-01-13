@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import dynamic from 'next/dynamic'; 
 import dayGridPlugin from '@fullcalendar/daygrid'; 
 import timeGridPlugin from '@fullcalendar/timegrid';

@@ -90,9 +90,8 @@ export type GuardiaRondines = {
 };
 
 export function GuardiasRondinesTable() {
-  const [guardias, setGuardias] =
-    React.useState<GuardiaRondines[]>(initialData);
-
+/*   const [guardias, setGuardias] =  React.useState<GuardiaRondines[]>(initialData);
+ */
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -108,7 +107,7 @@ export function GuardiasRondinesTable() {
   const [empleadoFilter, setEmpleadoFilter] = React.useState("");
 
   const table = useReactTable({
-    data: guardias,
+    data: initialData,
     columns: GuardiasRondinesColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,

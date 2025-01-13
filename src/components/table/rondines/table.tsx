@@ -26,16 +26,6 @@ import {
 } from "@/components/ui/table";
 
 
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination"
-
 
 import {
   DropdownMenu,
@@ -159,9 +149,9 @@ export function RondinesTable() {
   });
 
 
-  const totalPages = table.getPageCount(); 
+/*   const totalPages = table.getPageCount(); 
   const currentPage = pagination.pageIndex + 1; 
-
+ */
 
 
 
