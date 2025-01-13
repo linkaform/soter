@@ -3,7 +3,7 @@ services:
     image: linkaform/soter:develop
     container_name: soter
     build: 
-      context: ./ 
+      context: ../ 
       dockerfile: Dockerfile
       target: develop
 
