@@ -3,13 +3,12 @@
 ####################################
 FROM node:23.2.0-bullseye-slim as develop
 
-
 RUN apt-get update && \
     apt-get -y install \
     vim
 
-npm install -g yarn
-npm install -g next
+#RUN npm install -g yarn
+RUN npm install -g next
 
 RUN mkdir -p /srv
 RUN chown 1000:1000 -R /srv/
