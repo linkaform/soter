@@ -1,14 +1,13 @@
 
-export const getEntryPasses = async (tabStatus='Todos') => {
+export const getConfSeguridad = async (location:string) => {
     const payload = {
       script_name: "pase_de_acceso_use_api.py",
-      option: "get_my_pases",
-      tab_status:tabStatus   
+      option: "get_config_modulo_seguridad",
+      location   
      };
   
-     const userJwt = localStorage.getItem("access_token");
-  
-      const response = await fetch(`https://app.linkaform.com/api/infosync/scripts/run/`, {
+    const userJwt = localStorage.getItem("access_token");
+    const response = await fetch(`https://app.linkaform.com/api/infosync/scripts/run/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -16,9 +15,6 @@ export const getEntryPasses = async (tabStatus='Todos') => {
         },
         body: JSON.stringify(payload),
       });
-  
       const data = await response.json(); 
       return data 
-     
-  
   };

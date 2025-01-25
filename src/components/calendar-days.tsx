@@ -1,22 +1,27 @@
-import React from "react";
+import React, { useState } from "react";
 import { Label } from "./ui/label";
 
-const CalendarDays = () => {
+interface CalendarDaysProps {
+  diasDisponibles: string[]; // Un array de cadenas (días de la semana)
+}
+
+const CalendarDays: React.FC<CalendarDaysProps> = ({ diasDisponibles })=> {
+  const dias = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
   return (
     <>
-      <Label>Dias disponible:</Label>
+      <p className="font-bold">Días disponibles:</p>
 
-      <div className="grid grid-cols-7  gap-x-2 text-center">
-        {["L", "M", "M", "J", "V", "S", "D"].map((day, i) => (
+      <div className="grid grid-cols-7 gap-x-2 text-center">
+        {dias.map((day, i) => (
           <div
             key={i}
             className={`p-3 rounded ${
-              ["L", "M", "M", "J"].includes(day)
+              diasDisponibles.includes(day) // Si el día está seleccionado, se marca
                 ? "bg-primary text-primary-foreground"
                 : "bg-muted"
             }`}
           >
-            {day}
+            {day.charAt(0).toUpperCase()} {/* Capitaliza el primer caracter */}
           </div>
         ))}
       </div>

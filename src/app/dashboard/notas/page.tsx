@@ -42,14 +42,7 @@ const NotasPage = () => {
             ]}
           />
 
-
-      <PageTitle title="Listado de Notas" />
-
-
-
-
-   
-
+          <PageTitle title="Listado de Notas" />
           <div className="">
             <ListaNotasTable />
           </div>

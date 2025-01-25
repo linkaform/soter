@@ -50,10 +50,8 @@ export default function LoginPage() {
       setIsLoading(true);
       const response = await getLogin(values.username, values.password);
 
-      console.log(response);
-
       if (response.success) {
-        setAuth(response.jwt, response.session_id);
+        setAuth(response.jwt, response.session_id, response.user.name, response.user.email, response.user.id);
 
         router.push("/");
       } else {
@@ -69,10 +67,7 @@ export default function LoginPage() {
     }
   };
 
-
   console.log(isAuth)
-
-
 
   return (
     <Suspense>

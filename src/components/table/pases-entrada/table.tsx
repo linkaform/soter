@@ -34,97 +34,101 @@ import {
 import { PaseEntrada, pasesEntradaColumns } from "./pases-entrada-columns";
 import Link from "next/link";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useGetMyPases } from "@/hooks/useGetMyPases";
 
 
 
-export const data: PaseEntrada[] = [
-    {
-      folio: "1254-54",
-      fechaHora: "14/11/2024 12:54:45 hrs",
-      vigenciaPase: "14/11/2024 12:54:45 hrs",
-      visitante: "Julian Alonso Pérez Torres",
-      tipoDePase: "Visita General",
-      motivo: "Reunión",
-      estatus: "Activo",
-    },
-    {
-      folio: "3262-45",
-      fechaHora: "14/11/2024 12:54:45 hrs",
-      vigenciaPase: "14/11/2024 14:54:45 hrs",
-      visitante: "Julian Alonso Pérez Torres",
-      tipoDePase: "Visita General",
-      motivo: "Reunión",
-      estatus: "Activo",
-    },
-    {
-      folio: "2013-45",
-      fechaHora: "14/11/2024 12:54:45 hrs",
-      vigenciaPase: "14/11/2024 11:54:45 hrs",
-      visitante: "Julian Alonso Pérez Torres",
-      tipoDePase: "Invitado",
-      motivo: "Reunión",
-      estatus: "Activo",
-    },
-    {
-      folio: "8524-65",
-      fechaHora: "14/11/2024 12:54:45 hrs",
-      vigenciaPase: "14/11/2024 9:50:45 hrs",
-      visitante: "Julian Alonso Pérez Torres",
-      tipoDePase: "Invitado",
-      motivo: "Reunión",
-      estatus: "Activo",
-    },
-    {
-      folio: "6154-91",
-      fechaHora: "14/11/2024 12:54:45 hrs",
-      vigenciaPase: "14/11/2024 4:54:45 hrs",
+// export const data: PaseEntrada[] = [
+//     {
+//       folio: "1254-54",
+//       fechaHora: "14/11/2024 12:54:45 hrs",
+//       vigenciaPase: "14/11/2024 12:54:45 hrs",
+//       visitante: "Julian Alonso Pérez Torres",
+//       tipoDePase: "Visita General",
+//       motivo: "Reunión",
+//       estatus: "Activo",
+//     },
+//     {
+//       folio: "3262-45",
+//       fechaHora: "14/11/2024 12:54:45 hrs",
+//       vigenciaPase: "14/11/2024 14:54:45 hrs",
+//       visitante: "Julian Alonso Pérez Torres",
+//       tipoDePase: "Visita General",
+//       motivo: "Reunión",
+//       estatus: "Activo",
+//     },
+//     {
+//       folio: "2013-45",
+//       fechaHora: "14/11/2024 12:54:45 hrs",
+//       vigenciaPase: "14/11/2024 11:54:45 hrs",
+//       visitante: "Julian Alonso Pérez Torres",
+//       tipoDePase: "Invitado",
+//       motivo: "Reunión",
+//       estatus: "Activo",
+//     },
+//     {
+//       folio: "8524-65",
+//       fechaHora: "14/11/2024 12:54:45 hrs",
+//       vigenciaPase: "14/11/2024 9:50:45 hrs",
+//       visitante: "Julian Alonso Pérez Torres",
+//       tipoDePase: "Invitado",
+//       motivo: "Reunión",
+//       estatus: "Activo",
+//     },
+//     {
+//       folio: "6154-91",
+//       fechaHora: "14/11/2024 12:54:45 hrs",
+//       vigenciaPase: "14/11/2024 4:54:45 hrs",
 
-      visitante: "Julian Alonso Pérez Torres",
-      tipoDePase: "Familia de Empleado",
-      motivo: "Personal",
-      estatus: "Vencido",
-    },
-    {
-      folio: "1632-45",
-      fechaHora: "14/11/2024 12:54:45 hrs",
-      vigenciaPase: "14/11/2024 2:54:45 hrs",
-      visitante: "Julian Alonso Pérez Torres",
-      tipoDePase: "Familia de Empleado",
-      motivo: "Personal",
-      estatus: "Vencido",
-    },
-    {
-      folio: "7845-12",
-      fechaHora: "14/11/2024 13:00:00 hrs",
-      vigenciaPase: "14/11/2024 15:00:00 hrs",
-      visitante: "Marina Hernández López",
-      tipoDePase: "Invitado",
-      motivo: "Evento",
-      estatus: "Activo",
-    },
-    {
-      folio: "4521-34",
-      fechaHora: "14/11/2024 10:30:00 hrs",
-      vigenciaPase: "14/11/2024 12:30:00 hrs",
-      visitante: "Carlos Gómez Sánchez",
-      tipoDePase: "Visita General",
-      motivo: "Reunión",
-      estatus: "Vencido",
-    },
-    {
-      folio: "9654-88",
-      fechaHora: "14/11/2024 09:45:00 hrs",
-      vigenciaPase: "14/11/2024 10:45:00 hrs",
-      visitante: "Sofía Martínez López",
-      tipoDePase: "Familia de Empleado",
-      motivo: "Personal",
-      estatus: "Vencido",
-    },
+//       visitante: "Julian Alonso Pérez Torres",
+//       tipoDePase: "Familia de Empleado",
+//       motivo: "Personal",
+//       estatus: "Vencido",
+//     },
+//     {
+//       folio: "1632-45",
+//       fechaHora: "14/11/2024 12:54:45 hrs",
+//       vigenciaPase: "14/11/2024 2:54:45 hrs",
+//       visitante: "Julian Alonso Pérez Torres",
+//       tipoDePase: "Familia de Empleado",
+//       motivo: "Personal",
+//       estatus: "Vencido",
+//     },
+//     {
+//       folio: "7845-12",
+//       fechaHora: "14/11/2024 13:00:00 hrs",
+//       vigenciaPase: "14/11/2024 15:00:00 hrs",
+//       visitante: "Marina Hernández López",
+//       tipoDePase: "Invitado",
+//       motivo: "Evento",
+//       estatus: "Activo",
+//     },
+//     {
+//       folio: "4521-34",
+//       fechaHora: "14/11/2024 10:30:00 hrs",
+//       vigenciaPase: "14/11/2024 12:30:00 hrs",
+//       visitante: "Carlos Gómez Sánchez",
+//       tipoDePase: "Visita General",
+//       motivo: "Reunión",
+//       estatus: "Vencido",
+//     },
+//     {
+//       folio: "9654-88",
+//       fechaHora: "14/11/2024 09:45:00 hrs",
+//       vigenciaPase: "14/11/2024 10:45:00 hrs",
+//       visitante: "Sofía Martínez López",
+//       tipoDePase: "Familia de Empleado",
+//       motivo: "Personal",
+//       estatus: "Vencido",
+//     },
 
-  ];
+//   ];
   
 
 export function PasesEntradaTable() {
+
+  const { data, isLoading} = useGetMyPases();
+
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -140,7 +144,7 @@ export function PasesEntradaTable() {
   const [globalFilter, setGlobalFilter] = React.useState("");
 
   const table = useReactTable({
-    data,
+    data: data || [],
     columns: pasesEntradaColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -165,10 +169,6 @@ export function PasesEntradaTable() {
 
   return (
     <div className="w-full">
-
-
-     
-
       <div className="flex justify-between items-center my-5">
         {/* Campo de búsqueda a la izquierda */}
         <input
@@ -223,9 +223,7 @@ export function PasesEntradaTable() {
 
       <div className="">
 
-      <ScrollArea className="h-96 w-full border rounded-md">
-
-
+      <ScrollArea className="h-100 w-full border rounded-md">
         <Table>
         <TableHeader className="bg-[#F0F2F5]">
         {table.getHeaderGroups().map((headerGroup) => (
@@ -268,7 +266,7 @@ export function PasesEntradaTable() {
                   colSpan={pasesEntradaColumns.length}
                   className="h-24 text-center"
                 >
-                  No hay registros disponibles{" "}
+                  { isLoading? ("Cargando registros..."):("No hay registros disponibles")}
                 </TableCell>
               </TableRow>
             )}

@@ -27,6 +27,7 @@ import {
 import { AddNoteModal } from "@/components/modals/add-note-modal";
 import { Nota, notasColumns } from "./notas-columns";
 import Link from "next/link";
+import { useGetMyPases } from "@/hooks/useGetMyPases";
 
 
 const data: Nota[] = [
@@ -67,6 +68,8 @@ const data: Nota[] = [
 
 
 export function NotasTable() {
+  
+
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -82,7 +85,7 @@ export function NotasTable() {
   const [globalFilter, setGlobalFilter] = React.useState("");
 
   const table = useReactTable({
-    data,
+    data: data || [],
     columns: notasColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,

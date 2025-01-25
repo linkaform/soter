@@ -11,7 +11,7 @@ const RondinesPage = () => {
     <div className="">
       <div className="flex flex-col">
         <div className="p-6 space-y-6 w-full mx-auto">
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {/* <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <Card>
               <CardContent className="pt-6">
                 <div className="flex flex-col justify-between items-start">
@@ -63,7 +63,7 @@ const RondinesPage = () => {
                 </div>
               </CardContent>
             </Card>
-          </div>
+          </div> */}
 
 
           <PageTitle title="Historial de Pases" />
