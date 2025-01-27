@@ -34,7 +34,7 @@ export default function LoginPage() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { setAuth, isAuth } = useAuthStore();
+  const { setAuth } = useAuthStore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -49,12 +49,12 @@ export default function LoginPage() {
     try {
       setIsLoading(true);
       const response = await getLogin(values.username, values.password);
-
-      console.log(response);
-
+  
+  
       if (response.success) {
-        setAuth(response.jwt, response.session_id);
-
+        const { jwt, session_id, user } = response; 
+        setAuth(jwt, session_id, user);
+  
         router.push("/");
       } else {
         form.setError("password", {
@@ -69,8 +69,6 @@ export default function LoginPage() {
     }
   };
 
-
-  console.log(isAuth)
 
 
 

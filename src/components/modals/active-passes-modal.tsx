@@ -7,7 +7,6 @@ import {
 } from "../ui/dialog";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
-import SearchInput from '../search-input';
 
 interface ActivePassesModalProps {
   title: string;
@@ -62,7 +61,6 @@ export const ActivePassesModal: React.FC<ActivePassesModalProps> = ({
       </DialogTitle>
     </DialogHeader>
 
-    <SearchInput />
 
     {/* Contenedor con scroll */}
     <div className="flex-1 overflow-y-auto max-h-[500px] space-y-0 border-t border-b mt-2">

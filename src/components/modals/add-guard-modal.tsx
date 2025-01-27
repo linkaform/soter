@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { Button } from "../ui/button";
 import {
@@ -8,14 +9,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Checkbox } from "@/components/ui/checkbox";
 import SearchInput from "../search-input";
+import { useGetSupportGuards } from "@/hooks/useGetSupportGuards";
+import Image from "next/image";
+import { useShiftStore } from "@/store/useShiftStore";
 
 interface AddGuardModalProps {
   title: string;
   children: React.ReactNode;
-  onAddGuardias: (selectedGuardias: GuardiaApoyo[]) => void;
+  onAddGuardias?: (selectedGuardias: GuardiaApoyo[]) => void;
 }
 
 type GuardiaApoyo = {
@@ -28,81 +30,23 @@ type GuardiaApoyo = {
 export const AddGuardModal: React.FC<AddGuardModalProps> = ({
   title,
   children,
-  onAddGuardias,
 }) => {
+  const { supportGuards, addSupportGuardMutation, isLoading } = useGetSupportGuards();
+  const { area, location, checkin_id } = useShiftStore();
 
+  const [selectedGuard, setSelectedGuard] = useState<any>("");
+  const [searchText, setSearchText] = useState<string>("");
 
+  const filteredGuards = supportGuards?.filter((guardia: any) =>
+    guardia.name.toLowerCase().includes(searchText.toLowerCase())
+  );
 
- 
- 
-  const data: GuardiaApoyo[] = [
-    {
-      id: "a1b2c3d4",
-      empleado: "Carlos Rodríguez Pérez",
-      avatar: "/image/empleado4.png",
-      status: "disponible",
-    },
-    {
-      id: "e5f6g7h8",
-      empleado: "Felipe Carranza Piña",
-      avatar: "/image/empleado5.png",
-      status: "disponible",
-    },
-    {
-      id: "i9j0k1l2",
-      empleado: "Jacinto Cruz López",
-      avatar: "/image/empleado6.png",
-      status: "disponible",
-    },
-    {
-      id: "m3n4o5p6",
-      empleado: "Daniel Sánchez Cruz",
-      avatar: "/image/empleado7.png",
-      status: "disponible",
-    },
-    {
-      id: "q7r8s9t0",
-      empleado: "Sebastián López",
-      avatar: "/image/empleado8.png",
-      status: "disponible",
-    },
-    {
-      id: "u1v2w3x4",
-      empleado: "Omar Pérez",
-      avatar: "/image/empleado9.png",
-      status: "disponible",
-    },
-    {
-      id: "y5z6a7b8",
-      empleado: "Camila Torres",
-      avatar: "/image/empleado10.png",
-      status: "disponible",
-    },
-  ];
-
-  const [selectedGuardias, setSelectedGuardias] = useState<string[]>([]);
-
-  const handleCheckboxChange = (id: string) => {
-    setSelectedGuardias((prevSelected) =>
-      prevSelected.includes(id)
-        ? prevSelected.filter((item) => item !== id)
-        : [...prevSelected, id]
-    );
-  };
-
-  const handleAgregar = () => {
-    const selectedData = data.filter((guardia) =>
-      selectedGuardias.includes(guardia.id)
-    );
-    onAddGuardias(selectedData);
-    setSelectedGuardias([]);
-  };
 
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
 
-      <DialogContent className="max-w-xl max-h-[90vh] overflow-scroll">
+      <DialogContent className="max-w-xl min-h-[50vh]   max-h-[90vh] overflow-scroll">
         <DialogHeader>
           <DialogTitle className="text-2xl text-center font-bold my-5">
             {title}
@@ -110,32 +54,56 @@ export const AddGuardModal: React.FC<AddGuardModalProps> = ({
         </DialogHeader>
 
 
-        <SearchInput />
+        {isLoading ? (
+          <div className="flex justify-center items-center min-h-[50vh]">
+            <div className="w-16 h-16 border-8 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+          </div>
+        ) : (
+          <>
 
+        <SearchInput
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+        />
 
         <div className="space-y-4">
-          {data.map((guardia) => (
+          {filteredGuards?.map((guardia: any) => (
             <div
-              key={guardia.id}
-              className="flex items-center justify-between px-4 py-2 border-b"
+              key={guardia.user_id}
+              onClick={() =>
+                setSelectedGuard((prev: any) =>
+                  prev?.user_id === guardia.user_id ? null : guardia
+                )
+              }
+              className={`flex items-center justify-between px-4 py-2 border-b cursor-pointer ${
+                selectedGuard?.user_id === guardia.user_id
+                  ? "bg-[#9abcea]"
+                  : "bg-white"
+              }`
+            }
             >
               <div className="flex items-center space-x-4">
-                <Avatar className="w-14 h-14">
-                  <AvatarImage src={guardia.avatar} alt={guardia.empleado} />
-                  <AvatarFallback>{guardia.empleado.charAt(0)}</AvatarFallback>
-                </Avatar>
+                <div className="relative w-14 h-14 rounded-full overflow-hidden">
+                  <Image
+                    src={guardia.picture}
+                    alt={`${guardia.name || "Sin nombre"} avatar`}
+                    layout="fill"
+                    objectFit="cover"
+                  />
+                </div>
+
                 <div>
-                  <p className="font-semibold">{guardia.empleado}</p>
-                  <p className="text-sm text-gray-500">{guardia.status}</p>
+                  <p className="font-semibold">{guardia?.name}</p>
+                  <p className="text-sm text-gray-500">{guardia?.status}</p>
                 </div>
               </div>
-              <Checkbox
-                checked={selectedGuardias.includes(guardia.id)}
-                onCheckedChange={() => handleCheckboxChange(guardia.id)}
-              />
             </div>
           ))}
         </div>
+
+        {filteredGuards?.length === 0 && (
+          <div className="text-center py-4">No se encontraron registros.</div>
+        )}
 
         <div className="flex gap-5">
           <DialogClose asChild>
@@ -143,19 +111,30 @@ export const AddGuardModal: React.FC<AddGuardModalProps> = ({
               Cancelar
             </Button>
           </DialogClose>
+          <Button
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white"
+            onClick={() => {
+              if (!selectedGuard) {
+                console.log("No hay guardias seleccionados.");
+                return;
+              }
 
-          <DialogClose asChild>
-            <Button
-              type="submit"
-              className="w-full bg-blue-500 hover:bg-blue-600 text-white"
-              onClick={() => {
-                handleAgregar();
-              }}
-            >
-              Agregar
-            </Button>
-          </DialogClose>
+              addSupportGuardMutation.mutate({
+                area,
+                location,
+                checkin_id: checkin_id,
+                support_guards: [
+                  { user_id: selectedGuard.user_id, name: selectedGuard.name },
+                ],
+              });
+            }}
+          >
+            Agregar
+          </Button>
         </div>
+
+        </>
+        )}
       </DialogContent>
     </Dialog>
   );

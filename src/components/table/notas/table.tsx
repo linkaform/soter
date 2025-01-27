@@ -25,48 +25,26 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { AddNoteModal } from "@/components/modals/add-note-modal";
-import { Nota, notasColumns } from "./notas-columns";
+import {notasColumns } from "./notas-columns";
 import Link from "next/link";
-
-
-const data: Nota[] = [
-  {
-    id: "a1b2c3d4",
-    empleado: "Juan Pérez",
-    apertura: "2024-10-28 13:28",
-    cierre: "2024-02-09 09:54:06",
-    nota: "Inventario pendiente",
-    comentarios: "Cumplimiento de tareas",
-  },
-  {
-    id: "e5f6g7h8",
-    empleado: "María López",
-    apertura: "2024-10-22 11:14", 
-    cierre: "2024-03-10 10:30:00",
-    nota: "Revisión de seguridad",
-    comentarios: "Todo en orden",
-  },
-  {
-    id: "i9j0k1l2",
-    empleado: "Carlos Díaz",
-    apertura: "2024-10-22 10:34",
-    cierre: "2024-04-11 11:15:30",
-    nota: "Actualización de registros",
-    comentarios: "Registros actualizados",
-  },
-  {
-    id: "m3n4o5p6",
-    empleado: "Ana García",
-    apertura: "2024-10-22 10:11",
-    cierre: "2024-05-12 12:45:15",
-    nota: "Mantenimiento de equipos",
-    comentarios: "Equipos en buen estado",
-  },
-];
+import { useGetNotes } from "@/hooks/useGetNotes";
 
 
 
 export function NotasTable() {
+
+
+  const {listnotes}  =  useGetNotes()
+
+
+  console.log("LISTNOTES", listnotes?.[0])
+
+
+
+
+
+
+
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -82,7 +60,7 @@ export function NotasTable() {
   const [globalFilter, setGlobalFilter] = React.useState("");
 
   const table = useReactTable({
-    data,
+    data: listnotes || [],
     columns: notasColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,

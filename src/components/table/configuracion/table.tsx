@@ -2,6 +2,8 @@
 "use client";
 
 import * as React from "react";
+
+
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -14,10 +16,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import Image from "next/image";
-
 import { Button } from "@/components/ui/button";
-
 import {
   Table,
   TableBody,
@@ -26,124 +25,80 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { AddGuardModal } from "@/components/modals/add-guard-modal";
-import Exit from "@/components/icon/exit";
-import { ExitGuardModal } from "@/components/modals/exit-guard-modal";
-import { Plus } from "lucide-react";
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { ChevronDown } from "lucide-react";
+import { useGetLocations } from "@/hooks/useGetLocations";
+import { useGetUsers } from "@/hooks/useGetUsers";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useGetShift } from "@/hooks/useGetShift";
-import { useGetSupportGuards } from "@/hooks/useGetSupportGuards";
-import { useShiftStore } from "@/store/useShiftStore";
-
-export function GuardiasApoyoTable() {
-
-
-    const { checkoutSupportGuardsMutation } = useGetSupportGuards();
-
-
-
-    const { shift } = useGetShift();
-
-    const { location, area } = useShiftStore();
 
 
 
 
 
-  
 
-
-  const handleConfirmCheckout = (guardia: any) => {
-    checkoutSupportGuardsMutation.mutate({
-      area,
-      location,
-      guards: [guardia.user_id], 
-    });
-  };
-
-
-
-  
-
-
-
-  const columns: ColumnDef<any>[] = [
-    {
-      id: "select",
-      header: ({ table }) => (
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false,
-    },
-    {
-      id: "avatar",
-      header: "Foto",
-      cell: ({ row }) => (
-        <div className="flex items-center">
-          <div className="relative w-14 h-14 rounded-full overflow-hidden">
-            <Image
-              src={row.original.picture}
-              alt={`${row.original.name || "Sin nombre"} avatar`}
-              fill
-              sizes="56px"
-              style={{ objectFit: "cover" }}
-              />
-          </div>
-        </div>
-      ),
-      enableSorting: false,
-      enableHiding: false,
-    },
-    {
-      accessorKey: "name",
-      header: "Empleado",
-      cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("name")}</div>
-      ),
-    },
-
-    {
-      id: "actions",
-      header: "",
-      cell: ({ row }) => {
-        // Mostrar ExitGuardModal solo si el turno no está cerrado
-        if (shift?.guard?.status_turn === "Turno Cerrado") {
-          return null; // No mostrar nada
-        }
+      
     
-        return (
-          <ExitGuardModal
-            title="Confirmación"
-            empleado={row.original.name}
-            onConfirm={() => handleConfirmCheckout(row.original)} // Llamada al confirmar
-          >
-            <div className="cursor-pointer">
-              <Exit />
-            </div>
-          </ExitGuardModal>
-        );
-      },
-      enableSorting: false,
-      enableHiding: false,
-    },
-  ];
 
 
+export function ConfiguracionTable() {
+
+
+
+    const {  locations } = useGetLocations();
+  
+        const { users } = useGetUsers();
+
+
+         const configuracionColumns: ColumnDef<any>[] = [
+ 
+          {
+            accessorKey: "nombre",
+            header: "Usuario",
+            cell: ({ row }) => <div>{row.getValue("nombre")}</div>,
+            enableSorting: true,
+          },  
+      
+          {
+            id: "area",
+            header: "Área",
+            cell: ({ row }) => {
+              return (
+                <div>
+                  {/* Texto con el área */}
+                  <div className="font-medium mb-2">{row.getValue("area")}</div>
+        
+                  {/* Checkboxes para las localizaciones */}
+                  <div className="space-y-2">
+                    {locations?.map((location) => (
+                      <div key={location} className="flex items-center">
+                        <Checkbox
+                          checked={row.original.selectedLocations?.includes(location)}
+                          onCheckedChange={(checked) => {
+                            const selected = row.original.selectedLocations || [];
+                            if (checked) {
+                              row.original.selectedLocations = [...selected, location];
+                            } else {
+                              row.original.selectedLocations = selected.filter(
+                                (loc: any) => loc !== location
+                              );
+                            }
+                          }}
+                          aria-label={`Select location ${location}`}
+                        />
+                        <span className="ml-2">{location}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            },
+            enableSorting: false,
+            enableHiding: false,
+          },
+        ];   
+        
+
+  
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -153,14 +108,14 @@ export function GuardiasApoyoTable() {
   const [rowSelection, setRowSelection] = React.useState({});
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
-    pageSize: 3,
+    pageSize: 5,
   });
 
   const [globalFilter, setGlobalFilter] = React.useState("");
 
   const table = useReactTable({
-    data: shift?.support_guards || [],
-    columns,
+    data: users || [],
+    columns: configuracionColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
@@ -184,35 +139,64 @@ export function GuardiasApoyoTable() {
 
   return (
     <div className="w-full">
-      <div className="mb-5">
-        <h1 className="text-2xl font-bold">Guardias de Apoyo</h1>
-      </div>
 
-      <div className="flex flex-row justify-between items-center mb-5 gap-2">
+
+
+      <div className="flex justify-between items-center my-5">
+        {/* Campo de búsqueda a la izquierda */}
         <input
           type="text"
-          placeholder="Buscar"
+          placeholder="Buscar en todos los campos..."
           value={globalFilter}
           onChange={(e) => setGlobalFilter(e.target.value)}
           className="border border-gray-300 rounded-md p-2 h-12 w-full max-w-xs"
         />
 
-        <AddGuardModal title="Guardias">
-          <Button
-            type="submit"
-            className={"w-full text-white bg-green-600 hover:bg-green-700"}
+        {/* Botones a la derecha */}
+        <div className="flex items-center justify-end space-x-6">
+
+
+
+          
       
-            disabled={shift?.guard?.status_turn === "Turno Cerrado"}
-          >
-            <Plus />
-            Guardia apoyo
-          </Button>
-        </AddGuardModal>
+
+      <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="ml-auto">
+              Columnas <ChevronDown />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {table
+              .getAllColumns()
+              .filter((column) => column.getCanHide())
+              .map((column) => {
+                return (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="capitalize"
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
+                    }
+                  >
+                    {column.id}
+                  </DropdownMenuCheckboxItem>
+                )
+              })}
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+      
+    </div>
+
+
       </div>
+
       <div className="">
         <Table>
-          <TableHeader className="bg-[#F0F2F5]">
-            {table.getHeaderGroups().map((headerGroup) => (
+        <TableHeader className="bg-[#F0F2F5]">
+        {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
@@ -249,21 +233,16 @@ export function GuardiasApoyoTable() {
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={columns.length}
+                  colSpan={configuracionColumns.length}
                   className="h-24 text-center"
                 >
-                  No hay registros disponibles{" "}
-                </TableCell>
+           No hay registros disponibles                </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} de{" "}
-          {table.getFilteredRowModel().rows.length} guardias seleccionados.
-        </div>
         <div className="space-x-2">
           <Button
             variant="outline"

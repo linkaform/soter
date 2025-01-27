@@ -11,21 +11,31 @@ import {
 } from "../ui/dialog";
 import { UseMutationResult } from "@tanstack/react-query";
 import { useShiftStore } from "@/store/useShiftStore";
+import { useGetShift } from "@/hooks/useGetShift";
 
-interface StartShiftModalProps {
+interface CloseShiftModalProps {
   title: string;
   children: React.ReactNode;
-  startShiftMutation: UseMutationResult<any, Error, void, void>
+  closeShiftMutation: UseMutationResult<any, Error, void, void>
 }
 
-export const StartShiftModal: React.FC<StartShiftModalProps> = ({
+export const CloseShiftModal: React.FC<CloseShiftModalProps> = ({
   title,
   children,
-  startShiftMutation
+  closeShiftMutation
 }) => {
 
+
+  const { shift } = useGetShift();
   
   const { area, location } = useShiftStore();
+
+
+  
+
+    const guardNames = shift?.support_guards
+    ?.map((guardia: { name: string }) => guardia.name)
+    .join(", ");
 
 
 
@@ -43,12 +53,16 @@ export const StartShiftModal: React.FC<StartShiftModalProps> = ({
 
         <div className="px-16 mb-5">
           <p className="text-center mb-5">
-            ¿Desea iniciar el turno en la {" "} 
+            ¿Seguro que quieres cerrar el turno en la {" "} 
             <span className="font-semibold">{area}</span>
           {" "}  en la
-            <span className="font-semibold"> {location}?</span>
+            <span className="font-semibold"> {location} </span>
+            <span className="">con los siguientes</span>
+
+            <span className="font-semibold"> {guardNames}?</span>
+
           </p>
-     
+         
         </div>
 
         <div className="flex gap-5">
@@ -60,7 +74,7 @@ export const StartShiftModal: React.FC<StartShiftModalProps> = ({
 
 
           <Button className="w-full  bg-blue-500 hover:bg-blue-600 text-white"
-             onClick={() => startShiftMutation.mutate()}
+             onClick={() => closeShiftMutation.mutate()}
           >
             Confirmar
           </Button>

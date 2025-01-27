@@ -5,15 +5,42 @@ import Fails from "@/components/icon/fails";
 import Concessioned from "@/components/icon/concessioned";
 import Vehicles from "@/components/icon/vehicles";
 import Badges from "@/components/icon/badges";
+import { useGetShift } from '@/hooks/useGetShift';
 
 const ActivitySummary = () => {
 
+
+    const { shift } = useGetShift()
+
+
+
+
+
+
     const items = [
-        { icon: <Guest />, title: "Invitados Dentro", count: 11 },
-        { icon: <Fails />, title: "Fallas Pendientes", count: 13 },
-        { icon: <Concessioned />, title: "Equipos Concesionados", count: 24 },
-        { icon: <Vehicles />, title: "Vehículos Estacionados", count: 35 },
-        { icon: <Badges />, title: "Gafetes Pendientes", count: 14 },
+        { 
+          icon: <Guest />, 
+          title: "Visitas Dentro", 
+          count: shift?.booth_stats?.in_invitees || 0,
+        },
+        { icon: <Fails />,
+          title: "Fallas Pendientes", 
+          count: shift?.booth_stats?.incidentes_pendites || 0,
+        },
+        { icon: <Concessioned />, 
+          title: "Equipos Concesionados",
+          count: shift?.booth_stats?.articulos_concesionados || 0,
+           },
+        { icon: <Vehicles />,
+           title: "Vehículos Estacionados",
+           count: shift?.booth_stats?.vehiculos_estacionados || 0,
+          },
+        { 
+          icon: <Badges />,           
+          title: "Gafetes Pendientes", 
+          count: shift?.booth_stats?.gefetes_pendientes || 0,
+        
+        },
       ];
 
   return (

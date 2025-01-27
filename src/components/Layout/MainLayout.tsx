@@ -6,14 +6,15 @@ import { Header } from "@/components/header";
 import useAuthStore from "@/store/useAuthStore";
 
 export const MainLayout = ({ children }: { children: React.ReactNode }) => {
-  const { isAuth } = useAuthStore(); // Obtén el estado de autenticación desde tu store
+  const { isAuth, user } = useAuthStore(); // Obtén el estado de autenticación desde tu store
   const router = useRouter(); // Hook para redirigir
 
   useEffect(() => {
-    if (!isAuth) {
+    if (!isAuth || !user) {
       // Redirige al usuario al login si no está autenticado
       router.push("/auth/login");
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuth, router]);
 
 
