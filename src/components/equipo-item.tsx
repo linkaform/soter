@@ -73,9 +73,9 @@ export const formSchema =
       {/* Confirmar Pase de entrada modal */}
       <div className="flex justify-between">
         {isCollapsed ? (<>
-        <h3 className="font-bold text-lg mb-3">Equipo</h3>
+        <h3 className="font-bold text-lg mb-3">{equipo?.tipo}</h3>
         </>) : (<>
-          <h3 className="font-bold text-lg mb-3">Datos del Equipo</h3>
+          <h3 className="font-bold text-lg mb-3">Datos del Equipo: {equipo?.tipo}</h3>
         </>)}
         <div className="flex justify-between gap-5">
           <button onClick={onToggleCollapse} className="text-blue-500">
@@ -142,7 +142,7 @@ export const formSchema =
                           <FormControl>
                           <Input placeholder="Nombre" {...field} 
                           onChange={(e) => {
-                            field.onChange(e); // Actualiza el valor en react-hook-form
+                            field.onChange(e); 
                             // handleSelectChange("placas", e.target.value); // Acción adicional
                           }}
                           value={field.value || ""} />
@@ -162,7 +162,7 @@ export const formSchema =
                           <FormControl>
                           <Input placeholder="Marca " {...field}
                            onChange={(e) => {
-                            field.onChange(e); // Actualiza el valor en react-hook-form
+                            field.onChange(e); 
                             // handleSelectChange("placas", e.target.value); // Acción adicional
                           }}
                           value={field.value || ""} />
@@ -182,7 +182,7 @@ export const formSchema =
                           <FormControl>
                           <Input placeholder="No. serie" {...field}
                           onChange={(e) => {
-                            field.onChange(e); // Actualiza el valor en react-hook-form
+                            field.onChange(e); 
                             // handleSelectChange("placas", e.target.value); // Acción adicional
                           }}
                           value={field.value || ""}  />
@@ -202,7 +202,7 @@ export const formSchema =
                           <FormControl>
                           <Input placeholder="Modelo" {...field} 
                           onChange={(e) => {
-                            field.onChange(e); // Actualiza el valor en react-hook-form
+                            field.onChange(e); 
                             // handleSelectChange("placas", e.target.value); // Acción adicional
                           }}
                           value={field.value || ""} />

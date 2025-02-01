@@ -164,87 +164,78 @@ export const RegisterIncomeModal: React.FC<RegisterIncomeModalProps> = ({
           <p className="text-sm">{data?.motivoVisita}</p>
         </div>
 
-   
-
         {data?.agregarEquipo && data?.equipos && (
-  <div className="">
-    <p className="text-2xl font-bold mb-2">Equipos</p>
-    <Accordion type="single" collapsible>
-      {data.equipos.map((equipo, index) => (
-        <AccordionItem key={index} value={`equipo-${index}`}>
-          <AccordionTrigger>{`Equipo ${index + 1}`}</AccordionTrigger>
-          <AccordionContent>
-            <p className="font-medium mb-1">
-              Tipo: <span className="">{equipo.tipoEquipo || "N/A"}</span>
-            </p>
-            <p className="font-medium mb-1">
-              Equipo: <span className="">{equipo.equipo || "N/A"}</span>
-            </p>
-            <p className="font-medium mb-1">
-              Marca: <span className="">{equipo.marcaEquipo || "N/A"}</span>
-            </p>
-            <p className="font-medium mb-1">
-              Modelo: <span className="">{equipo.modeloEquipo || "N/A"}</span>
-            </p>
-            <p className="font-medium mb-1">
-              Número de Serie:{" "}
-              <span className="">{equipo.numeroSerieEquipo || "N/A"}</span>
-            </p>
-            <p className="font-medium mb-1">
-              Color: <span className="">{equipo.colorEquipo || "N/A"}</span>
-            </p>
-          </AccordionContent>
-        </AccordionItem>
-      ))}
-    </Accordion>
-  </div>
-)}
+          <div className="">
+            <p className="text-2xl font-bold mb-2">Equipos</p>
+            <Accordion type="single" collapsible>
+              {data.equipos.map((equipo, index) => (
+                <AccordionItem key={index} value={`equipo-${index}`}>
+                  <AccordionTrigger>{`Equipo ${index + 1}`}</AccordionTrigger>
+                  <AccordionContent>
+                    <p className="font-medium mb-1">
+                      Tipo: <span className="">{equipo.tipoEquipo || "N/A"}</span>
+                    </p>
+                    <p className="font-medium mb-1">
+                      Equipo: <span className="">{equipo.equipo || "N/A"}</span>
+                    </p>
+                    <p className="font-medium mb-1">
+                      Marca: <span className="">{equipo.marcaEquipo || "N/A"}</span>
+                    </p>
+                    <p className="font-medium mb-1">
+                      Modelo: <span className="">{equipo.modeloEquipo || "N/A"}</span>
+                    </p>
+                    <p className="font-medium mb-1">
+                      Número de Serie:{" "}
+                      <span className="">{equipo.numeroSerieEquipo || "N/A"}</span>
+                    </p>
+                    <p className="font-medium mb-1">
+                      Color: <span className="">{equipo.colorEquipo || "N/A"}</span>
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        )}
 
-
-{data?.agregarVehiculo && data?.vehiculos && (
-  <div className="">
-    <p className="text-2xl font-bold mb-2">Vehículos</p>
-    <Accordion type="single" collapsible>
-      {data.vehiculos.map((vehiculo, index) => (
-        <AccordionItem key={index} value={`vehiculo-${index}`}>
-          <AccordionTrigger>{`Vehículo ${index + 1}`}</AccordionTrigger>
-          <AccordionContent>
-            <p className="font-medium mb-1">
-              Tipo de Vehículo:{" "}
-              <span className="">{vehiculo.tipoVehiculo || "N/A"}</span>
-            </p>
-            <p className="font-medium mb-1">
-              Marca:{" "}
-              <span className="">{vehiculo.marcaVehiculo || "N/A"}</span>
-            </p>
-            <p className="font-medium mb-1">
-              Modelo:{" "}
-              <span className="">{vehiculo.modeloVehiculo || "N/A"}</span>
-            </p>
-            <p className="font-medium mb-1">
-              Estado:{" "}
-              <span className="">{vehiculo.estadoVehiculo || "N/A"}</span>
-            </p>
-            <p className="font-medium mb-1">
-              Placas:{" "}
-              <span className="">{vehiculo.placasVehiculo || "N/A"}</span>
-            </p>
-            <p className="font-medium mb-1">
-              Color:{" "}
-              <span className="">{vehiculo.colorVehiculo || "N/A"}</span>
-            </p>
-          </AccordionContent>
-        </AccordionItem>
-      ))}
-    </Accordion>
-  </div>
-)}
-
-
-
-     
-
-
+        {data?.agregarVehiculo && data?.vehiculos && (
+          <div className="">
+            <p className="text-2xl font-bold mb-2">Vehículos</p>
+            <Accordion type="single" collapsible>
+              {data.vehiculos.map((vehiculo, index) => (
+                <AccordionItem key={index} value={`vehiculo-${index}`}>
+                  <AccordionTrigger>{`Vehículo ${index + 1}`}</AccordionTrigger>
+                  <AccordionContent>
+                    <p className="font-medium mb-1">
+                      Tipo de Vehículo:{" "}
+                      <span className="">{vehiculo.tipoVehiculo || "N/A"}</span>
+                    </p>
+                    <p className="font-medium mb-1">
+                      Marca:{" "}
+                      <span className="">{vehiculo.marcaVehiculo || "N/A"}</span>
+                    </p>
+                    <p className="font-medium mb-1">
+                      Modelo:{" "}
+                      <span className="">{vehiculo.modeloVehiculo || "N/A"}</span>
+                    </p>
+                    <p className="font-medium mb-1">
+                      Estado:{" "}
+                      <span className="">{vehiculo.estadoVehiculo || "N/A"}</span>
+                    </p>
+                    <p className="font-medium mb-1">
+                      Placas:{" "}
+                      <span className="">{vehiculo.placasVehiculo || "N/A"}</span>
+                    </p>
+                    <p className="font-medium mb-1">
+                      Color:{" "}
+                      <span className="">{vehiculo.colorVehiculo || "N/A"}</span>
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        )}
             
          <div className="flex gap-5 my-5">
               <DialogClose asChild>

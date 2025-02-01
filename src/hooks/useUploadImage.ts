@@ -7,8 +7,7 @@ export const useUploadImage = (img:File|null) => {
     queryKey: ["uploadImage"], 
     queryFn: async () => {
             const data = await uploadImage(img); 
-            console.log("INFOOO",data)
-            return data; 
+            return {file_name:data?.file_name, file_url:data?.file}; 
     },
     
     refetchOnWindowFocus: true, 

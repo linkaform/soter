@@ -1,6 +1,8 @@
 import { clsx, type ClassValue } from "clsx"
-import { Component } from "react";
 import { twMerge } from "tailwind-merge"
+import Swal from 'sweetalert2'
+
+const blue500="#2b7fff"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -70,8 +72,33 @@ export function fileToBase64(file:File):Promise<string | null>{
   });
 }
 
-export function quitarAcentosYMinusculas(str:string) {
+export function quitarAcentosYMinusculasYEspacios(str: string) {
   const noAcentos = str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   const lower = noAcentos.toLowerCase();
-  return lower;
+  const sinEspacios = lower.replace(/\s+/g, '_');
+  return sinEspacios;
+}
+
+export const formatDateToString = (date: Date): string => {
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0'); 
+  const day = date.getDate().toString().padStart(2, '0'); 
+  const hours = date.getHours().toString().padStart(2, '0'); 
+  const minutes = date.getMinutes().toString().padStart(2, '0'); 
+  const seconds = date.getSeconds().toString().padStart(2, '0'); 
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+};
+
+export function capitalizeOnlyFirstLetterDelete_(text: string) {
+  const textWithSpaces = text.replace(/_/g, ' ');
+  return textWithSpaces.charAt(0).toUpperCase() + textWithSpaces.slice(1).toLowerCase();
+}
+
+export function sweetAlert(icon="success", title="Confirmación", text:string ,color=blue500){
+  Swal.fire({
+    icon: icon,
+    title:title,
+    text: text,
+    confirmButtonColor:color,
+  });
 }

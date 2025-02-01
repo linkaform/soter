@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -19,8 +17,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { EntryPassUpdateModal } from "@/components/modals/add-pass-update-modal";
-import { useGetCatalogoPaseNoJwt } from "@/hooks/useGetCatologoPaseNoJwt";
 import { Input } from "@/components/ui/input";
 import { catalogoColores } from "@/lib/utils";
 import { useGetVehiculos } from "@/hooks/useGetVehiculos";
@@ -52,9 +48,6 @@ export const formSchema =
     tiposCatPadre : string[]
     modelosCatPadre : string[]
     marcasCatPadre : string[]
-    // setTiposCat: (value: string[]) => void;
-    // setModelosCat: (value: string[]) => void;
-    // setMarcasCat: (value: string[]) => void;
     vehicle: Vehiculo;
   }
 
@@ -72,7 +65,6 @@ export const formSchema =
       const [marcasCat, setMarcasCat] = useState<string[]>(marcasCatPadre);
       const [modelosCat, setModelosCat] = useState<string[]>(modelosCatPadre);
 
-      const [info, setInfo] = useState(false);
       const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -137,9 +129,9 @@ export const formSchema =
       {/* Confirmar Pase de entrada modal */}
       <div className="flex justify-between">
         {isCollapsed ? (<>
-        <h3 className="font-bold text-lg mb-3">Vehículo</h3>
+        <h3 className="font-bold text-lg mb-3">{vehicle?.tipo}</h3>
         </>) : (<>
-          <h3 className="font-bold text-lg mb-3">Datos del Vehículo</h3>
+          <h3 className="font-bold text-lg mb-3">Datos del Vehículo : {vehicle?.tipo}</h3>
         </>)}
         <div className="flex justify-between gap-5">
           <button onClick={onToggleCollapse} className="text-blue-500">
@@ -306,7 +298,7 @@ export const formSchema =
                       <FormControl>
                         <Input placeholder="Matrícula" {...field} 
                           onChange={(e) => {
-                            field.onChange(e); // Actualiza el valor en react-hook-form
+                            field.onChange(e); 
                             // handleSelectChange("placas", e.target.value); // Acción adicional
                           }}
                           value={field.value || ""}

@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 export const useCatalogoPaseArea = (location:string) => {
   const { data: data, isLoading, error, isFetching, refetch } = useQuery<any>({
     queryKey: ["getCatalogoPaseArea", location], 
+    enabled:false,
     queryFn: async () => {
         const data = await getCatalogoPasesArea({ location }); 
         return data.response?.data.areas_by_location; 

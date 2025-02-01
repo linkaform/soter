@@ -1,0 +1,117 @@
+import React, { useEffect, useState } from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Areas, Comentarios } from "@/hooks/useCreateAccessPass";
+
+export const formSchema = 
+    z.array(
+      z.object({
+        tipo_comentario: z.string().optional(),
+        comentario_pase: z.string().optional(),
+      })
+    );
+
+  interface ComentariosItemProps {
+    isCollapsed: boolean;
+    onToggleCollapse: () => void;
+    index: number;
+    onDelete: () => void;
+    comentario: Comentarios;
+    tipo:string;
+    updateComentario: (newComentario: string) => void;
+  }
+
+  const ComentariosItem: React.FC<ComentariosItemProps> = ({isCollapsed, onToggleCollapse, onDelete, comentario, tipo, updateComentario})=>  {
+
+      const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+          areas: [{ tipo_comentario: "", comentario_pase: "" }],
+        },
+    });
+
+    useEffect(() => {
+      if(comentario?.tipo_comentario !==""){
+        loadNewArea(comentario)
+      }
+    }, [])
+
+    function loadNewArea(item:Comentarios){
+      form.setValue('tipo_comentario', tipo)
+      form.setValue('comentario_pase', item?.comentario_pase)
+    }
+
+    const onComentarioChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newComentario = e.target.value;
+        if (newComentario === "") {
+            onDelete();
+          } else {
+            updateComentario(newComentario);
+          }
+      };
+
+  return (
+    <div className="p-8 mb-4">
+      <div className="flex justify-between">
+        {isCollapsed ? (<>
+        <h3 className="font-bold text-lg mb-3 w-80 truncate">{comentario.comentario_pase}</h3>
+        </>) : (<>
+          <h3 className="font-bold text-lg mb-3 w-96 truncate">Datos del comentario o instrucción: {comentario.comentario_pase}</h3>
+        </>)}
+        <div className="flex justify-between gap-5">
+          <button onClick={onToggleCollapse} className="text-blue-500">
+            {isCollapsed ? 'Abrir' : 'Cerrar'}
+          </button>
+          
+          <button onClick={onDelete} className="text-blue-500">
+              {isCollapsed ? 'Eliminar' : 'Eliminar'}
+          </button>
+        </div>
+        
+      </div>
+        <Form {...form}> 
+          <form className="space-y-5">
+          {!isCollapsed && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5" >
+                {/* Comentario */}
+                <FormField
+                  control={form.control}
+                  name="comentario_pase"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Comentario o Instrucción:</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Comentario" {...field} 
+                          onChange={(e) => {
+                            field.onChange(e); // Actualiza el valor en react-hook-form
+                            console.log("VALORRRR",e)
+                            onComentarioChange(e);
+                          }}
+                          value={field.value || ""}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                </div>
+          )}
+          </form> 
+         </Form>
+      </div>
+  );
+};
+
+export default ComentariosItem;

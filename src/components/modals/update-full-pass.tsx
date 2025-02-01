@@ -40,6 +40,7 @@ import ComentariosList from "@/components/comentarios-list";
 import DateTime from "@/components/dateTime";
 import { MisContactosModal } from "@/components/modals/user-contacts";
 import { Contacto } from "@/lib/get-user-contacts";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 
 export const linkSchema = z.object({
   link: z.string().url({ message: "Por favor, ingresa una URL válida." }),  // Asegura que el link sea una URL válida
@@ -159,10 +160,15 @@ export const formSchema = z
     message: "Se requiere un email o teléfono.", 
     path:['email']
   });
-const PaseEntradaPage = () => {
-  const [tipoVisita, setTipoVisita] = useState("fecha_fija");
-  const [config_dias_acceso, set_config_dias_acceso] = useState<string[]>([]);
-  const [config_dia_de_acceso, set_config_dia_de_acceso] = useState("cualquier_día");
+
+  interface updatedFullPassModalProps{
+    dataPass:any;
+    children: React.ReactNode;
+  }
+const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, children }) => {
+  const [tipoVisita, setTipoVisita] = useState(dataPass.tipo_visita_pase || "fecha_fija");
+  const [config_dias_acceso, set_config_dias_acceso] = useState<string[]>(dataPass.config_dias_acceso||[]);
+  const [config_dia_de_acceso, set_config_dia_de_acceso] = useState(dataPass.config_dia_de_acceso);
   const [isSuccess, setIsSuccess] = useState(false);
   const [modalData, setModalData] = useState<any>(null);
   const { data: ubicaciones, isLoading: loadingUbicaciones } = useCatalogoPaseLocation();
@@ -173,26 +179,28 @@ const PaseEntradaPage = () => {
   const userIdSoter = parseInt(localStorage.getItem("userId_soter") || "0", 10);
   const protocol = window.location.protocol;  
   const host = window.location.host;  
-  const [enviar_correo_pre_registro, set_enviar_correo_pre_registro] = useState<string[]>([]);
+  const [enviar_correo_pre_registro, set_enviar_correo_pre_registro] = useState<string[]>(dataPass.enviar_correo_pre_registro);
   const { data: configLocation, isLoading: loadingConfigLocation, refetch:refetchConfLocation } = useGetConfSeguridad(ubicacionSeleccionada);
   const [formatedDocs, setFormatedDocs] = useState<string[]>([])
 
+  const [isActiveRangoFecha, setIsActiveRangoFecha] = useState(dataPass.tipo_visita_pase=="rango_de_fechas");
   const {data:catAreas, isLoading: loadingCatAreas, refetch:refetchAreas } = useCatalogoPaseArea(ubicacionSeleccionada)
 
-  const [comentariosList, setComentariosList] = useState<Comentarios[]>([]);
-  const [areasList, setAreasList] = useState<Areas[]>([]);
+  const [comentariosList, setComentariosList] = useState<Comentarios[]>(dataPass.comentarios);
+  const [areasList, setAreasList] = useState<Areas[]>(dataPass.areas);
 
-  const [isActive, setIsActive] = useState(false);
-  const [isActiveSMS, setIsActiveSMS] = useState(false);
-  const [isActiveFechaFija, setIsActiveFechaFija] = useState(true);
-  const [isActiveRangoFecha, setIsActiveRangoFecha] = useState(false);
-  const [isActivelimitarDias, setIsActiveLimitarDias] = useState(true);
+  const [isActive, setIsActive] = useState(dataPass.enviar_correo_pre_registro.includes("enviar_correo_pre_registro"));
+  const [isActiveSMS, setIsActiveSMS] = useState(dataPass.enviar_correo_pre_registro.includes("enviar_sms_pre_registro"));
+  const [isActiveFechaFija, setIsActiveFechaFija] = useState(dataPass.tipo_visita_pase=="fecha_fija");
+  const [isActivelimitarDias, setIsActiveLimitarDias] = useState(dataPass.config_limitar_acceso >0 ? true: false);
 
   const [isActiveCualquierDia, setIsActiveCualquierDia] = useState(true);
   const [isActivelimitarDiasSemana, setIsActiveLimitarDiasSemana] = useState(false);
 
   const [isActiveAdvancedOptions, setIsActiveAdvancedOptions] = useState(false);
-  const [date, setDate] = React.useState<Date| "">("");
+  
+  const [date, setDate] = React.useState<Date| "">(dataPass.tipo_visita_pase=="fecha_fija" ?
+        new Date(dataPass.fechaFija): new Date(dataPass.fecha_desde_visita));
   const [fechaDesde, setFechaDesde] = useState<string>('');
   const [selected, setSelected] = useState<Contacto |null>(null);
   const [isOpenModal, setOpenModal] = useState(false);
@@ -200,36 +208,38 @@ const PaseEntradaPage = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      nombre: "",
-      email: "",
-      telefono: "",
-      ubicacion:"",
-      tema_cita:"",
-      descripcion:"",
-      perfil_pase: "Visita General",
-      status_pase:"Proceso",
-      visita_a: userNameSoter,
+      nombre: dataPass.nombre,
+      email: dataPass.email,
+      telefono: dataPass.telefono,
+      ubicacion: dataPass.ubicacion,
+      tema_cita:dataPass.tema_cita,
+      descripcion:dataPass.descripcion,
+      perfil_pase: dataPass.perfil_pase,
+      status_pase:dataPass.status_pase,
+      visita_a: dataPass?.visita_a.lenght > 0 ? dataPass?.visita_a[0].nombre : "",
       custom: true,
       link:{
-        link :`${protocol}//${host}/dashboard/pase-update`,
-        docs : formatedDocs,
-        creado_por_id: userIdSoter,
-        creado_por_email: userEmailSoter
+        link :dataPass.link.link,
+        docs :dataPass.link.docs,
+        creado_por_id: dataPass.link.creado_por_id,
+        creado_por_email: dataPass.link.creado_por_email
     },
       enviar_correo_pre_registro:enviar_correo_pre_registro, 
-      tipo_visita_pase: "fecha_fija",
-      fechaFija: "",
-      fecha_desde_visita: "",
-      fecha_desde_hasta: "",
-      config_dia_de_acceso: "cualquier_día",
-      config_dias_acceso: config_dias_acceso,
-      config_limitar_acceso: 1,
-      areas: [],
-      comentarios: [],
+      tipo_visita_pase: tipoVisita,
+      fechaFija: dataPass.tipo_visita_pase=="fecha_fija" ?
+        new Date(dataPass.fechaFija): new Date(dataPass.fecha_desde_visita),
+      fecha_desde_visita: dataPass.tipo_visita_pase==="fecha_fija"? 
+        (new Date(dataPass.fechaFija) || new Date(dataPass.fecha_desde_visita) ) : ( new Date(dataPass.fecha_desde_visita) ),
+      fecha_desde_hasta: dataPass.fecha_desde_hasta !=="" ? new Date(dataPass.fecha_desde_hasta) : "",
+      config_dia_de_acceso:config_dia_de_acceso === "limitar_días_de_acceso" ? config_dia_de_acceso : "cualquier_día",
+      config_dias_acceso:config_dias_acceso,
+      config_limitar_acceso: Number(dataPass.config_limitar_acceso) || 0,
+      areas: areasList,
+      comentarios: comentariosList,
       enviar_pre_sms:{
         from: "enviar_pre_sms",
-        mensaje: "SOY UN MENSAJE",
-        numero: "528120084370",
+        mensaje: "prueba",
+        numero: dataPass.telefono,
       },
     },
   });
@@ -246,13 +256,8 @@ const PaseEntradaPage = () => {
 
   const errors = form.formState.errors;
 
-  // useEffect(()=>{
-  //   console.error("ERRORES", errors)
-  // },[errors])
-
   useEffect(()=>{
     if(selected){
-      console.log("contactos", selected)
       form.setValue("nombre", selected.nombre || "");
       form.setValue("email", selected.email || "");
       form.setValue("telefono", selected.telefono || "");
@@ -260,7 +265,6 @@ const PaseEntradaPage = () => {
       closeModalContactos()
     }
   }, [selected])
-
 
   useEffect(()=>{
     if(ubicacionSeleccionada){
@@ -289,6 +293,7 @@ const PaseEntradaPage = () => {
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
     console.log("Formulario enviado con los siguientes datos:", data);
+
     const formattedData = {
       nombre: data.nombre,
       email: data.email,
@@ -337,10 +342,8 @@ const PaseEntradaPage = () => {
 
   const handleToggleEmail = () => {
     if (form.getValues("email")=="") { 
-      console.log("DATOOSSS", form.getValues("email"))
       form.setError("email", { type: "manual", message: "El campo email debe tener datos." });
     } else {
-      console.log("ELSEEEE", form.getValues("email"))
       form.clearErrors("email");
     }
 
@@ -389,6 +392,7 @@ const PaseEntradaPage = () => {
     }
     setTipoVisita(tipo)
   };
+
   const handleToggleDiasAcceso = (tipo:string) => {
     if(tipo =="cualquier_día"){
       setIsActiveCualquierDia(true)
@@ -427,8 +431,18 @@ const PaseEntradaPage = () => {
 
 
   return (
-    <div className="p-8">
-      <EntryPassModal
+    <Dialog >
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-scroll">
+        <DialogHeader>
+          <DialogTitle className="text-2xl text-center  font-bold my-5">
+            Editar pase
+          </DialogTitle>
+        </DialogHeader>
+
+
+        <div className="p-8">
+        <EntryPassModal
           title={"Confirmación"}
           data={modalData}
           isSuccess={isSuccess}
@@ -437,11 +451,8 @@ const PaseEntradaPage = () => {
         />
 
       <div className="flex flex-col space-y-5 max-w-3xl mx-auto">
-        <div className="text-center">
-          <h1 className="font-bold text-2xl">Crear pase de entrada</h1>
-        </div>
 
-        <div className="flex justify-between">
+        {/* <div className="flex justify-between">
           <p className="font-bold text-xl">Sobre la visita</p>
           
           <Button
@@ -455,7 +466,7 @@ const PaseEntradaPage = () => {
           <MisContactosModal title="Mis Contactos" setSelected={setSelected} children={undefined} isOpenModal={isOpenModal} closeModal={closeModalContactos}>
           </MisContactosModal> 
 
-        </div>
+        </div> */}
 
         <div className="">
           <p className="font-bold">Tipo de pase : <span className="font-normal" > Visita General</span></p>
@@ -476,8 +487,6 @@ const PaseEntradaPage = () => {
                     />
               </>)}
                 
-
-
               <FormField
                 control={form.control}
                 name="nombre"
@@ -487,13 +496,12 @@ const PaseEntradaPage = () => {
                       <span className="text-red-500">*</span> Nombre Completo:
                     </FormLabel>{" "}
                     <FormControl>
-                      <Input placeholder="Nombre Completo" {...field} value={`${selected?.nombre||""}`}/>
+                      <Input placeholder="Nombre Completo" {...field} value={`${selected?.nombre||dataPass.nombre}`}/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -510,7 +518,7 @@ const PaseEntradaPage = () => {
                         onChange={(e) => {
                           field.onChange(e); // Asegúrate de seguir actualizando React Hook Form
                         }}
-                        value={`${selected?.email||""}`}
+                        value={`${selected?.email||dataPass.email}`}
                         />
                       </FormControl>
                       <FormMessage />
@@ -529,7 +537,7 @@ const PaseEntradaPage = () => {
                       <FormControl>
                         <PhoneInput
                           {...field}
-                          value={`${selected?.telefono||""}`}
+                          value={`${selected?.telefono||dataPass.telefono}`}
                           onChange={(value) => {
                             form.setValue("telefono", value || "");
                           }}
@@ -860,6 +868,8 @@ const PaseEntradaPage = () => {
                                 handleFechaDesdeChange(e); // Guardar la fecha seleccionada en el estado
 
                               }}
+                              value={field.value || new Date(dataPass.fecha_desde_visita)}
+                            //   value={new Date(dataPass.fecha_desde_visita)}
                             />
                           </FormControl>
                           <FormMessage />
@@ -876,6 +886,7 @@ const PaseEntradaPage = () => {
                           </FormLabel>
                           <FormControl>
                             <Input
+                              value={field.value || (fechaDesde ? getNextDay(fechaDesde) : new Date().toISOString().split('T')[0])}
                               type="date"
                               {...field}
                               min={fechaDesde ? getNextDay(fechaDesde) : new Date().toISOString().split('T')[0]}
@@ -1065,14 +1076,16 @@ const PaseEntradaPage = () => {
                   catAreas={catAreas}
                   loadingCatAreas={loadingCatAreas} />
               </> ) }
-
-            <div className="font-bold text-xl">Comentarios/ Instrucciones:</div>
-            <ComentariosList
-                comentarios={comentariosList}
-                setComentarios={setComentariosList}
-                location={ubicacionSeleccionada}
-                tipo={"Pase"}
-               />
+            {comentariosList && comentariosList.length>0?(<>
+                <div className="font-bold text-xl">Comentarios/ Instrucciones:</div>
+                <ComentariosList
+                    comentarios={comentariosList}
+                    setComentarios={setComentariosList}
+                    location={ubicacionSeleccionada}
+                    tipo={"Pase"}
+                />
+            </>):null}
+            
 
             {loadingAreas == false && loadingConfigLocation == false && loadingUbicaciones == false ? (<>
               <div className="text-center">
@@ -1088,8 +1101,10 @@ const PaseEntradaPage = () => {
      
       </div>
     </div>
+    </DialogContent>
+    </Dialog>
   );
 };
 
-export default PaseEntradaPage;
+export default UpdateFullPassModal;
 

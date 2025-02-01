@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
+  FormLabel,
 } from "@/components/ui/form";
 
 import { useGetCatalogoPaseNoJwt } from "@/hooks/useGetCatologoPaseNoJwt";
@@ -86,14 +87,18 @@ export default function PaseUpdate () {
     const [fotografia, setFotografia] = useState<Imagen[] | "">([])
     const [identificacion, setIdentificacion] = useState<Imagen[] | "">([])
 
+
+    const [errorFotografia, setErrorFotografia] = useState("")
+    const [errorIdentificacion, setErrorIdentificacion] = useState("")
+
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
         grupo_vehiculos:[],
-        grupos_equipos:[],
+        grupo_equipos:[],
         status_pase:'Activo',
-        walkin_fotografia:fotografia,
-        walkin_identificacion:identificacion,
+        walkin_fotografia:[],
+        walkin_identificacion:[],
         folio: "",
         account_id: 0,
         nombre:"",
@@ -106,7 +111,7 @@ export default function PaseUpdate () {
     const onSubmit = (data: z.infer<typeof formSchema>) => {
     const formattedData = {
         grupo_vehiculos: vehicles,
-        grupos_equipos: equipos,
+        grupo_equipos: equipos,
         status_pase: data.status_pase,
         walkin_fotografia:fotografia,
         walkin_identificacion:identificacion,
@@ -117,20 +122,39 @@ export default function PaseUpdate () {
         email:dataCatalogos?.pass_selected.email,
         telefono:dataCatalogos?.pass_selected.telefono
     };
+    if (showIneIden?.includes("foto") && fotografia.length<=0) {
+        setErrorFotografia("Este campo es requerido.");
+    }else{
+      console.log("GUIIONNNN DFOTOTO")
+      setErrorFotografia("-")
+    }
+
+    if (showIneIden?.includes("iden") && identificacion.length<=0) {
+        setErrorIdentificacion("Este campo es requerido.")
+    }else{
+      console.log("GUIIONNNN INDEN")
+      setErrorIdentificacion("-")
+    }
+    
     setModalData(formattedData);
-    setIsSuccess(true);
     };
 
+    useEffect(()=>{
+      console.log("qei pasaa",errorFotografia, errorIdentificacion)
+      if (errorFotografia === "-" && errorIdentificacion === "-") {
+        setIsSuccess(true); // Si no hay errores, mostramos el modal
+    } else {
+        setIsSuccess(false); // Si hay algún error, no mostramos el modal
+    }
+    },[errorFotografia,errorIdentificacion ])
+
     const handleCheckboxChange = (name:string) => {
-    //const { name, checked } = event.target;
     if (name === "agregar-equipos") {
         setAgregarEquiposActive(!agregarEquiposActive);
     } else if (name === "agregar-vehiculos") {
         setAgregarVehiculosActive(!agregarVehiculosActive);
     }
     };
-
-
     if(loadingDataCatalogos){
       return(
         <div className="flex justify-center items-center mt-10">
@@ -148,6 +172,12 @@ export default function PaseUpdate () {
       )
     }
 
+    const closeModal = () => {
+      console.log("CERRARR")
+      setErrorFotografia("")
+      setErrorIdentificacion("")
+      setIsSuccess(false);  // Reinicia el estado para que el modal no se quede abierto.
+    };
 return (
 
     <div className="p-8">
@@ -158,6 +188,7 @@ return (
           data={modalData}
           isSuccess={isSuccess}
           setIsSuccess={setIsSuccess}
+          onClose={closeModal}
         />
 
         <div className="flex flex-col flex-wrap space-y-5 max-w-5xl mx-auto">
@@ -198,25 +229,31 @@ return (
               </div>
               
 
-              <div className="flex justify-between "> {/* Cambié flex-col a flex-row */}
+              <div className="flex justify-between "> 
                 {showIneIden?.includes("foto")&& 
                   <div className="w-full sm:w-1/3 md:w-1/2 lg:w-1/2 lg:mr-4 sm:mr-4">
                       <LoadImage
-                      titulo={"Fotografía"}
+                      id="fotografia" //este identificador de preferencia ponerlo sin espacios, minusculas y sin acentos
+                      titulo={"Fotografía"} //este es el nombre que se mostrará y id es el que se usara internamente para diferenciar las instancias
                       img={fotografia}
                       setImg={setFotografia}
                       showWebcamOption={true}
+                      setErrorImagen={setErrorFotografia}
                       facingMode="user"
                       />
+                      {errorFotografia !=="" && <span className="text-red-500 text-sm">{errorFotografia}</span>}
                   </div>}
                   {showIneIden?.includes("iden")&& <div className="w-full sm:w-1/3 md:w-1/2 lg:w-1/2 lg:mr-4 sm:mr-4">
                       <LoadImage
+                      id="identificacion"
                       titulo={"Identificación"}
                       img={identificacion}
                       setImg={setIdentificacion}
                       showWebcamOption={true}
+                      setErrorImagen={setErrorIdentificacion}
                       facingMode="environment"
                       />
+                      {errorIdentificacion !=="" && <span className="text-red-500 text-sm">{errorIdentificacion}</span>}
                   </div>}
               </div> 
       
@@ -280,7 +317,7 @@ return (
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8"> 
               <div className="text-center mt-10 flex justify-center">
                 <Button
-                  className="bg-blue-500 hover:bg-blue-600 text-white w-full sm:w-2/3 md:w-1/2 lg:w-1/2"
+                  className="bg-blue-500 hover:bg-blue-600 text-white w-full sm:w-2/3 md:w-1/3 lg:w-1/3"
                   variant="secondary"
                   type="submit"
                 >
@@ -312,7 +349,7 @@ return (
                 </div>
 
                 <div className="w-full flex gap-2">
-                <p className="font-bold whitespace-nowrap">Teléfono : </p>
+                <p className="font-bold whitespace-nowrap">Fecha : </p>
                 <p className="text-sm">{dataCatalogos?.pass_selected.fecha_de_expedicion}</p>
                 </div>
             </div>

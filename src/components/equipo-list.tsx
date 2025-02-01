@@ -26,78 +26,57 @@ import EquipoItem from "./equipo-item";
 
 interface EquipoListProps {
     equipos: Equipo[];
-    setEquipos: (vehicle: Equipo[])=> void
+    setEquipos: (equipo: Equipo[])=> void
   }
 
   export const formSchema = 
-    z.array(
-      z.object({
-        tipo: z.string().refine((val) => val.trim().length > 0, {
-          message: "El tipo es obligatorio",
-        }),
-        marca: z.string().optional(),
-        modelo: z.string().optional(),
-        nombre: z.string().optional(),
-        serie: z.string().optional(),
-        color: z.string().optional()
-      })
-    );
+    z.object({
+      tipo: z.string().min(1,{message:"Tipo es un campo obligatorio"}),
+      marca: z.string().optional(),
+      modelo: z.string().optional(),
+      nombre: z.string().optional(),
+      serie: z.string().optional(),
+      color: z.string().optional()
+    })
 
 const EquipoList:React.FC<EquipoListProps> = ({ equipos, setEquipos})=> {
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues: {
-          vehicles: [{ tipo: "", marca: "", modelo: "", nombre: "", serie: "", color: "" }],
-        },
-    });
+        defaultValues: { tipo: "", marca: "", modelo: "", nombre: "", serie: "", color: "" },});
   
   const [cleanMain, setCleanMain] = useState(false);
 
-  const handleAddEquipo = () => {
-    
-    const newEquipo:Equipo = {
-      tipo:form.getValues('tipo')|| '',  // Valor inicial o el que desees
-      marca: form.getValues('marca') || '',  // Valor inicial o el que desees
-      modelo: form.getValues('modelo') || '',  // Valor inicial o el que desees
-      nombre:form.getValues('nombre') || '',  // Valor inicial o el que desees
-      serie:form.getValues('serie') || '',  // Valor inicial o el que desees
-      color: form.getValues('color') || '' // Valor inicial o el que desees
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
+    const newEquipo = {
+      tipo: data.tipo || "", 
+      marca: data.marca || "", 
+      modelo: data.modelo || "", 
+      nombre: data.nombre || "", 
+      serie: data.serie || "", 
+      color: data.color || ""
     };
-    console.log("VEHICULO E LISTA", newEquipo)
     setEquipos([...equipos, newEquipo]);
     setCleanMain(true)
   };
 
   // Función para eliminar el vehículo
   const handleDeleteEquipos = (index: number) => {
-      setEquipos((prevState) => prevState.filter((_, i) => i !== index)); // Elimina el vehículo en el índice especificado
+      setEquipos((prevState) => prevState.filter((_, i) => i !== index)); 
     };
 
   const [collapsedIndex, setCollapsedIndex] = useState<number | null>(null);
 
-  // Función para manejar la expansión y contracción del colapso
   const toggleCollapse = (index: number) => {
     if (collapsedIndex === index) {
-      setCollapsedIndex(null);  // Si el vehículo ya está expandido, lo contraemos
+      setCollapsedIndex(null); 
     } else {
-      setCollapsedIndex(index);  // Expandimos el vehículo
+      setCollapsedIndex(index); 
     }
   };
 
   useEffect(() => {
-    //   refetch({account_id, tipo: "", marca:""}).then((response: any) => {
-    //     const cat = response.data; 
-    //     setTipoVehiculoState(""); 
-    //     setTiposCat(cat); 
-    //   }).catch((error:string)=> {
-    //     console.error("Error al obtener tipos:", error);
-    //   });
-  }, []);
-
-  useEffect(() => {
     if (cleanMain) {
-      // Lógica para limpiar los campos del equipo
       form.setValue('tipo', '');
       form.setValue('marca', '');
       form.setValue('modelo', '');
@@ -111,7 +90,7 @@ const EquipoList:React.FC<EquipoListProps> = ({ equipos, setEquipos})=> {
   return (
     <div>
       {equipos.map((equipo, index) => (
-        <div key={index} className="border rounded">
+        <div key={index} className="border rounded mt-2">
           <EquipoItem
             equipo={equipo}
             isCollapsed={collapsedIndex !== index}  // Controlar si está colapsado o no
@@ -122,7 +101,7 @@ const EquipoList:React.FC<EquipoListProps> = ({ equipos, setEquipos})=> {
       ))}
 
         <Form {...form}>
-          <form className="space-y-5 border p-8 rounded mt-4">
+          <form className="space-y-5 border p-8 rounded mt-4" onSubmit={form.handleSubmit(onSubmit)}>
           <div className="font-bold text-lg">Agregar Equipo</div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5" >
                <>
@@ -175,7 +154,7 @@ const EquipoList:React.FC<EquipoListProps> = ({ equipos, setEquipos})=> {
                           <FormControl>
                           <Input placeholder="Nombre" {...field} 
                           onChange={(e) => {
-                            field.onChange(e); // Actualiza el valor en react-hook-form
+                            field.onChange(e);
                             // handleSelectChange("placas", e.target.value); // Acción adicional
                           }}
                           value={field.value || ""} />
@@ -195,7 +174,7 @@ const EquipoList:React.FC<EquipoListProps> = ({ equipos, setEquipos})=> {
                           <FormControl>
                           <Input placeholder="Marca " {...field}
                            onChange={(e) => {
-                            field.onChange(e); // Actualiza el valor en react-hook-form
+                            field.onChange(e);
                             // handleSelectChange("placas", e.target.value); // Acción adicional
                           }}
                           value={field.value || ""} />
@@ -215,7 +194,7 @@ const EquipoList:React.FC<EquipoListProps> = ({ equipos, setEquipos})=> {
                           <FormControl>
                           <Input placeholder="No. serie" {...field}
                           onChange={(e) => {
-                            field.onChange(e); // Actualiza el valor en react-hook-form
+                            field.onChange(e);
                             // handleSelectChange("placas", e.target.value); // Acción adicional
                           }}
                           value={field.value || ""}  />
@@ -235,7 +214,7 @@ const EquipoList:React.FC<EquipoListProps> = ({ equipos, setEquipos})=> {
                           <FormControl>
                           <Input placeholder="Modelo" {...field} 
                           onChange={(e) => {
-                            field.onChange(e); // Actualiza el valor en react-hook-form
+                            field.onChange(e);
                             // handleSelectChange("placas", e.target.value); // Acción adicional
                           }}
                           value={field.value || ""} />
@@ -285,17 +264,16 @@ const EquipoList:React.FC<EquipoListProps> = ({ equipos, setEquipos})=> {
                     />
                 </>
             </div>
-          </form>
-        </Form>
-        <div className="text-end  mt-3">
-            <Button
-            className="bg-blue-500 hover:bg-blue-600 text-white " 
-            variant="secondary"
-            onClick={handleAddEquipo} 
-            >
-            Agregar Equipo
-            </Button>
-        </div>
+          <div className="text-end  mt-3">
+              <Button
+              className="bg-blue-500 hover:bg-blue-600 text-white " 
+              type="submit"
+              >
+              Agregar Equipo
+              </Button>
+          </div>
+        </form>
+      </Form>
     </div>
   );
 };

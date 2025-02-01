@@ -1,5 +1,4 @@
   export const uploadImage = async (img: File|null) => {
-    const responseB={file_name:"", file_url:""}
     const formData = new FormData();
         formData.append('File', img);
         formData.append('field_id', '660459dde2b2d414bce9cf8f');

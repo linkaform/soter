@@ -8,14 +8,14 @@ export const useCatalogoPaseLocation = () => {
     queryFn: async () => {
         const data = await getCatalogoPasesLocation(); 
         if (!data.response || !data.response?.data || !data.response?.data?.ubicaciones_user) {
-          throw new Error("Error al cargar las ubicaciones");
+          console.error("Error al cargar las ubicaciones");
         }
         return data.response?.data?.ubicaciones_user;
     },
 
-    staleTime: 1000 * 60 * 5,  // 5 minutos de datos frescos antes de ser considerados obsoletos
-    cacheTime: 1000 * 60 * 10, // 10 minutos en caché
-    refetchOnWindowFocus: true,  // No hacer refetch cuando la ventana vuelva a enfocarse
+    staleTime: 1000 * 60 * 5,  
+    cacheTime: 1000 * 60 * 10, 
+    refetchOnWindowFocus: true, 
     refetchOnReconnect: true,
   
   });

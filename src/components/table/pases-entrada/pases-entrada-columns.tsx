@@ -1,6 +1,11 @@
+import Exit from "@/components/icon/exit";
+import { ExitGuardModal } from "@/components/modals/exit-guard-modal";
 import { ResendPassModal } from "@/components/modals/resend-pass-modal";
+import UpdateFullPassModal from "@/components/modals/update-full-pass";
+import { ViewPassModal } from "@/components/modals/view-pass-modal";
+import { Areas, Comentarios, enviar_pre_sms } from "@/hooks/useCreateAccessPass";
 import { ColumnDef } from "@tanstack/react-table";
-import { Eye, Forward, Pencil} from "lucide-react";
+import { Eye, Pencil} from "lucide-react";
 import { useState } from "react";
 
 type Imagen = {
@@ -9,53 +14,116 @@ type Imagen = {
 };
 
 export interface PaseEntrada {
-  folio: string;
   _id: string;
+  folio: string;
   nombre: string;
   email:string;
   telefono: string;
-  fecha_desde_hasta:string;
-  fecha_desde_visita:string;
-  tipo_de_pase:string;
-  motivo_visita: string;
-  estatus:string;
+  ubicacion:string;
   tema_cita:string;
   descripcion:string;
+  perfil_pase:string;
+  status_pase:string;
   visita_a: string[];
-  ubicacion:string;
+  custom:boolean;
+  link: string;
+  qr_pase: string[];
+  limitado_a_dias : string[]; 
   foto: Imagen[];
   identificacion: Imagen[];
   enviar_correo_pre_registro: string[];
-  enviar_correo: string[];
+  tipo_visita_pase:string;
+  fechaFija:string;
+  fecha_desde_visita:string;
+  fecha_desde_hasta:string;
   config_dia_de_acceso: string;
-  tipo_fechas_pase: string;
-  tipo_visita : string;
-  limite_de_acceso: string;
-  grupo_instrucciones_pase: string[];  
+  config_dias_acceso: string;
+  config_limitar_acceso:string;
+  motivo_visita: string;
+  estatus:string;
+  areas:Areas[]
+  comentarios:Comentarios[]
+  enviar_pre_sms:enviar_pre_sms[]
   grupo_vehiculos: string[];  
   grupo_equipos: string[]; 
-  grupo_areas_acceso : string[];
-  limitado_a_dias : string[]; 
-  qr_pase: string[];
-  archivo_invitacion: string[];
-  link: string;
-
 }
 
-const OptionsCell: React.FC = () => {
+const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
+  const rowData = row.original;
+  const [isModalOpen, setIsModalOpen] = useState(false); // Estado para manejar la visibilidad del modal
 
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+  const dataFull= {
+    _id:rowData._id,
+    folio:rowData.folio,
+    nombre: rowData.nombre,
+    email: rowData.email,
+    telefono: rowData.telefono,
+    ubicacion: rowData.ubicacion,
+    tema_cita: rowData.tema_cita,
+    descripcion: rowData.descripcion,
+    perfil_pase: rowData.perfil_pase,
+    status_pase: rowData.estatus,
+    visita_a: rowData.visita_a,
+    custom: false,
+    link: {
+      link: rowData.link,
+      docs: rowData.docs,
+      creado_por_id: rowData.creado_por_id,
+      creado_por_email: rowData.creado_por_email
+    },
+    qr_pase	:rowData.qr_pase	,
+    limitado_a_dias	: rowData.limitado_a_dias	,
+    foto:rowData.foto,
+    identificacion:rowData.identificacion,
+    enviar_correo_pre_registro: rowData.enviar_correo_pre_registro||[],
+    tipo_visita_pase: rowData.tipo_fechas_pase,
+    fechaFija: rowData.fechaFija || rowData.fecha_desde_visita,
+    fecha_desde_visita: rowData.fecha_desde_visita,
+    fecha_desde_hasta: rowData.fecha_desde_hasta,
+    config_dia_de_acceso: rowData.config_dia_de_acceso,
+    config_dias_acceso: rowData.limitado_a_dias,
+    config_limitar_acceso: rowData.limite_de_acceso,
+    areas: rowData.grupo_areas_acceso,
+    comentarios: rowData.grupo_instrucciones_pase||[],
+    enviar_pre_sms: {
+      from: rowData.from,
+      mensaje: rowData.mensaje,
+      numero: rowData.numero
+    },
+    grupo_equipos: rowData.grupo_equipos,
+    grupo_vehiculos: rowData.grupo_vehiculos,
+  }
   return (
+    
     <div className="flex space-x-2">
 
-      {/* Ícono de visualizar */}
-      <div className="cursor-pointer">
-        <Eye />
-      </div>
-      
       {/* Ícono de editar */}
-      <div className="cursor-pointer">
-        <Pencil /> 
-      </div>
+      <ViewPassModal 
+        title="Pase de entrada"
+        // setIsSuccess={setIsSuccess}
+        // isSuccess={isSuccess}
+        data={dataFull} 
+        isSuccess={false} 
+        isOpen={isModalOpen} // Pasa el estado isOpen al modal
+        closeModal={closeModal} // Pasa la función para cerrar el modal
+        >
+          <div className="cursor-pointer">
+            <Eye /> 
+          </div>
+      </ViewPassModal>
+      
+      <UpdateFullPassModal dataPass={dataFull}>
+        <div className="cursor-pointer">
+            <Pencil />
+          </div>
+      </UpdateFullPassModal>
+        
 
 
       {/* <ResendPassModal title="Reenviar Pase">
@@ -74,7 +142,7 @@ export const pasesEntradaColumns: ColumnDef<PaseEntrada>[] = [
   {
     id: "options",
     header: "Opciones",
-    cell: () => <OptionsCell />,
+    cell: ({row}) => <OptionsCell row={row}/>,
     enableSorting: false,
   },
   {
@@ -91,7 +159,7 @@ export const pasesEntradaColumns: ColumnDef<PaseEntrada>[] = [
           {/* Imagen */}
           <div>
             {primeraImagen ? (
-              <img src={primeraImagen} alt="Imagen" className="h-32 w-32 object-cover rounded-full bg-gray-300" />
+              <img src={primeraImagen} alt="Imagen" className="h-24 w-24 object-cover rounded-full bg-gray-300" />
             ) : (
               <span>No hay imagen</span>
             )}
@@ -118,22 +186,20 @@ export const pasesEntradaColumns: ColumnDef<PaseEntrada>[] = [
     enableSorting: true,
   },
   {
-    accessorKey: "fecha_desde_visita",  // Mantén esta columna
-    header: "Fecha de creación",  // Título actualizado
+    accessorKey: "fecha_desde_visita", 
+    header: "Fecha de creación", 
     cell: ({ row }) => {
       const fecha = row.getValue("fecha_desde_visita");
-      // Eliminar los últimos 3 caracteres (por ejemplo, para eliminar milisegundos)
       const fechaSinSegundos = fecha ? fecha.slice(0, -3) : "";
       return <div>{fechaSinSegundos}</div>;
     },
     enableSorting: true,
   },
   {
-    accessorKey: "fecha_desde_hasta",  // Mantén esta columna
-    header: "Vigencia del Pase",  // Título actualizado
+    accessorKey: "fecha_desde_hasta", 
+    header: "Vigencia del Pase",  
     cell: ({ row }) => {
       const fecha = row.getValue("fecha_desde_hasta");
-      // Eliminar los últimos 3 caracteres (por ejemplo, para eliminar milisegundos)
       const fechaSinSegundos = fecha ? fecha.slice(0, -3) : "";
       return <div>{fechaSinSegundos}</div>;
     },

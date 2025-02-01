@@ -3,7 +3,7 @@
 
 import { MainLayout } from "@/components/Layout/MainLayout";
 import { useGetMenu } from "@/hooks/useGetMenu";
-import { capitalizeFirstLetter } from "@/lib/utils";
+import { capitalizeFirstLetter, capitalizeOnlyFirstLetterDelete_ } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -79,7 +79,7 @@ export default function Home() {
                                                     src={`/${item}.svg`}
                                                     className="aspect-square rounded-md group-hover:opacity-75 h-12"
                                                 />
-                                                <p className="mt-2 text-lg">{capitalizeFirstLetter(item)}</p>
+                                                <p className="mt-2 text-lg">{capitalizeOnlyFirstLetterDelete_(item)}</p>
                                             </div>
                                         </div>
                                     );

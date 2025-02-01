@@ -9,7 +9,7 @@ interface getCatalogoPasesArea {
     const payload = {
         location,
         option: "catalogos_pase_area",
-        script_name: "pase_de_acceso_use_api.py",
+        script_name: "pase_de_acceso.py",
     };
   
     const userJwt = localStorage.getItem("access_token"); 

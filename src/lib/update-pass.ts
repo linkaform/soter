@@ -1,6 +1,3 @@
-import { Access_pass, enviar_pre_sms } from "@/hooks/useCreateAccessPass";
-  
-
 export type Vehiculo ={
     tipo:string,
     marca:string,
