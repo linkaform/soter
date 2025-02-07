@@ -32,113 +32,17 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Bitacora, bitacorasColumns } from "./bitacoras-columns";
+import {  Bitacora_record, bitacorasColumns } from "./bitacoras-columns";
+import { useEffect } from "react";
 
-const data: Bitacora[] = [
-  {
-    id: "1",
-    folio: "1676-10",
-    entrada: "2024-11-11 01:15:06",
-    salida: "2024-11-11 02:00:00",
-    visitante: "Nueva Visita",
-    tipo: "Walkin",
-    contratista: "Linkaform",
-    visitaA: "Pedro Paramo",
-    casetaEntrada: "Caseta Principal",
-    casetaSalida: "---",
-    gafete: "GAF-001",
-    comentarios: ["Sin incidencias reportadas"],
-  },
-  {
-    id: "2",
-    folio: "1674-10",
-    entrada: "2024-11-11 01:07:59",
-    salida: "2024-11-11 01:45:00",
-    visitante: "Joe Duck",
-    tipo: "Manejador de Grúa",
-    contratista: "Empresa de Limpieza SA de CV",
-    visitaA: "Venustiano Carranza",
-    casetaEntrada: "Caseta Principal",
-    casetaSalida: "---",
-    gafete: "GAF-002",
-    comentarios: ["Entrega de materiales", "Revisar nuevamente en dos días"],
-  },
-  {
-    id: "3",
-    folio: "1658-10",
-    entrada: "2024-11-05 11:51:50",
-    salida: "2024-11-05 12:30:00",
-    visitante: "Joe Duck",
-    tipo: "Técnico de Telecomunicaciones",
-    contratista: "Empresa de Limpieza SA de CV",
-    visitaA: "Venustiano Carranza",
-    casetaEntrada: "Caseta Principal",
-    casetaSalida: "---",
-    gafete: "GAF-003",
-    comentarios: ["Reparación de equipo", "Material instalado correctamente"],
-  },
-  {
-    id: "4",
-    folio: "1648-10",
-    entrada: "2024-11-05 04:59:59",
-    salida: "2024-11-05 05:45:00",
-    visitante: "Joe Duck",
-    tipo: "Técnico de Telecomunicaciones",
-    contratista: "Empresa de Limpieza SA de CV",
-    visitaA: "Venustiano Carranza",
-    casetaEntrada: "Caseta Principal",
-    casetaSalida: "---",
 
-    gafete: "GAF-004",
-    comentarios: ["Trabajo nocturno", "Sin interrupciones"],
-  },
-  {
-    id: "5",
-    folio: "1642-10",
-    entrada: "2024-11-04 12:02:24",
-    salida: "2024-11-04 12:50:00",
-    visitante: "Joe Duck",
-    tipo: "Manejador de Grúa",
-    contratista: "Empresa de Limpieza SA de CV",
-    visitaA: "Venustiano Carranza",
-    casetaEntrada: "Caseta Principal",
-    casetaSalida: "---",
+interface ListProps {
+  refetch:() => void;
+  data: Bitacora_record[];
+}
 
-    gafete: "GAF-005",
-    comentarios: ["Descarga completada", "Operación normal"],
-  },
-  {
-    id: "6",
-    folio: "1640-10",
-    entrada: "2024-11-04 11:45:52",
-    salida: "2024-11-04 12:30:00",
-    visitante: "Jonathan Arturo",
-    tipo: "Manejador de Grúa",
-    contratista: "Pelotas Dragón",
-    visitaA: "Juan Escutia",
-    casetaEntrada: "Caseta Principal",
-    casetaSalida: "---",
-    gafete: "GAF-006",
-    comentarios: ["Revisión rápida", "Todo en orden"],
-  },
-  {
-    id: "7",
-    folio: "1636-10",
-    entrada: "2024-11-04 10:17:04",
-    salida: "2024-11-04 11:00:00",
-    visitante: "Laura Hernández Peña",
-    tipo: "Manejador de Grúa",
-    contratista: "Pelotas Dragón",
-    visitaA: "Juan Escutia",
-    casetaEntrada: "Caseta Principal",
-    casetaSalida: "---",
-    gafete: "MYT-12",
-    comentarios: ["Entrega a tiempo", "Buen desempeño del equipo"],
-  },
- 
-];
+const BitacorasTable:React.FC<ListProps> = ({ refetch, data})=> {
 
-export function BitacorasTable() {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -154,7 +58,7 @@ export function BitacorasTable() {
   const [globalFilter, setGlobalFilter] = React.useState("");
 
   const table = useReactTable({
-    data,
+    data:data||[],
     columns: bitacorasColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -177,10 +81,13 @@ export function BitacorasTable() {
     },
   });
 
+
+  useEffect(()=>{
+    refetch()
+  },[])
+
   return (
     <div className="w-full">
-        
-    
       <div className="flex flex-col md:flex-row gap-3 justify-between items-center my-5">
         {/* Campo de búsqueda a la izquierda */}
         <input
@@ -268,12 +175,13 @@ export function BitacorasTable() {
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
+                  
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} >
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -315,3 +223,4 @@ export function BitacorasTable() {
     </div>
   );
 }
+export default BitacorasTable;

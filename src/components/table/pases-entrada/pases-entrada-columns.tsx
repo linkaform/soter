@@ -1,9 +1,8 @@
-import Exit from "@/components/icon/exit";
-import { ExitGuardModal } from "@/components/modals/exit-guard-modal";
-import { ResendPassModal } from "@/components/modals/resend-pass-modal";
+import { Visita } from "@/components/modals/add-pass-modal";
 import UpdateFullPassModal from "@/components/modals/update-full-pass";
 import { ViewPassModal } from "@/components/modals/view-pass-modal";
-import { Areas, Comentarios, enviar_pre_sms } from "@/hooks/useCreateAccessPass";
+import { Areas, Comentarios, enviar_pre_sms, Link } from "@/hooks/useCreateAccessPass";
+import { replaceNullsInArrayDynamic } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
 import { Eye, Pencil} from "lucide-react";
 import { useState } from "react";
@@ -24,9 +23,9 @@ export interface PaseEntrada {
   descripcion:string;
   perfil_pase:string;
   status_pase:string;
-  visita_a: string[];
+  visita_a: unknown;
   custom:boolean;
-  link: string;
+  link: Link;
   qr_pase: string[];
   limitado_a_dias : string[]; 
   foto: Imagen[];
@@ -67,20 +66,20 @@ const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
     ubicacion: rowData.ubicacion,
     tema_cita: rowData.tema_cita,
     descripcion: rowData.descripcion,
-    perfil_pase: rowData.perfil_pase,
+    perfil_pase: rowData.tipo_de_pase,
     status_pase: rowData.estatus,
-    visita_a: rowData.visita_a,
+    visita_a: rowData.visita_a[0]||[{}],
     custom: false,
     link: {
       link: rowData.link,
       docs: rowData.docs,
-      creado_por_id: rowData.creado_por_id,
-      creado_por_email: rowData.creado_por_email
+      creado_por_id: rowData.visita_a.lenght>0 ? rowData.visita_a[0].user_id:null,
+      creado_por_email:rowData.visita_a.lenght>0  ? rowData.visita_a[0].email:null
     },
-    qr_pase	:rowData.qr_pase	,
+    qr_pase	:rowData.qr_pase,
     limitado_a_dias	: rowData.limitado_a_dias	,
-    foto:rowData.foto,
-    identificacion:rowData.identificacion,
+    foto:rowData.foto || [],
+    identificacion:rowData.identificacion || [],
     enviar_correo_pre_registro: rowData.enviar_correo_pre_registro||[],
     tipo_visita_pase: rowData.tipo_fechas_pase,
     fechaFija: rowData.fechaFija || rowData.fecha_desde_visita,
@@ -89,29 +88,24 @@ const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
     config_dia_de_acceso: rowData.config_dia_de_acceso,
     config_dias_acceso: rowData.limitado_a_dias,
     config_limitar_acceso: rowData.limite_de_acceso,
-    areas: rowData.grupo_areas_acceso,
+    areas: replaceNullsInArrayDynamic(rowData.grupo_areas_acceso),
     comentarios: rowData.grupo_instrucciones_pase||[],
     enviar_pre_sms: {
-      from: rowData.from,
-      mensaje: rowData.mensaje,
-      numero: rowData.numero
+      from: rowData.from || "",
+      mensaje: rowData.mensaje || "",
+      numero: rowData.numero || "",
     },
-    grupo_equipos: rowData.grupo_equipos,
-    grupo_vehiculos: rowData.grupo_vehiculos,
+    grupo_equipos: rowData.grupo_equipos||[],
+    grupo_vehiculos: rowData.grupo_vehiculos||[],
   }
   return (
-    
     <div className="flex space-x-2">
-
-      {/* Ícono de editar */}
       <ViewPassModal 
         title="Pase de entrada"
-        // setIsSuccess={setIsSuccess}
-        // isSuccess={isSuccess}
         data={dataFull} 
         isSuccess={false} 
-        isOpen={isModalOpen} // Pasa el estado isOpen al modal
-        closeModal={closeModal} // Pasa la función para cerrar el modal
+        isOpen={isModalOpen}
+        closeModal={closeModal}
         >
           <div className="cursor-pointer">
             <Eye /> 
@@ -124,16 +118,11 @@ const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
           </div>
       </UpdateFullPassModal>
         
-
-
       {/* <ResendPassModal title="Reenviar Pase">
-
       <div className="cursor-pointer">
         <Forward />
       </div>
-
       </ResendPassModal> */}
-
     </div>
   );
 };

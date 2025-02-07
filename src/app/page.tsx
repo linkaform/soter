@@ -3,7 +3,7 @@
 
 import { MainLayout } from "@/components/Layout/MainLayout";
 import { useGetMenu } from "@/hooks/useGetMenu";
-import { capitalizeFirstLetter, capitalizeOnlyFirstLetterDelete_ } from "@/lib/utils";
+import { capitalizeOnlyFirstLetterDelete_ } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 

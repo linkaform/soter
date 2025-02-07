@@ -11,26 +11,17 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+
 import { Input } from "@/components/ui/input";
-import { Vehiculo } from "@/lib/update-pass";
-import AreasItem from "./comentarios-item";
-import { useCatalogoPaseArea } from "@/hooks/useCatalogoPaseArea";
-import { Areas, Comentarios } from "@/hooks/useCreateAccessPass";
+import { Comentarios } from "@/hooks/useCreateAccessPass";
 import ComentariosItem from "./comentarios-item";
 
 
 interface ComentariosListProps {
-    location:string;
     comentarios: Comentarios[];
     setComentarios: Dispatch<SetStateAction<Comentarios[]>>;
     tipo:string;
+    existingComentarios:boolean;
   }
 
   export const formSchema = 
@@ -39,8 +30,7 @@ interface ComentariosListProps {
       comentario_pase: z.string().min(1,{message:"Comentario es un campo obligatorio"}),
     });
 
-const ComentariosList:React.FC<ComentariosListProps> = ({ location, comentarios, setComentarios, tipo})=> {
-
+const ComentariosList:React.FC<ComentariosListProps> = ({comentarios, setComentarios, tipo, existingComentarios})=> {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: { tipo_comentario: "", comentario_pase: "",}});
@@ -69,7 +59,7 @@ const ComentariosList:React.FC<ComentariosListProps> = ({ location, comentarios,
     };
 
     useEffect(() => {
-        if(true){
+        if(existingComentarios==false){
             setComentarios([])
         }
     },[]);

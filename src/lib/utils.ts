@@ -1,6 +1,8 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import Swal from 'sweetalert2'
+import { Equipo_bitacora, Vehiculo_bitacora } from "@/components/table/bitacoras/bitacoras-columns"
+import { Equipo, Vehiculo } from "./update-pass"
 
 const blue500="#2b7fff"
 
@@ -101,4 +103,63 @@ export function sweetAlert(icon="success", title="Confirmación", text:string ,c
     text: text,
     confirmButtonColor:color,
   });
+}
+
+
+export function replaceNullsInArrayDynamic(arr: any[]): any[] {
+  return arr.map(obj => {
+    const newObj: any = {};
+    for (const key in obj) {
+      if (obj[key] === null) {
+        newObj[key] = ""; // Reemplaza null por ""
+      } else {
+        newObj[key] = obj[key]; // Deja los valores que no son null
+      }
+    }
+    return newObj;
+  });
+}
+
+export function formatVehiculos(arr: Vehiculo_bitacora[]): Vehiculo[] {
+  return arr.map(item => ({
+    tipo: item.tipo, 
+    marca: item.marca_vehiculo, 
+    modelo: item.modelo_vehiculo, 
+    estado: item.nombre_estado, 
+    placas: item.placas, 
+    color: item.color
+  }));
+}
+
+export function formatEquipos(arr: Equipo_bitacora[]): Equipo[] {
+  return arr.map(item => ({
+    color: item.color_articulo, 
+    serie: item.numero_serie, 
+    modelo: item.modelo_articulo, 
+    marca: item.marca_articulo, 
+    tipo: item.tipo_equipo, 
+    nombre: item.nombre_articulo
+  }));
+}
+
+export function formatVehiculosToBitacora(arr: Vehiculo []): Vehiculo_bitacora[] {
+  return arr.map(item => ({
+    tipo: item.tipo, 
+    marca_vehiculo: item.marca, 
+    modelo_vehiculo: item.modelo, 
+    nombre_estado: item.estado, 
+    placas: item.placas, 
+    color: item.color
+  }));
+}
+
+export function formatEquiposToBitacora(arr:Equipo[]): Equipo_bitacora[] {
+  return arr.map(item => ({
+    color_articulo: item.color, 
+    numero_serie: item.serie, 
+    modelo_articulo: item.modelo, 
+    marca_articulo: item.marca, 
+    tipo_equipo: item.tipo, 
+    nombre_articulo: item.nombre
+  }));
 }

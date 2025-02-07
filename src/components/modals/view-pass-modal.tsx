@@ -9,12 +9,11 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { Separator } from "../ui/separator";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
-import { Access_pass, Areas, Comentarios, enviar_pre_sms, Link, useCreateAccessPase } from "@/hooks/useCreateAccessPass";
-import { createPase } from "@/lib/create-access-pass";
+import {  Areas, Comentarios, enviar_pre_sms, Link } from "@/hooks/useCreateAccessPass";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
-import { Equipo, Imagen, Vehiculo } from "@/lib/update-pass";
+import { Imagen } from "@/lib/update-pass";
 import CalendarDays from "../calendar-days";
 import { toast } from "sonner";
 import { descargarPdfPase } from "@/lib/download-pdf";
@@ -69,13 +68,9 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
   title,
   data,
   children,
-  isOpen,
-  closeModal,
 }) => {
 
-  const [response, setResponse] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [openGeneratedPass, setOpenGeneratedPass] = useState<boolean>(false);
   const account_id = parseInt(localStorage.getItem("userId_soter") || "0", 10);
 
   const [selectedOptions, setSelectedOptions] = useState<string[]>(["enviar_correo"]); // Estado para almacenar las opciones seleccionadas
@@ -85,66 +80,7 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
   const { data: responsePdf, isLoading: loadingPdf, refetch:refetchPdf , error:errorPdf} = useGetPdf(account_id, data._id);
   const { data: responseSendCorreo, isLoading: loadingCorreo, refetch:refetchCorreo , error:errorCorreo} = useSendCorreo(account_id, selectedOptions,dataCorreo,data._id);
   const { data: responseSendSMS, isLoading: loadingSMS, refetch:refetchSMS , error:errorSMS} =  useSendSMS(account_id, selectedOptions, dataSMS, data._id)
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    
-    setOpen(true); // Trigger the success modal
-  }
 
-//   const onSubmit = async () => {
-//     console.log("Datos en el Modal", data);
-
-//     const accessPassData: Access_pass = {
-//       nombre: data.nombre,
-//       email: data.email,
-//       telefono: data.telefono,
-//       ubicacion: data.ubicacion,
-//       tema_cita: data.tema_cita,
-//       descripcion: data.descripcion,
-//       perfil_pase: data.perfil_pase,
-//       status_pase: data.status_pase,
-//       visita_a: data.visita_a,
-//       custom: data.custom,
-//       link: {
-//         link: data.link.link,
-//         docs: data.link.docs,
-//         creado_por_id: data.link.creado_por_id,
-//         creado_por_email: data.link.creado_por_email,
-//       },
-//       enviar_correo_pre_registro: data.enviar_correo_pre_registro,
-//       tipo_visita_pase: data.tipo_visita_pase,
-//       fechaFija: data.fechaFija,
-//       fecha_desde_visita: data.fecha_desde_visita,
-//       fecha_desde_hasta: data.fecha_desde_hasta,
-//       config_dia_de_acceso: data.config_dia_de_acceso,
-//       config_dias_acceso: data.config_dias_acceso,
-//       config_limitar_acceso: data.config_limitar_acceso,
-//       areas: data.areas,
-//       comentarios: data.comentarios,
-//       enviar_pre_sms: {
-//         from: data.enviar_pre_sms.from,
-//         mensaje: data.enviar_pre_sms.mensaje,
-//         numero: data.enviar_pre_sms.numero,
-//       },
-//     };
-
-//     const enviarPreSms = {
-//       from: data.enviar_pre_sms.from,
-//       mensaje: data.enviar_pre_sms.mensaje,
-//       numero: data.enviar_pre_sms.numero,
-//     };
-
-//     try {
-//       setIsLoading(true);
-//       const location=data.ubicacion
-//       const apiResponse = await createPase({access_pass:accessPassData , location, enviar_pre_sms:enviarPreSms});
-//       setResponse(apiResponse); // Guardar la respuesta en el estado
-//       setIsSuccess(true); // Marcar el éxito
-//     } catch (err) {
-//       console.error("Error al crear el pase:", err);
-//     } finally {
-//       setIsLoading(false);
-//     }
-//   };
 
 useEffect(()=>{
   if(dataCorreo){
@@ -161,7 +97,6 @@ useEffect(()=>{
 
 useEffect(()=>{
   if(responseSendCorreo){
-    console.log("ERROR CORREO",responseSendCorreo)
     if(responseSendCorreo.success){
       toast.success("¡Correo enviado correctamente!");
     }
@@ -170,7 +105,6 @@ useEffect(()=>{
 
 useEffect(()=>{
   if(responseSendSMS){
-    console.log("ERROR SMS",responseSendSMS)
     if(responseSendSMS.success){
       toast.success("¡Mensaje enviado correctamente!");
     }
@@ -217,7 +151,6 @@ function onEnviarSMS(){
 }
 
 async function onDescargarPDF(){
-  console.log("PDFFFFFF",responsePdf.response?.data?.data?.download_url)
   await descargarPdfPase(responsePdf.response?.data?.data?.download_url)
   toast.success("¡PDF descargado correctamente!");
 }

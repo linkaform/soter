@@ -31,7 +31,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { PaseEntrada, pasesEntradaColumns } from "./pases-entrada-columns";
+import {pasesEntradaColumns } from "./pases-entrada-columns";
 import Link from "next/link";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useGetMyPases } from "@/hooks/useGetMyPases";

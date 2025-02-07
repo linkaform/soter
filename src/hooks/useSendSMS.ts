@@ -1,5 +1,4 @@
 import { data_sms, sendSMS } from "@/lib/send-sms";
-import { data_correo, sendCorreo } from "@/lib/send_correo";
 import { useQuery } from "@tanstack/react-query";
 
 export const useSendSMS = (account_id: number, envio: string[],data_cel_msj:data_sms|null, folio:string) => {

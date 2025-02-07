@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -13,7 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Areas, Comentarios } from "@/hooks/useCreateAccessPass";
+import { Comentarios } from "@/hooks/useCreateAccessPass";
 
 export const formSchema = 
     z.array(
@@ -96,7 +94,6 @@ export const formSchema =
                         <Input placeholder="Comentario" {...field} 
                           onChange={(e) => {
                             field.onChange(e); // Actualiza el valor en react-hook-form
-                            console.log("VALORRRR",e)
                             onComentarioChange(e);
                           }}
                           value={field.value || ""}

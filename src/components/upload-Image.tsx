@@ -28,7 +28,7 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, img, setImg, showWeb
     const [urlImage, setUrlImage] = useState("")
     const [hideWebcam, setHideWebcam] = useState(true)
     const [hideButtonWebcam, setHideButtonWebcam] = useState(false)
-    const { data, isLoading , refetch, error} = useUploadImage(selectedFile);
+    const { data, refetch, error} = useUploadImage(selectedFile);
     const webcamRef = React.useRef(null)
     const videoConstraints = {
         width: 720,
@@ -81,37 +81,20 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, img, setImg, showWeb
     }, [selectedFile]); 
 
     useEffect(()=>{
-        console.log("entradaaa", data)
         if(data){
             if (data?.file_name?.includes(quitarAcentosYMinusculasYEspacios(id)) ) {
                 setImg([data]); 
-                console.log("data")
             }
         }
         setloading(false)
-
     }, [data])
 
-
     useEffect(()=>{
-        console.log("ERROR",error)
-        // Swal.fire({
-        //     title: 'Error!',
-        //     text: error,
-        //     icon: 'error',
-        //     confirmButtonText: 'Cool'
-        //   })
         setloading(false)
     }, [error])
 
-
-    useEffect(()=>{
-        console.log("IMGGG FOTO",img, )
-    }, [img])
-
     const handleUserMedia = () => {
-        console.log("QUE HACE LOADINF", loading)
-        setloadingWebcam(false); // Detenemos el loader cuando la cámara está lista
+        setloadingWebcam(false); 
       };
 
   return (
@@ -130,7 +113,7 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, img, setImg, showWeb
                             <Button className="bg-blue-500 rounded hover:bg-blue-600 w-8 h-8"
                             onClick={() => {
                                 setloadingWebcam(true)
-                                setHideWebcam(false); // Llamas a la función set o cualquier otra lógica que necesites
+                                setHideWebcam(false); 
                             }}>
                                 <Camera  size={24} className="p-0" />
                             </Button>}

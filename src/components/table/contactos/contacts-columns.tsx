@@ -1,9 +1,4 @@
-import Exit from "@/components/icon/exit";
-import { ExitGuardModal } from "@/components/modals/exit-guard-modal";
-import { ResendPassModal } from "@/components/modals/resend-pass-modal";
-import { ViewPassModal } from "@/components/modals/view-pass-modal";
 import { ColumnDef } from "@tanstack/react-table";
-import { Eye, Pencil} from "lucide-react";
 
 type Imagen = {
   file_name: string;

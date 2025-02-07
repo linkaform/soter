@@ -45,7 +45,7 @@ interface VehicleListProps {
 const VehicleList:React.FC<VehicleListProps> = ({ account_id, vehicles, setVehicles})=> {
     const [tipoVehiculoState, setTipoVehiculoState] = useState("");
     const [marcaState, setMarcaState] = useState("");
-    const {data:cat, isLoading: loadingCat, refetch } = useGetVehiculos({account_id, tipo:tipoVehiculoState, marca:marcaState})
+    const {isLoading: loadingCat, refetch } = useGetVehiculos({account_id, tipo:tipoVehiculoState, marca:marcaState})
     const { data:catEstados, isLoading: loadingCatEstados } = useCatalogoEstados(account_id)
 
     const [tiposCat, setTiposCat] = useState<string[]>([]);

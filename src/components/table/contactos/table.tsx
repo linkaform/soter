@@ -12,7 +12,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChevronDown, Plus } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -31,10 +31,8 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { PaseEntrada, pasesEntradaColumns } from "./contacts-columns";
-import Link from "next/link";
+import { pasesEntradaColumns } from "./contacts-columns";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useGetMyPases } from "@/hooks/useGetMyPases";
 import { useGetUserContacts } from "@/hooks/useGetUserContacts";
 import { Dispatch, SetStateAction } from "react";
 import { Contacto } from "@/lib/get-user-contacts";

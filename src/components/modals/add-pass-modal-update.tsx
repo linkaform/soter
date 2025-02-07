@@ -8,60 +8,44 @@ import {
   DialogTitle,
 } from "../ui/dialog";
 import { Separator } from "../ui/separator";
-import CalendarDays from "../calendar-days";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { CalendarClock, Loader2 } from "lucide-react";
-import { GeneratedPassModal } from "./generated-pass-modal";
-import { Access_pass, Areas, Comentarios, enviar_pre_sms, Link, useCreateAccessPase } from "@/hooks/useCreateAccessPass";
+import { Access_pass_update } from "@/lib/update-pass";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
+import { data_correo } from "@/lib/send_correo";
+import { useUpdatePaseFull } from "@/hooks/useUpdatePaseFull";
+import { GeneratedPassModal } from "./generated-pass-modal";
+import CalendarDays from "../calendar-days";
 
-
-export type Visita={
-  puesto: string;
-  nombre: string;
-  user_id: string;
-  email: string;
-  departamento:string;
-}
-interface EntryPassUpdateModalProps {
+interface EntryPassModalUpdateProps {
   title: string;
-  dataPass: {
-    nombre: string;
-    email: string;
-    telefono: string;
-    ubicacion: string;
-    tema_cita: string;
-    descripcion: string;
-    perfil_pase: string,
-    status_pase:string,
-    visita_a: string,
-    custom: boolean,
-    link:Link,
-    enviar_correo_pre_registro: string[],
-    tipo_visita_pase:string;
-    fechaFija:string;
-    fecha_desde_visita: string;
-    fecha_desde_hasta: string;
-    config_dia_de_acceso:string;
-    config_dias_acceso: string[];
-    config_limitar_acceso: number;
-    areas: Areas[];
-    comentarios: Comentarios[];
-    enviar_pre_sms: enviar_pre_sms
-  };
+  dataPass: any;
   isSuccess: boolean;
   setIsSuccess: Dispatch<SetStateAction<boolean>>;
   onClose: ()=> void;
- 
+  id:string;
+  folio:string;
 }
 
-export const EntryPassModal: React.FC<EntryPassUpdateModalProps> = ({
+export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
   title,
   dataPass,
   isSuccess,
   setIsSuccess,
   onClose,
+  id,
+  folio,
 }) => {
+  const [openGeneratedPass, setOpenGeneratedPass] = useState<boolean>(false);
+  const [responseformated, setResponseFormated] = useState<data_correo|null>(null);
+  const [sendDataUpdate, setSendDataUpdate] = useState<Access_pass_update|null>(null)
+  const [link, setLink] = useState("");
+  const account_id = parseInt(localStorage.getItem("userId_soter") || "0", 10);
+  const { data:responseUpdateFull, isLoading:loadingUpdateFull, refetch: refetchUpdateFull } = useUpdatePaseFull(sendDataUpdate, id, folio, dataPass?.ubicacion);
+  const userEmailSoter = localStorage.getItem("userEmail_soter");
+  const userIdSoter = parseInt(localStorage.getItem("userId_soter") || "0", 10);
+  const protocol = window.location.protocol;  
+  const host = window.location.host;  
 
   const items =
   dataPass?.tipo_visita_pase === "fecha_fija"
@@ -85,73 +69,72 @@ export const EntryPassModal: React.FC<EntryPassUpdateModalProps> = ({
           },
         ];
 
-  const [sendData, setSendData] = useState<Access_pass|null>(null)
-  const [sendPreSms, setSendPreSms] = useState<enviar_pre_sms|null>(null)
-  const { data:responseCreatePase, isLoading:loadingCreatePase, refetch: refetchCreatePase } = useCreateAccessPase(dataPass?.ubicacion, sendData, sendPreSms );
-  const [openGeneratedPass, setOpenGeneratedPass] = useState<boolean>(false);
-  const [link, setLink] = useState("");
-  const account_id = parseInt(localStorage.getItem("userId_soter") || "0", 10);
-
-  const onSubmit = async () => {
-    console.log("Datos en el Modal", dataPass);
-
-    const accessPassData: Access_pass = {
-      nombre: dataPass.nombre,
-      email: dataPass.email,
-      telefono: dataPass.telefono,
+  const onSubmitEdit = async () => {
+    const accessPassData = {
+      _id:dataPass._id,
+      folio: dataPass.folio,
+      nombre_pase: dataPass.nombre,
+      email_pase: dataPass.email,
+      telefono_pase: dataPass.telefono,
       ubicacion: dataPass.ubicacion,
       tema_cita: dataPass.tema_cita,
       descripcion: dataPass.descripcion,
       perfil_pase: dataPass.perfil_pase,
       status_pase: dataPass.status_pase,
-      visita_a: dataPass.visita_a,
-      custom: dataPass.custom,
+      visita_a: dataPass.visita_a.nombre,
       link: {
-        link: dataPass.link.link,
+        link: `${protocol}//${host}/pase-update.html`,
         docs: dataPass.link.docs,
-        creado_por_id: dataPass.link.creado_por_id,
-        creado_por_email: dataPass.link.creado_por_email,
+        qr_code: dataPass._id,
+        creado_por_id: userIdSoter,
+        creado_por_email: userEmailSoter
       },
+      qr_pase:dataPass.qr_pase,
+      tipo_visita: "alta_de_nuevo_visitante",
+      limitado_a_dias: dataPass.limitado_a_dias,
       enviar_correo_pre_registro: dataPass.enviar_correo_pre_registro,
       tipo_visita_pase: dataPass.tipo_visita_pase,
-      fechaFija: dataPass.fechaFija,
       fecha_desde_visita: dataPass.fecha_desde_visita,
       fecha_desde_hasta: dataPass.fecha_desde_hasta,
       config_dia_de_acceso: dataPass.config_dia_de_acceso,
       config_dias_acceso: dataPass.config_dias_acceso,
       config_limitar_acceso: dataPass.config_limitar_acceso,
-      areas: dataPass.areas,
-      comentarios: dataPass.comentarios,
-      enviar_pre_sms: {
-        from: dataPass.enviar_pre_sms.from,
-        mensaje: dataPass.enviar_pre_sms.mensaje,
-        numero: dataPass.enviar_pre_sms.numero,
-      },
+      grupo_areas_acceso: dataPass.areas,
+      grupo_instrucciones_pase: dataPass.comentarios,
+      grupo_vehiculos:dataPass.grupo_vehichulos,
+      grupo_equipos: dataPass.grupo_equipos,
+      autorizado_por: userEmailSoter,
+      walkin_fotografia:dataPass.foto,
+      walkin_identificacion:dataPass.identificacion,
+      enviar_correo:[]
     };
-    const enviarPreSms : enviar_pre_sms= {
-      from: dataPass.enviar_pre_sms.from,
-      mensaje: dataPass.enviar_pre_sms.mensaje,
-      numero: dataPass.enviar_pre_sms.numero,
-    };
-    setSendPreSms(enviarPreSms)
-    setSendData(accessPassData)
+
+      setSendDataUpdate(accessPassData)
   };
 
+  const handleClose = () => {
+      setIsSuccess(false); 
+      onClose(); 
+  };
 
   useEffect(()=>{
-    if(sendPreSms && sendData ){
-      refetchCreatePase()
+    if(sendDataUpdate ){
+      refetchUpdateFull()
     }
-  },[sendData])
-
+  },[sendDataUpdate])
 
   useEffect(()=>{
-    if(responseCreatePase?.success){
+    if(responseformated){
+    }
+  },[responseformated])
+
+  useEffect(()=>{
+    if(responseUpdateFull?.success){
     }
       const protocol = window.location.protocol;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
       const host = window.location.host;
       let docs=""
-      sendData?.link.docs.map((d, index)=>{
+      sendDataUpdate?.link.docs.map((d, index)=>{
         if(d == "agregarIdentificacion"){
           docs+="iden"
         }
@@ -162,30 +145,25 @@ export const EntryPassModal: React.FC<EntryPassUpdateModalProps> = ({
           docs+="-"
         }
       })
-      setLink(`${protocol}//${host}/dashboard/pase-update?id=${responseCreatePase?.response.data.json.id}&user=${account_id}&docs=${docs}`)
+      setLink(`${protocol}//${host}/dashboard/pase-update?id=${responseUpdateFull?.response.data.json.id}&user=${account_id}&docs=${docs}`)
       setOpenGeneratedPass(true)
-  },[responseCreatePase])
-
-  const handleClose = () => {
-    setIsSuccess(false); 
-    onClose(); 
-};
+  },[responseUpdateFull])
 
   return (
-    //onOpenChange={setIsSuccess}
-    <Dialog open={isSuccess} onClose={handleClose} modal>
-      <DialogContent
-          className="max-w-xl max-h-[90vh] overflow-scroll bg-white rounded-lg shadow-xl"
-          aria-labelledby="dialog-title"
-        >
-        <DialogHeader>
-          <DialogTitle className="text-2xl text-center  font-bold my-5">
-            {title}
-          </DialogTitle>
-        </DialogHeader>
+  //onOpenChange={setIsSuccess}
+  <Dialog open={isSuccess} onClose={handleClose} modal>
+  <DialogContent
+      className="max-w-xl max-h-[90vh] overflow-scroll bg-white rounded-lg shadow-xl"
+      aria-labelledby="dialog-title"
+    >
+    <DialogHeader>
+      <DialogTitle className="text-2xl text-center  font-bold my-5">
+        {title}
+      </DialogTitle>
+    </DialogHeader>
 
-        {/* Sobre la visita */}
-        <div className="w-full flex gap-2">
+    {/* Sobre la visita */}
+    <div className="w-full flex gap-2">
             <p className="font-bold flex-shrink-0">Nombre Completo : </p>
             <p className="">{dataPass?.nombre} </p>
           </div>
@@ -314,31 +292,32 @@ export const EntryPassModal: React.FC<EntryPassUpdateModalProps> = ({
             </>
           ):null}
         
-        <div className="flex gap-5 my-5">
-          <DialogClose asChild
-            disabled={loadingCreatePase}>
-            <Button className="w-full h-12 bg-gray-100 hover:bg-gray-200 text-gray-700" onClick={handleClose}>
-              Cancelar
-            </Button>
-          </DialogClose>
+    
+    <div className="flex gap-5 my-5">
+      <DialogClose asChild
+        disabled={loadingUpdateFull}>
+        <Button className="w-full h-12 bg-gray-100 hover:bg-gray-200 text-gray-700" onClick={handleClose}>
+          Cancelar
+        </Button>
+      </DialogClose>
 
-          {responseCreatePase?.success === true ? (
-            <GeneratedPassModal
-              title="Pase de Entrada Generado "
-              description="El pase de entrada se ha generado correctamente. Por favor, copie el siguiente enlace y compártalo con el visitante para completar el proceso."
-              link={link}
-              openGeneratedPass={openGeneratedPass}
-              setOpenGeneratedPass={setOpenGeneratedPass} children={undefined}/>
-            
-          ):null}
-          
-          <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white" onClick={onSubmit}>
-                { !loadingCreatePase ? (<>
-                  {("Crear pase")}
-                </>) :(<> <Loader2 className="animate-spin"/> {"Creando pase..."} </>)}
-              </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
+      {responseUpdateFull?.success === true ? (
+        <GeneratedPassModal
+          title="Pase de Entrada Generado "
+          description="El pase de entrada se ha generado correctamente. Por favor, copie el siguiente enlace y compártalo con el visitante para completar el proceso."
+          link={link}
+          openGeneratedPass={openGeneratedPass}
+          setOpenGeneratedPass={setOpenGeneratedPass} children={undefined}/>
+        
+      ):null}
+      
+      <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white" onClick={onSubmitEdit}>
+            { !loadingUpdateFull ? (<>
+              {("Editar pase")}
+            </>) :(<> <Loader2 className="animate-spin"/> {"Actualizando pase..."} </>)}
+          </Button>
+    </div>
+  </DialogContent>
+</Dialog>
+);
 };

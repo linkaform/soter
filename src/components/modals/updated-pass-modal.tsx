@@ -1,14 +1,12 @@
-import { CheckCircleIcon, Copy, Mail, MessageCircleMore } from "lucide-react";
+import { CheckCircleIcon, Mail, MessageCircleMore } from "lucide-react";
 import { Button } from "../ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { Separator } from "../ui/separator";
 import { toast } from "sonner";
 import { Dispatch,SetStateAction, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -71,11 +69,9 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
   });
 
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
-    console.log("Formulario enviado con los siguientes datos:", data);
     setDataCorreo(dataPass)
-    console.log("PDFFFFFF",responsePdf.response?.data?.data?.download_url)
-     await descargarPdfPase(responsePdf.response?.data?.data?.download_url)
-     toast.success("¡PDF descargado correctamente!");
+    await descargarPdfPase(responsePdf.response?.data?.data?.download_url)
+    toast.success("¡PDF descargado correctamente!");
     router.push(`/`);
   };
 

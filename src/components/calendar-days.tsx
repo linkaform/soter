@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { Label } from "./ui/label";
+import React from "react";
 
 interface CalendarDaysProps {
   diasDisponibles: string[]; // Un array de cadenas (días de la semana)

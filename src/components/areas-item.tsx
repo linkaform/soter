@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -36,7 +34,7 @@ export const formSchema =
     index: number;
     onDelete: () => void;
 
-    area: Areas;
+    areaRaw: Areas;
     location:string;
     loadingCatAreas:boolean;
     catAreas:string[];
@@ -44,8 +42,9 @@ export const formSchema =
   }
 
   const AreasItem: React.FC<AreasItemProps> = ({isCollapsed, onToggleCollapse, onDelete , 
-    catAreas, loadingCatAreas, area, updateArea
+    catAreas, loadingCatAreas, areaRaw, updateArea
   })=>  {
+      const area = formatArea(areaRaw)
       const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -54,14 +53,21 @@ export const formSchema =
     });
 
     useEffect(() => {
-      if(area?.nombre_area !==""){
+      if(area?.nombre_area !=="" ){
         loadNewArea(area)
       }
     }, [])
 
+    function formatArea(a:any){
+      if ('nombre_area' in a) {
+        return a
+      } else if ('note_booth' in a) {
+        return {nombre_area: a.note_booth||"", comentario_area: a.commentario_area||""}
+      }
+    }
     function loadNewArea(item:Areas){
-      form.setValue('nombre_area', item?.nombre_area)
-      form.setValue('comentario_area', item?.comentario_area)
+      form.setValue('nombre_area', item?.nombre_area||"")
+      form.setValue('comentario_area', item?.comentario_area||"")
     }
     
     const handleInputChange = (value:string, fieldName: string) => {

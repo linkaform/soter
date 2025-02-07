@@ -27,7 +27,6 @@ import {
 import { AddNoteModal } from "@/components/modals/add-note-modal";
 import { Nota, notasColumns } from "./notas-columns";
 import Link from "next/link";
-import { useGetMyPases } from "@/hooks/useGetMyPases";
 
 
 const data: Nota[] = [

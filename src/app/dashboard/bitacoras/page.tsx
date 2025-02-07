@@ -10,10 +10,13 @@ import { Home, Users } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LockerTable } from "@/components/table/bitacoras/locker/table";
 import ReusableAccordion from "@/components/resuable-accordion";
-import { BitacorasTable } from "@/components/table/bitacoras/table";
 import PageTitle from "@/components/page-title";
+import { useGetListBitacora } from "@/hooks/useGetListBitacora";
+import BitacorasTable from "@/components/table/bitacoras/table";
 
 const BitacorasPage = () => {
+  const { data, refetch} = useGetListBitacora("", "");
+
   return (
     <div className="">
       <div className="flex flex-col">
@@ -64,7 +67,7 @@ const BitacorasPage = () => {
             </TabsList>
             <TabsContent value="Personal">
               <div className="">
-                <BitacorasTable />
+                <BitacorasTable data={data} refetch={refetch} />
               </div>
             </TabsContent>
             <TabsContent value="Locker">

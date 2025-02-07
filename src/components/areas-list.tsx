@@ -19,7 +19,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Vehiculo } from "@/lib/update-pass";
 import AreasItem from "./areas-item";
 import { useCatalogoPaseArea } from "@/hooks/useCatalogoPaseArea";
 import { Areas } from "@/hooks/useCreateAccessPass";
@@ -31,6 +30,7 @@ interface AreasListProps {
     setAreas: (area: Areas[])=> void
     catAreas:string[]
     loadingCatAreas: boolean
+    existingAreas:boolean
   }
 
   export const formSchema = 
@@ -39,7 +39,7 @@ interface AreasListProps {
       comentario_area: z.string().optional(),
     });
 
-const AreasList:React.FC<AreasListProps> = ({ location, areas, setAreas, catAreas, loadingCatAreas})=> {
+const AreasList:React.FC<AreasListProps> = ({ location, areas, setAreas, catAreas, loadingCatAreas, existingAreas})=> {
     const {data:cat, isLoading: loadingCat, refetch } = useCatalogoPaseArea(location)
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -85,10 +85,15 @@ const AreasList:React.FC<AreasListProps> = ({ location, areas, setAreas, catArea
     }, []);
 
     useEffect(() => {
-        if(catAreas){
+        if(catAreas && existingAreas == false){
             setAreas([])
         }
     }, [catAreas]);
+    
+    function loadNewArea(item:Areas){
+      form.setValue('nombre_area', item?.nombre_area||"")
+      form.setValue('comentario_area', item?.comentario_area||"")
+    }
 
     const cleanInputs =() =>{
         form.setValue('nombre_area', '');
@@ -108,16 +113,14 @@ const AreasList:React.FC<AreasListProps> = ({ location, areas, setAreas, catArea
         }
     };
 
-    useEffect(()=>{
-        console.log("ENTRADA", areas, )
-    },[areas])
-
   return (
     <div >
-      {areas.map((area, index) => (
+      {areas.map((area, index) => 
+      { 
+        return(
         <div key={index} className="border rounded mt-2">
           <AreasItem
-            area={area}
+            areaRaw={area}
             isCollapsed={collapsedIndex !== index}
             onToggleCollapse={() => toggleCollapse(index)}
             index={index}
@@ -127,7 +130,7 @@ const AreasList:React.FC<AreasListProps> = ({ location, areas, setAreas, catArea
             loadingCatAreas={loadingCatAreas} 
             updateArea={(value:any, fieldName:string) => updatedArea(index, value, fieldName)}/>
         </div>
-      ))}
+      )})}
 
       <Form {...form} >
       {/* <form className="space-y-5 border p-8 rounded mt-5" onSubmit={form.handleSubmit(onSubmit)}> */}

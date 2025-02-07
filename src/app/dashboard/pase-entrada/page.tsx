@@ -4,7 +4,6 @@
 import React, { useEffect, useState } from "react";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
-import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm,Controller } from "react-hook-form";
 import { z } from "zod";
@@ -29,7 +28,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 
 import { EntryPassModal } from "@/components/modals/add-pass-modal";
-import { CalendarIcon, List, Mail, MessageCircleMore } from "lucide-react";
+import { List, Mail, MessageCircleMore } from "lucide-react";
 import { useCatalogoPaseLocation } from "@/hooks/useCatalogoPaseLocation";
 import { useCatalogoPaseArea } from "@/hooks/useCatalogoPaseArea";
 import { formatDateToString, formatFecha } from "@/lib/utils";
@@ -40,6 +39,7 @@ import ComentariosList from "@/components/comentarios-list";
 import DateTime from "@/components/dateTime";
 import { MisContactosModal } from "@/components/modals/user-contacts";
 import { Contacto } from "@/lib/get-user-contacts";
+import { useUpdatePaseFull } from "@/hooks/useUpdatePaseFull";
 
 export const linkSchema = z.object({
   link: z.string().url({ message: "Por favor, ingresa una URL válida." }),  // Asegura que el link sea una URL válida
@@ -178,6 +178,7 @@ const PaseEntradaPage = () => {
   const [formatedDocs, setFormatedDocs] = useState<string[]>([])
 
   const {data:catAreas, isLoading: loadingCatAreas, refetch:refetchAreas } = useCatalogoPaseArea(ubicacionSeleccionada)
+  const {data:responseUpdatePaseFull, isLoading: loadingUpdatePaseFull, refetch:refetchUpdatePaseFull } = useUpdatePaseFull(ubicacionSeleccionada)
 
   const [comentariosList, setComentariosList] = useState<Comentarios[]>([]);
   const [areasList, setAreasList] = useState<Areas[]>([]);
@@ -244,19 +245,11 @@ const PaseEntradaPage = () => {
     
   };
 
-  const errors = form.formState.errors;
-
-  // useEffect(()=>{
-  //   console.error("ERRORES", errors)
-  // },[errors])
-
   useEffect(()=>{
     if(selected){
-      console.log("contactos", selected)
       form.setValue("nombre", selected.nombre || "");
       form.setValue("email", selected.email || "");
       form.setValue("telefono", selected.telefono || "");
-
       closeModalContactos()
     }
   }, [selected])
@@ -337,10 +330,8 @@ const PaseEntradaPage = () => {
 
   const handleToggleEmail = () => {
     if (form.getValues("email")=="") { 
-      console.log("DATOOSSS", form.getValues("email"))
       form.setError("email", { type: "manual", message: "El campo email debe tener datos." });
     } else {
-      console.log("ELSEEEE", form.getValues("email"))
       form.clearErrors("email");
     }
 
@@ -430,7 +421,7 @@ const PaseEntradaPage = () => {
     <div className="p-8">
       <EntryPassModal
           title={"Confirmación"}
-          data={modalData}
+          dataPass={modalData}
           isSuccess={isSuccess}
           setIsSuccess={setIsSuccess}
           onClose={closeModal}
@@ -487,7 +478,9 @@ const PaseEntradaPage = () => {
                       <span className="text-red-500">*</span> Nombre Completo:
                     </FormLabel>{" "}
                     <FormControl>
-                      <Input placeholder="Nombre Completo" {...field} value={`${selected?.nombre||""}`}/>
+                      <Input placeholder="Nombre Completo" {...field} 
+                      // defaultValue={`${selected?.nombre||""}`}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -510,7 +503,7 @@ const PaseEntradaPage = () => {
                         onChange={(e) => {
                           field.onChange(e); // Asegúrate de seguir actualizando React Hook Form
                         }}
-                        value={`${selected?.email||""}`}
+                        // value={`${selected?.email||""}`}
                         />
                       </FormControl>
                       <FormMessage />
@@ -529,7 +522,7 @@ const PaseEntradaPage = () => {
                       <FormControl>
                         <PhoneInput
                           {...field}
-                          value={`${selected?.telefono||""}`}
+                          // value={`${selected?.telefono||""}`}
                           onChange={(value) => {
                             form.setValue("telefono", value || "");
                           }}
@@ -1059,11 +1052,11 @@ const PaseEntradaPage = () => {
             {isActiveAdvancedOptions&& (
               <><div className="font-bold text-xl">Areas de acceso:</div>
                 <AreasList
-                  areas={areasList}
-                  setAreas={setAreasList}
-                  location={ubicacionSeleccionada}
-                  catAreas={catAreas}
-                  loadingCatAreas={loadingCatAreas} />
+                areas={areasList}
+                setAreas={setAreasList}
+                location={ubicacionSeleccionada}
+                catAreas={catAreas}
+                loadingCatAreas={loadingCatAreas} existingAreas={false} />
               </> ) }
 
             <div className="font-bold text-xl">Comentarios/ Instrucciones:</div>

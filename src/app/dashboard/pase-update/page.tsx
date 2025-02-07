@@ -1,13 +1,12 @@
 "use client";
 
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
   Form,
-  FormLabel,
 } from "@/components/ui/form";
 
 import { useGetCatalogoPaseNoJwt } from "@/hooks/useGetCatologoPaseNoJwt";
@@ -125,14 +124,12 @@ export default function PaseUpdate () {
     if (showIneIden?.includes("foto") && fotografia.length<=0) {
         setErrorFotografia("Este campo es requerido.");
     }else{
-      console.log("GUIIONNNN DFOTOTO")
       setErrorFotografia("-")
     }
 
     if (showIneIden?.includes("iden") && identificacion.length<=0) {
         setErrorIdentificacion("Este campo es requerido.")
     }else{
-      console.log("GUIIONNNN INDEN")
       setErrorIdentificacion("-")
     }
     
@@ -140,11 +137,10 @@ export default function PaseUpdate () {
     };
 
     useEffect(()=>{
-      console.log("qei pasaa",errorFotografia, errorIdentificacion)
       if (errorFotografia === "-" && errorIdentificacion === "-") {
-        setIsSuccess(true); // Si no hay errores, mostramos el modal
+        setIsSuccess(true); 
     } else {
-        setIsSuccess(false); // Si hay algún error, no mostramos el modal
+        setIsSuccess(false); 
     }
     },[errorFotografia,errorIdentificacion ])
 
@@ -173,7 +169,6 @@ export default function PaseUpdate () {
     }
 
     const closeModal = () => {
-      console.log("CERRARR")
       setErrorFotografia("")
       setErrorIdentificacion("")
       setIsSuccess(false);  // Reinicia el estado para que el modal no se quede abierto.

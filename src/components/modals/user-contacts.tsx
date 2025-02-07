@@ -6,7 +6,6 @@ import {
     DialogTrigger,
   } from "../ui/dialog";
   
-  import SearchInput from '../search-input';
 import { ContactsTable } from "../table/contactos/table";
 import { Dispatch, SetStateAction } from "react";
 import { Contacto } from "@/lib/get-user-contacts";

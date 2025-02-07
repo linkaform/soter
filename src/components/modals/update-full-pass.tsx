@@ -4,7 +4,6 @@
 import React, { useEffect, useState } from "react";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
-import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm,Controller } from "react-hook-form";
 import { z } from "zod";
@@ -29,7 +28,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 
 import { EntryPassModal } from "@/components/modals/add-pass-modal";
-import { CalendarIcon, List, Mail, MessageCircleMore } from "lucide-react";
+import { Mail, MessageCircleMore } from "lucide-react";
 import { useCatalogoPaseLocation } from "@/hooks/useCatalogoPaseLocation";
 import { useCatalogoPaseArea } from "@/hooks/useCatalogoPaseArea";
 import { formatDateToString, formatFecha } from "@/lib/utils";
@@ -38,9 +37,10 @@ import AreasList from "@/components/areas-list";
 import { Areas, Comentarios } from "@/hooks/useCreateAccessPass";
 import ComentariosList from "@/components/comentarios-list";
 import DateTime from "@/components/dateTime";
-import { MisContactosModal } from "@/components/modals/user-contacts";
 import { Contacto } from "@/lib/get-user-contacts";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
+import { EntryPassModal2 } from "./add-pass-modal-2";
+import { EntryPassModalUpdate } from "./add-pass-modal-update";
 
 export const linkSchema = z.object({
   link: z.string().url({ message: "Por favor, ingresa una URL válida." }),  // Asegura que el link sea una URL válida
@@ -142,15 +142,7 @@ export const formSchema = z
     message: "Ambas fechas (Desde y Hasta) son requeridas cuando el tipo de pase es 'rango de fechas'.",
     path: ['fecha_desde_hasta'], // Error para 'fecha_desde_hasta'
   })
-  // .refine((data) => {
-  //   if (data.tipo_visita_pase === 'fecha_fija') {
-  //     return data.fechaFija; // Verifica que 'fechaFija' esté presente
-  //   }
-  //   return true;
-  // }, {
-  //   message: "Fecha Fija es requerida cuando el tipo de pase es 'fecha fija'.",
-  //   path: ['fechaFija'], // Error para 'fechaFija'
-  // })
+
   .refine((data) => {
     if (!data.email && !data.telefono) {
       return false;
@@ -165,6 +157,18 @@ export const formSchema = z
     dataPass:any;
     children: React.ReactNode;
   }
+
+  function formatArea(arr: any[]) {
+    return arr.map(a => {
+      if ('nombre_area' in a) {
+        return a;
+      } else if ('note_booth' in a) {
+        return { nombre_area: a.note_booth, comentario_area: a.commentario_area };
+      }
+      return a; 
+    });
+  }
+
 const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, children }) => {
   const [tipoVisita, setTipoVisita] = useState(dataPass.tipo_visita_pase || "fecha_fija");
   const [config_dias_acceso, set_config_dias_acceso] = useState<string[]>(dataPass.config_dias_acceso||[]);
@@ -172,7 +176,7 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
   const [isSuccess, setIsSuccess] = useState(false);
   const [modalData, setModalData] = useState<any>(null);
   const { data: ubicaciones, isLoading: loadingUbicaciones } = useCatalogoPaseLocation();
-  const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState('');
+  const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(dataPass.ubicacion);
   const { data: areas, isLoading: loadingAreas} = useCatalogoPaseArea(ubicacionSeleccionada);
   const userNameSoter = localStorage.getItem("userName_soter");
   const userEmailSoter = localStorage.getItem("userEmail_soter");
@@ -181,13 +185,13 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
   const host = window.location.host;  
   const [enviar_correo_pre_registro, set_enviar_correo_pre_registro] = useState<string[]>(dataPass.enviar_correo_pre_registro);
   const { data: configLocation, isLoading: loadingConfigLocation, refetch:refetchConfLocation } = useGetConfSeguridad(ubicacionSeleccionada);
-  const [formatedDocs, setFormatedDocs] = useState<string[]>([])
+  const [formatedDocs, setFormatedDocs] = useState<string[]>(configLocation)
 
   const [isActiveRangoFecha, setIsActiveRangoFecha] = useState(dataPass.tipo_visita_pase=="rango_de_fechas");
   const {data:catAreas, isLoading: loadingCatAreas, refetch:refetchAreas } = useCatalogoPaseArea(ubicacionSeleccionada)
 
   const [comentariosList, setComentariosList] = useState<Comentarios[]>(dataPass.comentarios);
-  const [areasList, setAreasList] = useState<Areas[]>(dataPass.areas);
+  const [areasList, setAreasList] = useState<Areas[]>(formatArea(dataPass.areas));
 
   const [isActive, setIsActive] = useState(dataPass.enviar_correo_pre_registro.includes("enviar_correo_pre_registro"));
   const [isActiveSMS, setIsActiveSMS] = useState(dataPass.enviar_correo_pre_registro.includes("enviar_sms_pre_registro"));
@@ -196,11 +200,10 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
 
   const [isActiveCualquierDia, setIsActiveCualquierDia] = useState(true);
   const [isActivelimitarDiasSemana, setIsActiveLimitarDiasSemana] = useState(false);
-
-  const [isActiveAdvancedOptions, setIsActiveAdvancedOptions] = useState(false);
+  const [isActiveAdvancedOptions, setIsActiveAdvancedOptions] = useState(dataPass.areas.length>0);
   
   const [date, setDate] = React.useState<Date| "">(dataPass.tipo_visita_pase=="fecha_fija" ?
-        new Date(dataPass.fechaFija): new Date(dataPass.fecha_desde_visita));
+        new Date(dataPass.fecha_desde_visita): new Date(dataPass.fecha_desde_visita));
   const [fechaDesde, setFechaDesde] = useState<string>('');
   const [selected, setSelected] = useState<Contacto |null>(null);
   const [isOpenModal, setOpenModal] = useState(false);
@@ -208,32 +211,36 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      _id:dataPass._id,
+      folio:dataPass.folio,
       nombre: dataPass.nombre,
-      email: dataPass.email,
-      telefono: dataPass.telefono,
-      ubicacion: dataPass.ubicacion,
-      tema_cita:dataPass.tema_cita,
-      descripcion:dataPass.descripcion,
-      perfil_pase: dataPass.perfil_pase,
-      status_pase:dataPass.status_pase,
-      visita_a: dataPass?.visita_a.lenght > 0 ? dataPass?.visita_a[0].nombre : "",
+      email: dataPass.email ||"",
+      telefono: dataPass.telefono||"",
+      ubicacion: dataPass.ubicacion||"",
+      tema_cita:dataPass.tema_cita||"",
+      descripcion:dataPass.descripcion||"",
+      perfil_pase: dataPass.perfil_pase||"",
+      status_pase:dataPass.status_pase||"",
+      visita_a: dataPass?.visita_a?.nombre||"",
       custom: true,
       link:{
-        link :dataPass.link.link,
-        docs :dataPass.link.docs,
-        creado_por_id: dataPass.link.creado_por_id,
-        creado_por_email: dataPass.link.creado_por_email
-    },
-      enviar_correo_pre_registro:enviar_correo_pre_registro, 
-      tipo_visita_pase: tipoVisita,
+        link : dataPass.link.link,
+        docs : formatedDocs,
+        creado_por_id: userIdSoter,
+        creado_por_email: userEmailSoter
+      },
+      qr_pase: dataPass.qr_pase||[],
+      limitado_a_dias	: dataPass.limitado_a_dias||[],
+      enviar_correo_pre_registro:enviar_correo_pre_registro||[], 
+      tipo_visita_pase: tipoVisita ||"",
       fechaFija: dataPass.tipo_visita_pase=="fecha_fija" ?
-        new Date(dataPass.fechaFija): new Date(dataPass.fecha_desde_visita),
+        dataPass.fechaFija: dataPass.fecha_desde_visita,
       fecha_desde_visita: dataPass.tipo_visita_pase==="fecha_fija"? 
-        (new Date(dataPass.fechaFija) || new Date(dataPass.fecha_desde_visita) ) : ( new Date(dataPass.fecha_desde_visita) ),
-      fecha_desde_hasta: dataPass.fecha_desde_hasta !=="" ? new Date(dataPass.fecha_desde_hasta) : "",
+        (dataPass.fechaFija || dataPass.fecha_desde_visita) : (dataPass.fecha_desde_visita),
+      fecha_desde_hasta: dataPass.fecha_desde_hasta !=="" ? dataPass.fecha_desde_hasta: "",
       config_dia_de_acceso:config_dia_de_acceso === "limitar_días_de_acceso" ? config_dia_de_acceso : "cualquier_día",
       config_dias_acceso:config_dias_acceso,
-      config_limitar_acceso: Number(dataPass.config_limitar_acceso) || 0,
+      config_limitar_acceso: Number(dataPass.config_limitar_acceso) || 1,
       areas: areasList,
       comentarios: comentariosList,
       enviar_pre_sms:{
@@ -251,17 +258,24 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
         : [...prev, dia]; // Si no está seleccionado, lo añadimos
       return updatedDias;
     });
-    
   };
 
   const errors = form.formState.errors;
+  useEffect(()=>{
+        console.log("Error",form.formState.errors)
+  },[form.formState.errors])
+
+
+  useEffect(()=>{
+    form.setValue("fecha_desde_visita", dataPass.fecha_desde_visita.split(" ")[0])
+    form.setValue("fecha_desde_hasta", dataPass.fecha_desde_hasta.split(" ")[0])
+  },[])
 
   useEffect(()=>{
     if(selected){
       form.setValue("nombre", selected.nombre || "");
       form.setValue("email", selected.email || "");
       form.setValue("telefono", selected.telefono || "");
-
       closeModalContactos()
     }
   }, [selected])
@@ -295,40 +309,47 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
     console.log("Formulario enviado con los siguientes datos:", data);
 
     const formattedData = {
+      _id: dataPass._id,
+      folio: dataPass.folio,
       nombre: data.nombre,
-      email: data.email,
-      telefono: data.telefono,
-      ubicacion: data.ubicacion,
-      tema_cita: data.tema_cita,
-      descripcion: data.descripcion,
-      perfil_pase: "Visita General",
-      status_pase:"Proceso",
-      visita_a: userNameSoter,
-      custom:true,
+      email: data.email ||"",
+      telefono: data.telefono||"",
+      ubicacion: data.ubicacion||"",
+      tema_cita:data.tema_cita||"",
+      descripcion:data.descripcion||"",
+      perfil_pase: dataPass.perfil_pase||"",
+      status_pase:data.status_pase||"",
+      visita_a: data?.visita_a ||"",
+      custom: true,
       link:{
-        link : data.link.link,
+        link : dataPass.link.link,
         docs : formatedDocs,
         creado_por_id: userIdSoter,
         creado_por_email: userEmailSoter
       },
-      enviar_correo_pre_registro: enviar_correo_pre_registro, 
-      tipo_visita_pase: tipoVisita,
-      fechaFija: date !=="" ? formatDateToString(date):"",
-      fecha_desde_visita: tipoVisita === "fecha_fija"? 
-        (date !=="" ? formatDateToString(date): "") : 
-          (data.fecha_desde_visita !== "" ? formatFecha(data.fecha_desde_visita)+` 00:00:00`: ""),
-      fecha_desde_hasta: data.fecha_desde_hasta !=="" ? formatFecha(data.fecha_desde_hasta)+` 00:00:00` : "",
-      config_dia_de_acceso: config_dia_de_acceso === "limitar_días_de_acceso" ? config_dia_de_acceso : "cualquier_día",
-      config_dias_acceso: config_dias_acceso,
-      config_limitar_acceso: Number(data.config_limitar_acceso) || 0,
-      areas:areasList,
+      qr_pase: dataPass.qr_pase||[],
+      limitado_a_dias	: dataPass.limitado_a_dias||[],
+      enviar_correo_pre_registro:enviar_correo_pre_registro||[], 
+      tipo_visita_pase: tipoVisita ||"",
+      config_dia_de_acceso:config_dia_de_acceso === "limitar_días_de_acceso" ? config_dia_de_acceso : "cualquier_día",
+      config_dias_acceso:config_dias_acceso,
+      config_limitar_acceso: Number(dataPass.config_limitar_acceso) || 1,
+      areas: areasList,
       comentarios: comentariosList,
       enviar_pre_sms:{
         from: "enviar_pre_sms",
-        mensaje: "SOY UN MENSAJE",
-        numero: data.telefono,
+        mensaje: "prueba",
+        numero: dataPass.telefono,
       },
+
+      fechaFija: date !=="" ? formatDateToString(date):"",
+      fecha_desde_visita: tipoVisita === "fecha_fija"? (date !=="" ? formatDateToString(date): "") : 
+          (data.fecha_desde_visita !== "" ? data.fecha_desde_visita: ""),
+      fecha_desde_hasta: data.fecha_desde_hasta !=="" ? data.fecha_desde_hasta.split(" ")[0] : "",
+      grupo_equipos: dataPass.grupo_equipos,
+      grupo_vehiculos:dataPass.grupo_vehiculos
     };
+
     if(tipoVisita == "fecha_fija" && date == ""){
       form.setError("fechaFija", { type: "manual", message: "Fecha Fija es requerida cuando el tipo de pase es 'fecha fija'." });
     }else if(tipoVisita == "rango_de_fechas" && (formattedData.fecha_desde_visita == "" || formattedData.fecha_desde_hasta == "" ) ){
@@ -423,13 +444,6 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
     setIsSuccess(false);  // Reinicia el estado para que el modal no se quede abierto.
   };
 
-  // Abrir el modal
-  const openModalContactos = () => setOpenModal(true);
-
-  // Cerrar el modal
-  const closeModalContactos = () => setOpenModal(false);
-
-
   return (
     <Dialog >
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -442,12 +456,14 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
 
 
         <div className="p-8">
-        <EntryPassModal
+        <EntryPassModalUpdate
           title={"Confirmación"}
-          data={modalData}
+          dataPass={modalData}
           isSuccess={isSuccess}
           setIsSuccess={setIsSuccess}
           onClose={closeModal}
+          id={dataPass._id}
+          folio={dataPass.folio}
         />
 
       <div className="flex flex-col space-y-5 max-w-3xl mx-auto">
@@ -470,7 +486,7 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
 
         <div className="">
           <p className="font-bold">Tipo de pase : <span className="font-normal" > Visita General</span></p>
-        </div>
+       </div>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
@@ -496,7 +512,9 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
                       <span className="text-red-500">*</span> Nombre Completo:
                     </FormLabel>{" "}
                     <FormControl>
-                      <Input placeholder="Nombre Completo" {...field} value={`${selected?.nombre||dataPass.nombre}`}/>
+                      <Input placeholder="Nombre Completo" {...field} 
+                      // value={`${selected?.nombre||dataPass.nombre}` }
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -518,7 +536,7 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
                         onChange={(e) => {
                           field.onChange(e); // Asegúrate de seguir actualizando React Hook Form
                         }}
-                        value={`${selected?.email||dataPass.email}`}
+                        // value={`${selected?.email||dataPass.email}`}
                         />
                       </FormControl>
                       <FormMessage />
@@ -537,7 +555,7 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
                       <FormControl>
                         <PhoneInput
                           {...field}
-                          value={`${selected?.telefono||dataPass.telefono}`}
+                          // value={`${selected?.telefono||dataPass.telefono}`}
                           onChange={(value) => {
                             form.setValue("telefono", value || "");
                           }}
@@ -785,33 +803,9 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
                           ):(
                             <><div className="text-blue-600">Limitar Días</div></>
                           )}
-                            
                         </div>
                       </Button>
                     )}
-                    {/* <RadioGroup
-                      value={tipoVisita}
-                      onValueChange={(value) => {
-                        field.onChange(value);
-                        setTipoVisita(value);
-                      }}
-                      className="flex flex-wrap space-y-1"
-                    >
-                      <FormItem className="flex items-center space-x-3 space-y-0">
-                        <FormControl>
-                          <RadioGroupItem value="fecha_fija" />
-                        </FormControl>
-                        <FormLabel>Fecha Fija</FormLabel>
-                      </FormItem>
-                        <>
-                          <FormItem className="flex items-center space-x-3 space-y-0">
-                            <FormControl>
-                              <RadioGroupItem value="rango_de_fechas" />
-                            </FormControl>
-                            <FormLabel>Rango de Fechas</FormLabel>
-                          </FormItem>
-                        </>
-                    </RadioGroup> */}
                     <FormMessage />
                   </FormItem>
                 )}
@@ -833,20 +827,13 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
                         <FormControl>
 
                         <DateTime date={date} setDate={setDate} />
-
                         
-                          {/* <Input
-                            type="datetime-local"
-                            {...field}
-                            min={new Date().toISOString().slice(0, 16)}
-                          /> */}
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                 )}
-
                 {tipoVisita === "rango_de_fechas" && (
                   <><div className="grid grid-cols-1 md:grid-cols-1 gap-2">
                     <FormField
@@ -868,7 +855,7 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
                                 handleFechaDesdeChange(e); // Guardar la fecha seleccionada en el estado
 
                               }}
-                              value={field.value || new Date(dataPass.fecha_desde_visita)}
+                              // value={dataPass.fecha_desde_visita.split(" ")[0]}
                             //   value={new Date(dataPass.fecha_desde_visita)}
                             />
                           </FormControl>
@@ -886,7 +873,6 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
                           </FormLabel>
                           <FormControl>
                             <Input
-                              value={field.value || (fechaDesde ? getNextDay(fechaDesde) : new Date().toISOString().split('T')[0])}
                               type="date"
                               {...field}
                               min={fechaDesde ? getNextDay(fechaDesde) : new Date().toISOString().split('T')[0]}
@@ -895,6 +881,8 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
                                 field.onChange(e); // Propagar el valor a react-hook-form
 
                               }}
+                              // value={dataPass.fecha_desde_hasta.split(" ")[0]}
+
                             />
                           </FormControl>
                           <FormMessage />
@@ -1021,7 +1009,7 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
                               min={0} // Opcional: Definir el valor mínimo
                               step={1} // Opcional: Definir el paso de incremento
                               {...field} 
-                              value={field.value ? Number(field.value) : 0} // Garantiza que sea un número válido
+                              // value={field.value ? Number(field.value) : 0} // Garantiza que sea un número válido
                               onChange={(e) => {
                                 const newValue = e.target.value ? Number(e.target.value) : 0;
                                 field.onChange(newValue); 
@@ -1074,17 +1062,18 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
                   setAreas={setAreasList}
                   location={ubicacionSeleccionada}
                   catAreas={catAreas}
-                  loadingCatAreas={loadingCatAreas} />
+                  loadingCatAreas={loadingCatAreas} 
+                  existingAreas={true}/>
               </> ) }
-            {comentariosList && comentariosList.length>0?(<>
+            {/* {comentariosList && comentariosList.length>0?( <>*/}
                 <div className="font-bold text-xl">Comentarios/ Instrucciones:</div>
                 <ComentariosList
                     comentarios={comentariosList}
                     setComentarios={setComentariosList}
-                    location={ubicacionSeleccionada}
                     tipo={"Pase"}
+                    existingComentarios={true}
                 />
-            </>):null}
+            {/* </>):null} */}
             
 
             {loadingAreas == false && loadingConfigLocation == false && loadingUbicaciones == false ? (<>
@@ -1100,7 +1089,7 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
             </>):null}
      
       </div>
-    </div>
+        </div>
     </DialogContent>
     </Dialog>
   );

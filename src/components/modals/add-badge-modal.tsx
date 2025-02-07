@@ -32,10 +32,15 @@ import { Checkbox } from "../ui/checkbox";
 import { Label } from "../ui/label";
 import { useState } from "react";
 import { SuccessModal } from "./success-modal";
+import { useGetLockers } from "@/hooks/useGetLockers";
+import { useGetGafetes } from "@/hooks/useGetGafetes";
 
 interface AddBadgeModalProps {
   title: string;
   children: React.ReactNode;
+  location:string;
+  area:string;
+  status:string;
 }
 
 const FormSchema = z.object({
@@ -54,8 +59,13 @@ const FormSchema = z.object({
 export const AddBadgeModal: React.FC<AddBadgeModalProps> = ({
   title,
   children,
+  location,
+  area,
+  status
 }) => {
   const [open, setOpen] = useState(false);
+  const { data:responseGetLockers, isLoading:loadingGetLockers, refetchLockers } = useGetLockers(location ?? null, area?? null, status);
+  const { data:responseGetGafetes, isLoading:loadingGetGafetes, refetchGafetes } = useGetGafetes(location ?? null, area?? null, status);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -68,11 +78,9 @@ export const AddBadgeModal: React.FC<AddBadgeModalProps> = ({
 
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(data);
-    setOpen(true); // Trigger the success modal
+    setOpen(true);
   }
 
-  // Return the SuccessModal if open is true
   if (open) {
     return (
       <SuccessModal
@@ -83,7 +91,6 @@ export const AddBadgeModal: React.FC<AddBadgeModalProps> = ({
       />
     );
   }
-
 
   return (
     <Dialog>
