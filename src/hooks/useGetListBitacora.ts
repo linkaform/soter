@@ -2,12 +2,12 @@
 import { getListBitacora } from "@/lib/get-list-bitacoras";
 import { useQuery } from "@tanstack/react-query";
 
-export const useGetListBitacora = (location:string, area:string) => {
+export const useGetListBitacora = (location:string, area:string, prioridades:string[]) => {
   const { data: data, isLoading, error, isFetching, refetch } = useQuery<any>({
-    queryKey: ["getListBitacora", location, area], 
+    queryKey: ["getListBitacora", location, area, prioridades], 
     enabled:false,
     queryFn: async () => {
-        const data = await getListBitacora(location, area ); 
+        const data = await getListBitacora(location, area , prioridades); 
         return data.response?.data; 
     },
    

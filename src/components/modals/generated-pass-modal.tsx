@@ -30,6 +30,7 @@ export const GeneratedPassModal: React.FC<GeneratedPassModalProps> = ({
   setOpenGeneratedPass
 }) => {
   const router = useRouter(); // Inicializamos el hook useRouter
+  console.log("PASE LINK", link)
   return (
     <Dialog open={openGeneratedPass} onOpenChange={setOpenGeneratedPass} >
       <DialogTrigger asChild>{children}</DialogTrigger>

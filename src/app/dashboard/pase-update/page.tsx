@@ -8,14 +8,16 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
 } from "@/components/ui/form";
-
+import { toast } from "sonner";
 import { useGetCatalogoPaseNoJwt } from "@/hooks/useGetCatologoPaseNoJwt";
 import VehicleList from "@/components/vehicle-list";
 import { Equipo, Imagen, Vehiculo } from "@/lib/update-pass";
 import EquipoList from "@/components/equipo-list";
 import { EntryPassModal2 } from "@/components/modals/add-pass-modal-2";
 import LoadImage from "@/components/upload-Image";
-import { Car, Laptop } from "lucide-react";
+import { Car, Laptop, Loader2 } from "lucide-react";
+import { useGetPdf } from "@/hooks/usetGetPdf";
+import { descargarPdfPase } from "@/lib/download-pdf";
 
 export const grupoEquipos = z.array(
   z.object({
@@ -73,7 +75,7 @@ export default function PaseUpdate () {
         account_id= userIdSoter
     }
     const showIneIden= docs?.split("-")
-
+    const { data: responsePdf, isLoading: loadingPdf} = useGetPdf(account_id, id);
     const { data: dataCatalogos, isLoading: loadingDataCatalogos } = useGetCatalogoPaseNoJwt(account_id, id);
 
     const [agregarEquiposActive, setAgregarEquiposActive] = useState(false);
@@ -144,6 +146,7 @@ export default function PaseUpdate () {
     }
     },[errorFotografia,errorIdentificacion ])
 
+
     const handleCheckboxChange = (name:string) => {
     if (name === "agregar-equipos") {
         setAgregarEquiposActive(!agregarEquiposActive);
@@ -151,6 +154,12 @@ export default function PaseUpdate () {
         setAgregarVehiculosActive(!agregarVehiculosActive);
     }
     };
+
+    async function onDescargarPDF(){
+      await descargarPdfPase(responsePdf.response?.data?.data?.download_url)
+      toast.success("¡PDF descargado correctamente!");
+    }
+
     if(loadingDataCatalogos){
       return(
         <div className="flex justify-center items-center mt-10">
@@ -167,6 +176,8 @@ export default function PaseUpdate () {
         </div>
       )
     }
+
+  
 
     const closeModal = () => {
       setErrorFotografia("")
@@ -214,7 +225,7 @@ return (
               <div className="flex justify-between">
                   <div className="w-full flex gap-2">
                   <p className="font-bold whitespace-nowrap">Visita a: </p>
-                  <p className="w-full break-words">{dataCatalogos?.pass_selected.visita_a[0].nombre}</p>
+                  <p className="w-full break-words">{dataCatalogos?.pass_selected.visita_a.nombre}</p>
                   </div>
 
                   <div className="w-full flex gap-2">
@@ -335,7 +346,7 @@ return (
             <div className="flex flex-col gap-2">
                 <div className="w-full flex gap-2">
                 <p className="font-bold whitespace-nowrap">Visita a: </p>
-                <p className="w-full break-words">{dataCatalogos?.pass_selected.visita_a[0].nombre}</p>
+                <p className="w-full break-words">{dataCatalogos?.pass_selected.visita_a}</p>
                 </div>
 
                 <div className="w-full flex gap-2">
@@ -359,9 +370,9 @@ return (
                     </div>
                 </div>
 
-                <Button className="w-40 h-12  bg-yellow-500 hover:bg-yellow-600" type="submit" >
+                <Button className="w-40 h-12  bg-yellow-500 hover:bg-yellow-600" type="submit" onClick={onDescargarPDF} disabled={loadingPdf}>
             {/* {!isLoading ? ("Actualizar pase"):(<><Loader2 className="animate-spin"/>Actualizando pase...</>)} */}
-            Descargar pdf
+            {!loadingPdf ? ("Descargar PDF"):(<><Loader2 className="animate-spin"/>Descargando PDF...</>)}
             </Button>
 
             <Button className="w-1/3 h-12  bg-blue-500 hover:bg-blue-600" type="submit" >

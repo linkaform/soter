@@ -28,19 +28,25 @@ import {
 } from "@/components/ui/select";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Checkbox } from "../ui/checkbox";
-import { Label } from "../ui/label";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SuccessModal } from "./success-modal";
 import { useGetLockers } from "@/hooks/useGetLockers";
 import { useGetGafetes } from "@/hooks/useGetGafetes";
+import { useAsignarGafete } from "@/hooks/useAsignarGafete";
+import { Loader2 } from "lucide-react";
+import { errorAlert, sweetAlert } from "@/lib/utils";
+import { dataGafetParamas } from "@/lib/asignar-gafete";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 
 interface AddBadgeModalProps {
   title: string;
   children: React.ReactNode;
-  location:string;
-  area:string;
   status:string;
+  refetchTable:()=>void;
+  id_bitacora:string;
+  tipo_movimiento:string;
+  ubicacion:string;
+  area:string;
 }
 
 const FormSchema = z.object({
@@ -51,7 +57,7 @@ const FormSchema = z.object({
   locker: z.string().min(2, {
     message: "Campo requerido.",
   }),
-  documentos: z.array(z.string()).min(1, {
+  documentos: z.string().min(1, {
     message: "Selecciona al menos un documento.",
   }),
 });
@@ -59,27 +65,70 @@ const FormSchema = z.object({
 export const AddBadgeModal: React.FC<AddBadgeModalProps> = ({
   title,
   children,
-  location,
   area,
-  status
+  status,
+  refetchTable, 
+  id_bitacora,
+  tipo_movimiento,
+  ubicacion
 }) => {
   const [open, setOpen] = useState(false);
-  const { data:responseGetLockers, isLoading:loadingGetLockers, refetchLockers } = useGetLockers(location ?? null, area?? null, status);
-  const { data:responseGetGafetes, isLoading:loadingGetGafetes, refetchGafetes } = useGetGafetes(location ?? null, area?? null, status);
+  const [dataGafete, setDataGafete]= useState<dataGafetParamas | null>(null)
+  const { data:responseGetLockers, isLoading:loadingGetLockers, refetch: refetchLockers } = useGetLockers(ubicacion ?? null,"", status);
+  const { data:responseGetGafetes, isLoading:loadingGetGafetes, refetch: refetchGafetes } = useGetGafetes(ubicacion ?? null,"", status);
+  const { data:responseAsignarGafete, isLoading:loadingAsginarGafete, refetch: refetchAsignarGafete, error:errorAsignarGafete } = useAsignarGafete(dataGafete ?? null, 
+    id_bitacora ?? null, tipo_movimiento?? null );
+  const [isOpen, setIsOpen] = useState(false);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
       gafete: "",
       locker: "",
-      documentos: [],
+      documentos:"",
     },
   });
 
+  useEffect(()=>{
+    console.log("LOGGG", responseGetLockers, responseGetGafetes)
+  },[responseGetLockers, responseGetGafetes])
+
+  useEffect(()=>{
+    if(isOpen){
+      refetchLockers()
+      refetchGafetes()
+    }
+  },[isOpen])
+
+  useEffect(()=>{
+    if(errorAsignarGafete){
+      console.log("ERROR USE WEFE", errorAsignarGafete)
+      errorAlert(errorAsignarGafete, "Error al asignar gafete.", "warning")
+    }
+
+},[errorAsignarGafete])
+
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    setOpen(true);
+    console.log("DATA PARA ENVIAR:", data)
+    setDataGafete({locker_id:data.locker, gafete_id:data.gafete, documento:data.documentos, status_gafete:"asignado" , ubicacion:ubicacion, area:area})
   }
+
+  useEffect(()=>{
+    if(dataGafete){
+      refetchAsignarGafete()
+    }
+  },[dataGafete])
+  
+
+  useEffect(()=>{
+    if(responseAsignarGafete){
+      console.log("RESPONSE", responseAsignarGafete)
+      setIsOpen(false)
+      sweetAlert("success", "Confirmación", "Gafete asignado exitosamente.")
+      refetchTable()
+    }
+  }, [responseAsignarGafete])
 
   if (open) {
     return (
@@ -93,7 +142,7 @@ export const AddBadgeModal: React.FC<AddBadgeModalProps> = ({
   }
 
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
 
       <DialogContent className="max-w-xl">
@@ -123,19 +172,23 @@ export const AddBadgeModal: React.FC<AddBadgeModalProps> = ({
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Selecciona una opción" />
+                        {loadingGetGafetes?(
+                            <>
+                            <SelectValue placeholder="Cargando gafetes..." />
+                            </>
+                          ): (
+                            <>
+                            <SelectValue placeholder="Selecciona un gafete" />
+                            </>
+                          )}
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="m@example.com">
-                          m@example.com
-                        </SelectItem>
-                        <SelectItem value="m@google.com">
-                          m@google.com
-                        </SelectItem>
-                        <SelectItem value="m@support.com">
-                          m@support.com
-                        </SelectItem>
+                      {responseGetGafetes?.map((gafete:any, index:string) => (
+                            <SelectItem key={index} value={gafete.gafete_id}>
+                              {gafete.gafete_id}
+                            </SelectItem>
+                          ))}
                       </SelectContent>
                     </Select>
 
@@ -158,19 +211,23 @@ export const AddBadgeModal: React.FC<AddBadgeModalProps> = ({
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Selecciona una opción" />
+                        {loadingGetLockers?(
+                            <>
+                            <SelectValue placeholder="Cargando lockers..." />
+                            </>
+                          ): (
+                            <>
+                            <SelectValue placeholder="Selecciona un locker" />
+                            </>
+                          )}
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="m@example.com">
-                          m@example.com
-                        </SelectItem>
-                        <SelectItem value="m@google.com">
-                          m@google.com
-                        </SelectItem>
-                        <SelectItem value="m@support.com">
-                          m@support.com
-                        </SelectItem>
+                      {responseGetLockers?.map((locker:any, index:string) => (
+                            <SelectItem key={index} value={locker.locker_id	}>
+                              {locker.locker_id	}
+                            </SelectItem>
+                          ))}
                       </SelectContent>
                     </Select>
 
@@ -184,33 +241,47 @@ export const AddBadgeModal: React.FC<AddBadgeModalProps> = ({
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>
-                      <span className="text-red-500">*</span> Documentos de
+                      <span className="text-red-500">*</span> Documento de
                       garantía
                     </FormLabel>
                     <div className="space-y-2 my-5">
-                      {[
-                        { label: "INE", value: "ine" },
-                        { label: "Licencia de Conducir", value: "licencia" },
-                        { label: "Pase de Estacionamiento", value: "pase" },
-                        { label: "Otro", value: "otro" },
-                      ].map((doc) => (
-                        <FormControl key={doc.value}>
+                        <FormControl >
                           <div className="flex items-center space-x-2">
-                            <Checkbox
-                              checked={field.value?.includes(doc.value)}
-                              onCheckedChange={(checked) => {
-                                const newValue = checked
-                                  ? [...(field.value || []), doc.value]
-                                  : field.value?.filter(
-                                      (val) => val !== doc.value
-                                    ) || [];
-                                field.onChange(newValue); // Actualiza la lista seleccionada
-                              }}
-                            />
-                            <Label className="text-sm">{doc.label}</Label>
+                            <RadioGroup 
+                              defaultValue={field.value}
+                              onValueChange={field.onChange}
+                            >
+                            <FormItem className="flex items-center space-x-3 space-y-0">
+                              <FormControl>
+                                <RadioGroupItem value="ine" />
+                              </FormControl>
+                              <FormLabel className="font-normal">
+                                INE
+                              </FormLabel>
+                            </FormItem>
+                            <FormItem className="flex items-center space-x-3 space-y-0">
+                              <FormControl>
+                                <RadioGroupItem value="licencia de conducir" />
+                              </FormControl>
+                              <FormLabel className="font-normal">Licencia de conducir</FormLabel>
+                            </FormItem>
+
+                            <FormItem className="flex items-center space-x-3 space-y-0">
+                              <FormControl>
+                                <RadioGroupItem value="pase de estacionamiento" />
+                              </FormControl>
+                              <FormLabel className="font-normal">Pase de Estacionamiento</FormLabel>
+                            </FormItem>
+                            <FormItem className="flex items-center space-x-3 space-y-0">
+                              <FormControl>
+                                <RadioGroupItem value="otro" />
+                              </FormControl>
+                              <FormLabel className="font-normal">Otro</FormLabel>
+                            </FormItem>
+
+                            </RadioGroup>
                           </div>
                         </FormControl>
-                      ))}
                     </div>
                     <FormMessage />
                   </FormItem>
@@ -229,7 +300,9 @@ export const AddBadgeModal: React.FC<AddBadgeModalProps> = ({
               </DialogClose>
 
               <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white">
-                Confirmar
+              { !loadingAsginarGafete ? (<>
+              {("Asignar gafete")}
+            </>) :(<> <Loader2 className="animate-spin"/> {"Cargando..."} </>)}
               </Button>
             </div>
           </form>

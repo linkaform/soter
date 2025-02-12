@@ -16,6 +16,7 @@ import { data_correo } from "@/lib/send_correo";
 import { useUpdatePaseFull } from "@/hooks/useUpdatePaseFull";
 import { GeneratedPassModal } from "./generated-pass-modal";
 import CalendarDays from "../calendar-days";
+import { renameKeyTipoComentario } from "@/lib/utils";
 
 interface EntryPassModalUpdateProps {
   title: string;
@@ -37,7 +38,7 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
   folio,
 }) => {
   const [openGeneratedPass, setOpenGeneratedPass] = useState<boolean>(false);
-  const [responseformated, setResponseFormated] = useState<data_correo|null>(null);
+  const [responseformated] = useState<data_correo|null>(null);
   const [sendDataUpdate, setSendDataUpdate] = useState<Access_pass_update|null>(null)
   const [link, setLink] = useState("");
   const account_id = parseInt(localStorage.getItem("userId_soter") || "0", 10);
@@ -71,8 +72,8 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
 
   const onSubmitEdit = async () => {
     const accessPassData = {
-      _id:dataPass._id,
-      folio: dataPass.folio,
+      // _id:dataPass._id,
+      // folio: dataPass.folio,
       nombre_pase: dataPass.nombre,
       email_pase: dataPass.email,
       telefono_pase: dataPass.telefono,
@@ -91,16 +92,16 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
       },
       qr_pase:dataPass.qr_pase,
       tipo_visita: "alta_de_nuevo_visitante",
-      limitado_a_dias: dataPass.limitado_a_dias,
+      // limitado_a_dias: dataPass.limitado_a_dias,
       enviar_correo_pre_registro: dataPass.enviar_correo_pre_registro,
       tipo_visita_pase: dataPass.tipo_visita_pase,
-      fecha_desde_visita: dataPass.fecha_desde_visita,
-      fecha_desde_hasta: dataPass.fecha_desde_hasta,
+      fecha_desde_visita: dataPass.fecha_desde_visita.includes(":") && dataPass.fecha_desde_visita!==""? dataPass.fecha_desde_visita: dataPass.fecha_desde_visita!==""?`${dataPass.fecha_desde_visita}`+` 00:00:00`:"",
+      fecha_desde_hasta: dataPass.fecha_desde_hasta.includes(":") && dataPass.fecha_desde_hasta!=="" ? dataPass.fecha_desde_hasta: dataPass.fecha_desde_hasta!==""?`${dataPass.fecha_desde_hasta}`+` 00:00:00`:"",
       config_dia_de_acceso: dataPass.config_dia_de_acceso,
       config_dias_acceso: dataPass.config_dias_acceso,
       config_limitar_acceso: dataPass.config_limitar_acceso,
       grupo_areas_acceso: dataPass.areas,
-      grupo_instrucciones_pase: dataPass.comentarios,
+      grupo_instrucciones_pase:renameKeyTipoComentario(dataPass.comentarios) ,
       grupo_vehiculos:dataPass.grupo_vehichulos,
       grupo_equipos: dataPass.grupo_equipos,
       autorizado_por: userEmailSoter,
@@ -130,11 +131,11 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
 
   useEffect(()=>{
     if(responseUpdateFull?.success){
-    }
+      console.log("quie pasaaaa", responseUpdateFull)
       const protocol = window.location.protocol;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
       const host = window.location.host;
       let docs=""
-      sendDataUpdate?.link.docs.map((d, index)=>{
+      dataPass?.link.docs.map((d, index)=>{
         if(d == "agregarIdentificacion"){
           docs+="iden"
         }
@@ -146,8 +147,17 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
         }
       })
       setLink(`${protocol}//${host}/dashboard/pase-update?id=${responseUpdateFull?.response.data.json.id}&user=${account_id}&docs=${docs}`)
-      setOpenGeneratedPass(true)
+      
+    }
   },[responseUpdateFull])
+
+  useEffect(()=>{
+    if(link){
+      console.log("LINK", link)
+      setOpenGeneratedPass(true)
+    }
+  },[link])
+
 
   return (
   //onOpenChange={setIsSuccess}
@@ -301,7 +311,7 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
         </Button>
       </DialogClose>
 
-      {responseUpdateFull?.success === true ? (
+      {openGeneratedPass? (
         <GeneratedPassModal
           title="Pase de Entrada Generado "
           description="El pase de entrada se ha generado correctamente. Por favor, copie el siguiente enlace y compártalo con el visitante para completar el proceso."

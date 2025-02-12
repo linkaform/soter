@@ -13,7 +13,7 @@ export const useUpdatePaseFull = (access_pass: Access_pass_update|null, id: stri
         folio,
         location
       });
-      return data.response?.data.areas_by_location;
+      return data;
     },
     refetchOnWindowFocus: true,
     refetchInterval: 60000,

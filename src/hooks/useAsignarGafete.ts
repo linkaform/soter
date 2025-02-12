@@ -1,13 +1,13 @@
-import { getLockers } from "@/lib/get-lockers";
+import { asignarGafete, dataGafetParamas } from "@/lib/asignar-gafete";
 import { useQuery } from "@tanstack/react-query";
 
-export const useGetLockers = (location:string, area:string, status:string) => {
+export const useAsignarGafete = (data_gafete:dataGafetParamas |null, id_bitacora:string | null, tipo_movimiento:string| null) => {
   const { data: data, isLoading, error, isFetching, refetch} = useQuery<any>({
-    queryKey: ["getLockers", location, area], 
+    queryKey: ["asignarGafete"], 
     enabled:false,
     queryFn: async () => {
-        const data = await getLockers(location, area , status); 
-        return data.response?.data; 
+        const data = await asignarGafete(data_gafete, id_bitacora, tipo_movimiento); 
+        return data; 
     },
    
     refetchOnWindowFocus: true, 

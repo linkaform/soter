@@ -1,13 +1,13 @@
-import { getLockers } from "@/lib/get-lockers";
+import { doOut } from "@/lib/do-out";
 import { useQuery } from "@tanstack/react-query";
 
-export const useGetLockers = (location:string, area:string, status:string) => {
+export const useDoOut = ( qr_code:string, location:string, area:string) => {
   const { data: data, isLoading, error, isFetching, refetch} = useQuery<any>({
-    queryKey: ["getLockers", location, area], 
+    queryKey: ["doOut", location, area, qr_code], 
     enabled:false,
     queryFn: async () => {
-        const data = await getLockers(location, area , status); 
-        return data.response?.data; 
+        const data = await doOut(qr_code, location, area); 
+        return data; 
     },
    
     refetchOnWindowFocus: true, 

@@ -1,14 +1,13 @@
 import { AddBadgeModal } from "@/components/modals/add-badge-modal";
 import { AddEquipmentModal } from "@/components/modals/add-equipment-modal";
 import { AddVehicleModal } from "@/components/modals/add-vehicle-modal";
+import { DoOutModal } from "@/components/modals/do-out-modal";
+import { ReturnGafeteModal } from "@/components/modals/return-gafete-modal";
 import { ViewListBitacoraModal } from "@/components/modals/view-bitacora";
-import { Areas, Comentarios } from "@/hooks/useCreateAccessPass";
-import { Equipo, Vehiculo } from "@/lib/update-pass";
-import { formatEquipos, formatVehiculos } from "@/lib/utils";
 import {
     ColumnDef,  
   } from "@tanstack/react-table";
-import { Car, Eye, Hammer, IdCard} from "lucide-react";
+import { Car, Eye, Forward, Hammer, IdCard} from "lucide-react";
 import { useState } from "react";
 
 
@@ -16,6 +15,7 @@ export interface Bitacora_record {
   equipos: Equipo_bitacora[] 
   file_name: string
   fecha_entrada: string
+  caseta_salida: string
   caseta_entrada: string
   updated_at: string
   motivo_visita: string
@@ -23,6 +23,7 @@ export interface Bitacora_record {
   contratista: unknown[]
   foto_url: string
   identificacion_url:string
+  id_locker: string
   id_gafet: string
   ubicacion: string
   perfil_visita: string
@@ -78,6 +79,7 @@ export interface Areas_bitacora {
 
 const OptionsCell: React.FC<{ row: any , refetch: () => void}> = ({ row, refetch }) => {
   const bitacora = row.original;
+  
   const [isModalOpen, setIsModalOpen] = useState(false); // Estado para manejar la visibilidad del modal
 
   const openModal = () => {
@@ -88,7 +90,7 @@ const OptionsCell: React.FC<{ row: any , refetch: () => void}> = ({ row, refetch
   };
 
   
-
+  console.log("bitacorea", bitacora.id_gafete)
   // const dataFull= {
   //     file_name:bitacora.file_name,
   //     folio:bitacora.folio ,
@@ -136,7 +138,7 @@ const OptionsCell: React.FC<{ row: any , refetch: () => void}> = ({ row, refetch
           </div>
       </ViewListBitacoraModal>
       
-      <AddVehicleModal title="Agregar vehiculo" id={bitacora._id} >
+      <AddVehicleModal title="Agregar vehiculo" id={bitacora._id} refetchTable={refetch} >
           <div className="cursor-pointer">
             <Car />
           </div>
@@ -148,9 +150,29 @@ const OptionsCell: React.FC<{ row: any , refetch: () => void}> = ({ row, refetch
           </div>
       </AddEquipmentModal>
 
-    <AddBadgeModal title={"Gafete"}  location={""} area={""} status={""}>
-      <IdCard />
-    </AddBadgeModal>
+    { bitacora.id_gafet || bitacora.id_locker ? (
+      <ReturnGafeteModal title={"Recibir Gafete"} refetchTable={refetch} id_bitacora={bitacora._id}
+        ubicacion={bitacora.ubicacion} area={bitacora.status_visita.toLowerCase() == "entrada" ? bitacora.caseta_entrada : bitacora.caseta_salida || ""} 
+        fecha_salida={bitacora.fecha_salida} gafete={bitacora.id_gafet} locker={bitacora.id_locker||""} tipo_movimiento={bitacora.status_visita.toLowerCase()}> 
+        <IdCard />
+      </ReturnGafeteModal>
+     ):(
+      <AddBadgeModal title={"Gafete"} status={"Disponible"} refetchTable={refetch} id_bitacora= {bitacora._id}
+      tipo_movimiento={bitacora.status_visita} ubicacion={bitacora.ubicacion} area={bitacora.status_visita.toLowerCase()=="entrada" ? bitacora.caseta_entrada: bitacora.caseta_salida||""}>
+        <IdCard />
+      </AddBadgeModal>
+    )
+    }
+      
+
+    { !bitacora.fecha_salida ? (
+      <DoOutModal title={"Registar Salida"} refetchTable={refetch} id_bitacora={bitacora._id} ubicacion={bitacora.ubicacion} 
+        area={bitacora.status_visita.toLowerCase() == "entrada" ? bitacora.caseta_entrada : bitacora.caseta_salida || ""} fecha_salida={bitacora.fecha_salida}>
+          <Forward />
+        </DoOutModal>
+    ):null}
+      
+
       {/* <ResendPassModal title="Reenviar Pase">
 
       <div className="cursor-pointer">
@@ -168,19 +190,22 @@ export const bitacorasColumns: ColumnDef[] = [
     {
       id: "options",
       header: "Opciones",
-      cell: ({row, refetch}) => <OptionsCell row={row}  refetch={refetch}/>,
+      cell: ({ row, table }) => {
+        const { refetch } = table.options.meta; 
+        return <OptionsCell row={row} refetch={refetch} />;
+      },
       enableSorting: false,
       enableHiding: false,
     },
-    {
-      accessorKey: "folio",
-      header: "Folio",
-      cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("folio")}</div>
-      ),
-      enableSorting: true,
-      enableHiding: true,
-    },
+    // {
+    //   accessorKey: "folio",
+    //   header: "Folio",
+    //   cell: ({ row }) => (
+    //     <div className="capitalize">{row.getValue("folio")}</div>
+    //   ),
+    //   enableSorting: true,
+    //   enableHiding: true,
+    // },
     {
       accessorKey: "fecha_entrada",
       header: "Entrada",
@@ -246,11 +271,37 @@ export const bitacorasColumns: ColumnDef[] = [
       ),
       enableSorting: true,
     },
+    // {
+    //   accessorKey: "id_gafet",
+    //   header: "Gafete",
+    //   cell: ({ row }) => (
+    //     <div className="capitalize">{row.getValue("id_gafet")}</div>
+    //   ),
+    //   enableSorting: true,
+    // },
     {
       accessorKey: "id_gafet",
       header: "Gafete",
+      cell: ({ row }) => {
+        const statusGafete = row.getValue("status_gafete")!==""? row.getValue("status_gafete"):"";
+        const isEntregado = statusGafete.toLowerCase() == "entregado";
+    
+        return (
+          <div
+            className={`capitalize ${isEntregado ? "text-red-500" : ""}`}
+          >
+            {isEntregado ? statusGafete.toLowerCase() : row.getValue("id_gafet")}
+          </div>
+        );
+      },
+      enableSorting: true,
+    },
+    
+    {
+      accessorKey: "id_locker",
+      header: "Locker",
       cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("id_gafet")}</div>
+        <div className="capitalize">{row.getValue("id_locker")}</div>
       ),
       enableSorting: true,
     },

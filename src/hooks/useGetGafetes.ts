@@ -2,8 +2,9 @@ import { getGafetes } from "@/lib/get-gafetes";
 import { useQuery } from "@tanstack/react-query";
 
 export const useGetGafetes = (location:string, area:string, status:string) => {
-  const { data: data, isLoading, error, isFetching } = useQuery<any>({
+  const { data: data, isLoading, error, isFetching, refetch } = useQuery<any>({
     queryKey: ["getGafetes", location, area, status], 
+    enabled:false,
     queryFn: async () => {
         const data = await getGafetes(location, area , status); 
         return data.response?.data; 
@@ -19,6 +20,7 @@ export const useGetGafetes = (location:string, area:string, status:string) => {
     data,
     isLoading,
     error,
-    isFetching
+    isFetching,
+    refetch
   };
 };

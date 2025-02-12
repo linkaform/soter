@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 
 
 import Vehicles from "@/components/icon/vehicles";
@@ -15,8 +15,17 @@ import { useGetListBitacora } from "@/hooks/useGetListBitacora";
 import BitacorasTable from "@/components/table/bitacoras/table";
 
 const BitacorasPage = () => {
-  const { data, refetch} = useGetListBitacora("", "");
+  const [selectedOption, setSelectedOption] = useState<string[]>([]);
 
+  const { data,isLoading, refetch} = useGetListBitacora("", "",selectedOption);
+
+
+  useEffect(()=>{
+    if(selectedOption){
+      refetch()
+    }
+  },[selectedOption])
+  
   return (
     <div className="">
       <div className="flex flex-col">
@@ -67,7 +76,7 @@ const BitacorasPage = () => {
             </TabsList>
             <TabsContent value="Personal">
               <div className="">
-                <BitacorasTable data={data} refetch={refetch} />
+                <BitacorasTable data={data} refetch={refetch} setSelectedOption={setSelectedOption} isLoading={isLoading}/>
               </div>
             </TabsContent>
             <TabsContent value="Locker">

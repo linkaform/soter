@@ -34,14 +34,17 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {  Bitacora_record, bitacorasColumns } from "./bitacoras-columns";
 import { useEffect } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 
 interface ListProps {
   refetch:() => void;
   data: Bitacora_record[];
+  setSelectedOption: React.Dispatch<React.SetStateAction<string[]>>;
+  isLoading:boolean;
 }
 
-const BitacorasTable:React.FC<ListProps> = ({ refetch, data})=> {
+const BitacorasTable:React.FC<ListProps> = ({ refetch, data, setSelectedOption, isLoading})=> {
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -57,9 +60,10 @@ const BitacorasTable:React.FC<ListProps> = ({ refetch, data})=> {
 
   const [globalFilter, setGlobalFilter] = React.useState("");
 
+
   const table = useReactTable({
-    data:data||[],
-    columns: bitacorasColumns,
+    data: data||[],
+    columns: isLoading ? []:bitacorasColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
@@ -79,12 +83,20 @@ const BitacorasTable:React.FC<ListProps> = ({ refetch, data})=> {
       pagination,
       globalFilter,
     },
+    meta: {
+      refetch
+    },
   });
 
 
   useEffect(()=>{
     refetch()
   },[])
+
+
+  const handleValueChange = (value:any) => {
+    setSelectedOption([value]);
+  };
 
   return (
     <div className="w-full">
@@ -100,19 +112,33 @@ const BitacorasTable:React.FC<ListProps> = ({ refetch, data})=> {
 
         {/* Botones a la derecha */}
         <div className="flex flex-col md:flex-row gap-3 items-center justify-end space-x-6">
+
+
+          
+
           <div className="flex items-center space-x-4">
             <Label htmlFor="entrada">
               <span className="text-lg font-semibold">Tipo de Movimiento:</span>
             </Label>
-
             <div className="flex items-center space-x-2">
+              <Select onValueChange={handleValueChange} defaultValue={""}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona una opción" />
+                  </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="entrada">Entrada</SelectItem>
+                  <SelectItem value="salida">Salida</SelectItem>
+                </SelectContent>
+              </Select>`
+            </div>
+            {/* <div className="flex items-center space-x-2">
               <Checkbox id="entrada" defaultChecked />
               <Label htmlFor="entrada">Entrada</Label>
             </div>
             <div className="flex items-center space-x-2">
               <Checkbox id="salida" />
               <Label htmlFor="salida">Salida</Label>
-            </div>
+            </div> */}
           </div>
 
           <Button className="bg-blue-500 w-full md:w-auto hover:bg-blue-600 text-white px-4 py-2">

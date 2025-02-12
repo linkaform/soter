@@ -62,11 +62,12 @@ export type Access_pass_update = {
     }else{
       delete access_pass.walkin_identificacion
     }
-
+    const userJwt = localStorage.getItem("access_token"); 
     const response = await fetch(`https://app.linkaform.com/api/infosync/scripts/run/`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${userJwt}`,
         },
         body: JSON.stringify(payload),
     });

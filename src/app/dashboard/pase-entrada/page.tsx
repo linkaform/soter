@@ -167,7 +167,7 @@ const PaseEntradaPage = () => {
   const [modalData, setModalData] = useState<any>(null);
   const { data: ubicaciones, isLoading: loadingUbicaciones } = useCatalogoPaseLocation();
   const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState('');
-  const { data: areas, isLoading: loadingAreas} = useCatalogoPaseArea(ubicacionSeleccionada);
+  const {  isLoading: loadingAreas} = useCatalogoPaseArea(ubicacionSeleccionada);
   const userNameSoter = localStorage.getItem("userName_soter");
   const userEmailSoter = localStorage.getItem("userEmail_soter");
   const userIdSoter = parseInt(localStorage.getItem("userId_soter") || "0", 10);
@@ -178,7 +178,7 @@ const PaseEntradaPage = () => {
   const [formatedDocs, setFormatedDocs] = useState<string[]>([])
 
   const {data:catAreas, isLoading: loadingCatAreas, refetch:refetchAreas } = useCatalogoPaseArea(ubicacionSeleccionada)
-  const {data:responseUpdatePaseFull, isLoading: loadingUpdatePaseFull, refetch:refetchUpdatePaseFull } = useUpdatePaseFull(ubicacionSeleccionada)
+  // const {data:responseUpdatePaseFull, isLoading: loadingUpdatePaseFull, refetch:refetchUpdatePaseFull } = useUpdatePaseFull(ubicacionSeleccionada)
 
   const [comentariosList, setComentariosList] = useState<Comentarios[]>([]);
   const [areasList, setAreasList] = useState<Areas[]>([]);
@@ -400,7 +400,7 @@ const PaseEntradaPage = () => {
     form.setValue('fecha_desde_hasta', '');
   };
 
-  function getNextDay(date) {
+  function getNextDay(date: string | number | Date) {
     const currentDate = new Date(date);
     currentDate.setDate(currentDate.getDate() + 1); // Añadir un día
     return currentDate.toISOString().split('T')[0]; // Retornar la fecha en formato 'YYYY-MM-DD'

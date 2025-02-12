@@ -20,20 +20,21 @@ interface AddVehicleModalProps {
   title: string;
   children: React.ReactNode;
   id:string;
-  // refetchList: () => void;
+  refetchTable:()=>void;
 }
 
 type params= {
     vehiculo: Vehiculo_bitacora[], 
     equipo:null,
     id:string
+    
   }
 
 export const AddVehicleModal: React.FC<AddVehicleModalProps> = ({
   title,
   children,
-  id
-  // refetchList
+  id,
+  refetchTable
 }) => {
   const [vehiculos, setVehiculos] = useState<Vehiculo[]>([]);
   const [dataFetch, setDataFetch] = useState<params| null>(null);
@@ -59,6 +60,7 @@ export const AddVehicleModal: React.FC<AddVehicleModalProps> = ({
   useEffect(()=>{
     if(responseUpdateBitacora?.status_code==202){
       setIsOpen(false)
+      refetchTable()
       toast.success("¡Vehiculos actualizados correctamente!");
     }
   },[responseUpdateBitacora])
