@@ -39,10 +39,8 @@ import ComentariosList from "@/components/comentarios-list";
 import DateTime from "@/components/dateTime";
 import { MisContactosModal } from "@/components/modals/user-contacts";
 import { Contacto } from "@/lib/get-user-contacts";
-<<<<<<< Updated upstream
-=======
+
 import Image from "next/image";
->>>>>>> Stashed changes
 
 export const linkSchema = z.object({
 	link: z.string().url({ message: "Por favor, ingresa una URL válida." }), 
