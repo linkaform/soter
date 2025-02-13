@@ -31,16 +31,17 @@ interface AreasListProps {
     catAreas:string[]
     loadingCatAreas: boolean
     existingAreas:boolean
-  }
+}
 
-  export const formSchema = 
+export const formSchema = 
     z.object({
       nombre_area: z.string().min(1,{message:"Área es un campo obligatorio"}),
       comentario_area: z.string().optional(),
-    });
+});
 
 const AreasList:React.FC<AreasListProps> = ({ location, areas, setAreas, catAreas, loadingCatAreas, existingAreas})=> {
-    const {data:cat, isLoading: loadingCat, refetch } = useCatalogoPaseArea(location)
+    const { refetch } = useCatalogoPaseArea(location)
+    const [collapsedIndex, setCollapsedIndex] = useState<number | null>(null);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -68,7 +69,6 @@ const AreasList:React.FC<AreasListProps> = ({ location, areas, setAreas, catArea
         setAreas((prevState) => prevState.filter((_, i) => i !== index)); // Elimina el vehículo en el índice especificado
       };
 
-    const [collapsedIndex, setCollapsedIndex] = useState<number | null>(null);
 
     const toggleCollapse = (index: number) => {
       if (collapsedIndex === index) {
@@ -82,19 +82,14 @@ const AreasList:React.FC<AreasListProps> = ({ location, areas, setAreas, catArea
         if(location!==""){
             refetch()
         }
-    }, []);
+    });
 
     useEffect(() => {
         if(catAreas && existingAreas == false){
             setAreas([])
         }
-    }, [catAreas]);
+    }, [catAreas,existingAreas]);
     
-    function loadNewArea(item:Areas){
-      form.setValue('nombre_area', item?.nombre_area||"")
-      form.setValue('comentario_area', item?.comentario_area||"")
-    }
-
     const cleanInputs =() =>{
         form.setValue('nombre_area', '');
         form.setValue('comentario_area', '');
@@ -109,7 +104,7 @@ const AreasList:React.FC<AreasListProps> = ({ location, areas, setAreas, catArea
         setAreas(updatedAreas);
 
         if (fieldName === "nombre_area" && areas.some(area => area.nombre_area === value)) {
-            setAreas((prevState) => prevState.filter((area, i) => area.nombre_area !== value));
+            setAreas((prevState) => prevState.filter((area) => area.nombre_area !== value));
         }
     };
 
@@ -128,7 +123,7 @@ const AreasList:React.FC<AreasListProps> = ({ location, areas, setAreas, catArea
             catAreas={catAreas}
             location={location} 
             loadingCatAreas={loadingCatAreas} 
-            updateArea={(value:any, fieldName:string) => updatedArea(index, value, fieldName)}/>
+            updateArea={(value:string, fieldName:string) => updatedArea(index, value, fieldName)}/>
         </div>
       )})}
 

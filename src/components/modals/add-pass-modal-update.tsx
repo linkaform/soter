@@ -1,4 +1,6 @@
 /* eslint-disable react/no-children-prop */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -122,12 +124,8 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
     if(sendDataUpdate ){
       refetchUpdateFull()
     }
-  },[sendDataUpdate])
+  },[sendDataUpdate,refetchUpdateFull])
 
-  useEffect(()=>{
-    if(responseformated){
-    }
-  },[responseformated])
 
   useEffect(()=>{
     if(responseUpdateFull?.success){
@@ -135,7 +133,7 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
       const protocol = window.location.protocol;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
       const host = window.location.host;
       let docs=""
-      dataPass?.link.docs.map((d, index)=>{
+      dataPass?.link.docs.map((d:string, index:number)=>{
         if(d == "agregarIdentificacion"){
           docs+="iden"
         }

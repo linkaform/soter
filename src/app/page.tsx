@@ -8,14 +8,14 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Home() {
-    const router = useRouter(); // Inicializamos el hook useRouter
+    const router = useRouter(); 
     const { data, isLoading } = useGetMenu();
     const [menu, setMenu] = useState<string[]>([]);
     const handleClick = (menuName: string) => {
         console.log(`Se hizo clic en: ${menuName}`);
         if (menuName == "fallas") menuName="incidencias"
         if (menuName == "articulos_concesionados" || menuName == "articulos_concesionados") menuName="articulos"
-        router.push(`/dashboard/${menuName}`); // Redirige a la ruta proporcionada
+        router.push(`/dashboard/${menuName}`); 
     };
 
     useEffect(() => {

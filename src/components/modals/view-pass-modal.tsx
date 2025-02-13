@@ -1,4 +1,6 @@
 /* eslint-disable react/no-children-prop */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -23,7 +25,18 @@ import { useSendCorreo } from "@/hooks/useSendCorreo";
 import { data_sms } from "@/lib/send-sms";
 import { data_correo } from "@/lib/send_correo";
 import { useSendSMS } from "@/hooks/useSendSMS";
+import { Equipo_bitacora } from "../table/bitacoras/bitacoras-columns";
+import Image from "next/image";
 
+
+type Vehiculo_custom={
+    tipo_vehiculo:string,
+    marca_vehiculo:string,
+    modelo_vehiculo:string,
+    state:string,
+    placas_vehiculo:string,
+    color_vehiculo:string
+}
 interface ViewPassModalProps {
   title: string;
   data: {
@@ -55,13 +68,11 @@ interface ViewPassModalProps {
     qr_pase:any[];
     comentarios: Comentarios[];
     enviar_pre_sms: enviar_pre_sms
-    grupo_vehiculos:any[];
-    grupo_equipos:any[];
+    grupo_vehiculos:Vehiculo_custom[];
+    grupo_equipos:Equipo_bitacora[];
   };
   isSuccess: boolean;
   children: React.ReactNode;
-  isOpen: boolean;
-  closeModal: () => void;
 }
 
 export const ViewPassModal: React.FC<ViewPassModalProps> = ({
@@ -69,17 +80,13 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
   data,
   children,
 }) => {
-
-  const [isLoading, setIsLoading] = useState(false);
   const account_id = parseInt(localStorage.getItem("userId_soter") || "0", 10);
-
-  const [selectedOptions, setSelectedOptions] = useState<string[]>(["enviar_correo"]); // Estado para almacenar las opciones seleccionadas
+  const [selectedOptions, setSelectedOptions] = useState<string[]>(["enviar_correo"]); 
   const [dataCorreo, setDataCorreo]= useState<data_correo|null>(null)
   const [dataSMS, setDataSMS]= useState<data_sms|null>(null)
-
-  const { data: responsePdf, isLoading: loadingPdf, refetch:refetchPdf , error:errorPdf} = useGetPdf(account_id, data._id);
-  const { data: responseSendCorreo, isLoading: loadingCorreo, refetch:refetchCorreo , error:errorCorreo} = useSendCorreo(account_id, selectedOptions,dataCorreo,data._id);
-  const { data: responseSendSMS, isLoading: loadingSMS, refetch:refetchSMS , error:errorSMS} =  useSendSMS(account_id, selectedOptions, dataSMS, data._id)
+  const { data: responsePdf, isLoading: loadingPdf} = useGetPdf(account_id, data._id);
+  const { data: responseSendCorreo, isLoading: loadingCorreo, refetch:refetchCorreo } = useSendCorreo(account_id, selectedOptions,dataCorreo,data._id);
+  const { data: responseSendSMS, isLoading: loadingSMS, refetch:refetchSMS} =  useSendSMS(account_id, selectedOptions, dataSMS, data._id)
 
 
 useEffect(()=>{
@@ -215,9 +222,11 @@ async function onDescargarPDF(){
                 <><div className="w-full ">
                     <p className="font-bold mb-3">Fotografia:</p>
                     <div className="w-full flex justify-center">
-                        <img
+                        <Image
                         src={data?.foto[0].file_url  } 
                         alt="Imagen"
+                        width={150}
+                        height={150}
                         className=" h-32 object-contain bg-gray-200 rounded-lg" 
                         />
                     </div>
@@ -230,9 +239,11 @@ async function onDescargarPDF(){
                 <><div className="w-full ">
                         <p className="font-bold mb-3">Identificacion:</p>
                         <div className="w-full flex justify-center">
-                            <img
+                            <Image
                             src={data?.identificacion[0].file_url  } 
                             alt="Imagen"
+                            width={150}
+                            height={150}
                             className=" h-32 object-contain bg-gray-200 rounded-lg" 
                             />
                         </div>
@@ -401,7 +412,7 @@ async function onDescargarPDF(){
               Cancelar
             </Button>
           </DialogClose>
-            {
+            {/* {
               isLoading ? (
                 <>
                 <Button className="w-full h-12  bg-blue-500" disabled>
@@ -410,7 +421,7 @@ async function onDescargarPDF(){
                 </Button>
                 </>
               ):(
-                <>
+                <> */}
                <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white" onClick={() => {
                  navigator.clipboard.writeText(data?.link?.link).then(() => {
                   toast("¡Enlace copiado!", {
@@ -448,9 +459,9 @@ async function onDescargarPDF(){
                 <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white"  onClick={onDescargarPDF} disabled={loadingPdf}>
                 {!loadingPdf ? ("Descargar PDF"):(<><Loader2 className="animate-spin"/>Descargando PDF...</>)}
                 </Button>
-          </>
-              )
-            }
+          {/*</>
+               )
+            } */}
         </div>
       </DialogContent>
     </Dialog>

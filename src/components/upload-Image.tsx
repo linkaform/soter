@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
@@ -7,12 +8,10 @@ import { Button } from "./ui/button";
 import { Camera, Trash } from "lucide-react";
 import Webcam  from "react-webcam";
 import { base64ToFile, fileToBase64, quitarAcentosYMinusculasYEspacios } from "@/lib/utils";
-// import Swal from 'sweetalert2'
 
 interface CalendarDaysProps {
   id: string;
   titulo: string; 
-  img:Imagen[] | "";
   setImg: (imag: Imagen[])=> void
   showWebcamOption:boolean;
   facingMode: string
@@ -20,12 +19,11 @@ interface CalendarDaysProps {
 }
 
 
-const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, img, setImg, showWebcamOption, facingMode,setErrorImagen})=> {
+const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOption, facingMode,setErrorImagen})=> {
     const [selectedFile, setSelectedFile] = useState<File|null>(null);
     const [loading, setloading] = useState(false);
     const [loadingWebcam, setloadingWebcam] = useState(false);
     const [base64photo, setBase64Photo] = useState<string|"" >("")
-    const [urlImage, setUrlImage] = useState("")
     const [hideWebcam, setHideWebcam] = useState(true)
     const [hideButtonWebcam, setHideButtonWebcam] = useState(false)
     const { data, refetch, error} = useUploadImage(selectedFile);
@@ -58,7 +56,6 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, img, setImg, showWeb
     function cleanPhoto(){
         setImg([])
         setBase64Photo("")
-        setUrlImage("")
         setHideWebcam(true)
         setHideButtonWebcam(false)
         setloading(false)
@@ -163,7 +160,7 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, img, setImg, showWeb
                         
                     </div>
                 ):null}
-                {base64photo && <img src= {base64photo}   className="h-44" />}
+                {base64photo && <img src= {base64photo} alt={""}  className="h-44" />}
                 {base64photo =="" &&
                     <>
                     <Input 

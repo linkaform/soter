@@ -1,11 +1,11 @@
-import { Visita } from "@/components/modals/add-pass-modal";
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import UpdateFullPassModal from "@/components/modals/update-full-pass";
 import { ViewPassModal } from "@/components/modals/view-pass-modal";
 import { Areas, Comentarios, enviar_pre_sms, Link } from "@/hooks/useCreateAccessPass";
 import { replaceNullsInArrayDynamic } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
 import { Eye, Pencil} from "lucide-react";
-import { useState } from "react";
+import Image from "next/image";
 
 type Imagen = {
   file_name: string;
@@ -49,14 +49,7 @@ export interface PaseEntrada {
 
 const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
   const rowData = row.original;
-  const [isModalOpen, setIsModalOpen] = useState(false); // Estado para manejar la visibilidad del modal
 
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
   const dataFull= {
     _id:rowData._id,
     folio:rowData.folio,
@@ -104,8 +97,6 @@ const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
         title="Pase de entrada"
         data={dataFull} 
         isSuccess={false} 
-        isOpen={isModalOpen}
-        closeModal={closeModal}
         >
           <div className="cursor-pointer">
             <Eye /> 
@@ -141,14 +132,14 @@ export const pasesEntradaColumns: ColumnDef<PaseEntrada>[] = [
       const foto = row.original.foto;
       const nombre = row.original.nombre;
       const estatus = row.original.estatus;
-      const primeraImagen = foto && foto.length > 0 ? foto[0].file_url : 'https://img.wattpad.com/8f19b412f2223afe4288ed0904120a48b7a38ce1/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f776174747061642d6d656469612d736572766963652f53746f7279496d6167652f5650722d38464e2d744a515349673d3d2d3234323931353831302e313434336539633161633764383437652e6a7067';
+      const primeraImagen = foto && foto.length > 0 ? foto[0].file_url : '/nouser.svg';
 
       return (
         <div className="flex items-center space-x-4">
           {/* Imagen */}
           <div>
             {primeraImagen ? (
-              <img src={primeraImagen} alt="Imagen" className="h-24 w-24 object-cover rounded-full bg-gray-300" />
+              <Image width={150} height={150} src={primeraImagen} alt="Imagen" className="h-24 w-24 object-cover rounded-full bg-gray-300" />
             ) : (
               <span>No hay imagen</span>
             )}

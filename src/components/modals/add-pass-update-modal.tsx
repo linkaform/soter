@@ -1,4 +1,5 @@
 /* eslint-disable react/no-children-prop */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -11,7 +12,7 @@ import { Separator } from "../ui/separator";
 import { Dispatch, SetStateAction, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { GeneratedPassModal } from "./generated-pass-modal";
-import { Access_pass, Areas, Comentarios, enviar_pre_sms, Link, useCreateAccessPase } from "@/hooks/useCreateAccessPass";
+import { Access_pass, Areas, Comentarios, enviar_pre_sms, Link } from "@/hooks/useCreateAccessPass";
 import { createPase } from "@/lib/create-access-pass";
 
 interface EntryPassModalProps {
@@ -51,7 +52,6 @@ export const EntryPassModal: React.FC<EntryPassModalProps> = ({
   setIsSuccess,
 }) => {
 
-  // Estado para manejar la respuesta de la API
   const [response, setResponse] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [openGeneratedPass, setOpenGeneratedPass] = useState<boolean>(false);

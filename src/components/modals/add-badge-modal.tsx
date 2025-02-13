@@ -1,35 +1,34 @@
 import { Button } from "../ui/button";
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+	Dialog,
+	DialogClose,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
 } from "../ui/dialog";
 
 import { z } from "zod";
 
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
 } from "@/components/ui/form";
 
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
 } from "@/components/ui/select";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
-import { SuccessModal } from "./success-modal";
 import { useGetLockers } from "@/hooks/useGetLockers";
 import { useGetGafetes } from "@/hooks/useGetGafetes";
 import { useAsignarGafete } from "@/hooks/useAsignarGafete";
@@ -39,275 +38,272 @@ import { dataGafetParamas } from "@/lib/asignar-gafete";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 
 interface AddBadgeModalProps {
-  title: string;
-  children: React.ReactNode;
-  status:string;
-  refetchTable:()=>void;
-  id_bitacora:string;
-  tipo_movimiento:string;
-  ubicacion:string;
-  area:string;
+	title: string;
+	children: React.ReactNode;
+	status:string;
+	refetchTable:()=>void;
+	id_bitacora:string;
+	tipo_movimiento:string;
+	ubicacion:string;
+	area:string;
 }
 
-const FormSchema = z.object({
-  gafete: z.string().min(2, {
-    message: "Campo requerido.",
-  }),
+export interface locker {
+	status: string
+	area: string
+	locker_id: string
+	ubicacion: string
+	tipo_locker: string
+	_id: string
+}
+export interface gafete {
+	ubicacion: string
+	status: string
+	gafete_id: string
+	_id: string
+	area: string
+}
 
-  locker: z.string().min(2, {
-    message: "Campo requerido.",
-  }),
-  documentos: z.string().min(1, {
-    message: "Selecciona al menos un documento.",
-  }),
+
+const FormSchema = z.object({
+	gafete: z.string().min(2, {
+		message: "Campo requerido.",
+	}),
+
+	locker: z.string().min(2, {
+		message: "Campo requerido.",
+	}),
+	documentos: z.string().min(1, {
+		message: "Selecciona al menos un documento.",
+	}),
 });
 
 export const AddBadgeModal: React.FC<AddBadgeModalProps> = ({
-  title,
-  children,
-  area,
-  status,
-  refetchTable, 
-  id_bitacora,
-  tipo_movimiento,
-  ubicacion
+	title,
+	children,
+	area,
+	status,
+	refetchTable, 
+	id_bitacora,
+	tipo_movimiento,
+	ubicacion
 }) => {
-  const [open, setOpen] = useState(false);
-  const [dataGafete, setDataGafete]= useState<dataGafetParamas | null>(null)
-  const { data:responseGetLockers, isLoading:loadingGetLockers, refetch: refetchLockers } = useGetLockers(ubicacion ?? null,"", status);
-  const { data:responseGetGafetes, isLoading:loadingGetGafetes, refetch: refetchGafetes } = useGetGafetes(ubicacion ?? null,"", status);
-  const { data:responseAsignarGafete, isLoading:loadingAsginarGafete, refetch: refetchAsignarGafete, error:errorAsignarGafete } = useAsignarGafete(dataGafete ?? null, 
-    id_bitacora ?? null, tipo_movimiento?? null );
-  const [isOpen, setIsOpen] = useState(false);
+	const [dataGafete, setDataGafete]= useState<dataGafetParamas | null>(null)
+	const { data:responseGetLockers, isLoading:loadingGetLockers, refetch: refetchLockers } = useGetLockers(ubicacion ?? null,"", status);
+	const { data:responseGetGafetes, isLoading:loadingGetGafetes, refetch: refetchGafetes } = useGetGafetes(ubicacion ?? null,"", status);
+	const { data:responseAsignarGafete, isLoading:loadingAsginarGafete, refetch: refetchAsignarGafete, error:errorAsignarGafete } = useAsignarGafete(dataGafete ?? null, 
+		id_bitacora ?? null, tipo_movimiento?? null );
+	const [isOpen, setIsOpen] = useState(false);
 
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
-    defaultValues: {
-      gafete: "",
-      locker: "",
-      documentos:"",
-    },
-  });
+	const form = useForm<z.infer<typeof FormSchema>>({
+		resolver: zodResolver(FormSchema),
+		defaultValues: {
+			gafete: "",
+			locker: "",
+			documentos:"",
+		},
+	});
 
-  useEffect(()=>{
-    console.log("LOGGG", responseGetLockers, responseGetGafetes)
-  },[responseGetLockers, responseGetGafetes])
+	useEffect(()=>{
+		if(isOpen){
+			refetchLockers()
+			refetchGafetes()
+		}
+	},[isOpen])
 
-  useEffect(()=>{
-    if(isOpen){
-      refetchLockers()
-      refetchGafetes()
-    }
-  },[isOpen])
-
-  useEffect(()=>{
-    if(errorAsignarGafete){
-      console.log("ERROR USE WEFE", errorAsignarGafete)
-      errorAlert(errorAsignarGafete, "Error al asignar gafete.", "warning")
-    }
-
-},[errorAsignarGafete])
+	useEffect(()=>{
+		if(errorAsignarGafete){
+			errorAlert(errorAsignarGafete, "Error al asignar gafete.", "warning")
+		}
+	},[errorAsignarGafete])
 
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log("DATA PARA ENVIAR:", data)
-    setDataGafete({locker_id:data.locker, gafete_id:data.gafete, documento:data.documentos, status_gafete:"asignado" , ubicacion:ubicacion, area:area})
-  }
+	function onSubmit(data: z.infer<typeof FormSchema>) {
+		setDataGafete({locker_id:data.locker, gafete_id:data.gafete, documento:data.documentos, status_gafete:"asignado" , ubicacion:ubicacion, area:area})
+	}
 
-  useEffect(()=>{
-    if(dataGafete){
-      refetchAsignarGafete()
-    }
-  },[dataGafete])
-  
+	useEffect(()=>{
+		if(dataGafete){
+			refetchAsignarGafete()
+		}
+	},[dataGafete])
+	
 
-  useEffect(()=>{
-    if(responseAsignarGafete){
-      console.log("RESPONSE", responseAsignarGafete)
-      setIsOpen(false)
-      sweetAlert("success", "Confirmación", "Gafete asignado exitosamente.")
-      refetchTable()
-    }
-  }, [responseAsignarGafete])
+	useEffect(()=>{
+		if(responseAsignarGafete){
+			setIsOpen(false)
+			sweetAlert("success", "Confirmación", "Gafete asignado exitosamente.")
+			refetchTable()
+		}
+	}, [responseAsignarGafete])
 
-  if (open) {
-    return (
-      <SuccessModal
-        title={"Gafete Recibido"}
-        description={"El gafete ha sido recibido correctamente."}
-        open={open}
-        setOpen={setOpen}
-      />
-    );
-  }
+return (
+	<Dialog open={isOpen} onOpenChange={setIsOpen}>
+		<DialogTrigger asChild>{children}</DialogTrigger>
 
-  return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+		<DialogContent className="max-w-xl">
+			<DialogHeader>
+				<DialogTitle className="text-2xl text-center  font-bold my-5">
+					{title}
+				</DialogTitle>
+			</DialogHeader>
 
-      <DialogContent className="max-w-xl">
-        <DialogHeader>
-          <DialogTitle className="text-2xl text-center  font-bold my-5">
-            {title}
-          </DialogTitle>
-        </DialogHeader>
+			<Form {...form}>
+				<form
+					onSubmit={form.handleSubmit(onSubmit)}
+					className="w-full space-y-6"
+				>
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+						<FormField
+							control={form.control}
+							name="gafete"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>
+										<span className="text-red-500">*</span> Gafete
+									</FormLabel>
+									<Select
+										onValueChange={field.onChange}
+										defaultValue={field.value}
+									>
+										<FormControl>
+											<SelectTrigger>
+											{loadingGetGafetes?(
+													<>
+													<SelectValue placeholder="Cargando gafetes..." />
+													</>
+												): (
+													<>
+													<SelectValue placeholder="Selecciona un gafete" />
+													</>
+												)}
+											</SelectTrigger>
+										</FormControl>
+										<SelectContent>
+										{responseGetGafetes?.map((gafete:gafete, index:string) => (
+													<SelectItem key={index} value={gafete.gafete_id}>
+														{gafete.gafete_id}
+													</SelectItem>
+												))}
+										</SelectContent>
+									</Select>
 
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="w-full space-y-6"
-          >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              <FormField
-                control={form.control}
-                name="gafete"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      <span className="text-red-500">*</span> Gafete
-                    </FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                        {loadingGetGafetes?(
-                            <>
-                            <SelectValue placeholder="Cargando gafetes..." />
-                            </>
-                          ): (
-                            <>
-                            <SelectValue placeholder="Selecciona un gafete" />
-                            </>
-                          )}
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                      {responseGetGafetes?.map((gafete:any, index:string) => (
-                            <SelectItem key={index} value={gafete.gafete_id}>
-                              {gafete.gafete_id}
-                            </SelectItem>
-                          ))}
-                      </SelectContent>
-                    </Select>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+						<FormField
+							control={form.control}
+							name="locker"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>
+										<span className="text-red-500">*</span> Locker
+									</FormLabel>
+									<Select
+										onValueChange={field.onChange}
+										defaultValue={field.value}
+									>
+										<FormControl>
+											<SelectTrigger>
+											{loadingGetLockers?(
+													<>
+													<SelectValue placeholder="Cargando lockers..." />
+													</>
+												): (
+													<>
+													<SelectValue placeholder="Selecciona un locker" />
+													</>
+												)}
+											</SelectTrigger>
+										</FormControl>
+										<SelectContent>
+										{responseGetLockers?.map((locker:locker, index:string) => (
+													<SelectItem key={index} value={locker.locker_id	}>
+														{locker.locker_id	}
+													</SelectItem>
+												))}
+										</SelectContent>
+									</Select>
 
-              <FormField
-                control={form.control}
-                name="locker"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      <span className="text-red-500">*</span> Locker
-                    </FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                        {loadingGetLockers?(
-                            <>
-                            <SelectValue placeholder="Cargando lockers..." />
-                            </>
-                          ): (
-                            <>
-                            <SelectValue placeholder="Selecciona un locker" />
-                            </>
-                          )}
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                      {responseGetLockers?.map((locker:any, index:string) => (
-                            <SelectItem key={index} value={locker.locker_id	}>
-                              {locker.locker_id	}
-                            </SelectItem>
-                          ))}
-                      </SelectContent>
-                    </Select>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="documentos"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>
+										<span className="text-red-500">*</span> Documento de
+										garantía
+									</FormLabel>
+									<div className="space-y-2 my-5">
+											<FormControl >
+												<div className="flex items-center space-x-2">
+													<RadioGroup 
+														defaultValue={field.value}
+														onValueChange={field.onChange}
+													>
+													<FormItem className="flex items-center space-x-3 space-y-0">
+														<FormControl>
+															<RadioGroupItem value="ine" />
+														</FormControl>
+														<FormLabel className="font-normal">
+															INE
+														</FormLabel>
+													</FormItem>
+													<FormItem className="flex items-center space-x-3 space-y-0">
+														<FormControl>
+															<RadioGroupItem value="licencia de conducir" />
+														</FormControl>
+														<FormLabel className="font-normal">Licencia de conducir</FormLabel>
+													</FormItem>
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="documentos"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>
-                      <span className="text-red-500">*</span> Documento de
-                      garantía
-                    </FormLabel>
-                    <div className="space-y-2 my-5">
-                        <FormControl >
-                          <div className="flex items-center space-x-2">
-                            <RadioGroup 
-                              defaultValue={field.value}
-                              onValueChange={field.onChange}
-                            >
-                            <FormItem className="flex items-center space-x-3 space-y-0">
-                              <FormControl>
-                                <RadioGroupItem value="ine" />
-                              </FormControl>
-                              <FormLabel className="font-normal">
-                                INE
-                              </FormLabel>
-                            </FormItem>
-                            <FormItem className="flex items-center space-x-3 space-y-0">
-                              <FormControl>
-                                <RadioGroupItem value="licencia de conducir" />
-                              </FormControl>
-                              <FormLabel className="font-normal">Licencia de conducir</FormLabel>
-                            </FormItem>
+													<FormItem className="flex items-center space-x-3 space-y-0">
+														<FormControl>
+															<RadioGroupItem value="pase de estacionamiento" />
+														</FormControl>
+														<FormLabel className="font-normal">Pase de Estacionamiento</FormLabel>
+													</FormItem>
+													<FormItem className="flex items-center space-x-3 space-y-0">
+														<FormControl>
+															<RadioGroupItem value="otro" />
+														</FormControl>
+														<FormLabel className="font-normal">Otro</FormLabel>
+													</FormItem>
 
-                            <FormItem className="flex items-center space-x-3 space-y-0">
-                              <FormControl>
-                                <RadioGroupItem value="pase de estacionamiento" />
-                              </FormControl>
-                              <FormLabel className="font-normal">Pase de Estacionamiento</FormLabel>
-                            </FormItem>
-                            <FormItem className="flex items-center space-x-3 space-y-0">
-                              <FormControl>
-                                <RadioGroupItem value="otro" />
-                              </FormControl>
-                              <FormLabel className="font-normal">Otro</FormLabel>
-                            </FormItem>
+													</RadioGroup>
+												</div>
+											</FormControl>
+									</div>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+					</div>
 
-                            </RadioGroup>
-                          </div>
-                        </FormControl>
-                    </div>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+					<div className="flex gap-5">
+						<DialogClose asChild>
+							<Button
+								onClick={() => form.reset()}
+								className="w-full h-12 bg-gray-100 hover:bg-gray-200 text-gray-700"
+							>
+								Cancelar
+							</Button>
+						</DialogClose>
 
-            <div className="flex gap-5">
-              <DialogClose asChild>
-                <Button
-                  onClick={() => form.reset()}
-                  className="w-full h-12 bg-gray-100 hover:bg-gray-200 text-gray-700"
-                >
-                  Cancelar
-                </Button>
-              </DialogClose>
-
-              <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white">
-              { !loadingAsginarGafete ? (<>
-              {("Asignar gafete")}
-            </>) :(<> <Loader2 className="animate-spin"/> {"Cargando..."} </>)}
-              </Button>
-            </div>
-          </form>
-        </Form>
-      </DialogContent>        
-    </Dialog>
-  );
+						<Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white">
+							{ !loadingAsginarGafete ? (<>
+							{("Asignar gafete")}
+							</>) :(<> <Loader2 className="animate-spin"/> {"Cargando..."} </>)}
+						</Button>
+					</div>
+				</form>
+			</Form>
+		</DialogContent>        
+	</Dialog>
+);
 };

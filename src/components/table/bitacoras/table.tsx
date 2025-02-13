@@ -25,7 +25,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -94,7 +93,7 @@ const BitacorasTable:React.FC<ListProps> = ({ refetch, data, setSelectedOption, 
   },[])
 
 
-  const handleValueChange = (value:any) => {
+  const handleValueChange = (value:string) => {
     setSelectedOption([value]);
   };
 
@@ -162,7 +161,7 @@ const BitacorasTable:React.FC<ListProps> = ({ refetch, data, setSelectedOption, 
                       key={column.id}
                       className="capitalize"
                       checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
+                      onCheckedChange={(value:string) =>
                         column.toggleVisibility(!!value)
                       }
                     >

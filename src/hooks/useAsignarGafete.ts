@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { asignarGafete, dataGafetParamas } from "@/lib/asignar-gafete";
 import { useQuery } from "@tanstack/react-query";
 

@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { catalogoColores, catalogoTipoEquipos } from "@/lib/utils";
-import { Equipo, Vehiculo } from "@/lib/update-pass";
+import { Equipo } from "@/lib/update-pass";
 
 export const formSchema = 
     z.array(
@@ -44,7 +44,6 @@ export const formSchema =
 
   const EquipoItem: React.FC<EquipoItemProps> = ({isCollapsed, onToggleCollapse,onDelete, equipo
   })=>  {
-      const [tipoEquipoCat, setTipoEquipoCat] = useState<string[]>(catalogoTipoEquipos());
       const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {

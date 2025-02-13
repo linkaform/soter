@@ -164,29 +164,18 @@ export function formatEquiposToBitacora(arr:Equipo[]): Equipo_bitacora[] {
   }));
 }
 
-function objLength(err:any,data:any){
-  let objectCount = 0;
-  const keys = Object.keys(data[err]);
-  if (typeof data === 'object' || data !== null) {
-      for (let key of keys) {
-          if (typeof data[err][key] === 'object' && data[err][key] !== null) {
-            objectCount++;
-          }
-      }
-  }
-  return objectCount
-}
+
 
 
 export function errorAlert(data:any, title = "Error", type="warning"){
   if(data.hasOwnProperty("json")){
-      let errores=[]
-      for(let err in data.json){
+    const errores=[]
+      for(const err in data.json){
            if(data.json[err].hasOwnProperty('label')){
               errores.push(data.json[err].label+': '+data.json[err].msg+" ")
           }else {
-              for (let subKey in err as unknown as { [key: string]: any }){
-                  for(let subKey2 in data.json[err][subKey]){
+              for (const subKey in err as unknown as { [key: string]: any }){
+                  for(const subKey2 in data.json[err][subKey]){
                       errores.push(data.json[err][subKey][subKey2].label+': '+data.json[err][subKey][subKey2].msg+" ")
                   }
               }
@@ -198,7 +187,7 @@ export function errorAlert(data:any, title = "Error", type="warning"){
           type: "warning"
       });
   }else if (data.hasOwnProperty("error")){
-      let error= data.error
+    const error= data.error
       if(error.hasOwnProperty('msg')){
           if(typeof error.msg ==='string'){
               Swal.fire({

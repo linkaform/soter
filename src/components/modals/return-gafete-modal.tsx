@@ -11,7 +11,6 @@ import {
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { errorAlert, sweetAlert } from "@/lib/utils";
-import { useDoOut } from "@/hooks/useDoOut";
 import { useAsignarGafete } from "@/hooks/useAsignarGafete";
 import { dataGafetParamas } from "@/lib/asignar-gafete";
 
@@ -60,7 +59,7 @@ export const ReturnGafeteModal: React.FC<AddBadgeModalProps> = ({
     if(dataGafete){
       refetchAsignarGafete()
     }
-  },[dataGafete])
+  },[dataGafete,refetchAsignarGafete])
 
   useEffect(()=>{
     if(responseAsignarGafete){
@@ -73,7 +72,7 @@ export const ReturnGafeteModal: React.FC<AddBadgeModalProps> = ({
             refetchTable()
         }
     }
-  }, [responseAsignarGafete])
+  }, [responseAsignarGafete,refetchTable])
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -53,12 +53,17 @@ export const formSchema =
     });
 
     useEffect(() => {
-      if(area?.nombre_area !=="" ){
+      if(area){
         loadNewArea(area)
       }
-    }, [])
+    }, [area])
 
-    function formatArea(a:any){
+    interface AreaConNoteBooth {
+      note_booth?: string;
+      commentario_area?: string;
+    }
+
+    function formatArea(a:Areas | AreaConNoteBooth){
       if ('nombre_area' in a) {
         return a
       } else if ('note_booth' in a) {
@@ -83,9 +88,9 @@ export const formSchema =
     <div className="p-8 mb-4">
       <div className="flex justify-between">
         {isCollapsed ? (<>
-        <h3 className="font-bold text-lg mb-3 w-80 truncate">{area.nombre_area}</h3>
+        <h3 className="font-bold text-lg mb-3 w-80 truncate">{area?.nombre_area}</h3>
         </>) : (<>
-          <h3 className="font-bold text-lg mb-3 w-96 truncate">Datos del Área: {area.nombre_area}</h3>
+          <h3 className="font-bold text-lg mb-3 w-96 truncate">Datos del Área: {area?.nombre_area}</h3>
         </>)}
         <div className="flex justify-between gap-5">
           <button onClick={onToggleCollapse} className="text-blue-500">

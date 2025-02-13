@@ -70,7 +70,7 @@ export const ContactsTable: React.FC<ContactsTableProps> = ({ setSelected }) => 
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     onPaginationChange: setPagination,
-    getRowId: (row) => row._id, 
+    getRowId: (row: { _id: any; }) => row._id, 
     state: {
       sorting,
       columnFilters,
@@ -81,8 +81,10 @@ export const ContactsTable: React.FC<ContactsTableProps> = ({ setSelected }) => 
     },
   });
 
-  const handleRowSelect = (row: any) => {
-    setSelected && setSelected(row); // Llamamos a setSelected con la fila seleccionada
+  const handleRowSelect = (row: React.SetStateAction<Contacto | null>) => {
+    if(row && setSelected){
+      setSelected(row); // Llamamos a setSelected con la fila seleccionada
+    }
   };
 
   return (
@@ -109,14 +111,14 @@ export const ContactsTable: React.FC<ContactsTableProps> = ({ setSelected }) => 
             <DropdownMenuContent align="end">
               {table
                 .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => {
+                .filter((column: { getCanHide: () => any; }) => column.getCanHide())
+                .map((column: { id: any; getIsVisible: () => any; toggleVisibility: (arg0: boolean) => any; }) => {
                   return (
                     <DropdownMenuCheckboxItem
                       key={column.id}
                       className="capitalize"
                       checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
+                      onCheckedChange={(value: any) =>
                         column.toggleVisibility(!!value)
                       }
                     >
@@ -134,9 +136,9 @@ export const ContactsTable: React.FC<ContactsTableProps> = ({ setSelected }) => 
       <ScrollArea className="h-100 w-full border rounded-md">
         <Table>
         <TableHeader className="bg-[#F0F2F5]">
-        {table.getHeaderGroups().map((headerGroup) => (
+        {table.getHeaderGroups().map((headerGroup: { id: React.Key | null | undefined; headers: any[]; }) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
+                {headerGroup.headers.map((header: { id: React.Key | null | undefined; isPlaceholder: any; column: { columnDef: { header: any; }; }; getContext: () => any; }) => {
                   return (
                     <TableHead key={header.id}>
                       {header.isPlaceholder
@@ -153,13 +155,13 @@ export const ContactsTable: React.FC<ContactsTableProps> = ({ setSelected }) => 
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.map((row: { id: React.Key | null | undefined; getIsSelected: () => any; original: any; getVisibleCells: () => any[]; }) => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                   onClick={() => handleRowSelect(row.original)}
                 >
-                  {row.getVisibleCells().map((cell) => (
+                  {row.getVisibleCells().map((cell: { id: React.Key | null | undefined; column: { columnDef: { cell: any; }; }; getContext: () => any; }) => (
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,

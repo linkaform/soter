@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -138,7 +139,6 @@ const VehicleList:React.FC<VehicleListProps> = ({ account_id, vehicles, setVehic
             vehicle={vehicle}
             isCollapsed={collapsedIndex !== index}  
             onToggleCollapse={() => toggleCollapse(index)}  
-            index = {index}
             onDelete={() => handleDeleteVehicle(index)}
             tiposCatPadre={tiposCat}
             modelosCatPadre={modelosCat}
