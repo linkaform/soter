@@ -109,7 +109,7 @@ export const AddBadgeModal: React.FC<AddBadgeModalProps> = ({
 			refetchLockers()
 			refetchGafetes()
 		}
-	},[isOpen])
+	},[isOpen,refetchLockers,refetchGafetes])
 
 	useEffect(()=>{
 		if(errorAsignarGafete){
@@ -126,7 +126,7 @@ export const AddBadgeModal: React.FC<AddBadgeModalProps> = ({
 		if(dataGafete){
 			refetchAsignarGafete()
 		}
-	},[dataGafete])
+	},[dataGafete,refetchAsignarGafete])
 	
 
 	useEffect(()=>{
@@ -135,7 +135,7 @@ export const AddBadgeModal: React.FC<AddBadgeModalProps> = ({
 			sweetAlert("success", "Confirmación", "Gafete asignado exitosamente.")
 			refetchTable()
 		}
-	}, [responseAsignarGafete])
+	}, [responseAsignarGafete,refetchTable])
 
 return (
 	<Dialog open={isOpen} onOpenChange={setIsOpen}>

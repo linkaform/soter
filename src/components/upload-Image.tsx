@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Label } from "./ui/label";
@@ -8,6 +9,7 @@ import { Button } from "./ui/button";
 import { Camera, Trash } from "lucide-react";
 import Webcam  from "react-webcam";
 import { base64ToFile, fileToBase64, quitarAcentosYMinusculasYEspacios } from "@/lib/utils";
+import Image from "next/image";
 
 interface CalendarDaysProps {
   id: string;
@@ -75,7 +77,7 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
         if (selectedFile) {
             refetch(); 
         }
-    }, [selectedFile]); 
+    }, [refetch, selectedFile]); 
 
     useEffect(()=>{
         if(data){
@@ -160,7 +162,7 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
                         
                     </div>
                 ):null}
-                {base64photo && <img src= {base64photo} alt={""}  className="h-44" />}
+                {base64photo && <Image width={280} height={280} src= {base64photo} alt={""}  className="h-44" />}
                 {base64photo =="" &&
                     <>
                     <Input 

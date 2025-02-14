@@ -6,10 +6,9 @@ import Vehicles from "@/components/icon/vehicles";
 import Exit from "@/components/icon/exit";
 import { Button } from "@/components/ui/button";
 import { ActivePassesModal } from "@/components/modals/active-passes-modal";
-import { Home, IdCard, List, Menu, Search, Trash2, Users } from "lucide-react";
+import { Home, List, Menu, Search, Trash2, Users } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { ErrorModal } from "@/components/modals/error-modal";
-import { AddBadgeModal } from "@/components/modals/add-badge-modal";
 import { ComentariosAccesosTable } from "@/components/table/accesos/comentarios/table";
 import Credentials from "@/components/pages/accesos/credential";
 import { AccesosPermitidosTable } from "@/components/table/accesos/accesos-permitidos/table";
@@ -27,34 +26,34 @@ const AccesosPage = () => {
           <ReusableAccordion
             ubicaciones={[
               { value: "planta-monterrey", label: "Planta Monterrey" },
-              { value: "planta-saltillo", label: "Planta Saltillo" },
+              { value: "planta-saltillo", label: "Planta Saltillo" }
             ]}
             casetas={[
               { value: "caseta-6", label: "Caseta 6 Poniente" },
-              { value: "caseta-5", label: "Caseta 5 Norte" },
+              { value: "caseta-5", label: "Caseta 5 Norte" }
             ]}
             jefe="Emiliano Zapata"
             estadisticas={[
               {
                 label: "Visitas en el Día",
                 value: 23,
-                icon: <Home className="text-primary " />,
+                icon: <Home className="text-primary " />
               },
               {
                 label: "Visitas Dentro",
                 value: 23,
-                icon: <Users className="text-primary" />,
+                icon: <Users className="text-primary" />
               },
               {
                 label: "Vehículos Estacionados",
                 value: 23,
-                icon: <Vehicles />,
+                icon: <Vehicles />
               },
               {
                 label: "Salidas Registradas",
                 value: 23,
-                icon: <Exit />,
-              },
+                icon: <Exit />
+              }
             ]}
           />
 
@@ -92,7 +91,7 @@ const AccesosPage = () => {
                 </Button>
               </ErrorModal>
 
-              <AddBadgeModal title={"Asignar Gafete"}>
+              {/* <AddBadgeModal title={"Asignar Gafete"}  status={""} refetchTable={} id_bitacora={""} tipo_movimiento={""} ubicacion={""} area={""}>
                 <Button
                   className="bg-blue-500 hover:bg-blue-600 text-white"
                   variant="secondary"
@@ -101,7 +100,7 @@ const AccesosPage = () => {
                   
                   Asignar Gafete
                 </Button>
-              </AddBadgeModal>
+              </AddBadgeModal> */}
 
 
               

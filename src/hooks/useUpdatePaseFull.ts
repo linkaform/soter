@@ -1,4 +1,4 @@
-import { Access_pass_update, UpdatePase } from "@/lib/update-pass";
+import { Access_pass_update } from "@/lib/update-pass";
 import { UpdatePaseFull } from "@/lib/update-pass-full";
 import { useQuery } from "@tanstack/react-query";
 

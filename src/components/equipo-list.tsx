@@ -83,7 +83,7 @@ const EquipoList:React.FC<EquipoListProps> = ({ equipos, setEquipos})=> {
 			form.setValue('serie', '');
 			form.setValue('color', '');
 		}
-	}, [cleanMain]);
+	}, [cleanMain, form]);
 
 
 	return (

@@ -58,7 +58,7 @@ export const DoOutModal: React.FC<AddBadgeModalProps> = ({
         }
       
     }
-  }, [responseDoOut])
+  }, [refetchTable, responseDoOut])
 
 //   if (open) {
 //     return (

@@ -24,7 +24,7 @@ const BitacorasPage = () => {
     if(selectedOption){
       refetch()
     }
-  },[selectedOption])
+  },[selectedOption, refetch])
   
   return (
     <div className="">

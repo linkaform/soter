@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
@@ -266,13 +267,13 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
 		if(ubicacionSeleccionada){
 			refetchConfLocation()
 		}
-	}, [ubicacionSeleccionada])
+	}, [refetchConfLocation, ubicacionSeleccionada])
 
 	useEffect(()=>{
 		if(ubicacionSeleccionada && isActiveAdvancedOptions){
 			refetchAreas()
 		}
-	}, [ubicacionSeleccionada, isActiveAdvancedOptions])
+	}, [ubicacionSeleccionada, isActiveAdvancedOptions, refetchAreas])
 
 	useEffect(()=>{
 		if(configLocation){

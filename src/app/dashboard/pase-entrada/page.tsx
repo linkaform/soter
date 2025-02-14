@@ -236,7 +236,7 @@ export const formSchema = z
 			form.setValue("telefono", selected.telefono || "");
 			closeModalContactos()
 		}
-	}, [selected])
+	}, [selected, form])
 
 	useEffect(()=>{
 		if ( ubicacionSeleccionada ) {

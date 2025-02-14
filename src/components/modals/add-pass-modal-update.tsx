@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/no-children-prop */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -175,7 +176,7 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
           </div>
 
         <div className="flex flex-col space-y-5">
-          <div className="flex justify-between flex-col sm:flex-row justify-between sm:space-x-5 space-y-5 sm:space-y-0 ">
+          <div className="flex justify-between flex-col sm:flex-row sm:space-x-5 space-y-5 sm:space-y-0 ">
             <div className="w-full flex gap-2 ">
               <p className="font-bold flex-shrink-0">Tipo de pase : </p>
               <p >Visita General</p>
@@ -187,7 +188,7 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
             </div>
           </div>
 
-          <div className="flex justify-between flex-col sm:flex-row justify-between sm:space-x-5 space-y-5 sm:space-y-0">
+          <div className="flex justify-between flex-col sm:flex-row  sm:space-x-5 space-y-5 sm:space-y-0">
             <div className="w-full flex gap-2 ">
               <p className="font-bold flex-shrink-0">Email : </p>
               <p className="w-full break-words">{dataPass?.email}</p>
@@ -199,7 +200,7 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
             </div>
           </div>
 
-          <div className="flex justify-between flex-col sm:flex-row justify-between sm:space-x-5 space-y-5 sm:space-y-0">
+          <div className="flex justify-between flex-col sm:flex-row  sm:space-x-5 space-y-5 sm:space-y-0">
             <div className="w-full  flex gap-2">
               <p className="font-bold flex-shrink-0">Tema cita : </p>
               <p className="w-full break-words">{dataPass?.tema_cita}</p>

@@ -9,8 +9,6 @@ import {
 		ColumnDef,  
 	} from "@tanstack/react-table";
 import { Car, Eye, Forward, Hammer, IdCard} from "lucide-react";
-import { useState } from "react";
-
 
 export interface Bitacora_record {
 	equipos: Equipo_bitacora[] 

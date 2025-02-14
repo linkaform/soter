@@ -14,7 +14,6 @@ import { Equipo } from "@/lib/update-pass";
 import { Loader2 } from "lucide-react";
 import { useUpdateBitacora } from "@/hooks/useUpdateBitacora";
 import { formatEquiposToBitacora, sweetAlert } from "@/lib/utils";
-import { toast } from "sonner";
 import { Equipo_bitacora } from "../table/bitacoras/bitacoras-columns";
 
 interface AddEquipmentModalProps {
