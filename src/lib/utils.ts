@@ -10,19 +10,17 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-//Corta la primera letra y la convierte mayuscula
 export function capitalizeFirstLetter(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
 };
 
-//Convierte la primera letra en  mayuscula el resto minusculas
 export function capitalizeOnlyFirstLetter(text:string) {
   return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
 }
 
 export const formatFecha = (fecha: string | undefined) => {
-  if (!fecha) return "";  // Si la fecha está vacía, no hacer nada
-  return fecha.replace("T", " ");  // Reemplazar "T" por espacio
+  if (!fecha) return "";  
+  return fecha.replace("T", " "); 
 };
 
 export function catalogoColores() {
@@ -35,7 +33,6 @@ export function catalogoTipoEquipos() {
 }
 
 export function base64ToFile(image: string, name:string){
-  // Convertir base64 a ArrayBuffer
   const byteString = atob(image.split(',')[1]);
   const ab = new ArrayBuffer(byteString.length);
   const ia = new Uint8Array(ab);
@@ -43,14 +40,12 @@ export function base64ToFile(image: string, name:string){
     ia[i] = byteString.charCodeAt(i);
   }
 
-  // Crear un Blob a partir del ArrayBuffer
   const buffer = new Blob([ab], {
-    type: 'image/jpeg', // Aquí puedes cambiar el tipo MIME según sea necesario
+    type: 'image/jpeg', 
   });
 
-  // Crear un archivo (File) a partir del Blob
   const file = new File([buffer], `${name}.jpg`, {
-    type: 'image/jpeg', // Tipo MIME del archivo
+    type: 'image/jpeg',
   });
 
   return file;
@@ -61,16 +56,14 @@ export function fileToBase64(file:File):Promise<string | null>{
     const reader = new FileReader();
 
     reader.onload = () => {
-      // Resolvemos la promesa con el resultado (base64)
       resolve(reader.result as string);
     };
 
     reader.onerror = (error) => {
-      // Si ocurre un error, rechazamos la promesa
       reject(error);
     };
 
-    reader.readAsDataURL(file); // Inicia la lectura del archivo
+    reader.readAsDataURL(file); 
   });
 }
 
@@ -111,9 +104,9 @@ export function replaceNullsInArrayDynamic(arr: any[]): any[] {
     const newObj: any = {};
     for (const key in obj) {
       if (obj[key] === null) {
-        newObj[key] = ""; // Reemplaza null por ""
+        newObj[key] = ""; 
       } else {
-        newObj[key] = obj[key]; // Deja los valores que no son null
+        newObj[key] = obj[key]; 
       }
     }
     return newObj;

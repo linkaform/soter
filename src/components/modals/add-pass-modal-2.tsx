@@ -22,7 +22,7 @@ import Image from "next/image";
 
 interface EntryPassModal2Props {
 	title: string;
-	data: formatData
+	data: formatData;
 	isSuccess: boolean;
 	setIsSuccess: Dispatch<SetStateAction<boolean>>;
 	onClose: ()=> void;
@@ -50,8 +50,8 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 					grupo_vehiculos: data?.grupo_vehiculos,
 					grupo_equipos: data.grupo_equipos,
 					status_pase: data.status_pase,
-					walkin_fotografia:data.walkin_fotografia,
-					walkin_identificacion:data.walkin_identificacion,
+					walkin_fotografia:data?.walkin_fotografia,
+					walkin_identificacion:data?.walkin_identificacion,
 			}, 
 			id:data.folio, account_id: data.account_id });
 			setResponseFormated({
@@ -124,7 +124,7 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 
 						<div className="w-full flex gap-2">
 							<p className="font-bold">Teléfono : </p>
-							<p className="text-sm">{data?.telefono} xdgsd</p>
+							<p className="text-sm">{data?.telefono}</p>
 						</div>
 					</div>
 
@@ -244,21 +244,25 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 							Cancelar
 						</Button>
 					</DialogClose>
-					{ response?.success ? ( 
+					{/* response?.success */}
+					{ response?.success  ? ( 
 						<UpdatedPassModal
 							title="Pase de Entrada Completado "
 							description={"El pase ha sido completado con éxito, selecciona una de las siguientes opciones."}
 							openGeneratedPass={openGeneratedPass}
-							// setOpenGeneratedPass={setOpenGeneratedPass} 
+							hasEmail={data?.email ? true: false}
+							hasTelefono={false}
+							setOpenGeneratedPass={setOpenGeneratedPass} 
 							children={undefined}
 							qr={response?.response?.data?.json?.qr_pase[0].file_url}
 							dataPass={responseformated}
-							account_id={data.account_id}
+							account_id={data?.account_id}
 							folio={response?.response?.data?.json?.id}
+							closePadre={handleClose}
 						 />
 					):null}
 					
-						<Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white" type="submit" onClick={onSubmit}>
+						<Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white" type="submit" onClick={onSubmit} disabled={isLoading}>
 							{!isLoading ? ("Actualizar pase"):(<><Loader2 className="animate-spin"/>Actualizando pase...</>)}
 						</Button>
 				</div>

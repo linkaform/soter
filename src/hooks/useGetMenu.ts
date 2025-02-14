@@ -8,9 +8,9 @@ export const useGetMenu = () => {
     queryFn: async () => {
         const data = await getMenu(); 
         if (!data.response || !data.response?.data || !data.response?.data.menus) {
-          console.error("Datos de menú no disponibles");
+          return ["pases"]
         }
-        return data.response?.data.menus;
+        return data.response?.data.menus||null;
     },
 
     staleTime: 1000 * 60 * 5,  // 5 minutos de datos frescos antes de ser considerados obsoletos

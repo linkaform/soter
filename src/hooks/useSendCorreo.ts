@@ -6,6 +6,7 @@ export const useSendCorreo = (account_id: number, envio: string[],data_for_msj:d
     queryKey: ["sendCorreo", account_id, envio, data_for_msj, folio],
     enabled:false,
     queryFn: async () => {
+      console.log("enviooo", envio)
       const data = await sendCorreo(
         account_id,
         envio,

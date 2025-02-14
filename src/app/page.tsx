@@ -85,7 +85,7 @@ export default function Home() {
                                     );
                             })
                         ) : (
-                            <div>No data available</div>
+                            <div>No hay menus disponibles, revisa la configuración.</div>
                         )}
                     </div>
                 )}

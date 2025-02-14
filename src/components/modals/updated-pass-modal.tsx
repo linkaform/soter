@@ -2,19 +2,19 @@ import { CheckCircleIcon, Mail, MessageCircleMore } from "lucide-react";
 import { Button } from "../ui/button";
 import {
 	Dialog,
+	DialogClose,
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
 } from "../ui/dialog";
 import { toast } from "sonner";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Checkbox } from "../ui/checkbox";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "../ui/form";
+import { Form, FormControl, FormItem, FormMessage } from "../ui/form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm ,Controller} from "react-hook-form";
 import { useSendCorreo } from "@/hooks/useSendCorreo";
 import { data_correo } from "@/lib/send_correo";
 import { useGetPdf } from "@/hooks/usetGetPdf";
@@ -27,10 +27,14 @@ interface updatedPassModalProps {
 	description: string;
 	children: React.ReactNode;
 	openGeneratedPass:boolean;
+	setOpenGeneratedPass:Dispatch<SetStateAction<boolean>>;
 	qr:string;
 	dataPass: data_correo|null;
 	account_id:number;
 	folio:string;
+	hasEmail:boolean;
+	hasTelefono:boolean;
+	closePadre:Dispatch<SetStateAction<boolean>>;
 }
 export const formSchema = z
 		.object({
@@ -41,29 +45,38 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 	description,
 	children,
 	openGeneratedPass,
+	setOpenGeneratedPass,
 	dataPass,
 	qr,
 	account_id,
-	folio
+	folio,
+	hasEmail,
+	hasTelefono,
+	closePadre
 }) => {
 	const router = useRouter(); // Inicializamos el hook useRouter
-	const [selectedOptions, setSelectedOptions] = useState<string[]>([]); // Estado para almacenar las opciones seleccionadas
+	// const [selectedOptions, setSelectedOptions] = useState<string[]>([]); // Estado para almacenar las opciones seleccionadas
+	console.log("HAS TEL ", hasEmail, hasTelefono)
 	const [dataCorreo, setDataCorreo]= useState<data_correo|null>(null)
-	const { isLoading: loadingCorreo, refetch:refetchCorreo , error} = useSendCorreo(account_id, selectedOptions,dataCorreo,folio);
+	const [enviarCorreo, setEnviarCorreo] = useState<string[]>([]);
+	const [isActive, setIsActive] = useState(false);
+	const [isActiveSMS, setIsActiveSMS] = useState(false);
+	const { isLoading: loadingCorreo, refetch:refetchCorreo , error} = useSendCorreo(account_id, enviarCorreo ,dataCorreo,folio);
 	const { data: responsePdf, isLoading: loadingPdf} = useGetPdf(account_id,folio);
 
-	const handleCheckboxChange = (option: string, checked: boolean) => {
-		if (checked) {
-			setSelectedOptions((prev) => [...prev, option]); // Agregar la opción al estado si está seleccionada
-		} else {
-			setSelectedOptions((prev) => prev.filter((item) => item !== option)); // Eliminar la opción del estado si no está seleccionada
-		}
-	};
+
+	// const handleCheckboxChange = (option: string, checked: boolean) => {
+	// 	if (checked) {
+	// 		setEnviarCorreo((prev) => [...prev, option]); // Agregar la opción al estado si está seleccionada
+	// 	} else {
+	// 		setEnviarCorreo((prev) => prev.filter((item) => item !== option)); // Eliminar la opción del estado si no está seleccionada
+	// 	}
+	// };
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			enviar_correo: [],
+			enviar_correo: enviarCorreo,
 		}
 		
 	});
@@ -88,6 +101,33 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 		}
 	},[error])
 
+	const handleToggleEmail = () => {
+		const email= "enviar_correo"
+		setEnviarCorreo((prev) => {
+			const pre = prev.includes(email)
+			? prev.filter((d) => d !== email) 
+			: [...prev, email];
+			return pre;
+		});
+		setIsActive(!isActive);
+
+	};
+
+	const handleToggleSMS = () => {
+		const sms= "enviar_sms"
+		setEnviarCorreo((prev) => {
+			const pre = prev.includes(sms)
+			? prev.filter((d) => d !== sms)
+			: [...prev, sms];
+			return pre;
+		});
+		setIsActiveSMS(!isActiveSMS);
+	};
+	const closeModal=()=>{
+		setOpenGeneratedPass(false)
+		closePadre()
+	}
+
 return (
 	//onOpenChange={setOpenGeneratedPass}  esto en estaba como pro
 	<Dialog open={openGeneratedPass} modal>
@@ -102,13 +142,13 @@ return (
 			</DialogHeader>
 			
 			<div className="px-16">
-				<p className="text-center">{description}</p>
+				<p className="text-center">{ !hasEmail && !hasTelefono ? "El pase ha sido completado con éxito.":description}</p>
 			</div>
 			<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8"> 
 					<div className="flex flex-col justify-start items-center gap-3">
 
-						<div >
+						{/* <div >
 						<FormField
 							control={form.control}
 							name="enviar_correo"
@@ -118,7 +158,7 @@ return (
 										<FormItem className="flex items-center space-x-3">
 											<FormControl>
 											<Checkbox id="correo"  
-											checked={selectedOptions.includes("enviar_correo")} // Si está seleccionado, marcar el checkbox
+											checked={enviarCorreo.includes("enviar_correo")} // Si está seleccionado, marcar el checkbox
 											onCheckedChange={(checked: boolean) => handleCheckboxChange("enviar_correo", checked)}/>
 											</FormControl>
 											<Mail className="h-6" />
@@ -126,14 +166,12 @@ return (
 												htmlFor="terms"
 												className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
 											>Enviar Correo</label>
-
-											{/* <FormLabel>Enviar Correo</FormLabel> */}
 										</FormItem>
 
 										<FormItem className="flex items-center space-x-3">
 											<FormControl>
 											<Checkbox id="sms" 
-												checked={selectedOptions.includes("enviar_sms")} // Si está seleccionado, marcar el checkbox
+												checked={enviarCorreo.includes("enviar_sms")} // Si está seleccionado, marcar el checkbox
 												onCheckedChange={(checked: boolean) => handleCheckboxChange("enviar_sms", checked)}
 											/>
 											</FormControl>
@@ -148,29 +186,100 @@ return (
 								</FormItem>
 							)}
 						/>
+						</div> */}
+
+
+					<div className="flex gap-2 flex-col">
+						<div className="flex gap-2 flex-wrap">
+						{hasEmail==true ? (
+							<Controller
+							control={form.control}
+							name="toggleFieldEmail"
+							render={() => (
+									<FormItem>
+									<FormControl>
+										<Button
+										type="button"
+										onClick={handleToggleEmail}
+										className={`px-4 py-2 rounded-md transition-all duration-300 ${
+											isActive ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent "
+										} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
+										>
+										<div className="flex flex-wrap items-center">
+											{isActive ? (
+											<><Mail className="mr-3" /><div className="">Enviar por correo</div></>
+											):(
+											<><Mail className="mr-3 text-blue-600" /><div className="text-blue-600">Enviar por correo</div></>
+											)}
+											
+										</div>
+										</Button>
+									</FormControl>
+									<FormMessage />
+									</FormItem>
+								)}
+								/>
+						):null}
+						{hasTelefono==true ?(
+							<Controller
+							control={form.control}
+							name="toggleFieldSMS"
+							render={() => (
+									<FormItem>
+									<FormControl>
+										<Button
+										type="button"
+										onClick={handleToggleSMS}
+										className={`px-4 py-2 rounded-md transition-all duration-300 ${
+											isActiveSMS ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
+										} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
+										>
+										<div className="flex flex-wrap items-center">
+											{isActiveSMS ? (
+											<><MessageCircleMore className="mr-3 text-white" /><div className="">Enviar por sms</div></>
+											):(
+											<><MessageCircleMore className="mr-3 text-blue-600" /><div className="text-blue-600">Enviar por sms</div></>
+											)}
+											
+										</div>
+										</Button>
+									</FormControl>
+									<FormMessage />
+									</FormItem>
+								)}
+								/>
+						):null}
 						</div>
-				</div>
+					</div>
+					
+					</div>
 						
 					{qr!=="" ?(
-							<>
-							<div className="w-full ">
-									<div className="w-full flex justify-center">
-											<Image
-											src={qr} // Asumiendo que data.imagenUrl contiene la URL de la imagen
-											alt="Imagen"
-											width={150}
-											height={150}
-											className="w-64 h-64 object-contain bg-gray-200 rounded-lg" // Clases de Tailwind para estilizar la imagen
-											/>
-									</div>
-									</div>
-							</>
+						<>
+						<div className="w-full ">
+							<div className="w-full flex justify-center">
+								<Image
+								src={qr} // Asumiendo que data.imagenUrl contiene la URL de la imagen
+								alt="Imagen"
+								width={150}
+								height={150}
+								className="w-64 h-64 object-contain bg-gray-200 rounded-lg" // Clases de Tailwind para estilizar la imagen
+								/>
+							</div>
+						</div>
+						</>
 					):null}
-
+					<div className="flex gap-5 my-5">
+					<DialogClose asChild >
+						<Button className="w-full h-12 bg-gray-100 hover:bg-gray-200 text-gray-700" onClick={closeModal}>
+							Cancelar
+						</Button>
+					</DialogClose>
 					<Button
 						className="w-full bg-blue-500 hover:bg-blue-600 text-white" type="submit">
 						{loadingCorreo || loadingPdf ? ("Cargando..."): ("Descargar PDF")}
 					</Button>
+					</div>
 			</form>
 			</Form>
 		</DialogContent>

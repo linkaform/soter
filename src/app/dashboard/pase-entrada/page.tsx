@@ -42,13 +42,6 @@ import { Contacto } from "@/lib/get-user-contacts";
 
 import Image from "next/image";
 
-export const linkSchema = z.object({
-	link: z.string().url({ message: "Por favor, ingresa una URL válida." }), 
-	docs: z.array(z.string()).optional(),
-	creado_por_id: z.number().int({ message: "El ID debe ser un número entero." }),  
-	creado_por_email: z.string().email({ message: "Por favor, ingresa un correo electrónico válido." }), 
-});
-
 export const enviarPreSmsSchema = z.object({
 	from: z.string().min(1, { message: "El campo 'from' no puede estar vacío." }),  
 	mensaje: z.string().min(1, { message: "El mensaje no puede estar vacío." }),  
@@ -92,7 +85,12 @@ export const formSchema = z
 	status_pase:z.string().min(1),
 	visita_a: z.string().min(1),
 	custom: z.boolean().optional(),
-	link: linkSchema,
+	link: z.object({
+		link: z.string().url({ message: "Por favor, ingresa una URL válida." }), 
+		docs: z.array(z.string()).optional(),
+		creado_por_id: z.number().int({ message: "El ID debe ser un número entero." }),  
+		creado_por_email: z.string().email({ message: "Por favor, ingresa un correo electrónico válido." }), 
+	}),
 	enviar_correo_pre_registro:z.array(
 	  	z.enum(["enviar_correo_pre_registro", "enviar_sms_pre_registro"])
 	).optional(),
@@ -151,7 +149,7 @@ export const formSchema = z
 		path:['email']
   });
 
-const PaseEntradaPage = () => {
+  export default function PaseEntradaPage () {
   const [tipoVisita, setTipoVisita] = useState("fecha_fija");
   const [config_dias_acceso, set_config_dias_acceso] = useState<string[]>([]);
   const [config_dia_de_acceso, set_config_dia_de_acceso] = useState("cualquier_día");
@@ -242,6 +240,7 @@ const PaseEntradaPage = () => {
 
 	useEffect(()=>{
 		if ( ubicacionSeleccionada ) {
+			console.log("UBICACION SELECCIONADA",ubicacionSeleccionada)
 			refetchConfLocation()
 		}
 	}, [ubicacionSeleccionada, refetchConfLocation])
@@ -254,6 +253,7 @@ const PaseEntradaPage = () => {
 
 	useEffect(()=>{
 		if(configLocation){
+			console.log("QUE PASA", configLocation)
 		const docs: string[] = []
 		configLocation?.map((value:string)=>{
 			if(value=="identificacion") {
@@ -261,6 +261,7 @@ const PaseEntradaPage = () => {
 			if(value=="fotografia") {
 				docs.push("agregarFoto")}
 		})
+		console.log("DOCS", docs)
 		setFormatedDocs(docs)
 		}
 	},[configLocation])
@@ -451,7 +452,7 @@ return (
 						<FormField
 							control={form.control}
 							name="nombre"
-							render={({ field }) => (
+							render={({ field}) => (
 								<FormItem>
 									<FormLabel className="">
 										<span className="text-red-500">*</span> Nombre Completo:
@@ -478,9 +479,8 @@ return (
 								<FormControl>
 								<Input placeholder="example@example.com" {...field}
 								onChange={(e) => {
-									field.onChange(e); // Asegúrate de seguir actualizando React Hook Form
+									field.onChange(e);
 								}}
-								// value={`${selected?.email||""}`}
 								/>
 								</FormControl>
 								<FormMessage />
@@ -500,7 +500,7 @@ return (
 								<PhoneInput
 									{...field}
 									// value={`${selected?.telefono||""}`}
-									onChange={(value) => {
+									onChange={(value:string) => {
 									form.setValue("telefono", value || "");
 									}}
 									placeholder="Teléfono"
@@ -990,7 +990,6 @@ return (
 				comentarios={comentariosList}
 				setComentarios={setComentariosList}
 				tipo={"Pase"} 
-				existingComentarios={false}
 			/>
 
 			{loadingAreas == false && loadingConfigLocation == false && loadingUbicaciones == false ? (
@@ -1010,5 +1009,4 @@ return (
 );
 };
 
-export default PaseEntradaPage;
 

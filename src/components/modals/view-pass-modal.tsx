@@ -93,13 +93,13 @@ useEffect(()=>{
   if(dataCorreo){
     refetchCorreo()
   }
-},[dataCorreo])
+},[dataCorreo,refetchCorreo])
 
 useEffect(()=>{
   if(dataSMS){
     refetchSMS()
   }
-},[dataSMS])
+},[dataSMS,refetchSMS])
 
 
 useEffect(()=>{

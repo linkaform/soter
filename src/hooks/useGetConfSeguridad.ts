@@ -5,7 +5,7 @@ export const useGetConfSeguridad = (location:string) => {
   
   const { data: data, isLoading, error, isFetching, refetch } = useQuery<any>({
     queryKey: ["getConfSeguridad", location], 
-    enabled: false, // No ejecutar automáticamente
+    enabled: false, 
     queryFn: async () => {
         const data = await getConfSeguridad(location); 
         return data.response?.data.requerimientos || []; 

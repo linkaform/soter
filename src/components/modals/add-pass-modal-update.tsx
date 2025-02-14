@@ -14,7 +14,6 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { CalendarClock, Loader2 } from "lucide-react";
 import { Access_pass_update } from "@/lib/update-pass";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
-import { data_correo } from "@/lib/send_correo";
 import { useUpdatePaseFull } from "@/hooks/useUpdatePaseFull";
 import { GeneratedPassModal } from "./generated-pass-modal";
 import CalendarDays from "../calendar-days";
@@ -40,7 +39,6 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
   folio,
 }) => {
   const [openGeneratedPass, setOpenGeneratedPass] = useState<boolean>(false);
-  const [responseformated] = useState<data_correo|null>(null);
   const [sendDataUpdate, setSendDataUpdate] = useState<Access_pass_update|null>(null)
   const [link, setLink] = useState("");
   const account_id = parseInt(localStorage.getItem("userId_soter") || "0", 10);

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -96,16 +97,19 @@ export default function PaseUpdate () {
 	const [agregarEquiposActive, setAgregarEquiposActive] = useState(false);
 	const [agregarVehiculosActive, setAgregarVehiculosActive] = useState(false);
 	const [isSuccess, setIsSuccess] = useState(false);
-	const [modalData, setModalData] = useState<formatData>();
+	const [modalData, setModalData] = useState<any>(null);
 
 	const [vehicles, setVehicles] = useState<Vehiculo[]>([]);
-	const [equipos, setEquipos] = useState<Equipo[]>([]);
 	const [fotografia, setFotografia] = useState<Imagen[]>([])
 	const [identificacion, setIdentificacion] = useState<Imagen[]>([])
 
+	const [vehiculos, setVehiculos] = useState<Vehiculo[]>([]);
+	const [equipos, setEquipos] = useState<Equipo[]>([]);
 
 	const [errorFotografia, setErrorFotografia] = useState("")
 	const [errorIdentificacion, setErrorIdentificacion] = useState("")
+
+	const [isActualizarOpen, setIsActualizarOpen] = useState<string|boolean>("");
 
 	const form = useForm<z.infer<typeof formSchema>>({
 			resolver: zodResolver(formSchema),
@@ -199,7 +203,7 @@ export default function PaseUpdate () {
 	};
 return (
 	<div className="p-8">
-		{modalData && dataCatalogos?.pass_selected.estatus == "proceso" ? (
+		{dataCatalogos?.pass_selected.estatus == "proceso" ? (
 			<>
 			<EntryPassModal2
 				title={"Confirmación"}
@@ -236,7 +240,7 @@ return (
 					<div className="flex justify-between">
 							<div className="w-full flex gap-2">
 							<p className="font-bold whitespace-nowrap">Visita a: </p>
-							<p className="w-full break-words">{dataCatalogos?.pass_selected.visita_a[0].nombre}</p>
+							<p className="w-full break-words">{dataCatalogos?.pass_selected.visita_a.length > 0? dataCatalogos?.pass_selected.visita_a[0].nombre: ""}</p>
 							</div>
 
 							<div className="w-full flex gap-2">
@@ -250,8 +254,8 @@ return (
 						{showIneIden?.includes("foto")&& 
 							<div className="w-full sm:w-1/3 md:w-1/2 lg:w-1/2 lg:mr-4 sm:mr-4">
 									<LoadImage
-									id="fotografia" //este identificador de preferencia ponerlo sin espacios, minusculas y sin acentos
-									titulo={"Fotografía"} //este es el nombre que se mostrará y id es el que se usara internamente para diferenciar las instancias
+									id="fotografia" 
+									titulo={"Fotografía"} 
 									setImg={setFotografia}
 									showWebcamOption={true}
 									setErrorImagen={setErrorFotografia}
@@ -351,7 +355,7 @@ return (
 					<div className="flex flex-col gap-2">
 							<div className="w-full flex gap-2">
 								<p className="font-bold whitespace-nowrap">Visita a: </p>
-								<p className="w-full break-words">{dataCatalogos?.pass_selected.visita_a[0].nombre}</p>
+								<p className="w-full break-words">{dataCatalogos?.pass_selected.visita_a.length > 0? dataCatalogos?.pass_selected.visita_a[0].nombre:""}</p>
 							</div>
 
 							<div className="w-full flex gap-2">
@@ -380,9 +384,57 @@ return (
 					{!loadingPdf ? ("Descargar PDF"):(<><Loader2 className="animate-spin"/>Descargando PDF...</>)}
 					</Button>
 
-					<Button className="w-1/3 h-12  bg-blue-500 hover:bg-blue-600" type="submit" >
-					Actualizar informacion
-					</Button>
+					{isActualizarOpen==true || isActualizarOpen==""?(
+						<Button className="w-1/3 h-12  bg-blue-500 hover:bg-blue-600" type="submit" onClick={()=>{setIsActualizarOpen(true)}}>
+							Actualizar informacion
+						</Button>
+					):null}
+					{!isActualizarOpen==false?(
+						<Button className="w-1/3 h-12  bg-red-500 hover:bg-red-600" type="submit" onClick={()=>{setIsActualizarOpen(false)}}>
+							Cerrar
+						</Button>
+					):null}
+
+					{isActualizarOpen==true?(
+						<><div className="flex  flex-col items-center justify-start  gap-2  mx-auto h-screen">
+
+							<div className="flex gap-2 ">
+								<div>
+									<p>Fotografia</p>
+									<Image
+										width={280}
+										height={280}
+										src={dataCatalogos?.pass_selected.foto.length > 0 ? dataCatalogos?.pass_selected.foto[0].file_url : ""}
+										alt="Imagen"
+										className="w-42 h-42 object-contain bg-gray-200 rounded-lg" />
+								</div>
+								<div >
+									<p>Identificacion actual:</p>
+									<Image
+										width={280}
+										height={280}
+										src={dataCatalogos?.pass_selected.identificacion.length > 0 ? dataCatalogos?.pass_selected.identificacion[0].file_url : ""}
+										alt="Imagen"
+										className="w-42 h-42 object-contain bg-gray-200 rounded-lg mb-2" />
+								</div>
+								
+								
+							</div>
+
+							<VehicleList account_id={10} vehicles={vehiculos} setVehicles={setVehiculos}/>
+
+							<EquipoList equipos={equipos} setEquipos={setEquipos}/>
+
+							<Button className="w-1/3 h-12  bg-red-500 hover:bg-red-600 mt-2" type="submit" onClick={() => { } }>
+							Confirmar
+						</Button>
+						</div>
+
+						
+						</>
+					):null}
+					
+					
 			</div>
 		</>)}
 	</div>
