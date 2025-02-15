@@ -24,7 +24,7 @@ interface AddBadgeModalProps {
   fecha_salida:string;
   gafete:string;
   locker:string;
-tipo_movimiento:string;
+  tipo_movimiento:string;
 }
 
 export const ReturnGafeteModal: React.FC<AddBadgeModalProps> = ({

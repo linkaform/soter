@@ -76,7 +76,7 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 
 	const handleClose = () => {
 			setIsSuccess(false); 
-			onClose(); 
+			// onClose(); 
 	};
 
 	useEffect(()=>{

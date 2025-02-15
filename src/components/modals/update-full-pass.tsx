@@ -39,34 +39,34 @@ import DateTime from "@/components/dateTime";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import { EntryPassModalUpdate } from "./add-pass-modal-update";
 
-export const linkSchema = z.object({
+ const linkSchema = z.object({
 	link: z.string().url({ message: "Por favor, ingresa una URL válida." }), 
 	docs: z.array(z.string()).optional(),
 	creado_por_id: z.number().int({ message: "El ID debe ser un número entero." }),  
 	creado_por_email: z.string().email({ message: "Por favor, ingresa un correo electrónico válido." }), 
 });
 
-export const enviarPreSmsSchema = z.object({
+ const enviarPreSmsSchema = z.object({
 	from: z.string().min(1, { message: "El campo 'from' no puede estar vacío." }),
 	mensaje: z.string().min(1, { message: "El mensaje no puede estar vacío." }),  
 	numero: z.string().optional()
 });
 
-export const comentariosSchema = z.array(
+ const comentariosSchema = z.array(
 	z.object({
 		tipo_comentario: z.string().optional(),      
 		comentario_pase: z.string().optional(),      
 	})
 );
 
-export const areasSchema = z.array(
+ const areasSchema = z.array(
 	z.object({
 		nombre_area: z.string().optional(),         
 		comentario_area: z.string().optional(),     
 	})
 );
 
-export const formSchema = z
+ const formSchema = z
 		.object({
 		nombre: z.string().min(2, {
 			message: "Por favor, ingresa un tu nombre completo",

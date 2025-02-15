@@ -34,9 +34,9 @@ interface updatedPassModalProps {
 	folio:string;
 	hasEmail:boolean;
 	hasTelefono:boolean;
-	closePadre:Dispatch<SetStateAction<boolean>>;
+	closePadre:()=>void;
 }
-export const formSchema = z
+ const formSchema = z
 		.object({
 			enviar_correo: z.array(z.string()).optional()
 	});

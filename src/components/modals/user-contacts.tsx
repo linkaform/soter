@@ -11,20 +11,19 @@ import { Dispatch, SetStateAction } from "react";
 import { Contacto } from "@/lib/get-user-contacts";
 import { Button } from "../ui/button";
 	
+interface ContactsModalProps {
+	title: string;
+	closeModal: () => void;
+	setSelected: Dispatch<SetStateAction<Contacto |null >>;
+	isOpenModal:boolean
+}
 
-	interface ContactsModalProps {
-		title: string;
-		closeModal: () => void;
-		setSelected: Dispatch<SetStateAction<Contacto |null >>;
-		isOpenModal:boolean
-	}
-	
-	export const MisContactosModal: React.FC<ContactsModalProps> = ({
-		title,
-		setSelected,  // Recibimos la prop 'data'
-		closeModal,
-		isOpenModal
-	}) => {
+export const MisContactosModal: React.FC<ContactsModalProps> = ({
+	title,
+	setSelected,  // Recibimos la prop 'data'
+	closeModal,
+	isOpenModal
+}) => {
 	
 return (
 	<Dialog open={isOpenModal} onClose={closeModal}>

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 import { NotasTable } from "@/components/table/notas/table";
@@ -20,16 +19,6 @@ export default function Home() {
 
 
     console.log("shift", shift)
-
-
-
-
-
-
-
-   
-    
-
 
   return (
      <>

@@ -20,7 +20,7 @@ import { useGetPdf } from "@/hooks/usetGetPdf";
 import { descargarPdfPase } from "@/lib/download-pdf";
 import Image from "next/image";
 
-export const grupoEquipos = z.array(
+ const grupoEquipos = z.array(
 	z.object({
 		nombre: z.string().optional(),
 		modelo: z.string().optional(),
@@ -31,7 +31,7 @@ export const grupoEquipos = z.array(
 	})
 ).optional();
 
-export const grupoVehiculos = z.array(
+ const grupoVehiculos = z.array(
 	z.object({
 		tipo: z.string().optional(),
 		marca: z.string().optional(),
@@ -42,14 +42,14 @@ export const grupoVehiculos = z.array(
 	})
 ).optional();
 
-export const valImagen = z.array(
+ const valImagen = z.array(
 	z.object({
 		file_url: z.string().optional(),
 		file_name: z.string().optional(),
 	})
 ).optional();
 
-export const formSchema = z
+ const formSchema = z
 	.object({
 	grupo_equipos:grupoEquipos,
 	grupo_vehiculos:grupoVehiculos,
@@ -78,7 +78,7 @@ export type formatData = {
 	email:string,
 	telefono:string
 }
-export default function PaseUpdate () {
+const PaseUpdate = () =>{
 	const userIdSoter = parseInt(localStorage.getItem("userId_soter") || "0", 10);
 
 	const valores = window.location.search;
@@ -439,3 +439,4 @@ return (
 	</div>
 );
 };
+export default PaseUpdate;

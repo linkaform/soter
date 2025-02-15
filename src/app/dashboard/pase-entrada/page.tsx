@@ -141,75 +141,76 @@ export const formSchema = z
 		path:['email']
   });
 
-  export default function PaseEntradaPage () {
-  const [tipoVisita, setTipoVisita] = useState("fecha_fija");
-  const [config_dias_acceso, set_config_dias_acceso] = useState<string[]>([]);
-  const [config_dia_de_acceso, set_config_dia_de_acceso] = useState("cualquier_día");
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [modalData, setModalData] = useState<any>(null);
-  const { data: ubicaciones, isLoading: loadingUbicaciones } = useCatalogoPaseLocation();
-  const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState('');
-  const {  isLoading: loadingAreas} = useCatalogoPaseArea(ubicacionSeleccionada);
-  const userNameSoter = localStorage.getItem("userName_soter");
-  const userEmailSoter = localStorage.getItem("userEmail_soter");
-  const userIdSoter = parseInt(localStorage.getItem("userId_soter") || "0", 10);
-  const protocol = window.location.protocol;  
-  const host = window.location.host;  
-  const [enviar_correo_pre_registro, set_enviar_correo_pre_registro] = useState<string[]>([]);
-  const { data: configLocation, isLoading: loadingConfigLocation, refetch:refetchConfLocation } = useGetConfSeguridad(ubicacionSeleccionada);
-  const [formatedDocs, setFormatedDocs] = useState<string[]>([])
-  const {data:catAreas, isLoading: loadingCatAreas, refetch:refetchAreas } = useCatalogoPaseArea(ubicacionSeleccionada)
-  const [comentariosList, setComentariosList] = useState<Comentarios[]>([]);
-  const [areasList, setAreasList] = useState<Areas[]>([]);
-  const [isActive, setIsActive] = useState(false);
-  const [isActiveSMS, setIsActiveSMS] = useState(false);
-  const [isActiveFechaFija, setIsActiveFechaFija] = useState(true);
-  const [isActiveRangoFecha, setIsActiveRangoFecha] = useState(false);
-  const [isActivelimitarDias, setIsActiveLimitarDias] = useState(true);
-  const [isActiveCualquierDia, setIsActiveCualquierDia] = useState(true);
-  const [isActivelimitarDiasSemana, setIsActiveLimitarDiasSemana] = useState(false);
-  const [isActiveAdvancedOptions, setIsActiveAdvancedOptions] = useState(false);
-  const [date, setDate] = React.useState<Date| "">("");
-  const [fechaDesde, setFechaDesde] = useState<string>('');
-  const [selected, setSelected] = useState<Contacto |null>(null);
-  const [isOpenModal, setOpenModal] = useState(false);
+  const PaseEntradaPage = () =>  {
 
-  const form = useForm<z.infer<typeof formSchema>>({
-	resolver: zodResolver(formSchema),
-	defaultValues: {
-		nombre: "",
-		email: "",
-		telefono: "",
-		ubicacion:"",
-		tema_cita:"",
-		descripcion:"",
-		perfil_pase: "Visita General",
-		status_pase:"Proceso",
-		visita_a: userNameSoter,
-		custom: true,
-		link:{
-			link :`${protocol}//${host}/dashboard/pase-update`,
-			docs : formatedDocs,
-			creado_por_id: userIdSoter,
-			creado_por_email: userEmailSoter
-	},
-		enviar_correo_pre_registro:enviar_correo_pre_registro, 
-		tipo_visita_pase: "fecha_fija",
-		fechaFija: "",
-		fecha_desde_visita: "",
-		fecha_desde_hasta: "",
-		config_dia_de_acceso: "cualquier_día",
-		config_dias_acceso: config_dias_acceso,
-		config_limitar_acceso: 1,
-		areas: [],
-		comentarios: [],
-		enviar_pre_sms:{
-			from: "enviar_pre_sms",
-			mensaje: "SOY UN MENSAJE",
-			numero: "528120084370",
+	const [tipoVisita, setTipoVisita] = useState("fecha_fija");
+	const [config_dias_acceso, set_config_dias_acceso] = useState<string[]>([]);
+	const [config_dia_de_acceso, set_config_dia_de_acceso] = useState("cualquier_día");
+	const [isSuccess, setIsSuccess] = useState(false);
+	const [modalData, setModalData] = useState<any>(null);
+	const { data: ubicaciones, isLoading: loadingUbicaciones } = useCatalogoPaseLocation();
+	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState('');
+	const {  isLoading: loadingAreas} = useCatalogoPaseArea(ubicacionSeleccionada);
+	const userNameSoter = localStorage.getItem("userName_soter");
+	const userEmailSoter = localStorage.getItem("userEmail_soter");
+	const userIdSoter = parseInt(localStorage.getItem("userId_soter") || "0", 10);
+	const protocol = window.location.protocol;  
+	const host = window.location.host;  
+	const [enviar_correo_pre_registro, set_enviar_correo_pre_registro] = useState<string[]>([]);
+	const { data: configLocation, isLoading: loadingConfigLocation, refetch:refetchConfLocation } = useGetConfSeguridad(ubicacionSeleccionada);
+	const [formatedDocs, setFormatedDocs] = useState<string[]>([])
+	const {data:catAreas, isLoading: loadingCatAreas, refetch:refetchAreas } = useCatalogoPaseArea(ubicacionSeleccionada)
+	const [comentariosList, setComentariosList] = useState<Comentarios[]>([]);
+	const [areasList, setAreasList] = useState<Areas[]>([]);
+	const [isActive, setIsActive] = useState(false);
+	const [isActiveSMS, setIsActiveSMS] = useState(false);
+	const [isActiveFechaFija, setIsActiveFechaFija] = useState(true);
+	const [isActiveRangoFecha, setIsActiveRangoFecha] = useState(false);
+	const [isActivelimitarDias, setIsActiveLimitarDias] = useState(true);
+	const [isActiveCualquierDia, setIsActiveCualquierDia] = useState(true);
+	const [isActivelimitarDiasSemana, setIsActiveLimitarDiasSemana] = useState(false);
+	const [isActiveAdvancedOptions, setIsActiveAdvancedOptions] = useState(false);
+	const [date, setDate] = React.useState<Date| "">("");
+	const [fechaDesde, setFechaDesde] = useState<string>('');
+	const [selected, setSelected] = useState<Contacto |null>(null);
+	const [isOpenModal, setOpenModal] = useState(false);
+
+	const form = useForm<z.infer<typeof formSchema>>({
+		resolver: zodResolver(formSchema),
+		defaultValues: {
+			nombre: "",
+			email: "",
+			telefono: "",
+			ubicacion:"",
+			tema_cita:"",
+			descripcion:"",
+			perfil_pase: "Visita General",
+			status_pase:"Proceso",
+			visita_a: userNameSoter,
+			custom: true,
+			link:{
+				link :`${protocol}//${host}/dashboard/pase-update`,
+				docs : formatedDocs,
+				creado_por_id: userIdSoter,
+				creado_por_email: userEmailSoter
 		},
-	},
-  });
+			enviar_correo_pre_registro:enviar_correo_pre_registro, 
+			tipo_visita_pase: "fecha_fija",
+			fechaFija: "",
+			fecha_desde_visita: "",
+			fecha_desde_hasta: "",
+			config_dia_de_acceso: "cualquier_día",
+			config_dias_acceso: config_dias_acceso,
+			config_limitar_acceso: 1,
+			areas: [],
+			comentarios: [],
+			enviar_pre_sms:{
+				from: "enviar_pre_sms",
+				mensaje: "SOY UN MENSAJE",
+				numero: "528120084370",
+			},
+		},
+	});
 
 	const toggleDia = (dia: string) => {
 		set_config_dias_acceso((prev) => {
@@ -998,4 +999,4 @@ return (
 );
 };
 
-
+export default PaseEntradaPage;

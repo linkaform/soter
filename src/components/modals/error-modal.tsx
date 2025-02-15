@@ -23,8 +23,6 @@ export const ErrorModal: React.FC<ErrorModalProps> = ({
   message,
   description
 }) => {
- 
- 
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
