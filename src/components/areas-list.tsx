@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -28,7 +28,7 @@ import { Areas } from "@/hooks/useCreateAccessPass";
 interface AreasListProps {
     location:string;
     areas: Areas[];
-    setAreas: (area: Areas[])=> void
+    setAreas: Dispatch<SetStateAction<Areas[]>>
     catAreas:string[]
     loadingCatAreas: boolean
     existingAreas:boolean
@@ -129,15 +129,13 @@ const AreasList:React.FC<AreasListProps> = ({ location, areas, setAreas, catArea
       )})}
 
       <Form {...form} >
-      {/* <form className="space-y-5 border p-8 rounded mt-5" onSubmit={form.handleSubmit(onSubmit)}> */}
       <div className="border p-8 rounded mt-5">
         <div className="font-bold text-lg">Agregar Area</div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5" >
-            {/* Nombre Area */}
             <FormField
               control={form.control}
               name="nombre_area"
-              render={({ field }) => (
+              render={({ field }:any) => (
                 <FormItem>
                   <FormLabel>Área:</FormLabel>
                   <FormControl>
@@ -177,7 +175,7 @@ const AreasList:React.FC<AreasListProps> = ({ location, areas, setAreas, catArea
             <FormField
               control={form.control}
               name="comentario_area"
-              render={({ field }) => (
+              render={({ field }:any) => (
                 <FormItem>
                   <FormLabel>Comentario:</FormLabel>
                   <FormControl>

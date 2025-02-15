@@ -1,20 +1,19 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Imagen } from "@/lib/update-pass";
 import { useUploadImage } from "@/hooks/useUploadImage";
 import { Button } from "./ui/button";
 import { Camera, Trash } from "lucide-react";
-import Webcam  from "react-webcam";
+import Webcam from "react-webcam";
 import { base64ToFile, fileToBase64, quitarAcentosYMinusculasYEspacios } from "@/lib/utils";
 import Image from "next/image";
 
 interface CalendarDaysProps {
   id: string;
   titulo: string; 
-  setImg: (imag: Imagen[])=> void
+  setImg: Dispatch<SetStateAction<Imagen[]>>;
   showWebcamOption:boolean;
   facingMode: string
   setErrorImagen:Dispatch<SetStateAction<string>>;
@@ -29,7 +28,7 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
     const [hideWebcam, setHideWebcam] = useState(true)
     const [hideButtonWebcam, setHideButtonWebcam] = useState(false)
     const { data, refetch, error} = useUploadImage(selectedFile);
-    const webcamRef = React.useRef(null)
+    const webcamRef = useRef<Webcam | null>(null);
     const videoConstraints = {
         width: 720,
         height: 720,
@@ -65,7 +64,7 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
     }
 
     function takeAndSavePhoto(){
-        const imageSrc = webcamRef.current.getScreenshot();
+        const imageSrc = webcamRef.current?.getScreenshot() || null;
         setSelectedFile(base64ToFile(imageSrc, quitarAcentosYMinusculasYEspacios(id)))
         setBase64Photo(imageSrc)
         setHideWebcam(true)

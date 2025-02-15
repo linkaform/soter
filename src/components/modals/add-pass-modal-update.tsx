@@ -1,6 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/no-children-prop */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { Button } from "../ui/button";
 import {
@@ -19,6 +17,7 @@ import { useUpdatePaseFull } from "@/hooks/useUpdatePaseFull";
 import { GeneratedPassModal } from "./generated-pass-modal";
 import CalendarDays from "../calendar-days";
 import { renameKeyTipoComentario } from "@/lib/utils";
+import { Areas, Comentarios } from "@/hooks/useCreateAccessPass";
 
 interface EntryPassModalUpdateProps {
   title: string;
@@ -73,8 +72,6 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
 
   const onSubmitEdit = async () => {
     const accessPassData = {
-      // _id:dataPass._id,
-      // folio: dataPass.folio,
       nombre_pase: dataPass.nombre,
       email_pase: dataPass.email,
       telefono_pase: dataPass.telefono,
@@ -93,7 +90,6 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
       },
       qr_pase:dataPass.qr_pase,
       tipo_visita: "alta_de_nuevo_visitante",
-      // limitado_a_dias: dataPass.limitado_a_dias,
       enviar_correo_pre_registro: dataPass.enviar_correo_pre_registro,
       tipo_visita_pase: dataPass.tipo_visita_pase,
       fecha_desde_visita: dataPass.fecha_desde_visita.includes(":") && dataPass.fecha_desde_visita!==""? dataPass.fecha_desde_visita: dataPass.fecha_desde_visita!==""?`${dataPass.fecha_desde_visita}`+` 00:00:00`:"",
@@ -128,7 +124,6 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
 
   useEffect(()=>{
     if(responseUpdateFull?.success){
-      console.log("quie pasaaaa", responseUpdateFull)
       const protocol = window.location.protocol;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
       const host = window.location.host;
       let docs=""
@@ -218,7 +213,7 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
           <div className="">
             <p className="text-2xl font-bold mb-2">Areas</p>
             <Accordion type="single" collapsible>
-              {dataPass?.areas.map((area, index) => (
+              {dataPass?.areas.map((area:Areas, index:number) => (
                 <AccordionItem key={index} value={`area-${index}`}>
                   <AccordionTrigger><div className="w-80 truncate text-left">{`${area.nombre_area}`}</div></AccordionTrigger>
                   <AccordionContent>
@@ -239,7 +234,7 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
         <div className="">
           <p className="text-2xl font-bold mb-2">Comentarios / Instrucciones</p>
           <Accordion type="single" collapsible>
-            {dataPass?.comentarios.map((com, index) => (
+            {dataPass?.comentarios.map((com:Comentarios, index:number) => (
               <AccordionItem key={index} value={`com-${index}`}>
                 <AccordionTrigger>
                    <div className="w-80 truncate text-left">{`${com.comentario_pase}`}</div>
@@ -314,7 +309,7 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
           description="El pase de entrada se ha generado correctamente. Por favor, copie el siguiente enlace y compártalo con el visitante para completar el proceso."
           link={link}
           openGeneratedPass={openGeneratedPass}
-          setOpenGeneratedPass={setOpenGeneratedPass} children={undefined}/>
+          setOpenGeneratedPass={setOpenGeneratedPass}/>
         
       ):null}
       

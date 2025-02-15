@@ -157,7 +157,7 @@ return (
 						<FormField
 							control={form.control}
 							name="gafete"
-							render={({ field }) => (
+							render={({ field }:any) => (
 								<FormItem>
 									<FormLabel>
 										<span className="text-red-500">*</span> Gafete
@@ -196,7 +196,7 @@ return (
 						<FormField
 							control={form.control}
 							name="locker"
-							render={({ field }) => (
+							render={({ field }:any) => (
 								<FormItem>
 									<FormLabel>
 										<span className="text-red-500">*</span> Locker
@@ -234,7 +234,7 @@ return (
 						<FormField
 							control={form.control}
 							name="documentos"
-							render={({ field }) => (
+							render={({ field }:any) => (
 								<FormItem>
 									<FormLabel>
 										<span className="text-red-500">*</span> Documento de

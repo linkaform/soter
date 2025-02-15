@@ -155,8 +155,8 @@ const BitacorasTable:React.FC<ListProps> = ({ refetch, data, setSelectedOption, 
             <DropdownMenuContent align="end">
               {table
                 .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => {
+                .filter((column:any) => column.getCanHide())
+                .map((column:any) => {
                   return (
                     <DropdownMenuCheckboxItem
                       key={column.id}
@@ -178,9 +178,9 @@ const BitacorasTable:React.FC<ListProps> = ({ refetch, data, setSelectedOption, 
       <div className="">
         <Table>
         <TableHeader className="bg-[#F0F2F5]">
-            {table.getHeaderGroups().map((headerGroup) => (
+            {table.getHeaderGroups().map((headerGroup:any) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
+                {headerGroup.headers.map((header:any) => {
                   return (
                     <TableHead key={header.id}>
                       {header.isPlaceholder
@@ -197,13 +197,13 @@ const BitacorasTable:React.FC<ListProps> = ({ refetch, data, setSelectedOption, 
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
+              table.getRowModel().rows.map((row:any) => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                   
                 >
-                  {row.getVisibleCells().map((cell) => (
+                  {row.getVisibleCells().map((cell:any) => (
                     <TableCell key={cell.id} >
                       {flexRender(
                         cell.column.columnDef.cell,

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -26,7 +26,7 @@ import EquipoItem from "./equipo-item";
 
 interface EquipoListProps {
 		equipos: Equipo[];
-		setEquipos: (equipo: Equipo[])=> void
+		setEquipos: Dispatch<SetStateAction<Equipo[]>>
 	}
 
 export const formSchema = 
@@ -103,11 +103,10 @@ const EquipoList:React.FC<EquipoListProps> = ({ equipos, setEquipos})=> {
 					<div className="font-bold text-lg">Agregar Equipo</div>
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-5" >
 							 <>
-								{/* Tipo de Equipo */}
 								<FormField
 									control={form.control}
 									name="tipo"
-									render={({ field }) => (
+									render={({ field }:any) => (
 										<FormItem>
 											<FormLabel>Tipo de Equipo:</FormLabel>
 											<FormControl>
@@ -142,18 +141,16 @@ const EquipoList:React.FC<EquipoListProps> = ({ equipos, setEquipos})=> {
 									)}
 								/>
 
-								{/* Nombre del Equipo */}
 								<FormField
 									control={form.control}
 									name="nombre"
-									render={({ field }) => (
+									render={({ field }:any) => (
 										<FormItem>
 											<FormLabel>Nombre del Equipo:</FormLabel>
 											<FormControl>
 											<Input placeholder="Nombre" {...field} 
 											onChange={(e) => {
 												field.onChange(e);
-												// handleSelectChange("placas", e.target.value); // Acción adicional
 											}}
 											value={field.value || ""} />
 											</FormControl>
@@ -166,14 +163,13 @@ const EquipoList:React.FC<EquipoListProps> = ({ equipos, setEquipos})=> {
 								<FormField
 									control={form.control}
 									name="marca"
-									render={({ field }) => (
+									render={({ field }:any) => (
 										<FormItem>
 											<FormLabel>Marca:</FormLabel>
 											<FormControl>
 											<Input placeholder="Marca " {...field}
 												onChange={(e) => {
 												field.onChange(e);
-												// handleSelectChange("placas", e.target.value); // Acción adicional
 											}}
 											value={field.value || ""} />
 											</FormControl>
@@ -186,14 +182,13 @@ const EquipoList:React.FC<EquipoListProps> = ({ equipos, setEquipos})=> {
 								<FormField
 									control={form.control}
 									name="serie"
-									render={({ field }) => (
+									render={({ field }:any) => (
 										<FormItem>
 											<FormLabel>No. de Serie:</FormLabel>
 											<FormControl>
 											<Input placeholder="No. serie" {...field}
 											onChange={(e) => {
 												field.onChange(e);
-												// handleSelectChange("placas", e.target.value); // Acción adicional
 											}}
 											value={field.value || ""}  />
 											</FormControl>
@@ -202,18 +197,16 @@ const EquipoList:React.FC<EquipoListProps> = ({ equipos, setEquipos})=> {
 									)}
 								/>
 
-								{/* Modelo */}
 								<FormField
 									control={form.control}
 									name="modelo"
-									render={({ field }) => (
+									render={({ field }:any) => (
 										<FormItem>
 											<FormLabel>Modelo:</FormLabel>
 											<FormControl>
 											<Input placeholder="Modelo" {...field} 
 											onChange={(e) => {
 												field.onChange(e);
-												// handleSelectChange("placas", e.target.value); // Acción adicional
 											}}
 											value={field.value || ""} />
 											</FormControl>
@@ -226,7 +219,7 @@ const EquipoList:React.FC<EquipoListProps> = ({ equipos, setEquipos})=> {
 								<FormField
 									control={form.control}
 									name="color"
-									render={({ field }) => (
+									render={({ field }:any) => (
 										<FormItem>
 											<FormLabel>Color:</FormLabel>
 											<FormControl>
@@ -263,12 +256,12 @@ const EquipoList:React.FC<EquipoListProps> = ({ equipos, setEquipos})=> {
 								</>
 						</div>
 					<div className="text-end  mt-3">
-							<Button
-							className="bg-blue-500 hover:bg-blue-600 text-white " 
-							type="submit"
-							>
-							Agregar Equipo
-							</Button>
+						<Button
+						className="bg-blue-500 hover:bg-blue-600 text-white " 
+						type="submit"
+						>
+								Agregar Equipo
+						</Button>
 					</div>
 				</form>
 			</Form>

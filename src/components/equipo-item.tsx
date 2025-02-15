@@ -97,7 +97,7 @@ export const formSchema =
                     <FormField
                       control={form.control}
                       name="tipo"
-                      render={({ field }) => (
+                      render={({ field }:any) => (
                         <FormItem>
                           <FormLabel>Tipo de Equipo:</FormLabel>
                           <FormControl>
@@ -136,14 +136,13 @@ export const formSchema =
                     <FormField
                       control={form.control}
                       name="nombre"
-                      render={({ field }) => (
+                      render={({ field }:any) => (
                         <FormItem>
                           <FormLabel>Nombre del Equipo:</FormLabel>
                           <FormControl>
                           <Input placeholder="Nombre" {...field} 
                           onChange={(e) => {
                             field.onChange(e); 
-                            // handleSelectChange("placas", e.target.value); // Acción adicional
                           }}
                           value={field.value || ""} />
                           </FormControl>
@@ -156,14 +155,13 @@ export const formSchema =
                     <FormField
                       control={form.control}
                       name="marca"
-                      render={({ field }) => (
+                      render={({ field }:any) => (
                         <FormItem>
                           <FormLabel>Marca:</FormLabel>
                           <FormControl>
                           <Input placeholder="Marca " {...field}
                            onChange={(e) => {
                             field.onChange(e); 
-                            // handleSelectChange("placas", e.target.value); // Acción adicional
                           }}
                           value={field.value || ""} />
                           </FormControl>
@@ -176,14 +174,13 @@ export const formSchema =
                     <FormField
                       control={form.control}
                       name="serie"
-                      render={({ field }) => (
+                      render={({ field }:any) => (
                         <FormItem>
                           <FormLabel>No. de Serie:</FormLabel>
                           <FormControl>
                           <Input placeholder="No. serie" {...field}
                           onChange={(e) => {
                             field.onChange(e); 
-                            // handleSelectChange("placas", e.target.value); // Acción adicional
                           }}
                           value={field.value || ""}  />
                           </FormControl>
@@ -196,14 +193,13 @@ export const formSchema =
                     <FormField
                       control={form.control}
                       name="modelo"
-                      render={({ field }) => (
+                      render={({ field }:any) => (
                         <FormItem>
                           <FormLabel>Modelo:</FormLabel>
                           <FormControl>
                           <Input placeholder="Modelo" {...field} 
                           onChange={(e) => {
                             field.onChange(e); 
-                            // handleSelectChange("placas", e.target.value); // Acción adicional
                           }}
                           value={field.value || ""} />
                           </FormControl>
@@ -216,7 +212,7 @@ export const formSchema =
                     <FormField
                       control={form.control}
                       name="color"
-                      render={({ field }) => (
+                      render={({ field }:any) => (
                         <FormItem>
                           <FormLabel>Color:</FormLabel>
                           <FormControl>

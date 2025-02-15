@@ -15,7 +15,6 @@ import { useRouter } from "next/navigation";
 interface GeneratedPassModalProps {
   title: string;
   description: string;
-  children: React.ReactNode;
   link:string;
   openGeneratedPass:boolean;
   setOpenGeneratedPass: Dispatch<SetStateAction<boolean>>;
@@ -24,7 +23,6 @@ interface GeneratedPassModalProps {
 export const GeneratedPassModal: React.FC<GeneratedPassModalProps> = ({
   title,
   description,
-  children,
   link,
   openGeneratedPass,
   setOpenGeneratedPass
@@ -33,7 +31,7 @@ export const GeneratedPassModal: React.FC<GeneratedPassModalProps> = ({
   console.log("PASE LINK", link)
   return (
     <Dialog open={openGeneratedPass} onOpenChange={setOpenGeneratedPass} >
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogTrigger ></DialogTrigger>
 
       <DialogContent className="max-w-xl">
         <DialogHeader>

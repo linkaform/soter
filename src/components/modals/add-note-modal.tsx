@@ -72,7 +72,7 @@ export const AddNoteModal: React.FC<AddNoteModalProps> = ({
             <FormField
               control={form.control}
               name="title"
-              render={({ field }) => (
+              render={({ field }:any) => (
                 <FormItem>
                   <FormLabel>* Titulo</FormLabel>
                   <FormControl>
@@ -87,7 +87,7 @@ export const AddNoteModal: React.FC<AddNoteModalProps> = ({
             <FormField
               control={form.control}
               name="description"
-              render={({ field }) => (
+              render={({ field }:any) => (
                 <FormItem>
                   <FormLabel>* Descripción</FormLabel>
                   <FormControl>
