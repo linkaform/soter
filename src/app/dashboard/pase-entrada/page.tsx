@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -39,28 +38,7 @@ import ComentariosList from "@/components/comentarios-list";
 import DateTime from "@/components/dateTime";
 import { MisContactosModal } from "@/components/modals/user-contacts";
 import { Contacto } from "@/lib/get-user-contacts";
-
 import Image from "next/image";
-
-export const enviarPreSmsSchema = z.object({
-	from: z.string().min(1, { message: "El campo 'from' no puede estar vacío." }),  
-	mensaje: z.string().min(1, { message: "El mensaje no puede estar vacío." }),  
-	numero: z.string().optional()
-});
-
-export const comentariosSchema = z.array(
-	z.object({
-		tipo_comentario: z.string().optional(),      
-		comentario_pase: z.string().optional(),      
-	})
-);
-
-export const areasSchema = z.array(
-	z.object({
-		nombre_area: z.string().optional(),         
-		comentario_area: z.string().optional(),     
-	})
-);
 
 export const formSchema = z
 	.object({
@@ -111,9 +89,23 @@ export const formSchema = z
 		message:
 		  "Ingrese un número válido mayor a 0 para el límite de accesos.",
 	}),
-	areas: areasSchema,
-	comentarios:comentariosSchema,
-	enviar_pre_sms: enviarPreSmsSchema,
+	areas: z.array(
+		z.object({
+			nombre_area: z.string().optional(),         
+			comentario_area: z.string().optional(),     
+		})
+	),
+	comentarios:z.array(
+		z.object({
+			tipo_comentario: z.string().optional(),      
+			comentario_pase: z.string().optional(),      
+		})
+	),
+	enviar_pre_sms: z.object({
+		from: z.string().min(1, { message: "El campo 'from' no puede estar vacío." }),  
+		mensaje: z.string().min(1, { message: "El mensaje no puede estar vacío." }),  
+		numero: z.string().optional()
+	}),
   }) 
   .refine((data) => {
 		if (data.tipo_visita_pase === 'rango_de_fechas') {
@@ -222,8 +214,8 @@ export const formSchema = z
 	const toggleDia = (dia: string) => {
 		set_config_dias_acceso((prev) => {
 		const updatedDias = prev.includes(dia)
-			? prev.filter((d) => d !== dia) // Si ya está seleccionado, lo quitamos
-			: [...prev, dia]; // Si no está seleccionado, lo añadimos
+			? prev.filter((d) => d !== dia) 
+			: [...prev, dia]; 
 		return updatedDias;
 		});
 		
@@ -240,7 +232,6 @@ export const formSchema = z
 
 	useEffect(()=>{
 		if ( ubicacionSeleccionada ) {
-			console.log("UBICACION SELECCIONADA",ubicacionSeleccionada)
 			refetchConfLocation()
 		}
 	}, [ubicacionSeleccionada, refetchConfLocation])
@@ -253,7 +244,6 @@ export const formSchema = z
 
 	useEffect(()=>{
 		if(configLocation){
-			console.log("QUE PASA", configLocation)
 		const docs: string[] = []
 		configLocation?.map((value:string)=>{
 			if(value=="identificacion") {
@@ -261,10 +251,10 @@ export const formSchema = z
 			if(value=="fotografia") {
 				docs.push("agregarFoto")}
 		})
-		console.log("DOCS", docs)
 		setFormatedDocs(docs)
 		}
 	},[configLocation])
+
 	const onSubmit = (data: z.infer<typeof formSchema>) => {
 		console.log("Formulario enviado con los siguientes datos:", data);
 		const formattedData = {

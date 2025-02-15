@@ -91,7 +91,7 @@ export const ResendPassModal: React.FC<ResendPassModalProps> = ({
               <FormField
                 control={form.control}
                 name="documentos"
-                render={({ field }) => (
+                render={({ field }:any) => (
                   <FormItem>
                     <div className="flex flex-col items-center text-center">
                       <FormLabel>
@@ -115,11 +115,11 @@ export const ResendPassModal: React.FC<ResendPassModalProps> = ({
                               {method.icon}
                               <Checkbox
                                 checked={field.value?.includes(method.value)}
-                                onCheckedChange={(checked) => {
+                                onCheckedChange={(checked:boolean) => {
                                   const newValue = checked
                                     ? [...(field.value || []), method.value]
                                     : field.value?.filter(
-                                        (val) => val !== method.value
+                                        (val:any) => val !== method.value
                                       ) || [];
                                   field.onChange(newValue);
                                 }}

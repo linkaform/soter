@@ -37,7 +37,7 @@ return (
 				</DialogTitle>
 			</DialogHeader>
 			<div className="flex flex-col space-y-5">
-				<div className="flex justify-between flex-col sm:flex-row justify-between sm:space-x-5 space-y-5 sm:space-y-0">
+				<div className="flex justify-between flex-col sm:flex-row sm:space-x-5 space-y-5 sm:space-y-0">
 					<div className="w-full flex gap-2 ">
 					<p className="font-bold flex-shrink-0">Nombre Completo : </p>
 					<p className="">{data?.nombre_visitante} </p>
@@ -49,7 +49,7 @@ return (
 					</div>           
 				</div>
 
-				<div className="flex justify-between flex-col sm:flex-row justify-between sm:space-x-5 space-y-5 sm:space-y-0">
+				<div className="flex justify-between flex-col sm:flex-row sm:space-x-5 space-y-5 sm:space-y-0">
 					<div className="w-full flex gap-2 ">
 						<p className="font-bold">Tipo de pase : </p>
 						<p >Visita General</p>
@@ -60,7 +60,7 @@ return (
 					</div>
 				</div>
 
-				<div className="flex justify-between flex-col sm:flex-row justify-between sm:space-x-5 space-y-5 sm:space-y-0">
+				<div className="flex justify-between flex-col sm:flex-row  sm:space-x-5 space-y-5 sm:space-y-0">
 				<div className="w-full flex gap-2 ">
 						<p className="font-bold flex-shrink-0">Visita a : </p>
 						<p > {data?.visita_a[0].nombre}</p>

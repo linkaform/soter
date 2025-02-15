@@ -1,4 +1,4 @@
-import { SetStateAction } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -12,7 +12,7 @@ interface SuccessModalProps {
   title: string;
   description: string;
   open: boolean;
-  setOpen: (value: SetStateAction<boolean>) => void;
+  setOpen:Dispatch<SetStateAction<boolean>>;
 }
 
 export const SuccessModal: React.FC<SuccessModalProps> = ({

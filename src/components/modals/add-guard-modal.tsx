@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -15,7 +15,7 @@ import SearchInput from "../search-input";
 interface AddGuardModalProps {
   title: string;
   children: React.ReactNode;
-  onAddGuardias: (selectedGuardias: GuardiaApoyo[]) => void;
+  onAddGuardias: Dispatch<SetStateAction<GuardiaApoyo[]>>;
 }
 
 type GuardiaApoyo = {

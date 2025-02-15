@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -462,7 +461,7 @@ return (
 						<FormField
 							control={form.control}
 							name="nombre"
-							render={({ field }) => (
+							render={({ field }:any) => (
 								<FormItem>
 									<FormLabel className="">
 										<span className="text-red-500">*</span> Nombre Completo:
@@ -481,7 +480,7 @@ return (
 							<FormField
 								control={form.control}
 								name="email"
-								render={({ field }) => (
+								render={({ field }:any) => (
 									<FormItem>
 										<FormLabel className="">
 											<span className="text-red-500">*</span> Email:
@@ -501,7 +500,7 @@ return (
 							<FormField
 								control={form.control}
 								name="telefono"
-								render={({ field}) => (
+								render={({ field}:any) => (
 									<FormItem>
 										<FormLabel>
 											<span className="text-red-500">*</span> Teléfono
@@ -532,7 +531,7 @@ return (
 							<FormField
 								control={form.control}
 								name="ubicacion"
-								render={({ field }) => (
+								render={({ field }:any) => (
 									<FormItem>
 										<FormLabel>Ubicación:</FormLabel>
 
@@ -586,7 +585,7 @@ return (
 							<FormField
 								control={form.control}
 								name="tema_cita"
-								render={({ field }) => (
+								render={({ field }:any) => (
 									<FormItem>
 										<FormLabel className="">
 												Tema cita:
@@ -607,7 +606,7 @@ return (
 						<FormField
 							control={form.control}
 							name="descripcion"
-							render={({ field }) => (
+							render={({ field }:any) => (
 								<FormItem>
 									<FormLabel className="">
 											Descripción:
@@ -780,7 +779,7 @@ return (
 									<FormField
 										control={form.control}
 										name="fecha_desde_visita"
-										render={({ field }) => (
+										render={({ field }:any) => (
 											<FormItem>
 												<FormLabel>
 													<span className="text-red-500">*</span> Fecha y Hora
@@ -804,7 +803,7 @@ return (
 									<FormField
 										control={form.control}
 										name="fecha_desde_hasta"
-										render={({ field }) => (
+										render={({ field }:any) => (
 											<FormItem>
 												<FormLabel>
 													<span className="text-red-500">*</span> Fecha y Hora
@@ -933,7 +932,7 @@ return (
 									<FormField
 										control={form.control}
 										name="config_limitar_acceso"
-										render={({ field }) => (
+										render={({ field }:any) => (
 											<FormItem>
 												<FormLabel>Limitar número de accesos:</FormLabel>
 												<FormControl>
