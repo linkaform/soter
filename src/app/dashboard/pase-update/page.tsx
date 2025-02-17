@@ -136,10 +136,10 @@ const PaseUpdate = () =>{
 				walkin_identificacion:identificacion,
 				folio: id,
 				account_id: account_id,
-				nombre: dataCatalogos?.data?.pass_selected?.nombre||"",
-				ubicacion: dataCatalogos?.data?.pass_selected?.ubicacion||"",
-				email: dataCatalogos?.data?.pass_selected?.email||"",
-				telefono:dataCatalogos?.data?.pass_selected?.telefono||""
+				nombre: dataCatalogos?.pass_selected?.nombre||"",
+				ubicacion: dataCatalogos?.pass_selected?.ubicacion||"",
+				email: dataCatalogos?.pass_selected?.email||"",
+				telefono:dataCatalogos?.pass_selected?.telefono||""
 			};
 			
 			if (showIneIden?.includes("foto") && fotografia.length<=0) {
@@ -202,7 +202,7 @@ const PaseUpdate = () =>{
 	};
 return (
 	<div className="p-8">
-		{dataCatalogos?.data?.pass_selected.estatus == "proceso" ? (
+		{dataCatalogos?.pass_selected?.estatus == "proceso" ? (
 			<>
 			<EntryPassModal2
 				title={"Confirmación"}
@@ -220,31 +220,31 @@ return (
 					<div className="flex flex-row justify-between ">
 							<div className="w-full flex gap-2">
 							<p className="font-bold whitespace-nowrap">Nombre: </p>
-							<p >{dataCatalogos?.data?.pass_selected.nombre}</p>
+							<p >{dataCatalogos?.pass_selected?.nombre}</p>
 							</div>
 					</div>
 
 					<div className="flex justify-between">
 							<div className="w-full flex gap-2">
 							<p className="font-bold whitespace-nowrap">Email : </p>
-							<p className="w-full break-words">{dataCatalogos?.data?.pass_selected.email}</p>
+							<p className="w-full break-words">{dataCatalogos?.pass_selected?.email}</p>
 							</div>
 
 							<div className="w-full flex gap-2">
 							<p className="font-bold whitespace-nowrap">Teléfono : </p>
-							<p className="text-sm">{dataCatalogos?.data?.pass_selected.telefono}</p>
+							<p className="text-sm">{dataCatalogos?.pass_selected?.telefono}</p>
 							</div>
 					</div>
 
 					<div className="flex justify-between">
 							<div className="w-full flex gap-2">
 							<p className="font-bold whitespace-nowrap">Visita a: </p>
-							<p className="w-full break-words">{dataCatalogos?.data?.pass_selected.visita_a.length > 0? dataCatalogos?.data?.pass_selected.visita_a[0].nombre: ""}</p>
+							<p className="w-full break-words">{dataCatalogos?.pass_selected?.visita_a ? dataCatalogos?.pass_selected?.visita_a[0].nombre: ""}</p>
 							</div>
 
 							<div className="w-full flex gap-2">
 							<p className="font-bold whitespace-nowrap">Ubicación : </p>
-							<p className="w-full break-words">{dataCatalogos?.data?.pass_selected.ubicacion} </p>
+							<p className="w-full break-words">{dataCatalogos?.pass_selected?.ubicacion} </p>
 							</div>
 					</div>
 					
@@ -347,24 +347,24 @@ return (
 			</>
 		): (<>
 			<div className="flex flex-col items-center justify-start  space-y-5 max-w-2xl mx-auto h-screen">
-					<span className="font-bold text-3xl text-slate-800">{dataCatalogos?.data?.pass_selected.nombre}</span>
+					<span className="font-bold text-3xl text-slate-800">{dataCatalogos?.pass_selected?.nombre}</span>
 					<div>
 						<p className="font-bold whitespace-nowrap">Visita General </p>
 					</div>
 					<div className="flex flex-col gap-2">
 							<div className="w-full flex gap-2">
 								<p className="font-bold whitespace-nowrap">Visita a: </p>
-								<p className="w-full break-words">{dataCatalogos?.data?.pass_selected.visita_a.length > 0? dataCatalogos?.data?.pass_selected.visita_a[0].nombre:""}</p>
+								<p className="w-full break-words">{dataCatalogos?.pass_selected?.visita_a[0] ? dataCatalogos?.pass_selected?.visita_a[0]?.nombre:""}</p>
 							</div>
 
 							<div className="w-full flex gap-2">
 								<p className="font-bold whitespace-nowrap">Ubicación : </p>
-								<p className="w-full break-words">{dataCatalogos?.data?.pass_selected.ubicacion} </p>
+								<p className="w-full break-words">{dataCatalogos?.pass_selected?.ubicacion} </p>
 							</div>
 
 							<div className="w-full flex gap-2">
 								<p className="font-bold whitespace-nowrap">Fecha : </p>
-								<p className="text-sm">{dataCatalogos?.data?.pass_selected.fecha_de_expedicion}</p>
+								<p className="text-sm">{dataCatalogos?.pass_selected?.fecha_de_expedicion}</p>
 							</div>
 					</div>
 					<div className="w-full flex-col">
@@ -372,7 +372,7 @@ return (
 								<Image
 									width={280}
 									height={280}
-									src={dataCatalogos?.data?.pass_selected.qr_pase[0].file_url  } 
+									src={dataCatalogos?.pass_selected?.qr_pase[0]?.file_url ?? "" } 
 									alt="Imagen"
 									className="w-42 h-42 object-contain bg-gray-200 rounded-lg" 
 								/>
@@ -403,7 +403,7 @@ return (
 									<Image
 										width={280}
 										height={280}
-										src={dataCatalogos?.data?.pass_selected.foto.length > 0 ? dataCatalogos?.data?.pass_selected.foto[0].file_url : ""}
+										src={dataCatalogos?.pass_selected?.foto ? dataCatalogos?.pass_selected?.foto[0]?.file_url : ""}
 										alt="Imagen"
 										className="w-42 h-42 object-contain bg-gray-200 rounded-lg" />
 								</div>
@@ -412,7 +412,7 @@ return (
 									<Image
 										width={280}
 										height={280}
-										src={dataCatalogos?.data?.pass_selected.identificacion.length > 0 ? dataCatalogos?.data?.pass_selected.identificacion[0].file_url : ""}
+										src={dataCatalogos?.pass_selected?.identificacion  ? dataCatalogos?.pass_selected?.identificacion[0]?.file_url : ""}
 										alt="Imagen"
 										className="w-42 h-42 object-contain bg-gray-200 rounded-lg mb-2" />
 								</div>

@@ -130,7 +130,7 @@ const OptionsCell: React.FC<{ row: any , refetch: () => void}> = ({ row, refetch
 };
 
 
-export const bitacorasColumns: ColumnDef[] = [
+export const bitacorasColumns: ColumnDef<Bitacora_record>[] = [
 	{
 		id: "options",
 		header: "Opciones",

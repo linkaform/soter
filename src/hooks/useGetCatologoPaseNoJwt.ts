@@ -10,7 +10,7 @@ export interface Root {
 }
 
 export interface Response {
-  data?: Data
+  data: Data
 }
 
 export interface Data {
@@ -33,6 +33,9 @@ export interface PassSelected {
   telefono: string
   email: string
   qr_pase: QrPase[]
+  foto?: Foto[]
+  identificacion?: Foto[]
+
 }
 
 export interface VisitaA {
@@ -49,16 +52,21 @@ export interface QrPase {
   file: string
 }
 
+export interface Foto {
+  file_name: string
+  file_url: string
+}
+
+
 export const useGetCatalogoPaseNoJwt = (account_id:number, qr_code:string ) => {
-  const { data: data, isLoading, error, isFetching, refetch } = useQuery<Response>({
+  const { data, isLoading, error, isFetching, refetch } = useQuery<Data>({
     queryKey: ["useGetCatalogoPaseNoJwt"], 
     queryFn: async () => {
         const data = await getCatalogosPaseNoJwt(account_id, qr_code); 
-        return data.response;
-    },
+        return data.response?.data ?? {};
+          },
 
     staleTime: 1000 * 60 * 5, 
-    cacheTime: 1000 * 60 * 10, 
     refetchOnWindowFocus: true,  
     refetchOnReconnect: true,
   
