@@ -128,33 +128,36 @@ const PaseUpdate = () =>{
 	});
 
 	const onSubmit = (data: z.infer<typeof formSchema>) => {
-	const formattedData = {
-			grupo_vehiculos: vehicles,
-			grupo_equipos: equipos,
-			status_pase: data.status_pase||"",
-			walkin_fotografia:fotografia,
-			walkin_identificacion:identificacion,
-			folio: id,
-			account_id: account_id,
-			nombre:dataCatalogos? dataCatalogos?.data?.pass_selected?.nombre||"" :"",
-			ubicacion:dataCatalogos ? dataCatalogos?.data?.pass_selected?.ubicacion||"":"",
-			email:dataCatalogos ? dataCatalogos?.data?.pass_selected?.email||"":"",
-			telefono:dataCatalogos ?dataCatalogos?.data?.pass_selected?.telefono||"":""
-	};
-	
-	if (showIneIden?.includes("foto") && fotografia.length<=0) {
-			setErrorFotografia("Este campo es requerido.");
-	}else{
-		setErrorFotografia("-")
-	}
+		if(dataCatalogos?.data?.pass_selected){
+			const formattedData = {
+				grupo_vehiculos: vehicles,
+				grupo_equipos: equipos,
+				status_pase: data.status_pase||"",
+				walkin_fotografia:fotografia,
+				walkin_identificacion:identificacion,
+				folio: id,
+				account_id: account_id,
+				nombre:dataCatalogos? dataCatalogos?.data?.pass_selected?.nombre||"" :"",
+				ubicacion:dataCatalogos ? dataCatalogos?.data?.pass_selected?.ubicacion||"":"",
+				email:dataCatalogos ? dataCatalogos?.data?.pass_selected?.email||"":"",
+				telefono:dataCatalogos ?dataCatalogos?.data?.pass_selected?.telefono||"":""
+			};
+			
+			if (showIneIden?.includes("foto") && fotografia.length<=0) {
+					setErrorFotografia("Este campo es requerido.");
+			}else{
+				setErrorFotografia("-")
+			}
 
-	if (showIneIden?.includes("iden") && identificacion.length<=0) {
-			setErrorIdentificacion("Este campo es requerido.")
-	}else{
-		setErrorIdentificacion("-")
-	}
-	
-	setModalData(formattedData);
+			if (showIneIden?.includes("iden") && identificacion.length<=0) {
+					setErrorIdentificacion("Este campo es requerido.")
+			}else{
+				setErrorIdentificacion("-")
+			}
+			
+			setModalData(formattedData);
+		}
+		
 	};
 
 	useEffect(()=>{
