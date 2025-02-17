@@ -988,7 +988,8 @@ return (
 						</>
 						)}
 					</div>
-					<FormField
+					
+					{/* <FormField
 						control={form.control}
 						name="showAreas"
 						value={"show_areas"}
@@ -1014,7 +1015,29 @@ return (
 							<FormMessage />
 							</FormItem>
 						)}
-					/>
+					/> */}
+
+
+					<div className="flex gap-2 flex-col">
+						{/* Botón Toggle sin FormField */}
+						<div className="flex gap-2 flex-wrap">
+							<Button
+							type="button"
+							onClick={handleToggleAdvancedOptions}
+							className={`px-4 py-2 rounded-md transition-all duration-300 ${
+								isActiveAdvancedOptions ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
+							} hover:bg-transparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
+							>
+							<div className="flex flex-wrap">
+								{isActiveAdvancedOptions ? (
+								<div>Áreas de acceso</div>
+								) : (
+								<div className="text-blue-600">Áreas de acceso</div>
+								)}
+							</div>
+							</Button>
+						</div>
+					</div>
 				</form>
 			</Form>
 			
