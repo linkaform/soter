@@ -136,10 +136,10 @@ const PaseUpdate = () =>{
 			walkin_identificacion:identificacion,
 			folio: id,
 			account_id: account_id,
-			nombre:dataCatalogos? dataCatalogos?.pass_selected?.nombre||"" :"",
-			ubicacion:dataCatalogos?dataCatalogos?.pass_selected?.ubicacion||"":"",
-			email:dataCatalogos?dataCatalogos?.pass_selected?.email||"":"",
-			telefono:dataCatalogos?dataCatalogos?.pass_selected?.telefono||"":""
+			nombre:dataCatalogos && dataCatalogos.pass_selected ? dataCatalogos?.pass_selected?.nombre||"" :"",
+			ubicacion:dataCatalogos && dataCatalogos.pass_selected ? dataCatalogos?.pass_selected?.ubicacion||"":"",
+			email:dataCatalogos && dataCatalogos.pass_selected ? dataCatalogos?.pass_selected?.email||"":"",
+			telefono:dataCatalogos && dataCatalogos.pass_selected ?dataCatalogos?.pass_selected?.telefono||"":""
 	};
 	
 	if (showIneIden?.includes("foto") && fotografia.length<=0) {
