@@ -69,9 +69,7 @@ import Image from "next/image";
 		creado_por_id: z.number().int({ message: "El ID debe ser un número entero." }),  
 		creado_por_email: z.string().email({ message: "Por favor, ingresa un correo electrónico válido." }), 
 	}),
-	enviar_correo_pre_registro:z.array(
-	  	z.enum(["enviar_correo_pre_registro", "enviar_sms_pre_registro"])
-	).optional(),
+	enviar_correo_pre_registro:z.array(z.string()).optional(),
 	
 	tipo_visita_pase: z.enum(["fecha_fija", "rango_de_fechas"], {
 	  	required_error: "Seleccione un tipo de fecha.",
@@ -82,9 +80,7 @@ import Image from "next/image";
 	config_dia_de_acceso: z.enum(["cualquier_día", "limitar_días_de_acceso"], {
 	  	required_error: "Seleccione un tipo de acceso.",
 	}),
-	config_dias_acceso: z.array(
-		z.enum(["lunes", "martes", "miércoles", "jueves", "viernes", "sábado"])
-	).optional(),
+	config_dias_acceso: z.array(z.string()).optional(),
 	config_limitar_acceso: z.number().optional().refine((val) => (val ? !isNaN(Number(val)) && Number(val) > 0 : true), {
 		message:
 		  "Ingrese un número válido mayor a 0 para el límite de accesos.",
@@ -194,13 +190,13 @@ import Image from "next/image";
 				creado_por_id: userIdSoter,
 				creado_por_email: userEmailSoter ?? ""
 		},
-			enviar_correo_pre_registro:enviar_correo_pre_registro, 
+			enviar_correo_pre_registro:enviar_correo_pre_registro??[], 
 			tipo_visita_pase: "fecha_fija",
 			fechaFija: "",
 			fecha_desde_visita: "",
 			fecha_desde_hasta: "",
 			config_dia_de_acceso: "cualquier_día",
-			config_dias_acceso: config_dias_acceso,
+			config_dias_acceso: config_dias_acceso??[],
 			config_limitar_acceso: 1,
 			areas: [],
 			comentarios: [],
