@@ -606,12 +606,67 @@ return (
 						/>         
 					</div>
 					
+
 					<div className="flex gap-2 flex-col">
 						<FormLabel className="mb-2">
 							Selecciona una opción:
 						</FormLabel>
+						<div className="flex gap-2">
+							<div className="flex gap-2 flex-wrap">
+								<Button
+								type="button"
+								onClick={handleToggleEmail}
+								className={`px-4 py-2 rounded-md transition-all duration-300 ${
+									isActive ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
+								} hover:bg-transparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
+								>
+								<div className="flex flex-wrap items-center">
+									{isActive ? (
+									<>
+										<Mail className="mr-3" />
+										<div>Enviar por correo</div>
+									</>
+									) : (
+									<>
+										<Mail className="mr-3 text-blue-600" />
+										<div className="text-blue-600">Enviar por correo</div>
+									</>
+									)}
+								</div>
+								</Button>
+							</div>
+							<div className="flex gap-2 flex-wrap">
+								<Button
+								type="button"
+								onClick={handleToggleSMS}
+								className={`px-4 py-2 rounded-md transition-all duration-300 ${
+									isActive ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
+								} hover:bg-transparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
+								>
+								<div className="flex flex-wrap items-center">
+									{isActive ? (
+									<>
+										<MessageCircleMore className="mr-3" />
+										<div>Enviar por sms</div>
+									</>
+									) : (
+									<>
+										<MessageCircleMore className="mr-3 text-blue-600" />
+										<div className="text-blue-600">Enviar por SMS</div>
+									</>
+									)}
+								</div>
+								</Button>
+							</div>
+						</div>
+						
+					</div>
+
+					{/* <div className="flex gap-2 flex-col">
+						<FormLabel className="mb-2">
+							Selecciona una opción:
+						</FormLabel>
 						<div className="flex gap-2 flex-wrap">
-						{/* Toggle Button */}
 						<Controller
 						control={form.control}
 						name="toggleFieldEmail"
@@ -667,7 +722,7 @@ return (
 							)}
 							/>
 						</div>
-					</div>
+					</div> */}
 					
 					<h1 className="font-bold text-xl">Sobre vigencia y acceso</h1>
 					<div className="flex items-center flex-wrap gap-5">
