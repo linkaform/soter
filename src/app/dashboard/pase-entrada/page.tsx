@@ -537,11 +537,13 @@ return (
 									)}
 									</SelectTrigger>
 									<SelectContent>
-									{ubicaciones?.map((ubicacion:string, index:string) => (
-									<SelectItem key={index} value={ubicacion}>
-										{ubicacion}
-									</SelectItem>
-									))}
+									{Array.isArray(ubicaciones)??(<>
+										{ubicaciones?.map((ubicacion:string, index:string) => (
+											<SelectItem key={index} value={ubicacion}>
+												{ubicacion}
+											</SelectItem>
+										))}
+									</>)}
 									</SelectContent>
 								</Select>
 								
