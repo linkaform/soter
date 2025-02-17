@@ -48,9 +48,11 @@ export interface QrPase {
   file_url: string
   file: string
 }
+type TQueryFnData = Response | null | undefined;
+type ResponseWithoutNonNullable = TQueryFnData; 
 
 export const useGetCatalogoPaseNoJwt = (account_id:number, qr_code:string ) => {
-  const { data: data, isLoading, error, isFetching, refetch } = useQuery<Response|"">({
+  const { data: data, isLoading, error, isFetching, refetch } = useQuery<ResponseWithoutNonNullable>({
     queryKey: ["useGetCatalogoPaseNoJwt"], 
     queryFn: async () => {
         const data = await getCatalogosPaseNoJwt(account_id, qr_code); 
