@@ -61,7 +61,7 @@ import Image from "next/image";
 	descripcion: z.string().optional(),
 	perfil_pase: z.string().min(1),
 	status_pase:z.string().min(1),
-	visita_a: z.string().min(1),
+	visita_a: z.string().nullable().optional(),
 	custom: z.boolean().optional(),
 	link: z.object({
 		link: z.string().url({ message: "Por favor, ingresa una URL válida." }), 
@@ -186,7 +186,7 @@ import Image from "next/image";
 			descripcion:"",
 			perfil_pase: "Visita General",
 			status_pase:"Proceso",
-			visita_a: userNameSoter,
+			visita_a: userNameSoter ?? "",
 			custom: true,
 			link:{
 				link :`${protocol}//${host}/dashboard/pase-update`,
@@ -259,38 +259,38 @@ import Image from "next/image";
 	const onSubmit = (data: z.infer<typeof formSchema>) => {
 		console.log("Formulario enviado con los siguientes datos:", data);
 		const formattedData = {
-		nombre: data.nombre,
-		email: data.email,
-		telefono: data.telefono,
-		ubicacion: data.ubicacion,
-		tema_cita: data.tema_cita,
-		descripcion: data.descripcion,
-		perfil_pase: "Visita General",
-		status_pase:"Proceso",
-		visita_a: userNameSoter,
-		custom:true,
-		link:{
-			link : data.link.link,
-			docs : formatedDocs,
-			creado_por_id: userIdSoter,
-			creado_por_email: userEmailSoter
-		},
-		enviar_correo_pre_registro: enviar_correo_pre_registro, 
-		tipo_visita_pase: tipoVisita,
-		fechaFija: date !=="" ? formatDateToString(date):"",
-		fecha_desde_visita: tipoVisita === "fecha_fija"? 
-			(date !=="" ? formatDateToString(date): "") : 
-			(data.fecha_desde_visita !== "" ? formatFecha(data.fecha_desde_visita)+` 00:00:00`: ""),
-		fecha_desde_hasta: data.fecha_desde_hasta !=="" ? formatFecha(data.fecha_desde_hasta)+` 00:00:00` : "",
-		config_dia_de_acceso: config_dia_de_acceso === "limitar_días_de_acceso" ? config_dia_de_acceso : "cualquier_día",
-		config_dias_acceso: config_dias_acceso,
-		config_limitar_acceso: Number(data.config_limitar_acceso) || 0,
-		areas:areasList,
-		comentarios: comentariosList,
-		enviar_pre_sms:{
-			from: "enviar_pre_sms",
-			mensaje: "SOY UN MENSAJE",
-			numero: data.telefono,
+			nombre: data.nombre,
+			email: data.email,
+			telefono: data.telefono,
+			ubicacion: data.ubicacion,
+			tema_cita: data.tema_cita,
+			descripcion: data.descripcion,
+			perfil_pase: "Visita General",
+			status_pase:"Proceso",
+			visita_a: userNameSoter,
+			custom:true,
+			link:{
+				link : data.link.link,
+				docs : formatedDocs,
+				creado_por_id: userIdSoter,
+				creado_por_email: userEmailSoter
+			},
+			enviar_correo_pre_registro: enviar_correo_pre_registro, 
+			tipo_visita_pase: tipoVisita,
+			fechaFija: date !=="" ? formatDateToString(date):"",
+			fecha_desde_visita: tipoVisita === "fecha_fija"? 
+				(date !=="" ? formatDateToString(date): "") : 
+				(data.fecha_desde_visita !== "" ? formatFecha(data.fecha_desde_visita)+` 00:00:00`: ""),
+			fecha_desde_hasta: data.fecha_desde_hasta !=="" ? formatFecha(data.fecha_desde_hasta)+` 00:00:00` : "",
+			config_dia_de_acceso: config_dia_de_acceso === "limitar_días_de_acceso" ? config_dia_de_acceso : "cualquier_día",
+			config_dias_acceso: config_dias_acceso,
+			config_limitar_acceso: Number(data.config_limitar_acceso) || 0,
+			areas:areasList,
+			comentarios: comentariosList,
+			enviar_pre_sms:{
+				from: "enviar_pre_sms",
+				mensaje: "SOY UN MENSAJE",
+				numero: data.telefono,
 		},
 		};
 		if(tipoVisita == "fecha_fija" && date == ""){

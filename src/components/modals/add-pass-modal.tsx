@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react/no-children-prop */
 import { Button } from "../ui/button";
 import {
   Dialog,
