@@ -48,20 +48,18 @@ export interface QrPase {
   file_url: string
   file: string
 }
-type TQueryFnData = Response | null | undefined;
-type ResponseWithoutNonNullable = TQueryFnData; 
 
 export const useGetCatalogoPaseNoJwt = (account_id:number, qr_code:string ) => {
-  const { data: data, isLoading, error, isFetching, refetch } = useQuery<ResponseWithoutNonNullable>({
+  const { data: data, isLoading, error, isFetching, refetch } = useQuery<Response>({
     queryKey: ["useGetCatalogoPaseNoJwt"], 
     queryFn: async () => {
         const data = await getCatalogosPaseNoJwt(account_id, qr_code); 
-        return data.response||{ data:{pass_selected:{}}};
+        return data.response;
     },
 
-    staleTime: 1000 * 60 * 5,  // 5 minutos de datos frescos antes de ser considerados obsoletos
-    cacheTime: 1000 * 60 * 10, // 10 minutos en caché
-    refetchOnWindowFocus: true,  // No hacer refetch cuando la ventana vuelva a enfocarse
+    staleTime: 1000 * 60 * 5, 
+    cacheTime: 1000 * 60 * 10, 
+    refetchOnWindowFocus: true,  
     refetchOnReconnect: true,
   
   });
