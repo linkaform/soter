@@ -97,7 +97,7 @@ return (
 					<FormField
 						control={form.control}
 						name="comentario_pase"
-						render={({ field }) => (
+						render={({ field }:any) => (
 							<FormItem>
 								<FormLabel>Comentario o instrucción:</FormLabel>
 								<FormControl>

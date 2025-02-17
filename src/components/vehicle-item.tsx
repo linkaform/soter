@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -153,7 +152,7 @@ return (
 						<FormField
 							control={form.control}
 							name="tipo"
-							render={({ field }) => (
+							render={({ field }:any) => (
 								<FormItem>
 									<FormLabel>Tipo de Vehículo:</FormLabel>
 									<FormControl>
@@ -194,7 +193,7 @@ return (
 						<FormField
 							control={form.control}
 							name="marca"
-							render={({ field }) => (
+							render={({ field }:any) => (
 								<FormItem>
 									<FormLabel>Marca:</FormLabel>
 									<FormControl>
@@ -244,7 +243,7 @@ return (
 						<FormField
 							control={form.control}
 							name="modelo"
-							render={({ field }) => (
+							render={({ field }:any) => (
 								<FormItem>
 									<FormLabel>Modelo:</FormLabel>
 									<FormControl>
@@ -293,7 +292,7 @@ return (
 						<FormField
 							control={form.control}
 							name="placas"
-							render={({ field }) => (
+							render={({ field }:any) => (
 								<FormItem>
 									<FormLabel>Matrícula:</FormLabel>
 									<FormControl>
@@ -314,7 +313,7 @@ return (
 						<FormField
 							control={form.control}
 							name="estado"
-							render={({ field }) => (
+							render={({ field }:any) => (
 								<FormItem>
 									<FormLabel>Estado:</FormLabel>
 									<FormControl>
@@ -354,7 +353,7 @@ return (
 						<FormField
 							control={form.control}
 							name="color"
-							render={({ field }) => (
+							render={({ field }:any) => (
 								<FormItem>
 									<FormLabel>Color:</FormLabel>
 									<FormControl>
