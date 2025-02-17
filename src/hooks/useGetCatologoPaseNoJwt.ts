@@ -10,7 +10,7 @@ export interface Root {
 }
 
 export interface Response {
-  data?: Data
+  data?: Data | null
 }
 
 export interface Data {
@@ -58,7 +58,7 @@ export const useGetCatalogoPaseNoJwt = (account_id:number, qr_code:string ) => {
         //   return {pass_selected:{}}
         // }
         console.log("PASS SELEC", data.response)
-        return data.response;
+        return data.response|| null;
     },
 
     staleTime: 1000 * 60 * 5,  // 5 minutos de datos frescos antes de ser considerados obsoletos
