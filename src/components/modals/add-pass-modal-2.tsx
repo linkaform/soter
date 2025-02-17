@@ -34,7 +34,6 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 	data,
 	isSuccess,
 	setIsSuccess,
-	onClose
 }) => {
 	const [response, setResponse] = useState<any>(null);
 	const [isLoading, setIsLoading] = useState(false);
