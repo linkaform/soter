@@ -58,7 +58,7 @@ export const useGetCatalogoPaseNoJwt = (account_id:number, qr_code:string ) => {
         //   return {pass_selected:{}}
         // }
         console.log("PASS SELEC", data.response)
-        return data.response|| null;
+        return data.response||{ data:{pass_selected:{}}};
     },
 
     staleTime: 1000 * 60 * 5,  // 5 minutos de datos frescos antes de ser considerados obsoletos
