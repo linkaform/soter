@@ -7,10 +7,10 @@ export const useGetCatalogoPaseNoJwt = (account_id:number, qr_code:string ) => {
     queryKey: ["useGetCatalogoPaseNoJwt"], 
     queryFn: async () => {
         const data = await getCatalogosPaseNoJwt(account_id, qr_code); 
-        if (!data.response || !data.response?.data ) {
-          return {pass_selected:{}}
-        }
-        return data.response?.data|| {pass_selected:{}};
+        // if (!data.response || !data.response?.data ) {
+        //   return {pass_selected:{}}
+        // }
+        return data.response;
     },
 
     staleTime: 1000 * 60 * 5,  // 5 minutos de datos frescos antes de ser considerados obsoletos
