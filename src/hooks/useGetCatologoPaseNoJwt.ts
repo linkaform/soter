@@ -8,9 +8,9 @@ export const useGetCatalogoPaseNoJwt = (account_id:number, qr_code:string ) => {
     queryFn: async () => {
         const data = await getCatalogosPaseNoJwt(account_id, qr_code); 
         if (!data.response || !data.response?.data ) {
-          console.error("Error al cargar la información");
+          return {}
         }
-        return data.response?.data;
+        return data.response?.data|| {};
     },
 
     staleTime: 1000 * 60 * 5,  // 5 minutos de datos frescos antes de ser considerados obsoletos
