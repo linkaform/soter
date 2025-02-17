@@ -40,7 +40,7 @@ import { MisContactosModal } from "@/components/modals/user-contacts";
 import { Contacto } from "@/lib/get-user-contacts";
 import Image from "next/image";
 
-export const formSchema = z
+ const formSchema = z
 	.object({
 	nombre: z.string().min(2, {
 	  	message: "Por favor, ingresa un tu nombre completo",
