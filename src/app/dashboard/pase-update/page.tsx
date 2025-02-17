@@ -92,7 +92,7 @@ const PaseUpdate = () =>{
 	const showIneIden= docs?.split("-")
 	const { data: responsePdf, isLoading: loadingPdf} = useGetPdf(account_id, id);
 	const { data: dataCatalogos, isLoading: loadingDataCatalogos } = useGetCatalogoPaseNoJwt(account_id, id);
-
+	console.log("DATAA", dataCatalogos)
 	const [agregarEquiposActive, setAgregarEquiposActive] = useState(false);
 	const [agregarVehiculosActive, setAgregarVehiculosActive] = useState(false);
 	const [isSuccess, setIsSuccess] = useState(false);
@@ -120,10 +120,10 @@ const PaseUpdate = () =>{
 			walkin_identificacion:[],
 			folio: "",
 			account_id: 0,
-			nombre:dataCatalogos?.data?.pass_selected.nombre ||"",
-			ubicacion:dataCatalogos?.data?.pass_selected.ubicacion ||"",
-			email:dataCatalogos?.data?.pass_selected.email ||"",
-			telefono:dataCatalogos?.data?.pass_selected.telefono ||"",
+			nombre:"",
+			ubicacion:"",
+			email:"",
+			telefono:"",
 	}
 	});
 
