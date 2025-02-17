@@ -4,19 +4,19 @@ import { useQuery } from "@tanstack/react-query";
 
 
 export interface Root {
-  response: Response
-  success: boolean
-  log: string
+  response?: Response
+  success?: boolean
+  log?: string
 }
 
 export interface Response {
-  data: Data
+  data?: Data
 }
 
 export interface Data {
-  pass_selected: PassSelected
-  cat_estados: string[]
-  cat_vehiculos: string[]
+  pass_selected?: PassSelected
+  cat_estados?: string[]
+  cat_vehiculos?: string[]
 }
 
 export interface PassSelected {
@@ -57,6 +57,7 @@ export const useGetCatalogoPaseNoJwt = (account_id:number, qr_code:string ) => {
         // if (!data.response || !data.response?.data ) {
         //   return {pass_selected:{}}
         // }
+        console.log("PASS SELEC", data.response)
         return data.response;
     },
 

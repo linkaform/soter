@@ -58,10 +58,10 @@ import Image from "next/image";
 	status_pase: z.string().optional(),
 	folio: z.string().optional(),
 	account_id: z.number().optional(),
-	nombre:z.string().optional(),
-	ubicacion:z.string().optional(),
-	email:z.string().optional(),
-	telefono:z.string().optional()
+	nombre:z.string().nullable().optional(),
+	ubicacion:z.string().nullable().optional(),
+	email:z.string().nullable().optional(),
+	telefono:z.string().nullable().optional()
 })
 
 
@@ -120,15 +120,14 @@ const PaseUpdate = () =>{
 			walkin_identificacion:[],
 			folio: "",
 			account_id: 0,
-			nombre:"",
-			ubicacion:"",
-			email:"",
-			telefono:""
+			nombre:dataCatalogos?.data?.pass_selected.nombre ||"",
+			ubicacion:dataCatalogos?.data?.pass_selected.ubicacion ||"",
+			email:dataCatalogos?.data?.pass_selected.email ||"",
+			telefono:dataCatalogos?.data?.pass_selected.telefono ||"",
 	}
 	});
 
 	const onSubmit = (data: z.infer<typeof formSchema>) => {
-		if(dataCatalogos?.data?.pass_selected){
 			const formattedData = {
 				grupo_vehiculos: vehicles,
 				grupo_equipos: equipos,
@@ -137,10 +136,10 @@ const PaseUpdate = () =>{
 				walkin_identificacion:identificacion,
 				folio: id,
 				account_id: account_id,
-				nombre:dataCatalogos? dataCatalogos?.data?.pass_selected?.nombre||"" :"",
-				ubicacion:dataCatalogos ? dataCatalogos?.data?.pass_selected?.ubicacion||"":"",
-				email:dataCatalogos ? dataCatalogos?.data?.pass_selected?.email||"":"",
-				telefono:dataCatalogos ?dataCatalogos?.data?.pass_selected?.telefono||"":""
+				nombre: dataCatalogos?.data?.pass_selected?.nombre||"",
+				ubicacion: dataCatalogos?.data?.pass_selected?.ubicacion||"",
+				email: dataCatalogos?.data?.pass_selected?.email||"",
+				telefono:dataCatalogos?.data?.pass_selected?.telefono||""
 			};
 			
 			if (showIneIden?.includes("foto") && fotografia.length<=0) {
@@ -156,8 +155,6 @@ const PaseUpdate = () =>{
 			}
 			
 			setModalData(formattedData);
-		}
-		
 	};
 
 	useEffect(()=>{
