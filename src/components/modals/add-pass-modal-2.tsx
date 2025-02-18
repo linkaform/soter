@@ -1,5 +1,3 @@
-/* eslint-disable react/no-children-prop */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from "../ui/button";
 import {
 	Dialog,
@@ -22,7 +20,7 @@ import Image from "next/image";
 
 interface EntryPassModal2Props {
 	title: string;
-	data: formatData;
+	data: formatData
 	isSuccess: boolean;
 	setIsSuccess: Dispatch<SetStateAction<boolean>>;
 	onClose: ()=> void;
@@ -85,7 +83,7 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 	},[error])
 
 	return (
-		<Dialog open={isSuccess} onClose={handleClose} modal>
+		<Dialog open={isSuccess} modal>
 		 
 			<DialogContent className="max-w-xl max-h-[90vh] overflow-scroll">
 				<DialogHeader>
@@ -243,7 +241,6 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 							Cancelar
 						</Button>
 					</DialogClose>
-					{/* response?.success */}
 					{ response?.success  ? ( 
 						<UpdatedPassModal
 							title="Pase de Entrada Completado "

@@ -86,36 +86,19 @@ const VehicleList:React.FC<VehicleListProps> = ({ account_id, vehicles, setVehic
     };
 
     useEffect(() => {
-        refetch({account_id, tipo: "", marca:""}).then((response: any) => {
-          const cat = response.data; 
-          setTipoVehiculoState(""); 
-          setTiposCat(cat); 
-        }).catch((error:string)=> {
-          console.error("Error al obtener tipos:", error);
-        });
+        refetch()
     }, []);
 
   useEffect(() => {
     if (tipoVehiculoState) {
-      refetch({account_id, tipo: tipoVehiculoState}).then((response: any) => {
-        const cat = response.data; 
-        setMarcaState(""); 
-        setMarcasCat(cat); 
-      }).catch((error:string)=> {
-        console.error("Error al obtener marcas:", error);
-      });
+      refetch()
     }
   }, [tipoVehiculoState]);
 
   useEffect(() => {
     if (marcaState) {
       setModelosCat([]);
-      refetch({account_id, tipo:tipoVehiculoState, marca:marcaState}).then((response: any) => {
-        const cat = response.data; 
-        setModelosCat(cat); 
-      }).catch((error:string)=> {
-        console.error("Error al obtener modelos:", error);
-      });
+      refetch()
     }
   }, [marcaState]);
 

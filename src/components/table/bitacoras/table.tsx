@@ -5,6 +5,7 @@ import * as React from "react";
 import {
   ColumnFiltersState,
   SortingState,
+  TableMeta,
   VisibilityState,
   flexRender,
   getCoreRowModel,
@@ -60,7 +61,7 @@ const BitacorasTable:React.FC<ListProps> = ({ refetch, data, setSelectedOption, 
 
   const [globalFilter, setGlobalFilter] = React.useState("");
 
-
+ 
   const table = useReactTable({
     data: data||[],
     columns: isLoading ? []:bitacorasColumns,
@@ -82,10 +83,7 @@ const BitacorasTable:React.FC<ListProps> = ({ refetch, data, setSelectedOption, 
       rowSelection,
       pagination,
       globalFilter,
-    },
-    meta: {
-      refetch
-    },
+    }
   });
 
 
@@ -162,7 +160,7 @@ const BitacorasTable:React.FC<ListProps> = ({ refetch, data, setSelectedOption, 
                       key={column.id}
                       className="capitalize"
                       checked={column.getIsVisible()}
-                      onCheckedChange={(value:string) =>
+                      onCheckedChange={(value:boolean) =>
                         column.toggleVisibility(!!value)
                       }
                     >

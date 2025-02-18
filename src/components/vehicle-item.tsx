@@ -26,7 +26,6 @@ import { useCatalogoEstados } from "@/hooks/useCatalogoEstados";
 
 
 export const formSchema = 
-	z.array(
 		z.object({
 			tipo: z.string().refine((val) => val.trim().length > 0, {
 				message: "El tipo es obligatorio",
@@ -37,7 +36,6 @@ export const formSchema =
 			placas: z.string().optional(),
 			color: z.string().optional()
 		})
-	);
 
 	interface VehicleItemProps {
 	account_id: number;
@@ -67,30 +65,21 @@ export const formSchema =
 
 		const form = useForm<z.infer<typeof formSchema>>({
 			resolver: zodResolver(formSchema),
-			defaultValues: {
-				vehicles: [{ tipo: "", marca: "", modelo: "", estado: "", placas: "", color: "" }],
-			},
+			defaultValues: { tipo: "", marca: "", modelo: "", estado: "", placas: "", color: "" },
+			
 	});
 
 	useEffect(() => {
-		
 		if(vehicle?.tipo !==""){
 			loadNewVehicle(vehicle)
 			
 		}else{
-			refetch({account_id, tipo: "", marca:""}).then((response: any) => {
-				const cat = response.data; 
-				setTipoVehiculoState(""); 
-				setTiposCat(cat); 
-			}).catch((error:string)=> {
-				console.error("Error al obtener tipos:", error);
-			});
+			refetch()
 		}
 	}, [])
 
 
 	function loadNewVehicle(vehicle:Vehiculo){
-
 		form.setValue('tipo', vehicle?.tipo)
 		form.setValue('marca', vehicle?.marca)
 		form.setValue('modelo', vehicle?.modelo)
@@ -101,26 +90,14 @@ export const formSchema =
 
 	useEffect(() => {
 		if (tipoVehiculoState) {
-			refetch({account_id, tipo: tipoVehiculoState}).then((response: any) => {
-				const cat = response.data; 
-				setMarcaState(""); 
-				console.log("MARCAS en segunda vuelta", cat, tipoVehiculoState)
-				setMarcasCat(cat); 
-			}).catch((error:string)=> {
-				console.error("Error al obtener marcas:", error);
-			});
+			refetch()
 		}
 	}, [tipoVehiculoState]);
 
 	useEffect(() => {
 		if (marcaState) {
 			setModelosCat([]);
-			refetch({account_id, tipo:tipoVehiculoState, marca:marcaState}).then((response: any) => {
-				const cat = response.data; 
-				setModelosCat(cat); 
-			}).catch((error:string)=> {
-				console.error("Error al obtener modelos:", error);
-			});
+			refetch()
 		}
 	}, [marcaState,refetch]);
 

@@ -90,9 +90,7 @@ import { EntryPassModalUpdate } from "./add-pass-modal-update";
 		visita_a: z.string().min(1),
 		custom: z.boolean().optional(),
 		link: linkSchema,
-		enviar_correo_pre_registro:z.array(
-			z.enum(["enviar_correo_pre_registro", "enviar_sms_pre_registro"])
-		).optional(),
+		enviar_correo_pre_registro:z.array(z.string()).optional(),
 		
 		tipo_visita_pase: z.enum(["fecha_fija", "rango_de_fechas"], {
 			required_error: "Seleccione un tipo de fecha.",
@@ -103,9 +101,7 @@ import { EntryPassModalUpdate } from "./add-pass-modal-update";
 		config_dia_de_acceso: z.enum(["cualquier_día", "limitar_días_de_acceso"], {
 			required_error: "Seleccione un tipo de acceso.",
 		}),
-		config_dias_acceso: z.array(
-				z.enum(["lunes", "martes", "miércoles", "jueves", "viernes", "sábado"])
-			).optional(),
+		config_dias_acceso: z.array(z.string()).optional(),
 		config_limitar_acceso: z.number().optional().refine((val) => (val ? !isNaN(Number(val)) && Number(val) > 0 : true), {
 				message:
 					"Ingrese un número válido mayor a 0 para el límite de accesos.",
@@ -113,6 +109,7 @@ import { EntryPassModalUpdate } from "./add-pass-modal-update";
 		areas: areasSchema,
 		comentarios:comentariosSchema,
 		enviar_pre_sms: enviarPreSmsSchema,
+		qr_pase: z.array(z.unknown()).optional()
 	}) 
 	.refine((data) => {
 		if (data.tipo_visita_pase === 'rango_de_fechas') {
@@ -174,9 +171,9 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
 	const { data: ubicaciones, isLoading: loadingUbicaciones } = useCatalogoPaseLocation();
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(dataPass.ubicacion);
 	const { isLoading: loadingAreas} = useCatalogoPaseArea(ubicacionSeleccionada);
-	const userEmailSoter = localStorage.getItem("userEmail_soter");
+	const userEmailSoter = localStorage.getItem("userEmail_soter")||"";
 	const userIdSoter = parseInt(localStorage.getItem("userId_soter") || "0", 10);
-	const [enviar_correo_pre_registro, set_enviar_correo_pre_registro] = useState<string[]>(dataPass.enviar_correo_pre_registro);
+	const [enviar_correo_pre_registro, set_enviar_correo_pre_registro] = useState<string[]>(dataPass.enviar_correo_pre_registro ||[]);
 	const { data: configLocation, isLoading: loadingConfigLocation, refetch:refetchConfLocation } = useGetConfSeguridad(ubicacionSeleccionada);
 	const [formatedDocs, setFormatedDocs] = useState<string[]>(configLocation)
 
@@ -202,8 +199,7 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			_id:dataPass._id,
-			folio:dataPass.folio,
+			// folio:dataPass.folio,
 			nombre: dataPass.nombre,
 			email: dataPass.email ||"",
 			telefono: dataPass.telefono||"",
@@ -221,7 +217,7 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
 				creado_por_email: userEmailSoter
 			},
 			qr_pase: dataPass.qr_pase||[],
-			limitado_a_dias	: dataPass.limitado_a_dias||[],
+			// limitado_a_dias	: dataPass.limitado_a_dias||[],
 			enviar_correo_pre_registro:enviar_correo_pre_registro||[], 
 			tipo_visita_pase: tipoVisita ||"",
 			fechaFija: dataPass.tipo_visita_pase=="fecha_fija" ?
@@ -558,11 +554,16 @@ return (
 												)}
 												</SelectTrigger>
 												<SelectContent>
-												{ubicaciones?.map((ubicacion:string, index:string) => (
-													<SelectItem key={index} value={ubicacion}>
-														{ubicacion}
-													</SelectItem>
-												))}
+													{Array.isArray(ubicaciones) ? (
+														<>
+														  {ubicaciones.map((ubicacion, index) => (
+															<SelectItem key={index} value={ubicacion}>
+															  {ubicacion}
+															</SelectItem>
+														  ))}
+														</>
+													  ) : null}
+												
 												</SelectContent>
 											</Select>
 											
@@ -629,61 +630,38 @@ return (
 									Selecciona una opción:
 							</FormLabel>
 							<div className="flex gap-2 flex-wrap">
-							<Controller
-							control={form.control}
-							name="toggleFieldEmail"
-							render={() => (
-
-										<FormItem>
-											<FormControl>
-												<Button
-													type="button"
-													onClick={handleToggleEmail}
-													className={`px-4 py-2 rounded-md transition-all duration-300 ${
-														isActive ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent "
-													} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
-												>
-													<div className="flex flex-wrap items-center">
-														{isActive ? (
-															<><Mail className="mr-3" /><div className="">Enviar por correo</div></>
-														):(
-															<><Mail className="mr-3 text-blue-600" /><div className="text-blue-600">Enviar por correo</div></>
-														)}
-															
-													</div>
-												</Button>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
+							<Button
+								type="button"
+								onClick={handleToggleEmail}
+								className={`px-4 py-2 rounded-md transition-all duration-300 ${
+									isActive ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent "
+								} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
+							>
+								<div className="flex flex-wrap items-center">
+									{isActive ? (
+										<><Mail className="mr-3" /><div className="">Enviar por correo</div></>
+									):(
+										<><Mail className="mr-3 text-blue-600" /><div className="text-blue-600">Enviar por correo</div></>
 									)}
-								/>
-							<Controller
-							control={form.control}
-							name="toggleFieldSMS"
-							render={() => (
-										<FormItem>
-											<FormControl>
-												<Button
-													type="button"
-													onClick={handleToggleSMS}
-													className={`px-4 py-2 rounded-md transition-all duration-300 ${
-														isActiveSMS ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
-													} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
-												>
-													<div className="flex flex-wrap items-center">
-														{isActiveSMS ? (
-															<><MessageCircleMore className="mr-3 text-white" /><div className="">Enviar por sms</div></>
-														):(
-															<><MessageCircleMore className="mr-3 text-blue-600" /><div className="text-blue-600">Enviar por sms</div></>
-														)}
-															
-													</div>
-												</Button>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
+										
+								</div>
+							</Button>
+							<Button
+								type="button"
+								onClick={handleToggleSMS}
+								className={`px-4 py-2 rounded-md transition-all duration-300 ${
+									isActiveSMS ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
+								} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
+							>
+								<div className="flex flex-wrap items-center">
+									{isActiveSMS ? (
+										<><MessageCircleMore className="mr-3 text-white" /><div className="">Enviar por sms</div></>
+									):(
+										<><MessageCircleMore className="mr-3 text-blue-600" /><div className="text-blue-600">Enviar por sms</div></>
 									)}
-								/>
+										
+								</div>
+							</Button>
 							</div>
 					</div>
 					
@@ -955,34 +933,22 @@ return (
 							</>
 						)}
 				</div>
-					<FormField
-							control={form.control}
-							name="showAreas"
-							value={"show_areas"}
-							render={() => (
-								<FormItem>
-									<FormControl>
-										<Button
-											type="button"
-											onClick={handleToggleAdvancedOptions}
-											className={`px-4 py-2 rounded-md transition-all duration-300 ${
-												isActiveAdvancedOptions ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
-											} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
-										>
-											<div className="flex flex-wrap">
-												{isActiveAdvancedOptions ? (
-													<><div className="">Áreas de acceso</div></>
-												):(
-													<><div className="text-blue-600">Áreas de acceso</div></>
-												)}
-													
-											</div>
-										</Button>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+				<Button
+					type="button"
+					onClick={handleToggleAdvancedOptions}
+					className={`px-4 py-2 rounded-md transition-all duration-300 ${
+						isActiveAdvancedOptions ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
+					} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
+				>
+					<div className="flex flex-wrap">
+						{isActiveAdvancedOptions ? (
+							<><div className="">Áreas de acceso</div></>
+						):(
+							<><div className="text-blue-600">Áreas de acceso</div></>
+						)}
+							
+					</div>
+				</Button>
 
 				</form>
 				</Form>

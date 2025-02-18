@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -22,12 +21,10 @@ import { Input } from "@/components/ui/input";
 import { Areas } from "@/hooks/useCreateAccessPass";
 
 export const formSchema = 
-    z.array(
       z.object({
         nombre_area: z.string().optional(),
         comentario_area: z.string().optional(),
       })
-    );
 
   interface AreasItemProps {
     isCollapsed: boolean;
@@ -48,9 +45,7 @@ export const formSchema =
       const area = formatArea(areaRaw)
       const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues: {
-          areas: [{ nombre_area: "", comentario_area: "" }]
-        },
+        defaultValues: { nombre_area: "", comentario_area: "" }
     });
 
     useEffect(() => {
@@ -116,7 +111,7 @@ export const formSchema =
                     <FormItem>
                       <FormLabel>Área:</FormLabel>
                       <FormControl>
-                          <Select {...field} className="input"
+                          <Select {...field} 
                               onValueChange={(value:string) => {
                               field.onChange(value); 
                               handleInputChange(value, "nombre_area")

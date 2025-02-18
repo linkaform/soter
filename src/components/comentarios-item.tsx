@@ -1,26 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { Form, useForm } from "react-hook-form";
 import { z } from "zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Comentarios } from "@/hooks/useCreateAccessPass";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "./ui/form";
+import { Input } from "./ui/input";
 
 export const formSchema = 
-	z.array(
 	  z.object({
 		tipo_comentario: z.string().optional(),
 		comentario_pase: z.string().optional(),
 	  })
-);
 
 interface ComentariosItemProps {
 	isCollapsed: boolean;
@@ -35,9 +26,7 @@ interface ComentariosItemProps {
   const ComentariosItem: React.FC<ComentariosItemProps> = ({isCollapsed, onToggleCollapse, onDelete, comentario, tipo, updateComentario})=>  {
 	  	const form = useForm<z.infer<typeof formSchema>>({
 			resolver: zodResolver(formSchema),
-			defaultValues: {
-			areas: [{ tipo_comentario: "", comentario_pase: "" }],
-			},
+			defaultValues: { tipo_comentario: "", comentario_pase: "" },
 	});
 
 	useEffect(() => {

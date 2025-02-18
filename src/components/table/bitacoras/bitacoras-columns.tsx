@@ -1,15 +1,14 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AddBadgeModal } from "@/components/modals/add-badge-modal";
 import { AddEquipmentModal } from "@/components/modals/add-equipment-modal";
 import { AddVehicleModal } from "@/components/modals/add-vehicle-modal";
 import { DoOutModal } from "@/components/modals/do-out-modal";
 import { ReturnGafeteModal } from "@/components/modals/return-gafete-modal";
 import { ViewListBitacoraModal } from "@/components/modals/view-bitacora";
+import { useGetListBitacora } from "@/hooks/useGetListBitacora";
 import {
 		ColumnDef,  
 	} from "@tanstack/react-table";
 import { Car, Eye, Forward, Hammer, IdCard} from "lucide-react";
-
 export interface Bitacora_record {
 	equipos: Equipo_bitacora[] 
 	file_name: string
@@ -76,7 +75,8 @@ export interface Areas_bitacora {
 	commentario_area: string
 }
 
-const OptionsCell: React.FC<{ row: any , refetch: () => void}> = ({ row, refetch }) => {
+const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
+	const {refetch} = useGetListBitacora("", "",[]);
 	const bitacora = row.original;
 	
 	return (
@@ -134,9 +134,9 @@ export const bitacorasColumns: ColumnDef<Bitacora_record>[] = [
 	{
 		id: "options",
 		header: "Opciones",
-		cell: ({ row, table }) => {
-			const { refetch } = table.options.meta; 
-			return <OptionsCell row={row} refetch={refetch} />;
+		cell: ({ row }) => {
+			
+			return <OptionsCell row={row} />;
 		},
 		enableSorting: false,
 		enableHiding: false,
@@ -185,9 +185,11 @@ export const bitacorasColumns: ColumnDef<Bitacora_record>[] = [
 	{
 		accessorKey: "visita_a",
 		header: "Visita a",
-		cell: ({ row }) => (
-			<div className="capitalize">{row.getValue("visita_a").length>0 ? row.getValue("visita_a")[0]?.nombre:""}</div>
-		),
+		cell: ({ row }) => {
+			let visita_a= row.getValue("visita_a") as VisitaA[]
+			return(
+			<div className="capitalize">{visita_a.length>0 ? visita_a[0]?.nombre:""}</div>
+		)},
 		enableSorting: true,
 	},
 	{

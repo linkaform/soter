@@ -606,7 +606,6 @@ return (
 						/>         
 					</div>
 					
-
 					<div className="flex gap-2 flex-col">
 						<FormLabel className="mb-2">
 							Selecciona una opción:

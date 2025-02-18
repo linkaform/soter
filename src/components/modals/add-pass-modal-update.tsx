@@ -153,7 +153,7 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
 
   return (
   //onOpenChange={setIsSuccess}
-  <Dialog open={isSuccess} onClose={handleClose} modal>
+  <Dialog open={isSuccess} modal>
   <DialogContent
       className="max-w-xl max-h-[90vh] overflow-scroll bg-white rounded-lg shadow-xl"
       aria-labelledby="dialog-title"

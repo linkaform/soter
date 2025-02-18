@@ -26,7 +26,7 @@ export const MisContactosModal: React.FC<ContactsModalProps> = ({
 }) => {
 	
 return (
-	<Dialog open={isOpenModal} onClose={closeModal}>
+	<Dialog open={isOpenModal} >
 <DialogTrigger ></DialogTrigger>
 
 <DialogContent className="max-w-xl flex flex-col">

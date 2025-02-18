@@ -1,4 +1,3 @@
-/* eslint-disable react/no-children-prop */
 import { Button } from "../ui/button";
 import {
 	Dialog,
@@ -24,10 +23,7 @@ export const ViewListBitacoraModal: React.FC<ViewListBitacoraModalProps> = ({
 	data,
 	children,
 }) => {
- 
-
 return (
-	// open={isSuccess} onOpenChange={setIsSuccess}
 	<Dialog >
 		<DialogTrigger asChild>{children}</DialogTrigger>
 		<DialogContent className="max-w-2xl max-h-[90vh] overflow-scroll">
@@ -67,7 +63,7 @@ return (
 					</div>
 				</div>
 				<Separator className="my-4" />
-				<div className="flex justify-between">
+				<div className="flex">
 					{data?.foto_url!== undefined ?(
 							<><div className="w-full ">
 									<p className="font-bold mb-3">Fotografia:</p>

@@ -11,10 +11,10 @@ import {
 import { toast } from "sonner";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Form, FormControl, FormItem, FormMessage } from "../ui/form";
+import { Form} from "../ui/form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm ,Controller} from "react-hook-form";
+import { useForm} from "react-hook-form";
 import { useSendCorreo } from "@/hooks/useSendCorreo";
 import { data_correo } from "@/lib/send_correo";
 import { useGetPdf } from "@/hooks/usetGetPdf";
@@ -54,8 +54,7 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 	hasTelefono,
 	closePadre
 }) => {
-	const router = useRouter(); // Inicializamos el hook useRouter
-	// const [selectedOptions, setSelectedOptions] = useState<string[]>([]); // Estado para almacenar las opciones seleccionadas
+	const router = useRouter(); 
 	console.log("HAS TEL ", hasEmail, hasTelefono)
 	const [dataCorreo, setDataCorreo]= useState<data_correo|null>(null)
 	const [enviarCorreo, setEnviarCorreo] = useState<string[]>([]);
@@ -63,15 +62,6 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 	const [isActiveSMS, setIsActiveSMS] = useState(false);
 	const { isLoading: loadingCorreo, refetch:refetchCorreo , error} = useSendCorreo(account_id, enviarCorreo ,dataCorreo,folio);
 	const { data: responsePdf, isLoading: loadingPdf} = useGetPdf(account_id,folio);
-
-
-	// const handleCheckboxChange = (option: string, checked: boolean) => {
-	// 	if (checked) {
-	// 		setEnviarCorreo((prev) => [...prev, option]); // Agregar la opción al estado si está seleccionada
-	// 	} else {
-	// 		setEnviarCorreo((prev) => prev.filter((item) => item !== option)); // Eliminar la opción del estado si no está seleccionada
-	// 	}
-	// };
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -192,62 +182,110 @@ return (
 					<div className="flex gap-2 flex-col">
 						<div className="flex gap-2 flex-wrap">
 						{hasEmail==true ? (
-							<Controller
-							control={form.control}
-							name="toggleFieldEmail"
-							render={() => (
-									<FormItem>
-									<FormControl>
-										<Button
-										type="button"
-										onClick={handleToggleEmail}
-										className={`px-4 py-2 rounded-md transition-all duration-300 ${
-											isActive ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent "
-										} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
-										>
-										<div className="flex flex-wrap items-center">
-											{isActive ? (
-											<><Mail className="mr-3" /><div className="">Enviar por correo</div></>
-											):(
-											<><Mail className="mr-3 text-blue-600" /><div className="text-blue-600">Enviar por correo</div></>
-											)}
+							// <Controller
+							// control={form.control}
+							// name="toggleFieldEmail"
+							// render={() => (
+							// 		<FormItem>
+							// 		<FormControl>
+							// 			<Button
+							// 			type="button"
+							// 			onClick={handleToggleEmail}
+							// 			className={`px-4 py-2 rounded-md transition-all duration-300 ${
+							// 				isActive ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent "
+							// 			} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
+							// 			>
+							// 			<div className="flex flex-wrap items-center">
+							// 				{isActive ? (
+							// 				<><Mail className="mr-3" /><div className="">Enviar por correo</div></>
+							// 				):(
+							// 				<><Mail className="mr-3 text-blue-600" /><div className="text-blue-600">Enviar por correo</div></>
+							// 				)}
 											
-										</div>
-										</Button>
-									</FormControl>
-									<FormMessage />
-									</FormItem>
-								)}
-								/>
+							// 			</div>
+							// 			</Button>
+							// 		</FormControl>
+							// 		<FormMessage />
+							// 		</FormItem>
+							// 	)}
+							// 	/>
+							<Button
+								type="button"
+								onClick={handleToggleEmail}
+								className={`px-4 py-2 rounded-md transition-all duration-300 ${
+									isActive ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent "
+								} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
+								>
+								<div className="flex flex-wrap items-center">
+									{isActive ? (
+									<>
+										<Mail className="mr-3" />
+										<div>Enviar por correo</div>
+									</>
+									) : (
+									<>
+										<Mail className="mr-3 text-blue-600" />
+										<div className="text-blue-600">Enviar por correo</div>
+									</>
+									)}
+								</div>
+								</Button>
+
 						):null}
+
+						
+
+
+
 						{hasTelefono==true ?(
-							<Controller
-							control={form.control}
-							name="toggleFieldSMS"
-							render={() => (
-									<FormItem>
-									<FormControl>
-										<Button
-										type="button"
-										onClick={handleToggleSMS}
-										className={`px-4 py-2 rounded-md transition-all duration-300 ${
-											isActiveSMS ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
-										} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
-										>
-										<div className="flex flex-wrap items-center">
-											{isActiveSMS ? (
-											<><MessageCircleMore className="mr-3 text-white" /><div className="">Enviar por sms</div></>
-											):(
-											<><MessageCircleMore className="mr-3 text-blue-600" /><div className="text-blue-600">Enviar por sms</div></>
-											)}
+							// <Controller
+							// control={form.control}
+							// name="toggleFieldSMS"
+							// render={() => (
+							// 		<FormItem>
+							// 		<FormControl>
+							// 			<Button
+							// 			type="button"
+							// 			onClick={handleToggleSMS}
+							// 			className={`px-4 py-2 rounded-md transition-all duration-300 ${
+							// 				isActiveSMS ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
+							// 			} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
+							// 			>
+							// 			<div className="flex flex-wrap items-center">
+							// 				{isActiveSMS ? (
+							// 				<><MessageCircleMore className="mr-3 text-white" /><div className="">Enviar por sms</div></>
+							// 				):(
+							// 				<><MessageCircleMore className="mr-3 text-blue-600" /><div className="text-blue-600">Enviar por sms</div></>
+							// 				)}
 											
-										</div>
-										</Button>
-									</FormControl>
-									<FormMessage />
-									</FormItem>
-								)}
-								/>
+							// 			</div>
+							// 			</Button>
+							// 		</FormControl>
+							// 		<FormMessage />
+							// 		</FormItem>
+							// 	)}
+							// 	/>
+							<Button
+								type="button"
+								onClick={handleToggleSMS}
+								className={`px-4 py-2 rounded-md transition-all duration-300 ${
+									isActiveSMS ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
+								} hover:bg-transparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
+								>
+								<div className="flex flex-wrap items-center">
+									{isActiveSMS ? (
+									<>
+										<MessageCircleMore className="mr-3 text-white" />
+										<div>Enviar por sms</div>
+									</>
+									) : (
+									<>
+										<MessageCircleMore className="mr-3 text-blue-600" />
+										<div className="text-blue-600">Enviar por sms</div>
+									</>
+									)}
+								</div>
+								</Button>
 						):null}
 						</div>
 					</div>
@@ -279,7 +317,7 @@ return (
 						className="w-full bg-blue-500 hover:bg-blue-600 text-white" type="submit">
 						{loadingCorreo || loadingPdf ? ("Cargando..."): ("Descargar PDF")}
 					</Button>
-					</div>
+					</div> 
 			</form>
 			</Form>
 		</DialogContent>

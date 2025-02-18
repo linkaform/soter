@@ -26,7 +26,6 @@ type params= {
 	vehiculo: Vehiculo_bitacora[], 
 	equipo:null,
 	id:string
-	
 }
 
 export const AddVehicleModal: React.FC<AddVehicleModalProps> = ({

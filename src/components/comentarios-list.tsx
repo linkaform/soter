@@ -24,6 +24,7 @@ interface ComentariosListProps {
 
 export const formSchema = 
 	z.object({
+		tipo_comentario: z.string().default("pase"),
 		comentario_pase: z.string().min(1,{message:"Comentario es un campo obligatorio"}),
 });
 

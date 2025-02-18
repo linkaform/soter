@@ -109,7 +109,7 @@ export const AddBadgeModal: React.FC<AddBadgeModalProps> = ({
 			refetchLockers()
 			refetchGafetes()
 		}
-	},[isOpen,refetchLockers,refetchGafetes])
+	},[isOpen])
 
 	useEffect(()=>{
 		if(errorAsignarGafete){

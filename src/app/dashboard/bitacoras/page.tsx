@@ -19,7 +19,6 @@ const BitacorasPage = () => {
 
   const { data,isLoading, refetch} = useGetListBitacora("", "",selectedOption);
 
-
   useEffect(()=>{
     if(selectedOption){
       refetch()

@@ -64,7 +64,7 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
     }
 
     function takeAndSavePhoto(){
-        const imageSrc = webcamRef.current?.getScreenshot() || null;
+        const imageSrc = webcamRef.current?.getScreenshot() || "";
         setSelectedFile(base64ToFile(imageSrc, quitarAcentosYMinusculasYEspacios(id)))
         setBase64Photo(imageSrc)
         setHideWebcam(true)
