@@ -59,7 +59,7 @@ export const ContactsTable: React.FC<ContactsTableProps> = ({ setSelected }) => 
 
   const table = useReactTable({
     data: data || [],
-    columns: pasesEntradaColumns,
+    columns:  isLoading ? []:pasesEntradaColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,

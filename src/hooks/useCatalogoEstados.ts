@@ -7,7 +7,6 @@ export const useCatalogoEstados = (account_id:number) => {
     queryKey: ["getCatalogoEstados"], 
     queryFn: async () => {
         const data = await getCatalogoEstados(account_id); 
-        console.log("ESTADOSSS", data)
         return data.response?.data; 
     },
    
