@@ -7,9 +7,9 @@ export const useCatalogoPaseLocation = () => {
     queryKey: ["getCatalogoPasesLocation"], 
     queryFn: async () => {
         const data = await getCatalogoPasesLocation(); 
-        if (!data.response || !data.response?.data || !data.response?.data?.ubicaciones_user) {
-          console.error("Error al cargar las ubicaciones");
-        }
+        // if (!data.response || !data.response?.data || !data.response?.data?.ubicaciones_user) {
+        //   console.error("Error al cargar las ubicaciones");
+        // }
         return data.response?.data?.ubicaciones_user;
     },
 

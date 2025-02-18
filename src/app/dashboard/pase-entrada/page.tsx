@@ -37,8 +37,8 @@ import { Areas, Comentarios } from "@/hooks/useCreateAccessPass";
 import ComentariosList from "@/components/comentarios-list";
 import DateTime from "@/components/dateTime";
 import { MisContactosModal } from "@/components/modals/user-contacts";
-import { Contacto } from "@/lib/get-user-contacts";
 import Image from "next/image";
+import { Contacto } from "@/lib/get-user-contacts";
 // import useAuthStore from "@/store/useAuthStore";
 
  const formSchema = z
@@ -156,7 +156,7 @@ import Image from "next/image";
 	const[userNameSoter, setUserNameSoter] = useState<string|null>("")
 	const [userEmailSoter, setUserEmailSoter] = useState<string|null>("")
 	// const {userIdSoter,userEmailSoter, userNameSoter} = useAuthStore();
-
+	const [hostPro, setHostPro] = useState({ protocol: '', host: '' });
 
 	const [enviar_correo_pre_registro, set_enviar_correo_pre_registro] = useState<string[]>([]);
 	const { data: configLocation, isLoading: loadingConfigLocation, refetch:refetchConfLocation } = useGetConfSeguridad(ubicacionSeleccionada);
@@ -177,7 +177,7 @@ import Image from "next/image";
 	const [selected, setSelected] = useState<Contacto |null>(null);
 	const [isOpenModal, setOpenModal] = useState(false);
 
-	const [hostPro, setHostPro] = useState({ protocol: '', host: '' });
+	
 
 	
 
@@ -237,7 +237,7 @@ import Image from "next/image";
 		  const host = window.location.host;
 		  setHostPro({ protocol, host });
   
-		//   const {userIdSoter,userEmailSoter, userNameSoter} = useAuthStore();
+		  //const {userIdSoter,userEmailSoter, userNameSoter} = useAuthStore();
 		  setUserIdSoter(Number(window.localStorage.getItem("userId_soter")));
 		  setUserNameSoter(window.localStorage.getItem("userName_soter"));
 		  setUserEmailSoter(window.localStorage.getItem("userEmail_soter"));

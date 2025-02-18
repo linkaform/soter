@@ -90,7 +90,9 @@ export const EntryPassModal: React.FC<EntryPassUpdateModalProps> = ({
   const { data:responseCreatePase, isLoading:loadingCreatePase, refetch: refetchCreatePase } = useCreateAccessPase(dataPass?.ubicacion, sendData, sendPreSms );
   const [openGeneratedPass, setOpenGeneratedPass] = useState<boolean>(false);
   const [link, setLink] = useState("");
-  const account_id = parseInt(localStorage.getItem("userId_soter") || "0", 10);
+  // const account_id = parseInt(localStorage.getItem("userId_soter") || "0", 10);
+  const[ account_id, setAccount_id] = useState<number|null>(null)
+  const [hostPro, setHostPro] = useState({ protocol: '', host: '' });
 
   const onSubmit = async () => {
     console.log("Datos en el Modal", dataPass);
@@ -137,6 +139,18 @@ export const EntryPassModal: React.FC<EntryPassUpdateModalProps> = ({
     setSendData(accessPassData)
   };
 
+	useEffect(() => {
+		if (typeof window !== "undefined") {
+		  const protocol = window.location.protocol;
+		  const host = window.location.host;
+		  setHostPro({ protocol, host });
+  
+		  //const {userIdSoter,userEmailSoter, userNameSoter} = useAuthStore();
+		  setAccount_id(Number(window.localStorage.getItem("userId_soter")));
+		  // setUserNameSoter(window.localStorage.getItem("userName_soter"));
+		  // setUserEmailSoter(window.localStorage.getItem("userEmail_soter"));
+		}
+	  }, []);
 
   useEffect(()=>{
     if(sendPreSms && sendData ){
@@ -148,8 +162,8 @@ export const EntryPassModal: React.FC<EntryPassUpdateModalProps> = ({
   useEffect(()=>{
     if(responseCreatePase?.success){
     }
-      const protocol = window.location.protocol;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
-      const host = window.location.host;
+      // const protocol = window.location.protocol;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
+      // const host = window.location.host;
       let docs=""
       sendData?.link.docs.map((d, index)=>{
         if(d == "agregarIdentificacion"){
@@ -162,7 +176,7 @@ export const EntryPassModal: React.FC<EntryPassUpdateModalProps> = ({
           docs+="-"
         }
       })
-      setLink(`${protocol}//${host}/dashboard/pase-update?id=${responseCreatePase?.response.data.json.id}&user=${account_id}&docs=${docs}`)
+      setLink(`${hostPro.protocol}//${hostPro.host}/dashboard/pase-update?id=${responseCreatePase?.response.data.json.id}&user=${account_id}&docs=${docs}`)
       setOpenGeneratedPass(true)
   },[responseCreatePase])
 
