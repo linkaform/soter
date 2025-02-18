@@ -101,7 +101,7 @@ const DateTime:React.FC<DateTimeListProps> = ({date, setDate})=> {
         <div className="sm:flex">
           <Calendar
             mode="single"
-            selected={date}
+            selected={date instanceof Date ? date : undefined}
             onSelect={handleDateSelect}
             initialFocus
             disabled={isDateDisabled}
