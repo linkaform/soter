@@ -129,7 +129,6 @@ const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
 	);
 };
 
-
 export const bitacorasColumns: ColumnDef<Bitacora_record>[] = [
 	{
 		id: "options",

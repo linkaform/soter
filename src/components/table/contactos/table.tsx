@@ -70,7 +70,6 @@ export const ContactsTable: React.FC<ContactsTableProps> = ({ setSelected }) => 
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
     onPaginationChange: setPagination,
-    getRowId: (row: { _id: any; }) => row._id, 
     state: {
       sorting,
       columnFilters,
