@@ -155,7 +155,7 @@ import Image from "next/image";
 	const[ userIdSoter, setUserIdSoter] = useState<number|null>(null)
 	const[userNameSoter, setUserNameSoter] = useState<string|null>("")
 	const [userEmailSoter, setUserEmailSoter] = useState<string|null>("")
-
+	// const {userIdSoter,userEmailSoter, userNameSoter} = useAuthStore();
 
 
 	const [enviar_correo_pre_registro, set_enviar_correo_pre_registro] = useState<string[]>([]);
@@ -238,9 +238,9 @@ import Image from "next/image";
 		  setHostPro({ protocol, host });
   
 		//   const {userIdSoter,userEmailSoter, userNameSoter} = useAuthStore();
-		  setUserIdSoter(Number(localStorage.getItem("userIdSoter")));
-		  setUserNameSoter(localStorage.getItem("userNameSoter"));
-		  setUserEmailSoter(localStorage.getItem("userEmailSoter"));
+		  setUserIdSoter(Number(window.localStorage.getItem("userIdSoter")));
+		  setUserNameSoter(window.localStorage.getItem("userNameSoter"));
+		  setUserEmailSoter(window.localStorage.getItem("userEmailSoter"));
 		}
 	  }, []);
 

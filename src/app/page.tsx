@@ -1,9 +1,9 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { MainLayout } from "@/components/Layout/MainLayout";
 import { useGetMenu } from "@/hooks/useGetMenu";
 import { capitalizeOnlyFirstLetterDelete_ } from "@/lib/utils";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -74,7 +74,9 @@ export default function Home() {
                                                 onClick={() => handleClick(item)}
                                                 className="text-center p-4 bg-gray-100 rounded-lg shadow-md flex flex-col justify-center items-center w-64 h-40 group transition-transform duration-200 transform hover:scale-105 hover:bg-gray-200 cursor-pointer hover:shadow-[0_4px_4px_rgba(0,0,0,0.2)]"
                                             >
-                                                <img
+                                                <Image
+                                                    width={250}
+                                                    height={250}
                                                     alt={item}
                                                     src={`/${item}.svg`}
                                                     className="aspect-square rounded-md group-hover:opacity-75 h-12"
