@@ -4,7 +4,6 @@ import Image from "next/image";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import CalendarDays from "@/components/calendar-days";
 import { Button } from "@/components/ui/button";
 
 import { MessageSquare, Phone } from "lucide-react";
@@ -68,7 +67,7 @@ const Credentials = () => {
               </div>
 
               <div>
-                <CalendarDays />
+             
               </div>
             </div>
           </div>
