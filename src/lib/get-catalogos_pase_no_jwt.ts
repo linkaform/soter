@@ -1,5 +1,5 @@
 
-export const getCatalogosPaseNoJwt = async (account_id:number, qr_code:string
+export const getCatalogosPaseNoJwt = async (account_id:number|null, qr_code:string
 ) => {
     const payload = {
         account_id,

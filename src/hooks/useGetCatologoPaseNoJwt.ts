@@ -58,7 +58,7 @@ export interface Foto {
 }
 
 
-export const useGetCatalogoPaseNoJwt = (account_id:number, qr_code:string ) => {
+export const useGetCatalogoPaseNoJwt = (account_id:number|null, qr_code:string ) => {
   const { data, isLoading, error, isFetching, refetch } = useQuery<Data>({
     queryKey: ["useGetCatalogoPaseNoJwt"], 
     queryFn: async () => {

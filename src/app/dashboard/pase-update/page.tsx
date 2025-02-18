@@ -79,20 +79,22 @@ export type formatData = {
 	telefono:string
 }
 const PaseUpdate = () =>{
-	const userIdSoter = parseInt(localStorage.getItem("userId_soter") || "0", 10);
-
-	const valores = window.location.search;
-	const urlParams = new URLSearchParams(valores);
-	const id = urlParams.get('id') ?? ''; 
-	const docs = urlParams.get('docs') !== null ? urlParams.get('docs') :'' ;
-	let account_id = parseInt(urlParams.get('user') ?? '') || 0;
-	if(account_id== null){
-			account_id= userIdSoter
-	}
-	const showIneIden= docs?.split("-")
+	// const userIdSoter = parseInt(localStorage.getItem("userId_soter") || "0", 10);
+	const [id, setId] = useState("")
+	// const [docs, setDocs] = useState<string|null>(null)
+	const [showIneIden, setShowIneIden] = useState<string[]|undefined>([])
+	const[account_id, setAccount_id] = useState<number|null>(null)
+	// const valores = window.location.search;
+	// const urlParams = new URLSearchParams(valores);
+	// const id = urlParams.get('id') ?? ''; 
+	// const docs = urlParams.get('docs') !== null ? urlParams.get('docs') :'' ;
+	// let account_id = parseInt(urlParams.get('user') ?? '') || 0;
+	// if(account_id== null){
+	// 		account_id= userIdSoter
+	// }
+	// const showIneIden= docs?.split("-")
 	const { data: responsePdf, isLoading: loadingPdf} = useGetPdf(account_id, id);
 	const { data: dataCatalogos, isLoading: loadingDataCatalogos } = useGetCatalogoPaseNoJwt(account_id, id);
-	console.log("DATAA", dataCatalogos)
 	const [agregarEquiposActive, setAgregarEquiposActive] = useState(false);
 	const [agregarVehiculosActive, setAgregarVehiculosActive] = useState(false);
 	const [isSuccess, setIsSuccess] = useState(false);
@@ -109,6 +111,8 @@ const PaseUpdate = () =>{
 	const [errorIdentificacion, setErrorIdentificacion] = useState("")
 
 	const [isActualizarOpen, setIsActualizarOpen] = useState<string|boolean>("");
+
+	
 
 	const form = useForm<z.infer<typeof formSchema>>({
 			resolver: zodResolver(formSchema),
@@ -156,6 +160,22 @@ const PaseUpdate = () =>{
 			
 			setModalData(formattedData);
 	};
+
+	useEffect(() => {
+		if (typeof window !== "undefined") {
+		  const valores = window.location.search
+		  const urlParams = new URLSearchParams(valores);
+		  const docs= urlParams.get('docs') !== null ? urlParams.get('docs') :''
+		  setShowIneIden(docs?.split("-"))
+		  setId(urlParams.get('id') ?? '')
+		  
+		  let acc = parseInt(urlParams.get('user') ?? '') || 0
+		  if(!acc){
+		  		acc = Number(window.localStorage.getItem("userId_soter"))
+		  }
+		  setAccount_id(acc);
+		}
+	  }, []);
 
 	useEffect(()=>{
 		if (errorFotografia === "-" && errorIdentificacion === "-") {
@@ -323,7 +343,7 @@ return (
 					{agregarVehiculosActive ? (
 							<>
 							<VehicleList
-									account_id={account_id}
+									account_id={account_id??0}
 									vehicles = {vehicles}
 									setVehicles={setVehicles}
 							/>
