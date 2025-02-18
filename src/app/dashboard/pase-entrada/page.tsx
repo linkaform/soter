@@ -39,7 +39,7 @@ import DateTime from "@/components/dateTime";
 import { MisContactosModal } from "@/components/modals/user-contacts";
 import { Contacto } from "@/lib/get-user-contacts";
 import Image from "next/image";
-import useAuthStore from "@/store/useAuthStore";
+// import useAuthStore from "@/store/useAuthStore";
 
  const formSchema = z
 	.object({
