@@ -18,6 +18,7 @@ import { GeneratedPassModal } from "./generated-pass-modal";
 import CalendarDays from "../calendar-days";
 import { renameKeyTipoComentario } from "@/lib/utils";
 import { Areas, Comentarios } from "@/hooks/useCreateAccessPass";
+import useAuthStore from "@/store/useAuthStore";
 
 interface EntryPassModalUpdateProps {
   title: string;
@@ -38,13 +39,13 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
   id,
   folio,
 }) => {
+  const {userEmailSoter , userIdSoter}= useAuthStore()
   const [openGeneratedPass, setOpenGeneratedPass] = useState<boolean>(false);
   const [sendDataUpdate, setSendDataUpdate] = useState<Access_pass_update|null>(null)
   const [link, setLink] = useState("");
-  const account_id = parseInt(localStorage.getItem("userId_soter") || "0", 10);
+  const account_id = userIdSoter;
   const { data:responseUpdateFull, isLoading:loadingUpdateFull, refetch: refetchUpdateFull } = useUpdatePaseFull(sendDataUpdate, id, folio, dataPass?.ubicacion);
-  const userEmailSoter = localStorage.getItem("userEmail_soter");
-  const userIdSoter = parseInt(localStorage.getItem("userId_soter") || "0", 10);
+  
   const protocol = window.location.protocol;  
   const host = window.location.host;  
 

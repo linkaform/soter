@@ -1,7 +1,7 @@
 import { data_sms, sendSMS } from "@/lib/send-sms";
 import { useQuery } from "@tanstack/react-query";
 
-export const useSendSMS = (account_id: number, envio: string[],data_cel_msj:data_sms|null, folio:string) => {
+export const useSendSMS = (account_id: number|null, envio: string[],data_cel_msj:data_sms|null, folio:string) => {
   const { data, isLoading, error, isFetching, refetch } = useQuery<any>({
     queryKey: ["sendSMS", account_id, envio, data_cel_msj, folio],
     enabled:false,

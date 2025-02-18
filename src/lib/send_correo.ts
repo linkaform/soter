@@ -8,7 +8,7 @@ export type data_correo={
     fecha: {desde: string, hasta: string},
     descripcion: string,
 }
-export const sendCorreo = async (account_id: number, envio: string[],data_for_msj:data_correo|null, folio:string) => {
+export const sendCorreo = async (account_id: number|null, envio: string[],data_for_msj:data_correo|null, folio:string) => {
     if(data_for_msj!==null){
     const payload = {
       script_name: "pase_de_acceso_use_api.py",

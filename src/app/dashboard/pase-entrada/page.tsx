@@ -39,6 +39,7 @@ import DateTime from "@/components/dateTime";
 import { MisContactosModal } from "@/components/modals/user-contacts";
 import { Contacto } from "@/lib/get-user-contacts";
 import Image from "next/image";
+import useAuthStore from "@/store/useAuthStore";
 
  const formSchema = z
 	.object({
@@ -138,7 +139,7 @@ import Image from "next/image";
   });
 
   const PaseEntradaPage = () =>  {
-
+	const {userEmailSoter, userNameSoter , userIdSoter}= useAuthStore()
 	const [tipoVisita, setTipoVisita] = useState("fecha_fija");
 	const [config_dias_acceso, set_config_dias_acceso] = useState<string[]>([]);
 	const [config_dia_de_acceso, set_config_dia_de_acceso] = useState("cualquier_día");
@@ -147,9 +148,6 @@ import Image from "next/image";
 	const { data: ubicaciones, isLoading: loadingUbicaciones } = useCatalogoPaseLocation();
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState('');
 	const {  isLoading: loadingAreas} = useCatalogoPaseArea(ubicacionSeleccionada);
-	const userNameSoter = localStorage.getItem("userName_soter") || "";
-	const userEmailSoter = localStorage.getItem("userEmail_soter")|| "";
-	const userIdSoter = parseInt(localStorage.getItem("userId_soter") || "0", 10);
 	const protocol = window.location.protocol;  
 	const host = window.location.host;  
 	const [enviar_correo_pre_registro, set_enviar_correo_pre_registro] = useState<string[]>([]);
@@ -187,7 +185,7 @@ import Image from "next/image";
 			link:{
 				link :`${protocol}//${host}/dashboard/pase-update`,
 				docs : formatedDocs,
-				creado_por_id: userIdSoter,
+				creado_por_id: userIdSoter|| undefined,
 				creado_por_email: userEmailSoter ?? ""
 		},
 			enviar_correo_pre_registro:enviar_correo_pre_registro??[], 

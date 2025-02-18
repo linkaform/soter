@@ -2,7 +2,7 @@ export type data_sms={
     mensaje: string,
     numero: string,
 }
-export const sendSMS= async (account_id: number, envio: string[],data_cel_msj:data_sms|null, folio:string) => {
+export const sendSMS= async (account_id: number|null, envio: string[],data_cel_msj:data_sms|null, folio:string) => {
   if(data_cel_msj!==null){
     const payload = {
       script_name: "pase_de_acceso_use_api.py",

@@ -1,7 +1,7 @@
 import { getPdf } from "@/lib/get-pdf";
 import { useQuery } from "@tanstack/react-query";
 
-export const useGetPdf = (account_id: number,qr_code:string) => {
+export const useGetPdf = (account_id: number|null,qr_code:string) => {
   const { data, isLoading, error, isFetching, refetch } = useQuery<any>({
     queryKey: ["getPdf", account_id, qr_code],
     queryFn: async () => {

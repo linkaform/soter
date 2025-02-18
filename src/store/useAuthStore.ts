@@ -11,7 +11,7 @@ interface AuthState {
   logout: () => void;
 }
 
-const useAuthStore = create<AuthState>((set:any) => {
+const useAuthStore = create<AuthState>((set) => {
   // Leer valores desde localStorage al inicializar el store
   const token = typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
   const userId = typeof window !== "undefined" ? localStorage.getItem("user_id") : null;
@@ -47,7 +47,7 @@ const useAuthStore = create<AuthState>((set:any) => {
       localStorage.removeItem("user_id");
 
       // Restablece el estado
-      set({ token: null, userId: null,userNameSoter: null, useruserEmailSoterId: null, userIdSoter: null ,isAuth: false });
+      set({ token: null, userId: null,userNameSoter: null, userEmailSoter: null, userIdSoter: null ,isAuth: false });
     },
   };
 });

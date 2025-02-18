@@ -23,6 +23,7 @@ import { data_correo } from "@/lib/send_correo";
 import { useSendSMS } from "@/hooks/useSendSMS";
 import { Equipo_bitacora } from "../table/bitacoras/bitacoras-columns";
 import Image from "next/image";
+import useAuthStore from "@/store/useAuthStore";
 
 
 type Vehiculo_custom={
@@ -76,7 +77,8 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
   data,
   children,
 }) => {
-  const account_id = parseInt(localStorage.getItem("userId_soter") || "0", 10);
+  const {userIdSoter}= useAuthStore()
+  const account_id = userIdSoter;
   const [selectedOptions, setSelectedOptions] = useState<string[]>(["enviar_correo"]); 
   const [dataCorreo, setDataCorreo]= useState<data_correo|null>(null)
   const [dataSMS, setDataSMS]= useState<data_sms|null>(null)

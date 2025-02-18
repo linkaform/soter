@@ -1,4 +1,4 @@
-export const getPdf = async (account_id: number,qr_code:string|null) => {
+export const getPdf = async (account_id: number|null,qr_code:string|null) => {
     if(qr_code!==null){
     const payload = {
       script_name: "pase_de_acceso_use_api.py",
