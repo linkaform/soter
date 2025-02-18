@@ -249,7 +249,6 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 							hasEmail={data?.email ? true: false}
 							hasTelefono={false}
 							setOpenGeneratedPass={setOpenGeneratedPass} 
-							children={undefined}
 							qr={response?.response?.data?.json?.qr_pase[0].file_url}
 							dataPass={responseformated}
 							account_id={data?.account_id}

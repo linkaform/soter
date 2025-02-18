@@ -59,8 +59,8 @@ export const formSchema =
 		const { isLoading: loadingCat, refetch } = useGetVehiculos({account_id, tipo:tipoVehiculoState, marca:marcaState})
 		const { data:catEstados, isLoading: loadingCatEstados } = useCatalogoEstados(account_id)
 
-		const [tiposCat, setTiposCat] = useState<string[]>(tiposCatPadre);
-		const [marcasCat, setMarcasCat] = useState<string[]>(marcasCatPadre);
+		const [tiposCat] = useState<string[]>(tiposCatPadre);
+		const [marcasCat] = useState<string[]>(marcasCatPadre);
 		const [modelosCat, setModelosCat] = useState<string[]>(modelosCatPadre);
 
 		const form = useForm<z.infer<typeof formSchema>>({

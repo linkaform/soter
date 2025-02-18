@@ -186,7 +186,7 @@ export const bitacorasColumns: ColumnDef<Bitacora_record>[] = [
 		accessorKey: "visita_a",
 		header: "Visita a",
 		cell: ({ row }) => {
-			let visita_a= row.getValue("visita_a") as VisitaA[]
+			const visita_a= row.getValue("visita_a") as VisitaA[]
 			return(
 			<div className="capitalize">{visita_a.length>0 ? visita_a[0]?.nombre:""}</div>
 		)},

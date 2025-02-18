@@ -25,7 +25,6 @@ import Image from "next/image";
 interface updatedPassModalProps {
 	title: string;
 	description: string;
-	children: React.ReactNode;
 	openGeneratedPass:boolean;
 	setOpenGeneratedPass:Dispatch<SetStateAction<boolean>>;
 	qr:string;
@@ -43,7 +42,6 @@ interface updatedPassModalProps {
 export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 	title,
 	description,
-	children,
 	openGeneratedPass,
 	setOpenGeneratedPass,
 	dataPass,
@@ -121,7 +119,7 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 return (
 	//onOpenChange={setOpenGeneratedPass}  esto en estaba como pro
 	<Dialog open={openGeneratedPass} modal>
-		<DialogTrigger asChild>{children}</DialogTrigger>
+		<DialogTrigger ></DialogTrigger>
 
 		<DialogContent className="max-w-xl">
 			<DialogHeader>

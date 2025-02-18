@@ -5,7 +5,6 @@ import * as React from "react";
 import {
   ColumnFiltersState,
   SortingState,
-  TableMeta,
   VisibilityState,
   flexRender,
   getCoreRowModel,

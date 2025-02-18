@@ -49,8 +49,8 @@ const VehicleList:React.FC<VehicleListProps> = ({ account_id, vehicles, setVehic
     const {isLoading: loadingCat, refetch } = useGetVehiculos({account_id, tipo:tipoVehiculoState, marca:marcaState})
     const { data:catEstados, isLoading: loadingCatEstados } = useCatalogoEstados(account_id)
 
-    const [tiposCat, setTiposCat] = useState<string[]>([]);
-    const [marcasCat, setMarcasCat] = useState<string[]>([]);
+    const [tiposCat] = useState<string[]>([]);
+    const [marcasCat] = useState<string[]>([]);
     const [modelosCat, setModelosCat] = useState<string[]>([]);
     const [cleanMain, setCleanMain] = useState(false);
 
