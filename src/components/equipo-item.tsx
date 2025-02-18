@@ -23,7 +23,6 @@ import { catalogoColores, catalogoTipoEquipos } from "@/lib/utils";
 import { Equipo } from "@/lib/update-pass";
 
 export const formSchema = 
-    z.array(
       z.object({
         tipo: z.string().refine((val) => val.trim().length > 0, {
           message: "El tipo es obligatorio",
@@ -34,7 +33,6 @@ export const formSchema =
         serie: z.string().optional(),
         color: z.string().optional()
       })
-    );
 
   interface EquipoItemProps {
     isCollapsed: boolean;
@@ -47,9 +45,7 @@ export const formSchema =
   })=>  {
       const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues: {
-          equipos: [{ tipo: "", marca: "", modelo: "", nombre: "", serie: "", color: "" }],
-        },
+        defaultValues: { tipo: "", marca: "", modelo: "", nombre: "", serie: "", color: "" ,},
     });
 
     useEffect(() => {
