@@ -238,9 +238,9 @@ import Image from "next/image";
 		  setHostPro({ protocol, host });
   
 		//   const {userIdSoter,userEmailSoter, userNameSoter} = useAuthStore();
-		  setUserIdSoter(Number(window.localStorage.getItem("userIdSoter")));
-		  setUserNameSoter(window.localStorage.getItem("userNameSoter"));
-		  setUserEmailSoter(window.localStorage.getItem("userEmailSoter"));
+		  setUserIdSoter(Number(window.localStorage.getItem("userId_soter")));
+		  setUserNameSoter(window.localStorage.getItem("userName_soter"));
+		  setUserEmailSoter(window.localStorage.getItem("userEmail_soter"));
 		}
 	  }, []);
 
