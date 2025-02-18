@@ -46,8 +46,18 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
   const account_id = userIdSoter;
   const { data:responseUpdateFull, isLoading:loadingUpdateFull, refetch: refetchUpdateFull } = useUpdatePaseFull(sendDataUpdate, id, folio, dataPass?.ubicacion);
   
-  const protocol = window.location.protocol;  
-  const host = window.location.host;  
+  // const protocol = window.location.protocol;  
+  // const host = window.location.host;  
+
+  const [hostPro, setHostPro] = useState({ protocol: '', host: '' });
+
+	useEffect(() => {
+	  if (typeof window !== "undefined") {
+		const protocol = window.location.protocol;
+		const host = window.location.host;
+		setHostPro({ protocol, host });
+	  }
+	}, []);
 
   const items =
   dataPass?.tipo_visita_pase === "fecha_fija"
@@ -83,7 +93,7 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
       status_pase: dataPass.status_pase,
       visita_a: dataPass.visita_a.nombre,
       link: {
-        link: `${protocol}//${host}/pase-update.html`,
+        link: `${hostPro?.protocol}//${hostPro?.host}/pase-update.html`,
         docs: dataPass.link.docs,
         qr_code: dataPass._id,
         creado_por_id: userIdSoter,
@@ -125,8 +135,6 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
 
   useEffect(()=>{
     if(responseUpdateFull?.success){
-      const protocol = window.location.protocol;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
-      const host = window.location.host;
       let docs=""
       dataPass?.link.docs.map((d:string, index:number)=>{
         if(d == "agregarIdentificacion"){
@@ -139,7 +147,7 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
           docs+="-"
         }
       })
-      setLink(`${protocol}//${host}/dashboard/pase-update?id=${responseUpdateFull?.response.data.json.id}&user=${account_id}&docs=${docs}`)
+      setLink(`${hostPro.protocol}//${hostPro.host}/dashboard/pase-update?id=${responseUpdateFull?.response.data.json.id}&user=${account_id}&docs=${docs}`)
       
     }
   },[responseUpdateFull])

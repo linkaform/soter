@@ -148,8 +148,8 @@ import useAuthStore from "@/store/useAuthStore";
 	const { data: ubicaciones, isLoading: loadingUbicaciones } = useCatalogoPaseLocation();
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState('');
 	const {  isLoading: loadingAreas} = useCatalogoPaseArea(ubicacionSeleccionada);
-	const protocol = window.location.protocol;  
-	const host = window.location.host;  
+	// const protocol = window.location.protocol;  
+	// const host = window.location.host;  
 	const [enviar_correo_pre_registro, set_enviar_correo_pre_registro] = useState<string[]>([]);
 	const { data: configLocation, isLoading: loadingConfigLocation, refetch:refetchConfLocation } = useGetConfSeguridad(ubicacionSeleccionada);
 	const [formatedDocs, setFormatedDocs] = useState<string[]>([])
@@ -169,6 +169,16 @@ import useAuthStore from "@/store/useAuthStore";
 	const [selected, setSelected] = useState<Contacto |null>(null);
 	const [isOpenModal, setOpenModal] = useState(false);
 
+	const [hostPro, setHostPro] = useState({ protocol: '', host: '' });
+
+	useEffect(() => {
+	  if (typeof window !== "undefined") {
+		const protocol = window.location.protocol;
+		const host = window.location.host;
+		setHostPro({ protocol, host });
+	  }
+	}, []);
+
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -183,7 +193,7 @@ import useAuthStore from "@/store/useAuthStore";
 			visita_a: userNameSoter ?? "",
 			custom: true,
 			link:{
-				link :`${protocol}//${host}/dashboard/pase-update`,
+				link :`${hostPro?.protocol}//${hostPro?.host}/dashboard/pase-update`,
 				docs : formatedDocs,
 				creado_por_id: userIdSoter|| undefined,
 				creado_por_email: userEmailSoter ?? ""
