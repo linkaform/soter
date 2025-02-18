@@ -1,4 +1,4 @@
-"use client";
+'use client'; 
 
 import React, { useEffect, useState } from "react";
 import PhoneInput from "react-phone-number-input";
@@ -139,7 +139,7 @@ import useAuthStore from "@/store/useAuthStore";
   });
 
   const PaseEntradaPage = () =>  {
-	const {userEmailSoter, userNameSoter , userIdSoter}= useAuthStore()
+	// const {userEmailSoter, userNameSoter , userIdSoter}= useAuthStore()
 	const [tipoVisita, setTipoVisita] = useState("fecha_fija");
 	const [config_dias_acceso, set_config_dias_acceso] = useState<string[]>([]);
 	const [config_dia_de_acceso, set_config_dia_de_acceso] = useState("cualquier_día");
@@ -190,13 +190,16 @@ import useAuthStore from "@/store/useAuthStore";
 			descripcion:"",
 			perfil_pase: "Visita General",
 			status_pase:"Proceso",
-			visita_a: userNameSoter ?? "",
+			// userNameSoter??
+			visita_a:   "",
 			custom: true,
 			link:{
 				link :`${hostPro?.protocol}//${hostPro?.host}/dashboard/pase-update`,
 				docs : formatedDocs,
-				creado_por_id: userIdSoter|| undefined,
-				creado_por_email: userEmailSoter ?? ""
+				// userIdSoter||
+				creado_por_id: undefined,
+				// userEmailSoter ??
+				creado_por_email:  ""
 		},
 			enviar_correo_pre_registro:enviar_correo_pre_registro??[], 
 			tipo_visita_pase: "fecha_fija",
@@ -271,13 +274,13 @@ import useAuthStore from "@/store/useAuthStore";
 			descripcion: data.descripcion,
 			perfil_pase: "Visita General",
 			status_pase:"Proceso",
-			visita_a: userNameSoter,
+			visita_a:  "",//userNameSoter,
 			custom:true,
 			link:{
 				link : data.link.link,
 				docs : formatedDocs,
-				creado_por_id: userIdSoter,
-				creado_por_email: userEmailSoter
+				creado_por_id: 0,// userIdSoter,
+				creado_por_email:"",// userEmailSoter
 			},
 			enviar_correo_pre_registro: enviar_correo_pre_registro, 
 			tipo_visita_pase: tipoVisita,
