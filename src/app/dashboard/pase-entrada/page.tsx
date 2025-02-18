@@ -179,19 +179,7 @@ import useAuthStore from "@/store/useAuthStore";
 
 	const [hostPro, setHostPro] = useState({ protocol: '', host: '' });
 
-	useEffect(() => {
-	  if (typeof window !== "undefined") {
-		const protocol = window.location.protocol;
-		const host = window.location.host;
-		setHostPro({ protocol, host });
-
-		const {userIdSoter,userEmailSoter, userNameSoter} = useAuthStore();
-		setUserIdSoter(userIdSoter);
-		setUserNameSoter(userNameSoter);
-		setUserEmailSoter(userEmailSoter);
-
-	  }
-	}, []);
+	
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -242,6 +230,19 @@ import useAuthStore from "@/store/useAuthStore";
 		});
 		
 	};
+
+	useEffect(() => {
+		if (typeof window !== "undefined") {
+		  const protocol = window.location.protocol;
+		  const host = window.location.host;
+		  setHostPro({ protocol, host });
+  
+		//   const {userIdSoter,userEmailSoter, userNameSoter} = useAuthStore();
+		  setUserIdSoter(Number(localStorage.getItem("userIdSoter")));
+		  setUserNameSoter(localStorage.getItem("userNameSoter"));
+		  setUserEmailSoter(localStorage.getItem("userEmailSoter"));
+		}
+	  }, []);
 
 	useEffect(()=>{
 		if ( selected ) {
