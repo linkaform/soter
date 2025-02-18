@@ -39,7 +39,7 @@ import DateTime from "@/components/dateTime";
 import { MisContactosModal } from "@/components/modals/user-contacts";
 import { Contacto } from "@/lib/get-user-contacts";
 import Image from "next/image";
-// import useAuthStore from "@/store/useAuthStore";
+import useAuthStore from "@/store/useAuthStore";
 
  const formSchema = z
 	.object({
@@ -148,8 +148,16 @@ import Image from "next/image";
 	const { data: ubicaciones, isLoading: loadingUbicaciones } = useCatalogoPaseLocation();
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState('');
 	const {  isLoading: loadingAreas} = useCatalogoPaseArea(ubicacionSeleccionada);
+
+
 	// const protocol = window.location.protocol;  
 	// const host = window.location.host;  
+	const[ userIdSoter, setUserIdSoter] = useState<number|null>(null)
+	const[userNameSoter, setUserNameSoter] = useState<string|null>("")
+	const [userEmailSoter, setUserEmailSoter] = useState<string|null>("")
+
+
+
 	const [enviar_correo_pre_registro, set_enviar_correo_pre_registro] = useState<string[]>([]);
 	const { data: configLocation, isLoading: loadingConfigLocation, refetch:refetchConfLocation } = useGetConfSeguridad(ubicacionSeleccionada);
 	const [formatedDocs, setFormatedDocs] = useState<string[]>([])
@@ -176,6 +184,12 @@ import Image from "next/image";
 		const protocol = window.location.protocol;
 		const host = window.location.host;
 		setHostPro({ protocol, host });
+
+		const {userIdSoter,userEmailSoter, userNameSoter} = useAuthStore();
+		setUserIdSoter(userIdSoter);
+		setUserNameSoter(userNameSoter);
+		setUserEmailSoter(userEmailSoter);
+
 	  }
 	}, []);
 
@@ -191,15 +205,15 @@ import Image from "next/image";
 			perfil_pase: "Visita General",
 			status_pase:"Proceso",
 			// userNameSoter??
-			visita_a:   "",
+			visita_a: userNameSoter ?? "",
 			custom: true,
 			link:{
 				link :`${hostPro?.protocol}//${hostPro?.host}/dashboard/pase-update`,
 				docs : formatedDocs,
 				// userIdSoter||
-				creado_por_id: undefined,
+				creado_por_id: userIdSoter || undefined,
 				// userEmailSoter ??
-				creado_por_email:  ""
+				creado_por_email: userEmailSoter ?? ""
 		},
 			enviar_correo_pre_registro:enviar_correo_pre_registro??[], 
 			tipo_visita_pase: "fecha_fija",
@@ -274,13 +288,13 @@ import Image from "next/image";
 			descripcion: data.descripcion,
 			perfil_pase: "Visita General",
 			status_pase:"Proceso",
-			visita_a:  "",//userNameSoter,
+			visita_a: userNameSoter?? "",//userNameSoter,
 			custom:true,
 			link:{
 				link : data.link.link,
 				docs : formatedDocs,
-				creado_por_id: 0,// userIdSoter,
-				creado_por_email:"",// userEmailSoter
+				creado_por_id:userIdSoter?? 0,// userIdSoter,
+				creado_por_email:userEmailSoter??"",// userEmailSoter
 			},
 			enviar_correo_pre_registro: enviar_correo_pre_registro, 
 			tipo_visita_pase: tipoVisita,
