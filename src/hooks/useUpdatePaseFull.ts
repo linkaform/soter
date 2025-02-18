@@ -1,5 +1,4 @@
-import { Access_pass_update } from "@/lib/update-pass";
-import { UpdatePaseFull } from "@/lib/update-pass-full";
+import { Access_pass_update, UpdatePaseFull } from "@/lib/update-pass-full";
 import { useQuery } from "@tanstack/react-query";
 
 export const useUpdatePaseFull = (access_pass: Access_pass_update|null, id: string, folio:string,location:string) => {

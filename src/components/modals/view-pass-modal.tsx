@@ -17,7 +17,6 @@ import CalendarDays from "../calendar-days";
 import { toast } from "sonner";
 import { descargarPdfPase } from "@/lib/download-pdf";
 import { useGetPdf } from "@/hooks/usetGetPdf";
-import { sweetAlert } from "@/lib/utils";
 import { useSendCorreo } from "@/hooks/useSendCorreo";
 import { data_sms } from "@/lib/send-sms";
 import { data_correo } from "@/lib/send_correo";
@@ -129,11 +128,11 @@ function onEnviarCorreo(){
             descripcion: data.descripcion,
         }
         setDataCorreo(data_for_msj)
-    }else{
-      sweetAlert("warning", "Validación", "Ingresa un correo valido.")
+    }else{  
+      toast.error("Ingresa un correo valido.")
     }
   }else{
-    sweetAlert("error", "Validación", "El pase de entrada debe haber sido completado por el visitante con anterioridad para poder enviar el correo.")
+    toast.error("El pase de entrada debe haber sido completado por el visitante con anterioridad para poder enviar el correo.")
   }
 }
 
@@ -147,10 +146,11 @@ function onEnviarSMS(){
         }
         setDataSMS(data_cel_msj)
     }else{
-      sweetAlert("warning", "Validación", "Ingresa un teléfono valido.")
+      toast.error("Ingresa un teléfono valido.")
     }
   }else{
-    sweetAlert("error", "Validación", "El pase de entrada debe haber sido completado por el visitante con anterioridad para poder enviar el sms.")
+    toast.error("El pase de entrada debe haber sido completado por el visitante con anterioridad para poder enviar el sms.")
+
   }
 }
 

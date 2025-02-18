@@ -33,9 +33,10 @@ import { useGetLockers } from "@/hooks/useGetLockers";
 import { useGetGafetes } from "@/hooks/useGetGafetes";
 import { useAsignarGafete } from "@/hooks/useAsignarGafete";
 import { Loader2 } from "lucide-react";
-import { errorAlert, sweetAlert } from "@/lib/utils";
+// import { errorAlert, sweetAlert } from "@/lib/utils";
 import { dataGafetParamas } from "@/lib/asignar-gafete";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { toast } from "sonner";
 
 interface AddBadgeModalProps {
 	title: string;
@@ -113,7 +114,8 @@ export const AddBadgeModal: React.FC<AddBadgeModalProps> = ({
 
 	useEffect(()=>{
 		if(errorAsignarGafete){
-			errorAlert(errorAsignarGafete, "Error al asignar gafete.", "warning")
+			toast.error("Error al asignar gafete.")
+			// errorAlert(errorAsignarGafete, "Error al asignar gafete.", "warning")
 		}
 	},[errorAsignarGafete])
 
@@ -132,7 +134,8 @@ export const AddBadgeModal: React.FC<AddBadgeModalProps> = ({
 	useEffect(()=>{
 		if(responseAsignarGafete){
 			setIsOpen(false)
-			sweetAlert("success", "Confirmación", "Gafete asignado exitosamente.")
+			toast.success("Gafete asignado exitosamente.")
+			// sweetAlert("success", "Confirmación", "Gafete asignado exitosamente.")
 			refetchTable()
 		}
 	}, [responseAsignarGafete,refetchTable])

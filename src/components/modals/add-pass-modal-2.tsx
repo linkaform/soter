@@ -14,8 +14,9 @@ import { UpdatedPassModal } from "./updated-pass-modal";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import { data_correo } from "@/lib/send_correo";
 import { formatData } from "@/app/dashboard/pase-update/page";
-import { errorAlert } from "@/lib/utils";
+// import { errorAlert } from "@/lib/utils";
 import Image from "next/image";
+import { toast } from "sonner";
 
 
 interface EntryPassModal2Props {
@@ -78,7 +79,8 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 
 	useEffect(()=>{
 		if(error){
-			errorAlert(error)
+			toast.error("Ocurrio un erorr")
+			// errorAlert(error)
 		}
 	},[error])
 

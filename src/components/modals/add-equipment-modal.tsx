@@ -13,8 +13,9 @@ import { useEffect, useState } from "react";
 import { Equipo } from "@/lib/update-pass";
 import { Loader2 } from "lucide-react";
 import { useUpdateBitacora } from "@/hooks/useUpdateBitacora";
-import { formatEquiposToBitacora, sweetAlert } from "@/lib/utils";
+import { formatEquiposToBitacora } from "@/lib/utils";
 import { Equipo_bitacora } from "../table/bitacoras/bitacoras-columns";
+import { toast } from "sonner";
 
 interface AddEquipmentModalProps {
 	title: string;
@@ -62,8 +63,8 @@ export const AddEquipmentModal: React.FC<AddEquipmentModalProps> = ({
 		if(responseUpdateBitacora?.status_code==202){
 			setIsOpen(false)
 			refetchTable()
-			sweetAlert("success", "Confirmación", "Equipo asignado correctamente.")
-			// toast.success("¡Equipos actualizados correctamente!");
+			// sweetAlert("success", "Confirmación", "Equipo asignado correctamente.")
+			toast.success("¡Equipos actualizados correctamente!");
 		}
 	},[responseUpdateBitacora, refetchTable])
 

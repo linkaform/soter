@@ -19,7 +19,6 @@ import { useSendCorreo } from "@/hooks/useSendCorreo";
 import { data_correo } from "@/lib/send_correo";
 import { useGetPdf } from "@/hooks/usetGetPdf";
 import { descargarPdfPase } from "@/lib/download-pdf";
-import { errorAlert } from "@/lib/utils";
 import Image from "next/image";
 
 interface updatedPassModalProps {
@@ -85,7 +84,8 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 	useEffect(()=>{
 		if(error){
 			console.error(error)
-			errorAlert(error)
+			toast.error("Error")
+			// errorAlert(error)
 		}
 	},[error])
 

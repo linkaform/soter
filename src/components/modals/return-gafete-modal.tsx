@@ -10,9 +10,10 @@ import {
 
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
-import { errorAlert, sweetAlert } from "@/lib/utils";
+// import { errorAlert, sweetAlert } from "@/lib/utils";
 import { useAsignarGafete } from "@/hooks/useAsignarGafete";
 import { dataGafetParamas } from "@/lib/asignar-gafete";
+import { toast } from "sonner";
 
 interface AddBadgeModalProps {
   title: string;
@@ -46,7 +47,7 @@ export const ReturnGafeteModal: React.FC<AddBadgeModalProps> = ({
   useEffect(()=>{
     if(errorAsignarGafete){
       setIsOpen(false)
-      errorAlert(errorAsignarGafete, "Error al devolver gafete.", "warning")
+      toast.error( "Error al devolver gafete.")
     }
     },[errorAsignarGafete])
 
@@ -65,10 +66,12 @@ export const ReturnGafeteModal: React.FC<AddBadgeModalProps> = ({
     if(responseAsignarGafete){
         if(responseAsignarGafete.success==false){
             setIsOpen(false)
-            errorAlert(responseAsignarGafete)
+            toast.error("Gafete liberado correctamente.")
+            // errorAlert(responseAsignarGafete)
         }else{
             setIsOpen(false)
-            sweetAlert("success", "Confirmación", "Gafete liberado correctamente.")
+            toast.error("Gafete liberado correctamente.")
+            // sweetAlert("success", "Confirmación", "Gafete liberado correctamente.")
             refetchTable()
         }
     }

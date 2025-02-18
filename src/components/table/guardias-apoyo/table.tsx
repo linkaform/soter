@@ -25,10 +25,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { AddGuardModal } from "@/components/modals/add-guard-modal";
 import Exit from "@/components/icon/exit";
 import { ExitGuardModal } from "@/components/modals/exit-guard-modal";
-import { Plus } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 
 const initialData: GuardiaApoyo[] = [
@@ -195,9 +193,9 @@ export function GuardiasApoyoTable() {
     setColumnFilters([{ id: "empleado", value: empleadoFilter }]);
   }, [empleadoFilter]);
 
-  const handleAddGuardias = (selectedGuardias: GuardiaApoyo[]) => {
-    setGuardias((prevGuardias) => [...selectedGuardias, ...prevGuardias]);
-  };
+  // const handleAddGuardias = (selectedGuardias: GuardiaApoyo[]) => {
+  //   setGuardias((prevGuardias) => [...selectedGuardias, ...prevGuardias]);
+  // };
 
   const handleDeleteGuard = (id: string) => {
     setGuardias((prevGuardias) =>
@@ -220,12 +218,12 @@ export function GuardiasApoyoTable() {
           className="border border-gray-300 rounded-md p-2 h-12 w-full max-w-xs"
         />
 
-        <AddGuardModal title="Guardias" onAddGuardias={handleAddGuardias}>
+        {/* <AddGuardModal title="Guardias">
           <Button className="w-auto bg-green-600 hover:bg-green-700">
             <Plus />
             Guardia apoyo
           </Button>
-        </AddGuardModal>
+        </AddGuardModal> */}
       </div>
       <div className="">
         <Table>

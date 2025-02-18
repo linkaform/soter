@@ -1,10 +1,8 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
-import Swal from 'sweetalert2'
 import { Equipo_bitacora, Vehiculo_bitacora } from "@/components/table/bitacoras/bitacoras-columns"
 import { Equipo, Vehiculo } from "./update-pass"
 
-const blue500="#2b7fff"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -89,14 +87,14 @@ export function capitalizeOnlyFirstLetterDelete_(text: string) {
   return textWithSpaces.charAt(0).toUpperCase() + textWithSpaces.slice(1).toLowerCase();
 }
 
-export function sweetAlert(icon="success", title:string, text:string ,color=blue500){
-  Swal.fire({
-    icon: icon,
-    title:title,
-    text: text,
-    confirmButtonColor:color,
-  });
-}
+// export function sweetAlert(icon="success", title:string, text:string ,color=blue500){
+//   Swal.fire({
+//     icon: icon,
+//     title:title,
+//     text: text,
+//     confirmButtonColor:color,
+//   });
+// }
 
 
 export function replaceNullsInArrayDynamic(arr: any[]): any[] {
@@ -160,56 +158,56 @@ export function formatEquiposToBitacora(arr:Equipo[]): Equipo_bitacora[] {
 
 
 
-export function errorAlert(data:any, title = "Error", type="warning"){
-  if(data.hasOwnProperty("json")){
-    const errores=[]
-      for(const err in data.json){
-           if(data.json[err].hasOwnProperty('label')){
-              errores.push(data.json[err].label+': '+data.json[err].msg+" ")
-          }else {
-              for (const subKey in err as unknown as { [key: string]: any }){
-                  for(const subKey2 in data.json[err][subKey]){
-                      errores.push(data.json[err][subKey][subKey2].label+': '+data.json[err][subKey][subKey2].msg+" ")
-                  }
-              }
-          }
-      }
-      Swal.fire({
-          title: title,
-          text: errores.flat(),
-          type: "warning"
-      });
-  }else if (data.hasOwnProperty("error")){
-    const error= data.error
-      if(error.hasOwnProperty('msg')){
-          if(typeof error.msg ==='string'){
-              Swal.fire({
-                  title: title,
-                  text: error.msg,
-                  type: "warning"
-              });
-          }else{
-              Swal.fire({
-                  title: error.msg.title,
-                  text: error.msg.msg,
-                  type: error.msg.type
-              });
-          }
-      }else{
-          Swal.fire({
-              title: title,
-              text: error,
-              type: type
-          });
-      }
-  }else if (typeof data ==='string'){
-      Swal.fire({
-          title: title,
-          text: data,
-          type: type
-      });
-  }
-}
+// export function errorAlert(data:any, title = "Error", type="warning"){
+//   if(data.hasOwnProperty("json")){
+//     const errores=[]
+//       for(const err in data.json){
+//            if(data.json[err].hasOwnProperty('label')){
+//               errores.push(data.json[err].label+': '+data.json[err].msg+" ")
+//           }else {
+//               for (const subKey in err as unknown as { [key: string]: any }){
+//                   for(const subKey2 in data.json[err][subKey]){
+//                       errores.push(data.json[err][subKey][subKey2].label+': '+data.json[err][subKey][subKey2].msg+" ")
+//                   }
+//               }
+//           }
+//       }
+//       Swal.fire({
+//           title: title,
+//           text: errores.flat(),
+//           type: "warning"
+//       });
+//   }else if (data.hasOwnProperty("error")){
+//     const error= data.error
+//       if(error.hasOwnProperty('msg')){
+//           if(typeof error.msg ==='string'){
+//               Swal.fire({
+//                   title: title,
+//                   text: error.msg,
+//                   type: "warning"
+//               });
+//           }else{
+//               Swal.fire({
+//                   title: error.msg.title,
+//                   text: error.msg.msg,
+//                   type: error.msg.type
+//               });
+//           }
+//       }else{
+//           Swal.fire({
+//               title: title,
+//               text: error,
+//               type: type
+//           });
+//       }
+//   }else if (typeof data ==='string'){
+//       Swal.fire({
+//           title: title,
+//           text: data,
+//           type: type
+//       });
+//   }
+// }
 
 
 export function renameKeyTipoComentario(array:any) {

@@ -170,7 +170,7 @@ export const pasesEntradaColumns: ColumnDef<PaseEntrada>[] = [
     header: "Fecha de creación", 
     cell: ({ row }) => {
       const fecha = row.getValue("fecha_desde_visita");
-      const fechaSinSegundos = fecha ? fecha.slice(0, -3) : "";
+      const fechaSinSegundos = typeof fecha === 'string' ? fecha.slice(0, -3) : '';
       return <div>{fechaSinSegundos}</div>;
     },
     enableSorting: true,
@@ -180,7 +180,7 @@ export const pasesEntradaColumns: ColumnDef<PaseEntrada>[] = [
     header: "Vigencia del Pase",  
     cell: ({ row }) => {
       const fecha = row.getValue("fecha_desde_hasta");
-      const fechaSinSegundos = fecha ? fecha.slice(0, -3) : "";
+      const fechaSinSegundos = typeof fecha === 'string' ? fecha.slice(0, -3) : '';
       return <div>{fechaSinSegundos}</div>;
     },
     enableSorting: true,

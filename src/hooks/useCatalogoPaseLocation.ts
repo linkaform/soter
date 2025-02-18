@@ -13,10 +13,10 @@ export const useCatalogoPaseLocation = () => {
         return data.response?.data?.ubicaciones_user;
     },
 
-    staleTime: 1000 * 60 * 5,  
-    cacheTime: 1000 * 60 * 10, 
-    refetchOnWindowFocus: true, 
+    refetchOnWindowFocus: true,
+    refetchInterval: 60000,
     refetchOnReconnect: true,
+    staleTime: 1000 * 60 * 5,
   
   });
 

@@ -17,7 +17,9 @@ const useAuthStore = create<AuthState>((set:any) => {
   const userId = typeof window !== "undefined" ? localStorage.getItem("user_id") : null;
   const userNameSoter = typeof window !== "undefined" ? localStorage.getItem("userName_soter") : null;
   const userEmailSoter = typeof window !== "undefined" ? localStorage.getItem("userEmail_soter") : null;
-  const userIdSoter = typeof window !== "undefined" ? localStorage.getItem("userId_soter") : null;
+  const userIdSoter = typeof window !== "undefined" 
+  ? parseInt(localStorage.getItem("userId_soter") ?? "") // Si es null, pasará una cadena vacía
+  : null;
   const isAuth = !!token; // isAuth es true si hay un token
 
   return {
@@ -34,7 +36,7 @@ const useAuthStore = create<AuthState>((set:any) => {
       localStorage.setItem("user_id", userId);
       localStorage.setItem("userName_soter", userNameSoter);
       localStorage.setItem("userEmail_soter", userEmailSoter);
-      localStorage.setItem("userId_soter", userIdSoter);
+      localStorage.setItem("userId_soter", userIdSoter.toString() );
       // Actualiza el estado
       set({ token, userId, userNameSoter, userEmailSoter, userIdSoter,isAuth: true });
     },

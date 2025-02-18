@@ -25,8 +25,8 @@ export type Access_pass_update = {
     grupo_vehiculos: Vehiculo[],
     grupo_equipos: Equipo[],
     status_pase: string,
-    walkin_fotografia:Imagen[]|"",
-    walkin_identificacion: Imagen[]|""
+    walkin_fotografia:Imagen[],
+    walkin_identificacion: Imagen[]
 
 }
   interface updatePase {

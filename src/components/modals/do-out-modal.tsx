@@ -10,8 +10,9 @@ import {
 
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
-import { errorAlert, sweetAlert } from "@/lib/utils";
+// import { errorAlert, sweetAlert } from "@/lib/utils";
 import { useDoOut } from "@/hooks/useDoOut";
+import { toast } from "sonner";
 
 interface AddBadgeModalProps {
   title: string;
@@ -37,7 +38,8 @@ export const DoOutModal: React.FC<AddBadgeModalProps> = ({
   useEffect(()=>{
     if(errorDoOut){
       setIsOpen(false)
-      errorAlert(errorDoOut, "Error al asignar registrar la salida.", "warning")
+      toast.error( "Error al asignar registrar la salida.")
+      // errorAlert(errorDoOut, "Error al asignar registrar la salida.", "warning")
     }
     },[errorDoOut])
 
@@ -49,11 +51,13 @@ export const DoOutModal: React.FC<AddBadgeModalProps> = ({
     if(responseDoOut){
         if(responseDoOut.success==false){
             setIsOpen(false)
-            errorAlert(responseDoOut)
+            toast.error("Error")
+            // errorAlert(responseDoOut)
         }else{
             console.log("RESPONSE", responseDoOut)
             setIsOpen(false)
-            sweetAlert("success", "Confirmación", "Salida registrada exitosamente.")
+            toast.success( "Salida registrada exitosamente.")
+            // sweetAlert("success", "Confirmación", "Salida registrada exitosamente.")
             refetchTable()
         }
       

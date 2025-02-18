@@ -12,8 +12,9 @@ import {Vehiculo } from "@/lib/update-pass";
 import VehicleList from "../vehicle-list";
 import { useUpdateBitacora } from "@/hooks/useUpdateBitacora";
 import { Vehiculo_bitacora } from "../table/bitacoras/bitacoras-columns";
-import { formatVehiculosToBitacora, sweetAlert } from "@/lib/utils";
+import { formatVehiculosToBitacora } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 interface AddVehicleModalProps {
 	title: string;
@@ -61,8 +62,8 @@ export const AddVehicleModal: React.FC<AddVehicleModalProps> = ({
 		if(responseUpdateBitacora?.status_code==202){
 			setIsOpen(false)
 			refetchTable()
-			sweetAlert("success", "Confirmación", "Vehiculo asignado correctamente.")
-			// toast.success("¡Vehiculos actualizados correctamente!");
+			// sweetAlert("success", "Confirmación", "Vehiculo asignado correctamente.")
+			toast.success("¡Vehiculos actualizados correctamente!");
 		}
 	},[responseUpdateBitacora, refetchTable])
 
