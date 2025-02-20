@@ -48,16 +48,16 @@ export type Access_pass_update = {
         account_id
     };
   
-    if(access_pass.walkin_fotografia){
-      if (access_pass.walkin_fotografia.length >0 )payload.access_pass.walkin_fotografia = access_pass.walkin_fotografia
-    }else{
-      delete access_pass.walkin_fotografia
-    }
-    if(access_pass.walkin_identificacion){
-      if(access_pass.walkin_identificacion.length>0)payload.access_pass.walkin_identificacion = access_pass.walkin_identificacion
-    }else{
-      delete access_pass.walkin_identificacion
-    }
+    // if(access_pass.walkin_fotografia){
+    //   if (access_pass.walkin_fotografia.length >0 )payload.access_pass.walkin_fotografia = access_pass.walkin_fotografia
+    // }else{
+    //   delete access_pass.walkin_fotografia
+    // }
+    // if(access_pass.walkin_identificacion){
+    //   if(access_pass.walkin_identificacion.length>0)payload.access_pass.walkin_identificacion = access_pass.walkin_identificacion
+    // }else{
+    //   delete access_pass.walkin_identificacion
+    // }
 
     const response = await fetch(`https://app.linkaform.com/api/infosync/scripts/run/`, {
         method: "POST",
