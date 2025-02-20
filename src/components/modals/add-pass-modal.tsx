@@ -235,7 +235,7 @@ export const EntryPassModal: React.FC<EntryPassUpdateModalProps> = ({
               <p className="w-full break-words">{dataPass?.tema_cita}</p>
             </div>
 
-            <div className="w-full flex flex-wrap gap-2">
+            <div className="w-full flex gap-2">
               <p className="font-bold flex-shrink-0">Descripción : </p>
               <p className="w-full break-words ">{dataPass?.descripcion} </p>
             </div>

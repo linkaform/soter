@@ -117,15 +117,7 @@ const EquipoList:React.FC<EquipoListProps> = ({ equipos, setEquipos})=> {
 											value={field.value} 
 										>
 											<SelectTrigger className="w-full">
-											{catalogoTipoEquipos().length>0 ?(
-												<>
-												<SelectValue placeholder="Cargando tipos de vehiculos..." />
-												</>
-											): (
-												<>
-												<SelectValue placeholder="Selecciona un tipo de vehiculo" />
-												</>
-											)}
+												<SelectValue placeholder="Selecciona un tipo de equipo" />
 											</SelectTrigger>
 											<SelectContent>
 											{catalogoTipoEquipos()?.map((vehiculo:string, index:number) => (
@@ -230,15 +222,7 @@ const EquipoList:React.FC<EquipoListProps> = ({ equipos, setEquipos})=> {
 											value={field.value} 
 										>
 											<SelectTrigger className="w-full">
-											{catalogoColores().length>0 ? (
-												<>
-												<SelectValue placeholder="Cargando tipos de vehiculos..." />
-												</>
-											): (
-												<>
-												<SelectValue placeholder="Selecciona un tipo de vehiculo" />
-												</>
-											)}
+												<SelectValue placeholder="Selecciona un color" />
 											</SelectTrigger>
 											<SelectContent>
 											{catalogoColores().map((color:string) => (

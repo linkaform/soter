@@ -46,11 +46,11 @@ interface VehicleListProps {
 const VehicleList:React.FC<VehicleListProps> = ({ account_id, vehicles, setVehicles})=> {
     const [tipoVehiculoState, setTipoVehiculoState] = useState("");
     const [marcaState, setMarcaState] = useState("");
-    const {isLoading: loadingCat, refetch } = useGetVehiculos({account_id, tipo:tipoVehiculoState, marca:marcaState})
+    const {data:dataVehiculos,isLoading: loadingCat, refetch } = useGetVehiculos({account_id, tipo:tipoVehiculoState, marca:marcaState})
     const { data:catEstados, isLoading: loadingCatEstados } = useCatalogoEstados(account_id)
 
-    const [tiposCat] = useState<string[]>([]);
-    const [marcasCat] = useState<string[]>([]);
+    const [tiposCat, setTiposCat] = useState<string[]>([]);
+    const [marcasCat, setMarcasCat] = useState<string[]>([]);
     const [modelosCat, setModelosCat] = useState<string[]>([]);
     const [cleanMain, setCleanMain] = useState(false);
 
@@ -87,17 +87,31 @@ const VehicleList:React.FC<VehicleListProps> = ({ account_id, vehicles, setVehic
 
     useEffect(() => {
         refetch()
+        setTiposCat(dataVehiculos)
     }, []);
+
+    useEffect(() => {
+      if(!tiposCat && dataVehiculos){
+        setTiposCat(dataVehiculos)
+      }
+      if(dataVehiculos && tipoVehiculoState && !marcaState){
+        setMarcasCat(dataVehiculos)
+      }
+      if(dataVehiculos && tipoVehiculoState && marcaState){
+        setModelosCat(dataVehiculos)
+      }
+    }, [dataVehiculos]);
+
 
   useEffect(() => {
     if (tipoVehiculoState) {
+      setMarcaState("")
       refetch()
     }
   }, [tipoVehiculoState]);
 
   useEffect(() => {
     if (marcaState) {
-      setModelosCat([]);
       refetch()
     }
   }, [marcaState]);

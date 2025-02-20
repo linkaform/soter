@@ -106,11 +106,11 @@ export const formSchema =
                           <SelectTrigger className="w-full">
                           {catalogoTipoEquipos().length>0 ?(
                             <>
-                            <SelectValue placeholder="Cargando tipos de vehiculos..." />
+                            <SelectValue placeholder="Cargando tipos de equipos..." />
                             </>
                           ): (
                             <>
-                            <SelectValue placeholder="Selecciona un tipo de vehiculo" />
+                            <SelectValue placeholder="Selecciona un tipo de equipo" />
                             </>
                           )}
                           </SelectTrigger>
@@ -221,11 +221,11 @@ export const formSchema =
                           <SelectTrigger className="w-full">
                           {catalogoColores().length>0 ? (
                             <>
-                            <SelectValue placeholder="Cargando tipos de vehiculos..." />
+                            <SelectValue placeholder="Cargando colores..." />
                             </>
                           ): (
                             <>
-                            <SelectValue placeholder="Selecciona un tipo de vehiculo" />
+                            <SelectValue placeholder="Selecciona un color" />
                             </>
                           )}
                           </SelectTrigger>

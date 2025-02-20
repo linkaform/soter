@@ -11,7 +11,7 @@ import {
 import { toast } from "sonner";
 import { useGetCatalogoPaseNoJwt } from "@/hooks/useGetCatologoPaseNoJwt";
 import VehicleList from "@/components/vehicle-list";
-import { Equipo, Imagen, Vehiculo } from "@/lib/update-pass";
+import { Equipo, Imagen, UpdatePase, Vehiculo } from "@/lib/update-pass";
 import EquipoList from "@/components/equipo-list";
 import { EntryPassModal2 } from "@/components/modals/add-pass-modal-2";
 import LoadImage from "@/components/upload-Image";
@@ -19,6 +19,7 @@ import { Car, Laptop, Loader2 } from "lucide-react";
 import { useGetPdf } from "@/hooks/usetGetPdf";
 import { descargarPdfPase } from "@/lib/download-pdf";
 import Image from "next/image";
+import router from "next/router";
 
  const grupoEquipos = z.array(
 	z.object({
@@ -93,8 +94,8 @@ const PaseUpdate = () =>{
 	// 		account_id= userIdSoter
 	// }
 	// const showIneIden= docs?.split("-")
-	const { data: responsePdf, isLoading: loadingPdf} = useGetPdf(account_id, id);
-	const { data: dataCatalogos, isLoading: loadingDataCatalogos } = useGetCatalogoPaseNoJwt(account_id, id);
+	const { data: responsePdf, isLoading: loadingPdf, refetch: refetchPdf} = useGetPdf(account_id, id);
+	const { data: dataCatalogos, isLoading: loadingDataCatalogos , refetch:refetchCatalog} = useGetCatalogoPaseNoJwt(account_id, id);
 	const [agregarEquiposActive, setAgregarEquiposActive] = useState(false);
 	const [agregarVehiculosActive, setAgregarVehiculosActive] = useState(false);
 	const [isSuccess, setIsSuccess] = useState(false);
@@ -112,7 +113,8 @@ const PaseUpdate = () =>{
 
 	const [isActualizarOpen, setIsActualizarOpen] = useState<string|boolean>("");
 
-	
+	const [isLoading, setIsLoading] = useState(false);
+	const [error, setError] = useState<unknown>();
 
 	const form = useForm<z.infer<typeof formSchema>>({
 			resolver: zodResolver(formSchema),
@@ -161,6 +163,40 @@ const PaseUpdate = () =>{
 			setModalData(formattedData);
 	};
 
+	const SendUpdate = async () => {
+		const formattedData = {
+			grupo_vehiculos: vehicles,
+			grupo_equipos: equipos,
+			status_pase: "activo",
+			folio: id,
+			account_id: account_id,
+		};
+		try {
+			setIsLoading(true);
+			const apiResponse = await UpdatePase({ access_pass: {
+				grupo_vehiculos: vehicles,
+				grupo_equipos: equipos,
+				status_pase: "activo",
+				walkin_fotografia:dataCatalogos?.pass_selected?.foto ?? [],
+				walkin_identificacion:dataCatalogos?.pass_selected?.identificacion ?? []
+			}, 
+			id:id, account_id: account_id ??0});
+			if(apiResponse.success){
+				router.push(`/dashboard/`)
+				setIsSuccess(true); 
+			}else{
+				setIsSuccess(false); 
+			}
+			toast.success("Informacion actualizada correctamente.")
+		} catch (err) {
+			setError(err);
+		} finally {
+			setIsLoading(false);
+		}
+		setModalData(formattedData);
+	};
+
+
 	useEffect(() => {
 		if (typeof window !== "undefined") {
 		  const valores = window.location.search
@@ -176,6 +212,21 @@ const PaseUpdate = () =>{
 		  setAccount_id(acc);
 		}
 	  }, []);
+
+
+	useEffect(()=>{
+		if(error){
+			toast.success("Ocurrio un error al actualizar la informacion.")
+		}
+	},[error])
+
+	useEffect(()=>{
+		if(id || account_id){
+			console.log("refetch pdf")
+			refetchPdf()
+			refetchCatalog()
+		}
+	},[id, account_id, refetchPdf, refetchCatalog])
 
 	useEffect(()=>{
 		if (errorFotografia === "-" && errorIdentificacion === "-") {
@@ -419,6 +470,7 @@ return (
 
 							<div className="flex gap-2 ">
 								<div>
+								
 									<p>Fotografia</p>
 									<Image
 										width={280}
@@ -444,16 +496,14 @@ return (
 
 							<EquipoList equipos={equipos} setEquipos={setEquipos}/>
 
-							<Button className="w-1/3 h-12  bg-red-500 hover:bg-red-600 mt-2" type="submit" onClick={() => { } }>
-							Confirmar
+							<Button className="w-1/3 h-12  bg-blue-500 hover:bg-blue-600 mt-2" type="submit" onClick={SendUpdate} disabled={isLoading}>
+							{!isLoading ? ("Confirmar"):(<><Loader2 className="animate-spin"/>Actualizando...</>)}
 						</Button>
 						</div>
 
 						
 						</>
 					):null}
-					
-					
 			</div>
 		</>)}
 	</div>

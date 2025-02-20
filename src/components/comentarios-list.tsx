@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -22,16 +22,16 @@ interface ComentariosListProps {
 		tipo:string;
 	}
 
-export const formSchema = 
+const formSchema = 
 	z.object({
-		tipo_comentario: z.string().default("pase"),
+		tipo_comentario: z.string().optional(),
 		comentario_pase: z.string().min(1,{message:"Comentario es un campo obligatorio"}),
 });
 
 const ComentariosList:React.FC<ComentariosListProps> = ({comentarios, setComentarios, tipo })=> {
 	const form = useForm<z.infer<typeof formSchema>>({
 			resolver: zodResolver(formSchema),
-			defaultValues: { tipo_comentario: "", comentario_pase: "",}});
+			defaultValues: { tipo_comentario: tipo, comentario_pase: "",}});
 
 	const onSubmitComentarios = (data: z.infer<typeof formSchema>) => {
 		const newComentario = {
@@ -56,11 +56,11 @@ const ComentariosList:React.FC<ComentariosListProps> = ({comentarios, setComenta
 		}
 	};
 
-	// useEffect(() => {
-	//     if(existingComentarios==false){
-	//         setComentarios([])
-	//     }
-	// },[]);
+	useEffect(() => {
+	    if(form.formState.errors){
+	        console.log("form.formState.errors",form.formState.errors)
+	    }
+	},[form.formState.errors]);
 
 	const cleanInputs =() =>{
 		form.setValue('comentario_pase', '');
@@ -89,51 +89,52 @@ return (
 		))}
 
 		<Form {...form} >
-		{/* <form className="space-y-5 border p-8 rounded mt-5" onSubmit={form.handleSubmit(onSubmit)}> */}
+		{/* <form className="space-y-5 border p-8 rounded mt-5" onSubmit={form.handleSubmit(onSubmitComentarios)}> */}
 		<div className="border p-8 rounded mt-5">
 			<div className="font-bold text-lg">Agregar comentario o instrucción</div>
-				<div className="grid  gap-5" >
+			<div className="grid  gap-5" >
+				{/* Comentario */}
+				<FormField
+					control={form.control}
+					name="comentario_pase"
+					render={({ field }:any) => (
+						<FormItem>
+							<FormLabel>Comentario o instrucción:</FormLabel>
+							<FormControl>
+								<Input placeholder="Comentario" {...field} 
+									onChange={(e) => {
+										field.onChange(e); // Actualiza el valor en react-hook-form
+									}}
+									value={field.value || ""}
+								/>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+			</div>
 
-					{/* Comentario */}
-					<FormField
-						control={form.control}
-						name="comentario_pase"
-						render={({ field }:any) => (
-							<FormItem>
-								<FormLabel>Comentario o instrucción:</FormLabel>
-								<FormControl>
-									<Input placeholder="Comentario" {...field} 
-										onChange={(e) => {
-											field.onChange(e); // Actualiza el valor en react-hook-form
-										}}
-										value={field.value || ""}
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
+			<div className="text-end  mt-3">
+				<Button
+					className="bg-blue-500 hover:bg-blue-600 text-white" 
+					type="button"
+					onClick={(e) => {
+						e.preventDefault();
+						form.handleSubmit(onSubmitComentarios)(); 
+					}}
+				>
+					Agregar Comentario
+				</Button>
+			</div>
 
-				</div>
-				<div className="text-end  mt-3">
-						<Button
-							className="bg-blue-500 hover:bg-blue-600 text-white " 
-							type="button"
-							onClick={(e) => {
-									e.preventDefault(); // Evita que el formulario padre se envíe
-									form.handleSubmit(onSubmitComentarios)(); // Solo se envía el formulario hijo
-								}}
-						>
-							Agregar Comentario
-						</Button>
-					</div>
 		</div>
-					
+			
 		{/* </form> */}
+		
 		</Form>
-				
+		
 	</div>
 );
 };
-
-export default ComentariosList;
+	
+	export default ComentariosList;

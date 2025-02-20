@@ -65,10 +65,10 @@ import { Contacto } from "@/lib/get-user-contacts";
 	visita_a: z.string().nullable().optional(),
 	custom: z.boolean().optional(),
 	link: z.object({
-		link: z.string().url({ message: "Por favor, ingresa una URL válida." }), 
+		link: z.string().optional(), 
 		docs: z.array(z.string()).optional(),
-		creado_por_id: z.number().int({ message: "El ID debe ser un número entero." }),  
-		creado_por_email: z.string().email({ message: "Por favor, ingresa un correo electrónico válido." }), 
+		creado_por_id: z.number().int({ message: "El ID debe ser un número entero." }).optional(),  
+		creado_por_email: z.string().optional(), 
 	}),
 	enviar_correo_pre_registro:z.array(z.string()).optional(),
 	
@@ -152,16 +152,19 @@ import { Contacto } from "@/lib/get-user-contacts";
 
 	// const protocol = window.location.protocol;  
 	// const host = window.location.host;  
-	const[ userIdSoter, setUserIdSoter] = useState<number|null>(null)
+	const[ userIdSoter, setUserIdSoter] = useState<number|null>(()=>{
+			return Number(typeof window !== "undefined"? window.localStorage.getItem("userId_soter"):0) 
+	});
+
 	const[userNameSoter, setUserNameSoter] = useState<string|null>("")
 	const [userEmailSoter, setUserEmailSoter] = useState<string|null>("")
 	// const {userIdSoter,userEmailSoter, userNameSoter} = useAuthStore();
 	const [hostPro, setHostPro] = useState({ protocol: '', host: '' });
+	const { data: configLocation, isLoading: loadingConfigLocation, refetch:refetchConfLocation } = useGetConfSeguridad(ubicacionSeleccionada);
+	const {data:catAreas, isLoading: loadingCatAreas, refetch:refetchAreas } = useCatalogoPaseArea(ubicacionSeleccionada)
 
 	const [enviar_correo_pre_registro, set_enviar_correo_pre_registro] = useState<string[]>([]);
-	const { data: configLocation, isLoading: loadingConfigLocation, refetch:refetchConfLocation } = useGetConfSeguridad(ubicacionSeleccionada);
 	const [formatedDocs, setFormatedDocs] = useState<string[]>([])
-	const {data:catAreas, isLoading: loadingCatAreas, refetch:refetchAreas } = useCatalogoPaseArea(ubicacionSeleccionada)
 	const [comentariosList, setComentariosList] = useState<Comentarios[]>([]);
 	const [areasList, setAreasList] = useState<Areas[]>([]);
 	const [isActive, setIsActive] = useState(false);
@@ -177,9 +180,19 @@ import { Contacto } from "@/lib/get-user-contacts";
 	const [selected, setSelected] = useState<Contacto |null>(null);
 	const [isOpenModal, setOpenModal] = useState(false);
 
-	
-
-	
+	useEffect(() => {
+		if (typeof window !== "undefined") {
+		  const protocol = window.location.protocol;
+		  const host = window.location.host;
+		  setHostPro({ protocol, host });
+  
+		  //const {userIdSoter,userEmailSoter, userNameSoter} = useAuthStore();
+		  console.log(window.localStorage.getItem("userEmail_soter"),window.localStorage.getItem("userName_soter") ,window.localStorage.getItem("userId_soter"))
+		  setUserIdSoter(Number(window.localStorage.getItem("userId_soter")));
+		  setUserNameSoter(window.localStorage.getItem("userName_soter"));
+		  setUserEmailSoter(window.localStorage.getItem("userEmail_soter"));
+		}
+	  }, []);
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -199,9 +212,9 @@ import { Contacto } from "@/lib/get-user-contacts";
 				link :`${hostPro?.protocol}//${hostPro?.host}/dashboard/pase-update`,
 				docs : formatedDocs,
 				// userIdSoter||
-				creado_por_id: userIdSoter || undefined,
+				creado_por_id: userIdSoter || 0,
 				// userEmailSoter ??
-				creado_por_email: userEmailSoter ?? ""
+				creado_por_email: userEmailSoter ??""
 		},
 			enviar_correo_pre_registro:enviar_correo_pre_registro??[], 
 			tipo_visita_pase: "fecha_fija",
@@ -231,18 +244,7 @@ import { Contacto } from "@/lib/get-user-contacts";
 		
 	};
 
-	useEffect(() => {
-		if (typeof window !== "undefined") {
-		  const protocol = window.location.protocol;
-		  const host = window.location.host;
-		  setHostPro({ protocol, host });
-  
-		  //const {userIdSoter,userEmailSoter, userNameSoter} = useAuthStore();
-		  setUserIdSoter(Number(window.localStorage.getItem("userId_soter")));
-		  setUserNameSoter(window.localStorage.getItem("userName_soter"));
-		  setUserEmailSoter(window.localStorage.getItem("userEmail_soter"));
-		}
-	  }, []);
+	
 
 	useEffect(()=>{
 		if ( selected ) {
@@ -252,6 +254,13 @@ import { Contacto } from "@/lib/get-user-contacts";
 			closeModalContactos()
 		}
 	}, [selected, form])
+
+	useEffect(()=>{
+		if ( form.formState.errors ) {
+			console.log("enviar_correo_pre_registro",form.getValues("link"))
+			console.log("form.formState.errors",form.formState.errors, userEmailSoter,userIdSoter, formatedDocs )
+		}
+	}, [form.formState.errors])
 
 	useEffect(()=>{
 		if ( ubicacionSeleccionada ) {
@@ -279,7 +288,7 @@ import { Contacto } from "@/lib/get-user-contacts";
 	},[configLocation])
 
 	const onSubmit = (data: z.infer<typeof formSchema>) => {
-		console.log("Formulario enviado con los siguientes datos:", data);
+		console.log("Formulario enviado con los siguientes datos:", data, userEmailSoter,userIdSoter, formatedDocs );
 		const formattedData = {
 			nombre: data.nombre,
 			email: data.email,
@@ -294,8 +303,8 @@ import { Contacto } from "@/lib/get-user-contacts";
 			link:{
 				link : data.link.link,
 				docs : formatedDocs,
-				creado_por_id:userIdSoter?? 0,// userIdSoter,
-				creado_por_email:userEmailSoter??"",// userEmailSoter
+				creado_por_id: userIdSoter ,// userIdSoter,
+				creado_por_email: userEmailSoter,// userEmailSoter
 			},
 			enviar_correo_pre_registro: enviar_correo_pre_registro, 
 			tipo_visita_pase: tipoVisita,
@@ -448,7 +457,7 @@ return (
 			</div>
 
 			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+				<form className="space-y-8">
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 						{selected && (
 							<><Image
@@ -643,7 +652,7 @@ return (
 								onClick={handleToggleEmail}
 								className={`px-4 py-2 rounded-md transition-all duration-300 ${
 									isActive ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
-								} hover:bg-transparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
+								} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}  //hover:bg-transparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]
 								>
 								<div className="flex flex-wrap items-center">
 									{isActive ? (
@@ -665,11 +674,11 @@ return (
 								type="button"
 								onClick={handleToggleSMS}
 								className={`px-4 py-2 rounded-md transition-all duration-300 ${
-									isActive ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
+									isActiveSMS ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
 								} hover:bg-transparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
 								>
 								<div className="flex flex-wrap items-center">
-									{isActive ? (
+									{isActiveSMS ? (
 									<>
 										<MessageCircleMore className="mr-3" />
 										<div>Enviar por sms</div>
@@ -1013,34 +1022,6 @@ return (
 						</>
 						)}
 					</div>
-					
-					{/* <FormField
-						control={form.control}
-						name="showAreas"
-						value={"show_areas"}
-						render={() => (
-							<FormItem>
-								<FormControl>
-									<Button
-										type="button"
-										onClick={handleToggleAdvancedOptions}
-										className={`px-4 py-2 rounded-md transition-all duration-300 ${
-										isActiveAdvancedOptions ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
-										} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
-										>
-											<div className="flex flex-wrap">
-											{isActiveAdvancedOptions ? (
-												<><div className="">Áreas de acceso</div></>
-											):(
-												<><div className="text-blue-600">Áreas de acceso</div></>
-											)}
-											</div>
-									</Button>
-								</FormControl>
-							<FormMessage />
-							</FormItem>
-						)}
-					/> */}
 
 
 					<div className="flex gap-2 flex-col">
@@ -1090,8 +1071,10 @@ return (
 					<Button
 						className="bg-blue-500 hover:bg-blue-600 text-white w-full sm:w-2/3 md:w-1/2 lg:w-1/2"
 						variant="secondary"
-						type="submit"
-						onClick={form.handleSubmit(onSubmit)}
+						type="button"
+						onClick={(e)=>{e.preventDefault()
+							form.handleSubmit(onSubmit)()
+						}}
 					>
 						Siguiente
 					</Button>

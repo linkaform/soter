@@ -34,7 +34,7 @@ interface AreasListProps {
     existingAreas:boolean
 }
 
-export const formSchema = 
+const formSchema = 
     z.object({
       nombre_area: z.string().min(1,{message:"Área es un campo obligatorio"}),
       comentario_area: z.string().optional(),
@@ -113,6 +113,8 @@ const AreasList:React.FC<AreasListProps> = ({ location, areas, setAreas, catArea
     <div >
       {areas.map((area, index) => 
       { 
+      console.log("areas", area)
+
         return(
         <div key={index} className="border rounded mt-2">
           <AreasItem

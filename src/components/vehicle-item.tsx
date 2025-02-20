@@ -52,10 +52,9 @@ export const formSchema =
 	const VehicleItem: React.FC<VehicleItemProps> = ({ account_id, isCollapsed, onToggleCollapse,onDelete, 
 	tiposCatPadre, modelosCatPadre, marcasCatPadre, vehicle,
 	})=>  {
-		//  
 		const [tipoVehiculoState, setTipoVehiculoState] = useState("");
 		const [marcaState, setMarcaState] = useState("");
-
+		
 		const { isLoading: loadingCat, refetch } = useGetVehiculos({account_id, tipo:tipoVehiculoState, marca:marcaState})
 		const { data:catEstados, isLoading: loadingCatEstados } = useCatalogoEstados(account_id)
 
@@ -66,13 +65,11 @@ export const formSchema =
 		const form = useForm<z.infer<typeof formSchema>>({
 			resolver: zodResolver(formSchema),
 			defaultValues: { tipo: "", marca: "", modelo: "", estado: "", placas: "", color: "" },
-			
 	});
 
 	useEffect(() => {
 		if(vehicle?.tipo !==""){
 			loadNewVehicle(vehicle)
-			
 		}else{
 			refetch()
 		}
