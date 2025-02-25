@@ -33,78 +33,17 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Incidencia, incidenciasColumns } from "./incidencias-columns";
+import { Incidencia_record, incidenciasColumns } from "./incidencias-columns";
 
-const data: Incidencia[] = [
-  {
-    id: "1",
-    nombre: "Leonciitoo",
-    articulo: "Peluche de león",
-    fotografia: "/image/incidencia1.png",
-    color: "Café",
-    categoria: "Juguetes y Peluches",
-    fechaHallazgo: "2024-09-13 21:29",
-    areaResguardo: "L9",
-    reporta: "Emiliano Zapata",
-    fechaDevolucion: "2024-09-25 15:05",
-    comentarios: ["Encontrado en zona infantil", "Entregado sin daños"],
-  },
-  {
-    id: "2",
-    nombre: "NUEVO NOMBRE",
-    articulo: "Auriculares inalámbricos",
-    fotografia: "/image/incidencia2.png",
-    color: "Rojo",
-    categoria: "Electrónicos",
-    fechaHallazgo: "2024-09-18 09:28",
-    areaResguardo: "L6",
-    reporta: "Juan Escutia",
-    fechaDevolucion: "2024-09-17 20:02",
-    comentarios: ["Audífonos encontrados", "Sin reporte adicional"],
-  },
-  {
-    id: "3",
-    nombre: "Termo",
-    articulo: "Barra de granola",
-    fotografia: "/image/incidencia3.png",
-    color: "Azul",
-    categoria: "Alimentos y Bebidas",
-    fechaHallazgo: "2024-09-10 18:01",
-    areaResguardo: "L6",
-    reporta: "Juan Escutia",
-    fechaDevolucion: "2024-09-18 13:48",
-    comentarios: ["Estaba en la cafetería", "Devuelto limpio"],
-  },
-  {
-    id: "4",
-    nombre: "Lápiz de lobo",
-    articulo: "Lapicera gris",
-    fotografia: "/image/incidencia1.png",
-    color: "Gris",
-    categoria: "Útiles Escolares",
-    fechaHallazgo: "2024-10-10 04:05",
-    areaResguardo: "L4",
-    reporta: "Emiliano Zapata",
-    fechaDevolucion: "2024-10-10 16:23",
-    comentarios: ["Entregado sin problemas", "Objeto en buen estado"],
-  },
-  {
-    id: "5",
-    nombre: "Color",
-    articulo: "Bolígrafo rojo",
-    fotografia: "/image/incidencia2.png",
-    color: "Rojo",
-    categoria: "Útiles Escolares",
-    fechaHallazgo: "2024-10-10 16:23",
-    areaResguardo: "L5",
-    reporta: "Juan Escutia",
-    fechaDevolucion: "2024-10-10 14:37",
-    comentarios: ["Prueba de entrega", "No se reportaron daños"],
-  },
-  
-];
+interface ListProps {
+  refetch:() => void;
+  data: Incidencia_record[];
+  setPrioridades: React.Dispatch<React.SetStateAction<string[]>>;
+  isLoading:boolean;
+  openModal: () => void;
+}
 
-export function IncidenciasTable() {
+const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, setPrioridades, isLoading, openModal})=> {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -119,9 +58,21 @@ export function IncidenciasTable() {
 
   const [globalFilter, setGlobalFilter] = React.useState("");
 
+  const handleCheckboxChange = (event:any) => {
+    const { id, checked } = event.target;
+
+    setPrioridades((prevPrioridades) => {
+      if (checked) {
+        return [...prevPrioridades, id]; // Agregar la opción seleccionada
+      } else {
+        return prevPrioridades.filter((item) => item !== id); // Eliminar la opción deseleccionada
+      }
+    });
+  };
+
   const table = useReactTable({
-    data,
-    columns: incidenciasColumns,
+    data:data || [],
+    columns:  isLoading ? [] : incidenciasColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
@@ -145,8 +96,6 @@ export function IncidenciasTable() {
 
   return (
     <div className="w-full">
-
-    
       <div className="flex flex-col md:flex-row justify-between items-center my-5">
         {/* Campo de búsqueda a la izquierda */}
         <input
@@ -165,26 +114,26 @@ export function IncidenciasTable() {
             </Label>
 
             <div className="flex items-center space-x-2">
-              <Checkbox id="alta" />
+              <Checkbox id="alta" onChange={handleCheckboxChange}/>
               <Label htmlFor="alta">Alta</Label>
             </div>
             <div className="flex items-center space-x-2">
-              <Checkbox id="media" />
+              <Checkbox id="media" onChange={handleCheckboxChange}/>
               <Label htmlFor="media">Media</Label>
             </div>
             <div className="flex items-center space-x-2">
-              <Checkbox id="baja" />
+              <Checkbox id="baja" onChange={handleCheckboxChange}/>
               <Label htmlFor="baja">Baja</Label>
             </div>
             <div className="flex items-center space-x-2">
-              <Checkbox id="critica" />
+              <Checkbox id="critica" onChange={handleCheckboxChange}/>
               <Label htmlFor="critica">Crítica</Label>
             </div>
           </div>
 
           <div className="w-full md:w-auto flex flex-col md:flex-row  gap-3 mb-5">
 
-          <Button className="w-full md:w-auto bg-blue-500 hover:bg-blue-600">
+          <Button className="w-full md:w-auto bg-blue-500 hover:bg-blue-600" onClick={openModal}>
             <Plus />
             Nuevo Incidente
           </Button>
@@ -307,3 +256,4 @@ export function IncidenciasTable() {
     </div>
   );
 }
+export default IncidenciasTable;

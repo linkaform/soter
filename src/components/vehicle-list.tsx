@@ -45,6 +45,7 @@ interface VehicleListProps {
 
 const VehicleList:React.FC<VehicleListProps> = ({ account_id, vehicles, setVehicles})=> {
     const [tipoVehiculoState, setTipoVehiculoState] = useState("");
+    const [catalogSearch, setCatalogSearch] = useState("");
     const [marcaState, setMarcaState] = useState("");
     const {data:dataVehiculos,isLoading: loadingCat, refetch } = useGetVehiculos({account_id, tipo:tipoVehiculoState, marca:marcaState})
     const { data:catEstados, isLoading: loadingCatEstados } = useCatalogoEstados(account_id)
@@ -68,7 +69,7 @@ const VehicleList:React.FC<VehicleListProps> = ({ account_id, vehicles, setVehic
         color: data.color||"" 
       };
       setVehicles([...vehicles, newVehicle]);
-      setCleanMain(true)
+      setCleanMain(!cleanMain)
     };
 
     const handleDeleteVehicle = (index: number) => {
@@ -91,41 +92,35 @@ const VehicleList:React.FC<VehicleListProps> = ({ account_id, vehicles, setVehic
     }, []);
 
     useEffect(() => {
+      console.log("QUE ESTA PASANDO", dataVehiculos, tipoVehiculoState,catalogSearch=="marcas")
       if(!tiposCat && dataVehiculos){
         setTiposCat(dataVehiculos)
       }
-      if(dataVehiculos && tipoVehiculoState && !marcaState){
+      if(dataVehiculos && tipoVehiculoState && catalogSearch=="marcas"){
         setMarcasCat(dataVehiculos)
       }
-      if(dataVehiculos && tipoVehiculoState && marcaState){
+      if(dataVehiculos && tipoVehiculoState && marcaState && catalogSearch=="modelos"){
         setModelosCat(dataVehiculos)
       }
     }, [dataVehiculos]);
 
-
   useEffect(() => {
-    if (tipoVehiculoState) {
-      setMarcaState("")
-      refetch()
-    }
-  }, [tipoVehiculoState]);
-
-  useEffect(() => {
-    if (marcaState) {
-      refetch()
-    }
-  }, [marcaState]);
-
-  useEffect(() => {
-    if (cleanMain) {
       form.setValue('tipo', '');
       form.setValue('marca', '');
       form.setValue('modelo', '');
       form.setValue('placas', '');
       form.setValue('estado', '');
       form.setValue('color', '');
-    }
   }, [cleanMain]);
+
+  const updatedVehicles = (index: number, value: string, fieldName:string) => {
+    const updatedAreas = [...vehicles];
+      updatedAreas[index] = {
+        ...updatedAreas[index],   // Mantener las propiedades anteriores del área
+        [fieldName]: value,       // Actualizar el campo específico
+      };
+    setVehicles(updatedAreas);
+  };
 
   return (
     <div>
@@ -140,6 +135,7 @@ const VehicleList:React.FC<VehicleListProps> = ({ account_id, vehicles, setVehic
             tiposCatPadre={tiposCat}
             modelosCatPadre={modelosCat}
             marcasCatPadre={marcasCat}
+            updatedVehicles={(value:string, fieldName:string) => updatedVehicles(index, value, fieldName)}
           />
         </div>
       ))}
@@ -159,7 +155,10 @@ const VehicleList:React.FC<VehicleListProps> = ({ account_id, vehicles, setVehic
                     <Select {...field} className="input"
                         onValueChange={(value:string) => {
                         field.onChange(value); 
+                        setCatalogSearch("marcas")
                         setTipoVehiculoState(value);
+                        setMarcaState("")
+                        setMarcasCat([])
                       }}
                       value={field.value}
                     >
@@ -200,7 +199,9 @@ const VehicleList:React.FC<VehicleListProps> = ({ account_id, vehicles, setVehic
                         onValueChange={(value:string) => {
                         field.onChange(value); 
                         setMarcaState(value);  // Actualiza el estado
-                        // handleSelectChange("marca", value)
+                        setModelosCat([])
+                        setCatalogSearch("modelos")
+                        refetch()
                       }}
                       value={field.value} 
                     >

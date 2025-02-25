@@ -51,17 +51,18 @@ export type Access_pass={
 
 }
 
-export const useCreateAccessPase = (location: string, access_pass: Access_pass|null, enviar_pre_sms: enviar_pre_sms|null) => {
+export const useCreateFalla = (location: string, access_pass: Access_pass|null, enviar_pre_sms: enviar_pre_sms|null) => {
   const { data, isLoading, error, isFetching, refetch } = useQuery<any>({
     queryKey: ["useCreateAccessPase", location, access_pass, enviar_pre_sms], // Agregamos los parámetros necesarios aquí
     enabled:false,
     queryFn: async () => {
-      const data = await createPase({
-        access_pass,
-        location,
-        enviar_pre_sms,
-      });
-      return data ;
+      // const data = await createFalla({
+      //   access_pass,
+      //   location,
+      //   enviar_pre_sms,
+      // });
+      // return data ;
+      return true
     },
     refetchOnWindowFocus: true,
     refetchInterval: 60000,
@@ -77,4 +78,3 @@ export const useCreateAccessPase = (location: string, access_pass: Access_pass|n
     refetch,
   };
 };
-

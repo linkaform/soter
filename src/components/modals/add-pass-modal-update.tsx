@@ -230,7 +230,7 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
                       Area: <span className="">{area.nombre_area || "N/A"}</span>
                     </p>
                     <p className="font-medium mb-1">
-                      Comentario: <span className="">{area.comentario_area || "N/A"}</span>
+                      Comentario: <span className="">{area.commentario_area || "N/A"}</span>
                     </p>
                   </AccordionContent>
                 </AccordionItem>

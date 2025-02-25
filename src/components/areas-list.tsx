@@ -37,7 +37,7 @@ interface AreasListProps {
 const formSchema = 
     z.object({
       nombre_area: z.string().min(1,{message:"Área es un campo obligatorio"}),
-      comentario_area: z.string().optional(),
+      commentario_area: z.string().optional(),
 });
 
 const AreasList:React.FC<AreasListProps> = ({ location, areas, setAreas, catAreas, loadingCatAreas, existingAreas})=> {
@@ -46,7 +46,7 @@ const AreasList:React.FC<AreasListProps> = ({ location, areas, setAreas, catArea
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
-        defaultValues: { nombre_area: "", comentario_area: "",}});
+        defaultValues: { nombre_area: "", commentario_area: "",}});
 
     const onSubmitArea = (data: z.infer<typeof formSchema>) => {
         const isAreaExists = areas.some(area => area.nombre_area === data.nombre_area);
@@ -60,7 +60,7 @@ const AreasList:React.FC<AreasListProps> = ({ location, areas, setAreas, catArea
 
       const newArea = {
         nombre_area:data.nombre_area ||"",  
-        comentario_area: data.comentario_area||"",  
+        commentario_area: data.commentario_area||"",  
       };
       setAreas([...areas, newArea]);
       cleanInputs()
@@ -93,7 +93,7 @@ const AreasList:React.FC<AreasListProps> = ({ location, areas, setAreas, catArea
     
     const cleanInputs =() =>{
         form.setValue('nombre_area', '');
-        form.setValue('comentario_area', '');
+        form.setValue('commentario_area', '');
     }
 
     const updatedArea = (index: number, value: string, fieldName:string) => {
@@ -176,7 +176,7 @@ const AreasList:React.FC<AreasListProps> = ({ location, areas, setAreas, catArea
             {/* Comentario */}
             <FormField
               control={form.control}
-              name="comentario_area"
+              name="commentario_area"
               render={({ field }:any) => (
                 <FormItem>
                   <FormLabel>Comentario:</FormLabel>

@@ -77,4 +77,3 @@ export const useCreateAccessPase = (location: string, access_pass: Access_pass|n
     refetch,
   };
 };
-

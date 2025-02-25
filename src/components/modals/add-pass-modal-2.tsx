@@ -39,7 +39,6 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 	const [error, setError] = useState<unknown>();
 	const [openGeneratedPass, setOpenGeneratedPass] = useState<boolean>(false);
 	const [responseformated, setResponseFormated] = useState<data_correo|null>(null);
-	console.log("errrrr")
 	const onSubmit = async () => {
 		console.log("Datos en el Modal", data);
 		try {

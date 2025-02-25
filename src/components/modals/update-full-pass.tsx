@@ -62,7 +62,7 @@ import { EntryPassModalUpdate } from "./add-pass-modal-update";
  const areasSchema = z.array(
 	z.object({
 		nombre_area: z.string().optional(),         
-		comentario_area: z.string().optional(),     
+		commentario_area: z.string().optional(),     
 	})
 );
 
@@ -156,7 +156,7 @@ import { EntryPassModalUpdate } from "./add-pass-modal-update";
 			if ('nombre_area' in a) {
 				return a;
 			} else if ('note_booth' in a) {
-				return { nombre_area: a.note_booth, comentario_area: a.commentario_area };
+				return { nombre_area: a.note_booth, commentario_area: a.commentario_area };
 			}
 			return a; 
 		});

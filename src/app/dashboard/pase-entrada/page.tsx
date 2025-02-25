@@ -152,14 +152,24 @@ import { Contacto } from "@/lib/get-user-contacts";
 
 	// const protocol = window.location.protocol;  
 	// const host = window.location.host;  
-	const[ userIdSoter, setUserIdSoter] = useState<number|null>(()=>{
+	const[ userIdSoter] = useState<number|null>(()=>{
 			return Number(typeof window !== "undefined"? window.localStorage.getItem("userId_soter"):0) 
 	});
 
-	const[userNameSoter, setUserNameSoter] = useState<string|null>("")
-	const [userEmailSoter, setUserEmailSoter] = useState<string|null>("")
-	// const {userIdSoter,userEmailSoter, userNameSoter} = useAuthStore();
-	const [hostPro, setHostPro] = useState({ protocol: '', host: '' });
+	const[userNameSoter] = useState<string|null>(()=>{
+		return typeof window !== "undefined"? window.localStorage.getItem("userName_soter"):""
+	})
+	const [userEmailSoter] = useState<string|null>(()=>{
+		return typeof window !== "undefined"? window.localStorage.getItem("userEmail_soter"):""
+	})
+
+	const [host] = useState(()=>{
+		return typeof window !== "undefined"? window.location.host:""
+	});
+	const [protocol] = useState(()=>{
+		return typeof window !== "undefined"? window.location.protocol:""
+	});
+
 	const { data: configLocation, isLoading: loadingConfigLocation, refetch:refetchConfLocation } = useGetConfSeguridad(ubicacionSeleccionada);
 	const {data:catAreas, isLoading: loadingCatAreas, refetch:refetchAreas } = useCatalogoPaseArea(ubicacionSeleccionada)
 
@@ -180,19 +190,19 @@ import { Contacto } from "@/lib/get-user-contacts";
 	const [selected, setSelected] = useState<Contacto |null>(null);
 	const [isOpenModal, setOpenModal] = useState(false);
 
-	useEffect(() => {
-		if (typeof window !== "undefined") {
-		  const protocol = window.location.protocol;
-		  const host = window.location.host;
-		  setHostPro({ protocol, host });
+	// useEffect(() => {
+	// 	if (typeof window !== "undefined") {
+	// 	  const protocol = window.location.protocol;
+	// 	  const host = window.location.host;
+	// 	  setHostPro({ protocol, host });
   
-		  //const {userIdSoter,userEmailSoter, userNameSoter} = useAuthStore();
-		  console.log(window.localStorage.getItem("userEmail_soter"),window.localStorage.getItem("userName_soter") ,window.localStorage.getItem("userId_soter"))
-		  setUserIdSoter(Number(window.localStorage.getItem("userId_soter")));
-		  setUserNameSoter(window.localStorage.getItem("userName_soter"));
-		  setUserEmailSoter(window.localStorage.getItem("userEmail_soter"));
-		}
-	  }, []);
+	// 	  //const {userIdSoter,userEmailSoter, userNameSoter} = useAuthStore();
+	// 	  console.log(window.localStorage.getItem("userEmail_soter"),window.localStorage.getItem("userName_soter") ,window.localStorage.getItem("userId_soter"))
+	// 	  setUserIdSoter(Number(window.localStorage.getItem("userId_soter")));
+	// 	  setUserNameSoter(window.localStorage.getItem("userName_soter"));
+	// 	  setUserEmailSoter(window.localStorage.getItem("userEmail_soter"));
+	// 	}
+	//   }, []);
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -209,7 +219,7 @@ import { Contacto } from "@/lib/get-user-contacts";
 			visita_a: userNameSoter ?? "",
 			custom: true,
 			link:{
-				link :`${hostPro?.protocol}//${hostPro?.host}/dashboard/pase-update`,
+				link :`${protocol}//${host}/dashboard/pase-update`,
 				docs : formatedDocs,
 				// userIdSoter||
 				creado_por_id: userIdSoter || 0,

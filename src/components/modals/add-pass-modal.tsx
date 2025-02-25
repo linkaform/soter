@@ -255,7 +255,7 @@ export const EntryPassModal: React.FC<EntryPassUpdateModalProps> = ({
                       Area: <span className="">{area.nombre_area || "N/A"}</span>
                     </p>
                     <p className="font-medium mb-1">
-                      Comentario: <span className="">{area.comentario_area || "N/A"}</span>
+                      Comentario: <span className="">{area.commentario_area || "N/A"}</span>
                     </p>
                   </AccordionContent>
                 </AccordionItem>
@@ -346,7 +346,7 @@ export const EntryPassModal: React.FC<EntryPassUpdateModalProps> = ({
             
           ):null}
           
-          <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white" onClick={onSubmit}>
+          <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white" onClick={onSubmit} disabled={loadingCreatePase}>
                 { !loadingCreatePase ? (<>
                   {("Crear pase")}
                 </>) :(<> <Loader2 className="animate-spin"/> {"Creando pase..."} </>)}

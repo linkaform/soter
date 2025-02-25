@@ -47,19 +47,21 @@ export const formSchema =
 	modelosCatPadre : string[]
 	marcasCatPadre : string[]
 	vehicle: Vehiculo;
+	updatedVehicles: (value: string, fieldName:string ) => void;
 	}
 
 	const VehicleItem: React.FC<VehicleItemProps> = ({ account_id, isCollapsed, onToggleCollapse,onDelete, 
-	tiposCatPadre, modelosCatPadre, marcasCatPadre, vehicle,
+	tiposCatPadre, modelosCatPadre, marcasCatPadre, vehicle, updatedVehicles
 	})=>  {
 		const [tipoVehiculoState, setTipoVehiculoState] = useState("");
 		const [marcaState, setMarcaState] = useState("");
-		
-		const { isLoading: loadingCat, refetch } = useGetVehiculos({account_id, tipo:tipoVehiculoState, marca:marcaState})
+		const [catalogSearch, setCatalogSearch] = useState("");
+
+		const { data:dataVehiculos,isLoading: loadingCat, refetch } = useGetVehiculos({account_id, tipo:tipoVehiculoState, marca:marcaState})
 		const { data:catEstados, isLoading: loadingCatEstados } = useCatalogoEstados(account_id)
 
-		const [tiposCat] = useState<string[]>(tiposCatPadre);
-		const [marcasCat] = useState<string[]>(marcasCatPadre);
+		const [tiposCat, setTiposCat] = useState<string[]>(tiposCatPadre);
+		const [marcasCat, setMarcasCat] = useState<string[]>(marcasCatPadre);
 		const [modelosCat, setModelosCat] = useState<string[]>(modelosCatPadre);
 
 		const form = useForm<z.infer<typeof formSchema>>({
@@ -72,9 +74,23 @@ export const formSchema =
 			loadNewVehicle(vehicle)
 		}else{
 			refetch()
+			setTiposCat(dataVehiculos)
 		}
 	}, [])
 
+
+    useEffect(() => {
+		if(!tiposCat && dataVehiculos){
+		  setTiposCat(dataVehiculos)
+		}
+		console.log("helloooooo",dataVehiculos, catalogSearch)
+		if(dataVehiculos && catalogSearch=="marcas"){
+		  setMarcasCat(dataVehiculos)
+		}
+		if(dataVehiculos && catalogSearch=="modelos"){
+		  setModelosCat(dataVehiculos)
+		}
+	  }, [dataVehiculos]);
 
 	function loadNewVehicle(vehicle:Vehiculo){
 		form.setValue('tipo', vehicle?.tipo)
@@ -93,10 +109,23 @@ export const formSchema =
 
 	useEffect(() => {
 		if (marcaState) {
-			setModelosCat([]);
 			refetch()
 		}
-	}, [marcaState,refetch]);
+	}, [marcaState]);
+
+	// useEffect(()=>{
+	// 	if(loadingCat){
+	// 		console.log("loadingCat",loadingCat)
+	// 	}
+	// },[loadingCat])
+	const handleInputChange = (value:string, fieldName: string) => {
+		if (value === "") {
+			if (fieldName === "tipo") {
+				onDelete(); 
+			}
+		}
+		updatedVehicles(value, fieldName);
+	};
 
 return (
 <div className="p-8 mb-4">
@@ -132,9 +161,11 @@ return (
 									<FormControl>
 										<Select {...field} className="input"
 												onValueChange={(value:string) => {
-													console.log("ontoyyyyyyyy", value)
+												handleInputChange(value, "tipo"); 
 												field.onChange(value); 
-												setTipoVehiculoState(value);
+												setMarcasCat([])
+												setCatalogSearch("marcas")
+												setTipoVehiculoState(value)
 											}}
 											value={field.value}
 										>
@@ -173,13 +204,16 @@ return (
 									<FormControl>
 									<Select {...field} className="input"
 												onValueChange={(value:string) => {
+												handleInputChange(value, "marca"); 
 												field.onChange(value); 
-												setMarcaState(value);  // Actualiza el estado
+												setModelosCat([])
+												setMarcaState(value)
+												setCatalogSearch("modelos")
 											}}
 											value={field.value} 
 										>
 											<SelectTrigger className="w-full">
-											{loadingCat?(
+											{loadingCat && catalogSearch=="marcas"? (
 												<>
 												<SelectValue placeholder="Cargando marcas de vehículos..." />
 												</>
@@ -224,11 +258,12 @@ return (
 									<Select {...field} className="input"
 												onValueChange={(value:string) => {
 												field.onChange(value); 
+												handleInputChange(value, "mdoelo"); 
 											}}
 											value={field.value} 
 										>
 											<SelectTrigger className="w-full">
-											{loadingCat?(
+											{loadingCat && catalogSearch=="modelos"?(
 												<>
 												<SelectValue placeholder="Cargando modelos..." />
 												</>
@@ -273,6 +308,7 @@ return (
 										<Input placeholder="Matrícula" {...field} 
 											onChange={(e) => {
 												field.onChange(e); 
+												handleInputChange(e.target.value, "placas"); 
 												// handleSelectChange("placas", e.target.value); // Acción adicional
 											}}
 											value={field.value || ""}
@@ -294,6 +330,7 @@ return (
 									<Select {...field} className="input"
 												onValueChange={(value:string) => {
 												field.onChange(value); 
+												handleInputChange(value, "estado"); 
 												// handleSelectChange("estado", value)
 											}}
 											value={field.value} 
@@ -334,6 +371,7 @@ return (
 									<Select {...field} className="input"
 												onValueChange={(value:string) => {
 												field.onChange(value); 
+												handleInputChange(value, "color"); 
 												// handleSelectChange("color", value)
 											}}
 											value={field.value} 

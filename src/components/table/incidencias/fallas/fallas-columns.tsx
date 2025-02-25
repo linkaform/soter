@@ -5,30 +5,44 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { Check, Edit, Eye, Trash2 } from "lucide-react";
 import Image from "next/image";
+import { Imagen } from "@/lib/update-pass";
 
 
 
 
-export type Falla = {
-    id: string;
-    fechaHora: string;
-    estado: "abierto" | "cerrado" | "en proceso"; 
-    ubicacion: string; 
-    lugarFallo: string;
-    falla: string; 
-    evidencia: string;
-    comentarios: string; 
-    reporta: string; 
-    responsable: string; 
-  };
+export interface Fallas_record{
+  falla_responsable_solucionar_nombre: string
+  folio: string
+  falla_documento: Imagen[]
+  falla_reporta_departamento: any
+  falla_estatus: string
+  falla_caseta: string
+  falla: string
+  falla_responsable_solucionar_documento?: [string, any[]]
+  falla_evidencia: Imagen[]
+  falla_ubicacion: string
+  falla_comentarios: string
+  _id: string
+  falla_fecha_hora: string
+  falla_reporta_nombre: string
+  falla_grupo_seguimiento?: FallaGrupoSeguimiento[]
+  falla_folio_accion_correctiva?: string
+  falla_evidencia_solucion?: any[]
+  falla_documento_solucion?: any[]
+  falla_comentario_solucion?: string
+}
 
- 
+export interface FallaGrupoSeguimiento {
+  "679a485c66c5d089fa6b8efa": string
+  "66f2dfb2c80d24e5e82332b4": string
+  "66f2dfb2c80d24e5e82332b5": Imagen[]
+  "66f2dfb2c80d24e5e82332b6": Imagen[]
+  "66f2dfb2c80d24e5e82332b3": string
+  "679a485c66c5d089fa6b8ef9": string
+}
 
 
-
-
-
-  export const fallasColumns: ColumnDef<Falla>[] = [
+  export const fallasColumns: ColumnDef<Fallas_record>[] = [
 
     {
       id: "select",
@@ -69,34 +83,34 @@ export type Falla = {
       enableHiding: false,
     },
     {
-      accessorKey: "fechaHora",
+      accessorKey: "falla_fecha_hora",
       header: "Fecha y hora",
       cell: ({ row }) => (
-        <div>{row.getValue("fechaHora")}</div>
+        <div>{row.getValue("falla_fecha_hora")}</div>
       ),
       enableSorting: true,
     },
     {
-      accessorKey: "estado",
+      accessorKey: "falla_estatus",
       header: "Estado",
       cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("estado")}</div>
+        <div className="capitalize">{row.getValue("falla_estatus")}</div>
       ),
       enableSorting: true,
     },
     {
-      accessorKey: "ubicacion",
+      accessorKey: "falla_ubicacion",
       header: "Ubicación",
       cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("ubicacion")}</div>
+        <div className="capitalize">{row.getValue("falla_ubicacion")}</div>
       ),
       enableSorting: true,
     },
     {
-      accessorKey: "lugarFallo",
+      accessorKey: "falla_caseta",
       header: "Lugar del fallo",
       cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("lugarFallo")}</div>
+        <div className="capitalize">{row.getValue("falla_caseta")}</div>
       ),
       enableSorting: true,
     },
@@ -109,54 +123,48 @@ export type Falla = {
       enableSorting: true,
     },
     {
-      accessorKey: "evidencia",
+      accessorKey: "falla_evidencia",
       header: "Evidencia",
-      cell: ({ row }) => (
-        <div className="relative h-24 w-28">
-        <Image
-          src={row.getValue("evidencia")}
-          alt="evidencia"
-          fill
-          className="object-cover"
-        />
-      </div>
-      ),
+      cell: ({ row }) => {
+        const foto = row.original.falla_evidencia;
+        const primeraImagen = foto && foto.length > 0 ? foto[0].file_url : '/nouser.svg';
+        return(
+          <div className="relative h-24 w-28">
+            <Image
+              src={primeraImagen|| "/nouser.svg"}
+              alt="Fotografía"
+              fill
+              className="object-cover"
+            />
+          </div>
+        )},
       enableSorting: false,
     },
     {
-      accessorKey: "comentarios",
+      accessorKey: "falla_comentarios",
       header: "Comentarios",
       cell: ({ row }) => {
-        const comentarios = row.getValue("comentarios") as string[];
         return (
           <div className="capitalize">
-            {Array.isArray(comentarios) ? (
-              <ul className="list-disc pl-5">
-                {comentarios.map((comentario, index) => (
-                  <li key={index}>{comentario}</li>
-                ))}
-              </ul>
-            ) : (
-              <span>{comentarios}</span>
-            )}
+            {row.getValue("falla_comentarios")}
           </div>
         );
       },
       enableSorting: true,
     },
     {
-      accessorKey: "reporta",
+      accessorKey: "falla_reporta_nombre",
       header: "Reporta",
       cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("reporta")}</div>
+        <div className="capitalize">{row.getValue("falla_reporta_nombre")}</div>
       ),
       enableSorting: true,
     },
     {
-      accessorKey: "responsable",
+      accessorKey: "falla_responsable_solucionar_nombre",
       header: "Responsable",
       cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("responsable")}</div>
+        <div className="capitalize">{row.getValue("falla_responsable_solucionar_nombre")}</div>
       ),
       enableSorting: true,
     },

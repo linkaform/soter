@@ -30,59 +30,17 @@ import {
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Falla, fallasColumns } from "./fallas-columns";
+import {Fallas_record, fallasColumns } from "./fallas-columns";
 
-
-
-
-
-  const data: Falla[] = [
-    {
-      id: "1",
-      fechaHora: "2024-10-23 11:49",
-      estado: "abierto",
-      ubicacion: "Planta Monterrey",
-      lugarFallo: "Caseta Principal",
-      falla: "Problemas con el software",
-      evidencia: "/image/incidencia1.png",
-      comentarios: "El sistema para control de presión de máquinas no responde correctamente.",
-      reporta: "Pedro Páramo",
-      responsable: "Venustiano Carranza",
-    },
-    {
-      id: "2",
-      fechaHora: "2024-11-01 08:15",
-      estado: "cerrado",
-      ubicacion: "Planta Guadalajara",
-      lugarFallo: "Torre de Control",
-      falla: "Error en sensores",
-      evidencia: "/image/falla1.png",
-      comentarios: "Los sensores de temperatura están enviando valores incorrectos.",
-      reporta: "Juan Escutia",
-      responsable: "Guadalupe Victoria",
-    },
-    {
-      id: "3",
-      fechaHora: "2024-10-30 14:30",
-      estado: "en proceso",
-      ubicacion: "Planta Querétaro",
-      lugarFallo: "Área de Ensamblaje",
-      falla: "Interrupción eléctrica",
-      evidencia: "/image/incidencia1.png",
-      comentarios: "Hubo una interrupción en el suministro eléctrico que afectó las líneas de producción.",
-      reporta: "Sor Juana Inés",
-      responsable: "Miguel Hidalgo",
-    },
-  ];
+  interface ListProps {
+    refetch:() => void;
+    data: Fallas_record[];
+    setPrioridades: React.Dispatch<React.SetStateAction<string[]>>;
+    isLoading:boolean;
+    openModal: () => void;
+  }
   
-
-
-
-
-
-
-  
-export function FallasTable() {
+  const FallasTable:React.FC<ListProps> = ({ refetch, data, setPrioridades, isLoading, openModal})=> {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -98,7 +56,7 @@ export function FallasTable() {
   const [globalFilter, setGlobalFilter] = React.useState("");
 
   const table = useReactTable({
-    data,
+    data:data||[],
     columns: fallasColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -153,7 +111,7 @@ export function FallasTable() {
 
 
 
-  <Button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2">
+  <Button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2" onClick={openModal}>
     <Plus />        
         Nueva Falla
       </Button>
@@ -283,5 +241,5 @@ export function FallasTable() {
     </div>
   );
 }
-
+export default FallasTable;
 

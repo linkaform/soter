@@ -25,7 +25,7 @@ import { Label } from "@radix-ui/react-label";
 const formSchema = 
 			z.object({
 				nombre_area: z.string().optional(),
-				comentario_area: z.string().optional(),
+				commentario_area: z.string().optional(),
 			})
 
 	interface AreasItemProps {
@@ -47,7 +47,7 @@ const formSchema =
 			const area = formatArea(areaRaw)
 			const form = useForm<z.infer<typeof formSchema>>({
 				resolver: zodResolver(formSchema),
-				defaultValues: { nombre_area: "", comentario_area: "" }
+				defaultValues: { nombre_area: "", commentario_area: "" }
 		});
 
 		useEffect(() => {
@@ -65,12 +65,12 @@ const formSchema =
 			if ('nombre_area' in a) {
 				return a
 			} else if ('note_booth' in a) {
-				return {nombre_area: a.note_booth||"", comentario_area: a.commentario_area||""}
+				return {nombre_area: a.note_booth||"", commentario_area: a.commentario_area||""}
 			}
 		}
 		function loadNewArea(item:Areas){
 			form.setValue('nombre_area', item?.nombre_area||"")
-			form.setValue('comentario_area', item?.comentario_area||"")
+			form.setValue('commentario_area', item?.commentario_area||"")
 		}
 		
 		const handleInputChange = (value:string, fieldName: string) => {
@@ -210,17 +210,17 @@ return (
 
 						{/* Campo Comentario */}
 						<div className="form-item">
-							<label htmlFor="comentario_area" className="text-sm"> Comentario: </label>
+							<label htmlFor="commentario_area" className="text-sm"> Comentario: </label>
 							<Input
-								id="comentario_area"
-								// name="comentario_area"
+								id="commentario_area"
+								// name="commentario_area"
 								placeholder="Comentario"
-								{...form.register("comentario_area")}
+								{...form.register("commentario_area")}
 								onChange={(e) => {
-									form.setValue("comentario_area", e.target.value); // Actualiza el valor en react-hook-form
-									handleInputChange(e.target.value, "comentario_area"); // Función personalizada
+									form.setValue("commentario_area", e.target.value); // Actualiza el valor en react-hook-form
+									handleInputChange(e.target.value, "commentario_area"); // Función personalizada
 								}}
-								value={form.getValues("comentario_area")}
+								value={form.getValues("commentario_area")}
 								className="input-class"
 							/>
 						</div>
