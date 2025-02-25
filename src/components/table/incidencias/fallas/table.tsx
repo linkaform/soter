@@ -40,7 +40,7 @@ import {Fallas_record, fallasColumns } from "./fallas-columns";
     openModal: () => void;
   }
   
-  const FallasTable:React.FC<ListProps> = ({ refetch, data, setPrioridades, isLoading, openModal})=> {
+  const FallasTable:React.FC<ListProps> = ({ refetch, data, openModal})=> {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -78,6 +78,10 @@ import {Fallas_record, fallasColumns } from "./fallas-columns";
       globalFilter,
     },
   });
+
+  React.useEffect(()=>{
+    refetch()
+  },[])
 
   return (
     <div className="w-full">

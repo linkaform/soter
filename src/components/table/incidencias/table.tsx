@@ -96,7 +96,7 @@ const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, setPrioridades, i
   });
 
   useEffect(()=>{
-    refetch
+    refetch()
   },[])
 
   return (
