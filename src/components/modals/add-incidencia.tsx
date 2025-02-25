@@ -63,14 +63,14 @@ export const AddIncidenciaModal: React.FC<AddIncidenciasModalProps> = ({
 	setIsSuccess,
 }) => {
 	const [modalData, setModalData] = useState<any>(null);
-  const [ubicaciones, setUbicaciones] = useState<any| string[]>(["Planta Monterrey"]);
+  const [ubicaciones] = useState<any| string[]>(["Planta Monterrey"]);
 
-  const [areas, setAreas] = useState<any| string[]>(["Caseta Principal"]);
-  const [concepto, setConcepto] = useState<any| string[]>(["Fallos en la maquinaria industrial"]);
-  const [subconcepto, setSubconcepto] = useState<any| string[]>(["Cortadora de cerámica"]);
+  const [areas] = useState<any| string[]>(["Caseta Principal"]);
+  const [concepto] = useState<any| string[]>(["Fallos en la maquinaria industrial"]);
+  const [subconcepto,] = useState<any| string[]>(["Cortadora de cerámica"]);
 
-  const [reporta, setReporta] = useState<any| string[]>(["Pedro Parmo"]);
-  const [responsable, setResponsable] = useState<any| string[]>(["Roman Lezama de la Rosa"]);
+  const [reporta] = useState<any| string[]>(["Pedro Parmo"]);
+  const [responsable] = useState<any| string[]>(["Roman Lezama de la Rosa"]);
 //   const { data:responseUpdateFull, isLoading:loadingUpdateFull, refetch: refetchUpdateFull } = useCreateFalla(sendDataUpdate, id, folio, dataPass?.ubicacion);
 
 
@@ -93,7 +93,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciasModalProps> = ({
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
-    let formatData={
+    const formatData={
       falla: "Fallos en la maquinaria industrial",
       falla_caseta: "Caseta Principal",
       falla_comentarios:  "soy una prueba",
@@ -115,7 +115,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciasModalProps> = ({
 
   useEffect(()=>{
 	if(modalData){
-		
+		console.log(data)
 	}
   },[modalData])
 

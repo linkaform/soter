@@ -19,7 +19,7 @@ const IncidenciasPage = () => {
   const [prioridades, setPrioridades] = useState<string[]>([]);
 
   const [isSuccess, setIsSuccess] = useState(false);
-	const [modalData, setModalData] = useState<any>(null);
+	const [modalData] = useState<any>(null);
 
 
   const { data,isLoading, refetch} = useGetIncidencias("", "",[]);

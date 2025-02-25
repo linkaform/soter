@@ -1,4 +1,3 @@
-import { createPase } from "@/lib/create-access-pass";
 import { useQuery } from "@tanstack/react-query";
 
 export type Link = {

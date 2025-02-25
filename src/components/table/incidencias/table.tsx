@@ -34,6 +34,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Incidencia_record, incidenciasColumns } from "./incidencias-columns";
+import { useEffect } from "react";
 
 interface ListProps {
   refetch:() => void;
@@ -93,6 +94,10 @@ const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, setPrioridades, i
       globalFilter,
     },
   });
+
+  useEffect(()=>{
+    refetch
+  },[])
 
   return (
     <div className="w-full">
