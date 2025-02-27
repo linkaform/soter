@@ -8,7 +8,7 @@ export const useCreateFalla = (data_failure: inputFalla | null) => {
     enabled:false,
     queryFn: async () => {
         const data = await crearFalla(data_failure); 
-        let hasError= data.response.data.status_code
+        const hasError= data.response.data.status_code
         if(hasError == 400){
           const textMsj = errorMsj(data.response.data) 
           throw new Error(`Error al crear Falla, Error: ${textMsj?.text}`);

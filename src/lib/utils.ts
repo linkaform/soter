@@ -157,14 +157,14 @@ export function formatEquiposToBitacora(arr:Equipo[]): Equipo_bitacora[] {
 
 export function errorMsj(data:any, title = "Error", type="warning"){
   if(data.hasOwnProperty("json")){
-      let errores=[]
-      for(let err in data.json){
+      const errores=[]
+      for(const err in data.json){
            if(data.json[err].hasOwnProperty('label')){
               errores.push(data.json[err].label+': '+data.json[err].msg[0]+" ")
           }else {
                const subData = data.json[err];
                if (typeof subData === 'object' && subData !== null) {
-                   for (let subKey in subData) {
+                   for (const subKey in subData) {
                        const subItem = subData[subKey];
                        if (subItem && subItem.hasOwnProperty('label') && subItem.hasOwnProperty('msg')) {
                            errores.push(subItem.label + ': ' + subItem.msg + " ");
@@ -175,7 +175,7 @@ export function errorMsj(data:any, title = "Error", type="warning"){
       }
       return {title: title, text:errores.join(", "), type}
   }else if (data.hasOwnProperty("error")){
-      let error= data.error
+      const error= data.error
       if(error.hasOwnProperty('msg')){
           if(typeof error.msg ==='string'){
             return {title: title, text: error.msg, type}
