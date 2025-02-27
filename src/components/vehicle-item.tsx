@@ -83,7 +83,6 @@ export const formSchema =
 		if(!tiposCat && dataVehiculos){
 		  setTiposCat(dataVehiculos)
 		}
-		console.log("helloooooo",dataVehiculos, catalogSearch)
 		if(dataVehiculos && catalogSearch=="marcas"){
 		  setMarcasCat(dataVehiculos)
 		}
@@ -128,13 +127,13 @@ export const formSchema =
 	};
 
 return (
-<div className="p-8 mb-4">
+<div className="p-2">
 	{/* Confirmar Pase de entrada modal */}
 	<div className="flex justify-between">
 		{isCollapsed ? (<>
-		<h3 className="font-bold text-lg mb-3">{vehicle?.tipo}</h3>
+		<h3 className="font-bold text-lg ml-3">{vehicle?.tipo}</h3>
 		</>) : (<>
-			<h3 className="font-bold text-lg mb-3">Datos del Vehículo : {vehicle?.tipo}</h3>
+			<h3 className="font-bold text-lg ml-3 p-2">Datos del Vehículo : {vehicle?.tipo}</h3>
 		</>)}
 		<div className="flex justify-between gap-5">
 			<button onClick={onToggleCollapse} className="text-blue-500">
@@ -150,7 +149,7 @@ return (
 		<Form {...form}>
 			<form className="space-y-5">
 			{!isCollapsed && (
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-5" >
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-5 p-5" >
 						{/* Tipo de Vehículo */}
 						<FormField
 							control={form.control}

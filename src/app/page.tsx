@@ -2,35 +2,44 @@
 
 import { MainLayout } from "@/components/Layout/MainLayout";
 import { useGetMenu } from "@/hooks/useGetMenu";
-import { capitalizeOnlyFirstLetterDelete_ } from "@/lib/utils";
+import { capitalizeFirstLetter } from "@/lib/utils";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+type menuItem = {
+    id:string,
+    text:string
+}
 export default function Home() {
     const router = useRouter(); 
     const { data, isLoading } = useGetMenu();
-    const [menu, setMenu] = useState<string[]>([]);
+    const [menu, setMenu] = useState<menuItem[]>([]);
     const handleClick = (menuName: string) => {
-        console.log(`Se hizo clic en: ${menuName}`);
-        if (menuName == "fallas") menuName="incidencias"
-        if (menuName == "articulos_concesionados" || menuName == "articulos_concesionados") menuName="articulos"
         router.push(`/dashboard/${menuName}`); 
     };
 
     useEffect(() => {
         if(data){
-            let updatedData = [...data];
-            if (updatedData.includes("incidencias") && !updatedData.includes("fallas")) {
-                updatedData.push("fallas");
-            }
-            if (updatedData.includes("articulos")) {
-                updatedData = updatedData.filter(item => item !== "articulos"); 
-                updatedData.push("articulos_concesionados", "articulos_perdidos"); 
-            }
-            setMenu(updatedData);
+            const transformedData = data.map((item: string) => {
+                let text = item;
+                if (item === "incidencias") {
+                    text = "Incidencias / Fallas";
+                } else if (item === "articulos" || item === "articulos") {
+                    text = "Artículos Perdidos / Concesionados";
+                }
+                else if (item === "pases") {
+                    text = "Pases de entrada";
+                }else{
+                    text = capitalizeFirstLetter(item);
+                }
+                return {
+                    id: item,
+                    text: text,
+                };
+            })
+            setMenu(transformedData)
         }
-        
     }, [data]);
 
     return (
@@ -61,27 +70,26 @@ export default function Home() {
                     <div className="flex flex-wrap gap-5 p-4 justify-center items-center sm:w-1/2 md:w-1/3 lg:w-4/6">
                         {menu?.length > 0 ? (
                             menu.sort((a, b) => {
-                                if (a === "pases") return -1;  // pases va primero
-                                if (b === "pases") return 1;   // si {b} es pases, {a} va antes
-                                if (a === "turnos") return -1;  // turnos va después de pases
-                                if (b === "turnos") return 1;   // si {b} es turnos, {a} va antes
+                                if (a.id === "pases") return -1;  // pases va primero
+                                if (b.id === "pases") return 1;   // si {b} es pases, {a} va antes
+                                if (a.id === "turnos") return -1;  // turnos va después de pases
+                                if (b.id === "turnos") return 1;   // si {b} es turnos, {a} va antes
                                 return 0; 
-                            }).map((item: string) => {
-                                console.log("menu",menu)
+                            }).map((item: menuItem) => {
                                     return (
-                                        <div key={item} className="flex flex-wrap">
+                                        <div key={item.id} className="flex flex-wrap">
                                             <div
-                                                onClick={() => handleClick(item)}
+                                                onClick={() => handleClick(item.id)}
                                                 className="text-center p-4 bg-gray-100 rounded-lg shadow-md flex flex-col justify-center items-center w-64 h-40 group transition-transform duration-200 transform hover:scale-105 hover:bg-gray-200 cursor-pointer hover:shadow-[0_4px_4px_rgba(0,0,0,0.2)]"
                                             >
                                                 <Image
                                                     width={250}
                                                     height={250}
-                                                    alt={item}
-                                                    src={`/${item}.svg`}
+                                                    alt={item.id}
+                                                    src={`/${item.id}.svg`}
                                                     className="aspect-square rounded-md group-hover:opacity-75 h-12"
                                                 />
-                                                <p className="mt-2 text-lg">{capitalizeOnlyFirstLetterDelete_(item)}</p>
+                                                <p className="mt-2 text-lg">{item.text}</p>
                                             </div>
                                         </div>
                                     );

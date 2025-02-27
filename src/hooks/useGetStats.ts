@@ -1,11 +1,11 @@
-import { getUserContacts } from "@/lib/get-user-contacts";
+import { getStats } from "@/lib/get-incidencias-stats";
 import { useQuery } from "@tanstack/react-query";
 
-export const useGetUserContacts= () => {
-  const { data, isLoading, error, isFetching, refetch } = useQuery<any[]>({
-    queryKey: ["getUserContacts"], 
+export const useGetStats= (area:string, location:string, page:string) => {
+  const { data, isLoading, error, isFetching, refetch } = useQuery<any>({
+    queryKey: ["getStats", area, location, page], 
     queryFn: async () => {
-        const data = await getUserContacts(); 
+        const data = await getStats(area, location, page); 
         return data.response?.data;
     },
 

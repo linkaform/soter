@@ -155,60 +155,40 @@ export function formatEquiposToBitacora(arr:Equipo[]): Equipo_bitacora[] {
   }));
 }
 
-
-
-
-// export function errorAlert(data:any, title = "Error", type="warning"){
-//   if(data.hasOwnProperty("json")){
-//     const errores=[]
-//       for(const err in data.json){
-//            if(data.json[err].hasOwnProperty('label')){
-//               errores.push(data.json[err].label+': '+data.json[err].msg+" ")
-//           }else {
-//               for (const subKey in err as unknown as { [key: string]: any }){
-//                   for(const subKey2 in data.json[err][subKey]){
-//                       errores.push(data.json[err][subKey][subKey2].label+': '+data.json[err][subKey][subKey2].msg+" ")
-//                   }
-//               }
-//           }
-//       }
-//       Swal.fire({
-//           title: title,
-//           text: errores.flat(),
-//           type: "warning"
-//       });
-//   }else if (data.hasOwnProperty("error")){
-//     const error= data.error
-//       if(error.hasOwnProperty('msg')){
-//           if(typeof error.msg ==='string'){
-//               Swal.fire({
-//                   title: title,
-//                   text: error.msg,
-//                   type: "warning"
-//               });
-//           }else{
-//               Swal.fire({
-//                   title: error.msg.title,
-//                   text: error.msg.msg,
-//                   type: error.msg.type
-//               });
-//           }
-//       }else{
-//           Swal.fire({
-//               title: title,
-//               text: error,
-//               type: type
-//           });
-//       }
-//   }else if (typeof data ==='string'){
-//       Swal.fire({
-//           title: title,
-//           text: data,
-//           type: type
-//       });
-//   }
-// }
-
+export function errorMsj(data:any, title = "Error", type="warning"){
+  if(data.hasOwnProperty("json")){
+      let errores=[]
+      for(let err in data.json){
+           if(data.json[err].hasOwnProperty('label')){
+              errores.push(data.json[err].label+': '+data.json[err].msg[0]+" ")
+          }else {
+               const subData = data.json[err];
+               if (typeof subData === 'object' && subData !== null) {
+                   for (let subKey in subData) {
+                       const subItem = subData[subKey];
+                       if (subItem && subItem.hasOwnProperty('label') && subItem.hasOwnProperty('msg')) {
+                           errores.push(subItem.label + ': ' + subItem.msg + " ");
+                       }
+                   }
+               }
+          }
+      }
+      return {title: title, text:errores.join(", "), type}
+  }else if (data.hasOwnProperty("error")){
+      let error= data.error
+      if(error.hasOwnProperty('msg')){
+          if(typeof error.msg ==='string'){
+            return {title: title, text: error.msg, type}
+          }else{
+              return {title: error.msg.title, text: error.msg.msg, type:error.msg.type}
+          }
+      }else{
+        return {title: title, text: error, type: type}
+      }
+  }else if (typeof data ==='string'){
+      return {title: title, text: data, type: type}
+  }
+}
 
 export function renameKeyTipoComentario(array:any) {
   return array.map((item: { [x: string]: any; tipo_de_comentario: any }) => {

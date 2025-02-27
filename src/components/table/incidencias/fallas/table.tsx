@@ -120,9 +120,6 @@ import {Fallas_record, fallasColumns } from "./fallas-columns";
         Nueva Falla
       </Button>
 
-      
-     
-
       <Button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2">
       <FileX2 />
         

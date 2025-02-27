@@ -234,7 +234,6 @@ export const bitacorasColumns: ColumnDef<Bitacora_record>[] = [
 			const lockerColorClass = isLockerEntregado ? "text-red-500" : isLockerAsignado ? "text-green-500" : "";
 			return (
 				<div className={`capitalize ${lockerColorClass}`}>
-					{/* Mostrar el nombre del locker (id_locker), pero con colores dependiendo del status */}
 					{row.getValue("id_locker")}
 				</div>
 			);

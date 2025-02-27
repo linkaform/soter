@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/popover";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import Swal from 'sweetalert2'
-import { useEffect } from "react";
 
 
 interface DateTimeListProps {
@@ -69,11 +68,6 @@ const DateTime:React.FC<DateTimeListProps> = ({date, setDate})=> {
     return selectedDate.getTime() < today.getTime();
   };
 
-  useEffect(()=>{
-    console.log("ESTA ABIERTO",isOpen)
-
-  },[isOpen])
-
   const handlePopoverToggle = () => {
     setIsOpen((prevState) => !prevState); // Alternar entre abierto y cerrado
   };
@@ -101,7 +95,6 @@ const DateTime:React.FC<DateTimeListProps> = ({date, setDate})=> {
         <div className="sm:flex">
           <Calendar
             mode="single"
-            selected={date instanceof Date ? date : undefined}
             onSelect={handleDateSelect}
             initialFocus
             disabled={isDateDisabled}

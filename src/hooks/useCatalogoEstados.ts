@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { getCatalogoEstados } from "@/lib/get-catalogos-estado";
 import { useQuery } from "@tanstack/react-query";
 

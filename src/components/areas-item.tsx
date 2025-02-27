@@ -83,12 +83,12 @@ const formSchema =
 		};
 
 return (
-	<div className="p-8 mb-4">
+	<div className="p-2">
 		<div className="flex justify-between">
 			{isCollapsed ? (<>
-			<h3 className="font-bold text-lg mb-3 w-80 truncate">{area?.nombre_area}</h3>
+			<h3 className="font-bold text-lg ml-3 w-80 truncate">{area?.nombre_area}</h3>
 			</>) : (<>
-				<h3 className="font-bold text-lg mb-3 w-96 truncate">Datos del Área: {area?.nombre_area}</h3>
+				<h3 className="font-bold text-lg ml-3 p-2 w-96 truncate">Datos del Área: {area?.nombre_area}</h3>
 			</>)}
 			<div className="flex justify-between gap-5">
 				<button onClick={onToggleCollapse} className="text-blue-500">
@@ -101,78 +101,9 @@ return (
 			</div>
 			
 		</div>
-			{/* <Form {...form}> 
-				<form className="space-y-5">
-				{!isCollapsed && (
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-5" >
-							<FormField
-								control={form.control}
-								name="nombre_area"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Área:</FormLabel>
-										<FormControl>
-												<Select {...field} 
-														onValueChange={(value:string) => {
-														field.onChange(value); 
-														handleInputChange(value, "nombre_area")
-													}}
-													value={field.value}
-												>
-												<SelectTrigger className="w-full">
-												{loadingCatAreas?(
-													<>
-													<SelectValue placeholder="Cargando tipos de areas..." />
-													</>
-												): (
-													<>
-													<SelectValue placeholder="Selecciona un tipo de areas" />
-													</>
-												)}
-												</SelectTrigger>
-												<SelectContent>
-												{catAreas?.map((area:string, index:number) => (
-													<SelectItem key={index} value={area}>
-														{area}
-													</SelectItem>
-												))}
-												</SelectContent>
-												</Select>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-
-							<FormField
-								control={form.control}
-								name="comentario_area"
-								render={({ field }) => (
-									<FormItem>
-										<FormLabel>Comentario:</FormLabel>
-										<FormControl>
-											<Input placeholder="Comentario" {...field} 
-												onChange={(e) => {
-													field.onChange(e); // Actualiza el valor en react-hook-form
-													handleInputChange(e.target.value, "comentario_area")
-												}}
-												value={field.value || ""}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-
-							</div>
-				)}
-				</form> 
-				</Form> */}
-
-
 				<form className="space-y-5">
 					{!isCollapsed && (
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-5 p-5 pt-2">
 						{/* Campo Área */}
 						<div className="form-item">
 							<Label htmlFor="nombre_area" className="text-sm">

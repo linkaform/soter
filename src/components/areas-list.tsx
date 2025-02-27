@@ -131,8 +131,8 @@ const AreasList:React.FC<AreasListProps> = ({ location, areas, setAreas, catArea
       )})}
 
       <Form {...form} >
-      <div className="border p-8 rounded mt-5">
-        <div className="font-bold text-lg">Agregar Area</div>
+      <div className="border p-7 pb-4 pt-4 rounded mt-5">
+        <div className="font-bold text-lg mb-2">Agregar Area</div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5" >
             <FormField
               control={form.control}

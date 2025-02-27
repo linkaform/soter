@@ -75,7 +75,7 @@ export type Incidencia = {
     return (
       <div className="flex space-x-2">
         <ViewIncidencia 
-          title="Información de Incidencia"
+          title="Información de la Incidencia"
           data={incidencia} isSuccess={false}>
             <div className="cursor-pointer">
               <Eye /> 
@@ -182,14 +182,13 @@ export type Incidencia = {
             const foto = row.original.evidencia_incidencia;
             const primeraImagen = foto && foto.length > 0 ? foto[0].file_url : '/nouser.svg';
             return(
-              <div className="relative h-24 w-28">
                 <Image
                   src={primeraImagen|| "/nouser.svg"}
                   alt="Fotografía"
-                  fill
+                  width={80}
+                  height={80}
                   className="object-cover"
                 />
-              </div>
             )},
           enableSorting: false,
         },

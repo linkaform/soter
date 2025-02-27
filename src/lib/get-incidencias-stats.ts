@@ -1,10 +1,15 @@
-export const getCatalogoFallas = async (tipo:string) => {
+export const getStats = async (
+    location:string, area:string,page:string) => {
     const payload = {
-        tipo,
-        option: "catalogo_fallas",
-        script_name: "fallas.py",
+        area,
+        location,
+        page,
+        option: "get_stats",
+        script_name: "get_stats.py",
     };
+  
     const userJwt = localStorage.getItem("access_token"); 
+  
     const response = await fetch(`https://app.linkaform.com/api/infosync/scripts/run/`, {
         method: "POST",
         headers: {
@@ -17,3 +22,4 @@ export const getCatalogoFallas = async (tipo:string) => {
     const data = await response.json();
     return data;
   };
+  

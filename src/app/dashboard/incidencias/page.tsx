@@ -9,9 +9,10 @@ import ReusableAccordion from "@/components/resuable-accordion";
 import PageTitle from "@/components/page-title";
 import { useGetIncidencias } from "@/hooks/useGetIncidencias";
 import IncidenciasTable from "@/components/table/incidencias/table";
-import { AddIncidenciaModal } from "@/components/modals/add-incidencia";
 import FallasTable from "@/components/table/incidencias/fallas/table";
 import { useGetFallas } from "@/hooks/useGetFallas";
+import { AddFallaModal } from "@/components/modals/add-falla";
+import { useGetStats } from "@/hooks/useGetStats";
 
 
 const IncidenciasPage = () => {
@@ -24,6 +25,13 @@ const IncidenciasPage = () => {
 
   const { data,isLoading, refetch} = useGetIncidencias("", "",[]);
   const { data:dataFallas,isLoading:isLoadingFallas, refetch:refetchFallas} = useGetFallas("", "","abierto");
+  const { data: dataStats} = useGetStats("", "", "Incidencias");
+
+  useEffect(()=>{
+    if(dataStats){
+      console.log("errorAE",dataStats)
+    }
+  },[dataStats])
 
   useEffect(()=>{
     if(prioridades){
@@ -41,12 +49,13 @@ const IncidenciasPage = () => {
 
   return (
     <div className="">
-			<AddIncidenciaModal
+			<AddFallaModal
 				title={"Crear falla"}
 				data={modalData}
 				isSuccess={isSuccess}
 				setIsSuccess={setIsSuccess}
 				onClose={closeModal}
+        refetchTableFallas={refetchFallas}
 			/>
       <div className="flex flex-col">
         <div className="p-6 space-y-6 w-full mx-auto">
@@ -63,12 +72,12 @@ const IncidenciasPage = () => {
             estadisticas={[
               {
                 label: "Incidentes X Día",
-                value: 65,
+                value: dataStats?.incidentes_x_dia,
                 icon: <TriangleAlert />,
               },
               {
                 label: "Fallas pendientes",
-                value: 29,
+                value: dataStats?.fallas_pendientes,
                 icon: <UndoDot />,
               },
             ]}

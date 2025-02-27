@@ -39,7 +39,6 @@ import DateTime from "@/components/dateTime";
 import { MisContactosModal } from "@/components/modals/user-contacts";
 import Image from "next/image";
 import { Contacto } from "@/lib/get-user-contacts";
-// import useAuthStore from "@/store/useAuthStore";
 
  const formSchema = z
 	.object({
@@ -139,7 +138,6 @@ import { Contacto } from "@/lib/get-user-contacts";
   });
 
   const PaseEntradaPage = () =>  {
-	// const {userEmailSoter, userNameSoter , userIdSoter}= useAuthStore()
 	const [tipoVisita, setTipoVisita] = useState("fecha_fija");
 	const [config_dias_acceso, set_config_dias_acceso] = useState<string[]>([]);
 	const [config_dia_de_acceso, set_config_dia_de_acceso] = useState("cualquier_día");
@@ -685,7 +683,7 @@ return (
 								onClick={handleToggleSMS}
 								className={`px-4 py-2 rounded-md transition-all duration-300 ${
 									isActiveSMS ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
-								} hover:bg-transparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
+								} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
 								>
 								<div className="flex flex-wrap items-center">
 									{isActiveSMS ? (
@@ -1041,8 +1039,8 @@ return (
 							type="button"
 							onClick={handleToggleAdvancedOptions}
 							className={`px-4 py-2 rounded-md transition-all duration-300 ${
-								isActiveAdvancedOptions ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
-							} hover:bg-transparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
+									isActiveAdvancedOptions ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
+								} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
 							>
 							<div className="flex flex-wrap">
 								{isActiveAdvancedOptions ? (

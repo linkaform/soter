@@ -50,14 +50,14 @@ interface ComentariosItemProps {
 	  };
 
   return (
-	<div className="p-8 mb-4">
-		  <div className="flex justify-between">
+	<div className="p-2">
+		  <div className="flex justify-between ">
 			  {isCollapsed ? (<>
-				  <h3 className="font-bold text-lg mb-3 w-80 truncate">{comentario.comentario_pase}</h3>
+				  <h3 className="font-bold text-lg ml-3 w-80 truncate">{comentario.comentario_pase}</h3>
 			  </>) : (<>
-				  <h3 className="font-bold text-lg mb-3 w-96 truncate">Datos del comentario o instrucción: {comentario.comentario_pase}</h3>
+				  <h3 className="font-bold text-lg p-2 ml-3 w-96 truncate">Datos del comentario o instrucción: {comentario.comentario_pase}</h3>
 			  </>)}
-			  <div className="flex justify-between gap-5">
+			  <div className="flex justify-between gap-5 ">
 				  <button onClick={onToggleCollapse} className="text-blue-500">
 					  {isCollapsed ? 'Abrir' : 'Cerrar'}
 				  </button>
@@ -68,37 +68,9 @@ interface ComentariosItemProps {
 			  </div>
 
 		  </div>
-		  {/* <Form {...form}>
-         <form className="space-y-5">
-            {!isCollapsed && (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5" >
-                        <FormField
-                        control={form.control}
-                        name="comentario_pase"
-                        render={({ field }:any) => (
-                            <FormItem>
-                                <FormLabel>Comentario o Instrucción:</FormLabel>
-                                <FormControl>
-                                        <Input placeholder="Comentario" {...field}
-                                        onChange={(e) => {
-                                            field.onChange(e); // Actualiza el valor en react-hook-form
-                                            onComentarioChange(e);
-                                        }}
-                                        value={field.value || ""}
-                                        />
-                                </FormControl>
-                            <FormMessage />
-                            </FormItem>
-                        )}
-                        />
-                    </div>
-            )}
-         </form>
-     </Form> */}
-
-		    <form onSubmit={form.handleSubmit((data) => console.log("Formulario enviado con:", data))} className="space-y-5">
+		    <form onSubmit={form.handleSubmit((data) => console.log("Formulario enviado con:", data))} className="space-y-5 ">
 				{!isCollapsed && (
-					<div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-5 p-5">
 						<div>
 							<Input
 								id="comentario_pase"

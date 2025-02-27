@@ -139,7 +139,8 @@ export const pasesEntradaColumns: ColumnDef<PaseEntrada>[] = [
           {/* Imagen */}
           <div>
             {primeraImagen ? (
-              <Image width={150} height={150} src={primeraImagen} alt="Imagen" className="h-24 w-24 object-cover rounded-full bg-gray-300" />
+              <Image width={75}
+              height={75} src={primeraImagen} alt="Imagen" className=" object-cover rounded-full bg-gray-300" />
             ) : (
               <span>No hay imagen</span>
             )}
