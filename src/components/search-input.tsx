@@ -4,8 +4,8 @@ import { Search } from "lucide-react";
 
 // Definir la interfaz de las propiedades
 interface SearchInputProps {
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const SearchInput: React.FC<SearchInputProps> = ({ value, onChange }) => {
