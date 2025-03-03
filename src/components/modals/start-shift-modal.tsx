@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { useState } from "react";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -9,6 +9,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
+import { useShiftStore } from "@/store/useShiftStore";
+import { useGuardSelectionStore } from "@/store/useGuardStore";
+import { useGetShift } from "@/hooks/useGetShift";
 
 interface StartShiftModalProps {
   title: string;
@@ -19,12 +22,15 @@ export const StartShiftModal: React.FC<StartShiftModalProps> = ({
   title,
   children,
 }) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [selectedGuardias, setSelectedGuardias] = useState([
-    "Carlos Rodríguez Pérez",
-    "Felipe Carranza Piña",
-    "Fernando López García",
-  ]);
+  const { area, location } = useShiftStore();
+
+  const { selectedGuards } = useGuardSelectionStore();
+
+  const { startShiftMutation } = useGetShift();
+
+  const guardNames = selectedGuards
+    ?.map((guardia: { name: string }) => guardia.name)
+    .join(", ");
 
   return (
     <Dialog>
@@ -39,25 +45,18 @@ export const StartShiftModal: React.FC<StartShiftModalProps> = ({
 
         <div className="px-16 mb-5">
           <p className="text-center mb-5">
-            ¿Desea iniciar el turno en la caseta
-            <span className="font-semibold"> 6 Poniente </span>
-            en la
-            <span className="font-semibold"> Planta Monterrey?</span>
+            ¿Desea iniciar el turno en la{" "}
+            <span className="font-semibold">{area}</span> en la
+            <span className="font-semibold"> {location}</span>
+            {guardNames?.length > 0 ? (
+              <>
+                {"  "}con los siguientes guardias{" "}
+                <span className="font-semibold">{guardNames}</span>?
+              </>
+            ) : (
+              "?"
+            )}
           </p>
-          <div>
-            <p className="font-semibold mb-3">Guardias de Apoyo:</p>
-            <ul className="list-disc ml-6">
-              {selectedGuardias.length > 0 ? (
-                selectedGuardias.map((guardia, index) => (
-                  <li key={index}>{guardia}</li>
-                ))
-              ) : (
-                <li className="text-gray-500">
-                  No hay guardias seleccionados.
-                </li>
-              )}
-            </ul>
-          </div>
         </div>
 
         <div className="flex gap-5">
@@ -67,13 +66,23 @@ export const StartShiftModal: React.FC<StartShiftModalProps> = ({
             </Button>
           </DialogClose>
 
-
           <DialogClose asChild>
-          <Button className="w-full  bg-blue-500 hover:bg-blue-600 text-white ">
-            Confirmar
-          </Button>
-          </DialogClose>
+            <Button
+              className="w-full  bg-blue-500 hover:bg-blue-600 text-white"
+              onClick={() => {
+                const formattedGuards = selectedGuards?.map(
+                  (guard: { user_id: number; name: string }) => ({
+                    user_id: guard.user_id,
+                    name: guard.name,
+                  })
+                );
 
+                startShiftMutation.mutate({ employee_list: formattedGuards });
+              }}
+            >
+              Confirmar
+            </Button>
+          </DialogClose>
         </div>
       </DialogContent>
     </Dialog>

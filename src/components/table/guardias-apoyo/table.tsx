@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import * as React from "react";
@@ -13,6 +14,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 
@@ -24,67 +26,51 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { AddGuardModal } from "@/components/modals/add-guard-modal";
 import Exit from "@/components/icon/exit";
 import { ExitGuardModal } from "@/components/modals/exit-guard-modal";
+import { Plus } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
-
-const initialData: GuardiaApoyo[] = [
-  {
-    id: "a1b2c3d4",
-    empleado: "Juan Pérez",
-    avatar: "/image/empleado1.png",
-  },
-  {
-    id: "e5f6g7h8",
-    empleado: "María López",
-    avatar: "/image/empleado2.png",
-  },
-  {
-    id: "i9j0k1l2",
-    empleado: "Carlos Díaz",
-    avatar: "/image/empleado3.png",
-  },
-  {
-    id: "m3n4o5p6",
-    empleado: "Ana García",
-    avatar: "/image/empleado1.png",
-  },
-  {
-    id: "q7r8s9t0",
-    empleado: "Luis Hernández",
-    avatar: "/image/empleado2.png",
-  },
-  {
-    id: "u1v2w3x4",
-    empleado: "Laura Martínez",
-    avatar: "/image/empleado3.png",
-  },
-  {
-    id: "y5z6a7b8",
-    empleado: "Pedro Jiménez",
-    avatar: "/image/empleado1.png",
-  },
-  {
-    id: "c9d0e1f2",
-    empleado: "Sofía Castro",
-    avatar: "/image/empleado2.png",
-  },
-  {
-    id: "g3h4i5j6",
-    empleado: "Roberto Morales",
-    avatar: "/image/empleado3.png",
-  },
-];
-
-export type GuardiaApoyo = {
-  id: string;
-  empleado: string;
-  avatar: string;
-};
+import { useGetShift } from "@/hooks/useGetShift";
+import { useGetSupportGuards } from "@/hooks/useGetSupportGuards";
+import { useShiftStore } from "@/store/useShiftStore";
+import { useGuardSelectionStore } from "@/store/useGuardStore";
 
 export function GuardiasApoyoTable() {
-  const columns: ColumnDef<GuardiaApoyo>[] = [
+  const { checkoutSupportGuardsMutation } = useGetSupportGuards();
+
+  const { shift } = useGetShift();
+
+  const { location, area } = useShiftStore();
+
+
+    const {toggleGuardSelection, clearSelectedGuards} =   useGuardSelectionStore()
+  
+
+  
+    React.useEffect(() => {
+      clearSelectedGuards(); // 🔥 Reinicia la selección de guardias cuando el componente se monta
+    }, [clearSelectedGuards]);
+
+
+
+
+
+  const handleConfirmCheckout = (guardia: any) => {
+    checkoutSupportGuardsMutation.mutate({
+      area,
+      location,
+      guards: [guardia.user_id],
+    });
+  };
+
+
+
+  
+
+
+
+  const columns: ColumnDef<any>[] = [
     {
       id: "select",
       header: ({ table }) => (
@@ -100,7 +86,10 @@ export function GuardiasApoyoTable() {
       cell: ({ row }) => (
         <Checkbox
           checked={row.getIsSelected()}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          onCheckedChange={(value) => {
+            row.toggleSelected(!!value)
+            toggleGuardSelection(row.original)
+          }}
           aria-label="Select row"
         />
       ),
@@ -109,49 +98,56 @@ export function GuardiasApoyoTable() {
     },
     {
       id: "avatar",
-      header: "",
+      header: "Foto",
       cell: ({ row }) => (
-        <div className="flex items-center space-x-4">
-          <Avatar className="w-14 h-14">
-            <AvatarImage
-              src={row.original.avatar}
-              alt={`${row.original.empleado} avatar`}
+        <div className="flex items-center">
+          <div className="relative w-14 h-14 rounded-full overflow-hidden">
+            <Image
+              src={row.original.picture || "/nouser.svg"}
+              alt={`${row.original.name || "Sin nombre"} avatar`}
+              fill
+              sizes="56px"
+              style={{ objectFit: "cover" }}
             />
-            <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
+          </div>
         </div>
       ),
       enableSorting: false,
       enableHiding: false,
     },
     {
-      accessorKey: "empleado",
+      accessorKey: "name",
       header: "Empleado",
       cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("empleado")}</div>
+        <div className="capitalize">{row.getValue("name")}</div>
       ),
     },
 
     {
       id: "actions",
       header: "",
-      cell: ({ row }) => (
-        <ExitGuardModal
-          title="Confirmación"
-          empleado={row.original.empleado} // Pasamos el nombre del guardia al modal
-          onConfirm={() => handleDeleteGuard(row.original.id)}
-        >
-          <div className="cursor-pointer">
-            <Exit /> {/* El ícono que abre el modal */}
-          </div>
-        </ExitGuardModal>
-      ),
+      cell: ({ row }) => {
+        // Mostrar ExitGuardModal solo si el turno no está cerrado
+        if (shift?.guard?.status_turn === "Turno Cerrado") {
+          return null; // No mostrar nada
+        }
+
+        return (
+          <ExitGuardModal
+            title="Confirmación"
+            empleado={row.original.name}
+            onConfirm={() => handleConfirmCheckout(row.original)} // Llamada al confirmar
+          >
+            <div className="cursor-pointer">
+              <Exit />
+            </div>
+          </ExitGuardModal>
+        );
+      },
       enableSorting: false,
       enableHiding: false,
     },
   ];
-
-  const [guardias, setGuardias] = React.useState<GuardiaApoyo[]>(initialData);
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -165,13 +161,14 @@ export function GuardiasApoyoTable() {
     pageSize: 3,
   });
 
-  const [empleadoFilter, setEmpleadoFilter] = React.useState("");
+  const [globalFilter, setGlobalFilter] = React.useState("");
 
   const table = useReactTable({
-    data: guardias,
+    data: shift?.support_guards || [],
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
+    onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
@@ -186,44 +183,36 @@ export function GuardiasApoyoTable() {
       columnVisibility,
       rowSelection,
       pagination,
+      globalFilter,
     },
   });
 
-  React.useEffect(() => {
-    setColumnFilters([{ id: "empleado", value: empleadoFilter }]);
-  }, [empleadoFilter]);
-
-  // const handleAddGuardias = (selectedGuardias: GuardiaApoyo[]) => {
-  //   setGuardias((prevGuardias) => [...selectedGuardias, ...prevGuardias]);
-  // };
-
-  const handleDeleteGuard = (id: string) => {
-    setGuardias((prevGuardias) =>
-      prevGuardias.filter((guardia) => guardia.id !== id)
-    );
-  };
-
   return (
     <div className="w-full">
-      <div className="my-5">
+      <div className="mb-5">
         <h1 className="text-2xl font-bold">Guardias de Apoyo</h1>
       </div>
 
       <div className="flex flex-row justify-between items-center mb-5 gap-2">
         <input
           type="text"
-          placeholder="Buscar por empleado..."
-          value={empleadoFilter}
-          onChange={(e) => setEmpleadoFilter(e.target.value)}
+          placeholder="Buscar"
+          value={globalFilter}
+          onChange={(e) => setGlobalFilter(e.target.value)}
           className="border border-gray-300 rounded-md p-2 h-12 w-full max-w-xs"
         />
 
-        {/* <AddGuardModal title="Guardias">
-          <Button className="w-auto bg-green-600 hover:bg-green-700">
+          <AddGuardModal title="Guardias">
+          <Button
+            type="submit"
+            className={"w-full text-white bg-green-600 hover:bg-green-700"}
+      
+            disabled={shift?.guard?.status_turn === "Turno Cerrado"}
+          >
             <Plus />
             Guardia apoyo
           </Button>
-        </AddGuardModal> */}
+        </AddGuardModal>
       </div>
       <div className="">
         <Table>
