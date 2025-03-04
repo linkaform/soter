@@ -85,7 +85,7 @@ export const useGetShift = () => {
 
       queryClient.invalidateQueries({ queryKey: ["getShift"] });
 
-      queryClient.invalidateQueries({ queryKey: ["getSupportGuards"] });
+      queryClient.invalidateQueries({ queryKey: ["getGuardSupport"] });
 
 
 
