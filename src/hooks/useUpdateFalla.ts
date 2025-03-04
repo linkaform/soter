@@ -1,16 +1,16 @@
-import { getCatalogoAreaEmpleadoApoyo } from "@/lib/getCatalogoAreaEmpleadoApoyo";
+import { inputFalla, updateFalla } from "@/lib/update-falla";
 import { errorMsj } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 
-export const useCatalogoAreaEmpleadoApoyo = () => {
-  const { data: data, isLoading, error, isFetching, refetch } = useQuery<any>({
-    queryKey: ["getCatalogoAreaEmpleadoApoyo"], 
+export const useUpdateFalla = (data_failure_update: inputFalla | null, folio:string) => {
+  const { data, isLoading, error, isFetching, refetch } = useQuery<any>({
+    queryKey: ["updateFalla", data_failure_update, folio], 
     enabled:false,
     queryFn: async () => {
-        const data = await getCatalogoAreaEmpleadoApoyo();
+        const data = await updateFalla(data_failure_update, folio); 
         const textMsj = errorMsj(data) 
         if(textMsj){
-          throw new Error(`Error al obtener catalogo de Area Empleado Apoyo, Error: ${data.error}`);
+          throw new Error(`Error al obtener catalogo de Fallas, Error: ${data.error}`);
         }else{
           return data.response?.data
         }

@@ -34,6 +34,7 @@ import { useCreateFalla } from "@/hooks/useCreateFalla";
 import { useCatalogoFallas } from "@/hooks/useCatalogoFallas";
 import { inputFalla } from "@/lib/create-falla";
 import DateTime from "../dateTime";
+import LoadFile from "../upload-file";
 
 interface AddFallaModalProps {
   	title: string;
@@ -136,7 +137,8 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 	},[isSuccess])
 
 	useEffect(()=>{
-		if(responseCreateFalla?.sucess){
+		console.log("responseCreateFalla",responseCreateFalla)
+		if(responseCreateFalla?.status_code==201){
 			console.log("responseCreateFalla",responseCreateFalla)
 			toast.success("Falla creada correctamente")
 			refetchTableFallas()
@@ -176,6 +178,8 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 			setCatalogoSub(dataFallas)
 		}
 		if(dataFallas && !subconcepto){
+			console.log("DATAFALLAS", dataFallas)
+
 			setFallas(dataFallas)
 		}
 	},[dataFallas])
@@ -372,7 +376,14 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 						value={field.value} 
 					>
 						<SelectTrigger className="w-full">
-							{isLoadingFallas ? (
+							{isLoadingFallas && subconcepto ? (
+								<SelectValue placeholder="Cargando subconcepto..." />
+							):null}
+							{catalagoSub.length > 0 ?(<SelectValue placeholder="Selecciona una opción..." />)
+							:(<SelectValue placeholder="Selecciona una falla para ver las opciones..." />)
+							}
+
+							{/* {isLoadingFallas ? (
 								<SelectValue placeholder="Cargando subconcepto..." />
 							):
 							(
@@ -383,14 +394,20 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 									<SelectValue placeholder="Selecciona una opción" />
 								)}
 								</>
-							)}
+							)} */}
 						</SelectTrigger>
 						<SelectContent>
-						{catalagoSub?.map((vehiculo:string, index:number) => (
-							<SelectItem key={index} value={vehiculo}>
-								{vehiculo}
-							</SelectItem>
-						))}
+						{catalagoSub.length>0 ? (
+							catalagoSub?.map((item:string, index:number) => {
+								return (
+									<SelectItem key={index} value={item}>
+										{item}
+									</SelectItem>
+								)
+							})
+						):(
+							<><SelectItem disabled value={"no opciones"}>No hay opciones disponibles</SelectItem></>
+						)}
 						</SelectContent>
 					</Select>
 						</FormControl>
@@ -498,14 +515,13 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
             </div>
 
             <div className="flex justify-between">
-				<LoadImage
-					id="documento" 
-					titulo={"Documento"} 
-					setImg={setDocumento}
+				<LoadFile
+					id="documento"
+					titulo={"Documento"}
+					setDocs={setDocumento}
 					showWebcamOption={true}
 					setErrorImagen={setErrorDocumento}
-					facingMode="user"
-					/>
+					facingMode="user" docArray={documento}/>
             </div>
 
 			<DialogClose asChild>

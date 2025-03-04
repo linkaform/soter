@@ -12,6 +12,7 @@ import Image from "next/image";
 import { Fallas_record } from "../table/incidencias/fallas/fallas-columns";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
 import { Card, CardContent } from "../ui/card";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@radix-ui/react-accordion";
 
 interface ViewFallaModalProps {
   title: string;
@@ -25,6 +26,28 @@ export const ViewFalla: React.FC<ViewFallaModalProps> = ({
   data,
   children,
 }) => {
+  const seguimientos = data.falla_grupo_seguimiento || []
+
+  // const keyToTextMap ={
+  //   '66f2dfb2c80d24e5e82332b4': 'accion_ealizada',
+  //   '66f2dfb2c80d24e5e82332b3': 'comentario',
+  //   '679a485c66c5d089fa6b8ef9': 'fecha_inicio',
+  //   '679a485c66c5d089fa6b8efa': 'fecha_fin',
+    
+  // };
+  // function formatItemKeysToText(item:string) {
+  //   const formattedItem = {};
+  
+  //   // Iteramos sobre las claves del objeto `item`
+  //   for (const key in item) {
+  //     // Verificamos si la clave existe en el mapa
+  //     if (keyToTextMap[key]) {
+  //       formattedItem[keyToTextMap[key]] = item[key];
+  //     }
+  //   }
+  
+  //   return formattedItem;
+  // }
   return (
     <Dialog >
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -167,6 +190,38 @@ export const ViewFalla: React.FC<ViewFallaModalProps> = ({
             <p className=""> </p>
             </div>
         </div>
+
+        {seguimientos.length>0 && (
+          <div className="">
+            <p className="text-lg font-bold mb-2">Seguimientos:</p>
+            <Accordion type="single" collapsible>
+              {seguimientos.map((item, index) => (
+                <AccordionItem key={index} value={`vehiculo-${index}`}>
+                  <AccordionTrigger>{`${item['66f2dfb2c80d24e5e82332b4']}`}</AccordionTrigger>
+                  <AccordionContent>
+                    <p className="font-medium mb-1">
+                      Accion realizada:{" "}
+                      <span className="">{`${item['66f2dfb2c80d24e5e82332b4']}`|| "N/A"}</span>
+                    </p>
+                    <p className="font-medium mb-1">
+                      Comentario	:{" "}
+                      <span className="">{`${item['66f2dfb2c80d24e5e82332b3']}`|| "N/A"}</span>
+                    </p>
+                    <p className="font-medium mb-1">
+                      Fecha de incio:{" "}
+                      <span className="">{`${item['679a485c66c5d089fa6b8ef9']}`|| "N/A"}</span>
+                    </p>
+                    <p className="font-medium mb-1">
+                      Fecha fin:{" "}
+                      <span className="">{`${item['679a485c66c5d089fa6b8efa']}`|| "N/A"}</span>
+                    </p>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+          )}
+
         <div className="flex gap-1 my-5">
           <DialogClose asChild>
             <Button className="w-full h-12 bg-gray-100 hover:bg-gray-200 text-gray-700">

@@ -9,11 +9,11 @@ export const useCatalogoFallas = (tipo:string) => {
     queryFn: async () => {
         const data = await getCatalogoFallas(tipo); 
         const textMsj = errorMsj(data) 
-		if(textMsj){
-			throw new Error(`Error al obtener catalogo de Fallas, Error: ${data.error}`);
-		}else{
-			return data.response?.data
-		}
+      if(textMsj){
+        throw new Error(`Error al obtener catalogo de Fallas, Error: ${data.error}`);
+      }else{
+        return data.response?.data
+      }
     },
    
     refetchOnWindowFocus: true, 

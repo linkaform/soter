@@ -72,6 +72,10 @@ export function quitarAcentosYMinusculasYEspacios(str: string) {
   return sinEspacios;
 }
 
+export function reemplazarGuionMinuscula(str:string) {
+  return str.replace(/_/g, ' ').toLowerCase();
+}
+
 export const formatDateToString = (date: Date): string => {
   const year = date.getFullYear();
   const month = (date.getMonth() + 1).toString().padStart(2, '0'); 
@@ -174,6 +178,33 @@ export function errorMsj(data:any, title = "Error", type="warning"){
           }
       }
       return {title: title, text:errores.join(", "), type}
+    }else if(data.response.data.hasOwnProperty("json")){
+        const dataInner=data.response.data
+        const errores=[]
+        for(const err in dataInner.json){
+            if(dataInner.json[err].hasOwnProperty('label') ){
+                errores.push(dataInner.json[err].label+': '+dataInner.json[err].msg[0]+" ")
+            }else {
+                 const subData = dataInner.json[err];
+                 if (typeof subData === 'object' && subData !== null) {
+                     for (const subKey in subData) {
+                      if(subKey!== "group"){
+                        const subItem = subData[subKey];
+                        for(const subSubKey in subItem){
+                          if (typeof subItem[subSubKey] === 'object' && subItem[subSubKey] !== null) {
+                            const subSubItem=subItem[subSubKey]
+                            if (subSubItem.hasOwnProperty('label') && subSubItem.hasOwnProperty('msg')) {
+                              errores.push(subSubItem.label + ': ' + subSubItem.msg[0] + " ");
+                            }
+                          }
+                        }
+                        
+                      }
+                     }
+                 }
+            }
+        }
+        return {title: title, text:errores.join(", "), type}
   }else if (data.hasOwnProperty("error")){
       const error= data.error
       if(error.hasOwnProperty('msg')){
@@ -188,6 +219,7 @@ export function errorMsj(data:any, title = "Error", type="warning"){
   }else if (typeof data ==='string'){
       return {title: title, text: data, type: type}
   }
+  return undefined
 }
 
 export function renameKeyTipoComentario(array:any) {

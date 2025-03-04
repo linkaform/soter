@@ -17,6 +17,8 @@ interface CalendarDaysProps {
   showWebcamOption:boolean;
   facingMode: string
   setErrorImagen:Dispatch<SetStateAction<string>>;
+//   imgArray:Imagen[];
+//   showArray:boolean;
 }
 
 

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import * as React from "react";
@@ -31,6 +32,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import {Fallas_record, fallasColumns } from "./fallas-columns";
+import { EliminarFallaModal } from "@/components/modals/delete-falla-modal";
 
   interface ListProps {
     refetch:() => void;
@@ -38,9 +40,11 @@ import {Fallas_record, fallasColumns } from "./fallas-columns";
     setPrioridades: React.Dispatch<React.SetStateAction<string[]>>;
     isLoading:boolean;
     openModal: () => void;
+    setSelectedFallas:React.Dispatch<React.SetStateAction<string[]>>;
+    selectedFallas:string[]
   }
   
-  const FallasTable:React.FC<ListProps> = ({ refetch, data, openModal})=> {
+  const FallasTable:React.FC<ListProps> = ({ refetch, data, openModal, setSelectedFallas, selectedFallas})=> {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -78,11 +82,21 @@ import {Fallas_record, fallasColumns } from "./fallas-columns";
       globalFilter,
     },
   });
-
+  
   React.useEffect(()=>{
     refetch()
   },[])
 
+  React.useEffect(()=>{
+    if(table.getFilteredSelectedRowModel().rows.length>0){
+      const folios: string[] = []
+      table.getFilteredSelectedRowModel().rows.map((row) => {
+        folios.push(row.original.folio);
+      });
+      setSelectedFallas(folios)
+    }
+  },[table.getFilteredSelectedRowModel().rows])
+  
   return (
     <div className="w-full">
       <div className="flex justify-between items-center my-5">
@@ -122,14 +136,17 @@ import {Fallas_record, fallasColumns } from "./fallas-columns";
 
       <Button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2">
       <FileX2 />
-        
         Descargar
       </Button>
 
-      <Button className="w-full bg-red-500 text-white hover:bg-red-600">
-      <Trash2 />        
-        Eliminar
-      </Button>
+      <EliminarFallaModal
+          title="Eliminar Falla"
+          refetchTableFallas={refetch} arrayFolios={selectedFallas}>
+            <div className="flex flex-shrink p-2 rounded-sm px-3 w-full bg-red-500 text-white hover:bg-red-600" >
+            <Trash2 />        
+              Eliminar
+            </div>
+        </EliminarFallaModal>
 
       <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -207,7 +224,7 @@ import {Fallas_record, fallasColumns } from "./fallas-columns";
                   colSpan={fallasColumns.length}
                   className="h-24 text-center"
                 >
-        No hay registros disponibles                </TableCell>
+                No hay registros disponibles                </TableCell>
               </TableRow>
             )}
           </TableBody>

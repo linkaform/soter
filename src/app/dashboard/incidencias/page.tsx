@@ -14,15 +14,12 @@ import { useGetFallas } from "@/hooks/useGetFallas";
 import { AddFallaModal } from "@/components/modals/add-falla";
 import { useGetStats } from "@/hooks/useGetStats";
 
-
 const IncidenciasPage = () => {
 
   const [prioridades, setPrioridades] = useState<string[]>([]);
-
   const [isSuccess, setIsSuccess] = useState(false);
 	const [modalData] = useState<any>(null);
-
-
+  const [selectedFallas, setSelectedFallas]= useState<string[]>([]);
   const { data,isLoading, refetch} = useGetIncidencias("", "",[]);
   const { data:dataFallas,isLoading:isLoadingFallas, refetch:refetchFallas} = useGetFallas("", "","abierto");
   const { data: dataStats} = useGetStats("", "", "Incidencias");
@@ -40,12 +37,17 @@ const IncidenciasPage = () => {
   },[prioridades, refetch])
   
   const closeModal = () => {
-		setIsSuccess(false);  // Reinicia el estado para que el modal no se quede abierto.
+		setIsSuccess(false);  
 	};
   const openModal = () => {
-		setIsSuccess(true);  // Reinicia el estado para que el modal no se quede abierto.
+		setIsSuccess(true);  
 	};
 
+  useEffect(()=>{
+    if(selectedFallas){
+      console.log("FALLALA",selectedFallas)
+    }
+  },[selectedFallas])
 
   return (
     <div className="">
@@ -95,7 +97,8 @@ const IncidenciasPage = () => {
             </TabsContent>
             <TabsContent value="Concecionados">
               <div className="">
-                <FallasTable  data={dataFallas} refetch={refetchFallas} setPrioridades={setPrioridades} isLoading={isLoadingFallas} openModal={openModal}/>
+                <FallasTable  data={dataFallas} refetch={refetchFallas} setPrioridades={setPrioridades} isLoading={isLoadingFallas} 
+                openModal={openModal} setSelectedFallas={setSelectedFallas} selectedFallas={selectedFallas}/>
               </div>
             </TabsContent>
           </Tabs>

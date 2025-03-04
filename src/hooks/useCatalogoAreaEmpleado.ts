@@ -8,7 +8,7 @@ export const useCatalogoAreaEmpleado = () => {
     enabled:false,
     queryFn: async () => {
         const data = await getCatalogoAreaEmpleado();
-        const textMsj = errorMsj(data)
+        const textMsj = errorMsj(data)  //COMO MANDAR LOS MSJS POR MEDIO DE ERROR
         if (textMsj){
           throw new Error (`Error al obtener catalogo de Area Empleado, Error: ${data.error}`);
         }else {

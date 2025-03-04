@@ -21,7 +21,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Textarea } from "../ui/textarea";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import LoadImage from "../upload-Image";
 import { Imagen } from "@/lib/update-pass";
@@ -30,18 +30,16 @@ import { format } from 'date-fns';
 
 import { useCatalogoAreaEmpleadoApoyo } from "@/hooks/useCatalogoAreaEmpleadoApoyo";
 import { toast } from "sonner";
-import { useCreateFalla } from "@/hooks/useCreateFalla";
 import { useCatalogoFallas } from "@/hooks/useCatalogoFallas";
 import { inputFalla } from "@/lib/create-falla";
 import DateTime from "../dateTime";
+import LoadFile from "../upload-file";
+import { useUpdateFalla } from "@/hooks/useUpdateFalla";
 
 interface EditarFallaModalProps {
   title: string;
 	data: any;
-	isSuccess: boolean;
-	setIsSuccess: Dispatch<SetStateAction<boolean>>;
-	onClose: ()=> void;
-	refetchTableIncidencias: ()=> void;
+	refetchTableFallas: ()=> void;
     children: React.ReactNode;
 }
 
@@ -67,22 +65,12 @@ const formSchema = z.object({
 	falla_reporta_nombre: z.string().min(1, { message: "El nombre del reportante es obligatorio" }), 
 	falla_responsable_solucionar_nombre: z.string().optional(),
 	falla_ubicacion: z.string().min(1, { message: "La ubicación es obligatoria" }),
-
-//   falla_reporta_departamento: z.string(),
-//   falla_responsable_solucionar_documento: z.array(z.string()).optional(),
-//   falla_grupo_seguimiento: z.array(z.string()).optional(),
-//   falla_folio_accion_correctiva:  z.string(),
-//   falla_evidencia_solucion: z.array(z.string()).optional(),
-//   falla_documento_solucion: z.array(z.string()).optional(),
-//   falla_comentario_solucion:  z.string().optional(),
 });
 
 export const EditarFallaModal: React.FC<EditarFallaModalProps> = ({
   	title,
 	data,
-	isSuccess,
-	setIsSuccess,
-	refetchTableIncidencias,
+	refetchTableFallas,
     children
 }) => {
 	const [modalData, setModalData] = useState<inputFalla | null>(null);
@@ -95,27 +83,27 @@ export const EditarFallaModal: React.FC<EditarFallaModalProps> = ({
 	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado, refetch: refetchAreaEmpleado, error:errorAreEmpleado } = useCatalogoAreaEmpleado();
 	const { data:dataAreaEmpleadoApoyo, isLoading:loadingAreaEmpleadoApoyo, refetch: refetchAreaEmpleadoApoyo, error:errorAEA} = useCatalogoAreaEmpleadoApoyo();
 	const { data:dataFallas, isLoading:isLoadingFallas, refetch: refetchFallas, error:errorFallas } = useCatalogoFallas(subconcepto);
-	const { data:responseCreateFalla, isLoading , refetch, error} = useCreateFalla(modalData)
+	const { data:responseUpdateFalla, isLoading , refetch, error} = useUpdateFalla(modalData, data.folio)
 
 	const [areas] = useState<any| string[]>(["Caseta Principal"]);
-
-	const [evidencia , setEvidencia] = useState<Imagen[]>([]);
-	const [documento , setDocumento] = useState<Imagen[]>([]);
-	const [date, setDate] = useState<Date|"">("");
+	const [evidencia , setEvidencia] = useState<Imagen[]>(data.falla_evidencia);
+	const [documento , setDocumento] = useState<Imagen[]>(data.falla_documento);
+	const [date, setDate] = useState<Date|"">(new Date(data.falla_fecha_hora));
 
 	const [errorEvidencia, setErrorEvidencia] = useState("")
 	const [errorDocumento, setErrorDocumento] = useState("")
 
+	const [isSuccess, setIsSuccess] =useState(false)
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 		falla: data.falla,
 		falla_caseta: data.falla_caseta,
 		falla_comentarios: data.falla_comentarios,
-		falla_documento:data.falla_documento,
+		falla_documento:documento,
 		falla_estatus: data.falla_estatus,
-		falla_evidencia:data.falla_evidencia,
-		falla_fecha_hora:data.falla_fecha_hora,
+		falla_evidencia:evidencia,
+		falla_fecha_hora: data.falla_fecha_hora,
 		falla_objeto_afectado: data.falla_objeto_afectado,
 		falla_reporta_nombre: data.falla_reporta_nombre,
 		falla_responsable_solucionar_nombre: data.falla_responsable_solucionar_nombre,
@@ -128,9 +116,6 @@ export const EditarFallaModal: React.FC<EditarFallaModalProps> = ({
 	useEffect(()=>{
 		if(isSuccess){
 			reset()
-			setDate("")
-			setEvidencia([])
-			setDocumento([])
 			refetchAreaEmpleado()
 			refetchAreaEmpleadoApoyo()
 			refetchFallas()
@@ -138,13 +123,12 @@ export const EditarFallaModal: React.FC<EditarFallaModalProps> = ({
 	},[isSuccess])
 
 	useEffect(()=>{
-		if(responseCreateFalla?.sucess){
-			console.log("responseCreateFalla",responseCreateFalla)
-			toast.success("Falla creada correctamente")
-			refetchTableIncidencias()
+		if(responseUpdateFalla?.status_code == 202){
 			handleClose()
+			toast.success("Falla actualizada correctamente!")
+			refetchTableFallas()
 		}
-	},[responseCreateFalla])
+	},[responseUpdateFalla])
 
 	useEffect(()=>{
 		if(errorAEA){
@@ -175,10 +159,16 @@ export const EditarFallaModal: React.FC<EditarFallaModalProps> = ({
 
 	useEffect(()=>{
 		if(dataFallas && subconcepto){
-			setCatalogoSub(dataFallas)
+			if (dataFallas.length === 1 && dataFallas[0] === null) {
+				setCatalogoSub([])
+			  }else{
+				setCatalogoSub(dataFallas)
+			  }
 		}
 		if(dataFallas && !subconcepto){
 			setFallas(dataFallas)
+			setSubConcepto(data.falla_objeto_afectado)
+
 		}
 	},[dataFallas])
 
@@ -227,6 +217,7 @@ export const EditarFallaModal: React.FC<EditarFallaModalProps> = ({
 	const handleClose = () => {
 		setIsSuccess(false); 
 	};
+
 	useEffect(()=>{
 		if(isLoadingFallas){
 			console.log("CARGANDOOOOOO",isLoadingFallas, subconcepto)
@@ -234,7 +225,7 @@ export const EditarFallaModal: React.FC<EditarFallaModalProps> = ({
 	},[isLoadingFallas])
 
   return (
-    <Dialog open={isSuccess} modal>
+    <Dialog onOpenChange={setIsSuccess} open={isSuccess}>
       <DialogTrigger>{children}</DialogTrigger>
 
       <DialogContent className="max-w-3xl" aria-describedby="">
@@ -313,7 +304,6 @@ export const EditarFallaModal: React.FC<EditarFallaModalProps> = ({
                 <FormItem>
                   <FormLabel>* Fecha</FormLabel>
                   <FormControl>
-                    {/* <Input type="datetime-local" placeholder="Fecha" {...field} /> */}
 					<DateTime date={date} setDate={setDate} />
                   </FormControl>
 
@@ -373,25 +363,25 @@ export const EditarFallaModal: React.FC<EditarFallaModalProps> = ({
 						value={field.value} 
 					>
 						<SelectTrigger className="w-full">
-							{isLoadingFallas ? (
+							{isLoadingFallas && subconcepto ? (
 								<SelectValue placeholder="Cargando subconcepto..." />
-							):
-							(
-								<>
-								{catalagoSub.length==0?(
-									<SelectValue placeholder="Selecciona una falla para ver las opciones..." />
-								):(
-									<SelectValue placeholder="Selecciona una opción" />
-								)}
-								</>
-							)}
+							):null}
+							{catalagoSub.length > 0 ?(<SelectValue placeholder="Selecciona una opción..." />)
+							:(<SelectValue placeholder="Selecciona una falla para ver las opciones..." />)
+							}
 						</SelectTrigger>
 						<SelectContent>
-						{catalagoSub?.map((vehiculo:string, index:number) => (
-							<SelectItem key={index} value={vehiculo}>
-								{vehiculo}
-							</SelectItem>
-						))}
+						{catalagoSub.length>0 ? (
+							catalagoSub?.map((item:string, index:number) => {
+								return (
+									<SelectItem key={index} value={item}>
+										{item}
+									</SelectItem>
+								)
+							})
+						):(
+							<><SelectItem disabled value={"no opciones"}>No hay opciones disponibles</SelectItem></>
+						)}
 						</SelectContent>
 					</Select>
 						</FormControl>
@@ -495,17 +485,21 @@ export const EditarFallaModal: React.FC<EditarFallaModalProps> = ({
 					showWebcamOption={true}
 					setErrorImagen={setErrorEvidencia}
 					facingMode="user"
+					//imgArray={evidencia}
+					//showArray={true}
 					/>
             </div>
 
             <div className="flex justify-between">
-				<LoadImage
-					id="documento" 
+				<LoadFile
+					id="doc" 
 					titulo={"Documento"} 
-					setImg={setDocumento}
+					setDocs={setDocumento}
 					showWebcamOption={true}
 					setErrorImagen={setErrorDocumento}
 					facingMode="user"
+					docArray={documento}
+					// showArray={true}
 					/>
             </div>
 

@@ -3,10 +3,14 @@ import {
     ColumnDef,   
   } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Edit, Eye } from "lucide-react";
+import { Check, Edit, Eye, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { Imagen } from "@/lib/update-pass";
 import { ViewFalla } from "@/components/modals/view-falla";
+import { EditarFallaModal } from "@/components/modals/editar-falla";
+import { useGetFallas } from "@/hooks/useGetFallas";
+import { SeguimientoFallaModal } from "@/components/modals/seguimiento-falla";
+import { EliminarFallaModal } from "@/components/modals/delete-falla-modal";
 
   export interface Fallas_record{
     falla_responsable_solucionar_nombre: string
@@ -40,7 +44,7 @@ import { ViewFalla } from "@/components/modals/view-falla";
   }
 
   const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
-    // const {refetch} = useGetIncidencias("", "",[]);
+    const {refetch} = useGetFallas("", "","abierto");
     const incidencia = row.original;
     
     return (
@@ -53,18 +57,29 @@ import { ViewFalla } from "@/components/modals/view-falla";
             </div>
         </ViewFalla>
         
-        {/* <EditarFallaModal
-          title="Editar Falla"
-          data={incidencia} isSuccess={false} >
+        <EditarFallaModal
+                title="Editar Falla"
+                data={incidencia} refetchTableFallas={refetch}>
             <div className="cursor-pointer">
               <Edit /> 
             </div>
-        </EditarFallaModal> */}
+        </EditarFallaModal>
 
-
-        <div className="cursor-pointer">
-              	<Edit />
+        <SeguimientoFallaModal
+                title="Seguimiento Falla"
+                data={incidencia} refetchTableFallas={refetch}>
+            <div className="cursor-pointer">
+                <Check />   
             </div>
+        </SeguimientoFallaModal>
+
+        <EliminarFallaModal
+          title="Eliminar Falla"
+          refetchTableFallas={refetch} arrayFolios={[incidencia.folio]}>
+            <div className="cursor-pointer">
+                <Trash2 />   
+            </div>
+        </EliminarFallaModal>
 
         	{/* <div className="cursor-pointer">
               	<Eye />
@@ -93,7 +108,7 @@ import { ViewFalla } from "@/components/modals/view-falla";
               checked={row.getIsSelected()}
               onCheckedChange={(value) => row.toggleSelected(!!value)}
               aria-label="Select row" />
-            <OptionsCell row={row} />
+            <OptionsCell row={row}/>
           </div>
           </>
         )
@@ -181,10 +196,10 @@ import { ViewFalla } from "@/components/modals/view-falla";
       header: "Evidencia",
       cell: ({ row }) => {
         const foto = row.original.falla_evidencia;
-        const primeraImagen = foto && foto.length > 0 ? foto[0].file_url : '/nouser.svg';
+        const ultimaImagen = foto && foto.length > 0 ? foto[foto.length - 1].file_url : '/nouser.svg'; 
         return(
             <Image
-              src={primeraImagen|| "/nouser.svg"}
+              src={ultimaImagen|| "/nouser.svg"}
               alt="Fotografía"
               width={80}
               height={80}
