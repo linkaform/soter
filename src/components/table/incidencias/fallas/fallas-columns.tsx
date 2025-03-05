@@ -4,13 +4,13 @@ import {
   } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Check, Edit, Eye, Trash2 } from "lucide-react";
-import Image from "next/image";
 import { Imagen } from "@/lib/update-pass";
 import { ViewFalla } from "@/components/modals/view-falla";
 import { EditarFallaModal } from "@/components/modals/editar-falla";
 import { useGetFallas } from "@/hooks/useGetFallas";
 import { SeguimientoFallaModal } from "@/components/modals/seguimiento-falla";
 import { EliminarFallaModal } from "@/components/modals/delete-falla-modal";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
   export interface Fallas_record{
     falla_responsable_solucionar_nombre: string
@@ -20,6 +20,7 @@ import { EliminarFallaModal } from "@/components/modals/delete-falla-modal";
     falla_estatus: string
     falla_caseta: string
     falla: string
+    falla_objeto_afectado:string
     falla_responsable_solucionar_documento?: [string, any[]]
     falla_evidencia: Imagen[]
     falla_ubicacion: string
@@ -125,29 +126,6 @@ import { EliminarFallaModal } from "@/components/modals/delete-falla-modal";
 
 
       ),
-      // cell: ({ row }) => (
-      //   <div className="flex space-x-3 items-center">
-      //   <Checkbox
-      //     checked={row.getIsSelected()}
-      //     onCheckedChange={(value) => row.toggleSelected(!!value)}
-      //     aria-label="Select row"
-      //   />
-
-      //  <div className="cursor-pointer">
-      //       <Eye />
-      //     </div>
-      //     <div className="cursor-pointer">
-      //     <Check />                    </div>
-      //     <div className="cursor-pointer">
-      //       <Edit />
-      //     </div>
-      //     <div className="cursor-pointer">
-      //       <Trash2 />
-      //     </div>
-
-      //   </div>
-
-      // ),
       enableSorting: false,
       enableHiding: false,
     },
@@ -198,13 +176,12 @@ import { EliminarFallaModal } from "@/components/modals/delete-falla-modal";
         const foto = row.original.falla_evidencia;
         const ultimaImagen = foto && foto.length > 0 ? foto[foto.length - 1].file_url : '/nouser.svg'; 
         return(
-            <Image
-              src={ultimaImagen|| "/nouser.svg"}
-              alt="Fotografía"
-              width={80}
-              height={80}
-              className="object-cover"
-            />
+          <>
+					<Avatar>
+						<AvatarImage src={ultimaImagen|| "/nouser.svg"} alt="Avatar" />
+						<AvatarFallback>CN</AvatarFallback>
+					</Avatar>
+					</>
         )},
       enableSorting: false,
     },

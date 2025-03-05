@@ -233,3 +233,19 @@ export function renameKeyTipoComentario(array:any) {
   });
 }
 
+export function formatDateToText(dateString: string): string {
+  const date = new Date(dateString);
+  const hasSeconds = dateString.includes(':') && dateString.split(':').length === 3;
+  const options: Intl.DateTimeFormatOptions = { 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric', 
+    hour: '2-digit', 
+    minute: '2-digit',
+    hour12: false 
+  };
+  if (hasSeconds) {
+    options.second = '2-digit'; 
+  }
+  return date.toLocaleString('es-ES', options);
+}

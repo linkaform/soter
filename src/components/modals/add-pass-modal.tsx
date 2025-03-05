@@ -95,8 +95,6 @@ export const EntryPassModal: React.FC<EntryPassUpdateModalProps> = ({
   const [hostPro, setHostPro] = useState({ protocol: '', host: '' });
 
   const onSubmit = async () => {
-    console.log("Datos en el Modal", dataPass);
-
     const accessPassData: Access_pass = {
       nombre: dataPass.nombre,
       email: dataPass.email,

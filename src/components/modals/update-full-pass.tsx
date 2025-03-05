@@ -284,8 +284,6 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
 	},[configLocation])
 
 	const onSubmit = (data: z.infer<typeof formSchema>) => {
-		console.log("Formulario enviado con los siguientes datos:", data);
-
 		const formattedData = {
 			_id: dataPass._id,
 			folio: dataPass.folio,

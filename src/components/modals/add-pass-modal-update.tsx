@@ -154,7 +154,6 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
 
   useEffect(()=>{
     if(link){
-      console.log("LINK", link)
       setOpenGeneratedPass(true)
     }
   },[link])

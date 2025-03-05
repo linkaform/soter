@@ -2,10 +2,10 @@
 import UpdateFullPassModal from "@/components/modals/update-full-pass";
 import { ViewPassModal } from "@/components/modals/view-pass-modal";
 import { Areas, Comentarios, enviar_pre_sms, Link } from "@/hooks/useCreateAccessPass";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { replaceNullsInArrayDynamic } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
 import { Eye, Pencil} from "lucide-react";
-import Image from "next/image";
 
 type Imagen = {
   file_name: string;
@@ -136,25 +136,27 @@ export const pasesEntradaColumns: ColumnDef<PaseEntrada>[] = [
 
       return (
         <div className="flex items-center space-x-4">
-          {/* Imagen */}
-          <div>
-            {primeraImagen ? (
-              <Image width={75}
-              height={75} src={primeraImagen} alt="Imagen" className=" object-cover rounded-full bg-gray-300" />
-            ) : (
-              <span>No hay imagen</span>
-            )}
-          </div>
+			<div>
+				{primeraImagen ? (
+					<>
+					<Avatar>
+						<AvatarImage src={primeraImagen} alt="Avatar" />
+						<AvatarFallback>CN</AvatarFallback>
+					</Avatar>
+					</>
+				) : (
+				<span>No hay imagen</span>
+				)}
+			</div>
 
-          {/* Nombre */}
-          <div className="flex flex-col">
-            <span className="font-bold">{nombre}</span>
-            <span
-              className={estatus === "Activo" ? "text-blue-500" : "text-red-500"}
-            >
-              {estatus}
-            </span>
-          </div>
+			<div className="flex flex-col">
+				<span className="font-bold">{nombre}</span>
+				<span
+				className={estatus === "Activo" ? "text-blue-500" : "text-red-500"}
+				>
+				{estatus}
+				</span>
+			</div>
         </div>
       );
     },

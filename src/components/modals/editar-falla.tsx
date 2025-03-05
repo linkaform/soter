@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 //eslint-disable react-hooks/exhaustive-deps
 import { Button } from "../ui/button";
 import {
@@ -35,6 +36,7 @@ import { inputFalla } from "@/lib/create-falla";
 import DateTime from "../dateTime";
 import LoadFile from "../upload-file";
 import { useUpdateFalla } from "@/hooks/useUpdateFalla";
+import { Loader2 } from "lucide-react";
 
 interface EditarFallaModalProps {
   title: string;
@@ -86,8 +88,8 @@ export const EditarFallaModal: React.FC<EditarFallaModalProps> = ({
 	const { data:responseUpdateFalla, isLoading , refetch, error} = useUpdateFalla(modalData, data.folio)
 
 	const [areas] = useState<any| string[]>(["Caseta Principal"]);
-	const [evidencia , setEvidencia] = useState<Imagen[]>(data.falla_evidencia);
-	const [documento , setDocumento] = useState<Imagen[]>(data.falla_documento);
+	const [evidencia , setEvidencia] = useState<Imagen[]>([]);
+	const [documento , setDocumento] = useState<Imagen[]>([]);
 	const [date, setDate] = useState<Date|"">(new Date(data.falla_fecha_hora));
 
 	const [errorEvidencia, setErrorEvidencia] = useState("")
@@ -115,10 +117,11 @@ export const EditarFallaModal: React.FC<EditarFallaModalProps> = ({
 
 	useEffect(()=>{
 		if(isSuccess){
-			reset()
 			refetchAreaEmpleado()
 			refetchAreaEmpleadoApoyo()
 			refetchFallas()
+			setEvidencia(data.falla_evidencia)
+			setDocumento(data.falla_documento)
 		}
 	},[isSuccess])
 
@@ -151,13 +154,6 @@ export const EditarFallaModal: React.FC<EditarFallaModalProps> = ({
 	},[errorAEA, errorAreEmpleado, errorFallas, error, errorEvidencia , errorDocumento])
 
 	useEffect(()=>{
-		if(subconcepto){
-			console.log("QUE PASA",subconcepto)
-			refetchFallas()
-		}
-	},[subconcepto])
-
-	useEffect(()=>{
 		if(dataFallas && subconcepto){
 			if (dataFallas.length === 1 && dataFallas[0] === null) {
 				setCatalogoSub([])
@@ -178,12 +174,6 @@ export const EditarFallaModal: React.FC<EditarFallaModalProps> = ({
 		}
 	},[modalData])
 
-	useEffect(()=>{
-		if(form.formState.errors){
-			console.log("	ERRORESS DEL FORMULARIO   ", form.formState.errors)
-		}
-	},[form.formState.errors])
-
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		let formattedDate=""
 		if(date){
@@ -201,28 +191,16 @@ export const EditarFallaModal: React.FC<EditarFallaModalProps> = ({
 				falla_responsable_solucionar_nombre: values.falla_responsable_solucionar_nombre||"",
 				falla_ubicacion:values.falla_ubicacion||"",
 				}
-				console.log("DATA LISTA PARA ENVIAR",formatData)
 				 setModalData(formatData);
 		}else{
 			form.setError("falla_fecha_hora", { type: "manual", message: "Fecha es un campo requerido." });
 		}
 	}
 
-	useEffect(()=>{
-		if(modalData){
-			console.log(data)
-		}
-	},[modalData])
-
 	const handleClose = () => {
+		reset()
 		setIsSuccess(false); 
 	};
-
-	useEffect(()=>{
-		if(isLoadingFallas){
-			console.log("CARGANDOOOOOO",isLoadingFallas, subconcepto)
-		}
-	},[isLoadingFallas])
 
   return (
     <Dialog onOpenChange={setIsSuccess} open={isSuccess}>
@@ -485,8 +463,9 @@ export const EditarFallaModal: React.FC<EditarFallaModalProps> = ({
 					showWebcamOption={true}
 					setErrorImagen={setErrorEvidencia}
 					facingMode="user"
-					//imgArray={evidencia}
-					//showArray={true}
+					imgArray={evidencia}
+					showArray={true}
+					limit={10}
 					/>
             </div>
 
@@ -495,11 +474,9 @@ export const EditarFallaModal: React.FC<EditarFallaModalProps> = ({
 					id="doc" 
 					titulo={"Documento"} 
 					setDocs={setDocumento}
-					showWebcamOption={true}
 					setErrorImagen={setErrorDocumento}
-					facingMode="user"
 					docArray={documento}
-					// showArray={true}
+					limit={10}
 					/>
             </div>
 
@@ -514,7 +491,11 @@ export const EditarFallaModal: React.FC<EditarFallaModalProps> = ({
 				type="submit"
 				className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={isLoading}
 			>
-				{isLoading? ("Editando falla..."):("Editar falla")}
+			{isLoading? (
+				<>
+					<Loader2 className="animate-spin"/> {"Editando falla..."}
+				</>
+			):("Editar falla")}
 			</Button>
           </form>
         </Form>

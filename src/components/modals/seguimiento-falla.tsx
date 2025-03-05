@@ -101,11 +101,9 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 	},[isSuccess, reset])
 
 	useEffect(()=>{
-		console.log("QUE PASA", responseSeguimientoFalla)
 		if(responseSeguimientoFalla?.status_code == 202){
 			handleClose()
 			refetchTableFallas()
-			console.log("responseSeguimientoFalla",responseSeguimientoFalla)
 			toast.success("Seguimiento actualizado correctamente!")
 		}
 	},[responseSeguimientoFalla])
@@ -128,15 +126,7 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 		}
 	},[modalData])
 
-	// useEffect(()=>{
-	// 	if(form.formState.errors){
-	// 		console.log("	ERRORESS DEL FORMULARIO   ", form.formState.errors)
-	// 	}
-	// },[form.formState.errors])
-
 	function onSubmit(values: z.infer<typeof formSchema>) {
-		// const formattedDate = format( new Date(date), 'yyyy-MM-dd HH:mm:ss');
-		// const formattedDateFin = format( new Date(dateFin), 'yyyy-MM-dd HH:mm:ss');
         const formatData ={
             falla_folio_accion_correctiva:values.falla_folio_accion_correctiva||"",
             falla_comentario_solucion: values.falla_comentario_solucion||"",
@@ -238,12 +228,15 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 
 				<div className="flex justify-between">
 					<LoadImage
-						id="evidencia" 
-						titulo={"Evidencia"} 
+						id="evidencia"
+						titulo={"Evidencia"}
 						setImg={setEvidencia}
 						showWebcamOption={true}
 						setErrorImagen={setErrorEvidencia}
-						facingMode="user"
+						facingMode="user" 
+						imgArray={evidencia} 
+						showArray={true} 
+						limit={10}
 						/>
 				</div>
 
@@ -252,10 +245,9 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 						id="documento" 
 						titulo={"Documento"} 
 						setDocs={setDocumento}
-						showWebcamOption={true}
 						setErrorImagen={setErrorDocumento}
-						facingMode="user"
 						docArray={documento}
+						limit={10}
 						/>
 				</div>
 			</div>

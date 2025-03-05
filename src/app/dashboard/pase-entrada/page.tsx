@@ -148,9 +148,6 @@ import { Contacto } from "@/lib/get-user-contacts";
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState('');
 	const {  isLoading: loadingAreas} = useCatalogoPaseArea(ubicacionSeleccionada);
 
-
-	// const protocol = window.location.protocol;  
-	// const host = window.location.host;  
 	const[ userIdSoter] = useState<number|null>(()=>{
 			return Number(typeof window !== "undefined"? window.localStorage.getItem("userId_soter"):0) 
 	});
@@ -189,20 +186,6 @@ import { Contacto } from "@/lib/get-user-contacts";
 	const [selected, setSelected] = useState<Contacto |null>(null);
 	const [isOpenModal, setOpenModal] = useState(false);
 
-	// useEffect(() => {
-	// 	if (typeof window !== "undefined") {
-	// 	  const protocol = window.location.protocol;
-	// 	  const host = window.location.host;
-	// 	  setHostPro({ protocol, host });
-  
-	// 	  //const {userIdSoter,userEmailSoter, userNameSoter} = useAuthStore();
-	// 	  console.log(window.localStorage.getItem("userEmail_soter"),window.localStorage.getItem("userName_soter") ,window.localStorage.getItem("userId_soter"))
-	// 	  setUserIdSoter(Number(window.localStorage.getItem("userId_soter")));
-	// 	  setUserNameSoter(window.localStorage.getItem("userName_soter"));
-	// 	  setUserEmailSoter(window.localStorage.getItem("userEmail_soter"));
-	// 	}
-	//   }, []);
-
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -214,15 +197,12 @@ import { Contacto } from "@/lib/get-user-contacts";
 			descripcion:"",
 			perfil_pase: "Visita General",
 			status_pase:"Proceso",
-			// userNameSoter??
 			visita_a: userNameSoter ?? "",
 			custom: true,
 			link:{
 				link :`${protocol}//${host}/dashboard/pase-update`,
 				docs : formatedDocs,
-				// userIdSoter||
 				creado_por_id: userIdSoter || 0,
-				// userEmailSoter ??
 				creado_por_email: userEmailSoter ??""
 		},
 			enviar_correo_pre_registro:enviar_correo_pre_registro??[], 
@@ -253,8 +233,6 @@ import { Contacto } from "@/lib/get-user-contacts";
 		
 	};
 
-	
-
 	useEffect(()=>{
 		if ( selected ) {
 			form.setValue("nombre", selected.nombre || "");
@@ -264,12 +242,12 @@ import { Contacto } from "@/lib/get-user-contacts";
 		}
 	}, [selected, form])
 
-	useEffect(()=>{
-		if ( form.formState.errors ) {
-			console.log("enviar_correo_pre_registro",form.getValues("link"))
-			console.log("form.formState.errors",form.formState.errors, userEmailSoter,userIdSoter, formatedDocs )
-		}
-	}, [form.formState.errors])
+	// useEffect(()=>{
+	// 	if ( form.formState.errors ) {
+	// 		console.log("enviar_correo_pre_registro",form.getValues("link"))
+	// 		console.log("form.formState.errors",form.formState.errors, userEmailSoter,userIdSoter, formatedDocs )
+	// 	}
+	// }, [form.formState.errors])
 
 	useEffect(()=>{
 		if ( ubicacionSeleccionada ) {
@@ -297,7 +275,6 @@ import { Contacto } from "@/lib/get-user-contacts";
 	},[configLocation])
 
 	const onSubmit = (data: z.infer<typeof formSchema>) => {
-		console.log("Formulario enviado con los siguientes datos:", data, userEmailSoter,userIdSoter, formatedDocs );
 		const formattedData = {
 			nombre: data.nombre,
 			email: data.email,
@@ -446,7 +423,6 @@ return (
 
 			<div className="flex justify-between">
 				<p className="font-bold text-xl">Sobre la visita</p>
-				
 				<Button
 					className="bg-blue-500 text-white hover:text-white hover:bg-blue-600"
 					variant="outline"
@@ -455,7 +431,6 @@ return (
 					<List size={36} />
 					Mis contactos
 				</Button>
-				
 				<MisContactosModal title="Mis Contactos" setSelected={setSelected} isOpenModal={isOpenModal} closeModal={closeModalContactos}>
 				</MisContactosModal> 
 
@@ -705,68 +680,6 @@ return (
 						
 					</div>
 
-					{/* <div className="flex gap-2 flex-col">
-						<FormLabel className="mb-2">
-							Selecciona una opción:
-						</FormLabel>
-						<div className="flex gap-2 flex-wrap">
-						<Controller
-						control={form.control}
-						name="toggleFieldEmail"
-						render={() => (
-								<FormItem>
-								<FormControl>
-									<Button
-									type="button"
-									onClick={handleToggleEmail}
-									className={`px-4 py-2 rounded-md transition-all duration-300 ${
-										isActive ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent "
-									} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
-									>
-									<div className="flex flex-wrap items-center">
-										{isActive ? (
-										<><Mail className="mr-3" /><div className="">Enviar por correo</div></>
-										):(
-										<><Mail className="mr-3 text-blue-600" /><div className="text-blue-600">Enviar por correo</div></>
-										)}
-										
-									</div>
-									</Button>
-								</FormControl>
-								<FormMessage />
-								</FormItem>
-							)}
-							/>
-						<Controller
-						control={form.control}
-						name="toggleFieldSMS"
-						render={() => (
-								<FormItem>
-								<FormControl>
-									<Button
-									type="button"
-									onClick={handleToggleSMS}
-									className={`px-4 py-2 rounded-md transition-all duration-300 ${
-										isActiveSMS ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
-									} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
-									>
-									<div className="flex flex-wrap items-center">
-										{isActiveSMS ? (
-										<><MessageCircleMore className="mr-3 text-white" /><div className="">Enviar por sms</div></>
-										):(
-										<><MessageCircleMore className="mr-3 text-blue-600" /><div className="text-blue-600">Enviar por sms</div></>
-										)}
-										
-									</div>
-									</Button>
-								</FormControl>
-								<FormMessage />
-								</FormItem>
-							)}
-							/>
-						</div>
-					</div> */}
-					
 					<h1 className="font-bold text-xl">Sobre vigencia y acceso</h1>
 					<div className="flex items-center flex-wrap gap-5">
 					<FormLabel>Visita de: </FormLabel>
@@ -894,8 +807,7 @@ return (
 										min={fechaDesde ? getNextDay(fechaDesde) : new Date().toISOString().split('T')[0]}
 										disabled={!fechaDesde}
 										onChange={(e) => {
-										field.onChange(e); // Propagar el valor a react-hook-form
-
+										field.onChange(e); 
 										}}
 									/>
 									</FormControl>
@@ -933,7 +845,6 @@ return (
 														):(
 															<><div className="text-blue-600">Cualquier Día</div></>
 														)}
-															
 														</div>
 													</Button>
 													<Button
@@ -949,7 +860,6 @@ return (
 														):(
 															<><div className="text-blue-600">Limitar Días de Acceso</div></>
 														)}
-															
 														</div>
 													</Button>
 													<FormMessage />
@@ -1034,7 +944,6 @@ return (
 
 
 					<div className="flex gap-2 flex-col">
-						{/* Botón Toggle sin FormField */}
 						<div className="flex gap-2 flex-wrap">
 							<Button
 							type="button"

@@ -126,18 +126,6 @@ export const AddGuardModal: React.FC<AddGuardModalProps> = ({
                 return;
               }
 
-
-                 // 🔥 Console.log para verificar los valores antes de enviar la mutación
-    console.log("Datos a enviar:", {
-      area,
-      location,
-      checkin_id,
-      support_guards: [
-        { user_id: selectedGuard.user_id, name: selectedGuard.name },
-      ],
-    });
-
-
              addSupportGuardMutation.mutate({
                 area,
                 location,

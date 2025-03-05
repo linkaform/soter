@@ -52,12 +52,9 @@ export const DoOutModal: React.FC<AddBadgeModalProps> = ({
         if(responseDoOut.success==false){
             setIsOpen(false)
             toast.error("Error")
-            // errorAlert(responseDoOut)
         }else{
-            console.log("RESPONSE", responseDoOut)
             setIsOpen(false)
             toast.success( "Salida registrada exitosamente.")
-            // sweetAlert("success", "Confirmación", "Salida registrada exitosamente.")
             refetchTable()
         }
       

@@ -162,7 +162,6 @@ async function onDescargarPDF(){
 }
 
   return (
-    // open={isSuccess} onOpenChange={setIsSuccess}
     <Dialog >
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-scroll">

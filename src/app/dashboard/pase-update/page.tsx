@@ -222,7 +222,6 @@ const PaseUpdate = () =>{
 
 	useEffect(()=>{
 		if(id || account_id){
-			console.log("refetch pdf")
 			refetchPdf()
 			refetchCatalog()
 		}
@@ -324,13 +323,15 @@ return (
 						{showIneIden?.includes("foto")&& 
 							<div className="w-full sm:w-1/3 md:w-1/2 lg:w-1/2 lg:mr-4 sm:mr-4">
 									<LoadImage
-									id="fotografia" 
-									titulo={"Fotografía"} 
-									setImg={setFotografia}
-									showWebcamOption={true}
-									setErrorImagen={setErrorFotografia}
-									facingMode="user"
-									/>
+										id="fotografia"
+										titulo={"Fotografía"}
+										setImg={setFotografia}
+										showWebcamOption={true}
+										setErrorImagen={setErrorFotografia}
+										facingMode="user" 
+										imgArray={fotografia} 
+										showArray={true} 
+										limit={1}									/>
 									{errorFotografia !=="" && <span className="text-red-500 text-sm">{errorFotografia}</span>}
 							</div>}
 							{showIneIden?.includes("iden")&& <div className="w-full sm:w-1/3 md:w-1/2 lg:w-1/2 lg:mr-4 sm:mr-4">
@@ -340,7 +341,10 @@ return (
 									setImg={setIdentificacion}
 									showWebcamOption={true}
 									setErrorImagen={setErrorIdentificacion}
-									facingMode="environment"
+									facingMode="environment" 
+									imgArray={identificacion} 
+									showArray={true} 
+									limit={1}
 									/>
 									{errorIdentificacion !=="" && <span className="text-red-500 text-sm">{errorIdentificacion}</span>}
 							</div>}

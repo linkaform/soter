@@ -10,7 +10,6 @@ import {
 
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
-// import { errorAlert, sweetAlert } from "@/lib/utils";
 import { useAsignarGafete } from "@/hooks/useAsignarGafete";
 import { dataGafetParamas } from "@/lib/asignar-gafete";
 import { toast } from "sonner";

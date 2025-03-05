@@ -9,10 +9,7 @@ export const metadata: Metadata = {
 export default function MisPasesEntradaLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
-      {/* Favicon directamente */}
       <link rel="icon" href="/history.svg" type="image/svg+xml" />
-      
-      {/* Layout principal */}
       <MainLayout>{children}</MainLayout>
     </>
   );

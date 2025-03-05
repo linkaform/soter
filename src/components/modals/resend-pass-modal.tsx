@@ -54,10 +54,9 @@ export const ResendPassModal: React.FC<ResendPassModalProps> = ({
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
     console.log(data);
-    setOpen(true); // Trigger the success modal
+    setOpen(true); 
   }
 
-  // Return the SuccessModal if open is true
   if (open) {
     return (
       <SuccessModal

@@ -25,12 +25,6 @@ const IncidenciasPage = () => {
   const { data: dataStats} = useGetStats("", "", "Incidencias");
 
   useEffect(()=>{
-    if(dataStats){
-      console.log("errorAE",dataStats)
-    }
-  },[dataStats])
-
-  useEffect(()=>{
     if(prioridades){
       refetch()
     }
@@ -42,12 +36,6 @@ const IncidenciasPage = () => {
   const openModal = () => {
 		setIsSuccess(true);  
 	};
-
-  useEffect(()=>{
-    if(selectedFallas){
-      console.log("FALLALA",selectedFallas)
-    }
-  },[selectedFallas])
 
   return (
     <div className="">

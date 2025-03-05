@@ -9,9 +9,7 @@ const RondinesPage = () => {
     <div className="">
       <div className="flex flex-col">
         <div className="p-6 space-y-6 w-full mx-auto">
-
           <PageTitle title="Historial de Pases" />
-      
             <PasesEntradaTable />
         </div>
       </div>

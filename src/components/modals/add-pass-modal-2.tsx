@@ -14,10 +14,8 @@ import { UpdatedPassModal } from "./updated-pass-modal";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import { data_correo } from "@/lib/send_correo";
 import { formatData } from "@/app/dashboard/pase-update/page";
-// import { errorAlert } from "@/lib/utils";
 import Image from "next/image";
 import { toast } from "sonner";
-
 
 interface EntryPassModal2Props {
 	title: string;
@@ -26,7 +24,6 @@ interface EntryPassModal2Props {
 	setIsSuccess: Dispatch<SetStateAction<boolean>>;
 	onClose: ()=> void;
 }
-
 
 export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 	title,
@@ -40,7 +37,6 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 	const [openGeneratedPass, setOpenGeneratedPass] = useState<boolean>(false);
 	const [responseformated, setResponseFormated] = useState<data_correo|null>(null);
 	const onSubmit = async () => {
-		console.log("Datos en el Modal", data);
 		try {
 			setIsLoading(true);
 			const apiResponse = await UpdatePase({ access_pass: {

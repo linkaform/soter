@@ -57,8 +57,6 @@ export const EntryPassModal: React.FC<EntryPassModalProps> = ({
   const [openGeneratedPass, setOpenGeneratedPass] = useState<boolean>(false);
 
   const onSubmit = async () => {
-    console.log("Datos en el Modal", data);
-
     const accessPassData: Access_pass = {
       nombre: data.nombre,
       email: data.email,

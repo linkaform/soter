@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 //eslint-disable react-hooks/exhaustive-deps
 import { Button } from "../ui/button";
 import {
@@ -35,6 +36,7 @@ import { useCatalogoFallas } from "@/hooks/useCatalogoFallas";
 import { inputFalla } from "@/lib/create-falla";
 import DateTime from "../dateTime";
 import LoadFile from "../upload-file";
+import { Loader2 } from "lucide-react";
 
 interface AddFallaModalProps {
   	title: string;
@@ -79,7 +81,6 @@ const formSchema = z.object({
 
 export const AddFallaModal: React.FC<AddFallaModalProps> = ({
   	title,
-	data,
 	isSuccess,
 	setIsSuccess,
 	refetchTableFallas
@@ -111,9 +112,9 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 		falla: "",
 		falla_caseta: "",
 		falla_comentarios: "",
-		falla_documento:documento,
+		falla_documento:[],
 		falla_estatus: "abierto",
-		falla_evidencia:evidencia,
+		falla_evidencia:[],
 		falla_fecha_hora:date.toString(),
 		falla_objeto_afectado: "",
 		falla_reporta_nombre: "",
@@ -137,9 +138,7 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 	},[isSuccess])
 
 	useEffect(()=>{
-		console.log("responseCreateFalla",responseCreateFalla)
 		if(responseCreateFalla?.status_code==201){
-			console.log("responseCreateFalla",responseCreateFalla)
 			toast.success("Falla creada correctamente")
 			refetchTableFallas()
 			handleClose()
@@ -168,7 +167,6 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 
 	useEffect(()=>{
 		if(subconcepto){
-			console.log("QUE PASA",subconcepto)
 			refetchFallas()
 		}
 	},[subconcepto])
@@ -178,8 +176,6 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 			setCatalogoSub(dataFallas)
 		}
 		if(dataFallas && !subconcepto){
-			console.log("DATAFALLAS", dataFallas)
-
 			setFallas(dataFallas)
 		}
 	},[dataFallas])
@@ -189,12 +185,6 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 			refetch()
 		}
 	},[modalData])
-
-	useEffect(()=>{
-		if(form.formState.errors){
-			console.log("	ERRORESS DEL FORMULARIO   ", form.formState.errors)
-		}
-	},[form.formState.errors])
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		let formattedDate=""
@@ -213,27 +203,15 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 				falla_responsable_solucionar_nombre: values.falla_responsable_solucionar_nombre||"",
 				falla_ubicacion:values.falla_ubicacion||"",
 				}
-				console.log("DATA LISTA PARA ENVIAR",formatData)
 				 setModalData(formatData);
 		}else{
 			form.setError("falla_fecha_hora", { type: "manual", message: "Fecha es un campo requerido." });
 		}
 	}
 
-	useEffect(()=>{
-		if(modalData){
-			console.log(data)
-		}
-	},[modalData])
-
 	const handleClose = () => {
 		setIsSuccess(false); 
 	};
-	useEffect(()=>{
-		if(isLoadingFallas){
-			console.log("CARGANDOOOOOO",isLoadingFallas, subconcepto)
-		}
-	},[isLoadingFallas])
 
   return (
     <Dialog open={isSuccess} modal>
@@ -511,6 +489,9 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 					showWebcamOption={true}
 					setErrorImagen={setErrorEvidencia}
 					facingMode="user"
+					imgArray={evidencia}
+					showArray={true}
+					limit={10}
 					/>
             </div>
 
@@ -519,9 +500,9 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 					id="documento"
 					titulo={"Documento"}
 					setDocs={setDocumento}
-					showWebcamOption={true}
 					setErrorImagen={setErrorDocumento}
-					facingMode="user" docArray={documento}/>
+					docArray={documento}
+					limit={10}/>
             </div>
 
 			<DialogClose asChild>
@@ -535,7 +516,11 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 				type="submit"
 				className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={isLoading}
 			>
-				{isLoading? ("Creando falla"):("Crear falla")}
+				{isLoading? (
+				<>
+					<Loader2 className="animate-spin"/> {"Creando falla..."}
+				</>
+			):("Crear falla")}
 			</Button>
           </form>
         </Form>

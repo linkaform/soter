@@ -1,11 +1,10 @@
 import { ViewIncidencia } from "@/components/modals/view-incidencia";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
-// import { useGetIncidencias } from "@/hooks/useGetIncidencias";
 import {
     ColumnDef,  
   } from "@tanstack/react-table";
 import { Eye } from "lucide-react";
-import Image from "next/image";
 
 export type Incidencia = {
     id: string;
@@ -81,22 +80,9 @@ export type Incidencia = {
               <Eye /> 
             </div>
         </ViewIncidencia>
-        
-        {/* <AddVehicleModal title="Agregar vehiculo" id={incidencia._id} refetchTable={refetch} >
-            <div className="cursor-pointer">
-              <Pencil />
-            </div>
-        </AddVehicleModal>
-          
-        <AddEquipmentModal title="Agregar equipo" id={incidencia._id} refetchTable={refetch}>
-            <div className="cursor-pointer">
-              <Trash />
-            </div>
-        </AddEquipmentModal> */}
       </div>
     );
   };
-  
 
   export const incidenciasColumns: ColumnDef<Incidencia_record>[] = [
     {
@@ -124,91 +110,66 @@ export type Incidencia = {
           aria-label="Select all"
         />
       ),
-      // cell: ({ row }) => (
-      //   <div className="flex space-x-3 items-center">
-      //   <Checkbox
-      //     checked={row.getIsSelected()}
-      //     onCheckedChange={(value) => row.toggleSelected(!!value)}
-      //     aria-label="Select row"
-      //   />
-
-      //  <div className="cursor-pointer">
-      //       <Eye />
-      //     </div>
-    
-      //   <div className="cursor-pointer">
-      //   <Pencil />
-      //   </div>
-      //     <div className="cursor-pointer">
-      //       <Trash2 />
-      //     </div>
-
-      //   </div>
-
-      // ),
       enableSorting: false,
       enableHiding: false,
     },
-    
-        {
-          accessorKey: "ubicacion_incidencia",
-          header: "Ubicación",
-          cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("ubicacion_incidencia")}</div>
-          ),
-          enableSorting: true,
-        },
-        {
-          accessorKey: "area_incidencia",
-          header: "Lugar del Incidente",
-          cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("area_incidencia")}</div>
-          ),
-          enableSorting: true,
-        },
-    
-        {
-          accessorKey: "fecha_hora_incidencia",
-          header: "Fecha",
-          cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("fecha_hora_incidencia")}</div>
-          ),
-          enableSorting: true,
-        },
-        {
-          accessorKey: "evidencia_incidencia",
-          header: "Evidencia",
-          cell: ({ row }) => {
-            const foto = row.original.evidencia_incidencia;
-            const primeraImagen = foto && foto.length > 0 ? foto[0].file_url : '/nouser.svg';
-            return(
-                <Image
-                  src={primeraImagen|| "/nouser.svg"}
-                  alt="Fotografía"
-                  width={80}
-                  height={80}
-                  className="object-cover"
-                />
-            )},
-          enableSorting: false,
-        },
-       {
-          accessorKey: "comentario_incidencia",
-          header: "Comentarios",
-          cell: ({ row }) => {
-            return (
-              <span>{row.getValue("comentario_incidencia")}</span>
-            );
-          },
-          enableSorting: true,
-        },
-        {
-          accessorKey: "reporta_incidencia",
-          header: "Reporta",
-          cell: ({ row }) => (
-            <div>{row.getValue("reporta_incidencia")}</div>
-          ),
-          enableSorting: true,
-        },
-       
-      ];
+		{
+			accessorKey: "ubicacion_incidencia",
+			header: "Ubicación",
+			cell: ({ row }) => (
+			<div className="capitalize">{row.getValue("ubicacion_incidencia")}</div>
+			),
+			enableSorting: true,
+		},
+		{
+			accessorKey: "area_incidencia",
+			header: "Lugar del Incidente",
+			cell: ({ row }) => (
+			<div className="capitalize">{row.getValue("area_incidencia")}</div>
+			),
+			enableSorting: true,
+      	},
+     	{
+			accessorKey: "fecha_hora_incidencia",
+			header: "Fecha",
+			cell: ({ row }) => (
+			<div className="capitalize">{row.getValue("fecha_hora_incidencia")}</div>
+			),
+			enableSorting: true,
+      	},
+      	{
+			accessorKey: "evidencia_incidencia",
+			header: "Evidencia",
+			cell: ({ row }) => {
+			const foto = row.original.evidencia_incidencia;
+			const primeraImagen = foto && foto.length > 0 ? foto[0].file_url : '/nouser.svg';
+			return(
+				<>
+				<Avatar>
+				<AvatarImage src={primeraImagen|| "/nouser.svg"} alt="Avatar" />
+				<AvatarFallback>CN</AvatarFallback>
+				</Avatar>
+				</>
+			)},
+			enableSorting: false,
+     	},
+      	{
+			accessorKey: "comentario_incidencia",
+			header: "Comentarios",
+			cell: ({ row }) => {
+			return (
+				<span>{row.getValue("comentario_incidencia")}</span>
+			);
+			},
+			enableSorting: true,
+      	},
+      	{
+			accessorKey: "reporta_incidencia",
+			header: "Reporta",
+			cell: ({ row }) => (
+			<div>{row.getValue("reporta_incidencia")}</div>
+			),
+			enableSorting: true,
+      	},
+      
+    ];

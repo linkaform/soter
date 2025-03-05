@@ -12,6 +12,7 @@ import Image from "next/image";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
 import { Card, CardContent } from "../ui/card";
 import { Incidencia_record } from "../table/incidencias/incidencias-columns";
+import { formatDateToText } from "@/lib/utils";
 
 interface ViewFallaModalProps {
   title: string;
@@ -30,26 +31,26 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-scroll">
         <DialogHeader>
-          <DialogTitle className="text-2xl text-center  font-bold my-5">
+          <DialogTitle className="text-2xl text-center  font-bold ">
             {title}
           </DialogTitle>
         </DialogHeader>
 
         <div className="flex flex-between gap-2 ">
 			<div className="w-full flex flex-col gap-3">
-				<div className="w-full ">
-					<p className="font-bold ">Fecha y hora de la incidencia:</p>
-					<p className="">{data?.fecha_hora_incidencia} </p>
+				<div className="w-full flex gap-2">
+					<p className="font-bold flex flex-shrink-0">Fecha :</p>
+					<p className="">{formatDateToText(data?.fecha_hora_incidencia.slice(0,-3))} </p>
 				</div>
-				<div className="w-full ">
+				<div className="w-full flex gap-2">
 					<p className="font-bold">Ubicación: </p>
 					<p >{data?.ubicacion_incidencia} </p>
 				</div>
-				<div className="w-full ">
+				<div className="w-full flex gap-2">
 					<p className="font-bold">Area: </p>
 					<p >{data?.area_incidencia} </p>
 				</div>
-				<div className="w-full ">
+				<div className="w-full flex gap-2">
 					<p className="font-bold">Incidencia: </p>
 					<p >{data?.incidencia} </p>
 				</div>
@@ -88,10 +89,10 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
               </div></>
               ):(
 				<>
-				<div className="w-full">
+				<div className="w-full flex gap-2">
 					<div className="mx-auto max-w-xs">
 						<p className="font-bold mb-2">Evidencia : </p>
-						<p className="mb-2">No hay evidencias disponibles : </p>
+						<p className="mb-2">No hay evidencias disponibles </p>
 					</div>
 				</div>
 				</>
@@ -100,24 +101,24 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 
         <div className="flex justify-between">
           	<div className="w-full flex flex-col gap-3">
-				<div className="w-full ">
-				<p className="font-bold ">Comentarios:</p>
-				<p className="">{data?.comentario_incidencia} </p>
+				<div className="w-full flex gap-2">
+          <p className="font-bold ">Comentarios:</p>
+          <p className="">{data?.comentario_incidencia} </p>
 				</div>
-				<div className="w-full ">
-                <p className="font-bold ">Prioridad: </p>
-                <p className="text-red-500">{data?.prioridad_incidencia} </p>
+				<div className="w-full flex gap-2">
+          <p className="font-bold ">Prioridad: </p>
+          <p className="text-red-500">{data?.prioridad_incidencia} </p>
 				</div>
-				<div className="w-full ">
+				<div className="w-full flex gap-2">
 					<p className="font-bold">Tipo de daño: </p>
 					<p >{data?.area_incidencia} </p>
 				</div>
-				<div className="w-full ">
+				<div className="w-full flex gap-2">
 					<p className="font-bold">Notificaciones: </p>
 					<p >{data?.notificacion_incidencia} </p>
 				</div>
          	 </div>
-          	<div className="w-full">
+          	<div className="w-full flex gap-2">
 			  <div className="mx-auto max-w-xs">
 				<p className="font-bold">Documentos:</p>
 				{data?.documento_incidencia && data.documento_incidencia.length > 0 ? (
@@ -141,14 +142,14 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 				</div >
 			</div >
         </div>
-
+        <Separator></Separator>
 		<div className="flex flex-col space-y-5">
 			<div className=" flex justify-between">
-				<div className="w-full ">
+				<div className="w-full flex gap-2">
 				<p className="font-bold">Depositos : </p>
 				<p className=""></p>
 				</div>
-				<div className="w-full ">
+				<div className="w-full flex gap-2">
 				<p className="font-bold">Total : </p>
 				<p className=""></p>
 				</div>

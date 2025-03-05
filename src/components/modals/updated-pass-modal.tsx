@@ -52,7 +52,6 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 	closePadre
 }) => {
 	const router = useRouter(); 
-	console.log("HAS TEL ", hasEmail, hasTelefono)
 	const [dataCorreo, setDataCorreo]= useState<data_correo|null>(null)
 	const [enviarCorreo, setEnviarCorreo] = useState<string[]>([]);
 	const [isActive, setIsActive] = useState(false);

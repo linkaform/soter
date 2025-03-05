@@ -20,7 +20,7 @@ interface ContactsModalProps {
 
 export const MisContactosModal: React.FC<ContactsModalProps> = ({
 	title,
-	setSelected,  // Recibimos la prop 'data'
+	setSelected, 
 	closeModal,
 	isOpenModal
 }) => {

@@ -4,9 +4,10 @@ import { useQuery } from "@tanstack/react-query";
 
 export const useCatalogoFallas = (tipo:string) => {
   const { data: data, isLoading, error, isFetching, refetch } = useQuery<any>({
-    queryKey: ["getCatalogoFallas"], 
+    queryKey: ["getCatalogoFallas", tipo], 
     enabled:false,
     queryFn: async () => {
+      console.log("QUE PASA")
         const data = await getCatalogoFallas(tipo); 
         const textMsj = errorMsj(data) 
       if(textMsj){
