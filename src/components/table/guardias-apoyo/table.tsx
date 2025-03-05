@@ -49,7 +49,7 @@ export function GuardiasApoyoTable() {
 
   
     React.useEffect(() => {
-      clearSelectedGuards(); // 🔥 Reinicia la selección de guardias cuando el componente se monta
+      clearSelectedGuards(); // 🔥 Reinicia la selección de guardias
     }, [clearSelectedGuards]);
 
 
@@ -69,30 +69,37 @@ export function GuardiasApoyoTable() {
   
 
 
-
   const columns: ColumnDef<any>[] = [
     {
       id: "select",
-      header: ({ table }) => (
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      ),
-      cell: ({ row }) => (
-        <Checkbox
-          checked={row.getIsSelected()}
-          onCheckedChange={(value) => {
-            row.toggleSelected(!!value)
-            toggleGuardSelection(row.original)
-          }}
-          aria-label="Select row"
-        />
-      ),
+      header: ({ table }) => {
+        if (shift?.guard?.status_turn !== "Turno Cerrado") return null; // 🔥 Oculta el header del checkbox si el turno NO está cerrado
+    
+        return (
+          <Checkbox
+            checked={
+              table.getIsAllPageRowsSelected() ||
+              (table.getIsSomePageRowsSelected() && "indeterminate")
+            }
+            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+            aria-label="Select all"
+          />
+        );
+      },
+      cell: ({ row }) => {
+        if (shift?.guard?.status_turn !== "Turno Cerrado") return null; // 🔥 Oculta los checkboxes si el turno NO está cerrado
+    
+        return (
+          <Checkbox
+            checked={row.getIsSelected()}
+            onCheckedChange={(value) => {
+              row.toggleSelected(!!value);
+              toggleGuardSelection(row.original);
+            }}
+            aria-label="Select row"
+          />
+        );
+      },
       enableSorting: false,
       enableHiding: false,
     },

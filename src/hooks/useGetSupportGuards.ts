@@ -4,44 +4,36 @@ import { getSupportGuards } from "@/lib/get-support-guards";
 import { updateSupportGuards } from "@/lib/update-support-guard";
 import { toast } from "sonner"; // Importar Sonner
 
-/* import useAuthStore from "@/store/useAuthStore";
- */
 import { useShiftStore } from "@/store/useShiftStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import useAuthStore from "@/store/useAuthStore";
 
-
 export const useGetSupportGuards = () => {
-  
   const queryClient = useQueryClient();
 
-  
   const { area, location, setLoading } = useShiftStore();
-
-
-
-
-
-
 
   const { userNameSoter } = useAuthStore();
 
-  const { data: supportGuards, isLoading, error, isFetching } = useQuery<any>({
+  const {
+    data: supportGuards,
+    isLoading,
+    error,
+    isFetching,
+  } = useQuery<any>({
     queryKey: ["getGuardSupport", area, location],
     queryFn: async () => {
       const response = await getSupportGuards({ area, location });
 
-
-  
       // Aplicar el filtro directamente
-    const filteredGuards = response?.response?.data?.guardia_de_apoyo?.filter((guard: any) => {
+      const filteredGuards = response?.response?.data?.guardia_de_apoyo?.filter(
+        (guard: any) => {
+          return guard.name !== userNameSoter;
+        }
+      );
 
-
-        return guard.name !== userNameSoter; 
-      }); 
-  
-    return filteredGuards || [];
-     },
+      return filteredGuards || [];
+    },
     retry: 3,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
     refetchOnWindowFocus: true,
@@ -53,7 +45,7 @@ export const useGetSupportGuards = () => {
 
 
   const addSupportGuardMutation = useMutation({
-    mutationFn: ({
+    mutationFn: async ({
       area,
       location,
       checkin_id,
@@ -63,30 +55,46 @@ export const useGetSupportGuards = () => {
       location: string;
       checkin_id?: string;
       support_guards: { user_id: number; name: string }[];
-    }) =>
-      updateSupportGuards({
+    }) => {
+      const response = await updateSupportGuards({
         area,
         location,
         checkin_id,
         support_guards,
-      }),
+      });
+  
+      if (!response.success) {
+        throw new Error(
+          response.error?.msg?.msg || "Hubo un error al agregar el guardia."
+        );
+      }
+  
+      return response;
+    },
     onMutate: () => {
       setLoading(true); // Activar loading global
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["getShift"] }); // Refrescar datos del turno
+      queryClient.invalidateQueries({ queryKey: ["getShift"] });
+      queryClient.invalidateQueries({ queryKey: ["getGuardSupport"] });
+  
+      // ✅ Notificación de éxito
+      toast.success("Guardia agregado correctamente.");
     },
     onError: (error) => {
-      console.error("Error al cambiar la agregar el guardia a la caseta:", error);
+      console.error("Error al agregar el guardia:", error);
+  
+      // ❌ Notificación de error
+      toast.error(
+        error.message || "Hubo un error al agregar el guardia a la caseta."
+      );
     },
     onSettled: () => {
       setLoading(false); // Desactivar loading global
     },
   });
-
-
-
-
+  
+ 
   const checkoutSupportGuardsMutation = useMutation({
     mutationFn: async ({
       area,
@@ -102,44 +110,41 @@ export const useGetSupportGuards = () => {
         location,
         guards,
       });
-  
+
       if (!response.success) {
         throw new Error(
-          response.error?.msg?.msg || "Hubo un error al realizar el checkout de los guardias"
+          response.error?.msg?.msg ||
+            "Hubo un error al realizar el checkout de los guardias"
         );
       }
-  
+
       return response;
     },
     onMutate: () => {
       setLoading(true); // Activar loading global
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["getShift"] }); 
-      queryClient.invalidateQueries({ queryKey: ["getSupportGuards"] });
-  
+      queryClient.invalidateQueries({ queryKey: ["getShift"] });
+      queryClient.invalidateQueries({ queryKey: ["getGuardSupport"] });
+
       // ✅ Notificación de éxito
       toast.success("Checkout de guardias realizado correctamente.");
     },
     onError: (error) => {
       console.error("Error al realizar el checkout de los guardias:", error);
-  
+
       // ❌ Notificación de error
-      toast.error(error.message || "Hubo un error al realizar el checkout de los guardias.");
+      toast.error(
+        error.message ||
+          "Hubo un error al realizar el checkout de los guardias."
+      );
     },
     onSettled: () => {
       setLoading(false); // Desactivar loading global
     },
   });
-  
-
-
-
-
-
 
   return {
-
     /* Obtener List de guardias */
     supportGuards,
     isLoading,
@@ -149,9 +154,7 @@ export const useGetSupportGuards = () => {
     /* Actualizar Lists de guardias */
     addSupportGuardMutation,
 
-
     /* Salida de guardias de la caseta*/
-    checkoutSupportGuardsMutation
-
+    checkoutSupportGuardsMutation,
   };
 };

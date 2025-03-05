@@ -12,6 +12,7 @@ import {
 import SearchInput from "../search-input";
 import { useGetSupportGuards } from "@/hooks/useGetSupportGuards";
 import Image from "next/image";
+import { useShiftStore } from "@/store/useShiftStore";
 
 interface AddGuardModalProps {
   title: string;
@@ -30,7 +31,13 @@ export const AddGuardModal: React.FC<AddGuardModalProps> = ({
   title,
   children,
 }) => {
-  const { supportGuards,isLoading } = useGetSupportGuards();
+  const { supportGuards, addSupportGuardMutation, isLoading } = useGetSupportGuards();
+
+    const { location, area, checkin_id } = useShiftStore();
+  
+
+
+
 
   const [selectedGuard, setSelectedGuard] = useState<any>("");
   const [searchText, setSearchText] = useState<string>("");
@@ -119,14 +126,27 @@ export const AddGuardModal: React.FC<AddGuardModalProps> = ({
                 return;
               }
 
-          /*     addSupportGuardMutation.mutate({
+
+                 // 🔥 Console.log para verificar los valores antes de enviar la mutación
+    console.log("Datos a enviar:", {
+      area,
+      location,
+      checkin_id,
+      support_guards: [
+        { user_id: selectedGuard.user_id, name: selectedGuard.name },
+      ],
+    });
+
+
+             addSupportGuardMutation.mutate({
                 area,
                 location,
                 checkin_id: checkin_id,
                 support_guards: [
                   { user_id: selectedGuard.user_id, name: selectedGuard.name },
                 ],
-              }); */
+              })
+            
             }}
           >
             Agregar

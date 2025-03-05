@@ -7,6 +7,8 @@ import ActivitySummary from "@/components/pages/turnos/activity-summary";
 import TurnStatus from "@/components/pages/turnos/turn-status";
 
 import { useGetShift } from "@/hooks/useGetShift";
+import { useShiftStore } from "@/store/useShiftStore";
+import { useEffect } from "react";
 
 
 
@@ -14,7 +16,34 @@ export default function Home() {
 
 
 
-    const { isLoading, loading } = useGetShift();
+
+
+    const { isLoading, loading, shift } = useGetShift()
+
+
+    const { setCheckin_id } = useShiftStore()
+
+
+
+    
+
+   
+  useEffect(() => {
+    if ( shift?.guard?.status_turn !== "Turno Cerrado") {     
+      setCheckin_id(shift?.booth_status?.checkin_id);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shift]);
+
+
+
+
+
+
+  
+
+
+
 
 
   

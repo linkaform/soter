@@ -3,17 +3,12 @@ import { closeShift } from "@/lib/close-shift";
 import { getShift, getStats } from "@/lib/get-shift";
 import { startShift } from "@/lib/start-shift";
 import { toast } from "sonner"; // Importar Sonner
-
-/* import useAuthStore from "@/store/useAuthStore";
- */
 import { useShiftStore } from "@/store/useShiftStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import useAuthStore from "@/store/useAuthStore";
 
 export const useGetShift = () => {
   const queryClient = useQueryClient();
-
-
 
   const { userNameSoter } = useAuthStore();
 
