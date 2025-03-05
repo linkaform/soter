@@ -44,7 +44,7 @@ export const useGetShift = () => {
       };
     },
     refetchOnWindowFocus: true,
-    refetchInterval: 60000,
+    refetchInterval: 15000,
     refetchOnReconnect: true,
     staleTime: 1000 * 60 * 5,
   });

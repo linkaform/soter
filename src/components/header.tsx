@@ -20,7 +20,7 @@ export const Header = () => {
     const { logout } = useAuthStore();
     const { data } = useGetMenu();
   return (
-    <header className="w-full shadow py-3 px-12">
+    <header className="w-full shadow py-3 px-12 sticky top-0 left-0 bg-white  z-50">
       <div className="mx-auto flex flex-col lg:flex-row items-center justify-between">
         {/* Logo */}
 
