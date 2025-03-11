@@ -13,12 +13,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { DoorOpen, LogOut, Settings, StickyNote} from "lucide-react";
 import useAuthStore from "@/store/useAuthStore";
-import { useGetMenu } from "@/hooks/useGetMenu";
+import { useMenuStore } from "@/store/useGetMenuStore";
 
 export const Header = () => {
-    const currentPath = usePathname();
-    const { logout } = useAuthStore();
-    const { data } = useGetMenu();
+  const currentPath = usePathname();
+  const { logout } = useAuthStore();
+  const { labels } = useMenuStore();
+
   return (
     <header className="w-full shadow py-3 px-12 sticky top-0 left-0 bg-white  z-50">
       <div className="mx-auto flex flex-col lg:flex-row items-center justify-between">
@@ -54,9 +55,9 @@ export const Header = () => {
               <nav className="flex  space-x-3 mr-5">
               { currentPath !== "/" ? (
                 <>
-                {data?.length > 0 ? (
+                {labels?.length > 0 ? (
                   <>
-                    { data.includes("accesos")? (
+                    { labels.includes("accesos")? (
                       <>
                         <Link href="/dashboard/accesos">
                         <Button
@@ -72,7 +73,7 @@ export const Header = () => {
                       ) : null
                     }
                     
-                    { data.includes("turnos")? (
+                    { labels.includes("turnos")? (
                       <>
                           <Link href="/dashboard/turnos">
                           <Button
@@ -88,7 +89,7 @@ export const Header = () => {
                       ) : null
                     }
                       
-                      { data.includes("bitacoras")? (
+                      { labels.includes("bitacoras")? (
                       <>
                           <Link href="/dashboard/bitacoras">
                           <Button
@@ -104,7 +105,7 @@ export const Header = () => {
                       ) : null
                     }
     
-                    { data.includes("incidencias")? (
+                    { labels.includes("incidencias")? (
                       <>
                           <Link href="/dashboard/incidencias">
                           <Button
@@ -120,7 +121,7 @@ export const Header = () => {
                       ) : null
                     }
                       
-                    { data.includes("articulos")? (
+                    { labels.includes("articulos")? (
                       <>
                           <Link href="/dashboard/articulos">
                           <Button
@@ -136,7 +137,7 @@ export const Header = () => {
                       ) : null
                     }
     
-                    { data.includes("rondines")? (
+                    { labels.includes("rondines")? (
                       <>
                           <Link href="/dashboard/rondines">
                           <Button
@@ -169,9 +170,9 @@ export const Header = () => {
                   <DropdownMenuSeparator />
                   { currentPath !== "/" ? (
                     <>
-                    {data?.length > 0 ? (
+                    {labels?.length > 0 ? (
                       <>
-                        { data.includes("turnos")? (
+                        { labels.includes("turnos")? (
                           <>
                             <Link href="/dashboard/turnos">
                               <DropdownMenuItem>
@@ -184,9 +185,9 @@ export const Header = () => {
                       </>
                     ):null}
                       
-                    {data?.length > 0 ? (
+                    {labels?.length > 0 ? (
                       <>
-                        { data.includes("notas")? (
+                        { labels.includes("notas")? (
                       <>
                         <Link href="/dashboard/notas">
                           <DropdownMenuItem>

@@ -71,7 +71,6 @@ const DateTime:React.FC<DateTimeListProps> = ({date, setDate})=> {
   const handlePopoverToggle = () => {
     setIsOpen((prevState) => !prevState); // Alternar entre abierto y cerrado
   };
-  
   return (
     <Popover open={isOpen}>
       <PopoverTrigger asChild>

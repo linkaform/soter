@@ -9,11 +9,12 @@ import {
 } from "../ui/dialog";
 import { Separator } from "../ui/separator";
 import Image from "next/image";
-import { Fallas_record } from "../table/incidencias/fallas/fallas-columns";
+import { FallaGrupoSeguimiento, Fallas_record } from "../table/incidencias/fallas/fallas-columns";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
 import { Card, CardContent } from "../ui/card";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@radix-ui/react-accordion";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import { capitalizeFirstLetter, formatDateToText } from "@/lib/utils";
+import { Imagen } from "@/lib/update-pass";
 
 interface ViewFallaModalProps {
   title: string;
@@ -27,11 +28,11 @@ export const ViewFalla: React.FC<ViewFallaModalProps> = ({
   data,
   children,
 }) => {
-  const seguimientos = data.falla_grupo_seguimiento || []
+  const seguimientos = data.falla_grupo_seguimiento_formated || []
   return (
     <Dialog >
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="max-w-3xl overflow-scroll">
+      <DialogContent className="max-w-4xl overflow-scroll">
         <DialogHeader>
           <DialogTitle className="text-2xl text-center font-bold">
             {title}
@@ -85,13 +86,13 @@ export const ViewFalla: React.FC<ViewFallaModalProps> = ({
             <div className="w-full flex flex-col">
                 <p className="font-bold mb-2">Evidencia: </p>
                 <div className="flex justify-center">
-                  <Carousel className="w-48 ">
+                  <Carousel className="w-36 ">
                       <CarouselContent>
                           {data.falla_evidencia.map((a, index) => (
                           <CarouselItem key={index}>
                               <div className="p-1">
                               <Card>
-                                  <CardContent className="flex aspect-square items-center justify-center p-6">
+                                  <CardContent className="flex aspect-square items-center justify-center p-0">
                                   {/* <span className="text-4xl font-semibold"> */}
                                       <Image
                                           width={280}
@@ -150,37 +151,91 @@ export const ViewFalla: React.FC<ViewFallaModalProps> = ({
             </div>
         </div>
 
-        {seguimientos.length>0 && (
-          <div className="">
-            <p className=" font-bold mb-2">Seguimientos:</p>
-            <Accordion type="single" collapsible>
-              {seguimientos.map((item, index) => (
-                <AccordionItem key={index} value={`vehiculo-${index}`}>
-                  <AccordionTrigger>{`${item['66f2dfb2c80d24e5e82332b4']}`}</AccordionTrigger>
-                  <AccordionContent>
-                    <p className="font-medium mb-1">
-                      Accion realizada:{" "}
-                      <span className="">{`${item['66f2dfb2c80d24e5e82332b4']}`|| "N/A"}</span>
-                    </p>
-                    <p className="font-medium mb-1">
-                      Comentario	:{" "}
-                      <span className="">{`${item['66f2dfb2c80d24e5e82332b3']}`|| "N/A"}</span>
-                    </p>
-                    <p className="font-medium mb-1">
-                      Fecha de incio:{" "}
-                      <span className="">{`${item['679a485c66c5d089fa6b8ef9']}`|| "N/A"}</span>
-                    </p>
-                    <p className="font-medium mb-1">
-                      Fecha fin:{" "}
-                      <span className="">{`${item['679a485c66c5d089fa6b8efa']}`|| "N/A"}</span>
-                    </p>
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </div>
-          )}
-
+		{seguimientos.length > 0 ? (
+		<div className="">
+			{/* <p className=" font-bold mb-2">Seguimientos:</p> */}
+			<Accordion type="single" collapsible>
+			{/* {seguimientos.map((item:FallaGrupoSeguimiento, index:number) => ( */}
+				<AccordionItem key={"1"} value={`1`}>
+				<AccordionTrigger>{`Seguimientos`}</AccordionTrigger>
+				<AccordionContent className="mb-0 pb-0">
+        <table className="min-w-full table-auto border-separate border-spacing-2">
+          <thead>
+            <tr>
+              <th className="px-4 py-2 text-left border-b">Acción realizada</th>
+              <th className="px-4 py-2 text-left border-b">Comentario</th>
+              <th className="px-4 py-2 text-left border-b">Fecha inicio</th>
+              <th className="px-4 py-2 text-left border-b">Fecha fin</th>
+              <th className="px-4 py-2 text-left border-b">Evidencia</th>
+              <th className="px-4 py-2 text-left border-b">Documentos</th>
+            </tr>
+          </thead>
+          <tbody>
+            {seguimientos.map((item: FallaGrupoSeguimiento, index: number) => (
+              <tr key={index}>
+                <td className="px-4 py-2"><small>{item.accion_correctiva || "N/A"}</small></td>
+                <td className="px-4 py-2"><small>{item.comentario || "N/A"}</small></td>
+                <td className="px-4 py-2"><small>{item.fecha_inicio || "N/A"}</small></td>
+                <td className="px-4 py-2"><small>{item.fecha_fin || "N/A"}</small></td>
+                <td className="px-4 py-2">
+                  {item.evidencia.length > 0 ? (
+                    <div className="w-full flex justify-center">
+                      <Carousel className="w-16">
+                        <CarouselContent>
+                          {item.evidencia.map((a: Imagen, index: number) => (
+                            <CarouselItem key={index}>
+                              <Card>
+                                <CardContent className="flex aspect-square items-center justify-center p-0">
+                                  <Image
+                                    width={280}
+                                    height={280}
+                                    src={a.file_url || "/nouser.svg"}
+                                    alt="Imagen"
+                                    className="w-42 h-42 object-contain bg-gray-200 rounded-lg"
+                                  />
+                                </CardContent>
+                              </Card>
+                            </CarouselItem>
+                          ))}
+                        </CarouselContent>
+                        <CarouselPrevious />
+                        <CarouselNext />
+                      </Carousel>
+                    </div>
+                  ) : (
+                    <small>No hay evidencias disponibles.</small>
+                  )}
+                </td>
+                <td className="px-4 py-2">
+                  {item.documento && item.documento.length > 0 ? (
+                    <ul className="ms-2">
+                      {item.documento.map((file, index) => (
+                        <li key={index}>
+                          <a
+                            href={file.file_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:underline"
+                          >
+                            <small>{file.file_name}</small>
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <small>No hay archivos disponibles.</small>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+				</AccordionContent>
+				</AccordionItem>
+			{/* ))} */}
+			</Accordion>
+		</div>
+		):(<div>No hay seguimientos disponibles.</div>)}
         <div className="flex  gap-1 my-5">
           <DialogClose asChild>
             <Button className="w-1/2 h-12 bg-gray-100 hover:bg-gray-200 text-gray-700">

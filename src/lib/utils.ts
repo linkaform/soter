@@ -249,3 +249,10 @@ export function formatDateToText(dateString: string): string {
   }
   return date.toLocaleString('es-ES', options);
 }
+
+export function formatCurrency(number:number) {
+  return new Intl.NumberFormat('es-MX', {
+    style: 'currency',
+    currency: 'MXN'
+  }).format(number);
+}

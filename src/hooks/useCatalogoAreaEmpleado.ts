@@ -2,10 +2,10 @@ import { getCatalogoAreaEmpleado } from "@/lib/getCatalogoAreaEmpleado";
 import { errorMsj } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 
-export const useCatalogoAreaEmpleado = () => {
+export const useCatalogoAreaEmpleado = (isSuccess:boolean) => {
   const { data: data, isLoading, error, isFetching, refetch } = useQuery<any>({
     queryKey: ["getCatalogoAreaEmpleado"], 
-    enabled:false,
+    enabled:isSuccess,
     queryFn: async () => {
         const data = await getCatalogoAreaEmpleado();
         const textMsj = errorMsj(data)  //COMO MANDAR LOS MSJS POR MEDIO DE ERROR

@@ -26,7 +26,6 @@ interface CalendarDaysProps {
 
 
 const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOption, facingMode, setErrorImagen, imgArray, showArray, limit})=> {
-    console.log("IMAGEEENN", imgArray)
     const [selectedFile, setSelectedFile] = useState<File|null>(null);
     const [loading, setloading] = useState(false);
     const [loadingWebcam, setloadingWebcam] = useState(false);
@@ -171,13 +170,13 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
                         {imgArray?.length>0 && showArray ? (
                             <>
                             <div className="w-full flex justify-center ">
-                            <Carousel className="w-48 ">
+                            <Carousel className="w-36 ">
                             <CarouselContent>
                                 {imgArray.map((a:Imagen, index:number) => (
                                 <CarouselItem key={index}>
                                     <div className="p-1">
                                     <Card>
-                                        <CardContent className="flex aspect-square items-center justify-center p-6">
+                                        <CardContent className="flex aspect-square items-center justify-center p-0">
                                         {/* <span className="text-4xl font-semibold"> */}
                                             <Image
                                                 width={280}

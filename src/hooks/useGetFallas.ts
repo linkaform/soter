@@ -3,10 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 
 export const useGetFallas= (location:string, area:string, status:string) => {
   const { data: data, isLoading, error, isFetching, refetch } = useQuery<any>({
-    queryKey: ["getFallas", location, area, status], 
+    queryKey: ["getListFallas", location, area, status], 
     queryFn: async () => {
         const data = await getListFallas(location, area , status); 
-        return data.response?.data; 
+        return data.response?.data||[]; 
     },
    
     refetchOnWindowFocus: true, 

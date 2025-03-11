@@ -7,7 +7,6 @@ export const useDeleteFalla = (folio: string[]) => {
     queryKey: ["deleteFalla", folio],
     enabled:false,
     queryFn: async () => {
-        console.log("DENTROO")
       const data = await deleteFalla(folio);
       const textMsj = errorMsj(data)  
       if (textMsj?.text){

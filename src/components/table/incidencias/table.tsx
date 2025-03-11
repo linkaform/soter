@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Incidencia_record, incidenciasColumns } from "./incidencias-columns";
 import { useEffect } from "react";
+import { EliminarIncidenciaModal } from "@/components/modals/delete-incidencia-modal";
 
 interface ListProps {
   refetch:() => void;
@@ -42,9 +43,11 @@ interface ListProps {
   setPrioridades: React.Dispatch<React.SetStateAction<string[]>>;
   isLoading:boolean;
   openModal: () => void;
+  setSelectedIncidencias:React.Dispatch<React.SetStateAction<string[]>>;
+  selectedIncidencias:string[]
 }
 
-const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, setPrioridades, isLoading, openModal})=> {
+const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, setPrioridades, isLoading, openModal,setSelectedIncidencias,selectedIncidencias })=> {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -99,6 +102,17 @@ const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, setPrioridades, i
     refetch()
   },[])
 
+
+  React.useEffect(()=>{
+    if(table.getFilteredSelectedRowModel().rows.length>0){
+      const folios: string[] = []
+      table.getFilteredSelectedRowModel().rows.map((row) => {
+        folios.push(row.original.folio);
+      });
+      setSelectedIncidencias(folios)
+    }
+  },[table.getFilteredSelectedRowModel().rows])
+
   return (
     <div className="w-full">
       <div className="flex flex-col md:flex-row justify-between items-center my-5">
@@ -148,10 +162,18 @@ const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, setPrioridades, i
             Descargar
           </Button>
 
-          <Button className="w-full md:w-auto bg-red-500 hover:bg-red-600">
+          <EliminarIncidenciaModal
+          title="Eliminar Incidencias" arrayFolios={selectedIncidencias}>
+            <div className="flex flex-shrink p-2 rounded-sm px-3 w-full bg-red-500 text-white hover:bg-red-600" >
+            <Trash2 />        
+              Eliminar
+            </div>
+          </EliminarIncidenciaModal>
+
+          {/* <Button className="w-full md:w-auto bg-red-500 hover:bg-red-600">
             <Trash2 />
             Eliminar
-          </Button>
+          </Button> */}
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

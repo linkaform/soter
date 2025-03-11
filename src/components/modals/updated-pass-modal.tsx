@@ -82,7 +82,6 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 
 	useEffect(()=>{
 		if(error){
-			console.error(error)
 			toast.error("Error")
 			// errorAlert(error)
 		}

@@ -2,12 +2,11 @@ import { getCatalogoFallas } from "@/lib/getCatalogoFallas";
 import { errorMsj } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 
-export const useCatalogoFallas = (tipo:string) => {
+export const useCatalogoFallas = (tipo:string, isModalOpen:boolean) => {
   const { data: data, isLoading, error, isFetching, refetch } = useQuery<any>({
     queryKey: ["getCatalogoFallas", tipo], 
-    enabled:false,
+    enabled:isModalOpen,
     queryFn: async () => {
-      console.log("QUE PASA")
         const data = await getCatalogoFallas(tipo); 
         const textMsj = errorMsj(data) 
       if(textMsj){

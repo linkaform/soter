@@ -1,10 +1,15 @@
+import { EliminarFallaModal } from "@/components/modals/delete-falla-modal";
+import { EliminarIncidenciaModal } from "@/components/modals/delete-incidencia-modal";
+import { EditarIncidenciaModal } from "@/components/modals/editar-incidencia";
+import { LoadingModal } from "@/components/modals/loading-modal";
 import { ViewIncidencia } from "@/components/modals/view-incidencia";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
     ColumnDef,  
   } from "@tanstack/react-table";
-import { Eye } from "lucide-react";
+import { Eye, Trash2 } from "lucide-react";
+import { useState } from "react";
 
 export type Incidencia = {
     id: string;
@@ -70,7 +75,8 @@ export type Incidencia = {
   const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
     // const {refetch} = useGetIncidencias("", "",[]);
     const incidencia = row.original;
-    
+    const [showLoadingModal, setShowLoadingModal] = useState(false);
+
     return (
       <div className="flex space-x-2">
         <ViewIncidencia 
@@ -80,6 +86,43 @@ export type Incidencia = {
               <Eye /> 
             </div>
         </ViewIncidencia>
+
+        <LoadingModal isOpen={showLoadingModal} text="Cargando..."/>
+        
+        <EditarIncidenciaModal
+          title="Editar Incidencia"
+          data={incidencia} setShowLoadingModal={setShowLoadingModal} showLoadingModal={showLoadingModal}/>
+
+        <EliminarIncidenciaModal
+          title="Eliminar Incidencia" arrayFolios={[incidencia.folio]}>
+            <div className="cursor-pointer">
+                <Trash2 />   
+            </div>
+        </EliminarIncidenciaModal>
+        {/* <EditarFallaModal
+                title="Editar Falla"
+                data={incidencia} refetchTableFallas={refetch}>
+            <div className="cursor-pointer">
+              <Edit /> 
+            </div>
+        </EditarFallaModal>
+
+        <SeguimientoFallaModal
+                title="Seguimiento Falla"
+                data={incidencia} refetchTableFallas={refetch}>
+            <div className="cursor-pointer">
+                <Check />   
+            </div>
+        </SeguimientoFallaModal>
+
+        <EliminarFallaModal
+          title="Eliminar Falla"
+          refetchTableFallas={refetch} arrayFolios={[incidencia.folio]}>
+            <div className="cursor-pointer">
+                <Trash2 />   
+            </div>
+        </EliminarFallaModal> */}
+        
       </div>
     );
   };

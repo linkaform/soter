@@ -2,10 +2,10 @@ import { getCatalogoAreaEmpleadoApoyo } from "@/lib/getCatalogoAreaEmpleadoApoyo
 import { errorMsj } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 
-export const useCatalogoAreaEmpleadoApoyo = () => {
+export const useCatalogoAreaEmpleadoApoyo = (isSuccess:boolean) => {
   const { data: data, isLoading, error, isFetching, refetch } = useQuery<any>({
     queryKey: ["getCatalogoAreaEmpleadoApoyo"], 
-    enabled:false,
+    enabled:isSuccess,
     queryFn: async () => {
         const data = await getCatalogoAreaEmpleadoApoyo();
         const textMsj = errorMsj(data) 

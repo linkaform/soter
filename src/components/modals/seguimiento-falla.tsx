@@ -31,7 +31,9 @@ import { useCreateSeguimientoFalla } from "@/hooks/useCreateSeguimientoFalla";
 import { Input } from "../ui/input";
 import { inputSeguimientoFalla } from "@/lib/create-seguimiento-falla";
 import LoadFile from "../upload-file";
-import { formatFecha } from "@/lib/utils";
+// import { formatFecha } from "@/lib/utils";
+import { format } from "date-fns";
+import DateTime from "../dateTime";
 // import { format } from "date-fns";
 
 interface AddFallaModalProps {
@@ -44,7 +46,7 @@ interface AddFallaModalProps {
 const formSchema = z.object({
 	falla_folio_accion_correctiva: z.string().min(1, { message: "Este campo es oblicatorio" }),
 	falla_comentario_solucion: z.string().optional(),
-	fechaInicioFallaCompleta: z.string().min(1, { message: "Fecha de inicio es obligatoria" }), 
+	fechaInicioFallaCompleta: z.string().optional(), 
 	fechaFinFallaCompleta: z.string().optional(),
 	falla_documento_solucion: z.array(
         z.object({
@@ -72,18 +74,20 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 	const [isSuccess, setIsSuccess] =useState(false)
 	const [evidencia , setEvidencia] = useState<Imagen[]>([]);
 	const [documento , setDocumento] = useState<Imagen[]>([]);
-	// const [date, setDate] = useState<Date|"">("");
-	// const [dateFin, setDateFin] = useState<Date|"">("");
+	const [date, setDate] = useState<Date|"">("");
+	const [dateFin, setDateFin] = useState<Date|"">("");
+
 	const [errorEvidencia, setErrorEvidencia] = useState("")
 	const [errorDocumento, setErrorDocumento] = useState("")
+
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			falla_folio_accion_correctiva: "",
 			falla_comentario_solucion: "",
-			fechaInicioFallaCompleta: "",
-			fechaFinFallaCompleta: "",
+			fechaInicioFallaCompleta: date !=="" ? format( new Date(date), 'yyyy-MM-dd HH:mm:ss'):"",
+			fechaFinFallaCompleta: dateFin !==""  ? format( new Date(dateFin), 'yyyy-MM-dd HH:mm:ss'):"",
 			falla_documento_solucion:documento,
 			falla_evidencia_solucion:evidencia,
 		},
@@ -127,15 +131,22 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 	},[modalData])
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
-        const formatData ={
-            falla_folio_accion_correctiva:values.falla_folio_accion_correctiva||"",
-            falla_comentario_solucion: values.falla_comentario_solucion||"",
-            fechaInicioFallaCompleta: formatFecha(values.fechaInicioFallaCompleta)+":00",
-            fechaFinFallaCompleta:formatFecha(values.fechaFinFallaCompleta)+":00",
-            falla_documento_solucion:documento,
-            falla_evidencia_solucion:evidencia,
-            }
+		if(date){
+			const formattedDate = format( new Date(date), 'yyyy-MM-dd HH:mm:ss');
+			const formattedDateFin = format( new Date(dateFin), 'yyyy-MM-dd HH:mm:ss');
+			console.log("FORMATED", formattedDate, formattedDateFin)
+			const formatData ={
+				falla_folio_accion_correctiva:values.falla_folio_accion_correctiva||"",
+				falla_comentario_solucion: values.falla_comentario_solucion||"",
+				fechaInicioFallaCompleta: formattedDate, //formatFecha(values.fechaInicioFallaCompleta)+":00",
+				fechaFinFallaCompleta: formattedDateFin,//formatFecha(values.fechaFinFallaCompleta)+":00",
+				falla_documento_solucion:documento,
+				falla_evidencia_solucion:evidencia,
+			}
             setModalData(formatData);
+		}else{
+			form.setError("fechaInicioFallaCompleta", { type: "manual", message: "Fecha es un campo requerido." });
+		}
 	}
 
 	const handleClose = () => {
@@ -198,12 +209,12 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 				<FormField
 				control={form.control}
 				name="fechaInicioFallaCompleta"
-				render={({ field }:any) => (
+				render={() => (
 					<FormItem>
 					<FormLabel>* Fecha</FormLabel>
 					<FormControl>
-						<Input type="datetime-local" placeholder="Fecha" {...field} />
-						{/* <DateTime date={date} setDate={setDate} /> */}
+						{/* <Input type="datetime-local" placeholder="Fecha" {...field} /> */}
+						<DateTime date={date} setDate={setDate} />
 					</FormControl>
 
 					<FormMessage />
@@ -213,12 +224,12 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 				<FormField
 				control={form.control}
 				name="fechaFinFallaCompleta"
-				render={({ field }:any) => (
+				render={() => (
 					<FormItem>
 					<FormLabel>* Fecha</FormLabel>
 					<FormControl>
-						<Input type="datetime-local" placeholder="Fecha" {...field} />
-						{/* <DateTime date={dateFin} setDate={setDateFin}/> */}
+						{/* <Input type="datetime-local" placeholder="Fecha" {...field} /> */}
+						<DateTime date={dateFin} setDate={setDateFin}/>
 					</FormControl>
 
 					<FormMessage />

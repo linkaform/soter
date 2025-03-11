@@ -12,47 +12,35 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { useDeleteFalla } from "@/hooks/useDeleteFallas";
+import { useInciencias } from "@/hooks/useIncidencias";
 
 interface AddFallaModalProps {
   	title: string;
     arrayFolios:string[];
-	refetchTableFallas: ()=> void;
 	children: React.ReactNode;
 }
 
-export const EliminarFallaModal: React.FC<AddFallaModalProps> = ({
+export const EliminarIncidenciaModal: React.FC<AddFallaModalProps> = ({
   	title,
 	arrayFolios,
-	refetchTableFallas,
 	children
 }) => {
-    const { data:responseDeleteFallas,isLoading:isLoadingDeleteFallas, refetch:refetchDeleteFallas, error} = useDeleteFalla(arrayFolios);
+    const { eliminarIncidenciaMutation, loading } = useInciencias([], false);
 	const [isSuccess, setIsSuccess] =useState(false)
-	useEffect(()=>{
-		if(responseDeleteFallas?.status_code == 202){
-			handleClose()
-			refetchTableFallas()
-			toast.success("Falla(s) eliminadas correctamente!")
-		}
-	},[responseDeleteFallas])
-
-	useEffect(()=>{
-		if(error){
-			toast.error(error.message)
-			handleClose()
-		}
-	
-	},[error])
-
 	const handleClose = () => {
 		setIsSuccess(false); 
 	};
+    useEffect(()=>{
+		if(!loading){
+			handleClose()			
+		}
+	},[loading])
 
     const deleteFallas = ()=>{
 		if(arrayFolios.length>0){
-			refetchDeleteFallas()
+			eliminarIncidenciaMutation.mutate({folio : arrayFolios})
 		}else{
-			toast.error("Selecciona una falla para poder eliminarla...")
+			toast.error("Selecciona una incidencia para poder eliminarla...")
 		}
     }
 
@@ -68,8 +56,9 @@ export const EliminarFallaModal: React.FC<AddFallaModalProps> = ({
         </DialogHeader>
 
             <div className="my-3 flex flex-col items-center">
-			{arrayFolios.length==1 ?(<p className="text-2xl font-bold"> ¿Seguro que quieres eliminar esta falla?</p>):(
-               <p className="text-2xl font-bold"> ¿Seguro que quieres eliminar las fallas seleccionadas?</p>)}
+            {arrayFolios.length==1 ?(<p className="text-2xl font-bold"> ¿Seguro que quieres eliminar esta incidencia?</p>):(
+               <p className="text-2xl font-bold"> ¿Seguro que quieres eliminar las incidencias seleccionadas?</p>)}
+                
                 <small>Esta acción no se puede revertir.</small>
             </div>
 
@@ -83,11 +72,11 @@ export const EliminarFallaModal: React.FC<AddFallaModalProps> = ({
 				
 				<Button
                     onClick={deleteFallas}
-					className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={isLoadingDeleteFallas}
+					className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={loading}
 				>
-					{ !isLoadingDeleteFallas ? (<>
-					{arrayFolios.length==1 ?("Eliminar falla seleccionada"):("Eliminar fallas seleccionadas")}
-					</>) :(<> <Loader2 className="animate-spin"/> {arrayFolios.length==1 ?("Eliminando falla seleccionada"):("Eliminando fallas seleccionadas")} </>)}
+					{ !loading ? (<>
+					{arrayFolios.length==1 ?("Eliminar incidencia seleccionada"):("Eliminar incidencias seleccionadas")}
+					</>) :(<> <Loader2 className="animate-spin"/> {arrayFolios.length==1 ?("Eliminando incidencia seleccionada"):("Eliminando incidencias seleccionadas")} </>)}
 				</Button>
 			</div>
         

@@ -3,14 +3,6 @@ import React, { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-// import {
-// 	Form,
-// 	FormControl,
-// 	FormField,
-// 	FormItem,
-// 	FormLabel,
-// 	FormMessage,
-// } from "@/components/ui/form";
 import {
 	Select,
 	SelectContent,
@@ -23,10 +15,10 @@ import { Areas } from "@/hooks/useCreateAccessPass";
 import { Label } from "@radix-ui/react-label";
 
 const formSchema = 
-			z.object({
-				nombre_area: z.string().optional(),
-				commentario_area: z.string().optional(),
-			})
+	z.object({
+		nombre_area: z.string().optional(),
+		commentario_area: z.string().optional(),
+	})
 
 	interface AreasItemProps {
 		isCollapsed: boolean;
@@ -76,7 +68,7 @@ const formSchema =
 		const handleInputChange = (value:string, fieldName: string) => {
 			if (value === "") {
 				if (fieldName === "nombre_area") {
-					onDelete(); // Elimina el area si está vacío
+					onDelete(); 
 				}
 			}
 			updateArea(value, fieldName);

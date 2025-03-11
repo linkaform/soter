@@ -247,9 +247,6 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
 		});
 	};
 
-	// useEffect(()=>{
-	// 	console.log("Error",form.formState.errors)
-	// },[form.formState.errors])
 
 
 	useEffect(()=>{

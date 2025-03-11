@@ -3,7 +3,7 @@ import {
     ColumnDef,   
   } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Check, Edit, Eye, Trash2 } from "lucide-react";
+import { Check, Eye, Trash2 } from "lucide-react";
 import { Imagen } from "@/lib/update-pass";
 import { ViewFalla } from "@/components/modals/view-falla";
 import { EditarFallaModal } from "@/components/modals/editar-falla";
@@ -11,6 +11,8 @@ import { useGetFallas } from "@/hooks/useGetFallas";
 import { SeguimientoFallaModal } from "@/components/modals/seguimiento-falla";
 import { EliminarFallaModal } from "@/components/modals/delete-falla-modal";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { LoadingModal } from "@/components/modals/loading-modal";
+import { useState } from "react";
 
   export interface Fallas_record{
     falla_responsable_solucionar_nombre: string
@@ -28,7 +30,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
     _id: string
     falla_fecha_hora: string
     falla_reporta_nombre: string
-    falla_grupo_seguimiento?: FallaGrupoSeguimiento[]
+    falla_grupo_seguimiento_formated?: FallaGrupoSeguimiento[]
     falla_folio_accion_correctiva?: string
     falla_evidencia_solucion?: any[]
     falla_documento_solucion?: any[]
@@ -36,18 +38,19 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
   }
 
   export interface FallaGrupoSeguimiento {
-    "679a485c66c5d089fa6b8efa": string
-    "66f2dfb2c80d24e5e82332b4": string
-    "66f2dfb2c80d24e5e82332b5": Imagen[]
-    "66f2dfb2c80d24e5e82332b6": Imagen[]
-    "66f2dfb2c80d24e5e82332b3": string
-    "679a485c66c5d089fa6b8ef9": string
+    accion_correctiva: string
+    comentario: string
+    evidencia: Imagen[]
+    documento: Imagen[]
+    fecha_inicio: string
+    fecha_fin: string
   }
 
   const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
     const {refetch} = useGetFallas("", "","abierto");
     const incidencia = row.original;
-    
+	  const [showLoadingModal, setShowLoadingModal] = useState(false);
+
     return (
       <div className="flex space-x-2">
         <ViewFalla 
@@ -58,14 +61,12 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
             </div>
         </ViewFalla>
         
-        <EditarFallaModal
-                title="Editar Falla"
-                data={incidencia} refetchTableFallas={refetch}>
-            <div className="cursor-pointer">
-              <Edit /> 
-            </div>
-        </EditarFallaModal>
+        <LoadingModal isOpen={showLoadingModal} text="Cargando..."/>
 
+        <EditarFallaModal
+          title="Editar Falla"
+          data={incidencia} refetchTableFallas={refetch} setShowLoadingModal={setShowLoadingModal} showLoadingModal={showLoadingModal}/>
+       
         <SeguimientoFallaModal
                 title="Seguimiento Falla"
                 data={incidencia} refetchTableFallas={refetch}>
@@ -81,19 +82,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
                 <Trash2 />   
             </div>
         </EliminarFallaModal>
-
-        	{/* <div className="cursor-pointer">
-              	<Eye />
-            </div>
-            <div className="cursor-pointer">
-            	<Check />                    
-			    </div>
-            <div className="cursor-pointer">
-              	<Edit />
-            </div>
-            <div className="cursor-pointer">
-              	<Trash2 />
-            </div> */}
       </div>
     );
   };

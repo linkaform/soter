@@ -69,14 +69,6 @@ const formSchema = z.object({
 	falla_reporta_nombre: z.string().min(1, { message: "El nombre del reportante es obligatorio" }), 
 	falla_responsable_solucionar_nombre: z.string().optional(),
 	falla_ubicacion: z.string().min(1, { message: "La ubicación es obligatoria" }),
-
-//   falla_reporta_departamento: z.string(),
-//   falla_responsable_solucionar_documento: z.array(z.string()).optional(),
-//   falla_grupo_seguimiento: z.array(z.string()).optional(),
-//   falla_folio_accion_correctiva:  z.string(),
-//   falla_evidencia_solucion: z.array(z.string()).optional(),
-//   falla_documento_solucion: z.array(z.string()).optional(),
-//   falla_comentario_solucion:  z.string().optional(),
 });
 
 export const AddFallaModal: React.FC<AddFallaModalProps> = ({
@@ -91,10 +83,9 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 	const [catalagoSub, setCatalogoSub] = useState<string[]>([]);
 	const [catalagoFallas, setFallas] = useState<string[]>([]);
 
-	//AGREGAR CATALOGO DE UBICACION YA SEA DESDE CACHE O HACER LA PETICION
-	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado, refetch: refetchAreaEmpleado, error:errorAreEmpleado } = useCatalogoAreaEmpleado();
-	const { data:dataAreaEmpleadoApoyo, isLoading:loadingAreaEmpleadoApoyo, refetch: refetchAreaEmpleadoApoyo, error:errorAEA} = useCatalogoAreaEmpleadoApoyo();
-	const { data:dataFallas, isLoading:isLoadingFallas, refetch: refetchFallas, error:errorFallas } = useCatalogoFallas(subconcepto);
+	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado, refetch: refetchAreaEmpleado, error:errorAreEmpleado } = useCatalogoAreaEmpleado(isSuccess);
+	const { data:dataAreaEmpleadoApoyo, isLoading:loadingAreaEmpleadoApoyo, refetch: refetchAreaEmpleadoApoyo, error:errorAEA} = useCatalogoAreaEmpleadoApoyo(isSuccess);
+	const { data:dataFallas, isLoading:isLoadingFallas, refetch: refetchFallas, error:errorFallas } = useCatalogoFallas(subconcepto, isSuccess);
 	const { data:responseCreateFalla, isLoading , refetch, error} = useCreateFalla(modalData)
 
 	const [areas] = useState<any| string[]>(["Caseta Principal"]);
@@ -164,12 +155,6 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 			handleClose()
 		}
 	},[errorAEA, errorAreEmpleado, errorFallas, error, errorEvidencia , errorDocumento])
-
-	useEffect(()=>{
-		if(subconcepto){
-			refetchFallas()
-		}
-	},[subconcepto])
 
 	useEffect(()=>{
 		if(dataFallas && subconcepto){
@@ -356,23 +341,12 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 						<SelectTrigger className="w-full">
 							{isLoadingFallas && subconcepto ? (
 								<SelectValue placeholder="Cargando subconcepto..." />
-							):null}
+							):(<>
 							{catalagoSub.length > 0 ?(<SelectValue placeholder="Selecciona una opción..." />)
 							:(<SelectValue placeholder="Selecciona una falla para ver las opciones..." />)
 							}
-
-							{/* {isLoadingFallas ? (
-								<SelectValue placeholder="Cargando subconcepto..." />
-							):
-							(
-								<>
-								{catalagoSub.length==0?(
-									<SelectValue placeholder="Selecciona una falla para ver las opciones..." />
-								):(
-									<SelectValue placeholder="Selecciona una opción" />
-								)}
-								</>
-							)} */}
+							</>)}
+							
 						</SelectTrigger>
 						<SelectContent>
 						{catalagoSub.length>0 ? (

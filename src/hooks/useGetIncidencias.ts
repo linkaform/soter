@@ -1,8 +1,9 @@
-import { getListIncidencias } from "@/lib/get-list-incidencias";
+import { getListIncidencias } from "@/lib/incidencias";
 import { useQuery } from "@tanstack/react-query";
 
 export const useGetIncidencias = (location:string, area:string, prioridades:string[]) => {
-  const { data: data, isLoading, error, isFetching, refetch } = useQuery<any>({
+
+  const { data: dataListIncidencias, isLoading, error, isFetching, refetch } = useQuery<any>({
     queryKey: ["getListIncidencias", location, area, prioridades], 
     queryFn: async () => {
         const data = await getListIncidencias(location, area , prioridades); 
@@ -16,7 +17,7 @@ export const useGetIncidencias = (location:string, area:string, prioridades:stri
   });
 
   return {
-    data,
+    dataListIncidencias,
     isLoading,
     error,
     isFetching,

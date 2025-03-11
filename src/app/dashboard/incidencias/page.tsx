@@ -7,34 +7,41 @@ import { TriangleAlert, UndoDot } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ReusableAccordion from "@/components/resuable-accordion";
 import PageTitle from "@/components/page-title";
-import { useGetIncidencias } from "@/hooks/useGetIncidencias";
 import IncidenciasTable from "@/components/table/incidencias/table";
 import FallasTable from "@/components/table/incidencias/fallas/table";
 import { useGetFallas } from "@/hooks/useGetFallas";
 import { AddFallaModal } from "@/components/modals/add-falla";
 import { useGetStats } from "@/hooks/useGetStats";
+import { AddIncidenciaModal } from "@/components/modals/add-incidencia";
+import { useInciencias } from "@/hooks/useIncidencias";
 
 const IncidenciasPage = () => {
 
   const [prioridades, setPrioridades] = useState<string[]>([]);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isSuccessIncidencia, setIsSuccessIncidencia] = useState(false);
 	const [modalData] = useState<any>(null);
   const [selectedFallas, setSelectedFallas]= useState<string[]>([]);
-  const { data,isLoading, refetch} = useGetIncidencias("", "",[]);
+  const [selectedIncidencias, setSelectedIncidencias]= useState<string[]>([]);
+  // const { data,isLoading, refetch} = useGetIncidencias("", "",[]);
   const { data:dataFallas,isLoading:isLoadingFallas, refetch:refetchFallas} = useGetFallas("", "","abierto");
-  const { data: dataStats} = useGetStats("", "", "Incidencias");
+  // const { data: dataStats} = useGetStats("", "", "incidencias");
+  const { listIncidencias, refetchTableIncidencias, isLoadingListIncidencias , stats, statsError} = useInciencias([], true);
 
   useEffect(()=>{
     if(prioridades){
-      refetch()
+      refetchTableIncidencias()
     }
-  },[prioridades, refetch])
+  },[prioridades, refetchTableIncidencias])
   
   const closeModal = () => {
 		setIsSuccess(false);  
 	};
   const openModal = () => {
 		setIsSuccess(true);  
+	};
+  const openModalIncidencia = () => {
+		setIsSuccessIncidencia(true);  
 	};
 
   return (
@@ -47,8 +54,15 @@ const IncidenciasPage = () => {
 				onClose={closeModal}
         refetchTableFallas={refetchFallas}
 			/>
+      <AddIncidenciaModal
+				title={"Crear Incidencia"}
+				data={modalData}
+				isSuccess={isSuccessIncidencia}
+				setIsSuccess={setIsSuccessIncidencia}
+				onClose={closeModal}
+			/>
       <div className="flex flex-col">
-        <div className="p-6 space-y-6 w-full mx-auto">
+        <div className="p-6 w-full pt-0 mb-2">
           <ReusableAccordion
             ubicaciones={[
               { value: "planta-monterrey", label: "Planta Monterrey" },
@@ -62,12 +76,12 @@ const IncidenciasPage = () => {
             estadisticas={[
               {
                 label: "Incidentes X Día",
-                value: dataStats?.incidentes_x_dia,
+                value: stats?.incidentes_x_dia,
                 icon: <TriangleAlert />,
               },
               {
                 label: "Fallas pendientes",
-                value: dataStats?.fallas_pendientes,
+                value: stats?.fallas_pendientes,
                 icon: <UndoDot />,
               },
             ]}
@@ -80,13 +94,14 @@ const IncidenciasPage = () => {
             </TabsList>
             <TabsContent value="Perdidos">
               <div className="">
-                <IncidenciasTable data={data} refetch={refetch} setPrioridades={setPrioridades} isLoading={isLoading} openModal={openModal}/>
+                <IncidenciasTable data={listIncidencias} refetch={refetchTableIncidencias} setPrioridades={setPrioridades} 
+                isLoading={isLoadingListIncidencias} openModal={openModalIncidencia} setSelectedIncidencias={setSelectedIncidencias} selectedIncidencias={selectedIncidencias}/>
               </div>
             </TabsContent>
             <TabsContent value="Concecionados">
               <div className="">
                 <FallasTable  data={dataFallas} refetch={refetchFallas} setPrioridades={setPrioridades} isLoading={isLoadingFallas} 
-                openModal={openModal} setSelectedFallas={setSelectedFallas} selectedFallas={selectedFallas}/>
+                openModal={openModal} setSelectedFallas={setSelectedFallas} selectedFallas={selectedFallas} />
               </div>
             </TabsContent>
           </Tabs>

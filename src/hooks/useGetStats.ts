@@ -1,4 +1,4 @@
-import { getStats } from "@/lib/get-incidencias-stats";
+import { getStats } from "@/lib/get-stats";
 import { useQuery } from "@tanstack/react-query";
 
 export const useGetStats= (area:string, location:string, page:string) => {
