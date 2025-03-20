@@ -21,9 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import AreasItem from "./areas-item";
-import { useCatalogoPaseArea } from "@/hooks/useCatalogoPaseArea";
 import { Areas } from "@/hooks/useCreateAccessPass";
-
 
 interface AreasListProps {
     location:string;
@@ -41,7 +39,6 @@ const formSchema =
 });
 
 const AreasList:React.FC<AreasListProps> = ({ location, areas, setAreas, catAreas, loadingCatAreas, existingAreas})=> {
-    const { refetch } = useCatalogoPaseArea(location)
     const [collapsedIndex, setCollapsedIndex] = useState<number | null>(null);
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -80,12 +77,6 @@ const AreasList:React.FC<AreasListProps> = ({ location, areas, setAreas, catArea
     };
 
     useEffect(() => {
-        if(location!==""){
-            refetch()
-        }
-    });
-
-    useEffect(() => {
         if(catAreas && existingAreas == false){
             setAreas([])
         }
@@ -99,8 +90,8 @@ const AreasList:React.FC<AreasListProps> = ({ location, areas, setAreas, catArea
     const updatedArea = (index: number, value: string, fieldName:string) => {
         const updatedAreas = [...areas];
           updatedAreas[index] = {
-            ...updatedAreas[index],   // Mantener las propiedades anteriores del área
-            [fieldName]: value,       // Actualizar el campo específico
+            ...updatedAreas[index],
+            [fieldName]: value,  
           };
         setAreas(updatedAreas);
 
@@ -154,17 +145,23 @@ const AreasList:React.FC<AreasListProps> = ({ location, areas, setAreas, catArea
                         </>
                       ): (
                         <>
-                        <SelectValue placeholder="Selecciona una ubicación" />
+                        { catAreas?.length > 0 ? 
+                        <SelectValue placeholder="Selecciona una área" />:
+                        <SelectValue placeholder="Selecciona un ubicación para ver las opciones" />}
                         </>
                       )}
                       </SelectTrigger>
                       <SelectContent>
-                      {catAreas?.map((area:string, index:number) => {
-                      return(
-                        <SelectItem key={index} value={area}>
-                          {area}
-                        </SelectItem>
-                      )})}
+                      {catAreas?.length >0 ? (
+                        <>
+                          {catAreas?.map((area:string, index:number) => {
+                          return(
+                            <SelectItem key={index} value={area}>
+                              {area}
+                            </SelectItem>
+                          )})} 
+                        </>
+                      ):<SelectItem key={"1"} value={"1"} disabled>No hay opciones disponibles.</SelectItem>}
                       </SelectContent>
                     </Select>
                   </FormControl>

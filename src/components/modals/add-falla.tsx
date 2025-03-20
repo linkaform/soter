@@ -31,12 +31,12 @@ import { format } from 'date-fns';
 
 import { useCatalogoAreaEmpleadoApoyo } from "@/hooks/useCatalogoAreaEmpleadoApoyo";
 import { toast } from "sonner";
-import { useCreateFalla } from "@/hooks/useCreateFalla";
 import { useCatalogoFallas } from "@/hooks/useCatalogoFallas";
-import { inputFalla } from "@/lib/create-falla";
 import DateTime from "../dateTime";
 import LoadFile from "../upload-file";
 import { Loader2 } from "lucide-react";
+import { useFallas } from "@/hooks/useFallas";
+import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
 
 interface AddFallaModalProps {
   	title: string;
@@ -44,7 +44,6 @@ interface AddFallaModalProps {
 	isSuccess: boolean;
 	setIsSuccess: Dispatch<SetStateAction<boolean>>;
 	onClose: ()=> void;
-	refetchTableFallas: ()=> void;
 }
 
 const formSchema = z.object({
@@ -75,27 +74,24 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
   	title,
 	isSuccess,
 	setIsSuccess,
-	refetchTableFallas
 }) => {
-	const [modalData, setModalData] = useState<inputFalla | null>(null);
-	const [ubicaciones] = useState<any| string[]>(["Planta Monterrey"]);
 	const [subconcepto, setSubConcepto] = useState<string>("");
 	const [catalagoSub, setCatalogoSub] = useState<string[]>([]);
 	const [catalagoFallas, setFallas] = useState<string[]>([]);
+	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState('');
+	const { dataAreas:areas, dataLocations:ubicaciones, isLoadingAreas:loadingAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true,  ubicacionSeleccionada?true:false);
+	// const [ubicaciones] = useState<any| string[]>(["Planta Monterrey"]);
 
 	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado, refetch: refetchAreaEmpleado, error:errorAreEmpleado } = useCatalogoAreaEmpleado(isSuccess);
 	const { data:dataAreaEmpleadoApoyo, isLoading:loadingAreaEmpleadoApoyo, refetch: refetchAreaEmpleadoApoyo, error:errorAEA} = useCatalogoAreaEmpleadoApoyo(isSuccess);
 	const { data:dataFallas, isLoading:isLoadingFallas, refetch: refetchFallas, error:errorFallas } = useCatalogoFallas(subconcepto, isSuccess);
-	const { data:responseCreateFalla, isLoading , refetch, error} = useCreateFalla(modalData)
+	const { createFallaMutation, isLoading} = useFallas("","", "abierto", false)
 
-	const [areas] = useState<any| string[]>(["Caseta Principal"]);
+	// const [areas] = useState<any| string[]>(["Caseta Principal"]);
 
 	const [evidencia , setEvidencia] = useState<Imagen[]>([]);
 	const [documento , setDocumento] = useState<Imagen[]>([]);
 	const [date, setDate] = useState<Date|"">("");
-
-	const [errorEvidencia, setErrorEvidencia] = useState("")
-	const [errorDocumento, setErrorDocumento] = useState("")
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -129,12 +125,10 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 	},[isSuccess])
 
 	useEffect(()=>{
-		if(responseCreateFalla?.status_code==201){
-			toast.success("Falla creada correctamente")
-			refetchTableFallas()
-			handleClose()
+		if(!isLoading){
+			handleClose()			
 		}
-	},[responseCreateFalla])
+	},[isLoading])
 
 	useEffect(()=>{
 		if(errorAEA){
@@ -146,15 +140,7 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 		if(errorFallas){
 			toast.error(errorFallas.message)
 		}
-		if(error){
-			toast.error(error.message)
-			handleClose()
-		}
-		if(errorEvidencia || errorDocumento){
-			toast.error("Error al cargar imagenes o documentos")
-			handleClose()
-		}
-	},[errorAEA, errorAreEmpleado, errorFallas, error, errorEvidencia , errorDocumento])
+	},[errorAEA, errorAreEmpleado, errorFallas])
 
 	useEffect(()=>{
 		if(dataFallas && subconcepto){
@@ -165,11 +151,10 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 		}
 	},[dataFallas])
 
-	useEffect(()=>{
-		if(modalData){
-			refetch()
-		}
-	},[modalData])
+	// useEffect(()=>{
+	// 	if(modalData){
+	// 	}
+	// },[modalData])
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		let formattedDate=""
@@ -188,7 +173,8 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 				falla_responsable_solucionar_nombre: values.falla_responsable_solucionar_nombre||"",
 				falla_ubicacion:values.falla_ubicacion||"",
 				}
-				 setModalData(formatData);
+				//  setModalData(formatData);
+				createFallaMutation.mutate({data_failure: formatData})
 		}else{
 			form.setError("falla_fecha_hora", { type: "manual", message: "Fecha es un campo requerido." });
 		}
@@ -202,283 +188,295 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
     <Dialog open={isSuccess} modal>
       <DialogTrigger></DialogTrigger>
 
-      <DialogContent className="max-w-3xl" aria-describedby="">
-        <DialogHeader>
+      <DialogContent className="max-w-3xl  overflow-y-auto max-h-[80vh] flex flex-col" aria-describedby="">
+        <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center font-bold">
             {title}
           </DialogTitle>
         </DialogHeader>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-5">
-
-
-          <FormField
-				control={form.control}
-				name="falla_ubicacion"
-				render={({ field }:any) => (
-					<FormItem>
-						<FormLabel>Ubicacion:</FormLabel>
-						<FormControl>
-						<Select {...field} className="input"
-							onValueChange={(value:string) => {
-							field.onChange(value); 
-						}}
-						value={field.value} 
-					>
-						<SelectTrigger className="w-full">
-							<SelectValue placeholder="Selecciona una ubicacion" />
-						</SelectTrigger>
-						<SelectContent>
-						{ubicaciones?.map((vehiculo:string, index:number) => (
-							<SelectItem key={index} value={vehiculo}>
-								{vehiculo}
-							</SelectItem>
-						))}
-						</SelectContent>
-					</Select>
-						</FormControl>
-						<FormMessage />
-					</FormItem>
-				)}
-			/>
-
+		<div className="flex-grow overflow-y-auto p-4">
+			<Form {...form}>
+			<form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-5">
 			<FormField
-				control={form.control}
-				name="falla_caseta"
-				render={({ field }:any) => (
-					<FormItem>
-						<FormLabel>Area:</FormLabel>
-						<FormControl>
-						<Select {...field} className="input"
-							onValueChange={(value:string) => {
-							field.onChange(value); 
-						}}
-						value={field.value} 
-					>
-						<SelectTrigger className="w-full">
-							<SelectValue placeholder="Selecciona una ubicacion" />
-						</SelectTrigger>
-						<SelectContent>
-						{areas?.map((vehiculo:string, index:number) => (
-							<SelectItem key={index} value={vehiculo}>
-								{vehiculo}
-							</SelectItem>
-						))}
-						</SelectContent>
-					</Select>
-						</FormControl>
-						<FormMessage />
-					</FormItem>
-				)}
-			/>
-            <FormField
-              control={form.control}
-              name="falla_fecha_hora"
-              render={() => (
-                <FormItem>
-                  <FormLabel>* Fecha</FormLabel>
-                  <FormControl>
-                    {/* <Input type="datetime-local" placeholder="Fecha" {...field} /> */}
-					<DateTime date={date} setDate={setDate} />
-                  </FormControl>
+					control={form.control}
+					name="falla_ubicacion"
+					render={({ field }:any) => (
+						<FormItem>
+							<FormLabel>Ubicacion:</FormLabel>
+							<FormControl>
+							<Select {...field} className="input"
+								onValueChange={(value:string) => {
+								field.onChange(value); 
+								setUbicacionSeleccionada(value); 
+							}}
+							value={field.value} 
+						>
+							<SelectTrigger className="w-full">
+								{loadingUbicaciones?
+								<SelectValue placeholder="Cargando ubicaciones..." />:<SelectValue placeholder="Selecciona una ubicación" />}
+							</SelectTrigger>
+							<SelectContent>
+							{ubicaciones?.map((vehiculo:string, index:number) => (
+								<SelectItem key={index} value={vehiculo}>
+									{vehiculo}
+								</SelectItem>
+							))}
+							</SelectContent>
+						</Select>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-			<FormField
-				control={form.control}
-				name="falla"
-				render={({ field }:any) => (
-					<FormItem>
-						<FormLabel>Concepto:</FormLabel>
-						<FormControl>
-						<Select {...field} className="input"
-							onValueChange={(value:string) => {
-							field.onChange(value); 
-							setCatalogoSub([])
-							setSubConcepto(value)
-						}}
-						value={field.value} 
-					>
-						<SelectTrigger className="w-full">
-							{isLoadingFallas && subconcepto == "" ? (
-								<SelectValue placeholder="Cargando fallas..." />
-							):
-							(
-								<SelectValue placeholder="Selecciona una falla" />
-							)}
-						</SelectTrigger>
-						<SelectContent>
-						{catalagoFallas?.map((vehiculo:string, index:number) => (
-							<SelectItem key={index} value={vehiculo}>
-								{vehiculo}
-							</SelectItem>
-						))}
-						</SelectContent>
-					</Select>
-						</FormControl>
-						<FormMessage />
-					</FormItem>
-				)}
-			/>	
-
-			<FormField
-				control={form.control}
-				name="falla_objeto_afectado"
-				render={({ field }:any) => (
-					<FormItem>
-						<FormLabel>Subconcepto:</FormLabel>
-						<FormControl>
-						<Select {...field} className="input"
-							onValueChange={(value:string) => {
-							field.onChange(value); 
-						}}
-						value={field.value} 
-					>
-						<SelectTrigger className="w-full">
-							{isLoadingFallas && subconcepto ? (
-								<SelectValue placeholder="Cargando subconcepto..." />
-							):(<>
-							{catalagoSub.length > 0 ?(<SelectValue placeholder="Selecciona una opción..." />)
-							:(<SelectValue placeholder="Selecciona una falla para ver las opciones..." />)
-							}
-							</>)}
-							
-						</SelectTrigger>
-						<SelectContent>
-						{catalagoSub.length>0 ? (
-							catalagoSub?.map((item:string, index:number) => {
-								return (
-									<SelectItem key={index} value={item}>
-										{item}
+				<FormField
+					control={form.control}
+					name="falla_caseta"
+					render={({ field }:any) => (
+						<FormItem>
+							<FormLabel>Area:</FormLabel>
+							<FormControl>
+							<Select {...field} className="input"
+								onValueChange={(value:string) => {
+								field.onChange(value); 
+							}}
+							value={field.value} 
+						>
+							<SelectTrigger className="w-full">
+							{loadingAreas?
+								<SelectValue placeholder="Cargando areas..." />:<SelectValue placeholder="Selecciona una ubicación" />}
+							</SelectTrigger>
+							<SelectContent>
+							{areas?.length >0 ? (
+								<>
+								{areas?.map((area:string, index:number) => {
+								return(
+									<SelectItem key={index} value={area}>
+									{area}
 									</SelectItem>
-								)
-							})
-						):(
-							<><SelectItem disabled value={"no opciones"}>No hay opciones disponibles</SelectItem></>
-						)}
-						</SelectContent>
-					</Select>
-						</FormControl>
-						<FormMessage />
+								)})} 
+								</>
+							):<SelectItem key={"1"} value={"1"} disabled>No hay opciones disponibles.</SelectItem>}
+							</SelectContent>
+						</Select>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+				<FormField
+				control={form.control}
+				name="falla_fecha_hora"
+				render={() => (
+					<FormItem>
+					<FormLabel>* Fecha</FormLabel>
+					<FormControl>
+						{/* <Input type="datetime-local" placeholder="Fecha" {...field} /> */}
+						<DateTime date={date} setDate={setDate} />
+					</FormControl>
+
+					<FormMessage />
 					</FormItem>
 				)}
-			/>	
+				/>
 
-			<FormField
-              control={form.control}
-              name="falla_comentarios"
-              render={({ field }:any) => (
-                <FormItem>
-                  <FormLabel>* Comentarios</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Texto"
-                      className="resize-none"
-                      {...field}
-                    />
-                  </FormControl>
+				<FormField
+					control={form.control}
+					name="falla"
+					render={({ field }:any) => (
+						<FormItem>
+							<FormLabel>Concepto:</FormLabel>
+							<FormControl>
+							<Select {...field} className="input"
+								onValueChange={(value:string) => {
+								field.onChange(value); 
+								setCatalogoSub([])
+								setSubConcepto(value)
+							}}
+							value={field.value} 
+						>
+							<SelectTrigger className="w-full">
+								{isLoadingFallas && subconcepto == "" ? (
+									<SelectValue placeholder="Cargando fallas..." />
+								):
+								(
+									<SelectValue placeholder="Selecciona una falla" />
+								)}
+							</SelectTrigger>
+							<SelectContent>
+							{catalagoFallas?.map((vehiculo:string, index:number) => (
+								<SelectItem key={index} value={vehiculo}>
+									{vehiculo}
+								</SelectItem>
+							))}
+							</SelectContent>
+						</Select>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>	
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-			<FormField
+				<FormField
+					control={form.control}
+					name="falla_objeto_afectado"
+					render={({ field }:any) => (
+						<FormItem>
+							<FormLabel>Subconcepto:</FormLabel>
+							<FormControl>
+							<Select {...field} className="input"
+								onValueChange={(value:string) => {
+								field.onChange(value); 
+							}}
+							value={field.value} 
+						>
+							<SelectTrigger className="w-full">
+								{isLoadingFallas && subconcepto ? (
+									<SelectValue placeholder="Cargando subconcepto..." />
+								):(<>
+								{catalagoSub.length > 0 ?(<SelectValue placeholder="Selecciona una opción..." />)
+								:(<SelectValue placeholder="Selecciona una falla para ver las opciones..." />)
+								}
+								</>)}
+								
+							</SelectTrigger>
+							<SelectContent>
+							{catalagoSub.length>0 ? (
+								catalagoSub?.map((item:string, index:number) => {
+									return (
+										<SelectItem key={index} value={item}>
+											{item}
+										</SelectItem>
+									)
+								})
+							):(
+								<><SelectItem disabled value={"no opciones"}>No hay opciones disponibles</SelectItem></>
+							)}
+							</SelectContent>
+						</Select>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>	
+
+				<FormField
 				control={form.control}
-				name="falla_reporta_nombre"
+				name="falla_comentarios"
 				render={({ field }:any) => (
 					<FormItem>
-						<FormLabel>Reporta:</FormLabel>
-						<FormControl>
-						<Select {...field} className="input"
-							onValueChange={(value:string) => {
-							field.onChange(value); 
-						}}
-						value={field.value} 
-					>
-						<SelectTrigger className="w-full">
-						{loadingAreaEmpleado?(<>
-								<SelectValue placeholder="Cargando opciones..." />
-							</>):(<>
-								<SelectValue placeholder="Selecciona una opcion" />
-							</>)}
-						</SelectTrigger>
-						<SelectContent>
-						{dataAreaEmpleado?.map((vehiculo:string, index:number) => (
-							<SelectItem key={index} value={vehiculo}>
-								{vehiculo}
-							</SelectItem>
-						))}
-						</SelectContent>
-					</Select>
-						</FormControl>
-						<FormMessage />
+					<FormLabel>* Comentarios</FormLabel>
+					<FormControl>
+						<Textarea
+						placeholder="Texto"
+						className="resize-none"
+						{...field}
+						/>
+					</FormControl>
+
+					<FormMessage />
 					</FormItem>
 				)}
-			/>	
+				/>
+				<FormField
+					control={form.control}
+					name="falla_reporta_nombre"
+					render={({ field }:any) => (
+						<FormItem>
+							<FormLabel>Reporta:</FormLabel>
+							<FormControl>
+							<Select {...field} className="input"
+								onValueChange={(value:string) => {
+								field.onChange(value); 
+							}}
+							value={field.value} 
+						>
+							<SelectTrigger className="w-full">
+							{loadingAreaEmpleado?(<>
+									<SelectValue placeholder="Cargando opciones..." />
+								</>):(<>
+									<SelectValue placeholder="Selecciona una opcion" />
+								</>)}
+							</SelectTrigger>
+							<SelectContent>
+							{dataAreaEmpleado?.map((vehiculo:string, index:number) => (
+								<SelectItem key={index} value={vehiculo}>
+									{vehiculo}
+								</SelectItem>
+							))}
+							</SelectContent>
+						</Select>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>	
 
 
-			<FormField
-				control={form.control}
-				name="falla_responsable_solucionar_nombre"
-				render={({ field }:any) => (
-					<FormItem>
-						<FormLabel>Responsable asignado de solucionar:</FormLabel>
-						<FormControl>
-						<Select {...field} className="input"
-							onValueChange={(value:string) => {
-							field.onChange(value); 
-						}}
-						value={field.value} 
-					>
-						<SelectTrigger className="w-full">
-							{loadingAreaEmpleadoApoyo?(<>
-								<SelectValue placeholder="Cargando opciones..." />
-							</>):(<>
-								<SelectValue placeholder="Selecciona una opcion" />
-							</>)}
-						</SelectTrigger>
-						<SelectContent>
-						{dataAreaEmpleadoApoyo?.map((vehiculo:string, index:number) => (
-							<SelectItem key={index} value={vehiculo}>
-								{vehiculo}
-							</SelectItem>
-						))}
-						</SelectContent>
-					</Select>
-						</FormControl>
-						<FormMessage />
-					</FormItem>
-				)}
-			/>	
+				<FormField
+					control={form.control}
+					name="falla_responsable_solucionar_nombre"
+					render={({ field }:any) => (
+						<FormItem>
+							<FormLabel>Responsable asignado de solucionar:</FormLabel>
+							<FormControl>
+							<Select {...field} className="input"
+								onValueChange={(value:string) => {
+								field.onChange(value); 
+							}}
+							value={field.value} 
+						>
+							<SelectTrigger className="w-full">
+								{loadingAreaEmpleadoApoyo?(<>
+									<SelectValue placeholder="Cargando opciones..." />
+								</>):(<>
+									<SelectValue placeholder="Selecciona una opcion" />
+								</>)}
+							</SelectTrigger>
+							<SelectContent>
+							{dataAreaEmpleadoApoyo?.map((vehiculo:string, index:number) => (
+								<SelectItem key={index} value={vehiculo}>
+									{vehiculo}
+								</SelectItem>
+							))}
+							</SelectContent>
+						</Select>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>	
 
-            <div className="flex justify-between">
-				<LoadImage
-					id="evidencia" 
-					titulo={"Evidencia"} 
-					setImg={setEvidencia}
-					showWebcamOption={true}
-					setErrorImagen={setErrorEvidencia}
-					facingMode="user"
-					imgArray={evidencia}
-					showArray={true}
-					limit={10}
-					/>
-            </div>
+				<div className="flex justify-between">
+					<LoadImage
+						id="evidencia" 
+						titulo={"Evidencia"} 
+						setImg={setEvidencia}
+						showWebcamOption={true}
+						// setErrorImagen={setErrorEvidencia}
+						facingMode="user"
+						imgArray={evidencia}
+						showArray={true}
+						limit={10}
+						/>
+				</div>
 
-            <div className="flex justify-between">
-				<LoadFile
-					id="documento"
-					titulo={"Documento"}
-					setDocs={setDocumento}
-					setErrorImagen={setErrorDocumento}
-					docArray={documento}
-					limit={10}/>
-            </div>
+				<div className="flex justify-between">
+					<LoadFile
+						id="documento"
+						titulo={"Documento"}
+						setDocs={setDocumento}
+						// setErrorImagen={setErrorDocumento}
+						docArray={documento}
+						limit={10}/>
+				</div>
 
+				
+			</form>
+			</Form>
+		</div>
+		<div className="flex gap-2">
 			<DialogClose asChild>
 				<Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700" onClick={handleClose}>
 				Cancelar
@@ -488,6 +486,7 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 			
 			<Button
 				type="submit"
+				onClick={form.handleSubmit(onSubmit)}
 				className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={isLoading}
 			>
 				{isLoading? (
@@ -496,8 +495,8 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 				</>
 			):("Crear falla")}
 			</Button>
-          </form>
-        </Form>
+		</div>
+		
       </DialogContent>
     </Dialog>
   );

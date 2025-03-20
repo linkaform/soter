@@ -2,6 +2,7 @@ import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 import { Equipo_bitacora, Vehiculo_bitacora } from "@/components/table/bitacoras/bitacoras-columns"
 import { Equipo, Vehiculo } from "./update-pass"
+import { toast } from "sonner"
 
 
 export function cn(...inputs: ClassValue[]) {
@@ -256,3 +257,32 @@ export function formatCurrency(number:number) {
     currency: 'MXN'
   }).format(number);
 }
+
+
+type Column = {
+  label: string; 
+  key: string; 
+};
+
+export const downloadCSV = (data: any[], columns: Column[], fileName: string = 'data.csv') => {
+  if(data.length > 0){
+    console.log("DATAA", data)
+    const header = columns.map(col => col.label);
+    const rows = data.map(row => 
+      columns.map(col => row[col.key]) 
+    );
+    const csvContent = [header, ...rows].map(e => e.join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', fileName); 
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success("¡Archivo CSV descargado correctamente!")
+  }else{
+    toast.error("¡Seleciona al menos un registro para descargar!")
+  }
+
+};

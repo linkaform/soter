@@ -80,20 +80,10 @@ export type formatData = {
 	telefono:string
 }
 const PaseUpdate = () =>{
-	// const userIdSoter = parseInt(localStorage.getItem("userId_soter") || "0", 10);
 	const [id, setId] = useState("")
-	// const [docs, setDocs] = useState<string|null>(null)
 	const [showIneIden, setShowIneIden] = useState<string[]|undefined>([])
 	const[account_id, setAccount_id] = useState<number|null>(null)
-	// const valores = window.location.search;
-	// const urlParams = new URLSearchParams(valores);
-	// const id = urlParams.get('id') ?? ''; 
-	// const docs = urlParams.get('docs') !== null ? urlParams.get('docs') :'' ;
-	// let account_id = parseInt(urlParams.get('user') ?? '') || 0;
-	// if(account_id== null){
-	// 		account_id= userIdSoter
-	// }
-	// const showIneIden= docs?.split("-")
+
 	const { data: responsePdf, isLoading: loadingPdf, refetch: refetchPdf} = useGetPdf(account_id, id);
 	const { data: dataCatalogos, isLoading: loadingDataCatalogos , refetch:refetchCatalog} = useGetCatalogoPaseNoJwt(account_id, id);
 	const [agregarEquiposActive, setAgregarEquiposActive] = useState(false);
@@ -327,7 +317,6 @@ return (
 										titulo={"Fotografía"}
 										setImg={setFotografia}
 										showWebcamOption={true}
-										setErrorImagen={setErrorFotografia}
 										facingMode="user" 
 										imgArray={fotografia} 
 										showArray={true} 
@@ -340,7 +329,6 @@ return (
 									titulo={"Identificación"}
 									setImg={setIdentificacion}
 									showWebcamOption={true}
-									setErrorImagen={setErrorIdentificacion}
 									facingMode="environment" 
 									imgArray={identificacion} 
 									showArray={true} 

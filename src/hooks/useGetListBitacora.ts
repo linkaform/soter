@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { getListBitacora } from "@/lib/get-list-bitacoras";
+import { getListBitacora } from "@/lib/bitacoras";
 import { useQuery } from "@tanstack/react-query";
 
 export const useGetListBitacora = (location:string, area:string, prioridades:string[]) => {

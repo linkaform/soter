@@ -28,8 +28,9 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 
 import { Mail, MessageCircleMore } from "lucide-react";
-import { useCatalogoPaseLocation } from "@/hooks/useCatalogoPaseLocation";
-import { useCatalogoPaseArea } from "@/hooks/useCatalogoPaseArea";
+// import { useCatalogoPaseLocation } from "@/hooks/useCatalogoPaseLocation";
+// import { useCatalogoPaseArea } from "@/hooks/useCatalogoPaseAreaLocation";
+import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
 import { formatDateToString } from "@/lib/utils";
 import { useGetConfSeguridad } from "@/hooks/useGetConfSeguridad";
 import AreasList from "@/components/areas-list";
@@ -168,17 +169,19 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
 	const [config_dia_de_acceso, set_config_dia_de_acceso] = useState(dataPass.config_dia_de_acceso);
 	const [isSuccess, setIsSuccess] = useState(false);
 	const [modalData, setModalData] = useState<any>(null);
-	const { data: ubicaciones, isLoading: loadingUbicaciones } = useCatalogoPaseLocation();
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(dataPass.ubicacion);
-	const { isLoading: loadingAreas} = useCatalogoPaseArea(ubicacionSeleccionada);
+	// const {dataAreas,isLoadingAreas } = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true, ubicacionSeleccionada);
+	const { dataLocations , dataAreas, isLoadingAreas:loadingCatAreas } = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true, ubicacionSeleccionada  ? true : false)
+	console.log("UBICACIONES", dataLocations)
+	// const { isLoading: loadingCatAreas} = useCatalogoPaseArea(ubicacionSeleccionada);
 	const userEmailSoter = localStorage.getItem("userEmail_soter")||"";
 	const userIdSoter = parseInt(localStorage.getItem("userId_soter") || "0", 10);
 	const [enviar_correo_pre_registro, set_enviar_correo_pre_registro] = useState<string[]>(dataPass.enviar_correo_pre_registro ||[]);
-	const { data: configLocation, isLoading: loadingConfigLocation, refetch:refetchConfLocation } = useGetConfSeguridad(ubicacionSeleccionada);
+	const { data: configLocation, isLoading: loadingConfigLocation } = useGetConfSeguridad(ubicacionSeleccionada);
 	const [formatedDocs, setFormatedDocs] = useState<string[]>(configLocation)
 
 	const [isActiveRangoFecha, setIsActiveRangoFecha] = useState(dataPass.tipo_visita_pase=="rango_de_fechas");
-	const {data:catAreas, isLoading: loadingCatAreas, refetch:refetchAreas } = useCatalogoPaseArea(ubicacionSeleccionada)
+	// const {data:catAreas, isLoading: loadingCatAreas, refetch:refetchAreas } = useCatalogoPaseArea(ubicacionSeleccionada)
 
 	const [comentariosList, setComentariosList] = useState<Comentarios[]>(dataPass.comentarios);
 	const [areasList, setAreasList] = useState<Areas[]>(formatArea(dataPass.areas));
@@ -255,17 +258,17 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
 	},[])
 
 
-	useEffect(()=>{
-		if(ubicacionSeleccionada){
-			refetchConfLocation()
-		}
-	}, [refetchConfLocation, ubicacionSeleccionada])
+	// useEffect(()=>{
+	// 	if(ubicacionSeleccionada){
+	// 		refetchConfLocation()
+	// 	}
+	// }, [refetchConfLocation, ubicacionSeleccionada])
 
-	useEffect(()=>{
-		if(ubicacionSeleccionada && isActiveAdvancedOptions){
-			refetchAreas()
-		}
-	}, [ubicacionSeleccionada, isActiveAdvancedOptions, refetchAreas])
+	// useEffect(()=>{
+	// 	if(ubicacionSeleccionada && isActiveAdvancedOptions){
+	// 		refetchAreas()
+	// 	}
+	// }, [ubicacionSeleccionada, isActiveAdvancedOptions, refetchAreas])
 
 	useEffect(()=>{
 		if(configLocation){
@@ -525,11 +528,8 @@ return (
 								render={({ field }:any) => (
 									<FormItem>
 										<FormLabel>Ubicación:</FormLabel>
-
 										{ !loadingConfigLocation ? ( <>
-
 										<FormControl>
-											
 												<Select
 													onValueChange={(value:string) => {
 														field.onChange(value); 
@@ -538,7 +538,7 @@ return (
 													value={field.value} 
 												>
 												<SelectTrigger className="w-full">
-												{loadingAreas?(
+												{loadingConfigLocation?(
 													<>
 													<SelectValue placeholder="Cargando ubicaciónes..." />
 													</>
@@ -549,9 +549,9 @@ return (
 												)}
 												</SelectTrigger>
 												<SelectContent>
-													{Array.isArray(ubicaciones) ? (
+													{Array.isArray(dataLocations) ? (
 														<>
-														  {ubicaciones.map((ubicacion, index) => (
+														  {dataLocations.map((ubicacion, index) => (
 															<SelectItem key={index} value={ubicacion}>
 															  {ubicacion}
 															</SelectItem>
@@ -953,7 +953,7 @@ return (
 								areas={areasList}
 								setAreas={setAreasList}
 								location={ubicacionSeleccionada}
-								catAreas={catAreas}
+								catAreas={dataAreas}
 								loadingCatAreas={loadingCatAreas} 
 								existingAreas={true}/>
 						</> ) }
@@ -964,7 +964,7 @@ return (
 								tipo={"Pase"}
 							/>
 
-					{loadingAreas == false && loadingConfigLocation == false && loadingUbicaciones == false ? (<>
+					{loadingCatAreas == false && loadingConfigLocation == false && loadingCatAreas == false ? (<>
 						<div className="text-center">
 						<Button
 							className="bg-blue-500 hover:bg-blue-600 text-white w-full sm:w-2/3 md:w-1/2 lg:w-1/2"

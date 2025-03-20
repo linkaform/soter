@@ -10,7 +10,6 @@ export const useGetMyPases = () => {
     queryKey: ["getMyPases", tab], 
     queryFn: async () => {
         const data = await getMyPases({ tab }); 
-        console.log("PASE",data)
         return data.response?.data; 
     },
    

@@ -2,90 +2,91 @@
 
 import React, { useEffect, useState } from "react";
 
-
-import Vehicles from "@/components/icon/vehicles";
-import Exit from "@/components/icon/exit";
-import { Home, Users } from "lucide-react";
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LockerTable } from "@/components/table/bitacoras/locker/table";
-import ReusableAccordion from "@/components/resuable-accordion";
 import PageTitle from "@/components/page-title";
 import { useGetListBitacora } from "@/hooks/useGetListBitacora";
 import BitacorasTable from "@/components/table/bitacoras/table";
+import { Home, Users, Car, DoorClosed } from "lucide-react";
+import { useGetStats } from "@/hooks/useGetStats";
 
 const BitacorasPage = () => {
   const [selectedOption, setSelectedOption] = useState<string[]>([]);
-
+  const { data: dataStats} = useGetStats("", "", "Bitacoras");
   const { data,isLoading, refetch} = useGetListBitacora("", "",selectedOption);
-
+ 
   useEffect(()=>{
     if(selectedOption){
       refetch()
     }
   },[selectedOption, refetch])
   
-  return (
+return (
     <div className="">
-      <div className="flex flex-col">
-        <div className="p-6 space-y-6 w-full mx-auto">
-          <ReusableAccordion
-            ubicaciones={[
-              { value: "planta-monterrey", label: "Planta Monterrey" },
-              { value: "planta-saltillo", label: "Planta Saltillo" },
-            ]}
-            casetas={[
-              { value: "caseta-6", label: "Caseta 6 Poniente" },
-              { value: "caseta-5", label: "Caseta 5 Norte" },
-            ]}
-            jefe="Emiliano Zapata"
-            estadisticas={[
-              {
-                label: "Visitas en el Día",
-                value: 23,
-                icon: <Home className="text-primary" />,
-              },
-              {
-                label: "Personal Dentro",
-                value: 23,
-                icon: <Users className="text-primary" />,
-              },
-              {
-                label: "Vehículos Dentro",
-                value: 23,
-                icon: <Vehicles />,
-              },
-              {
-                label: "Salidas Registradas",
-                value: 23,
-                icon: <Exit />,
-              },
-            ]}
-          />
+		<div className="p-6 space-y-1 pt-3 w-full mx-auto ">
 
-
-        <PageTitle title="Registro y seguimiento de entradas y salidas" />
-
-
-   
-          <Tabs defaultValue="Personal" className="w-full">
-            <TabsList>
-              <TabsTrigger value="Personal">Personal</TabsTrigger>
-              <TabsTrigger value="Locker">Locker</TabsTrigger>
-            </TabsList>
-            <TabsContent value="Personal">
-              <div className="">
-                <BitacorasTable data={data} refetch={refetch} setSelectedOption={setSelectedOption} isLoading={isLoading}/>
-              </div>
-            </TabsContent>
-            <TabsContent value="Locker">
-              <div className="">
-                <LockerTable />
-              </div>
-            </TabsContent>
-          </Tabs>
-        </div>
-      </div>
+		<div className="flex justify-between">
+			<div>
+				<PageTitle title="Registro de Entradas y Salidas" />	
+			</div>
+			<div className="flex gap-5">
+				<div className="border px-12 py-1 rounded-md">
+					<div className="flex gap-6"><Home className="text-primary w-10 h-10" />
+						<span className="flex items-center font-bold text-4xl"> {dataStats?.visitas_en_dia}</span>
+						
+					</div>
+					<div className="flex items-center space-x-0">
+						<div className="h-1 w-1/2 bg-cyan-100"></div>
+						<div className="h-1 w-1/2 bg-blue-500"></div>
+					</div>
+					<span className="text-md">Visitas en el día</span>
+				</div>
+				<div className="border p-4 px-12 py-1 rounded-md">
+					<div className="flex gap-6"><Users className="text-primary w-10 h-10"/>
+						<span className="flex items-center font-bold text-4xl"> {dataStats?.personal_dentro}</span>
+					</div>
+					<div className="flex items-center space-x-0">
+						<div className="h-1 w-1/2 bg-cyan-100"></div>
+						<div className="h-1 w-1/2 bg-blue-500"></div>
+					</div>
+					<span className="text-md">Personal dentro</span>
+				</div>
+				<div className="border p-4 px-12 py-1 rounded-md">
+					<div className="flex gap-6"><Car className="text-primary w-10 h-10"/>
+						<span className="flex items-center font-bold text-4xl"> {dataStats?.total_vehiculos_dentro}</span>
+					</div>
+					<div className="flex items-center space-x-0">
+						<div className="h-1 w-1/2 bg-cyan-100"></div>
+						<div className="h-1 w-1/2 bg-blue-500"></div>
+					</div>
+					<span className="text-md">Vehiculos Dentro</span>
+				</div>
+				<div className="border p-4 px-12 py-1 rounded-md">
+					<div className="flex gap-6"><DoorClosed className="text-primary w-10 h-10"/>
+						<span className="flex items-center font-bold text-4xl"> {dataStats?.salidas_registradas}</span>
+					</div>
+					<div className="flex items-center space-x-0">
+						<div className="h-1 w-1/2 bg-cyan-100"></div>
+						<div className="h-1 w-1/2 bg-blue-500"></div>
+					</div>
+					<span className="text-md">Salidas registradas</span>
+				</div>
+			</div>
+		</div>
+			<Tabs defaultValue="Personal" className="w-full">
+				<TabsContent value="Personal">
+					
+				<div className="">
+					<BitacorasTable data={data} refetch={refetch} setSelectedOption={setSelectedOption} isLoading={isLoading}/>
+				</div>
+				</TabsContent>
+				<TabsContent value="Locker">
+				<div className="">
+					<LockerTable />
+				</div>
+				</TabsContent>
+			</Tabs>
+		</div>
     </div>
   );
 };

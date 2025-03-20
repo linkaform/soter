@@ -25,21 +25,19 @@ import { useEffect, useState } from "react";
 import LoadImage from "../upload-Image";
 import { Imagen } from "@/lib/update-pass";
 import { toast } from "sonner";
-// import DateTime from "../dateTime";
 import { Loader2 } from "lucide-react";
-import { useCreateSeguimientoFalla } from "@/hooks/useCreateSeguimientoFalla";
 import { Input } from "../ui/input";
-import { inputSeguimientoFalla } from "@/lib/create-seguimiento-falla";
+import { inputSeguimientoFalla } from "@/lib/fallas";
 import LoadFile from "../upload-file";
-// import { formatFecha } from "@/lib/utils";
 import { format } from "date-fns";
 import DateTime from "../dateTime";
-// import { format } from "date-fns";
+import { formatFecha } from "@/lib/utils";
+import { useFallas } from "@/hooks/useFallas";
+import { useShiftStore } from "@/store/useShiftStore";
 
 interface AddFallaModalProps {
   	title: string;
 	data: any;
-	refetchTableFallas: ()=> void;
 	children: React.ReactNode;
 }
 
@@ -65,20 +63,16 @@ const formSchema = z.object({
 export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
   	title,
 	data,
-	refetchTableFallas,
 	children
 }) => {
 	const [modalData, setModalData] = useState<inputSeguimientoFalla | null>(null);
-
-	const { data:responseSeguimientoFalla, isLoading , refetch, error} = useCreateSeguimientoFalla("", modalData, data.folio ,"", data.falla_estatus)
+	const { area, location } = useShiftStore();
 	const [isSuccess, setIsSuccess] =useState(false)
 	const [evidencia , setEvidencia] = useState<Imagen[]>([]);
 	const [documento , setDocumento] = useState<Imagen[]>([]);
 	const [date, setDate] = useState<Date|"">("");
 	const [dateFin, setDateFin] = useState<Date|"">("");
-
-	const [errorEvidencia, setErrorEvidencia] = useState("")
-	const [errorDocumento, setErrorDocumento] = useState("")
+	const { seguimientoFallaMutation, isLoading} = useFallas("","", "abierto", false)
 
 
 	const form = useForm<z.infer<typeof formSchema>>({
@@ -98,52 +92,49 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 	useEffect(()=>{
 		if(isSuccess){
 			reset()
-			// setDate("")
+			setDate("")
+			setDateFin("")
 			setEvidencia([])
 			setDocumento([])
 		}
 	},[isSuccess, reset])
 
-	useEffect(()=>{
-		if(responseSeguimientoFalla?.status_code == 202){
-			handleClose()
-			refetchTableFallas()
-			toast.success("Seguimiento actualizado correctamente!")
-		}
-	},[responseSeguimientoFalla])
-
-	useEffect(()=>{
-		if(error){
-			toast.error(error.message)
-			handleClose()
-		}
-		if(errorEvidencia || errorDocumento){
-			toast.error("Error al cargar imagenes o documentos")
-			handleClose()
-		}
-	},[error, errorEvidencia , errorDocumento])
+	// useEffect(()=>{
+	// 	if(responseSeguimientoFalla?.status_code == 202){
+	// 		handleClose()
+	// 		refetchTableFallas()
+	// 		toast.success("Seguimiento actualizado correctamente!")
+	// 	}
+	// },[responseSeguimientoFalla])
 
 
 	useEffect(()=>{
-		if(modalData){
-			refetch()
+		if(!isLoading){
+			handleClose()			
 		}
-	},[modalData])
+	},[isLoading])
+
+	// useEffect(()=>{
+	// 	if(modalData){
+			
+	// 	}
+	// },[modalData])
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		if(date){
 			const formattedDate = format( new Date(date), 'yyyy-MM-dd HH:mm:ss');
 			const formattedDateFin = format( new Date(dateFin), 'yyyy-MM-dd HH:mm:ss');
 			console.log("FORMATED", formattedDate, formattedDateFin)
+		console.log("QUE PASA",values.fechaInicioFallaCompleta)
 			const formatData ={
 				falla_folio_accion_correctiva:values.falla_folio_accion_correctiva||"",
 				falla_comentario_solucion: values.falla_comentario_solucion||"",
-				fechaInicioFallaCompleta: formattedDate, //formatFecha(values.fechaInicioFallaCompleta)+":00",
-				fechaFinFallaCompleta: formattedDateFin,//formatFecha(values.fechaFinFallaCompleta)+":00",
+				fechaInicioFallaCompleta:values.fechaInicioFallaCompleta? formatFecha(values.fechaInicioFallaCompleta)+`:00`:"2024-03-24 11:04:00",// values.fechaInicioFallaCompleta,//date?format( new Date(date), 'yyyy-MM-dd HH:mm:ss'):"", // formattedDate, //formatFecha(values.fechaInicioFallaCompleta)+":00",
+				fechaFinFallaCompleta:values.fechaFinFallaCompleta? formatFecha(values.fechaFinFallaCompleta)+`:00`:"2024-03-12 09:04:00",// values.fechaFinFallaCompleta,//dateFin?format( new Date(dateFin), 'yyyy-MM-dd HH:mm:ss'):"",//formattedDateFin,//formatFecha(values.fechaFinFallaCompleta)+":00",
 				falla_documento_solucion:documento,
 				falla_evidencia_solucion:evidencia,
 			}
-            setModalData(formatData);
+			seguimientoFallaMutation.mutate({falla_grupo_seguimiento:formatData, folio:data.folio, location,area , status:"abierto"})
 		}else{
 			form.setError("fechaInicioFallaCompleta", { type: "manual", message: "Fecha es un campo requerido." });
 		}
@@ -153,6 +144,11 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 		setIsSuccess(false); 
 	};
 
+	useEffect(()=>{
+		if(!isLoading){
+			handleClose()			
+		}
+	},[isLoading])
 
   return (
     <Dialog onOpenChange={setIsSuccess} open={isSuccess}>
@@ -209,11 +205,11 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 				<FormField
 				control={form.control}
 				name="fechaInicioFallaCompleta"
-				render={() => (
+				render={(field:any) => (
 					<FormItem>
 					<FormLabel>* Fecha</FormLabel>
 					<FormControl>
-						{/* <Input type="datetime-local" placeholder="Fecha" {...field} /> */}
+						{/* <Input type="datetime-local" placeholder="Fecha"  /> */}
 						<DateTime date={date} setDate={setDate} />
 					</FormControl>
 
@@ -224,11 +220,11 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 				<FormField
 				control={form.control}
 				name="fechaFinFallaCompleta"
-				render={() => (
+				render={(field:any) => (
 					<FormItem>
 					<FormLabel>* Fecha</FormLabel>
 					<FormControl>
-						{/* <Input type="datetime-local" placeholder="Fecha" {...field} /> */}
+						{/* <Input type="datetime-local" placeholder="Fecha" /> */}
 						<DateTime date={dateFin} setDate={setDateFin}/>
 					</FormControl>
 
@@ -243,7 +239,6 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 						titulo={"Evidencia"}
 						setImg={setEvidencia}
 						showWebcamOption={true}
-						setErrorImagen={setErrorEvidencia}
 						facingMode="user" 
 						imgArray={evidencia} 
 						showArray={true} 
@@ -256,7 +251,6 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 						id="documento" 
 						titulo={"Documento"} 
 						setDocs={setDocumento}
-						setErrorImagen={setErrorDocumento}
 						docArray={documento}
 						limit={10}
 						/>

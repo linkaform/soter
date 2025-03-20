@@ -7,69 +7,40 @@ import { useUploadImage } from "@/hooks/useUploadImage";
 import { Button } from "./ui/button";
 import { Trash } from "lucide-react";
 import {quitarAcentosYMinusculasYEspacios, reemplazarGuionMinuscula } from "@/lib/utils";
-import { toast } from "sonner";
 
 interface CalendarDaysProps {
   id: string;
   titulo: string; 
   setDocs: Dispatch<SetStateAction<Imagen[]>>;
-  setErrorImagen:Dispatch<SetStateAction<string>>;
+//   setErrorImagen:Dispatch<SetStateAction<string>>;
   docArray:Imagen[];
   limit:number;
 }
 
 
-const LoadFile: React.FC<CalendarDaysProps>= ({id, titulo, setDocs,setErrorImagen, docArray, limit})=> {
-    console.log("EVIDENCIA", docArray)
-    const [selectedFile, setSelectedFile] = useState<File|null>(null);
-    const [isLoading, setLoading] = useState(false);
-    const { data, refetch, error} = useUploadImage(selectedFile);
-
+const LoadFile: React.FC<CalendarDaysProps>= ({id, titulo, setDocs, docArray, limit})=> {
+    const { uploadImageMutation, response, isLoading} = useUploadImage();
 
     async function handleFileChange(event:any){
         const file = event.target.files ? event.target.files[0] : null;
         if (file) {
             const nuevoArchivo = new File([file], reemplazarGuionMinuscula(id+" "+file.name) , { type: file.type });
-            console.log("QUE PASAa",nuevoArchivo)
-            setSelectedFile(nuevoArchivo)
+            uploadImageMutation.mutate({img: nuevoArchivo})
         }
     }
 
     function cleanPhoto(){
         setDocs([])
-        setLoading(false)
-        setErrorImagen("")
+        // setErrorImagen("")
     }
 
-    useEffect(() => {
-        setLoading(true)
-        if (selectedFile) {
-            refetch(); 
-        }
-    }, [refetch, selectedFile]); 
-
     useEffect(()=>{
-        if(data){
-            if (data?.file_name?.includes(quitarAcentosYMinusculasYEspacios(id)) ) {
-                setDocs((prevDocs) => [...prevDocs, ...(Array.isArray(data) ? data : [data])]);
-
+        if(response){
+            if (response?.file_name?.includes(quitarAcentosYMinusculasYEspacios(id)) ) {
+                setDocs((prevDocs) => [...prevDocs, ...(Array.isArray(response) ? response : [response])]);
             }
         }
-        setLoading(false)
-    }, [data])
-
-    useEffect(()=>{
-        if(docArray){
-            console.log("CVAMBIOS", docArray)
-        }
-    },[docArray])
-
-    useEffect(()=>{
-        setLoading(false)
-        if(error){
-            toast.error("Ocurrio un error al cargar el archivo")
-        }
-    }, [error])
+    }, [response])
 
   return (
     <>

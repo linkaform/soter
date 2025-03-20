@@ -11,22 +11,14 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (!isAuth) {
-      // Redirige al usuario al login si no está autenticado
       router.push("/auth/login");
     }
   }, [isAuth, router]);
 
-
-
-
-
   return (
-    <div className="">
-      {/* Header visible en todas las páginas logueadas */}
+    <div>
       <Header />
-
-      {/* Contenido principal */}
-      <main className="">
+      <main >
         {children}
       </main>
     </div>

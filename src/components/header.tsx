@@ -21,11 +21,11 @@ export const Header = () => {
   const { labels } = useMenuStore();
 
   return (
-    <header className="w-full shadow py-3 px-12 sticky top-0 left-0 bg-white  z-50">
-      <div className="mx-auto flex flex-col lg:flex-row items-center justify-between">
+    <header className="w-full shadow py-1 px-12 sticky top-0 left-0 bg-white  z-50">
+      <div className="mx-auto flex flex-col lg:flex-row items-center justify-between mb-0">
         {/* Logo */}
 
-          <div className="flex  mb-5 lg:mb-0 justify-center items-center">
+          <div className="flex lg:mb-0 justify-center items-center">
             <Link href="/">
               <Image
                 className="dark:invert"

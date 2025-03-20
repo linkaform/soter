@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -14,6 +13,9 @@ import { CalendarClock, Loader2 } from "lucide-react";
 import { GeneratedPassModal } from "./generated-pass-modal";
 import { Access_pass, Areas, Comentarios, enviar_pre_sms, Link, useCreateAccessPase } from "@/hooks/useCreateAccessPass";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
+import { usePaseEntrada } from "@/hooks/usePaseEntrada";
+import { useShiftStore } from "@/store/useShiftStore";
+import useAuthStore from "@/store/useAuthStore";
 
 
 export type Visita={
@@ -87,10 +89,11 @@ export const EntryPassModal: React.FC<EntryPassUpdateModalProps> = ({
 
   const [sendData, setSendData] = useState<Access_pass|null>(null)
   const [sendPreSms, setSendPreSms] = useState<enviar_pre_sms|null>(null)
-  const { data:responseCreatePase, isLoading:loadingCreatePase, refetch: refetchCreatePase } = useCreateAccessPase(dataPass?.ubicacion, sendData, sendPreSms );
+  const {userIdSoter }= useAuthStore()
+  const { createPaseEntradaMutation , responseCreatePase, isLoading} = usePaseEntrada("")
+  const {location} = useShiftStore()
   const [openGeneratedPass, setOpenGeneratedPass] = useState<boolean>(false);
   const [link, setLink] = useState("");
-  // const account_id = parseInt(localStorage.getItem("userId_soter") || "0", 10);
   const[ account_id, setAccount_id] = useState<number|null>(null)
   const [hostPro, setHostPro] = useState({ protocol: '', host: '' });
 
@@ -142,26 +145,20 @@ export const EntryPassModal: React.FC<EntryPassUpdateModalProps> = ({
 		  const protocol = window.location.protocol;
 		  const host = window.location.host;
 		  setHostPro({ protocol, host });
-  
-		  //const {userIdSoter,userEmailSoter, userNameSoter} = useAuthStore();
-		  setAccount_id(Number(window.localStorage.getItem("userId_soter")));
-		  // setUserNameSoter(window.localStorage.getItem("userName_soter"));
-		  // setUserEmailSoter(window.localStorage.getItem("userEmail_soter"));
+		  setAccount_id(userIdSoter);
 		}
 	  }, []);
 
   useEffect(()=>{
     if(sendPreSms && sendData ){
-      refetchCreatePase()
+      createPaseEntradaMutation.mutate({ access_pass:sendData, location:dataPass?.ubicacion, enviar_pre_sms: sendPreSms })
     }
-  },[refetchCreatePase, sendData, sendPreSms])
+  },[ sendData, sendPreSms])
 
 
   useEffect(()=>{
-    if(responseCreatePase?.success){
+    if(responseCreatePase?.status_code == 201){
     }
-      // const protocol = window.location.protocol;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
-      // const host = window.location.host;
       let docs=""
       sendData?.link.docs.map((d, index)=>{
         if(d == "agregarIdentificacion"){
@@ -174,7 +171,7 @@ export const EntryPassModal: React.FC<EntryPassUpdateModalProps> = ({
           docs+="-"
         }
       })
-      setLink(`${hostPro.protocol}//${hostPro.host}/dashboard/pase-update?id=${responseCreatePase?.response.data.json.id}&user=${account_id}&docs=${docs}`)
+      setLink(`${hostPro.protocol}//${hostPro.host}/dashboard/pase-update?id=${responseCreatePase?.json.id}&user=${account_id}&docs=${docs}`)
       setOpenGeneratedPass(true)
   },[responseCreatePase])
 
@@ -184,7 +181,6 @@ export const EntryPassModal: React.FC<EntryPassUpdateModalProps> = ({
 };
 
   return (
-    //onOpenChange={setIsSuccess}
     <Dialog open={isSuccess} modal>
       <DialogContent
           className="max-w-xl max-h-[90vh] overflow-scroll bg-white rounded-lg shadow-xl"
@@ -328,13 +324,13 @@ export const EntryPassModal: React.FC<EntryPassUpdateModalProps> = ({
         
         <div className="flex gap-5 my-5">
           <DialogClose asChild
-            disabled={loadingCreatePase}>
+            disabled={isLoading}>
             <Button className="w-full h-12 bg-gray-100 hover:bg-gray-200 text-gray-700" onClick={handleClose}>
               Cancelar
             </Button>
           </DialogClose>
 
-          {responseCreatePase?.success === true ? (
+          {responseCreatePase?.status_code == 201 ? (
             <GeneratedPassModal
               title="Pase de Entrada Generado "
               description="El pase de entrada se ha generado correctamente. Por favor, copie el siguiente enlace y compártalo con el visitante para completar el proceso."
@@ -344,8 +340,8 @@ export const EntryPassModal: React.FC<EntryPassUpdateModalProps> = ({
             
           ):null}
           
-          <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white" onClick={onSubmit} disabled={loadingCreatePase}>
-                { !loadingCreatePase ? (<>
+          <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white" onClick={onSubmit} disabled={isLoading}>
+                { !isLoading ? (<>
                   {("Crear pase")}
                 </>) :(<> <Loader2 className="animate-spin"/> {"Creando pase..."} </>)}
               </Button>

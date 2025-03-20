@@ -18,21 +18,20 @@ interface CalendarDaysProps {
   setImg: Dispatch<SetStateAction<Imagen[]>>;
   showWebcamOption:boolean;
   facingMode: string
-  setErrorImagen:Dispatch<SetStateAction<string>>;
+//   setErrorImagen:Dispatch<SetStateAction<string>>;
   imgArray:Imagen[];
   showArray:boolean;
   limit:number;
 }
 
 
-const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOption, facingMode, setErrorImagen, imgArray, showArray, limit})=> {
+const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOption, facingMode, imgArray, showArray, limit})=> {
     const [selectedFile, setSelectedFile] = useState<File|null>(null);
-    const [loading, setloading] = useState(false);
     const [loadingWebcam, setloadingWebcam] = useState(false);
-    // const [base64photo, setBase64Photo] = useState<string|"" >("")
     const [hideWebcam, setHideWebcam] = useState(true)
     const [hideButtonWebcam, setHideButtonWebcam] = useState(false)
-    const { data, refetch, error} = useUploadImage(selectedFile);
+    const { uploadImageMutation, response, isLoading} = useUploadImage();
+
     const webcamRef = useRef<Webcam | null>(null);
     const videoConstraints = {
         width: 720,
@@ -47,13 +46,7 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
             const extension = tipoMime.split('/')[1];
             const nuevoNombre = `${quitarAcentosYMinusculasYEspacios(id)}.${extension}`;
             const nuevoArchivo = new File([file], nuevoNombre, { type: file.type });
-            setSelectedFile(nuevoArchivo)
-            // try {
-            //   const base64 = await fileToBase64(file)||""; // Convertimos el archivo a base64
-            // //   setBase64Photo(base64); // Asignamos el valor base64 al estado
-            // } catch (error) {
-            //   console.error('Error al convertir el archivo a base64:', error);
-            // }
+            uploadImageMutation.mutate({img:nuevoArchivo})
             setHideWebcam(true)
             setHideButtonWebcam(true)
         }
@@ -61,40 +54,25 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
 
     function cleanPhoto(){
         setImg([])
-        // setBase64Photo("")
         setHideWebcam(true)
         setHideButtonWebcam(false)
-        setloading(false)
-        setErrorImagen("")
+        // setErrorImagen("")
     }
 
     function takeAndSavePhoto(){
         const imageSrc = webcamRef.current?.getScreenshot() || "";
         setSelectedFile(base64ToFile(imageSrc, quitarAcentosYMinusculasYEspacios(id)))
-        // setBase64Photo(imageSrc)
         setHideWebcam(true)
         setHideButtonWebcam(true)   
     }
 
-    useEffect(() => {
-        setloading(true)
-        if (selectedFile) {
-            refetch(); 
-        }
-    }, [refetch, selectedFile]); 
-
     useEffect(()=>{
-        if(data){
-            if (data?.file_name?.includes(quitarAcentosYMinusculasYEspacios(id)) ) {
-                setImg((prevDocs) => [...prevDocs, ...(Array.isArray(data) ? data : [data])]);
+        if(response){
+            if (response?.file_name?.includes(quitarAcentosYMinusculasYEspacios(id)) ) {
+                setImg((prevDocs) => [...prevDocs, ...(Array.isArray(response) ? response : [response])]);
             }
         }
-        setloading(false)
-    }, [data])
-
-    useEffect(()=>{
-        setloading(false)
-    }, [error])
+    }, [response])
 
     const handleUserMedia = () => {
         setloadingWebcam(false); 
@@ -132,7 +110,7 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
                 </div>
             </div>
             <div className="w-full flex flex-col">
-                {loading ? (<>
+                {isLoading ? (<>
                     <div role="status">
                         <svg aria-hidden="true" className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>

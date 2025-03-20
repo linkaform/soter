@@ -103,8 +103,6 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const [documento , setDocumento] = useState<Imagen[]>([]);
 	const [date, setDate] = useState<Date|"">("");
 
-	const [errorEvidencia, setErrorEvidencia] = useState("")
-	const [errorDocumento, setErrorDocumento] = useState("")
 	const [incidencia, setIncidencia] = useState("")
 
 	const [personasInvolucradas, setPersonasInvolucradas] = useState<PersonasInvolucradas[]>([])
@@ -154,15 +152,11 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	// },[responseCreateIncidencia])
 
 	useEffect(()=>{
-		if(errorEvidencia || errorDocumento){
-			toast.error("Error al cargar imagenes o documentos")
-			handleClose()
-		}
 		if(errorAreEmpleado){
 			toast.error("Error al cargar catalogo de area empleado")
 			handleClose()
 		}
-	},[ errorEvidencia , errorDocumento, errorAreEmpleado])
+	},[errorAreEmpleado])
 
 	useEffect(()=>{
 		if(modalData){
@@ -423,7 +417,6 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 								titulo={"Evidencia"} 
 								setImg={setEvidencia}
 								showWebcamOption={true}
-								setErrorImagen={setErrorEvidencia}
 								facingMode="environment"
 								imgArray={evidencia}
 								showArray={true}
@@ -433,7 +426,6 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 								id="documento"
 								titulo={"Documento"}
 								setDocs={setDocumento}
-								setErrorImagen={setErrorDocumento}
 								docArray={documento}
 								limit={10}/>
 							

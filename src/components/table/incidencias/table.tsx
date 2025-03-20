@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChevronDown, FileX2, Plus, Trash2 } from "lucide-react";
+import { ChevronDown, FileX2, Plus, Search, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -34,8 +34,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Incidencia_record, incidenciasColumns } from "./incidencias-columns";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { EliminarIncidenciaModal } from "@/components/modals/delete-incidencia-modal";
+import { downloadCSV } from "@/lib/utils";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
+import ChangeLocation from "@/components/changeLocation";
 
 interface ListProps {
   refetch:() => void;
@@ -47,8 +52,18 @@ interface ListProps {
   selectedIncidencias:string[]
 }
 
+const fallasColumnsCSV = [
+  { label: 'Folio', key: 'folio' },
+  { label: 'Ubicacion', key: 'ubicacion_incidencia' },
+  { label: 'Lugar del Incidente', key: 'area_incidencia' },
+  { label: 'Fecha y hora', key: 'fecha_hora_incidencia' },
+  { label: 'Comentarios', key: 'comentario_incidencia' },
+  { label: 'Reporta', key: 'reporta_incidencia' },
+];
+
 const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, setPrioridades, isLoading, openModal,setSelectedIncidencias,selectedIncidencias })=> {
   const [sorting, setSorting] = React.useState<SortingState>([]);
+
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
@@ -73,6 +88,7 @@ const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, setPrioridades, i
       }
     });
   };
+
 
   const table = useReactTable({
     data:data || [],
@@ -105,9 +121,9 @@ const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, setPrioridades, i
 
   React.useEffect(()=>{
     if(table.getFilteredSelectedRowModel().rows.length>0){
-      const folios: string[] = []
+      const folios: any[] = []
       table.getFilteredSelectedRowModel().rows.map((row) => {
-        folios.push(row.original.folio);
+        folios.push(row.original);
       });
       setSelectedIncidencias(folios)
     }
@@ -115,171 +131,175 @@ const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, setPrioridades, i
 
   return (
     <div className="w-full">
-      <div className="flex flex-col md:flex-row justify-between items-center my-5">
-        {/* Campo de búsqueda a la izquierda */}
-        <input
-          type="text"
-          placeholder="Buscar en todos los campos..."
-          value={globalFilter}
-          onChange={(e) => setGlobalFilter(e.target.value)}
-          className="w-full border border-gray-300 mb-5 rounded-md p-2 h-12  max-w-xs"
-        />
+		<div className="flex justify-between items-center my-2 ">
+			<div className="flex">
+				<TabsList className="bg-blue-500 text-white">
+				<TabsTrigger value="Incidencias">Incidencias</TabsTrigger>
+				<TabsTrigger value="Fallas">Fallas</TabsTrigger>
+				</TabsList>
+			</div>
+			
+			<div className="flex items-center">
+				<input
+				type="text"
+				placeholder="Buscar en todos los campos..."
+				value={globalFilter}
+				onChange={(e) => setGlobalFilter(e.target.value)}
+				className="w-full border border-gray-300 rounded-md p-2"
+				/>
+			</div>
 
-        {/* Botones a la derecha */}
-        <div className="flex flex-col-reverse items-center justify-start space-x-3">
-          <div className="flex items-center space-x-4">
-            <Label htmlFor="prioridad">
-              <span className="text-lg font-semibold">Prioridad:</span>
-            </Label>
+			<div className="flex w-1/3 gap-2"> 
+				<ChangeLocation location={""} area={""} all={false} setAreas={() => { } } setLocations={() => { } } 
+				setAll={()=>{}}>
+				</ChangeLocation>
+			</div>
 
-            <div className="flex items-center space-x-2">
-              <Checkbox id="alta" onChange={handleCheckboxChange}/>
-              <Label htmlFor="alta">Alta</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox id="media" onChange={handleCheckboxChange}/>
-              <Label htmlFor="media">Media</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox id="baja" onChange={handleCheckboxChange}/>
-              <Label htmlFor="baja">Baja</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox id="critica" onChange={handleCheckboxChange}/>
-              <Label htmlFor="critica">Crítica</Label>
-            </div>
-          </div>
+			<div className="flex items-center gap-2">
+				<span className="text-lg font-semibold">Prioridad:</span>
+				<Select onValueChange={handleCheckboxChange} defaultValue={""}>
+					<SelectTrigger>
+						<SelectValue placeholder="Selecciona una opción" />
+					</SelectTrigger>
+					<SelectContent>
+						<SelectItem value="alta">Alta</SelectItem>
+						<SelectItem value="media">Media</SelectItem>
+						<SelectItem value="baja">Baja</SelectItem>
+						<SelectItem value="crítica">Crítica</SelectItem>
+					</SelectContent>
+				</Select>
+			</div>
 
-          <div className="w-full md:w-auto flex flex-col md:flex-row  gap-3 mb-5">
+			<div className="flex flex-wrap gap-2">
+				<div>
+					<Button className="w-full md:w-auto bg-blue-500 hover:bg-blue-600" onClick={openModal}>
+						<Plus />
+						Nuevo Incidente
+					</Button>
+				</div>
 
-          <Button className="w-full md:w-auto bg-blue-500 hover:bg-blue-600" onClick={openModal}>
-            <Plus />
-            Nuevo Incidente
-          </Button>
+				<div>
+					<Button className="w-full md:w-auto bg-blue-500 hover:bg-blue-600" onClick={()=>{downloadCSV(selectedIncidencias, fallasColumnsCSV, "incidencias.csv")}}>
+						<FileX2 />
+						Descargar
+					</Button>
+				</div>
 
-          <Button className="w-full md:w-auto bg-blue-500 hover:bg-blue-600">
-            <FileX2 />
-            Descargar
-          </Button>
+				<div>
+					<EliminarIncidenciaModal title="Eliminar Incidencias" arrayFolios={selectedIncidencias}>
+						<div className="flex flex-shrink p-2 rounded-sm px-3 w-full bg-red-500 text-white hover:bg-red-600 mb-0" >
+							<Trash2 />        
+							Eliminar
+						</div>
+					</EliminarIncidenciaModal>
+				</div>
 
-          <EliminarIncidenciaModal
-          title="Eliminar Incidencias" arrayFolios={selectedIncidencias}>
-            <div className="flex flex-shrink p-2 rounded-sm px-3 w-full bg-red-500 text-white hover:bg-red-600" >
-            <Trash2 />        
-              Eliminar
-            </div>
-          </EliminarIncidenciaModal>
+				<div>
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+						<Button variant="outline" className="ml-auto">
+							Columnas <ChevronDown />
+						</Button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align="end" className="bg-blue-500">
+						{table
+							.getAllColumns()
+							.filter((column) => column.getCanHide())
+							.map((column) => {
+							return (
+								<DropdownMenuCheckboxItem
+								key={column.id}
+								className="capitalize bg-blue-500"
+								checked={column.getIsVisible()}
+								onCheckedChange={(value) =>
+									column.toggleVisibility(!!value)
+								}
+								>
+								{column.id}
+								</DropdownMenuCheckboxItem>
+							);
+							})}
+						</DropdownMenuContent>
+					</DropdownMenu>
+				</div>
+			</div>
+		</div>
 
-          {/* <Button className="w-full md:w-auto bg-red-500 hover:bg-red-600">
-            <Trash2 />
-            Eliminar
-          </Button> */}
+		<div>
+			<Table>
+			<TableHeader className="bg-blue-100 hover:bg-blue-100">
+			{table.getHeaderGroups().map((headerGroup) => (
+				<TableRow key={headerGroup.id}>
+					{headerGroup.headers.map((header) => {
+					return (
+						<TableHead key={header.id} >
+						{header.isPlaceholder
+							? null
+							: flexRender(
+								header.column.columnDef.header,
+								header.getContext()
+							)}
+						</TableHead>
+					);
+					})}
+				</TableRow>
+				))}
+			</TableHeader>
+			<TableBody>
+				{table.getRowModel().rows?.length ? (
+				table.getRowModel().rows.map((row) => (
+					<TableRow
+					key={row.id}
+					data-state={row.getIsSelected() && "selected"}
+					>
+					{row.getVisibleCells().map((cell) => (
+						<TableCell key={cell.id}>
+						{flexRender(
+							cell.column.columnDef.cell,
+							cell.getContext()
+						)}
+						</TableCell>
+					))}
+					</TableRow>
+				))
+				) : (
+				<TableRow>
+					<TableCell
+					colSpan={incidenciasColumns.length}
+					className="h-24 text-center"
+					>
+					No hay registros disponibles{" "}
+					</TableCell>
+				</TableRow>
+				)}
+			</TableBody>
+			</Table>
+		</div>
+		<div className="flex items-center justify-end space-x-2 py-4">
+			<div className="flex-1 text-sm text-muted-foreground">
+			{table.getFilteredSelectedRowModel().rows.length} de{" "}
+			{table.getFilteredRowModel().rows.length} items seleccionados.
+			</div>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto">
-                Columnas <ChevronDown />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  );
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          </div>
-        </div>
-      </div>
-
-      <div className="">
-        <Table>
-        <TableHeader className="bg-[#F0F2F5]">
-        {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={incidenciasColumns.length}
-                  className="h-24 text-center"
-                >
-                  No hay registros disponibles{" "}
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} de{" "}
-          {table.getFilteredRowModel().rows.length} items seleccionados.
-        </div>
-
-        <div className="space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Anterior
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Siguiente
-          </Button>
-        </div>
-      </div>
+			<div className="space-x-2">
+			<Button
+				variant="outline"
+				size="sm"
+				onClick={() => table.previousPage()}
+				disabled={!table.getCanPreviousPage()}
+			>
+				Anterior
+			</Button>
+			<Button
+				variant="outline"
+				size="sm"
+				onClick={() => table.nextPage()}
+				disabled={!table.getCanNextPage()}
+			>
+				Siguiente
+			</Button>
+			</div>
+		</div>
     </div>
   );
 }

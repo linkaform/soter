@@ -13,7 +13,7 @@ export default function IncidenciasLayout({ children }: { children: React.ReactN
       <link rel="icon" href="/incidencias.svg" type="image/svg+xml" />
       
       {/* Layout principal */}
-      <MainLayout>{children}</MainLayout>
+      <MainLayout >{children}</MainLayout>
     </>
   );
 }

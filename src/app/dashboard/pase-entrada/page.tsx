@@ -29,10 +29,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 import { EntryPassModal } from "@/components/modals/add-pass-modal";
 import { List, Mail, MessageCircleMore } from "lucide-react";
-import { useCatalogoPaseLocation } from "@/hooks/useCatalogoPaseLocation";
-import { useCatalogoPaseArea } from "@/hooks/useCatalogoPaseArea";
 import { formatDateToString, formatFecha } from "@/lib/utils";
-import { useGetConfSeguridad } from "@/hooks/useGetConfSeguridad";
 import AreasList from "@/components/areas-list";
 import { Areas, Comentarios } from "@/hooks/useCreateAccessPass";
 import ComentariosList from "@/components/comentarios-list";
@@ -40,6 +37,8 @@ import DateTime from "@/components/dateTime";
 import { MisContactosModal } from "@/components/modals/user-contacts";
 import Image from "next/image";
 import { Contacto } from "@/lib/get-user-contacts";
+import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
+import { usePaseEntrada } from "@/hooks/usePaseEntrada";
 
  const formSchema = z
 	.object({
@@ -144,10 +143,9 @@ import { Contacto } from "@/lib/get-user-contacts";
 	const [config_dia_de_acceso, set_config_dia_de_acceso] = useState("cualquier_día");
 	const [isSuccess, setIsSuccess] = useState(false);
 	const [modalData, setModalData] = useState<any>(null);
-	const { data: ubicaciones, isLoading: loadingUbicaciones } = useCatalogoPaseLocation();
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState('');
-	const {  isLoading: loadingAreas} = useCatalogoPaseArea(ubicacionSeleccionada);
-
+	const { dataAreas:catAreas, dataLocations:ubicaciones, isLoadingAreas:loadingCatAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true, ubicacionSeleccionada?true:false);
+	console.log("CATALGOOO",catAreas, ubicaciones)
 	const[ userIdSoter] = useState<number|null>(()=>{
 			return Number(typeof window !== "undefined"? window.localStorage.getItem("userId_soter"):0) 
 	});
@@ -166,9 +164,8 @@ import { Contacto } from "@/lib/get-user-contacts";
 		return typeof window !== "undefined"? window.location.protocol:""
 	});
 
-	const { data: configLocation, isLoading: loadingConfigLocation, refetch:refetchConfLocation } = useGetConfSeguridad(ubicacionSeleccionada);
-	const {data:catAreas, isLoading: loadingCatAreas, refetch:refetchAreas } = useCatalogoPaseArea(ubicacionSeleccionada)
-
+	const { dataConfigLocation, isLoadingConfigLocation } = usePaseEntrada(ubicacionSeleccionada)
+	// const { dataAreas:catAreas, isLoadingAreas:loadingCatAreas } = useCatalogoPaseAreaLocation(ubicacionSeleccionada, false, ubicacionSeleccionada  ? true : false)
 	const [enviar_correo_pre_registro, set_enviar_correo_pre_registro] = useState<string[]>([]);
 	const [formatedDocs, setFormatedDocs] = useState<string[]>([])
 	const [comentariosList, setComentariosList] = useState<Comentarios[]>([]);
@@ -242,29 +239,10 @@ import { Contacto } from "@/lib/get-user-contacts";
 		}
 	}, [selected, form])
 
-	// useEffect(()=>{
-	// 	if ( form.formState.errors ) {
-	// 		console.log("enviar_correo_pre_registro",form.getValues("link"))
-	// 		console.log("form.formState.errors",form.formState.errors, userEmailSoter,userIdSoter, formatedDocs )
-	// 	}
-	// }, [form.formState.errors])
-
 	useEffect(()=>{
-		if ( ubicacionSeleccionada ) {
-			refetchConfLocation()
-		}
-	}, [ubicacionSeleccionada, refetchConfLocation])
-
-	useEffect(()=>{
-		if ( ubicacionSeleccionada && isActiveAdvancedOptions ) {
-			refetchAreas()
-		}
-	}, [ubicacionSeleccionada, isActiveAdvancedOptions, refetchAreas])
-
-	useEffect(()=>{
-		if(configLocation){
+		if(dataConfigLocation){
 		const docs: string[] = []
-		configLocation?.map((value:string)=>{
+		dataConfigLocation?.map((value:string)=>{
 			if(value=="identificacion") {
 				docs.push("agregarIdentificacion")}
 			if(value=="fotografia") {
@@ -272,7 +250,7 @@ import { Contacto } from "@/lib/get-user-contacts";
 		})
 		setFormatedDocs(docs)
 		}
-	},[configLocation])
+	},[dataConfigLocation])
 
 	const onSubmit = (data: z.infer<typeof formSchema>) => {
 		const formattedData = {
@@ -532,7 +510,7 @@ return (
 							<FormItem>
 								<FormLabel>Ubicación:</FormLabel>
 
-								{ !loadingConfigLocation ? ( <>
+								{ !isLoadingConfigLocation ? ( <>
 
 								<FormControl>
 								
@@ -545,7 +523,7 @@ return (
 									value={field.value} 
 									>
 									<SelectTrigger className="w-full">
-									{loadingAreas?(
+									{loadingUbicaciones?(
 									<>
 									<SelectValue placeholder="Cargando ubicaciónes..." />
 									</>
@@ -984,7 +962,7 @@ return (
 				tipo={"Pase"} 
 			/>
 
-			{loadingAreas == false && loadingConfigLocation == false && loadingUbicaciones == false ? (
+			{loadingCatAreas == false && isLoadingConfigLocation == false && loadingUbicaciones == false ? (
 				<><div className="text-center">
 					<Button
 						className="bg-blue-500 hover:bg-blue-600 text-white w-full sm:w-2/3 md:w-1/2 lg:w-1/2"

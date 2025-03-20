@@ -31,53 +31,41 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { FileX2, Plus } from "lucide-react";
+import { ChevronDown, FileX2, Plus } from "lucide-react";
 import { Label } from "@/components/ui/label";
-import { ArticuloPendiente, pendientesColumns } from "./pendientes-columns";
+import { Articulo_perdido_record, pendientesColumns } from "./pendientes-columns";
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { downloadCSV } from "@/lib/utils";
+import ChangeLocation from "@/components/changeLocation";
+import { TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useEffect } from "react";
 
-const data: ArticuloPendiente[] = [
-  {
-    id: "1",
-    nombre: "Caseta 6 Poniente",
-    articulo: "chamarra",
-    fotografia: "/image/articulo1.png",
-    color: "Negro",
-    categoria: "Categoría 1",
-    fechaHallazgo: "2024-11-05 17:55",
-    areaResguardo: "L4",
-    reporta: "Carlos",
-    fechaDevolucion: "2024-11-06 15:00",
-    comentarios: ["test"],
-  },
-  {
-    id: "2",
-    nombre: "Caseta Principal",
-    articulo: "Peluche",
-    fotografia: "/image/articulo2.png",
-    color: "Gris",
-    categoria: "Categoría 2",
-    fechaHallazgo: "2024-09-17 13:54",
-    areaResguardo: "L6",
-    reporta: "Juan Escutia",
-    fechaDevolucion: "2024-09-26 12:42:52",
-    comentarios: ["sdfa"],
-  },
-  {
-    id: "3",
-    nombre: "Caseta Principal",
-    articulo: "bálsamo labial",
-    fotografia: "/image/articulo3.png",
-    color: "Café",
-    categoria: "Categoría 3",
-    fechaHallazgo: "2024-09-14 15:51",
-    areaResguardo: "L10",
-    reporta: "Juan Escutia",
-    fechaDevolucion: "2024-09-25 15:12:12",
-    comentarios: ["Se entregó al propietario", "Se encontro roto"],
-  },
-];
+interface ListProps {
+  data: Articulo_perdido_record[];
+  isLoadingListArticulosPerdidos:boolean;
+  openModal: () => void;
+  setSelectedState: React.Dispatch<React.SetStateAction<string>>;
+  setSelectedArticulos:React.Dispatch<React.SetStateAction<string[]>>;
+  selectedArticulos:string[]
+}
 
-export function ArticulosPendientesTable() {
+const articulosColumnsCSV = [
+    { label: 'Folio', key: 'folio' },
+    { label: 'Nombre', key: 'articulo_perdido' },
+    { label: 'Articulo', key: 'articulo_seleccion' },
+    { label: 'Color', key: 'color_perdido' },
+    { label: 'Categoria', key: 'tipo_articulo_perdido' },
+    { label: 'Fecha del Hallazgo', key: 'date_hallazgo_perdido' },
+    { label: 'Area de Resguardo', key: 'locker_perdido' },
+    { label: 'Reporta Interno', key: 'quien_entrega_interno' },
+	{ label: 'Reporta Externo', key: 'quien_entrega_externo' },
+    { label: 'Fecha de Devolucion', key: 'date_entrega_perdido' },
+	{ label: 'Comentarios', key: 'comentario_perdido' },
+  ];
+
+const ArticulosPerdidosTable:React.FC<ListProps> = ({ data, isLoadingListArticulosPerdidos, openModal, setSelectedState,
+	setSelectedArticulos,selectedArticulos 
+})=> {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -93,8 +81,8 @@ export function ArticulosPendientesTable() {
   const [globalFilter, setGlobalFilter] = React.useState("");
 
   const table = useReactTable({
-    data,
-    columns: pendientesColumns,
+    data: data || [],
+    columns: isLoadingListArticulosPerdidos ? []: pendientesColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
@@ -116,56 +104,111 @@ export function ArticulosPendientesTable() {
     },
   });
 
+  const handleCheckboxChange = (value:any) => {
+	setSelectedState(value)
+  };
+
+	useEffect(()=>{
+		if(table.getFilteredSelectedRowModel().rows.length>0){
+		const folios: any[] = []
+		table.getFilteredSelectedRowModel().rows.map((row) => {
+			folios.push(row.original);
+		});
+		setSelectedArticulos(folios)
+		}
+  	},[table.getFilteredSelectedRowModel().rows])
+
   return (
     <div className="w-full">
-      <div className="flex justify-between items-center my-5">
-        {/* Campo de búsqueda a la izquierda */}
-        <input
-          type="text"
-          placeholder="Buscar en todos los campos..."
-          value={globalFilter}
-          onChange={(e) => setGlobalFilter(e.target.value)}
-          className="border border-gray-300 rounded-md p-2 h-12 w-full max-w-xs"
-        />
+      <div className="flex justify-between items-center my-2 ">
+			<div className="flex">
+				<TabsList className="bg-blue-500 text-white">
+					<TabsTrigger value="Perdidos">Artículos perdidos</TabsTrigger>
+					<TabsTrigger value="Concecionados">Artículos concecionados</TabsTrigger>
+				</TabsList>
+			</div>
+			
+			<div className="flex items-center">
+				<input
+				type="text"
+				placeholder="Buscar en todos los campos..."
+				value={globalFilter}
+				onChange={(e) => setGlobalFilter(e.target.value)}
+				className="w-full border border-gray-300 rounded-md p-2"
+				/>
+			</div>
 
-        {/* Botones a la derecha */}
-        <div className="flex items-center justify-end space-x-6">
-          <div className="flex items-center space-x-5">
-            <Label className="font-bold text-base" htmlFor="terms">
-              Estado:
-            </Label>
+			<div className="flex w-1/3 gap-2"> 
+				<ChangeLocation location={""} area={""} all={false} setAreas={() => { } } setLocations={() => { } } 
+				setAll={()=>{}}>
+				</ChangeLocation>
+			</div>
 
-            <Select defaultValue="Pendiente">
+			<div className="flex items-center gap-2">
+				<span className="text-lg font-semibold">Prioridad:</span>
+        <Select defaultValue="Pendiente" onValueChange={handleCheckboxChange}>
               <SelectTrigger className="w-[280px]">
                 <SelectValue placeholder="Seleccione un estado" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectLabel>Estado</SelectLabel>
                   <SelectItem value="Pendiente">Pendiente</SelectItem>
                   <SelectItem value="Entregado">Entregado</SelectItem>
                   <SelectItem value="Donado">Donado</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
-          </div>
+			</div>
 
-          <Button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2">
-            <Plus />
-            Nuevo Artículo
-          </Button>
+			<div className="flex flex-wrap gap-2">
+				<div>
+					<Button className="w-full md:w-auto bg-blue-500 hover:bg-blue-600" onClick={openModal}>
+						<Plus />
+						Nuevo Artículo
+					</Button>
+				</div>
 
-          <Button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2">
-            <FileX2 />
-            Descargar
-          </Button>
+				<div>
+					<Button className="w-full md:w-auto bg-blue-500 hover:bg-blue-600" onClick={()=>{downloadCSV(selectedArticulos, articulosColumnsCSV, "incidencias.csv")}}>
+						<FileX2 />
+						Descargar
+					</Button>
+				</div>
 
-        </div>
-      </div>
+				<div>
+					<DropdownMenu>
+						<DropdownMenuTrigger asChild>
+						<Button variant="outline" className="ml-auto">
+							Columnas <ChevronDown />
+						</Button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align="end" className="bg-blue-500">
+						{table
+							.getAllColumns()
+							.filter((column) => column.getCanHide())
+							.map((column) => {
+							return (
+								<DropdownMenuCheckboxItem
+								key={column.id}
+								className="capitalize bg-blue-500"
+								checked={column.getIsVisible()}
+								onCheckedChange={(value) =>
+									column.toggleVisibility(!!value)
+								}
+								>
+								{column.id}
+								</DropdownMenuCheckboxItem>
+							);
+							})}
+						</DropdownMenuContent>
+					</DropdownMenu>
+				</div>
+			</div>
+		</div>
 
       <div className="">
         <Table>
-          <TableHeader className="bg-[#F0F2F5]">
+          <TableHeader className=" bg-blue-100 hover:bg-blue-100">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
@@ -236,3 +279,4 @@ export function ArticulosPendientesTable() {
     </div>
   );
 }
+export default ArticulosPerdidosTable;

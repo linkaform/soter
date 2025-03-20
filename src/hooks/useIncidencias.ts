@@ -131,19 +131,19 @@ export const useInciencias = (prioridades:string[], enabled:boolean) => {
     });
 
     const { data: stats, isLoading: isStatsLoading, error: statsError,
-      } = useQuery<any>({
-        queryKey: ["getStatsIncidencias", area, location],
-        enabled:enabled,
-        queryFn: async () => {
-          const data = await getStats( area, location, "Incidencias" );
-          const responseData = data.response?.data || {};
-          return responseData;
-        },
-        refetchOnWindowFocus: true,
-        refetchInterval: 60000,
-        refetchOnReconnect: true,
-        staleTime: 1000 * 60 * 5,
-      });
+	} = useQuery<any>({
+	queryKey: ["getStatsIncidencias", area, location],
+	enabled:enabled,
+	queryFn: async () => {
+		const data = await getStats( area, location, "Incidencias" );
+		const responseData = data.response?.data || {};
+		return responseData;
+	},
+	refetchOnWindowFocus: true,
+	refetchInterval: 60000,
+	refetchOnReconnect: true,
+	staleTime: 1000 * 60 * 5,
+	});
 
   return {
     //Obtener Incidencias

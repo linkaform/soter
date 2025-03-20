@@ -1,4 +1,4 @@
-import { doOut } from "@/lib/do-out";
+import { doOut } from "@/lib/bitacoras";
 import { useQuery } from "@tanstack/react-query";
 
 export const useDoOut = ( qr_code:string, location:string, area:string) => {

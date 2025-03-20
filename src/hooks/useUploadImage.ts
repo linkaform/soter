@@ -1,26 +1,43 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { uploadImage } from "@/lib/get-upload-image";
-import { useQuery } from "@tanstack/react-query";
+import { Imagen } from "@/lib/update-pass";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { toast } from "sonner";
 
-export const useUploadImage = (img:File|null) => {
-  const { data: data, isLoading, error, isFetching, refetch } = useQuery<any>({
-    queryKey: ["uploadImage"], 
-    queryFn: async () => {
-            const data = await uploadImage(img); 
-            return {file_name:data?.file_name, file_url:data?.file}; 
-    },
-    
-    refetchOnWindowFocus: true, 
-    refetchInterval: 60000,
-    refetchOnReconnect: true, 
-    staleTime: 1000 * 60 * 5, 
-  });
+export const useUploadImage = () => {
+    const[isLoading, setLoading] = useState(false);
+    const[response, setResponse] = useState<Imagen>();
+    const queryClient = useQueryClient();
+
+     //Subir Imagen
+    const uploadImageMutation = useMutation({
+      mutationFn: async ({ img } : { img: File | null}) => {
+          const response = await uploadImage(img);
+          const data = {file_name:response?.file_name, file_url:response?.file}; 
+          setResponse(data)
+          return data;
+      },
+      onMutate: () => {
+        setLoading(true);
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["getListIncidencias"] });
+        queryClient.invalidateQueries({ queryKey: ["getStatsIncidencias"] });
+        toast.success("Archivo subido correctamente.");
+      },
+      onError: (err) => {
+        console.error("Error al subir archivo:", err);
+        toast.error(err.message || "Hubo un error al subir el archivo.");
+      },
+      onSettled: () => {
+        setLoading(false);
+      },
+    });
 
   return {
-    data,
+    uploadImageMutation,
+    response,
     isLoading,
-    error,
-    isFetching,
-    refetch,
   };
 };

@@ -56,12 +56,6 @@ const ComentariosList:React.FC<ComentariosListProps> = ({comentarios, setComenta
 		}
 	};
 
-	useEffect(() => {
-	    if(form.formState.errors){
-	        console.log("form.formState.errors",form.formState.errors)
-	    }
-	},[form.formState.errors]);
-
 	const cleanInputs =() =>{
 		form.setValue('comentario_pase', '');
 	}
@@ -71,7 +65,6 @@ const ComentariosList:React.FC<ComentariosListProps> = ({comentarios, setComenta
 		updatedComentarios[index].comentario_pase = newComentario;
 		setComentarios(updatedComentarios);
 	};
-
 
 return (
 	<div>
@@ -89,7 +82,6 @@ return (
 		))}
 
 		<Form {...form} >
-		{/* <form className="space-y-5 border p-8 rounded mt-5" onSubmit={form.handleSubmit(onSubmitComentarios)}> */}
 		<div className="border p-8 rounded mt-5">
 			<div className="font-bold text-lg">Agregar comentario o instrucción</div>
 			<div className="grid  gap-5" >
@@ -103,7 +95,7 @@ return (
 							<FormControl>
 								<Input placeholder="Comentario" {...field} 
 									onChange={(e) => {
-										field.onChange(e); // Actualiza el valor en react-hook-form
+										field.onChange(e); 
 									}}
 									value={field.value || ""}
 								/>

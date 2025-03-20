@@ -6,6 +6,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { replaceNullsInArrayDynamic } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
 import { Eye, Pencil} from "lucide-react";
+import { useState } from "react";
 
 type Imagen = {
   file_name: string;
@@ -49,7 +50,8 @@ export interface PaseEntrada {
 
 const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
   const rowData = row.original;
-
+ 
+  
   const dataFull= {
     _id:rowData._id,
     folio:rowData.folio,

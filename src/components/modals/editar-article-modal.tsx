@@ -68,7 +68,7 @@ const formSchema = z.object({
 	falla_ubicacion: z.string().min(1, { message: "La ubicación es obligatoria" }),
 });
 
-export const EditarFallaModal: React.FC<EditarFallaModalProps> = ({
+export const EditarArticuloModal: React.FC<EditarFallaModalProps> = ({
   	title,
 	data,
 	setShowLoadingModal,

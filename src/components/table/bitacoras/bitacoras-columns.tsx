@@ -4,6 +4,7 @@ import { AddVehicleModal } from "@/components/modals/add-vehicle-modal";
 import { DoOutModal } from "@/components/modals/do-out-modal";
 import { ReturnGafeteModal } from "@/components/modals/return-gafete-modal";
 import { ViewListBitacoraModal } from "@/components/modals/view-bitacora";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useGetListBitacora } from "@/hooks/useGetListBitacora";
 import {
 		ColumnDef,  
@@ -39,6 +40,8 @@ export interface Bitacora_record {
 	status_gafete: string
 	_id: string
 	comentarios: Comentarios_bitacoras[]
+    formated_comentarios?:string
+	formated_visita?:string
 }
 
 export type Comentarios_bitacoras={
@@ -79,7 +82,9 @@ export interface Areas_bitacora {
 const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
 	const {refetch} = useGetListBitacora("", "",[]);
 	const bitacora = row.original;
-	
+	bitacora.formated_visita = bitacora.visita_a.map((item: VisitaA) => item.nombre).join(', ');
+	console.log("asdas",bitacora.comentarios)
+	bitacora.formated_comentarios = bitacora.comentarios.map((item: Comentarios_bitacoras) => item.comentario).join(', ');
 	return (
 		<div className="flex space-x-2">
 			<ViewListBitacoraModal 
@@ -148,6 +153,22 @@ export const bitacorasColumns: ColumnDef<Bitacora_record>[] = [
 			<div className="capitalize">{row.getValue("nombre_visitante")}</div>
 		),
 		enableSorting: true,
+	},
+	{
+		accessorKey:"foto_url",
+		header:"Fotografía",
+		cell: ({ row }) => {
+			const foto = row.original.foto_url ?? '/nouser.svg';
+			// const ultimaImagen = foto && foto.length > 0 ? foto[foto.length - 1].foto_url : '/nouser.svg'; 
+			return(
+			  <>
+				<Avatar>
+					<AvatarImage src={foto|| "/nouser.svg"} alt="Avatar" />
+					<AvatarFallback>CN</AvatarFallback>
+				</Avatar>
+				</>
+			)},
+		  enableSorting: false,
 	},
 	{
 		accessorKey: "fecha_entrada",

@@ -7,7 +7,6 @@ import { Check, Eye, Trash2 } from "lucide-react";
 import { Imagen } from "@/lib/update-pass";
 import { ViewFalla } from "@/components/modals/view-falla";
 import { EditarFallaModal } from "@/components/modals/editar-falla";
-import { useGetFallas } from "@/hooks/useGetFallas";
 import { SeguimientoFallaModal } from "@/components/modals/seguimiento-falla";
 import { EliminarFallaModal } from "@/components/modals/delete-falla-modal";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -47,9 +46,8 @@ import { useState } from "react";
   }
 
   const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
-    const {refetch} = useGetFallas("", "","abierto");
     const incidencia = row.original;
-	  const [showLoadingModal, setShowLoadingModal] = useState(false);
+	const [showLoadingModal, setShowLoadingModal] = useState(false);
 
     return (
       <div className="flex space-x-2">
@@ -65,11 +63,11 @@ import { useState } from "react";
 
         <EditarFallaModal
           title="Editar Falla"
-          data={incidencia} refetchTableFallas={refetch} setShowLoadingModal={setShowLoadingModal} showLoadingModal={showLoadingModal}/>
-       
+          data={incidencia} setShowLoadingModal={setShowLoadingModal} showLoadingModal={showLoadingModal}/>
+         
         <SeguimientoFallaModal
                 title="Seguimiento Falla"
-                data={incidencia} refetchTableFallas={refetch}>
+                data={incidencia} >
             <div className="cursor-pointer">
                 <Check />   
             </div>
@@ -77,7 +75,7 @@ import { useState } from "react";
 
         <EliminarFallaModal
           title="Eliminar Falla"
-          refetchTableFallas={refetch} arrayFolios={[incidencia.folio]}>
+          arrayFolios={[incidencia.folio]}>
             <div className="cursor-pointer">
                 <Trash2 />   
             </div>

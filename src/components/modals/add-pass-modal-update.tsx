@@ -19,6 +19,7 @@ import CalendarDays from "../calendar-days";
 import { renameKeyTipoComentario } from "@/lib/utils";
 import { Areas, Comentarios } from "@/hooks/useCreateAccessPass";
 import useAuthStore from "@/store/useAuthStore";
+import { usePaseEntrada } from "@/hooks/usePaseEntrada";
 
 interface EntryPassModalUpdateProps {
   title: string;
@@ -44,8 +45,8 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
   const [sendDataUpdate, setSendDataUpdate] = useState<Access_pass_update|null>(null)
   const [link, setLink] = useState("");
   const account_id = userIdSoter;
-  const { data:responseUpdateFull, isLoading:loadingUpdateFull, refetch: refetchUpdateFull } = useUpdatePaseFull(sendDataUpdate, id, folio, dataPass?.ubicacion);
-  
+  // const { data:responseUpdateFull, isLoading:loadingUpdateFull, refetch: refetchUpdateFull } = useUpdatePaseFull(sendDataUpdate, id, folio, dataPass?.ubicacion);
+  const { updatePaseEntradaFullMutation, responseCreatePase, isLoading } = usePaseEntrada("")
   // const protocol = window.location.protocol;  
   // const host = window.location.host;  
 
@@ -128,13 +129,14 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
 
   useEffect(()=>{
     if(sendDataUpdate ){
-      refetchUpdateFull()
+      // refetchUpdateFull()
+      updatePaseEntradaFullMutation.mutate({access_pass: sendDataUpdate, id, folio, location: dataPass?.ubicacion})
     }
-  },[sendDataUpdate,refetchUpdateFull])
+  },[sendDataUpdate])
 
 
   useEffect(()=>{
-    if(responseUpdateFull?.success){
+    if(responseCreatePase?.status_code == 201){
       let docs=""
       dataPass?.link.docs.map((d:string, index:number)=>{
         if(d == "agregarIdentificacion"){
@@ -147,10 +149,10 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
           docs+="-"
         }
       })
-      setLink(`${hostPro.protocol}//${hostPro.host}/dashboard/pase-update?id=${responseUpdateFull?.response.data.json.id}&user=${account_id}&docs=${docs}`)
+      setLink(`${hostPro.protocol}//${hostPro.host}/dashboard/pase-update?id=${responseCreatePase?.json.id}&user=${account_id}&docs=${docs}`)
       
     }
-  },[responseUpdateFull])
+  },[responseCreatePase])
 
   useEffect(()=>{
     if(link){
@@ -305,7 +307,7 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
     
     <div className="flex gap-5 my-5">
       <DialogClose asChild
-        disabled={loadingUpdateFull}>
+        disabled={isLoading}>
         <Button className="w-full h-12 bg-gray-100 hover:bg-gray-200 text-gray-700" onClick={handleClose}>
           Cancelar
         </Button>
@@ -322,7 +324,7 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
       ):null}
       
       <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white" onClick={onSubmitEdit}>
-            { !loadingUpdateFull ? (<>
+            { !isLoading ? (<>
               {("Editar pase")}
             </>) :(<> <Loader2 className="animate-spin"/> {"Actualizando pase..."} </>)}
           </Button>

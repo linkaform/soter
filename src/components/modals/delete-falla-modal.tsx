@@ -11,46 +11,37 @@ import {
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import { useDeleteFalla } from "@/hooks/useDeleteFallas";
+import { useFallas } from "@/hooks/useFallas";
 
 interface AddFallaModalProps {
   	title: string;
-    arrayFolios:string[];
-	refetchTableFallas: ()=> void;
+    arrayFolios:any[];
 	children: React.ReactNode;
 }
 
 export const EliminarFallaModal: React.FC<AddFallaModalProps> = ({
   	title,
 	arrayFolios,
-	refetchTableFallas,
 	children
 }) => {
-    const { data:responseDeleteFallas,isLoading:isLoadingDeleteFallas, refetch:refetchDeleteFallas, error} = useDeleteFalla(arrayFolios);
+	const { eliminarFallaMutation, isLoading} = useFallas("","", "abierto", false)
+
 	const [isSuccess, setIsSuccess] =useState(false)
-	useEffect(()=>{
-		if(responseDeleteFallas?.status_code == 202){
-			handleClose()
-			refetchTableFallas()
-			toast.success("Falla(s) eliminadas correctamente!")
-		}
-	},[responseDeleteFallas])
 
 	useEffect(()=>{
-		if(error){
-			toast.error(error.message)
-			handleClose()
+		if(!isLoading){
+			handleClose()			
 		}
+	},[isLoading])
 	
-	},[error])
-
 	const handleClose = () => {
 		setIsSuccess(false); 
 	};
 
     const deleteFallas = ()=>{
 		if(arrayFolios.length>0){
-			refetchDeleteFallas()
+			const foliosArray = arrayFolios.map(item => item.folio);
+			eliminarFallaMutation.mutate({folio:foliosArray})
 		}else{
 			toast.error("Selecciona una falla para poder eliminarla...")
 		}
@@ -83,9 +74,9 @@ export const EliminarFallaModal: React.FC<AddFallaModalProps> = ({
 				
 				<Button
                     onClick={deleteFallas}
-					className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={isLoadingDeleteFallas}
+					className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={isLoading}
 				>
-					{ !isLoadingDeleteFallas ? (<>
+					{ !isLoading ? (<>
 					{arrayFolios.length==1 ?("Eliminar falla seleccionada"):("Eliminar fallas seleccionadas")}
 					</>) :(<> <Loader2 className="animate-spin"/> {arrayFolios.length==1 ?("Eliminando falla seleccionada"):("Eliminando fallas seleccionadas")} </>)}
 				</Button>

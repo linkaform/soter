@@ -30,7 +30,7 @@ import { format } from 'date-fns';
 import DateTime from "../dateTime";
 import LoadFile from "../upload-file";
 import { Edit, Loader2 } from "lucide-react";
-import { AccionesTomadas, Depositos, getCatIncidencias, InputIncidencia, PersonasInvolucradas } from "@/lib/incidencias";
+import { AccionesTomadas, Depositos, InputIncidencia, PersonasInvolucradas } from "@/lib/incidencias";
 import PersonasInvolucradasList from "../personas-involucradas-list";
 import AccionesTomadasList from "../acciones-tomadas-list";
 import { toast } from "sonner";
@@ -102,9 +102,6 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 	const [documento , setDocumento] = useState<Imagen[]>([]);
 	const [date, setDate] = useState<Date|"">("");
 
-	const [errorEvidencia, setErrorEvidencia] = useState("")
-	const [errorDocumento, setErrorDocumento] = useState("")
-
 	const [personasInvolucradas, setPersonasInvolucradas] = useState<PersonasInvolucradas[]>(data.personas_involucradas_incidencia)
 	const [accionesTomadas, setAccionesTomadas] = useState<AccionesTomadas[]>(data.acciones_tomadas_incidencia)
 	const [depositos] = useState<Depositos[]>(data.depositos)
@@ -132,16 +129,6 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 		},
 	});
 
-	// const { reset } = form;
-
-	// useEffect(()=>{
-	// 	if(isSuccess){
-	// 		reset()
-	// 		setDate("")
-	// 		setEvidencia([])
-	// 		setDocumento([])
-	// 	}
-	// },[isSuccess])
 	useEffect(()=>{
 		if(isSuccess){
 			setEvidencia(data.evidencia_incidencia)
@@ -153,15 +140,11 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 
 
 	useEffect(()=>{
-		if(errorEvidencia || errorDocumento){
-			toast.error("Error al cargar imagenes o documentos")
-			handleClose()
-		}
 		if(errorAreEmpleado){
 			toast.error("Error al cargar catalogo de area empleado")
 			handleClose()
 		}
-	},[ errorEvidencia , errorDocumento, errorAreEmpleado])
+	},[ errorAreEmpleado])
 
 	useEffect(()=>{
 		if(modalData){
@@ -211,8 +194,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 		setIsSuccess(true);
 	};
 
-
-  return (
+	return (
     <Dialog open={isSuccess} modal>
       	{/* <DialogTrigger>
 			<div className="cursor-pointer">
@@ -222,9 +204,9 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 		<div className="cursor-pointer" onClick={handleOpenModal}>
             <Edit />
         </div>
-      <DialogContent className="max-w-3xl overflow-y-auto max-h-[80vh] flex flex-col " aria-describedby="">
+      <DialogContent className="max-w-3xl overflow-y-auto max-h-[80vh] flex flex-col" aria-describedby="">
         <DialogHeader className="flex-shrink-0">
-          <DialogTitle className="text-2xl  text-center font-bold">
+          <DialogTitle className="text-2xl text-center font-bold">
             {title}
           </DialogTitle>
         </DialogHeader>
@@ -427,7 +409,6 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 								titulo={"Evidencia"} 
 								setImg={setEvidencia}
 								showWebcamOption={true}
-								setErrorImagen={setErrorEvidencia}
 								facingMode="environment"
 								imgArray={evidencia}
 								showArray={true}
@@ -437,7 +418,6 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 								id="documento"
 								titulo={"Documento"}
 								setDocs={setDocumento}
-								setErrorImagen={setErrorDocumento}
 								docArray={documento}
 								limit={10}/>
 							

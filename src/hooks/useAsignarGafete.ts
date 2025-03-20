@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { asignarGafete, dataGafetParamas } from "@/lib/asignar-gafete";
+import { asignarGafete, dataGafetParamas } from "@/lib/bitacoras";
 import { useQuery } from "@tanstack/react-query";
 
 export const useAsignarGafete = (data_gafete:dataGafetParamas |null, id_bitacora:string | null, tipo_movimiento:string| null) => {
