@@ -7,8 +7,26 @@ import { FolderOpen, Package, Sun } from "lucide-react";
 import { ListaNotasTable } from "@/components/table/notas/lista-notas/table";
 import ReusableAccordion from "@/components/resuable-accordion";
 import PageTitle from "@/components/page-title";
+import { useShiftStore } from "@/store/useShiftStore";
 
 const NotasPage = () => {
+
+    const { isLoading } = useShiftStore();
+  
+
+
+
+   
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="w-16 h-16 border-8 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+      </div>
+    );
+  }
+
+
+
   return (
     <div className="">
       <div className="flex flex-col">

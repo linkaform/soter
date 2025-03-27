@@ -12,7 +12,6 @@ const ActivitySummary = () => {
 
 
 
-  console.log("stats", stats)
 
   const items = [
     {

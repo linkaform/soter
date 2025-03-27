@@ -9,6 +9,7 @@ import TurnStatus from "@/components/pages/turnos/turn-status";
 import { useGetShift } from "@/hooks/useGetShift";
 import { useShiftStore } from "@/store/useShiftStore";
 import { useEffect } from "react";
+import { getCycleCounts } from "@/lib/get-warehouses";
 
 
 
@@ -35,6 +36,21 @@ export default function Home() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [shift]);
 
+
+
+
+
+  useEffect(() => {
+
+    (async () => {
+
+   const response = getCycleCounts();
+
+    console.log("cyclea", response)
+  
+      })()
+
+  }, []);
 
 
 

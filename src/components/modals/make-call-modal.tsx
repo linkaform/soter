@@ -8,6 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
+import { useState } from "react";
 
 interface MakeCallModalProps {
   title: string;
@@ -18,11 +19,15 @@ interface MakeCallModalProps {
 export const MakeCallModal: React.FC<MakeCallModalProps> = ({
   title,
   children,
-  description
+  description,
 }) => {
+  const [open, setOpen] = useState(false);
+
   return (
-    <Dialog>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild onClick={() => setOpen(true)}>
+        {children}
+      </DialogTrigger>
 
       <DialogContent className="max-w-xl">
         <DialogHeader>
@@ -33,11 +38,7 @@ export const MakeCallModal: React.FC<MakeCallModalProps> = ({
           <Separator />
         </DialogHeader>
 
-        <div className="text-center px-16 my-10">
-
-            {description}
-          
-        </div>
+        <div className="text-center px-16 my-10">{description}</div>
 
         <div className="flex gap-5">
           <DialogClose asChild>
@@ -46,14 +47,11 @@ export const MakeCallModal: React.FC<MakeCallModalProps> = ({
             </Button>
           </DialogClose>
 
-
           <DialogClose asChild>
-
-          <Button className="w-full  bg-blue-500 hover:bg-blue-600 text-white ">
-            Confirmar
-          </Button>
+            <Button className="w-full  bg-blue-500 hover:bg-blue-600 text-white ">
+              Confirmar
+            </Button>
           </DialogClose>
-
         </div>
       </DialogContent>
     </Dialog>

@@ -12,7 +12,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import {List, Trash2 } from "lucide-react";
+import { List, Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -25,56 +25,26 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import {
-  EquipoAutorizado,
-  EquipoAutorizadoColumns,
-} from "./equipos-autorizados-columns";
+import { EquipoAutorizadoColumns } from "./equipos-autorizados-columns";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { SearchAccessPass } from "@/hooks/useSearchPass";
+import { EqipmentPassModal } from "@/components/modals/equipment-access-modal";
 
-const data: EquipoAutorizado[] = [
-  {
-    tipo: "Herramienta",
-    equipo: "Taladro",
-    marca: "Bosch",
-    modelo: "GSR120",
-    numeroSerie: "123456789",
-    color: "Azul",
-  },
-  {
-    tipo: "Computo",
-    equipo: "Laptop",
-    marca: "Dell",
-    modelo: "Inspiron 15",
-    numeroSerie: "987654321",
-    color: "Negro",
-  },
-  {
-    tipo: "Tablet",
-    equipo: "iPad",
-    marca: "Apple",
-    modelo: "Air 2023",
-    numeroSerie: "456789123",
-    color: "Plateado",
-  },
-  {
-    tipo: "Herramienta",
-    equipo: "Sierra",
-    marca: "Makita",
-    modelo: "XSR01",
-    numeroSerie: "741852963",
-    color: "Verde",
-  },
-  {
-    tipo: "Otra",
-    equipo: "Cámara",
-    marca: "Sony",
-    modelo: "Alpha 7",
-    numeroSerie: "852963741",
-    color: "Negro",
-  },
-];
 
-export function EquiposAutorizadosTable() {
+
+
+interface TableProps {
+  searchPass: SearchAccessPass | undefined;
+  allEquipments: any[]
+}
+
+
+  export const EquiposAutorizadosTable: React.FC<TableProps> = ({ allEquipments }) => {
+
+
+
+  
+
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -90,7 +60,8 @@ export function EquiposAutorizadosTable() {
   const [globalFilter, setGlobalFilter] = React.useState("");
 
   const table = useReactTable({
-    data,
+    data: allEquipments || [],
+
     columns: EquipoAutorizadoColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -115,13 +86,21 @@ export function EquiposAutorizadosTable() {
 
   return (
     <div className="w-full">
+
+
+
       <div className="mb-3">
         <h1 className="text-2xl font-bold">Equipos Autorizados</h1>
       </div>
 
       {/* Botones a la derecha */}
       <div className="flex justify-end mb-3 space-x-3">
-        
+          <EqipmentPassModal title="Nuevo Equipo">
+          <Button className="bg-green-600 hover:bg-green-700 text-white">
+            <Plus />
+            Agregar Equipo
+          </Button>
+        </EqipmentPassModal>
 
         <Button
           className="bg-blue-500 text-white hover:text-white hover:bg-blue-600"
@@ -130,15 +109,23 @@ export function EquiposAutorizadosTable() {
         >
           <List size={36} />
         </Button>
-      
-      
+
         <Button
           className="bg-red-500 hover:bg-red-600 text-black"
           variant="outline"
-          size={"icon"}        >
+          size={"icon"}
+        >
           <Trash2 className="text-white" />
         </Button>
       </div>
+
+
+
+
+
+
+
+   
 
       <div className="w-full">
         <ScrollArea className="h-60 w-full border rounded-md">
@@ -192,6 +179,10 @@ export function EquiposAutorizadosTable() {
           </Table>
         </ScrollArea>
       </div>
+
+
+
+
     </div>
   );
 }

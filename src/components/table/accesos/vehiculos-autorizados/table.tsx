@@ -12,7 +12,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { List, Trash2 } from "lucide-react";
+import { List, Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -25,51 +25,25 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import {
-  VehiculoAutorizado,
-  VehiculoAutorizadoColumns,
-} from "./vehiculos-autorizados-columns";
+import { VehiculoAutorizadoColumns } from "./vehiculos-autorizados-columns";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { SearchAccessPass } from "@/hooks/useSearchPass";
+import { VehiclePassModal } from "@/components/modals/vehicle-access-modal";
 
-const data: VehiculoAutorizado[] = [
-  {
-    tipo: "Automóvil",
-    marca: "Toyota",
-    modelo: "Corolla",
-    matricula: "ABC123",
-    color: "Blanco",
-  },
-  {
-    tipo: "Camioneta",
-    marca: "Ford",
-    modelo: "Ranger",
-    matricula: "XYZ789",
-    color: "Negro",
-  },
-  {
-    tipo: "Motocicleta",
-    marca: "Honda",
-    modelo: "CBR500",
-    matricula: "MOT456",
-    color: "Rojo",
-  },
-  {
-    tipo: "Camión",
-    marca: "Mercedes-Benz",
-    modelo: "Actros",
-    matricula: "CAMION321",
-    color: "Azul",
-  },
-  {
-    tipo: "SUV",
-    marca: "Chevrolet",
-    modelo: "Equinox",
-    matricula: "SUV654",
-    color: "Gris",
-  },
-];
 
-export function VehiculosAutorizadosTable() {
+
+
+interface TableProps {
+  searchPass: SearchAccessPass | undefined;
+  allVehicles?: any[]
+}
+
+
+  export const VehiculosAutorizadosTable: React.FC<TableProps> = ({ allVehicles }) => {
+
+
+
+
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -85,7 +59,8 @@ export function VehiculosAutorizadosTable() {
   const [globalFilter, setGlobalFilter] = React.useState("");
 
   const table = useReactTable({
-    data,
+    data: allVehicles|| [],
+
     columns: VehiculoAutorizadoColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -110,16 +85,18 @@ export function VehiculosAutorizadosTable() {
 
   return (
     <div className="w-full">
-     
-     
-      <div className="mb-3">
-        <h1 className="text-2xl font-bold">Vehículos Autorizados</h1>
-      </div>
+        <div className="mb-3">
+          <h1 className="text-2xl font-bold">Vehículos Autorizados</h1>
+        </div>
 
-    
         {/* Botones a la derecha */}
-        <div className="flex justify-end mb-3 space-x-2">
-
+        <div className="flex justify-end mb-3 space-x-1">
+       <VehiclePassModal title="Nuevo Vehiculo">
+          <Button className="bg-green-600 hover:bg-green-700 text-white">
+            <Plus />
+            Agregar Vehiculo
+          </Button>
+        </VehiclePassModal>
 
           <Button
             className="bg-blue-500 text-white hover:text-white hover:bg-blue-600"
@@ -129,7 +106,6 @@ export function VehiculosAutorizadosTable() {
             <List size={36} />
           </Button>
 
-
           <Button
             className="bg-red-500 hover:bg-red-600 text-black"
             variant="outline"
@@ -138,6 +114,10 @@ export function VehiculosAutorizadosTable() {
             <Trash2 className="text-white" size={36} />
           </Button>
         </div>
+
+
+
+   
 
       <div className="w-full">
         <ScrollArea className="h-60 w-full border rounded-md">
@@ -190,7 +170,10 @@ export function VehiculosAutorizadosTable() {
             </TableBody>
           </Table>
         </ScrollArea>
-      </div>   
+      </div>
+
+
+
     </div>
   );
 }

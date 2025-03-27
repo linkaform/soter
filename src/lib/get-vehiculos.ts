@@ -1,7 +1,7 @@
  export interface getVehiculosParams {
-    tipo: string,
-    account_id: number,
-    marca?:string
+  tipo?: string,
+  account_id?: number,
+  marca?:string
   }
   
   export const getVehiculos = async ({
@@ -17,10 +17,15 @@
         marca
     };
 
+    const userJwt = localStorage.getItem("access_token"); 
+
+
     const response = await fetch(`https://app.linkaform.com/api/infosync/scripts/run/`, {
-        method: "POST",
+      method: "POST",
         headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${userJwt}`,
+
         },
         body: JSON.stringify(payload),
     });
@@ -28,3 +33,10 @@
     const data = await response.json();
     return data;
   };
+
+
+
+
+
+
+ 

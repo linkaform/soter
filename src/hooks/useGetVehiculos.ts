@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export const useGetVehiculos = ({account_id, tipo, marca}: getVehiculosParams) => {
   const { data, isLoading, error, isFetching, refetch } = useQuery<any>({
-    queryKey: ["useGetVehiculos", account_id,tipo,marca], // Agregamos los parámetros necesarios aquí
+    queryKey: ["useGetVehiculos", account_id, tipo, marca],
     queryFn: async () => {
       const data = await getVehiculos({
         account_id,
@@ -11,7 +11,7 @@ export const useGetVehiculos = ({account_id, tipo, marca}: getVehiculosParams) =
         marca
       });
       
-      return data.response?.data;
+      return data.response?.data || []
     },
     refetchOnWindowFocus: true,
     refetchInterval: 60000,

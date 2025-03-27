@@ -14,32 +14,30 @@ import { fetchTemporalPasses } from "@/lib/access";
 import { useState } from "react";
 import Image from "next/image";
 
-interface ActivePassesModalProps {
+interface Props {
   title: string;
   children: React.ReactNode;
 }
 
-
-
-export const ActivePassesModal: React.FC<ActivePassesModalProps> = ({
-  title,
-  children,
-}) => {
+export const TemporaryPassesModal: React.FC<Props> = ({ title, children }) => {
   const { setPassCode } = useAccessStore();
 
   const { area, location } = useShiftStore();
 
   const [searchText, setSearchText] = useState("");
 
-  const [open, setOpen] = useState(false); 
+  const [open, setOpen] = useState(false); // Estado para manejar la visibilidad del modal
 
 
-
-  const { data: activePasses, isLoading } = useQuery<any>({
-    queryKey: ["getActivePasses"],
+  const { data: temporaryPasses, isLoading } = useQuery<any>({
+    queryKey: ["getTemporaryPasses"],
     enabled: Boolean(area && location),
     queryFn: async () => {
-      const data = await fetchTemporalPasses({ area, location });
+      const data = await fetchTemporalPasses({
+        area,
+        location,
+        inActive: "true",
+      });
 
       return data.response?.data || [];
     },
@@ -49,15 +47,15 @@ export const ActivePassesModal: React.FC<ActivePassesModalProps> = ({
     staleTime: 1000 * 60 * 5,
   });
 
-  const filteredTemporaryPasses = activePasses?.filter((item: any) =>
+  const filteredTemporaryPasses = temporaryPasses?.filter((item: any) =>
     item.nombre?.toLowerCase().includes(searchText.toLowerCase())
   );
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild onClick={() => setOpen(true)}>
-        {children}
-      </DialogTrigger>
+    <DialogTrigger asChild onClick={() => setOpen(true)}>
+      {children}
+    </DialogTrigger>
 
       <DialogContent className="max-w-xl flex flex-col">
         <DialogHeader>
@@ -87,7 +85,8 @@ export const ActivePassesModal: React.FC<ActivePassesModalProps> = ({
                     className="flex  items-center justify-between px-4 py-4 border-b hover:bg-gray-100 cursor-pointer transition-colors"
                     onClick={() => {
                       setPassCode(item._id);
-                      setOpen(false); 
+                      setOpen(false);
+
 
                     }}
                   >

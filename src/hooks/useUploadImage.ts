@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 export const useUploadImage = (img:File|null) => {
   const { data: data, isLoading, error, isFetching, refetch } = useQuery<any>({
     queryKey: ["uploadImage"], 
+    enabled: !!img, // 🔹 Solo ejecuta la query si `img` no es null
     queryFn: async () => {
             const data = await uploadImage(img); 
             return {file_name:data?.file_name, file_url:data?.file}; 

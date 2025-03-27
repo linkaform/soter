@@ -7,18 +7,18 @@ export interface AccesosComentario {
 
 export const AccesosComentarioColumns: ColumnDef<AccesosComentario>[] = [
   {
-    accessorKey: "comentario",
+    accessorKey: "comentario_pase",
     header: "Comentario",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("comentario")}</div>
+      <div className="capitalize">{row.getValue("comentario_pase")}</div>
     ),
     enableSorting: true,
   },
   {
-    accessorKey: "tipoComentario",
+    accessorKey: "tipo_de_comentario",
     header: "Tipo de Comentario",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("tipoComentario")}</div>
+      <div className="capitalize">{row.getValue("tipo_de_comentario")}</div>
     ),
     enableSorting: true,
   },

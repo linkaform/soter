@@ -25,57 +25,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { AddNoteModal } from "@/components/modals/add-note-modal";
-import { ListaNota, listaNotasColumns } from "./lista-notas-columns";
+import {listaNotasColumns } from "./lista-notas-columns";
+import { useGetNotes } from "@/hooks/useGetNotes";
 
-
-const data: ListaNota[] = [
-  {
-    id: "a1b2c3d4",
-    folio: "1619-10",
-    empleado: "Juan Pérez",
-    apertura: "2024-10-28 13:28",
-    cierre: "2024-02-09 09:54:06",
-    nota: "Inventario pendiente",
-    fotografia: "/image/nota1.png",
-    archivo: "Archivo_Prueba1.odt",
-
-    comentarios: "Cumplimiento de tareas",
-  },
-  {
-    id: "e5f6g7h8",
-    folio: "1584-10",
-    empleado: "María López",
-    apertura: "2024-10-22 11:14", 
-    cierre: "2024-03-10 10:30:00",
-    nota: "Revisión de seguridad",
-    archivo: "Archivo_Prueba2.odt",
-    fotografia: "/image/nota2.png",
-    comentarios: "Todo en orden",
-  },
-  {
-    id: "i9j0k1l2",
-    folio: "1583-10", 
-    empleado: "Carlos Díaz",
-    apertura: "2024-10-22 10:34",
-    cierre: "2024-04-11 11:15:30",
-    nota: "Actualización de registros",
-    fotografia: "/image/nota1.png",
-    archivo: "Archivo_Prueba3.odt",
-    comentarios: "Registros actualizados",
-  },
-  {
-    id: "m3n4o5p6",
-    folio: "1582-10",
-    empleado: "Ana García",
-    apertura: "2024-10-22 10:11",
-    cierre: "2024-05-12 12:45:15",
-    nota: "Mantenimiento de equipos",
-    archivo: "Archivo_Prueba4.odt",
-    fotografia: "/image/nota2.png",
-    comentarios: "Equipos en buen estado",
-  },
- 
-];
 
 
 
@@ -94,8 +46,17 @@ export function ListaNotasTable() {
 
   const [globalFilter, setGlobalFilter] = React.useState("");
 
+
+
+    const {listnotes} =  useGetNotes()
+
+
+
+    console.log(listnotes)
+  
+
   const table = useReactTable({
-    data,
+    data: listnotes || [],
     columns: listaNotasColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,

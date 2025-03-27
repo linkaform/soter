@@ -8,14 +8,22 @@ export interface AccesosPermitidos {
 
 export const accesosPermitidosColumns: ColumnDef<AccesosPermitidos>[] = [
   {
-    accessorKey: "acceso",
+    accessorKey: "nombre_area",
     header: "Acceso",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("acceso")}</div>
+      <div className="capitalize">{row.getValue("nombre_area")}</div>
     ),
     enableSorting: true,
   },
   {
+    accessorKey: "status",
+    header: "Estatus",
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue("status")}</div>
+    ),
+    enableSorting: true,
+  },
+/*   {
     accessorKey: "estatus",
     header: "Estatus",
     cell: ({ row }) => (
@@ -30,12 +38,12 @@ export const accesosPermitidosColumns: ColumnDef<AccesosPermitidos>[] = [
       </div>
     ),
     enableSorting: true,
-  },
+  }, */
   {
-    accessorKey: "comentario",
+    accessorKey: "commentario_area",
     header: "Comentario",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("comentario")}</div>
+      <div className="capitalize">{row.getValue("commentario_area")}</div>
     ),
     enableSorting: false,
   },

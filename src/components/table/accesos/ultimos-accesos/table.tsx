@@ -13,7 +13,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-
 import {
   Table,
   TableBody,
@@ -23,66 +22,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import {
-  UltimosAccesos,
-  UltimosAccesosColumns,
-} from "./ultimos-accesos-columns";
+import { UltimosAccesosColumns } from "./ultimos-accesos-columns";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { SearchAccessPass } from "@/hooks/useSearchPass";
 
-const data: UltimosAccesos[] = [
-  {
-    visito: "Ramón Pancracio Torres",
-    fecha: "12/05/2024 11:19:20 hrs",
-    duracion: "1 hora 45 minutos",
-  },
-  {
-    visito: "Juan Felipe Gonzáles",
-    fecha: "12/05/2024 11:19:20 hrs",
-    duracion: "1 hora 45 minutos",
-  },
-  {
-    visito: "Mireya López Sánchez",
-    fecha: "12/05/2024 11:19:20 hrs",
-    duracion: "1 hora 45 minutos",
-  },
-  {
-    visito: "Laura Pérez García",
-    fecha: "12/05/2024 10:00:15 hrs",
-    duracion: "2 horas",
-  },
-  {
-    visito: "Carlos Mendoza Ríos",
-    fecha: "11/05/2024 09:15:10 hrs",
-    duracion: "1 hora 30 minutos",
-  },
-  {
-    visito: "Lucía Fernández Morales",
-    fecha: "10/05/2024 13:45:50 hrs",
-    duracion: "3 horas",
-  },
-  {
-    visito: "Pedro Hernández Pérez",
-    fecha: "09/05/2024 15:20:30 hrs",
-    duracion: "1 hora",
-  },
-  {
-    visito: "Ana Gómez Rojas",
-    fecha: "08/05/2024 08:35:40 hrs",
-    duracion: "4 horas 15 minutos",
-  },
-  {
-    visito: "Jorge Ramírez Soto",
-    fecha: "07/05/2024 17:10:20 hrs",
-    duracion: "2 horas 30 minutos",
-  },
-  {
-    visito: "María José Vargas",
-    fecha: "06/05/2024 19:45:30 hrs",
-    duracion: "1 hora 15 minutos",
-  },
-];
+interface TableProps {
+  searchPass: SearchAccessPass | undefined;
+}
 
-export function UltimosAccesosTable() {
+export const UltimosAccesosTable: React.FC<TableProps> = ({ searchPass }) => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -98,7 +46,8 @@ export function UltimosAccesosTable() {
   const [globalFilter, setGlobalFilter] = React.useState("");
 
   const table = useReactTable({
-    data,
+    data: searchPass?.ultimo_acceso || [],
+
     columns: UltimosAccesosColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -127,8 +76,6 @@ export function UltimosAccesosTable() {
         <h1 className="text-2xl font-bold">Últimos Accesos</h1>
       </div>
 
-    
-    
       <div className="w-full">
         <ScrollArea className="h-60 w-full border rounded-md">
           <Table>
@@ -180,7 +127,7 @@ export function UltimosAccesosTable() {
             </TableBody>
           </Table>
         </ScrollArea>
-      </div>   
+      </div>
     </div>
   );
-}
+};
