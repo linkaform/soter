@@ -1,11 +1,4 @@
-
-interface getCatalogoPasesArea {
-    location?: string;
-  }
-  
-  export const getCatalogoPasesArea = async ({
-    location = "Caseta Principal",
-  }: getCatalogoPasesArea = {}) => {
+  export const getCatalogoPasesArea = async (location = "Caseta Principal") => {
     const payload = {
         location,
         option: "catalogos_pase_area",

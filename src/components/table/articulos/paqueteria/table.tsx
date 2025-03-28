@@ -32,15 +32,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { FileX2, Plus } from "lucide-react";
-import { Articulo_con_record, conColumns } from "./concecionados-columns";
 import { downloadCSV } from "@/lib/utils";
 import ChangeLocation from "@/components/changeLocation";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEffect } from "react";
+import { Paquete_record, paqueteriaColumns } from "./paqueteria-columns";
 
 interface ListProps {
-  data: Articulo_con_record[];
-  isLoadingListArticulosCon:boolean;
+  data: Paquete_record[];
+  isLoadingListPaqueteria:boolean;
   openModal: () => void;
   setStateArticle: React.Dispatch<React.SetStateAction<string>>;
   setSelectedArticulos:React.Dispatch<React.SetStateAction<string[]>>;
@@ -68,7 +68,7 @@ const articulosColumnsCSV = [
 	  { label: 'Comentarios', key: 'comentario_perdido' },
   ];
 
-const ArticulosConTable:React.FC<ListProps> = ({ data, isLoadingListArticulosCon, openModal, setStateArticle,
+const PaqueteriaTable:React.FC<ListProps> = ({ data, isLoadingListPaqueteria, openModal, setStateArticle,
 	setSelectedArticulos,selectedArticulos, setUbicacionSeleccionada, setAreaSeleccionada, areaSeleccionada, ubicacionSeleccionada, setAll, all
 })=> {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -87,7 +87,7 @@ const ArticulosConTable:React.FC<ListProps> = ({ data, isLoadingListArticulosCon
 
   const table = useReactTable({
     data: data || [],
-    columns: isLoadingListArticulosCon ? []: conColumns,
+    columns: isLoadingListPaqueteria ? []: paqueteriaColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
@@ -110,7 +110,7 @@ const ArticulosConTable:React.FC<ListProps> = ({ data, isLoadingListArticulosCon
   });
 
   const handleCheckboxChange = (value:any) => {
-	setStateArticle(value)
+	  setStateArticle(value)
   };
 
 	useEffect(()=>{
@@ -129,8 +129,8 @@ const ArticulosConTable:React.FC<ListProps> = ({ data, isLoadingListArticulosCon
 			<div className="flex">
 				<TabsList className="bg-blue-500 text-white mr-2">
 					<TabsTrigger value="Perdidos">Artículos perdidos</TabsTrigger>
-					<TabsTrigger value="Concecionados">Artículos concesionados</TabsTrigger>
-					<TabsTrigger value="Paqueteria">Paqueteria</TabsTrigger>
+					<TabsTrigger value="Concecionados">Artículos concecionados</TabsTrigger>
+          <TabsTrigger value="Paqueteria">Paqueteria</TabsTrigger>
 				</TabsList>
 			</div>
 			
@@ -158,8 +158,8 @@ const ArticulosConTable:React.FC<ListProps> = ({ data, isLoadingListArticulosCon
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="Pendiente">En uso</SelectItem>
-                  <SelectItem value="Donado">Devuelto</SelectItem>
+                  <SelectItem value="Pendiente">Guardado</SelectItem>
+                  <SelectItem value="Entregado">Entregado</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -251,7 +251,7 @@ const ArticulosConTable:React.FC<ListProps> = ({ data, isLoadingListArticulosCon
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={conColumns.length}
+                  colSpan={paqueteriaColumns.length}
                   className="h-24 text-center"
                 >
                   No hay registros disponibles{" "}
@@ -284,4 +284,4 @@ const ArticulosConTable:React.FC<ListProps> = ({ data, isLoadingListArticulosCon
     </div>
   );
 }
-export default ArticulosConTable;
+export default PaqueteriaTable;

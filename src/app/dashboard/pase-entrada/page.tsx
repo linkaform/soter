@@ -145,7 +145,6 @@ import { usePaseEntrada } from "@/hooks/usePaseEntrada";
 	const [modalData, setModalData] = useState<any>(null);
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState('');
 	const { dataAreas:catAreas, dataLocations:ubicaciones, isLoadingAreas:loadingCatAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true, ubicacionSeleccionada?true:false);
-	console.log("CATALGOOO",catAreas, ubicaciones)
 	const[ userIdSoter] = useState<number|null>(()=>{
 			return Number(typeof window !== "undefined"? window.localStorage.getItem("userId_soter"):0) 
 	});
@@ -165,7 +164,6 @@ import { usePaseEntrada } from "@/hooks/usePaseEntrada";
 	});
 
 	const { dataConfigLocation, isLoadingConfigLocation } = usePaseEntrada(ubicacionSeleccionada)
-	// const { dataAreas:catAreas, isLoadingAreas:loadingCatAreas } = useCatalogoPaseAreaLocation(ubicacionSeleccionada, false, ubicacionSeleccionada  ? true : false)
 	const [enviar_correo_pre_registro, set_enviar_correo_pre_registro] = useState<string[]>([]);
 	const [formatedDocs, setFormatedDocs] = useState<string[]>([])
 	const [comentariosList, setComentariosList] = useState<Comentarios[]>([]);

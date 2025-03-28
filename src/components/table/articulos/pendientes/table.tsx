@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import * as React from "react";
@@ -27,14 +28,11 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ChevronDown, FileX2, Plus } from "lucide-react";
-import { Label } from "@/components/ui/label";
+import { FileX2, Plus } from "lucide-react";
 import { Articulo_perdido_record, pendientesColumns } from "./pendientes-columns";
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { downloadCSV } from "@/lib/utils";
 import ChangeLocation from "@/components/changeLocation";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -44,9 +42,16 @@ interface ListProps {
   data: Articulo_perdido_record[];
   isLoadingListArticulosPerdidos:boolean;
   openModal: () => void;
-  setSelectedState: React.Dispatch<React.SetStateAction<string>>;
+  setStateArticle: React.Dispatch<React.SetStateAction<string>>;
   setSelectedArticulos:React.Dispatch<React.SetStateAction<string[]>>;
-  selectedArticulos:string[]
+  selectedArticulos:string[];
+
+  setUbicacionSeleccionada: React.Dispatch<React.SetStateAction<string>>;
+  setAreaSeleccionada:React.Dispatch<React.SetStateAction<string>>;
+  areaSeleccionada:string;
+  ubicacionSeleccionada:string;
+  setAll:React.Dispatch<React.SetStateAction<boolean>>;
+  all:boolean;
 }
 
 const articulosColumnsCSV = [
@@ -58,13 +63,13 @@ const articulosColumnsCSV = [
     { label: 'Fecha del Hallazgo', key: 'date_hallazgo_perdido' },
     { label: 'Area de Resguardo', key: 'locker_perdido' },
     { label: 'Reporta Interno', key: 'quien_entrega_interno' },
-	{ label: 'Reporta Externo', key: 'quien_entrega_externo' },
+	  { label: 'Reporta Externo', key: 'quien_entrega_externo' },
     { label: 'Fecha de Devolucion', key: 'date_entrega_perdido' },
-	{ label: 'Comentarios', key: 'comentario_perdido' },
+	  { label: 'Comentarios', key: 'comentario_perdido' },
   ];
 
-const ArticulosPerdidosTable:React.FC<ListProps> = ({ data, isLoadingListArticulosPerdidos, openModal, setSelectedState,
-	setSelectedArticulos,selectedArticulos 
+const ArticulosPerdidosTable:React.FC<ListProps> = ({ data, isLoadingListArticulosPerdidos, openModal, setStateArticle,
+	setSelectedArticulos,selectedArticulos , setUbicacionSeleccionada, setAreaSeleccionada, areaSeleccionada, ubicacionSeleccionada, setAll, all
 })=> {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -105,7 +110,8 @@ const ArticulosPerdidosTable:React.FC<ListProps> = ({ data, isLoadingListArticul
   });
 
   const handleCheckboxChange = (value:any) => {
-	setSelectedState(value)
+    console.log("VALOR", value)
+    setStateArticle(value)
   };
 
 	useEffect(()=>{
@@ -122,9 +128,10 @@ const ArticulosPerdidosTable:React.FC<ListProps> = ({ data, isLoadingListArticul
     <div className="w-full">
       <div className="flex justify-between items-center my-2 ">
 			<div className="flex">
-				<TabsList className="bg-blue-500 text-white">
+				<TabsList className="bg-blue-500 text-white mr-2">
 					<TabsTrigger value="Perdidos">Artículos perdidos</TabsTrigger>
 					<TabsTrigger value="Concecionados">Artículos concecionados</TabsTrigger>
+          <TabsTrigger value="Paqueteria">Paqueteria</TabsTrigger>
 				</TabsList>
 			</div>
 			
@@ -139,8 +146,8 @@ const ArticulosPerdidosTable:React.FC<ListProps> = ({ data, isLoadingListArticul
 			</div>
 
 			<div className="flex w-1/3 gap-2"> 
-				<ChangeLocation location={""} area={""} all={false} setAreas={() => { } } setLocations={() => { } } 
-				setAll={()=>{}}>
+				<ChangeLocation ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} 
+        setUbicacionSeleccionada={setUbicacionSeleccionada} setAreaSeleccionada={setAreaSeleccionada} setAll={setAll} all={all}>
 				</ChangeLocation>
 			</div>
 
@@ -175,7 +182,7 @@ const ArticulosPerdidosTable:React.FC<ListProps> = ({ data, isLoadingListArticul
 					</Button>
 				</div>
 
-				<div>
+				{/* <div>
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
 						<Button variant="outline" className="ml-auto">
@@ -202,7 +209,7 @@ const ArticulosPerdidosTable:React.FC<ListProps> = ({ data, isLoadingListArticul
 							})}
 						</DropdownMenuContent>
 					</DropdownMenu>
-				</div>
+				</div> */}
 			</div>
 		</div>
 

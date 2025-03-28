@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -26,82 +27,83 @@ import { Imagen } from "@/lib/update-pass";
 import { useCatalogoAreaEmpleado } from "@/hooks/useCatalogoAreaEmpleado";
 import { format,  } from 'date-fns';
 
-import { useCatalogoAreaEmpleadoApoyo } from "@/hooks/useCatalogoAreaEmpleadoApoyo";
-import { toast } from "sonner";
-import { useCatalogoFallas } from "@/hooks/useCatalogoFallas";
-import DateTime from "../dateTime";
-import LoadFile from "../upload-file";
+import { useCatalogoArticulos } from "@/hooks/useCatalogoArticulos";
+import { Input } from "../ui/input";
+import { capitalizeFirstLetter, catalogoColores } from "@/lib/utils";
+import { Articulo_perdido_record } from "../table/articulos/pendientes/pendientes-columns";
+import { useGetLockers } from "@/hooks/useGetLockers";
 import { Edit, Loader2 } from "lucide-react";
-import { getCatalogoFallas } from "@/lib/fallas";
-import { useFallas } from "@/hooks/useFallas";
+import DateTime from "../dateTime";
+import { useArticulosPerdidos } from "@/hooks/useArticulosPerdidos";
 import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
-import { getCatalogoPasesArea } from "@/lib/get-catalogos-pase-area";
 
 interface EditarFallaModalProps {
   	title: string;
-	data: any;
+	data: Articulo_perdido_record;
 	setShowLoadingModal:Dispatch<SetStateAction<boolean>>;
 	showLoadingModal:boolean;
 }
 
 const formSchema = z.object({
-	falla: z.string().optional(),
-	falla_caseta: z.string().optional(),
-	falla_comentarios: z.string().min(1, { message: "Comentario es obligatorio" }), 
-	falla_documento: z.array(
-	  z.object({
-		file_url: z.string(),
-		file_name: z.string(),
-	  })
-	).optional(),
-	falla_estatus: z.string().optional(),
-	falla_evidencia: z.array(
-	  z.object({
-		file_url: z.string(),
-		file_name: z.string(),
-	  })
-	).optional(),
-	falla_fecha_hora: z.string().optional(), 
-	falla_objeto_afectado: z.string().optional(),
-	falla_reporta_nombre: z.string().min(1, { message: "El nombre del reportante es obligatorio" }), 
-	falla_responsable_solucionar_nombre: z.string().optional(),
-	falla_ubicacion: z.string().min(1, { message: "La ubicación es obligatoria" }),
+	area_perdido: z.string().min(1, { message: "Este campo es obligatorio" }),
+	articulo_perdido: z.string().optional(),
+	articulo_seleccion: z.string().min(1, { message: "Comentario es obligatorio" }), 
+    color_perdido:z.string().min(1, { message: "Comentario es obligatorio" }), 
+	comentario_perdido:z.string().optional(),
+	date_hallazgo_perdido: z.string().optional(),
+	descripcion: z.string().optional(),
+	estatus_perdido: z.string().optional(), 
+	foto_perdido: z.array(
+        z.object({
+          file_url: z.string(),
+          file_name: z.string(),
+        })
+      ).optional(),
+	locker_perdido: z.string().min(1, { message: "Este campo es obligatorio" }), 
+	quien_entrega: z.string().optional(),
+    quien_entrega_externo: z.string().optional(),
+    quien_entrega_interno: z.string().optional(),
+    tipo_articulo_perdido: z.string().min(1, { message: "Este campo es obligatorio" }), 
+    ubicacion_perdido: z.string().min(1, { message: "Este campo es obligatorio" }),
 });
 
 export const EditarArticuloModal: React.FC<EditarFallaModalProps> = ({
   	title,
 	data,
 	setShowLoadingModal,
+    showLoadingModal
 }) => {
-	const [subconcepto, setSubConcepto] = useState<string>("");
-	const [catalagoSub, setCatalogoSub] = useState<string[]>([]);
-	const [catalagoFallas, setFallas] = useState<string[]>([]);
 	const [isSuccess, setIsSuccess] =useState(false)
-	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState('');
-	const { dataAreas:areas, dataLocations:ubicaciones, isLoadingAreas:loadingAreas} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true,  ubicacionSeleccionada?true:false);
-	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado, error:errorAreEmpleado } = useCatalogoAreaEmpleado(isSuccess);
-	const { data:dataAreaEmpleadoApoyo, isLoading:loadingAreaEmpleadoApoyo,error:errorAEA} = useCatalogoAreaEmpleadoApoyo(isSuccess);
-	const { data:dataFallas, isLoading:isLoadingFallas, error:errorFallas } = useCatalogoFallas(subconcepto, isSuccess);
-	const { editarFallaMutation, isLoading} = useFallas("","", "abierto", false)
-	const [catAreas, setCatAreas] =useState([])
+	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(data.ubicacion_perdido);
+	const { dataAreas:areas, dataLocations:ubicaciones, isLoadingLocations, isLoadingAreas} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, showLoadingModal|| isSuccess,  ubicacionSeleccionada?true:false);
+	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado } = useCatalogoAreaEmpleado(showLoadingModal|| isSuccess, ubicacionSeleccionada, "Objetos Perdidos");
+    const [tipoArt, setTipoArt] = useState<string>(data.tipo_articulo_perdido);
+	
+    const { data: dataArticulos ,dataArticuloSub, isLoading: isLoadingArticles,isLoadingArticuloSub} = useCatalogoArticulos(tipoArt, showLoadingModal|| isSuccess);
+	const { editarArticulosPerdidosMutation, isLoading} = useArticulosPerdidos("","", "abierto", false)
 	const [evidencia , setEvidencia] = useState<Imagen[]>([]);
-	const [documento , setDocumento] = useState<Imagen[]>([]);
 	const [date, setDate] = useState<Date|"">("");
-console.log("DATAAA", data)
+    const [isActiveInterno, setIsActiveInterno] = useState< string | null>(data?.quien_entrega ? data?.quien_entrega.toLocaleLowerCase():"");
+    const { data:responseGetLockers, isLoading:loadingGetLockers } = useGetLockers(ubicacionSeleccionada ?? null,"", "Disponible");
+
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-		falla: data.falla,
-		falla_caseta: data.falla_caseta,
-		falla_comentarios: data.falla_comentarios,
-		falla_documento:documento,
-		falla_estatus: data.falla_estatus,
-		falla_evidencia:evidencia,
-		falla_fecha_hora: data.falla_fecha_hora,
-		falla_objeto_afectado: data.falla_objeto_afectado,
-		falla_reporta_nombre: data.falla_reporta_nombre,
-		falla_responsable_solucionar_nombre: data.falla_responsable_solucionar_nombre,
-		falla_ubicacion: data.falla_ubicacion,
+            area_perdido: data.area_perdido,
+            articulo_perdido: data.articulo_perdido,
+            articulo_seleccion: data.articulo_seleccion, 
+            color_perdido: capitalizeFirstLetter(data.color_perdido??""), 
+            comentario_perdido: data.comentario_perdido,
+            date_hallazgo_perdido: data.date_hallazgo_perdido, 
+            descripcion: data.descripcion, 
+            estatus_perdido: data.estatus_perdido,
+            foto_perdido: evidencia,
+            locker_perdido: data.locker_perdido,
+            quien_entrega: data.quien_entrega,
+            quien_entrega_externo: data.quien_entrega_externo,
+            quien_entrega_interno: data.quien_entrega_interno, 
+            tipo_articulo_perdido: tipoArt,
+            ubicacion_perdido: data.ubicacion_perdido,
 		},
 	});
 
@@ -110,44 +112,13 @@ console.log("DATAAA", data)
 	useEffect(()=>{
 		if(isSuccess){
 			reset()
-			setEvidencia(data.falla_evidencia)
-			setDocumento(data.falla_documento)
-			setDate(new Date(data.falla_fecha_hora))
+			setEvidencia(data.foto_perdido)
+			setDate(new Date(data.date_hallazgo_perdido))
 			setShowLoadingModal(false)
 		}
-		// if(ubicaciones){
-		// 	setUbicacionSeleccionada(data.falla_ubicacion)
-		// }
-		// if(areas){
-		// 	setCatAreas(areas)
-		// }
-		if(dataFallas && subconcepto){
-			if (dataFallas.length == 1 && dataFallas[0] === null) {
-				setCatalogoSub([])
-			  }else{
-				setCatalogoSub(dataFallas)
-				
-			  }
-		}
-		if(dataFallas && !subconcepto){
-			setFallas(dataFallas)
-			setSubConcepto(data.falla)
-		}
-	},[isSuccess, dataFallas, ubicaciones, areas])
+	},[isSuccess, ubicaciones, areas])
 
-	useEffect(()=>{
-		if(errorAEA){
-			toast.error(errorAEA.message)
-		}
-		if(errorAreEmpleado){
-			toast.error(errorAreEmpleado.message)
-		}
-		if(errorFallas){
-			toast.error(errorFallas.message)
-		}
-	},[errorAEA, errorAreEmpleado, errorFallas])
-
-	useEffect(()=>{
+    useEffect(()=>{
 		if(!isLoading){
 			handleClose()			
 		}
@@ -156,319 +127,488 @@ console.log("DATAAA", data)
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		let formattedDate=""
 		if(date){
+            console.log("tipoArt", tipoArt )
 			formattedDate = format( new Date(date), 'yyyy-MM-dd HH:mm:ss');
 			const formatData ={
-				falla:values.falla||"",
-				falla_caseta: values.falla_caseta||"",
-				falla_comentarios:values.falla_comentarios||"",
-				falla_documento:documento,
-				falla_estatus:"abierto",
-				falla_evidencia:evidencia,
-				falla_fecha_hora: formattedDate||"",
-				falla_objeto_afectado: values.falla_objeto_afectado||"",
-				falla_reporta_nombre:values.falla_reporta_nombre||"",
-				falla_responsable_solucionar_nombre: values.falla_responsable_solucionar_nombre||"",
-				falla_ubicacion:values.falla_ubicacion||"",
+                area_perdido: values.area_perdido || "",
+                articulo_perdido:  values.articulo_perdido|| "",
+                articulo_seleccion:  values.articulo_seleccion|| "", 
+                color_perdido:  values.color_perdido|| "", 
+                comentario_perdido:  values.comentario_perdido|| "",
+                date_hallazgo_perdido: formattedDate|| "", 
+                descripcion:  values.descripcion|| "", 
+                estatus_perdido:  values.estatus_perdido|| "pendiente",
+                foto_perdido: evidencia || [],
+                locker_perdido:  values.locker_perdido|| "",
+                quien_entrega:  values.quien_entrega|| "externo",
+                quien_entrega_externo:  values.quien_entrega_externo|| "",
+                quien_entrega_interno:  values.quien_entrega_interno|| "", 
+                tipo_articulo_perdido: tipoArt|| "",
+                ubicacion_perdido:  values.ubicacion_perdido|| "",
 				}
-				 editarFallaMutation.mutate({data_failure_update: formatData, folio: data.folio})
+                console.log("EDICION INFO",formatData )
+				editarArticulosPerdidosMutation.mutate({data_article_update: formatData, folio: data.folio})
 		}else{
-			form.setError("falla_fecha_hora", { type: "manual", message: "Fecha es un campo requerido." });
+			form.setError("date_hallazgo_perdido", { type: "manual", message: "Fecha es un campo requerido." });
 		}
 	}
 
 	const handleClose = () => {
 		reset()
 		setShowLoadingModal(false); 
+        setIsSuccess(false); 
 	};
+
+
+   useEffect(()=>{
+        if(showLoadingModal){
+            setTimeout(() => {
+                setIsSuccess(true); 
+            }, 4000);
+        }
+   },[showLoadingModal])
 
 	const handleOpenModal = async () => {
 		setShowLoadingModal(true);
-		const fallasCat = await getCatalogoFallas("");
-		const areasSub = await getCatalogoPasesArea(data.falla_ubicacion)
-		setCatAreas(areasSub.response.data.areas_by_location)
-		setFallas(fallasCat.response.data);
-		const fallasObjetoAfectado = await getCatalogoFallas(data.falla_objeto_afectado);
-		setCatalogoSub(fallasObjetoAfectado.response.data);
-		setIsSuccess(true);
 	};
 
   return (
-	<Dialog onOpenChange={setIsSuccess} open={isSuccess}>
+	<Dialog open={isSuccess} modal>
 	<div className="cursor-pointer" onClick={handleOpenModal}>
 		<Edit />
 	</div>
-		<DialogContent className="max-w-3xl overflow-y-auto max-h-[80vh] flex flex-col" aria-describedby="">
-		<DialogHeader className="flex-shrink-0">
+        <DialogContent className="max-w-3xl overflow-y-auto max-h-[80vh] flex flex-col" aria-describedby="">
+			<DialogHeader className="flex-shrink-0">
 			<DialogTitle className="text-2xl text-center font-bold">
 				{title}
 			</DialogTitle>
-				<div className="flex-grow overflow-y-auto p-4">
-					<Form {...form}>
-						<form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-5">
-							<FormField
-								control={form.control}
-								name="falla_ubicacion"
-								render={({ field }: any) => (
-									<FormItem>
-										<FormLabel>Ubicacion:</FormLabel>
-										<FormControl>
-											<Select {...field} className="input"
-												onValueChange={(value: string) => {
-													field.onChange(value);
-													setUbicacionSeleccionada(value)
-													setCatAreas([])
-												} }
-												// value={data.value||""}
-											>
-												<SelectTrigger className="w-full">
-													<SelectValue placeholder="Selecciona una ubicación" />
-												</SelectTrigger>
-												<SelectContent>
-													{ubicaciones?.map((vehiculo: string, index: number) => (
-														<SelectItem key={index} value={vehiculo}>
-															{vehiculo}
-														</SelectItem>
-													))}
-												</SelectContent>
-											</Select>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)} />
-							<FormField
-								control={form.control}
-								name="falla_caseta"
-								render={({ field }: any) => (
-									<FormItem>
-										<FormLabel>Area:</FormLabel>
-										<FormControl>
-											<Select {...field} className="input"
-												onValueChange={(value: string) => {
-													field.onChange(value);
-												} }
-												value={field.value}
-											>
-												<SelectTrigger className="w-full">
-													{loadingAreas ? 
-														<SelectValue placeholder="Cargando áreas..." />
-													: <SelectValue placeholder="Selecciona una opción..." />
-													}
-												</SelectTrigger>
-												<SelectContent>
-												{areas?.length >0 && ubicacionSeleccionada ? (
-													<>
-													{areas?.map((area:string, index:number) => {
-													return(
-														<SelectItem key={index} value={area}>
-														{area}
-														</SelectItem>
-													)})} 
-													</>
-												):<SelectItem key={"1"} value={"1"} disabled>No hay opciones disponibles.</SelectItem>}
-
-													{/* {catAreas?.map((vehiculo: string, index: number) => (
-														<SelectItem key={index} value={vehiculo}>
-															{vehiculo}
-														</SelectItem>
-													))} */}
-												</SelectContent>
-											</Select>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)} />
-							<FormField
-								control={form.control}
-								name="falla_fecha_hora"
-								render={() => (
-									<FormItem>
-										<FormLabel>* Fecha</FormLabel>
-										<FormControl>
-											<DateTime date={date} setDate={setDate} />
-										</FormControl>
-
-										<FormMessage />
-									</FormItem>
-								)} />
-							<FormField
-								control={form.control}
-								name="falla"
-								render={({ field }: any) => (
-									<FormItem>
-										<FormLabel>Concepto:</FormLabel>
-										<FormControl>
-											<Select {...field} className="input"
-												onValueChange={(value: string) => {
-													field.onChange(value);
-													setSubConcepto(value)
-													setCatalogoSub([]);
-												} }
-												value={field.value || ""}
-											>
-												<SelectTrigger className="w-full">
-												{isLoadingFallas && subconcepto ==""? (  
-													<SelectValue placeholder="Cargando subconcepto..." /> 
-													
-												) : (
-													<SelectValue placeholder="Selecciona una falla" />
-												)}
-												</SelectTrigger>
-												<SelectContent>
-													{catalagoFallas?.map((vehiculo: string, index: number) => (
-														<SelectItem key={index} value={vehiculo}>
-															{vehiculo}
-														</SelectItem>
-													))}
-												</SelectContent>
-											</Select>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)} />
-							<FormField
-								control={form.control}
-								name="falla_objeto_afectado"
-								render={({ field }: any) => (
-									<FormItem>
-										<FormLabel>Subconcepto:</FormLabel>
-										<FormControl>
-											<Select {...field} className="input"
-												onValueChange={(value: string) => {
-													console.log("VALOR", value)
-													field.onChange(value);
-												} }
-												value={field.value}
-											>
-												<SelectTrigger className="w-full">
-													{isLoadingFallas && subconcepto !== "" ? (
-														<>
-														<div >Cargando subconcepto...</div>
-														</>
-													) : (
-														<SelectValue placeholder="Selecciona una opción..." />
-													)}
-												</SelectTrigger>
-												<SelectContent>
-													{catalagoSub.length > 0 ? (
-														catalagoSub?.map((item: string, index: number) => {
-															return (
-																<SelectItem key={index} value={item}>
-																	{item}
-																</SelectItem>
-															);
-														})
-													) : (
-														<><SelectItem disabled value={"no opciones"}>No hay opciones disponibles</SelectItem></>
-													)}
-												</SelectContent>
-											</Select>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)} />
-							<FormField
-								control={form.control}
-								name="falla_comentarios"
-								render={({ field }: any) => (
-									<FormItem>
-										<FormLabel>* Comentarios</FormLabel>
-										<FormControl>
-											<Textarea
-												placeholder="Texto"
-												className="resize-none"
-												{...field} />
-										</FormControl>
-
-										<FormMessage />
-									</FormItem>
-								)} />
-							<FormField
-								control={form.control}
-								name="falla_reporta_nombre"
-								render={({ field }: any) => (
-									<FormItem>
-										<FormLabel>Reporta:</FormLabel>
-										<FormControl>
-											<Select {...field} className="input"
-												onValueChange={(value: string) => {
-													field.onChange(value);
-												} }
-												value={field.value}
-											>
-												<SelectTrigger className="w-full">
-													{loadingAreaEmpleado ? (<>
-														<SelectValue placeholder="Cargando opciones..." />
-													</>) : (<>
-														<SelectValue placeholder="Selecciona una opcion" />
-													</>)}
-												</SelectTrigger>
-												<SelectContent>
-													{dataAreaEmpleado?.map((vehiculo: string, index: number) => (
-														<SelectItem key={index} value={vehiculo}>
-															{vehiculo}
-														</SelectItem>
-													))}
-												</SelectContent>
-											</Select>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)} />
-							<FormField
-								control={form.control}
-								name="falla_responsable_solucionar_nombre"
-								render={({ field }: any) => (
-									<FormItem>
-										<FormLabel>Responsable asignado de solucionar:</FormLabel>
-										<FormControl>
-											<Select {...field} className="input"
-												onValueChange={(value: string) => {
-													field.onChange(value);
-												} }
-												value={field.value}
-											>
-												<SelectTrigger className="w-full">
-													{loadingAreaEmpleadoApoyo ? (<>
-														<SelectValue placeholder="Cargando opciones..." />
-													</>) : (<>
-														<SelectValue placeholder="Selecciona una opcion" />
-													</>)}
-												</SelectTrigger>
-												<SelectContent>
-													{dataAreaEmpleadoApoyo?.map((vehiculo: string, index: number) => (
-														<SelectItem key={index} value={vehiculo}>
-															{vehiculo}
-														</SelectItem>
-													))}
-												</SelectContent>
-											</Select>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)} />
-							<div className="flex justify-between">
-								<LoadImage
-									id="evidencia"
-									titulo={"Evidencia"}
-									setImg={setEvidencia}
-									showWebcamOption={true}
-									facingMode="user"
-									imgArray={evidencia}
-									showArray={true}
-									limit={10} />
-							</div>
-							<div className="flex justify-between">
-								<LoadFile
-									id="doc"
-									titulo={"Documento"}
-									setDocs={setDocumento}
-									docArray={documento}
-									limit={10} />
-							</div>
-							
-						</form>
-					</Form>
+			</DialogHeader>
+            <div className="flex-grow overflow-y-auto p-4">
+			<Form {...form}>
+			<form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="flex justify-between">
+                    <LoadImage
+                        id="evidencia" 
+                        titulo={"Evidencia"} 
+                        setImg={setEvidencia}
+                        showWebcamOption={true}
+                        facingMode="user"
+                        imgArray={evidencia}
+                        showArray={true}
+                        limit={10}
+                        />
 				</div>
+
+                <FormField
+				control={form.control}
+				name="date_hallazgo_perdido"
+				render={() => (
+					<FormItem>
+					<FormLabel> Fecha del hallazgo:</FormLabel>
+					<FormControl>
+						{/* <Input type="datetime-local" placeholder="Fecha" {...field} /> */}
+						<DateTime date={date} setDate={setDate} />
+					</FormControl>
+
+					<FormMessage />
+					</FormItem>
+				)}
+				/>
+
+			    <FormField
+					control={form.control}
+					name="ubicacion_perdido"
+					render={({ field }:any) => (
+						<FormItem>
+							<FormLabel>Ubicacion:</FormLabel>
+							<FormControl>
+							<Select {...field} className="input"
+								onValueChange={(value:string) => {
+								field.onChange(value); 
+								setUbicacionSeleccionada(value); 
+							}}
+							value={ubicacionSeleccionada} 
+						>
+							<SelectTrigger className="w-full">
+								{isLoadingLocations?
+								<SelectValue placeholder="Cargando ubicaciones..." />:<SelectValue placeholder="Selecciona una ubicación" />}
+							</SelectTrigger>
+							<SelectContent>
+							{ubicaciones?.map((vehiculo:string, index:number) => (
+								<SelectItem key={index} value={vehiculo}>
+									{vehiculo}
+								</SelectItem>
+							))}
+							</SelectContent>
+						</Select>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+
+				<FormField
+					control={form.control}
+					name="area_perdido"
+					render={({ field }:any) => (
+						<FormItem>
+							<FormLabel>Area:</FormLabel>
+							<FormControl>
+							<Select {...field} className="input"
+								onValueChange={(value:string) => {
+								field.onChange(value); 
+							}}
+							value={field.value} 
+						>
+							<SelectTrigger className="w-full">
+							{isLoadingAreas?
+								 <>
+                                 <div >Cargando areas...</div>
+                                 </>:<>
+								{areas?.length > 0 ?( <>
+                                    <SelectValue placeholder="Selecciona una opcion..." />
+                                    </>)
+								:( <>
+                                    <div >Delecciona una ubicacion para ver las opciones...</div>
+                                    </>)
+								}
+								</>}
+							</SelectTrigger>
+							<SelectContent>
+							{areas?.length >0 ? (
+								<>
+								{areas?.map((area:string, index:number) => {
+								return(
+									<SelectItem key={index} value={area}>
+									{area}
+									</SelectItem>
+								)})} 
+								</>
+							):<SelectItem key={"1"} value={"1"} disabled>No hay opciones disponibles.</SelectItem>}
+							</SelectContent>
+						</Select>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+
+                <FormField
+				control={form.control}
+				name="comentario_perdido"
+				render={({ field }:any) => (
+					<FormItem>
+					<FormLabel>Comentarios</FormLabel>
+					<FormControl className="col-span-2">
+						<Textarea
+						placeholder="Texto"
+						className="resize-none w-full"
+						{...field}
+                        value={field.value}
+						/>
+					</FormControl>
+					<FormMessage />
+					</FormItem>
+				)}
+				/>
+
+				<FormField
+					control={form.control}
+					name="tipo_articulo_perdido"
+					render={({ field }:any) => (
+						<FormItem>
+							<FormLabel>Tipo de artículo:</FormLabel>
+							<FormControl>
+							<Select {...field} className="input"
+								onValueChange={(value:string) => {
+								field.onChange(value); 
+                                setTipoArt(value)
+							}}
+							value={tipoArt} 
+						>
+							<SelectTrigger className="w-full">
+								{isLoadingArticles && tipoArt == "" ? <SelectValue placeholder="Cargando Articulos..." />:
+                                <SelectValue placeholder="Selecciona un articulo" />}
+							</SelectTrigger>
+							<SelectContent>
+							{dataArticulos?.map((vehiculo:string, index:number) => (
+								<SelectItem key={index} value={vehiculo}>
+									{vehiculo}
+								</SelectItem>
+							))}
+							</SelectContent>
+						</Select>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>	
+
+				<FormField
+					control={form.control}
+					name="articulo_seleccion"
+					render={({ field }:any) => (
+						<FormItem>
+							<FormLabel>Artículo:</FormLabel>
+							<FormControl>
+							<Select {...field} className="input"
+								onValueChange={(value:string) => {
+								field.onChange(value); 
+							}}
+							value={field.value} 
+						>
+							<SelectTrigger className="w-full">
+								{isLoadingArticuloSub && tipoArt ? (
+                                    <>
+                                    <div >Cargando articulos...</div>
+                                    </>
+								):(<>
+								{dataArticuloSub?.length > 0 ?( <>
+                                    <SelectValue placeholder="Selecciona una opcion..." />
+                                    </>)
+								:( <>
+                                    <div >Selecciona una categoria para ver las opciones...</div>
+                                    </>)
+								}
+								</>)}
+								
+							</SelectTrigger>
+							<SelectContent>
+							{dataArticuloSub?.length>0 ? (
+								dataArticuloSub?.map((item:string, index:number) => {
+									return (
+										<SelectItem key={index} value={item}>
+											{item}
+										</SelectItem>
+									)
+								})
+							):(
+								<><SelectItem disabled value={"no opciones"}>No hay opciones disponibles</SelectItem></>
+							)}
+							</SelectContent>
+						</Select>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>	
+	
+                <FormField
+                    control={form.control}
+                    name="articulo_perdido"
+                    render={({ field}:any)=> (
+                        <FormItem>
+                            <FormLabel className="">
+                                <span className="text-red-500">*</span> Nombre:
+                            </FormLabel>{" "}
+                            <FormControl>
+                                <Input placeholder="Nombre Completo" {...field} value={field.value}
+                                />
+                            </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <FormField
+                    control={form.control}
+                    name="color_perdido"
+                    render={({ field }:any) => (
+                        <FormItem>
+                        <FormLabel>Color:</FormLabel>
+                        <FormControl>
+                        <Select {...field} className="input"
+                                onValueChange={(value:string) => {
+                                field.onChange(value); 
+                            }}
+                            value={field.value} 
+                            >
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Selecciona un color" />
+                            </SelectTrigger>
+                            <SelectContent>
+                            {catalogoColores().map((vehiculo:string) => (
+                                <SelectItem key={vehiculo} value={vehiculo}>
+                                {vehiculo}
+                                </SelectItem>
+                            ))}
+                            </SelectContent>
+                            </Select>
+                        </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                />	
+
+                <FormField
+                    control={form.control}
+                    name="descripcion"
+                    render={({ field }:any) => (
+                        <FormItem>
+                        <FormLabel>Descripción: </FormLabel>
+                        <FormControl>
+                            <Textarea
+                            placeholder="Texto"
+                            className="resize-none"
+                            {...field}
+                            value={field.value}
+                            />
+                        </FormControl>
+
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                />
+        
+                <div className="flex gap-2 flex-col ">
+						<FormLabel className="mb-2">
+                        Quién entrega, Selecciona una opción:
+						</FormLabel>
+						<div className="flex gap-2">
+							<div className="flex gap-2 flex-wrap">
+								<Button
+								type="button"
+								onClick={() => setIsActiveInterno("interno")}
+								className={`px-4 py-2 rounded-md transition-all duration-300 ${
+                                    isActiveInterno === 'interno'
+                                      ? 'bg-blue-600 text-white'
+                                      : 'border-2 border-blue-400 bg-transparent'
+                                  } hover:bg-transparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`} //hover:bg-transparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]
+								>
+								<div className="flex flex-wrap items-center">
+									{isActiveInterno == "interno"? (
+									<>
+										<div>Interno</div>
+									</>
+									) : (
+									<>
+										<div className="text-blue-600">Interno</div>
+									</>
+									)}
+								</div>
+								</Button>
+							</div>
+							<div className="flex gap-2 flex-wrap">
+								<Button
+								type="button"
+								onClick={() => setIsActiveInterno("externo")}
+								className={`px-4 py-2 rounded-md transition-all duration-300 ${
+                                    isActiveInterno === 'externo'
+                                      ? 'bg-blue-600 text-white'
+                                      : 'border-2 border-blue-400 bg-transparent'
+                                  } hover:bg-transparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
+								>
+								<div className="flex flex-wrap items-center">
+									{isActiveInterno == "externo"? (
+									<>
+										<div>Externo</div>
+									</>
+									) : (
+									<>
+										<div className="text-blue-600">Externo</div>
+									</>
+									)}
+								</div>
+								</Button>
+							</div>
+						</div>						
+				</div>
+                <br/>
+                {isActiveInterno=="interno"? (
+                    <FormField
+                        control={form.control}
+                            name="quien_entrega_interno"
+                            render={({ field }:any) => (
+                                <FormItem>
+                                    <FormLabel>Quien entrega Interno:</FormLabel>
+                                    <FormControl>
+                                    <Select {...field} className="input"
+                                        onValueChange={(value:string) => {
+                                        field.onChange(value); 
+                                    }}
+                                    value={field.value} 
+                                >
+                                    <SelectTrigger className="w-full">
+                                        {loadingAreaEmpleado?(<>
+                                            <SelectValue placeholder="Cargando opciones..." />
+                                        </>):(<>
+                                            <SelectValue placeholder="Selecciona una opcion" />
+                                        </>)}
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                    {dataAreaEmpleado?.map((vehiculo:string, index:number) => (
+                                        <SelectItem key={index} value={vehiculo}>
+                                            {vehiculo}
+                                        </SelectItem>
+                                    ))}
+                                    </SelectContent>
+                                </Select>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                        )}
+                    />	
+                ):(
+                    <FormField
+                        control={form.control}
+                            name="quien_entrega_externo"
+                            render={({ field}:any)=> (
+                                <FormItem>
+                                    <FormLabel className="">
+                                        <span className="text-red-500">*</span> Quien entrega Externo:
+                                    </FormLabel>{" "}
+                                    <FormControl>
+                                        <Input placeholder="Nombre" {...field} value={field.value}
+                                        />
+                                    </FormControl>
+                                <FormMessage />
+                                </FormItem>
+                        )}
+                    />
+                )}
+
+                <FormField
+                    control={form.control}
+                        name="locker_perdido"
+                        render={({ field }:any) => (
+                            <FormItem>
+                                <FormLabel>Área de resguardo:</FormLabel>
+                                <FormControl>
+                                <Select {...field} className="input"
+                                    onValueChange={(value:string) => {
+                                    field.onChange(value); 
+                                }}
+                                value={field.value} 
+                            >
+                                <SelectTrigger className="w-full">
+                                    {loadingGetLockers?(<>
+                                        <SelectValue placeholder="Cargando opciones..." />
+                                    </>):(<>
+                                        <SelectValue placeholder="Selecciona una opcion" />
+                                    </>)}
+                                </SelectTrigger>
+                                <SelectContent>
+                                {responseGetLockers ? <>
+                                    {responseGetLockers?.map((locker:any, index:number) => (
+                                        <SelectItem key={index} value={locker.locker_id}>
+                                            {locker.locker_id}
+                                        </SelectItem>
+                                    ))}
+                                </>: 
+                                    <SelectItem key={"0"} value={"0"} disabled>
+                                        Selecciona una ubicación
+                                    </SelectItem>
+                                }
+                                </SelectContent>
+                            </Select>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                    )}
+                />	
+			</form>
+			</Form>
+		    </div>
 			<div className="flex gap-2">
 				<DialogClose asChild>
 						<Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700" onClick={handleClose}>
@@ -488,8 +628,7 @@ console.log("DATAAA", data)
 						) : ("Editar falla")}
 					</Button>
 			</div>
-		</DialogHeader>
-		</DialogContent>
-	</Dialog>
+            </DialogContent>
+        </Dialog>
   );
 };

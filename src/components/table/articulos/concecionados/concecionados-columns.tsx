@@ -1,136 +1,143 @@
-
 import {
-    ColumnDef,  
-  } from "@tanstack/react-table";
-import { ArrowLeftRight, Eye, Pencil } from "lucide-react";
+  ColumnDef, 
+} from "@tanstack/react-table";
+import { useState } from "react";
+import { Eye } from "lucide-react";
+import { LoadingModal } from "@/components/modals/loading-modal";
+import { ViewArticuloCon } from "@/components/modals/view-articulo-con";
+import { EditArticuloConModal } from "@/components/modals/edit-article-con";
+import { DevolucionArticuloConModal } from "@/components/modals/devolucion-article-con-modal";
 
 
-export type Concecionado = {
-    id: string;
-    articulo: string;
-    fecha: string;
-    tipo: string;
-    noSerie: string
-    reporta: string;
-    observaciones: string[]
-    recibe: string;
-    devolucion: string;
-    estado: string;
-    area: string;
-  };
+export interface Articulo_con_record {
+    _id:string,
+    folio:string,
+    ubicacion_concesion:string, 
+    fecha_concesion:string,
+    caseta_concesion:string,
+    area_concesion:string, 
+    solicita_concesion: string,
+    observacion_concesion:string, 
+    nombre_concesion:string,
+    fecha_devolucion_concesion:string,
+    status_concesion:string,
+    persona_nombre_concesion:string
+}
 
 
-export const concecionadosColumns: ColumnDef<Concecionado>[] = [
+const OptionsCell: React.FC<{ row: any }> = ({ row}) => {
+  const articulo = row.original;
+  const [showLoadingModal, setShowLoadingModal] = useState(false);
+
+  return (
+    <div className="flex space-x-2">
+      <ViewArticuloCon 
+          title="Información del Artículo Concesionado"
+          data={articulo} isSuccess={false}>
+            <div className="cursor-pointer">
+              <Eye /> 
+            </div>
+        </ViewArticuloCon>
+
+      <LoadingModal isOpen={showLoadingModal} text="Cargando..."/>
+
+      <EditArticuloConModal 
+        title="Editar Artículo Concesionado"
+        data={articulo} setShowLoadingModal={setShowLoadingModal} showLoadingModal={showLoadingModal}/>
+
+      <DevolucionArticuloConModal 
+        title="Devolver Artículo Concesionado" data={articulo}/>
+    </div>
+  );
+};
+
+
+export const conColumns: ColumnDef<Articulo_con_record>[] = [
     {
       id: "options",
       header: "Opciones",
-      cell: () => (
-        <div className="flex space-x-2">
-          <div className="cursor-pointer">
-            <Eye />
-          </div>
-          <div className="cursor-pointer">
-            <ArrowLeftRight />
-          </div>
-          <div className="cursor-pointer">
-            <Pencil />
-          </div>
-        </div>
-      ),
+      cell: ({ row }) => {
+        
+        return <OptionsCell row={row} key={row.original._id} />;
+      },
       enableSorting: false,
       enableHiding: false,
     },
+    // {
+    //   id: "select",
+    //   cell: ({ row }) => {
+    //     return (
+    //       <>
+    //       <div className="flex space-x-3 items-center">
+    //         <Checkbox
+    //           checked={row.getIsSelected()}
+    //           onCheckedChange={(value) => row.toggleSelected(!!value)}
+    //           aria-label="Select row" />
+    //         <OptionsCell row={row} key={row.original._id}/>
+    //       </div>
+    //       </>
+    //     )
+    //   },
+    //   header: ({ table }) => (
+    //     <Checkbox
+    //       checked={
+    //         table.getIsAllPageRowsSelected() ||
+    //         (table.getIsSomePageRowsSelected() && "indeterminate")
+    //       }
+    //       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+    //       aria-label="Select all"
+    //     />
+    //   ),
+    //   enableSorting: false,
+    //   enableHiding: false,
+    // },
     {
-      accessorKey: "id",
-      header: "ID",
-      cell: ({ row }) => <div>{row.getValue("id")}</div>,
-      enableSorting: true,
-    },
-    {
-      accessorKey: "articulo",
-      header: "Artículo",
+      accessorKey: "solicita_concesion",
+      header: "Solicita",
       cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("articulo")}</div>
+        <div className="capitalize">{row.getValue("solicita_concesion")}</div>
       ),
       enableSorting: true,
     },
     {
-      accessorKey: "fecha",
-      header: "Fecha",
-      cell: ({ row }) => <div>{row.getValue("fecha")}</div>,
-      enableSorting: true,
-    },
-    {
-      accessorKey: "tipo",
-      header: "Tipo",
+      accessorKey: "nombre_concesion",
+      header: "Persona",
       cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("tipo")}</div>
+        <div className="capitalize">{row.getValue("nombre_concesion")}</div>
       ),
       enableSorting: true,
     },
     {
-      accessorKey: "noSerie",
-      header: "No. Serie",
-      cell: ({ row }) => <div>{row.getValue("noSerie")}</div>,
-      enableSorting: true,
-    },
-    {
-      accessorKey: "reporta",
-      header: "Reporta",
+      accessorKey: "fecha_concesion",
+      header: "Fecha de la concesion",
       cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("reporta")}</div>
+        <div>{row.getValue("fecha_concesion")}</div>
       ),
       enableSorting: true,
     },
     {
-      accessorKey: "observaciones",
+      accessorKey: "status_concesion",
+      header: "Equipo",
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("status_concesion")}</div>
+      ),
+      enableSorting: true,
+    },
+    {
+      accessorKey: "observacion_concesion",
       header: "Observaciones",
-      cell: ({ row }) => {
-        const observaciones = row.getValue("observaciones") as string[];
-        return (
-          <div className="capitalize">
-            {Array.isArray(observaciones) ? (
-              <ul className="list-disc pl-5">
-                {observaciones.map((obs, index) => (
-                  <li key={index}>{obs}</li>
-                ))}
-              </ul>
-            ) : (
-              <span>{observaciones}</span>
-            )}
-          </div>
-        );
-      },
-      enableSorting: true,
-    },
-    {
-      accessorKey: "recibe",
-      header: "Recibe",
       cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("recibe")}</div>
+        <div className="capitalize">{row.getValue("observacion_concesion")}</div>
       ),
       enableSorting: true,
     },
     {
-      accessorKey: "devolucion",
-      header: "Devolución",
-      cell: ({ row }) => <div>{row.getValue("devolucion")}</div>,
-      enableSorting: true,
-    },
-    {
-      accessorKey: "estado",
-      header: "Estado",
+      accessorKey: "fecha_devolucion_concesion",
+      header: "Fecha de devolucion",
       cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("estado")}</div>
+        <div>{row.getValue("fecha_devolucion_concesion")}</div>
       ),
       enableSorting: true,
     },
-    {
-      accessorKey: "area",
-      header: "Área",
-      cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("area")}</div>
-      ),
-      enableSorting: true,
-    },
-  ];   
+  ];
+  

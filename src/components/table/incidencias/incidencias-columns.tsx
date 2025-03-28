@@ -138,7 +138,7 @@ export type Incidencia = {
               checked={row.getIsSelected()}
               onCheckedChange={(value) => row.toggleSelected(!!value)}
               aria-label="Select row" />
-            <OptionsCell row={row} />
+            <OptionsCell row={row} key={row.original._id}/>
           </div>
           </>
         )

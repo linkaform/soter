@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -27,8 +28,6 @@ import { Imagen } from "@/lib/update-pass";
 import { useCatalogoAreaEmpleado } from "@/hooks/useCatalogoAreaEmpleado";
 import { format } from 'date-fns';
 
-import { useCatalogoAreaEmpleadoApoyo } from "@/hooks/useCatalogoAreaEmpleadoApoyo";
-import { toast } from "sonner";
 import DateTime from "../dateTime";
 import { Loader2 } from "lucide-react";
 import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
@@ -36,6 +35,7 @@ import { useArticulosPerdidos } from "@/hooks/useArticulosPerdidos";
 import { catalogoColores } from "@/lib/utils";
 import { Input } from "../ui/input";
 import { useCatalogoArticulos } from "@/hooks/useCatalogoArticulos";
+import { useGetLockers } from "@/hooks/useGetLockers";
 
 interface AddFallaModalProps {
   	title: string;
@@ -74,20 +74,17 @@ export const AddArticuloModal: React.FC<AddFallaModalProps> = ({
 	setIsSuccess,
 }) => {
 	const [tipoArt, setTipoArt] = useState<string>("");
-	const [catalagoSub, setCatalogoSub] = useState<string[]>([]);
-	const [catalagoArticulos, setArticulos] = useState<string[]>([]);
+	// const [catalagoSub, setCatalogoSub] = useState<string[]>([]);
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState('');
 	const { dataAreas:areas, dataLocations:ubicaciones, isLoadingAreas:loadingAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true,  ubicacionSeleccionada?true:false);
 
-	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado, refetch: refetchAreaEmpleado, error:errorAreEmpleado } = useCatalogoAreaEmpleado(isSuccess);
-	const { data:dataAreaEmpleadoApoyo, isLoading:loadingAreaEmpleadoApoyo, refetch: refetchAreaEmpleadoApoyo, error:errorAEA} = useCatalogoAreaEmpleadoApoyo(isSuccess);
-	const { data:dataArticulos, isLoading:isLoadingArticulos, refetch: refetchArticulos, error:errorArticulos } = useCatalogoArticulos(tipoArt, isSuccess);
+	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado, refetch: refetchAreaEmpleado, } = useCatalogoAreaEmpleado(isSuccess, ubicacionSeleccionada,"Objetos Perdidos" );
+	const { data:dataArticulos, isLoading:isLoadingArticulos,dataArticuloSub, isLoadingArticuloSub } = useCatalogoArticulos(tipoArt, isSuccess);
 	const { createArticulosPerdidosMutation, isLoading} = useArticulosPerdidos("","", "abierto", false)
-	const [isActiveInterno, setIsActiveInterno] = useState(false);
-	const [isActiveExterno, setIsActiveExterno] = useState(false);
+	const { data:responseGetLockers, isLoading:loadingGetLockers } = useGetLockers(ubicacionSeleccionada ?? false,"", "Disponible");
+    const [isActiveInterno, setIsActiveInterno] = useState<string|null>("interno");
 
 	const [evidencia , setEvidencia] = useState<Imagen[]>([]);
-	const [documento , setDocumento] = useState<Imagen[]>([]);
 	const [date, setDate] = useState<Date|"">("");
 
 	const form = useForm<z.infer<typeof formSchema>>({
@@ -118,10 +115,7 @@ export const AddArticuloModal: React.FC<AddFallaModalProps> = ({
 			reset()
 			setDate("")
 			setEvidencia([])
-			setDocumento([])
 			refetchAreaEmpleado()
-			refetchAreaEmpleadoApoyo()
-			refetchArticulos()
 		}
 	},[isSuccess])
 
@@ -130,27 +124,6 @@ export const AddArticuloModal: React.FC<AddFallaModalProps> = ({
 			handleClose()			
 		}
 	},[isLoading])
-
-	useEffect(()=>{
-		if(errorAEA){
-			toast.error(errorAEA.message)
-		}
-		if(errorAreEmpleado){
-			toast.error(errorAreEmpleado.message)
-		}
-		if(errorArticulos){
-			toast.error(errorArticulos.message)
-		}
-	},[errorAEA, errorAreEmpleado, errorArticulos])
-
-	useEffect(()=>{
-		if(dataArticulos && tipoArt){
-			setCatalogoSub(dataArticulos)
-		}
-		if(dataArticulos && !tipoArt){
-			setArticulos(dataArticulos)
-		}
-	},[dataArticulos])
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		if(date){
@@ -172,7 +145,6 @@ export const AddArticuloModal: React.FC<AddFallaModalProps> = ({
                     tipo_articulo_perdido:  values.tipo_articulo_perdido|| "",
                     ubicacion_perdido:  values.ubicacion_perdido|| "",
 				}
-                console.log("INFO ANTES DE ENVIO", formatData)
 				createArticulosPerdidosMutation.mutate({data_article: formatData})
 		}else{
 			form.setError("date_hallazgo_perdido", { type: "manual", message: "Fecha es un campo requerido." });
@@ -183,13 +155,9 @@ export const AddArticuloModal: React.FC<AddFallaModalProps> = ({
 		setIsSuccess(false); 
 	};
 
-    const handleToggleInterno = () => {
-		setIsActiveInterno(!isActiveInterno);
+    const handleToggleInterno = (value:string) => {
+		setIsActiveInterno(value);
 
-	};
-
-	const handleToggleExterno = () => {
-		setIsActiveExterno(!isActiveExterno);
 	};
 
   return (
@@ -332,7 +300,7 @@ export const AddArticuloModal: React.FC<AddFallaModalProps> = ({
 							<Select {...field} className="input"
 								onValueChange={(value:string) => {
 								field.onChange(value); 
-								setCatalogoSub([])
+								// setCatalogoSub([])
 								setTipoArt(value)
 							}}
 							value={field.value} 
@@ -346,7 +314,7 @@ export const AddArticuloModal: React.FC<AddFallaModalProps> = ({
 								)}
 							</SelectTrigger>
 							<SelectContent>
-							{catalagoArticulos?.map((vehiculo:string, index:number) => (
+							{dataArticulos?.map((vehiculo:string, index:number) => (
 								<SelectItem key={index} value={vehiculo}>
 									{vehiculo}
 								</SelectItem>
@@ -373,18 +341,18 @@ export const AddArticuloModal: React.FC<AddFallaModalProps> = ({
 							value={field.value} 
 						>
 							<SelectTrigger className="w-full">
-								{isLoadingArticulos && tipoArt ? (
+								{isLoadingArticuloSub && tipoArt ? (
 									<SelectValue placeholder="Cargando articulos..." />
 								):(<>
-								{catalagoSub.length > 0 ?(<SelectValue placeholder="Selecciona una opción..." />)
+								{dataArticuloSub?.length > 0 ?(<SelectValue placeholder="Selecciona una opción..." />)
 								:(<SelectValue placeholder="Selecciona una categoria para ver las opciones..." />)
 								}
 								</>)}
 								
 							</SelectTrigger>
 							<SelectContent>
-							{catalagoSub.length>0 ? (
-								catalagoSub?.map((item:string, index:number) => {
+							{dataArticuloSub?.length>0 ? (
+								dataArticuloSub?.map((item:string, index:number) => {
 									return (
 										<SelectItem key={index} value={item}>
 											{item}
@@ -470,19 +438,19 @@ export const AddArticuloModal: React.FC<AddFallaModalProps> = ({
         
                     <div className="flex gap-2 flex-col ">
 						<FormLabel className="mb-2">
-							Selecciona una opción:
+						Quién entrega, Selecciona una opción :
 						</FormLabel>
 						<div className="flex gap-2">
 							<div className="flex gap-2 flex-wrap">
 								<Button
 								type="button"
-								onClick={handleToggleInterno}
+								onClick={()=>handleToggleInterno("interno")}
 								className={`px-4 py-2 rounded-md transition-all duration-300 ${
-									isActiveInterno ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
+									isActiveInterno == "interno" ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
 								} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}  //hover:bg-transparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]
 								>
 								<div className="flex flex-wrap items-center">
-									{isActiveInterno ? (
+									{isActiveInterno == "interno" ? (
 									<>
 										<div>Interno</div>
 									</>
@@ -497,13 +465,13 @@ export const AddArticuloModal: React.FC<AddFallaModalProps> = ({
 							<div className="flex gap-2 flex-wrap">
 								<Button
 								type="button"
-								onClick={handleToggleExterno}
+								onClick={()=>handleToggleInterno("externo")}
 								className={`px-4 py-2 rounded-md transition-all duration-300 ${
-									isActiveExterno ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
+									isActiveInterno == "externo" ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
 								} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
 								>
 								<div className="flex flex-wrap items-center">
-									{isActiveExterno ? (
+									{isActiveInterno == "externo" ? (
 									<>
 										<div>Externo</div>
 									</>
@@ -519,7 +487,7 @@ export const AddArticuloModal: React.FC<AddFallaModalProps> = ({
 						
 					</div>
                     <br />
-
+                { isActiveInterno == "interno" ?(<>
                     <FormField
                         control={form.control}
                         name="quien_entrega_interno"
@@ -553,23 +521,28 @@ export const AddArticuloModal: React.FC<AddFallaModalProps> = ({
                             </FormItem>
                         )}
                     />	
-
+                </>):(<>
                     <FormField
                         control={form.control}
                         name="quien_entrega_externo"
                         render={({ field}:any)=> (
                             <FormItem>
                                 <FormLabel className="">
-                                    <span className="text-red-500">*</span> Quien entrega Externo:
+                                    <span className="text-red-500"></span> Quien entrega Externo:
                                 </FormLabel>{" "}
                                 <FormControl>
-                                    <Input placeholder="Nombre" {...field} 
+                                    <Input placeholder="Quien entrega Interno" {...field} 
                                     />
                                 </FormControl>
                             <FormMessage />
                             </FormItem>
                         )}
                     />
+                </>)
+                }
+                    
+
+                   
 
                     <FormField
                         control={form.control}
@@ -585,18 +558,25 @@ export const AddArticuloModal: React.FC<AddFallaModalProps> = ({
                                 value={field.value} 
                             >
                                 <SelectTrigger className="w-full">
-                                    {loadingAreaEmpleadoApoyo?(<>
+                                    {loadingGetLockers ? (<>
                                         <SelectValue placeholder="Cargando opciones..." />
                                     </>):(<>
-                                        <SelectValue placeholder="Selecciona una opcion" />
+                                        <SelectValue placeholder="Selecciona una opción" />
                                     </>)}
                                 </SelectTrigger>
                                 <SelectContent>
-                                {dataAreaEmpleadoApoyo?.map((vehiculo:string, index:number) => (
-                                    <SelectItem key={index} value={vehiculo}>
-                                        {vehiculo}
+                                {responseGetLockers ? <>
+                                    {responseGetLockers?.map((locker:any, index:number) => (
+                                        <SelectItem key={index} value={locker.locker_id}>
+                                            {locker.locker_id}
+                                        </SelectItem>
+                                    ))}
+                                </>: 
+                                    <SelectItem key={"0"} value={"0"} disabled>
+                                        Selecciona una ubicación
                                     </SelectItem>
-                                ))}
+                                }
+                                
                                 </SelectContent>
                             </Select>
                                 </FormControl>

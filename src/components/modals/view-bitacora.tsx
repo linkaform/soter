@@ -7,10 +7,11 @@ import {
 	DialogTitle,
 	DialogTrigger,
 } from "../ui/dialog";
-import { Separator } from "../ui/separator";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import { Bitacora_record } from "../table/bitacoras/bitacoras-columns";
 import Image from "next/image";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
+import { Card, CardContent } from "../ui/card";
 
 interface ViewListBitacoraModalProps {
 	title: string;
@@ -26,13 +27,13 @@ export const ViewListBitacoraModal: React.FC<ViewListBitacoraModalProps> = ({
 return (
 	<Dialog >
 		<DialogTrigger asChild>{children}</DialogTrigger>
-		<DialogContent className="max-w-2xl max-h-[90vh] overflow-scroll">
-			<DialogHeader>
-				<DialogTitle className="text-2xl text-center  font-bold my-5">
-					{title}
-				</DialogTitle>
-			</DialogHeader>
-			<div className="flex flex-col space-y-5">
+		<DialogContent className="max-w-3xl overflow-y-auto max-h-[80vh] flex flex-col" aria-describedby="">
+        <DialogHeader className="flex-shrink-0">
+          <DialogTitle className="text-2xl text-center font-bold">
+            {title}
+          </DialogTitle>
+        </DialogHeader>
+			<div className="flex flex-col space-y-5 overflow-y-auto">
 				<div className="flex justify-between flex-col sm:flex-row sm:space-x-5 space-y-5 sm:space-y-0">
 					<div className="w-full flex gap-2 ">
 					<p className="font-bold flex-shrink-0">Nombre Completo : </p>
@@ -57,49 +58,69 @@ return (
 				</div>
 
 				<div className="flex justify-between flex-col sm:flex-row  sm:space-x-5 space-y-5 sm:space-y-0">
-				<div className="w-full flex gap-2 ">
+					<div className="w-full flex gap-2 ">
 						<p className="font-bold flex-shrink-0">Visita a : </p>
 						<p > {data?.visita_a[0].nombre}</p>
 					</div>
+					
 				</div>
-				<Separator className="my-4" />
-				<div className="flex">
-					{data?.foto_url!== undefined ?(
-							<><div className="w-full ">
-									<p className="font-bold mb-3">Fotografia:</p>
-									<div className="w-full flex justify-center">
-											<Image
-											src={data?.foto_url  } 
-											alt="Imagen"
-											width={150}
-											height={150}
-											className=" h-32 object-contain rounded-lg" 
-											/>
-									</div>
-							</div>
-							</>
-					):null}
+				<div className="flex justify-between gap-2">
+						{data?.foto_url!== undefined ?(
+								<><div className="w-full ">
+										<p className="font-bold mb-1">Fotografia:</p>
+										<div className="flex justify-center">
+											<Carousel className="w-36 ">
+												<CarouselContent>
+													<CarouselItem key={0}>
+														<Card>
+															<CardContent className="flex aspect-square items-center justify-center p-1">
+																<Image
+																	width={100}
+																	height={100}
+																	src= {data.foto_url || "/nouser.svg"}
+																	alt="Imagen"
+																	className="w-42 h-42 object-cover bg-gray-200 rounded-lg" 
+																/>
+															</CardContent>
+														</Card>
+													</CarouselItem>
+												</CarouselContent>
+												<CarouselPrevious />
+												<CarouselNext />
+											</Carousel>
+										</div>
+								</div>
+								</>
+						):null}
 
-
-					{data?.identificacion_url!== undefined ?(
-							<><div className="w-full ">
-											<p className="font-bold mb-3">Identificacion:</p>
-											<div className="w-full flex justify-center">
-													<Image
-													src={data?.identificacion_url  } 
-													alt="Imagen"
-													width={150}
-													height={150}
-													className=" h-32 object-contain rounded-lg" 
-													/>
-											</div>
-									</div>
-							</>
-					):null}
-				</div>
-
-				<Separator className="my-4" />
-
+						{data?.file_url!== undefined ?(
+								<><div className="w-full ">
+								<p className="font-bold mb-1">Fotografia:</p>
+								<div className="flex justify-center">
+									<Carousel className="w-36 ">
+										<CarouselContent>
+											<CarouselItem key={0}>
+												<Card>
+													<CardContent className="flex aspect-square items-center justify-center p-0">
+														<Image
+															width={100}
+															height={100}
+															src= {data.file_url || "/nouser.svg"}
+															alt="Imagen"
+															className="w-42 h-42 object-cover bg-gray-200 rounded-lg" 
+														/>
+													</CardContent>
+												</Card>
+											</CarouselItem>
+										</CarouselContent>
+										<CarouselPrevious />
+										<CarouselNext />
+									</Carousel>
+								</div>
+						</div>
+						</>
+						):null}
+					</div>
 				{data?.equipos.length>0 && (
 				<div className="">
 					<p className="text-lg font-bold mb-2">Equipos</p>

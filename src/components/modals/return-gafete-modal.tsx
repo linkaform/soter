@@ -11,8 +11,9 @@ import {
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useAsignarGafete } from "@/hooks/useAsignarGafete";
-import { dataGafetParamas } from "@/lib/asignar-gafete";
+
 import { toast } from "sonner";
+import { dataGafetParamas } from "@/lib/bitacoras";
 
 interface AddBadgeModalProps {
   title: string;

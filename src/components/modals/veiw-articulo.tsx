@@ -60,7 +60,7 @@ export const ViewArticulo: React.FC<ViewArtModalProps> = ({
                 <div className=" flex justify-between">
                     <div className="w-full flex gap-2">
                     <p className="font-bold">Estatus : 
-                    {data?.estatus_perdido =="donado"?(<span className="text-green-600"> {capitalizeFirstLetter( data?.estatus_perdido)}</span>):(
+                  { data?.estatus_perdido =="donado"|| data?.estatus_perdido =="entregado"?(<span className="text-green-600"> {capitalizeFirstLetter( data?.estatus_perdido)}</span>):(
                       <span className="text-red-600"> {capitalizeFirstLetter( data?.estatus_perdido)}</span>
                     )}
                     </p>

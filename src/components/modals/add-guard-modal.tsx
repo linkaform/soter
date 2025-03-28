@@ -32,13 +32,7 @@ export const AddGuardModal: React.FC<AddGuardModalProps> = ({
   children,
 }) => {
   const { supportGuards, addSupportGuardMutation, isLoading } = useGetSupportGuards();
-
-    const { location, area, checkin_id } = useShiftStore();
-  
-
-
-
-
+  const { location, area, checkin_id } = useShiftStore();
   const [selectedGuard, setSelectedGuard] = useState<any>("");
   const [searchText, setSearchText] = useState<string>("");
 

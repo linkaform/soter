@@ -1,5 +1,5 @@
 import { asignarGafete, dataGafetParamas, getListBitacora } from "@/lib/bitacoras";
-import { crearFalla, crearSeguimientoFalla, deleteFalla, InputFalla, inputSeguimientoFalla, updateFalla } from "@/lib/fallas";
+import { crearFalla, InputFalla } from "@/lib/fallas";
 import { getStats } from "@/lib/get-stats";
 import { errorMsj } from "@/lib/utils";
 import { useShiftStore } from "@/store/useShiftStore";
@@ -29,7 +29,7 @@ export const useBitacoras = (location:string, area:string,prioridades:string[], 
         staleTime: 1000 * 60 * 5,
     });
 
-     //Salida
+    //Salida
      const doOutMutation = useMutation({
         mutationFn: async ({ data_failure} : { data_failure: InputFalla }) => {
             const response = await crearFalla(data_failure);

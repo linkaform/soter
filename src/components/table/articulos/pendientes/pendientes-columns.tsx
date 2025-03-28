@@ -2,42 +2,42 @@ import {
   ColumnDef, 
 } from "@tanstack/react-table";
 import { Imagen } from "@/lib/update-pass";
-import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { ViewArticulo } from "@/components/modals/veiw-articulo";
 import { Eye } from "lucide-react";
 import { EditarArticuloModal } from "@/components/modals/editar-article-modal";
 import { LoadingModal } from "@/components/modals/loading-modal";
+import { DevolucionArticuloModal } from "@/components/modals/devolucion-article-modal";
 
 
 export interface Articulo_perdido_record {
-  articulo_seleccion?: string
-  area_perdido?: string
+  articulo_seleccion: string
+  area_perdido: string
   folio: string
-  color_perdido?: string
-  ubicacion_perdido?: string
+  color_perdido: string
+  ubicacion_perdido: string
   foto_perdido: Imagen[]
-  tipo_articulo_perdido?: string
+  tipo_articulo_perdido: string
   comentario_perdido: string
   estatus_perdido: string
-  quien_entrega?: string
-  locker_perdido?: string
-  quien_entrega_interno?: string
-  quien_entrega_externo?: string
-  descripcion?: string
+  quien_entrega: string
+  locker_perdido: string
+  quien_entrega_interno: string
+  quien_entrega_externo: string
+  descripcion: string
   date_hallazgo_perdido: string
   _id: string
-  articulo_perdido?: string
-  identificacion_recibe_perdido?: Imagen[]
-  telefono_recibe_perdido?: string
-  foto_recibe_perdido?: Imagen[]
-  date_entrega_perdido?: string
-  recibe_perdido?: string
+  articulo_perdido: string
+  identificacion_recibe_perdido: Imagen[]
+  telefono_recibe_perdido: string
+  foto_recibe_perdido: Imagen[]
+  date_entrega_perdido: string
+  recibe_perdido: string
 }
 
 
-const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
+const OptionsCell: React.FC<{ row: any }> = ({ row}) => {
   const articulo = row.original;
   const [showLoadingModal, setShowLoadingModal] = useState(false);
 
@@ -53,39 +53,14 @@ const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
 
 		<LoadingModal isOpen={showLoadingModal} text="Cargando..."/>
 		
-		<EditarArticuloModal
+		<EditarArticuloModal 
         title="Editar Artículo"
         data={articulo} setShowLoadingModal={setShowLoadingModal} showLoadingModal={showLoadingModal}/>
 
-      {/* <ViewFalla 
-        title="Información de la Falla"
-        data={incidencia} isSuccess={false}>
-          <div className="cursor-pointer">
-            <Eye /> 
-          </div>
-      </ViewFalla>
-      
-      <LoadingModal isOpen={showLoadingModal} text="Cargando..."/>
+		<DevolucionArticuloModal 
+        title="Devolver Artículo"
+        data={articulo} />
 
-      <EditarFallaModal
-        title="Editar Falla"
-        data={incidencia} setShowLoadingModal={setShowLoadingModal} showLoadingModal={showLoadingModal}/>
-       
-      <SeguimientoFallaModal
-              title="Seguimiento Falla"
-              data={incidencia} >
-          <div className="cursor-pointer">
-              <Check />   
-          </div>
-      </SeguimientoFallaModal>
-
-      <EliminarFallaModal
-        title="Eliminar Falla"
-        arrayFolios={[incidencia.folio]}>
-          <div className="cursor-pointer">
-              <Trash2 />   
-          </div>
-      </EliminarFallaModal> */}
     </div>
   );
 };
@@ -93,55 +68,43 @@ const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
 
 export const pendientesColumns: ColumnDef<Articulo_perdido_record>[] = [
     {
-      id: "select",
+      id: "options",
+      header: "Opciones",
       cell: ({ row }) => {
-        return (
-          <>
-          <div className="flex space-x-3 items-center">
-            <Checkbox
-              checked={row.getIsSelected()}
-              onCheckedChange={(value) => row.toggleSelected(!!value)}
-              aria-label="Select row" />
-            <OptionsCell row={row}/>
-          </div>
-          </>
-        )
+        
+        return <OptionsCell row={row} key={row.original._id} />;
       },
-      header: ({ table }) => (
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      ),
       enableSorting: false,
       enableHiding: false,
     },
     // {
-    //   id: "options",
-    //   header: "Opciones",
-    //   cell: () => (
-    //     <div className="flex space-x-2">
-    //       {/* Ícono de visualizar */}
-    //       <div className="cursor-pointer">
-    //         <Eye />
+    //   id: "select",
+    //   cell: ({ row }) => {
+    //     return (
+    //       <>
+    //       <div className="flex space-x-3 items-center">
+    //         <Checkbox
+    //           checked={row.getIsSelected()}
+    //           onCheckedChange={(value) => row.toggleSelected(!!value)}
+    //           aria-label="Select row" />
+    //         <OptionsCell row={row} key={row.original._id}/>
     //       </div>
-    //       {/* Ícono de devolver */}
-    //       <div className="cursor-pointer">
-    //         <ArrowLeftRight />
-    //       </div>
-    //       {/* Ícono de editar */}
-    //       <div className="cursor-pointer">
-    //         <Pencil />
-    //       </div>
-    //     </div>
+    //       </>
+    //     )
+    //   },
+    //   header: ({ table }) => (
+    //     <Checkbox
+    //       checked={
+    //         table.getIsAllPageRowsSelected() ||
+    //         (table.getIsSomePageRowsSelected() && "indeterminate")
+    //       }
+    //       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+    //       aria-label="Select all"
+    //     />
     //   ),
     //   enableSorting: false,
     //   enableHiding: false,
-    // },     
+    // },
     {
       accessorKey: "articulo_perdido",
       header: "Nombre",
@@ -209,9 +172,8 @@ export const pendientesColumns: ColumnDef<Articulo_perdido_record>[] = [
       accessorKey: "quien_entrega_externo",
       header: "Reporta",
       cell: ({ row }) => {
-		console.log("QUEEE", row.original.quien_entrega_externo,  row.original.quien_entrega_interno)
 		return (
-			<div className="capitalize">{row.original.quien_entrega_externo!=="" ? row.original.quien_entrega_interno : ""}</div>
+			<div className="capitalize">{row.original.quien_entrega_externo!=="" ? row.original.quien_entrega_externo: row.original.quien_entrega_interno }</div>
 		  )
 	  },
       enableSorting: true,

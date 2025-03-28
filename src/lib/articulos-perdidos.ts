@@ -21,7 +21,7 @@ export interface InputArticuloPerdido {
 export interface InputDevolver {
     estatus_perdido: string,
     foto_recibe_perdido: Imagen[],
-    identificacion_recibe_perdido:string,
+    identificacion_recibe_perdido:Imagen[],
     recibe_perdido: string,
     telefono_recibe_perdido	: string,
 }

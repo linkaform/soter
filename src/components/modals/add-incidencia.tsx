@@ -30,17 +30,17 @@ import { format } from 'date-fns';
 import DateTime from "../dateTime";
 import LoadFile from "../upload-file";
 import { Loader2 } from "lucide-react";
-import { AccionesTomadas, Depositos, InputIncidencia, PersonasInvolucradas } from "@/lib/incidencias";
+import { AccionesTomadas, Depositos, PersonasInvolucradas } from "@/lib/incidencias";
 import PersonasInvolucradasList from "../personas-involucradas-list";
 import AccionesTomadasList from "../acciones-tomadas-list";
 import { toast } from "sonner";
 import { useShiftStore } from "@/store/useShiftStore";
 import { useInciencias } from "@/hooks/useIncidencias";
 import DepositosList from "../depositos-list";
+import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
 
 interface AddIncidenciaModalProps {
   	title: string;
-	data: any;
 	isSuccess: boolean;
 	setIsSuccess: Dispatch<SetStateAction<boolean>>;
 	onClose: ()=> void;
@@ -94,22 +94,20 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	isSuccess,
 	setIsSuccess,
 }) => {
-	const [modalData, setModalData] = useState<InputIncidencia | null>(null);
-	const { area, location, isLoading } = useShiftStore();
-	const [ubicaciones] = useState<any| string[]>([location]);
-	const [areas] = useState<any| string[]>([area]);
-
+	const { location, isLoading } = useShiftStore();
 	const [evidencia , setEvidencia] = useState<Imagen[]>([]);
 	const [documento , setDocumento] = useState<Imagen[]>([]);
 	const [date, setDate] = useState<Date|"">("");
 
 	const [incidencia, setIncidencia] = useState("")
-
+	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState("");
+	const { dataAreas:areas, dataLocations:ubicaciones, isLoadingAreas:loadingAreas} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true,  ubicacionSeleccionada?true:false);
+	const [catAreas, setCatAreas] = useState<any| string[]>(areas);
 	const [personasInvolucradas, setPersonasInvolucradas] = useState<PersonasInvolucradas[]>([])
 	const [accionesTomadas, setAccionesTomadas] = useState<AccionesTomadas[]>([])
 	const [depositos, setDepositos] = useState<Depositos[]>([])
-	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado, error:errorAreEmpleado } = useCatalogoAreaEmpleado(isSuccess);
-	const { createIncidenciaMutation, catIncidencias, isLoadingCatIncidencias , loading} = useInciencias([], true);
+	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado, error:errorAreEmpleado } = useCatalogoAreaEmpleado(isSuccess, location, "Incidencias");
+	const { createIncidenciaMutation, catIncidencias, isLoadingCatIncidencias , loading} = useInciencias([], false, isSuccess);
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -141,15 +139,10 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 			setEvidencia([])
 			setDocumento([])
 		}
-	},[isSuccess])
-
-	// useEffect(()=>{
-	// 	if(responseCreateIncidencia?.status_code==201){
-	// 		toast.success("Falla creada correctamente")
-	// 		refetchTableFallas()
-	// 		handleClose()
-	// 	}
-	// },[responseCreateIncidencia])
+		if(areas){
+			setCatAreas(areas)
+		}
+	},[isSuccess, areas])
 
 	useEffect(()=>{
 		if(errorAreEmpleado){
@@ -157,12 +150,6 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 			handleClose()
 		}
 	},[errorAreEmpleado])
-
-	useEffect(()=>{
-		if(modalData){
-			createIncidenciaMutation.mutate({ data_incidencia: modalData });
-		}
-	},[modalData])
 
 	useEffect(()=>{
 		if(!loading){
@@ -191,7 +178,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 					notificacion_incidencia:values.notificacion_incidencia||"",
 					datos_deposito_incidencia: depositos||[],
 				}
-				 setModalData(formatData);
+				createIncidenciaMutation.mutate({ data_incidencia: formatData });
 		}else{
 			form.setError("fecha_hora_incidencia", { type: "manual", message: "Fecha es un campo requerido." });
 		}
@@ -225,6 +212,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 										<Select {...field} className="input"
 											onValueChange={(value:string) => {
 											field.onChange(value); 
+											setUbicacionSeleccionada(value)
 										}}
 										value={field.value} 
 									>
@@ -258,14 +246,29 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 										value={field.value} 
 									>
 										<SelectTrigger className="w-full">
-											<SelectValue placeholder="Selecciona una ubicacion" />
+											{loadingAreas ? (
+												<SelectValue placeholder="Cargando áreas..." />
+											):(
+												<SelectValue placeholder="Selecciona una opción" />
+											)}
 										</SelectTrigger>
 										<SelectContent>
-										{areas?.map((vehiculo:string, index:number) => (
-											<SelectItem key={index} value={vehiculo}>
-												{vehiculo}
+										{catAreas? (
+											<>
+											{catAreas?.map((vehiculo:string, index:number) => (
+												<SelectItem key={index} value={vehiculo}>
+													{vehiculo}
+												</SelectItem>
+											))}
+											</>
+										):(
+											<>
+											<SelectItem key={0} value={"0"} disabled>
+												No hay opciones disponibles
 											</SelectItem>
-										))}
+											</>
+										)}
+										
 										</SelectContent>
 									</Select>
 										</FormControl>

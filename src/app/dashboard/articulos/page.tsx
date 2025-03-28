@@ -3,19 +3,34 @@
 import React, { useState } from "react";
 import { Archive, CircleHelp } from "lucide-react";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
-import { ConcecionadosTable } from "@/components/table/articulos/concecionados/table";
 import PageTitle from "@/components/page-title";
 import { useArticulosPerdidos } from "@/hooks/useArticulosPerdidos";
 import ArticulosPerdidosTable from "@/components/table/articulos/pendientes/table";
 import { AddArticuloModal } from "@/components/modals/add-article-lost";
+import ArticulosConTable from "@/components/table/articulos/concecionados/table";
+import { useArticulosConcesionados } from "@/hooks/useArticulosConcesionados";
+import { AddArticuloConModal } from "@/components/modals/add-article.con";
+import PaqueteriaTable from "@/components/table/articulos/paqueteria/table";
+import { usePaqueteria } from "@/hooks/usePaqueteria";
+import { useShiftStore } from "@/store/useShiftStore";
 
 const ArticulosPage = () => {
-  const [stateArticle, setStateArticle] = useState("Pendientes");
-  const { listArticulosPerdidos, isLoadingListArticulosPerdidos , stats, statsError} = useArticulosPerdidos("", "", "pendiente", true);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [modalData] = useState<any>(null);
-  const [selectedState, setSelectedState] = useState<string>("");
-  const [selectedArticulos, setSelectedArticulos]= useState<string[]>([]);
+	const [stateArticle, setStateArticle] = useState("pendiente");
+	
+	const {location, area} = useShiftStore()
+	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
+	const [areaSeleccionada, setAreaSeleccionada] = useState(area)
+	const [all, setAll] = useState(false)
+
+	const { listArticulosPerdidos, isLoadingListArticulosPerdidos , stats} = useArticulosPerdidos(ubicacionSeleccionada, areaSeleccionada, stateArticle, true);
+	const { listArticulosCon, isLoadingListArticulosCon} = useArticulosConcesionados( true);
+	const { listPaqueteria, isLoadingListPaqueteria} = usePaqueteria("", "", "guardado", true);
+
+	const [isSuccess, setIsSuccess] = useState(false);
+	const [modalData] = useState<any>(null);
+	const [selectedArticulos, setSelectedArticulos]= useState<string[]>([]);
+
+	const [isSuccessCon, setIsSuccessCon] = useState(false);
 
   const openModal = () => {
 	setIsSuccess(true);  
@@ -23,6 +38,15 @@ const ArticulosPage = () => {
   const closeModal = () => {
 		setIsSuccess(false);  
 	};
+
+
+	const openModalCon = () => {
+		setIsSuccessCon(true);  
+		};
+	const closeModalCon = () => {
+		setIsSuccessCon(false);  
+	};
+	
   return (
     <div className="">
 		
@@ -54,44 +78,65 @@ const ArticulosPage = () => {
 					</div>
 					<span className="text-md">Artículos perdidos</span>
 				</div>
+        <div className="border p-4 px-12 py-1 rounded-md">
+					<div className="flex gap-6"><CircleHelp className="text-primary w-10 h-10"/>
+						<span className="flex items-center font-bold text-4xl"> {stats?.articulos_perdidos}</span>
+					</div>
+					<div className="flex items-center space-x-0">
+						<div className="h-1 w-1/2 bg-cyan-100"></div>
+						<div className="h-1 w-1/2 bg-blue-500"></div>
+					</div>
+					<span className="text-md">Paqueteria</span>
+				</div>
 			</div>
 		</div>
 
           <Tabs defaultValue="Perdidos" className="w-full">
             
             <TabsContent value="Perdidos">
-              {stateArticle === "Pendientes" && (
                 <div className="">
                   <ArticulosPerdidosTable data={listArticulosPerdidos} isLoadingListArticulosPerdidos={isLoadingListArticulosPerdidos} 
-				   openModal={openModal} setSelectedState={setSelectedState} selectedArticulos={selectedArticulos} setSelectedArticulos={setSelectedArticulos}/>
+				   openModal={openModal} setStateArticle={setStateArticle} selectedArticulos={selectedArticulos} setSelectedArticulos={setSelectedArticulos}
+				   ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} setUbicacionSeleccionada={setUbicacionSeleccionada} 
+				   setAreaSeleccionada={setAreaSeleccionada} setAll={setAll} all={all} 
+				   />
                 </div>
-              )}
-
-              {/* {stateArticle === "Entregados" && (
-                <div className="">
-                  <ArticulosEntregadosTable />
-                </div>
-              )}
-
-              {stateArticle === "Donados" && (
-                <div className="">
-                  <ArticulosDonadosTable />
-                </div>
-              )} */}
+             
             </TabsContent>
             <TabsContent value="Concecionados">
               <div className="">
-                <ConcecionadosTable />
+                <ArticulosConTable data={listArticulosCon} isLoadingListArticulosCon={isLoadingListArticulosCon} 
+				   openModal={openModalCon} setStateArticle={setStateArticle} selectedArticulos={selectedArticulos} setSelectedArticulos={setSelectedArticulos}
+				   ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} setUbicacionSeleccionada={setUbicacionSeleccionada} 
+				   setAreaSeleccionada={setAreaSeleccionada} setAll={setAll} all={all} 
+				   />
               </div>
             </TabsContent>
+
+            <TabsContent value="Paqueteria"> 
+              <div className="">
+                <PaqueteriaTable data={listPaqueteria} isLoadingListPaqueteria={isLoadingListPaqueteria} 
+				    openModal={openModalCon} setStateArticle={setStateArticle} selectedArticulos={selectedArticulos} setSelectedArticulos={setSelectedArticulos}
+					ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} setUbicacionSeleccionada={setUbicacionSeleccionada} 
+				   setAreaSeleccionada={setAreaSeleccionada} setAll={setAll} all={all} />
+
+              </div>
+            </TabsContent>
+
           </Tabs>
 
 		  <AddArticuloModal
-			title={"Crear Artículo"}
+			title={"Crear Artículo Perdido"}
 			data={modalData}
 			isSuccess={isSuccess}
 			setIsSuccess={setIsSuccess}
 			onClose={closeModal}
+		/>
+		<AddArticuloConModal
+			title={"Crear Artículo Concesionado"}
+			isSuccess={isSuccessCon}
+			setIsSuccess={setIsSuccessCon}
+			onClose={closeModalCon}
 		/>
         </div>
       </div>

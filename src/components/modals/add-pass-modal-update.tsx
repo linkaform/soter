@@ -13,7 +13,6 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { CalendarClock, Loader2 } from "lucide-react";
 import { Access_pass_update } from "@/lib/update-pass";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
-import { useUpdatePaseFull } from "@/hooks/useUpdatePaseFull";
 import { GeneratedPassModal } from "./generated-pass-modal";
 import CalendarDays from "../calendar-days";
 import { renameKeyTipoComentario } from "@/lib/utils";

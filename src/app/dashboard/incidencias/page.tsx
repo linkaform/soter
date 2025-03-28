@@ -22,7 +22,7 @@ const IncidenciasPage = () => {
   const [selectedFallas, setSelectedFallas]= useState<string[]>([]);
   const [selectedIncidencias, setSelectedIncidencias]= useState<string[]>([]);
   const { data:dataFallas,isLoading:isLoadingFallas, refetch:refetchFallas} = useGetFallas("", "","abierto");
-  const { listIncidencias, refetchTableIncidencias, isLoadingListIncidencias , stats, statsError} = useInciencias([], true);
+  const { listIncidencias, refetchTableIncidencias, isLoadingListIncidencias , stats} = useInciencias([],  true, false);
 
   useEffect(()=>{
     if(prioridades){
@@ -98,7 +98,6 @@ const IncidenciasPage = () => {
 		/>
       	<AddIncidenciaModal
 			title={"Crear Incidencia"}
-			data={modalData}
 			isSuccess={isSuccessIncidencia}
 			setIsSuccess={setIsSuccessIncidencia}
 			onClose={closeModal}

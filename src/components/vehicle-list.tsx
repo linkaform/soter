@@ -92,7 +92,6 @@ const VehicleList:React.FC<VehicleListProps> = ({ account_id, vehicles, setVehic
     }, []);
 
     useEffect(() => {
-      console.log("QUE ESTA PASANDO", dataVehiculos, tipoVehiculoState,catalogSearch=="marcas")
       if(!tiposCat && dataVehiculos){
         setTiposCat(dataVehiculos)
       }

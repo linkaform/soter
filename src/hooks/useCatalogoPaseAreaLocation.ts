@@ -15,7 +15,7 @@ export const useCatalogoPaseAreaLocation = (location:string, enableLocation:bool
     queryKey: ["getCatalogoPaseArea", location], 
     enabled:enableArea,
     queryFn: async () => {
-        const data = await getCatalogoPasesArea({ location }); 
+        const data = await getCatalogoPasesArea(location); 
         const textMsj = errorMsj(data) 
         if (textMsj){
           throw new Error (`Error al obtener catalogo de areas, Error: ${data.error}`);
@@ -36,6 +36,7 @@ export const useCatalogoPaseAreaLocation = (location:string, enableLocation:bool
     enabled:enableLocation,
     queryFn: async () => {
         const data = await getCatalogoPasesLocation(); 
+
         const textMsj = errorMsj(data) 
         if (textMsj){
           throw new Error (`Error al obtener catalogo de locations, Error: ${data.error}`);

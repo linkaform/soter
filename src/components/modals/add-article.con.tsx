@@ -1,5 +1,4 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-//eslint-disable react-hooks/exhaustive-deps
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -24,86 +23,63 @@ import { useForm } from "react-hook-form";
 import { Textarea } from "../ui/textarea";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import LoadImage from "../upload-Image";
-import { Imagen } from "@/lib/update-pass";
-import { useCatalogoAreaEmpleado } from "@/hooks/useCatalogoAreaEmpleado";
 import { format } from 'date-fns';
 
 import { useCatalogoAreaEmpleadoApoyo } from "@/hooks/useCatalogoAreaEmpleadoApoyo";
-import { useCatalogoFallas } from "@/hooks/useCatalogoFallas";
 import DateTime from "../dateTime";
-import LoadFile from "../upload-file";
 import { Loader2 } from "lucide-react";
-import { useFallas } from "@/hooks/useFallas";
 import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
+import { useArticulosConcesionados } from "@/hooks/useArticulosConcesionados";
+import { useCatalogoConcesion } from "@/hooks/useCatalogoConcesion";
 import { useShiftStore } from "@/store/useShiftStore";
 
 interface AddFallaModalProps {
   	title: string;
-	data: any;
 	isSuccess: boolean;
 	setIsSuccess: Dispatch<SetStateAction<boolean>>;
 	onClose: ()=> void;
 }
 
 const formSchema = z.object({
-	falla: z.string().optional(),
-	falla_caseta: z.string().optional(),
-	falla_comentarios: z.string().min(1, { message: "Comentario es obligatorio" }), 
-	falla_documento: z.array(
-	  z.object({
-		file_url: z.string(),
-		file_name: z.string(),
-	  })
-	).optional(),
-	falla_estatus: z.string().optional(),
-	falla_evidencia: z.array(
-	  z.object({
-		file_url: z.string(),
-		file_name: z.string(),
-	  })
-	).optional(),
-	falla_fecha_hora: z.string().optional(), 
-	falla_objeto_afectado: z.string().optional(),
-	falla_reporta_nombre: z.string().min(1, { message: "El nombre del reportante es obligatorio" }), 
-	falla_responsable_solucionar_nombre: z.string().optional(),
-	falla_ubicacion: z.string().min(1, { message: "La ubicación es obligatoria" }),
+    status_concesion:z.string().optional(),
+    persona_nombre_concesion:z.string().optional(),
+	ubicacion_concesion: z.string().optional(),
+	caseta_concesion: z.string().optional(),
+	fecha_concesion: z.string().optional(),
+	solicita_concesion: z.string().min(2, {
+		message: "Este campo es requerido.",
+	}),
+	area_concesion: z.string().optional(),
+	equipo_concesion: z.string().optional(), 
+	observacion_concesion: z.string().optional(), 
 });
 
-export const AddFallaModal: React.FC<AddFallaModalProps> = ({
+export const AddArticuloConModal: React.FC<AddFallaModalProps> = ({
   	title,
 	isSuccess,
 	setIsSuccess,
 }) => {
-	const [subconcepto, setSubConcepto] = useState<string>("");
-	const [catalagoSub, setCatalogoSub] = useState<string[]>([]);
-	const [catalagoFallas, setFallas] = useState<string[]>([]);
-	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState('');
+	const [conSelected, setConSelected] = useState<string>("");
+	const {location} = useShiftStore()
+	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
 	const { dataAreas:areas, dataLocations:ubicaciones, isLoadingAreas:loadingAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true,  ubicacionSeleccionada?true:false);
-	const { location } = useShiftStore();
-	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado, refetch: refetchAreaEmpleado,  } = useCatalogoAreaEmpleado(isSuccess, location, "Incidencias");
-	const { data:dataAreaEmpleadoApoyo, isLoading:loadingAreaEmpleadoApoyo, refetch: refetchAreaEmpleadoApoyo, } = useCatalogoAreaEmpleadoApoyo(isSuccess);
-	const { data:dataFallas, isLoading:isLoadingFallas, refetch: refetchFallas} = useCatalogoFallas(subconcepto, isSuccess);
-	const { createFallaMutation, isLoading} = useFallas("","", "abierto", false)
-
-	const [evidencia , setEvidencia] = useState<Imagen[]>([]);
-	const [documento , setDocumento] = useState<Imagen[]>([]);
+	const { data:dataAreaEmpleadoApoyo, isLoading:loadingAreaEmpleadoApoyo,} = useCatalogoAreaEmpleadoApoyo(isSuccess);
+	const { createArticulosConMutation, isLoading} = useArticulosConcesionados(false)
+    const { dataCon, dataConSub, isLoadingCon, isLoadingConSub  } = useCatalogoConcesion(ubicacionSeleccionada ,conSelected,  isSuccess);
 	const [date, setDate] = useState<Date|"">("");
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-		falla: "",
-		falla_caseta: "",
-		falla_comentarios: "",
-		falla_documento:[],
-		falla_estatus: "abierto",
-		falla_evidencia:[],
-		falla_fecha_hora:date.toString(),
-		falla_objeto_afectado: "",
-		falla_reporta_nombre: "",
-		falla_responsable_solucionar_nombre: "",
-		falla_ubicacion: "",
+            status_concesion:"",
+            persona_nombre_concesion:"",
+            ubicacion_concesion:"",
+            caseta_concesion:"",
+            fecha_concesion:"",
+            solicita_concesion:"",
+            area_concesion:"",
+            equipo_concesion:"", 
+            observacion_concesion:"", 
 		},
 	});
 
@@ -113,11 +89,6 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 		if(isSuccess){
 			reset()
 			setDate("")
-			setEvidencia([])
-			setDocumento([])
-			refetchAreaEmpleado()
-			refetchAreaEmpleadoApoyo()
-			refetchFallas()
 		}
 	},[isSuccess])
 
@@ -127,36 +98,23 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 		}
 	},[isLoading])
 
-
-	useEffect(()=>{
-		if(dataFallas && subconcepto){
-			setCatalogoSub(dataFallas)
-		}
-		if(dataFallas && !subconcepto){
-			setFallas(dataFallas)
-		}
-	},[dataFallas])
-
 	function onSubmit(values: z.infer<typeof formSchema>) {
-		let formattedDate=""
 		if(date){
-			formattedDate = format( new Date(date), 'yyyy-MM-dd HH:mm:ss');
+			const formattedDate = format( new Date(date), 'yyyy-MM-dd HH:mm:ss');
 			const formatData ={
-				falla:values.falla||"",
-				falla_caseta: values.falla_caseta||"",
-				falla_comentarios:values.falla_comentarios||"",
-				falla_documento:documento,
-				falla_estatus:"abierto",
-				falla_evidencia:evidencia,
-				falla_fecha_hora: formattedDate||"",
-				falla_objeto_afectado: values.falla_objeto_afectado||"",
-				falla_reporta_nombre:values.falla_reporta_nombre||"",
-				falla_responsable_solucionar_nombre: values.falla_responsable_solucionar_nombre||"",
-				falla_ubicacion:values.falla_ubicacion||"",
+                    status_concesion: "abierto",
+                    persona_nombre_concesion:values.persona_nombre_concesion??"",
+                    ubicacion_concesion: values.ubicacion_concesion ?? "",
+                    caseta_concesion: values.caseta_concesion ?? "",
+                    fecha_concesion: formattedDate?? "",
+                    solicita_concesion: values.solicita_concesion ?? "persona",
+                    area_concesion: values.area_concesion?? "",
+                    equipo_concesion: values.equipo_concesion?? "", 
+                    observacion_concesion: values.observacion_concesion?? "", 
 				}
-				createFallaMutation.mutate({data_failure: formatData})
+				createArticulosConMutation.mutate({data_article: formatData})
 		}else{
-			form.setError("falla_fecha_hora", { type: "manual", message: "Fecha es un campo requerido." });
+			form.setError("fecha_concesion", { type: "manual", message: "Fecha es un campo requerido." });
 		}
 	}
 
@@ -178,9 +136,9 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 		<div className="flex-grow overflow-y-auto p-4">
 			<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-5">
-			<FormField
+            <FormField
 					control={form.control}
-					name="falla_ubicacion"
+					name="ubicacion_concesion"
 					render={({ field }:any) => (
 						<FormItem>
 							<FormLabel>Ubicacion:</FormLabel>
@@ -190,7 +148,7 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 								field.onChange(value); 
 								setUbicacionSeleccionada(value); 
 							}}
-							value={field.value} 
+							value={ubicacionSeleccionada} 
 						>
 							<SelectTrigger className="w-full">
 								{loadingUbicaciones?
@@ -212,7 +170,7 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 
 				<FormField
 					control={form.control}
-					name="falla_caseta"
+					name="caseta_concesion"
 					render={({ field }:any) => (
 						<FormItem>
 							<FormLabel>Area:</FormLabel>
@@ -220,8 +178,10 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 							<Select {...field} className="input"
 								onValueChange={(value:string) => {
 								field.onChange(value); 
+								// setAreaSeleccionada(value)
+								setConSelected(value)
 							}}
-							value={field.value} 
+							value={conSelected} 
 						>
 							<SelectTrigger className="w-full">
 							{loadingAreas?
@@ -245,51 +205,43 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 						</FormItem>
 					)}
 				/>
-				<FormField
-				control={form.control}
-				name="falla_fecha_hora"
-				render={() => (
-					<FormItem>
-					<FormLabel>* Fecha</FormLabel>
-					<FormControl>
-						{/* <Input type="datetime-local" placeholder="Fecha" {...field} /> */}
-						<DateTime date={date} setDate={setDate} />
-					</FormControl>
-
-					<FormMessage />
-					</FormItem>
-				)}
-				/>
 
 				<FormField
 					control={form.control}
-					name="falla"
+					name="fecha_concesion"
+					render={() => (
+						<FormItem>
+						<FormLabel> Fecha de la concesion:</FormLabel>
+						<FormControl>
+							{/* <Input type="datetime-local" placeholder="Fecha" {...field} /> */}
+							<DateTime date={date} setDate={setDate} />
+						</FormControl>
+
+						<FormMessage />
+						</FormItem>
+					)}
+					/>
+
+				<FormField
+					control={form.control}
+					name="solicita_concesion"
 					render={({ field }:any) => (
 						<FormItem>
-							<FormLabel>Concepto:</FormLabel>
+							<FormLabel>Tipo de concesion:</FormLabel>
 							<FormControl>
 							<Select {...field} className="input"
 								onValueChange={(value:string) => {
 								field.onChange(value); 
-								setCatalogoSub([])
-								setSubConcepto(value)
 							}}
 							value={field.value} 
 						>
 							<SelectTrigger className="w-full">
-								{isLoadingFallas && subconcepto == "" ? (
-									<SelectValue placeholder="Cargando fallas..." />
-								):
-								(
-									<SelectValue placeholder="Selecciona una falla" />
-								)}
+									<SelectValue placeholder="Seleciona una opcion..." />
 							</SelectTrigger>
 							<SelectContent>
-							{catalagoFallas?.map((vehiculo:string, index:number) => (
-								<SelectItem key={index} value={vehiculo}>
-									{vehiculo}
-								</SelectItem>
-							))}
+								<SelectItem key={"persona"} value={"persona"}>Persona</SelectItem>
+								<SelectItem key={"área"} value={"área"}>Area</SelectItem>
+								<SelectItem key={"compartida"} value={"compartida"}>Compartida</SelectItem>
 							</SelectContent>
 						</Select>
 							</FormControl>
@@ -300,10 +252,53 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 
 				<FormField
 					control={form.control}
-					name="falla_objeto_afectado"
+					name="area_concesion"
 					render={({ field }:any) => (
 						<FormItem>
-							<FormLabel>Subconcepto:</FormLabel>
+							<FormLabel>Nombre del area:</FormLabel>
+							<FormControl>
+							<Select {...field} className="input"
+								onValueChange={(value:string) => {
+								field.onChange(value); 
+								setConSelected(value)
+							}}
+							value={field.value} 
+						>
+							<SelectTrigger className="w-full">
+								{isLoadingCon && conSelected ? (
+									<SelectValue placeholder="Cargando articulos..." />
+								):(<>
+								{dataCon?.length > 0 ?(<SelectValue placeholder="Selecciona una opción..." />)
+								:(<SelectValue placeholder="Selecciona una categoria para ver las opciones..." />)
+								}
+								</>)}
+								
+							</SelectTrigger>
+							<SelectContent>
+							{dataCon?.length>0 ? (
+								dataCon?.map((item:string, index:number) => {
+									return (
+										<SelectItem key={index} value={item}>
+											{item}
+										</SelectItem>
+									)
+								})
+							):(
+								<><SelectItem disabled value={"no opciones"}>No hay opciones disponibles</SelectItem></>
+							)}
+							</SelectContent>
+						</Select>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>	
+				<FormField
+					control={form.control}
+					name="equipo_concesion"
+					render={({ field }:any) => (
+						<FormItem>
+							<FormLabel>Nombre del equipo:</FormLabel>
 							<FormControl>
 							<Select {...field} className="input"
 								onValueChange={(value:string) => {
@@ -312,18 +307,61 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 							value={field.value} 
 						>
 							<SelectTrigger className="w-full">
-								{isLoadingFallas && subconcepto ? (
-									<SelectValue placeholder="Cargando subconcepto..." />
+								{isLoadingConSub && conSelected ? (
+									<SelectValue placeholder="Cargando articulos..." />
 								):(<>
-								{catalagoSub.length > 0 ?(<SelectValue placeholder="Selecciona una opción..." />)
-								:(<SelectValue placeholder="Selecciona una falla para ver las opciones..." />)
+								{dataConSub?.length > 0 ?(<SelectValue placeholder="Selecciona una opción..." />)
+								:(<SelectValue placeholder="Selecciona una categoria para ver las opciones..." />)
 								}
 								</>)}
 								
 							</SelectTrigger>
 							<SelectContent>
-							{catalagoSub.length>0 ? (
-								catalagoSub?.map((item:string, index:number) => {
+							{dataConSub?.length>0 ? (
+								dataConSub?.map((item:string, index:number) => {
+									return (
+										<SelectItem key={index} value={item}>
+											{item}
+										</SelectItem>
+									)
+								})
+							):(
+								<><SelectItem disabled value={"no opciones"}>No hay opciones disponibles</SelectItem></>
+							)}
+							</SelectContent>
+						</Select>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>	
+			
+            <FormField
+					control={form.control}
+					name="persona_nombre_concesion"
+					render={({ field }:any) => (
+						<FormItem>
+							<FormLabel>Persona:</FormLabel>
+							<FormControl>
+							<Select {...field} className="input"
+								onValueChange={(value:string) => {
+								field.onChange(value); 
+							}}
+							value={field.value} 
+						>
+							<SelectTrigger className="w-full">
+								{loadingAreaEmpleadoApoyo ? (
+									<SelectValue placeholder="Cargando articulos..." />
+								):(<>
+								{dataAreaEmpleadoApoyo?.length > 0 ?(<SelectValue placeholder="Selecciona una opción..." />)
+								:(<SelectValue placeholder="Selecciona una categoria para ver las opciones..." />)
+								}
+								</>)}
+								
+							</SelectTrigger>
+							<SelectContent>
+							{dataAreaEmpleadoApoyo?.length>0 ? (
+								dataAreaEmpleadoApoyo?.map((item:string, index:number) => {
 									return (
 										<SelectItem key={index} value={item}>
 											{item}
@@ -341,118 +379,24 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 					)}
 				/>	
 
-				<FormField
-				control={form.control}
-				name="falla_comentarios"
-				render={({ field }:any) => (
-					<FormItem>
-					<FormLabel>* Comentarios</FormLabel>
-					<FormControl>
-						<Textarea
-						placeholder="Texto"
-						className="resize-none"
-						{...field}
-						/>
-					</FormControl>
+                <FormField
+                    control={form.control}
+                    name="observacion_concesion"
+                    render={({ field }:any) => (
+                        <FormItem className="col-span-2">
+                        <FormLabel>Observaciones: </FormLabel>
+                        <FormControl>
+                            <Textarea
+                            placeholder="Texto"
+                            className="resize-none"
+                            {...field}
+                            />
+                        </FormControl>
 
-					<FormMessage />
-					</FormItem>
-				)}
-				/>
-				<FormField
-					control={form.control}
-					name="falla_reporta_nombre"
-					render={({ field }:any) => (
-						<FormItem>
-							<FormLabel>Reporta:</FormLabel>
-							<FormControl>
-							<Select {...field} className="input"
-								onValueChange={(value:string) => {
-								field.onChange(value); 
-							}}
-							value={field.value} 
-						>
-							<SelectTrigger className="w-full">
-							{loadingAreaEmpleado?(<>
-									<SelectValue placeholder="Cargando opciones..." />
-								</>):(<>
-									<SelectValue placeholder="Selecciona una opcion" />
-								</>)}
-							</SelectTrigger>
-							<SelectContent>
-							{dataAreaEmpleado?.map((vehiculo:string, index:number) => (
-								<SelectItem key={index} value={vehiculo}>
-									{vehiculo}
-								</SelectItem>
-							))}
-							</SelectContent>
-						</Select>
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>	
-
-
-				<FormField
-					control={form.control}
-					name="falla_responsable_solucionar_nombre"
-					render={({ field }:any) => (
-						<FormItem>
-							<FormLabel>Responsable asignado de solucionar:</FormLabel>
-							<FormControl>
-							<Select {...field} className="input"
-								onValueChange={(value:string) => {
-								field.onChange(value); 
-							}}
-							value={field.value} 
-						>
-							<SelectTrigger className="w-full">
-								{loadingAreaEmpleadoApoyo?(<>
-									<SelectValue placeholder="Cargando opciones..." />
-								</>):(<>
-									<SelectValue placeholder="Selecciona una opcion" />
-								</>)}
-							</SelectTrigger>
-							<SelectContent>
-							{dataAreaEmpleadoApoyo?.map((vehiculo:string, index:number) => (
-								<SelectItem key={index} value={vehiculo}>
-									{vehiculo}
-								</SelectItem>
-							))}
-							</SelectContent>
-						</Select>
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>	
-
-				<div className="flex justify-between">
-					<LoadImage
-						id="evidencia" 
-						titulo={"Evidencia"} 
-						setImg={setEvidencia}
-						showWebcamOption={true}
-						// setErrorImagen={setErrorEvidencia}
-						facingMode="user"
-						imgArray={evidencia}
-						showArray={true}
-						limit={10}
-						/>
-				</div>
-
-				<div className="flex justify-between">
-					<LoadFile
-						id="documento"
-						titulo={"Documento"}
-						setDocs={setDocumento}
-						// setErrorImagen={setErrorDocumento}
-						docArray={documento}
-						limit={10}/>
-				</div>
-
-				
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                    />
 			</form>
 			</Form>
 		</div>
@@ -471,9 +415,9 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 			>
 				{isLoading? (
 				<>
-					<Loader2 className="animate-spin"/> {"Creando falla..."}
+					<Loader2 className="animate-spin"/> {"Creando Articulo..."}
 				</>
-			):("Crear falla")}
+			):("Crear Articulo")}
 			</Button>
 		</div>
 		

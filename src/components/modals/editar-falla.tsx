@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -35,7 +36,7 @@ import { Edit, Loader2 } from "lucide-react";
 import { getCatalogoFallas } from "@/lib/fallas";
 import { useFallas } from "@/hooks/useFallas";
 import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
-import { getCatalogoPasesArea } from "@/lib/get-catalogos-pase-area";
+import { useShiftStore } from "@/store/useShiftStore";
 
 interface EditarFallaModalProps {
   	title: string;
@@ -73,21 +74,20 @@ export const EditarFallaModal: React.FC<EditarFallaModalProps> = ({
 	data,
 	setShowLoadingModal,
 }) => {
-	const [subconcepto, setSubConcepto] = useState<string>("");
+	const [subconcepto, setSubConcepto] = useState<string>(data.falla);
 	const [catalagoSub, setCatalogoSub] = useState<string[]>([]);
 	const [catalagoFallas, setFallas] = useState<string[]>([]);
 	const [isSuccess, setIsSuccess] =useState(false)
-	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState('');
+	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(data.falla_ubicacion);
+	const { location } = useShiftStore();
 	const { dataAreas:areas, dataLocations:ubicaciones, isLoadingAreas:loadingAreas} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true,  ubicacionSeleccionada?true:false);
-	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado, error:errorAreEmpleado } = useCatalogoAreaEmpleado(isSuccess);
+	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado, error:errorAreEmpleado } = useCatalogoAreaEmpleado(isSuccess, location, "Incidencias");
 	const { data:dataAreaEmpleadoApoyo, isLoading:loadingAreaEmpleadoApoyo,error:errorAEA} = useCatalogoAreaEmpleadoApoyo(isSuccess);
 	const { data:dataFallas, isLoading:isLoadingFallas, error:errorFallas } = useCatalogoFallas(subconcepto, isSuccess);
 	const { editarFallaMutation, isLoading} = useFallas("","", "abierto", false)
-	const [catAreas, setCatAreas] =useState([])
 	const [evidencia , setEvidencia] = useState<Imagen[]>([]);
 	const [documento , setDocumento] = useState<Imagen[]>([]);
 	const [date, setDate] = useState<Date|"">("");
-console.log("DATAAA", data)
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -101,11 +101,12 @@ console.log("DATAAA", data)
 		falla_objeto_afectado: data.falla_objeto_afectado,
 		falla_reporta_nombre: data.falla_reporta_nombre,
 		falla_responsable_solucionar_nombre: data.falla_responsable_solucionar_nombre,
-		falla_ubicacion: data.falla_ubicacion,
+		falla_ubicacion:data.falla_ubicacion,
 		},
 	});
 
 	const { reset } = form;
+	
 
 	useEffect(()=>{
 		if(isSuccess){
@@ -115,25 +116,19 @@ console.log("DATAAA", data)
 			setDate(new Date(data.falla_fecha_hora))
 			setShowLoadingModal(false)
 		}
-		// if(ubicaciones){
-		// 	setUbicacionSeleccionada(data.falla_ubicacion)
-		// }
-		// if(areas){
-		// 	setCatAreas(areas)
-		// }
+
 		if(dataFallas && subconcepto){
 			if (dataFallas.length == 1 && dataFallas[0] === null) {
 				setCatalogoSub([])
 			  }else{
 				setCatalogoSub(dataFallas)
-				
 			  }
 		}
 		if(dataFallas && !subconcepto){
 			setFallas(dataFallas)
-			setSubConcepto(data.falla)
+			// setSubConcepto(data.falla)
 		}
-	},[isSuccess, dataFallas, ubicaciones, areas])
+	},[isSuccess, dataFallas, ubicaciones])
 
 	useEffect(()=>{
 		if(errorAEA){
@@ -179,13 +174,12 @@ console.log("DATAAA", data)
 	const handleClose = () => {
 		reset()
 		setShowLoadingModal(false); 
+		setIsSuccess(false); 
 	};
 
 	const handleOpenModal = async () => {
 		setShowLoadingModal(true);
 		const fallasCat = await getCatalogoFallas("");
-		const areasSub = await getCatalogoPasesArea(data.falla_ubicacion)
-		setCatAreas(areasSub.response.data.areas_by_location)
 		setFallas(fallasCat.response.data);
 		const fallasObjetoAfectado = await getCatalogoFallas(data.falla_objeto_afectado);
 		setCatalogoSub(fallasObjetoAfectado.response.data);
@@ -193,15 +187,16 @@ console.log("DATAAA", data)
 	};
 
   return (
-	<Dialog onOpenChange={setIsSuccess} open={isSuccess}>
-	<div className="cursor-pointer" onClick={handleOpenModal}>
-		<Edit />
-	</div>
-		<DialogContent className="max-w-3xl overflow-y-auto max-h-[80vh] flex flex-col" aria-describedby="">
+	<Dialog open={isSuccess} modal>
+		<div className="cursor-pointer" onClick={handleOpenModal}>
+			<Edit />
+		</div>
+	<DialogContent className="max-w-3xl overflow-y-auto max-h-[80vh] flex flex-col" aria-describedby="">
 		<DialogHeader className="flex-shrink-0">
-			<DialogTitle className="text-2xl text-center font-bold">
-				{title}
-			</DialogTitle>
+		<DialogTitle className="text-2xl text-center font-bold">
+			{title}
+		</DialogTitle>
+		</DialogHeader>
 				<div className="flex-grow overflow-y-auto p-4">
 					<Form {...form}>
 						<form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -216,19 +211,22 @@ console.log("DATAAA", data)
 												onValueChange={(value: string) => {
 													field.onChange(value);
 													setUbicacionSeleccionada(value)
-													setCatAreas([])
 												} }
-												// value={data.value||""}
+												value={ubicacionSeleccionada} 
 											>
 												<SelectTrigger className="w-full">
 													<SelectValue placeholder="Selecciona una ubicación" />
 												</SelectTrigger>
 												<SelectContent>
+												{ubicaciones?.length >0 ? (
+													<>
 													{ubicaciones?.map((vehiculo: string, index: number) => (
 														<SelectItem key={index} value={vehiculo}>
 															{vehiculo}
 														</SelectItem>
 													))}
+													</>
+												):<SelectItem key={"1"} value={"1"} disabled>No hay opciones disponibles.</SelectItem>}
 												</SelectContent>
 											</Select>
 										</FormControl>
@@ -255,7 +253,7 @@ console.log("DATAAA", data)
 													}
 												</SelectTrigger>
 												<SelectContent>
-												{areas?.length >0 && ubicacionSeleccionada ? (
+												{areas?.length>0 ? (
 													<>
 													{areas?.map((area:string, index:number) => {
 													return(
@@ -265,12 +263,6 @@ console.log("DATAAA", data)
 													)})} 
 													</>
 												):<SelectItem key={"1"} value={"1"} disabled>No hay opciones disponibles.</SelectItem>}
-
-													{/* {catAreas?.map((vehiculo: string, index: number) => (
-														<SelectItem key={index} value={vehiculo}>
-															{vehiculo}
-														</SelectItem>
-													))} */}
 												</SelectContent>
 											</Select>
 										</FormControl>
@@ -300,10 +292,9 @@ console.log("DATAAA", data)
 											<Select {...field} className="input"
 												onValueChange={(value: string) => {
 													field.onChange(value);
-													setSubConcepto(value)
-													setCatalogoSub([]);
+													setSubConcepto(value);
 												} }
-												value={field.value || ""}
+												value={subconcepto}
 											>
 												<SelectTrigger className="w-full">
 												{isLoadingFallas && subconcepto ==""? (  
@@ -334,7 +325,6 @@ console.log("DATAAA", data)
 										<FormControl>
 											<Select {...field} className="input"
 												onValueChange={(value: string) => {
-													console.log("VALOR", value)
 													field.onChange(value);
 												} }
 												value={field.value}
@@ -488,7 +478,6 @@ console.log("DATAAA", data)
 						) : ("Editar falla")}
 					</Button>
 			</div>
-		</DialogHeader>
 		</DialogContent>
 	</Dialog>
   );

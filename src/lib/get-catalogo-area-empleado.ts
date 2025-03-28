@@ -1,5 +1,7 @@
-export const getCatalogoAreaEmpleado = async () => {
+export const getCatalogoAreaEmpleado = async (location:string, bitacora:string) => {
     const payload = {
+        location,
+        bitacora,
         option: "catalogo_area_empleado",
         script_name: "incidencias.py",
     };

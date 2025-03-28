@@ -24,10 +24,8 @@ import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import LoadImage from "../upload-Image";
 import { Imagen } from "@/lib/update-pass";
-import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { Input } from "../ui/input";
-import { inputSeguimientoFalla } from "@/lib/fallas";
 import LoadFile from "../upload-file";
 import { format } from "date-fns";
 import DateTime from "../dateTime";
@@ -65,7 +63,6 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 	data,
 	children
 }) => {
-	const [modalData, setModalData] = useState<inputSeguimientoFalla | null>(null);
 	const { area, location } = useShiftStore();
 	const [isSuccess, setIsSuccess] =useState(false)
 	const [evidencia , setEvidencia] = useState<Imagen[]>([]);
@@ -205,7 +202,7 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 				<FormField
 				control={form.control}
 				name="fechaInicioFallaCompleta"
-				render={(field:any) => (
+				render={() => (
 					<FormItem>
 					<FormLabel>* Fecha</FormLabel>
 					<FormControl>
@@ -220,7 +217,7 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 				<FormField
 				control={form.control}
 				name="fechaFinFallaCompleta"
-				render={(field:any) => (
+				render={() => (
 					<FormItem>
 					<FormLabel>* Fecha</FormLabel>
 					<FormControl>

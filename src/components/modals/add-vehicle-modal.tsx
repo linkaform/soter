@@ -5,7 +5,6 @@ import {
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
-	DialogTrigger,
 } from "../ui/dialog";
 import { useEffect, useState } from "react";
 import {Vehiculo } from "@/lib/update-pass";
@@ -13,12 +12,11 @@ import VehicleList from "../vehicle-list";
 import { useUpdateBitacora } from "@/hooks/useUpdateBitacora";
 import { Vehiculo_bitacora } from "../table/bitacoras/bitacoras-columns";
 import { formatVehiculosToBitacora } from "@/lib/utils";
-import { Loader2 } from "lucide-react";
+import { Car, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 interface AddVehicleModalProps {
 	title: string;
-	children: React.ReactNode;
 	id:string;
 	refetchTable:()=>void;
 }
@@ -31,7 +29,6 @@ type params= {
 
 export const AddVehicleModal: React.FC<AddVehicleModalProps> = ({
 	title,
-	children,
 	id,
 	refetchTable
 }) => {
@@ -62,35 +59,45 @@ export const AddVehicleModal: React.FC<AddVehicleModalProps> = ({
 		if(responseUpdateBitacora?.status_code==202){
 			setIsOpen(false)
 			refetchTable()
-			// sweetAlert("success", "Confirmación", "Vehiculo asignado correctamente.")
 			toast.success("¡Vehiculos actualizados correctamente!");
 		}
 	},[responseUpdateBitacora, refetchTable])
 
-	return (
-		<Dialog open={isOpen} onOpenChange={setIsOpen}>
-			<DialogTrigger asChild>{children}</DialogTrigger>
-			<DialogContent className="max-w-3xl">
-				<DialogHeader>
-					<DialogTitle className="text-2xl text-center  font-bold my-5">
-						{title}
-					</DialogTitle>
-				</DialogHeader>
+	const handleClose = () => {
+		setIsOpen(false); 
+	};
+	const handleOpenModal = async () => {
+		setIsOpen(true); 
+	}
 
-				<VehicleList
-					vehicles={vehiculos}
-					setVehicles={setVehiculos} account_id={account_id}
-				/>
+	return (
+		<Dialog open={isOpen}  modal>
+			<div className="cursor-pointer" onClick={handleOpenModal}>
+				<Car />
+			</div>
+			<DialogContent className="max-w-3xl overflow-y-auto max-h-[80vh] flex flex-col" aria-describedby="">
+			<DialogHeader className="flex-shrink-0">
+			<DialogTitle className="text-2xl text-center font-bold">
+				{title}
+			</DialogTitle>
+			</DialogHeader>
+
+				<div className="overflow-y-auto">
+					<VehicleList
+						vehicles={vehiculos}
+						setVehicles={setVehiculos} account_id={account_id}/>
 					<p className="text-red-500" hidden={!showError}> Agrega almenos un elemento para actualizar. </p>
+				</div>
+				
 		 
 				<div className="flex gap-5">
 					<DialogClose asChild>
-						<Button className="w-full h-12 bg-gray-100 hover:bg-gray-200 text-gray-700">
+						<Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700" onClick={handleClose}>
 							Cancelar
 						</Button>
 					</DialogClose>
 					
-					<Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white"
+					<Button className="w-full  bg-blue-500 hover:bg-blue-600 text-white"
 					onClick={onSubmit}
 					disabled={loadingUpdateBitacora}
 					>

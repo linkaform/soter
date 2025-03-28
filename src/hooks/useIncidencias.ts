@@ -5,7 +5,7 @@ import { useShiftStore } from "@/store/useShiftStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-export const useInciencias = (prioridades:string[], enabled:boolean) => {
+export const useInciencias = (prioridades:string[], enabled:boolean, enabledIncidencias:boolean) => {
     const queryClient = useQueryClient();
     
     const { area, location, isLoading: loading, setLoading} = useShiftStore();
@@ -26,7 +26,7 @@ export const useInciencias = (prioridades:string[], enabled:boolean) => {
     //Obtener lista de Incidencias
     const {data: catIncidencias, isLoading:isLoadingCatIncidencias, error:errorCatIncidencias} = useQuery<any>({
       queryKey: ["getCatIncidencias", area, location, prioridades],
-      enabled:enabled,
+      enabled:enabledIncidencias,
       queryFn: async () => {
           const data = await getCatIncidencias();
           return data.response?.data||[]; 

@@ -27,10 +27,9 @@ export const ActivePassesModal: React.FC<ActivePassesModalProps> = ({
   children,
 }) => {
 
-
     const data: Passes[] = [
         { 
-            id: "a1b2c3d4", 
+        id: "a1b2c3d4", 
         nombre: "Samantha Chávez Juárez", avatar: "/image/empleado1.png", vista: "Visita General" },
         { id: "e5f6g7h8", nombre: "Orlando Peña Silva", avatar: "/image/empleado2.png", vista: "Visita General" },
         { id: "i9j0k1l2", nombre: "Luisa Ramírez Sánchez", avatar: "/image/empleado3.png", vista: "Visita General" },
@@ -47,9 +46,6 @@ export const ActivePassesModal: React.FC<ActivePassesModalProps> = ({
         { id: "a3b4c5d6", nombre: "Eduardo Sánchez Flores", avatar: "/image/empleado3.png", vista: "Visita General" },
         { id: "e7f8g9h0", nombre: "Valeria Reyes Montes", avatar: "/image/empleado4.png", vista: "Visita General" }
       ];
-     
-
-
 
   return (
     <Dialog>
@@ -64,7 +60,6 @@ export const ActivePassesModal: React.FC<ActivePassesModalProps> = ({
 
     <SearchInput />
 
-    {/* Contenedor con scroll */}
     <div className="flex-1 overflow-y-auto max-h-[500px] space-y-0 border-t border-b mt-2">
       {data.map((guardia) => (
         <div

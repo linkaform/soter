@@ -1,22 +1,22 @@
-import { crearArticuloConcesionados, editarArticuloConcesionados, getListArticulosConcesionados, InputArticuloConcesionados } from "@/lib/articulos-concesionados";
+import { crearArticuloCon, editarArticuloCon, getListArticulosCon, InputArticuloCon, InputOutArticuloCon } from "@/lib/articulos-concesionados";
 import { errorMsj } from "@/lib/utils";
 import { useShiftStore } from "@/store/useShiftStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-export const useFallas = (location:string, area:string, status:string, enableList:boolean) => {
+export const useArticulosConcesionados = (enableList:boolean) => {
     const queryClient = useQueryClient();
     const {isLoading, setLoading} = useShiftStore();
 
-    //Obtener lista de ArtículosConcesionados
-    const {data: listArticulosConcesionados, isLoading:isLoadingListArticulosConcesionados, error:errorListArticulosConcesionados } = useQuery<any>({
-        queryKey: ["getListArticulosConcesionados", location, status],
+    //Obtener lista de ArtículosCon
+    const {data: listArticulosCon, isLoading:isLoadingListArticulosCon, error:errorListArticulosCon } = useQuery<any>({
+        queryKey: ["getListArticulosCon"],
         enabled:enableList,
         queryFn: async () => {
-            const data = await getListArticulosConcesionados(location, status);
+            const data = await getListArticulosCon();
             const textMsj = errorMsj(data) 
             if (textMsj){
-              throw new Error (`Error al obtener lista de artículos Concesionados, Error: ${data.error}`);
+              throw new Error (`Error al obtener lista de artículos concesionados, Error: ${data.error}`);
             }else {
               return data.response?.data||[];
             }
@@ -28,9 +28,9 @@ export const useFallas = (location:string, area:string, status:string, enableLis
     });
 
      //Crear ArtículoConcesionado
-     const createArticulosConcesionadosMutation = useMutation({
-        mutationFn: async ({ data_article} : { data_article: InputArticuloConcesionados }) => {
-            const response = await crearArticuloConcesionados(data_article);
+     const createArticulosConMutation = useMutation({
+        mutationFn: async ({ data_article} : { data_article: InputArticuloCon }) => {
+            const response = await crearArticuloCon(data_article);
             const hasError= response.response.data.status_code
 
             if(hasError == 400|| hasError == 401){
@@ -44,7 +44,7 @@ export const useFallas = (location:string, area:string, status:string, enableLis
           setLoading(true);
         },
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["getListArticulosConcesionados"] });
+          queryClient.invalidateQueries({ queryKey: ["getListArticulosCon"] });
           queryClient.invalidateQueries({ queryKey: ["getStatsArticulos"] });
           toast.success("Artículo creado creado correctamente.");
         },
@@ -59,9 +59,9 @@ export const useFallas = (location:string, area:string, status:string, enableLis
       });
 
       //Editar artículo concesionado
-     const editarArticulosConcesionadosMutation = useMutation({
-        mutationFn: async ({ data_article_update, folio} : { data_article_update: InputArticuloConcesionados, folio:string }) => {
-            const response = await editarArticuloConcesionados(data_article_update, folio);
+     const editarArticulosConMutation = useMutation({
+        mutationFn: async ({ data_article_update, folio} : { data_article_update: InputArticuloCon | InputOutArticuloCon, folio:string }) => {
+            const response = await editarArticuloCon(data_article_update, folio);
             const hasError= response.response.data.status_code
 
             if(hasError == 400|| hasError == 401){
@@ -75,7 +75,7 @@ export const useFallas = (location:string, area:string, status:string, enableLis
           setLoading(true);
         },
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["getListArticulosConcesionados"] });
+          queryClient.invalidateQueries({ queryKey: ["getListArticulosCon"] });
           queryClient.invalidateQueries({ queryKey: ["getStatsArticulos"] });
           toast.success("Artículo concesionado editado correctamente.");
         },
@@ -90,14 +90,14 @@ export const useFallas = (location:string, area:string, status:string, enableLis
       });
 
     return{
-        //Lista de ArticulosConcesionados
-        listArticulosConcesionados,
-        isLoadingListArticulosConcesionados,
-        errorListArticulosConcesionados,
-        //Crear ArticulosConcesionados
-        createArticulosConcesionadosMutation,
+        //Lista de ArticulosCon
+        listArticulosCon,
+        isLoadingListArticulosCon,
+        errorListArticulosCon,
+        //Crear ArticulosCon
+        createArticulosConMutation,
         isLoading,
-        //Editar ArticulosConcesionados
-        editarArticulosConcesionadosMutation,
+        //Editar ArticulosCon
+        editarArticulosConMutation,
     }
 }

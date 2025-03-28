@@ -11,7 +11,6 @@ import {
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import { useDeleteFalla } from "@/hooks/useDeleteFallas";
 import { useInciencias } from "@/hooks/useIncidencias";
 
 interface AddFallaModalProps {
@@ -25,7 +24,7 @@ export const EliminarIncidenciaModal: React.FC<AddFallaModalProps> = ({
 	arrayFolios,
 	children
 }) => {
-    const { eliminarIncidenciaMutation, loading } = useInciencias([], false);
+    const { eliminarIncidenciaMutation, loading } = useInciencias([], false, true);
 	const [isSuccess, setIsSuccess] =useState(false)
 	const handleClose = () => {
 		setIsSuccess(false); 

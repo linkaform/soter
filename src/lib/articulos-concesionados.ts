@@ -1,38 +1,25 @@
-import { Imagen } from "./update-pass"
-
-export interface InputArticuloConcesionados {
-    area_Concesionados:string,
-    articulo_Concesionados: string,
-    articulo_seleccion: string,
-    color_Concesionados: string,
-    comentario_Concesionados: string,
-    date_hallazgo_Concesionados: string,
-    descripcion: string,
-    estatus_Concesionados: string,
-    foto_Concesionados: Imagen[],
-    locker_Concesionados:string,
-    quien_entrega: string,
-    quien_entrega_externo: string,
-    quien_entrega_interno: string,
-    tipo_articulo_Concesionados: string,
-    ubicacion_Concesionados:string,
+export interface InputArticuloCon {
+    status_concesion:string,
+    ubicacion_concesion:string,
+    solicita_concesion:string,
+    persona_nombre_concesion:string,
+    caseta_concesion:string,
+    fecha_concesion:string,
+    area_concesion:string,
+    equipo_concesion:string,
+    observacion_concesion:string,
+}
+export interface InputOutArticuloCon {
+    fecha_devolucion_concesion:string,
+    status_concesion:string
 }
 
-export interface InputDevolver {
-    estatus_Concesionados: string,
-    foto_recibe_Concesionados: Imagen[],
-    identificacion_recibe_Concesionados:string,
-    recibe_Concesionados: string,
-    telefono_recibe_Concesionados: string,
-}
-  
-export const getListArticulosConcesionados = async (
-    location:string,status:string) => {
+
+export const getListArticulosCon = async () => {
     const payload = {
-        location: location,
-        status:status,
+        tipo:"",
         option: "get_articles",
-        script_name: "articulos_concesionadoss.py",
+        script_name: "articulos_consecionados.py",
     };
   
     const userJwt = localStorage.getItem("access_token"); 
@@ -50,11 +37,12 @@ export const getListArticulosConcesionados = async (
     return data;
   };
 
-export const getTipoArticulo = async (tipo:string) => {
+export const getTipoConcesion = async (location:string, tipo:string) => {
     const payload = {
+        location,
         tipo,
-        option: "catalogo_tipo_articulo",
-        script_name: "articulos_concesionadoss.py",
+        option: "catalogo_tipo_concesion",
+        script_name: "articulos_consecionados.py",
     };
   
     const userJwt = localStorage.getItem("access_token"); 
@@ -72,11 +60,11 @@ export const getTipoArticulo = async (tipo:string) => {
     return data;
   };
 
-export const crearArticuloConcesionados = async (data_article: InputArticuloConcesionados | null)=> {
+export const crearArticuloCon = async (data_article: InputArticuloCon | null)=> {
     const payload = {
         data_article,
-        option: "nuevo_articulo",
-        script_name: "articulos_concesionadoss.py",
+        option: "new_article",
+        script_name: "articulos_consecionados.py",
     };
   
     const userJwt = localStorage.getItem("access_token"); 
@@ -93,10 +81,10 @@ export const crearArticuloConcesionados = async (data_article: InputArticuloConc
     return data;
   };
 
-export const editarArticuloConcesionados = async (data_article_update: InputArticuloConcesionados | InputDevolver, folio:string)=> {
+export const editarArticuloCon = async (data_article_update: InputArticuloCon | InputOutArticuloCon, folio:string)=> {
     const payload = {
         option: "update_article",
-        script_name: "articulos_concesionadoss.py",
+        script_name: "articulos_consecionados.py",
         data_article_update,
         folio: folio
     };

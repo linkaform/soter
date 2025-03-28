@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { LockerTable } from "@/components/table/bitacoras/locker/table";
 import PageTitle from "@/components/page-title";
 import { useGetListBitacora } from "@/hooks/useGetListBitacora";

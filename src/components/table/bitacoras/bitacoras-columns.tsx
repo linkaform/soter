@@ -9,7 +9,7 @@ import { useGetListBitacora } from "@/hooks/useGetListBitacora";
 import {
 		ColumnDef,  
 	} from "@tanstack/react-table";
-import { Car, Eye, Forward, Hammer, IdCard} from "lucide-react";
+import { Eye, Forward, IdCard} from "lucide-react";
 
 export interface Bitacora_record {
 	equipos: Equipo_bitacora[] 
@@ -83,7 +83,6 @@ const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
 	const {refetch} = useGetListBitacora("", "",[]);
 	const bitacora = row.original;
 	bitacora.formated_visita = bitacora.visita_a.map((item: VisitaA) => item.nombre).join(', ');
-	console.log("asdas",bitacora.comentarios)
 	bitacora.formated_comentarios = bitacora.comentarios.map((item: Comentarios_bitacoras) => item.comentario).join(', ');
 	return (
 		<div className="flex space-x-2">
@@ -96,17 +95,10 @@ const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
 					</div>
 			</ViewListBitacoraModal>
 			
-			<AddVehicleModal title="Agregar vehiculo" id={bitacora._id} refetchTable={refetch} >
-					<div className="cursor-pointer">
-						<Car />
-					</div>
-			</AddVehicleModal>
-				
-			<AddEquipmentModal title="Agregar equipo" id={bitacora._id} refetchTable={refetch}>
-					<div className="cursor-pointer">
-						<Hammer />
-					</div>
-			</AddEquipmentModal>
+			<AddVehicleModal title="Agregar vehiculo" id={bitacora._id} refetchTable={refetch} />
+					
+			<AddEquipmentModal title="Agregar equipo" id={bitacora._id} refetchTable={refetch}/>
+					
 
 		{ bitacora.status_visita.toLowerCase() =="salida" && bitacora.status_gafete.toLowerCase()=="asignado" ? (
 			<ReturnGafeteModal title={"Recibir Gafete"} refetchTable={refetch} id_bitacora={bitacora._id}
@@ -118,9 +110,7 @@ const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
 		 <>
 		 	{ bitacora.status_visita.toLowerCase() =="entrada"? (
 				<AddBadgeModal title={"Gafete"} status={"Disponible"} refetchTable={refetch} id_bitacora= {bitacora._id}
-					tipo_movimiento={bitacora.status_visita} ubicacion={bitacora.ubicacion} area={bitacora.status_visita.toLowerCase()=="entrada" ? bitacora.caseta_entrada: bitacora.caseta_salida||""}>
-						<IdCard />
-				</AddBadgeModal>
+					tipo_movimiento={bitacora.status_visita} ubicacion={bitacora.ubicacion} area={bitacora.status_visita.toLowerCase()=="entrada" ? bitacora.caseta_entrada: bitacora.caseta_salida||""}/>
 			):null}
 		 </>
 		)}
@@ -141,7 +131,7 @@ export const bitacorasColumns: ColumnDef<Bitacora_record>[] = [
 		header: "Opciones",
 		cell: ({ row }) => {
 			
-			return <OptionsCell row={row} />;
+			return <OptionsCell row={row} key={row.original._id} />;
 		},
 		enableSorting: false,
 		enableHiding: false,

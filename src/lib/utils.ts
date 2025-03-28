@@ -161,7 +161,21 @@ export function formatEquiposToBitacora(arr:Equipo[]): Equipo_bitacora[] {
 }
 
 export function errorMsj(data:any, title = "Error", type="warning"){
-  if(data.hasOwnProperty("json")){
+	if (data.hasOwnProperty("error")){
+		let res=undefined
+			const error= data.error
+			if(error.hasOwnProperty('msg')){
+				if(typeof error.msg ==='string'){
+					res= {title: title, text: error.msg, type}
+				}else{
+					res= {title: error.msg.title, text: error.msg.msg, type:error.msg.type}
+				}
+			}else{
+				res= {title: title, text: error, type: type}
+			}
+			return res
+  	}
+  	if (data.hasOwnProperty("json")){
       const errores=[]
       for(const err in data.json){
            if(data.json[err].hasOwnProperty('label')){
@@ -179,7 +193,8 @@ export function errorMsj(data:any, title = "Error", type="warning"){
           }
       }
       return {title: title, text:errores.join(", "), type}
-    }else if(data.response.data.hasOwnProperty("json")){
+  	}
+	if (data.response.data.hasOwnProperty("json")){
         const dataInner=data.response.data
         const errores=[]
         for(const err in dataInner.json){
@@ -206,20 +221,10 @@ export function errorMsj(data:any, title = "Error", type="warning"){
             }
         }
         return {title: title, text:errores.join(", "), type}
-  }else if (data.hasOwnProperty("error")){
-      const error= data.error
-      if(error.hasOwnProperty('msg')){
-          if(typeof error.msg ==='string'){
-            return {title: title, text: error.msg, type}
-          }else{
-              return {title: error.msg.title, text: error.msg.msg, type:error.msg.type}
-          }
-      }else{
-        return {title: title, text: error, type: type}
-      }
-  }else if (typeof data ==='string'){
+  	}
+   if (typeof data ==='string'){
       return {title: title, text: data, type: type}
-  }
+  	}
   return undefined
 }
 

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -11,10 +12,9 @@ import CalendarDays from "../calendar-days";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { CalendarClock, Loader2 } from "lucide-react";
 import { GeneratedPassModal } from "./generated-pass-modal";
-import { Access_pass, Areas, Comentarios, enviar_pre_sms, Link, useCreateAccessPase } from "@/hooks/useCreateAccessPass";
+import { Access_pass, Areas, Comentarios, enviar_pre_sms, Link } from "@/hooks/useCreateAccessPass";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import { usePaseEntrada } from "@/hooks/usePaseEntrada";
-import { useShiftStore } from "@/store/useShiftStore";
 import useAuthStore from "@/store/useAuthStore";
 
 
@@ -91,7 +91,6 @@ export const EntryPassModal: React.FC<EntryPassUpdateModalProps> = ({
   const [sendPreSms, setSendPreSms] = useState<enviar_pre_sms|null>(null)
   const {userIdSoter }= useAuthStore()
   const { createPaseEntradaMutation , responseCreatePase, isLoading} = usePaseEntrada("")
-  const {location} = useShiftStore()
   const [openGeneratedPass, setOpenGeneratedPass] = useState<boolean>(false);
   const [link, setLink] = useState("");
   const[ account_id, setAccount_id] = useState<number|null>(null)

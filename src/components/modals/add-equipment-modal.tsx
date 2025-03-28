@@ -5,13 +5,12 @@ import {
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
-	DialogTrigger,
 } from "../ui/dialog";
 
 import EquipoList from "../equipo-list";
 import { useEffect, useState } from "react";
 import { Equipo } from "@/lib/update-pass";
-import { Loader2 } from "lucide-react";
+import { Hammer, Loader2 } from "lucide-react";
 import { useUpdateBitacora } from "@/hooks/useUpdateBitacora";
 import { formatEquiposToBitacora } from "@/lib/utils";
 import { Equipo_bitacora } from "../table/bitacoras/bitacoras-columns";
@@ -19,7 +18,6 @@ import { toast } from "sonner";
 
 interface AddEquipmentModalProps {
 	title: string;
-	children: React.ReactNode;
 	id:string;
 	refetchTable:()=>void;
 
@@ -32,7 +30,6 @@ type params= {
 
 export const AddEquipmentModal: React.FC<AddEquipmentModalProps> = ({
 	title,
-	children,
 	id,
 	refetchTable
 }) => {
@@ -63,43 +60,54 @@ export const AddEquipmentModal: React.FC<AddEquipmentModalProps> = ({
 		if(responseUpdateBitacora?.status_code==202){
 			setIsOpen(false)
 			refetchTable()
-			// sweetAlert("success", "Confirmación", "Equipo asignado correctamente.")
 			toast.success("¡Equipos actualizados correctamente!");
 		}
 	},[responseUpdateBitacora, refetchTable])
 
+	const handleClose = () => {
+		setIsOpen(false); 
+	};
+	const handleOpenModal = async () => {
+		setIsOpen(true); 
+	}
+
 return (
 	<Dialog open={isOpen} onOpenChange={setIsOpen}>
-		<DialogTrigger asChild>{children}</DialogTrigger>
-
-		<DialogContent className="max-w-3xl">
-			<DialogHeader>
-				<DialogTitle className="text-2xl text-center  font-bold my-5">
-					{title}
-				</DialogTitle>
+		<div className="cursor-pointer" onClick={handleOpenModal}>
+			<Hammer />
+		</div>
+		<DialogContent className="max-w-3xl overflow-y-auto max-h-[80vh] flex flex-col" aria-describedby="">
+			<DialogHeader className="flex-shrink-0">
+			<DialogTitle className="text-2xl text-center font-bold">
+				{title}
+			</DialogTitle>
 			</DialogHeader>
-					<EquipoList
+			<div className="overflow-y-auto">
+				<EquipoList
 					equipos={equipos}
 					setEquipos={setEquipos} />
-				<p className="text-red-500" hidden={!showError}> Agrega almenos un elemento para actualizar. </p>
-					<div className="flex gap-5">
-						<DialogClose asChild>
-							<Button
-								className="w-full h-12 bg-gray-100 hover:bg-gray-200 text-gray-700"
-							>
-								Cancelar
-							</Button>
-						</DialogClose>
+					<p className="text-red-500" hidden={!showError}> Agrega almenos un elemento para actualizar. </p>
+			</div>
+				
 
-						<Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white"
-						onClick={onSubmit}
-						disabled={loadingUpdateBitacora}
+				<div className="flex gap-5">
+					<DialogClose asChild>
+						<Button
+							className="w-full  bg-gray-100 hover:bg-gray-200 text-gray-700" onClick={handleClose}
 						>
-							{ !loadingUpdateBitacora ? (<>
-								{("Actualizar equipos")}
-							</>) :(<> <Loader2 className="animate-spin"/> {"Actualizando equipos..."} </>)}
+							Cancelar
 						</Button>
-					</div>
+					</DialogClose>
+
+					<Button className="w-full   bg-blue-500 hover:bg-blue-600 text-white"
+					onClick={onSubmit}
+					disabled={loadingUpdateBitacora}
+					>
+						{ !loadingUpdateBitacora ? (<>
+							{("Actualizar equipos")}
+						</>) :(<> <Loader2 className="animate-spin"/> {"Actualizando equipos..."} </>)}
+					</Button>
+				</div>
 		</DialogContent>
 	</Dialog>
 );

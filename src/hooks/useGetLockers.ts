@@ -3,11 +3,11 @@ import { useQuery } from "@tanstack/react-query";
 
 export const useGetLockers = (location:string, area:string, status:string) => {
   const { data: data, isLoading, error, isFetching, refetch} = useQuery<any>({
-    queryKey: ["getLockers", location, area], 
-    enabled:false,
+    queryKey: ["getLockers", location, area, status], 
+    enabled:location? true  : false,
     queryFn: async () => {
         const data = await getLockers(location, area , status); 
-        return data.response?.data; 
+        return data.response?.data ??[]; 
     },
    
     refetchOnWindowFocus: true, 

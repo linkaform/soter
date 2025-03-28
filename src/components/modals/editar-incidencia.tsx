@@ -6,7 +6,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "../ui/dialog";
 
 import {
@@ -36,11 +35,11 @@ import AccionesTomadasList from "../acciones-tomadas-list";
 import { toast } from "sonner";
 import { useShiftStore } from "@/store/useShiftStore";
 import { useInciencias } from "@/hooks/useIncidencias";
+import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
 
 interface EditarIncidenciaModalProps {
   	title: string;
 	setShowLoadingModal:Dispatch<SetStateAction<boolean>>;
-	showLoadingModal:boolean;
 	data: any;
 }
 
@@ -90,23 +89,25 @@ const formSchema = z.object({
 export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
   	title,
 	setShowLoadingModal,
-	showLoadingModal,
 	data
 }) => {
 	const [modalData, setModalData] = useState<InputIncidencia | null>(null);
-	const { area, location, isLoading } = useShiftStore();
-	const [ubicaciones] = useState<any| string[]>([location]);
-	const [areas] = useState<any| string[]>([area]);
-	const [isSuccess, setIsSuccess] =useState(false)
+	const { location, isLoading } = useShiftStore();
+	// const [ubicaciones] = useState<any| string[]>([location]);
+	// const [areas] = useState<any| string[]>([area]);
+	const [isSuccess, setIsSuccess] = useState(false)
 	const [evidencia , setEvidencia] = useState<Imagen[]>([]);
 	const [documento , setDocumento] = useState<Imagen[]>([]);
 	const [date, setDate] = useState<Date|"">("");
+	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(data.ubicacion_incidencia);
+	const { dataAreas:areas, dataLocations:ubicaciones} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true,  ubicacionSeleccionada?true:false);
 
 	const [personasInvolucradas, setPersonasInvolucradas] = useState<PersonasInvolucradas[]>(data.personas_involucradas_incidencia)
 	const [accionesTomadas, setAccionesTomadas] = useState<AccionesTomadas[]>(data.acciones_tomadas_incidencia)
 	const [depositos] = useState<Depositos[]>(data.depositos)
-	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado, error:errorAreEmpleado } = useCatalogoAreaEmpleado(isSuccess);
-	const { editarIncidenciaMutation, catIncidencias, isLoadingCatIncidencias , loading} = useInciencias([], true);
+	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado, error:errorAreEmpleado } = useCatalogoAreaEmpleado(isSuccess, location, "Incidencias" );
+	const { editarIncidenciaMutation, catIncidencias, isLoadingCatIncidencias , loading} = useInciencias([],  false, isSuccess);
+	const [ setCatAreas] = useState<any| string[]>(areas);
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -136,7 +137,10 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 			setDate(new Date(data.fecha_hora_incidencia))
 			setShowLoadingModal(false)
 		}
-	},[isSuccess])
+		if(areas){
+			setCatAreas(areas)
+		}
+	},[isSuccess, areas])
 
 
 	useEffect(()=>{
@@ -196,11 +200,6 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 
 	return (
     <Dialog open={isSuccess} modal>
-      	{/* <DialogTrigger>
-			<div className="cursor-pointer">
-				<Edit /> 
-			</div>
-		</DialogTrigger> */}
 		<div className="cursor-pointer" onClick={handleOpenModal}>
             <Edit />
         </div>
@@ -223,19 +222,22 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 										<FormControl>
 										<Select {...field} className="input"
 											onValueChange={(value:string) => {
-											field.onChange(value); 
+											field.onChange(value);
+											setUbicacionSeleccionada(value); 
 										}}
-										value={field.value} 
+										value={ubicacionSeleccionada} 
 									>
 										<SelectTrigger className="w-full">
 											<SelectValue placeholder="Selecciona una ubicacion" />
 										</SelectTrigger>
 										<SelectContent>
-										{ubicaciones?.map((vehiculo:string, index:number) => (
-											<SelectItem key={index} value={vehiculo}>
-												{vehiculo}
-											</SelectItem>
-										))}
+										{ubicaciones?.map((vehiculo:string, index:number) => {
+											return (
+												<SelectItem key={index} value={vehiculo}>
+													{vehiculo}
+												</SelectItem>
+											)
+										})}
 										</SelectContent>
 									</Select>
 										</FormControl>
