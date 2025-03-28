@@ -13,10 +13,8 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChevronDown, FileX2, Plus } from "lucide-react";
-
+import { ChevronDown, FileX2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
 import {
   Table,
   TableBody,
@@ -25,7 +23,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Label } from "@/components/ui/label";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -33,10 +30,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {  Bitacora_record, bitacorasColumns } from "./bitacoras-columns";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { downloadCSV } from "@/lib/utils";
-import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
 import ChangeLocation from "@/components/changeLocation";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 
@@ -44,8 +40,15 @@ import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 interface ListProps {
   refetch:() => void;
   data: Bitacora_record[];
-  setSelectedOption: React.Dispatch<React.SetStateAction<string[]>>;
+  setSelectedOption: React.Dispatch<React.SetStateAction<string>>;
   isLoading:boolean;
+
+  setUbicacionSeleccionada: React.Dispatch<React.SetStateAction<string>>;
+  setAreaSeleccionada:React.Dispatch<React.SetStateAction<string>>;
+  areaSeleccionada:string;
+  ubicacionSeleccionada:string;
+  setAll:React.Dispatch<React.SetStateAction<boolean>>;
+  all:boolean;
 }
 
 const fallasColumnsCSV = [
@@ -63,25 +66,24 @@ const fallasColumnsCSV = [
   { label: 'Comentarios', key: 'formated_comentarios' },
 ];
 
-const BitacorasTable:React.FC<ListProps> = ({ refetch, data, setSelectedOption, isLoading})=> {
-	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState<string>("");
-	const { dataAreas:catAreas, dataLocations:ubicaciones, isLoadingAreas:loadingCatAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true, ubicacionSeleccionada?true:false);
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
-  const [pagination, setPagination] = React.useState({
-    pageIndex: 0,
-    pageSize: 5,
-  });
+const BitacorasTable:React.FC<ListProps> = ({ refetch, data, setSelectedOption, isLoading ,
+	setUbicacionSeleccionada, setAreaSeleccionada, areaSeleccionada, ubicacionSeleccionada, setAll, all
+})=> {
+	const [sorting, setSorting] = React.useState<SortingState>([]);
+	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+		[]
+	);
+	const [columnVisibility, setColumnVisibility] =
+		React.useState<VisibilityState>({});
+	const [rowSelection, setRowSelection] = React.useState({});
+	const [pagination, setPagination] = React.useState({
+		pageIndex: 0,
+		pageSize: 5,
+	});
 
-  const [globalFilter, setGlobalFilter] = React.useState("");
-
+  	const [globalFilter, setGlobalFilter] = React.useState("");
  
-  const table = useReactTable({
+  	const table = useReactTable({
     data: data||[],
     columns: isLoading ? []:bitacorasColumns,
     onSortingChange: setSorting,
@@ -103,21 +105,16 @@ const BitacorasTable:React.FC<ListProps> = ({ refetch, data, setSelectedOption, 
       pagination,
       globalFilter,
     }
-  });
+  	});
 
 
-  useEffect(()=>{
-    refetch()
-  },[])
+	useEffect(()=>{
+		refetch()
+	},[])
 
 
-  const handleValueChange = (value:string) => {
-    setSelectedOption([value]);
-  };
-
-    // Función que se ejecuta cuando se selecciona un valor
 	const handleSelectChange = (value:string) => {
-		setUbicacionSeleccionada(value); // Actualiza el estado con el valor seleccionado
+		setSelectedOption(value); // Actualiza el estado con el valor seleccionado
 	  };
 
 return (
@@ -141,8 +138,8 @@ return (
 			</div>
 
 			<div className="flex w-1/3 gap-2"> 
-				<ChangeLocation location={""} area={""} all={false} setAreas={() => { } } setLocations={() => { } } 
-				setAll={()=>{}}>
+				<ChangeLocation ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} 
+        		setUbicacionSeleccionada={setUbicacionSeleccionada} setAreaSeleccionada={setAreaSeleccionada} setAll={setAll} all={all}>
 				</ChangeLocation>
 			</div>
 

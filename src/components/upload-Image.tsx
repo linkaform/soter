@@ -7,7 +7,7 @@ import { useUploadImage } from "@/hooks/useUploadImage";
 import { Button } from "./ui/button";
 import { Camera, Trash } from "lucide-react";
 import Webcam from "react-webcam";
-import { base64ToFile, quitarAcentosYMinusculasYEspacios } from "@/lib/utils";
+import { quitarAcentosYMinusculasYEspacios } from "@/lib/utils";
 import Image from "next/image";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "./ui/carousel";
 import { Card, CardContent } from "./ui/card";
@@ -18,7 +18,6 @@ interface CalendarDaysProps {
   setImg: Dispatch<SetStateAction<Imagen[]>>;
   showWebcamOption:boolean;
   facingMode: string
-//   setErrorImagen:Dispatch<SetStateAction<string>>;
   imgArray:Imagen[];
   showArray:boolean;
   limit:number;
@@ -26,7 +25,7 @@ interface CalendarDaysProps {
 
 
 const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOption, facingMode, imgArray, showArray, limit})=> {
-    const [selectedFile, setSelectedFile] = useState<File|null>(null);
+    // const [ setSelectedFile] = useState<File|null>(null);
     const [loadingWebcam, setloadingWebcam] = useState(false);
     const [hideWebcam, setHideWebcam] = useState(true)
     const [hideButtonWebcam, setHideButtonWebcam] = useState(false)
@@ -56,12 +55,12 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
         setImg([])
         setHideWebcam(true)
         setHideButtonWebcam(false)
-        // setErrorImagen("")
     }
 
     function takeAndSavePhoto(){
         const imageSrc = webcamRef.current?.getScreenshot() || "";
-        setSelectedFile(base64ToFile(imageSrc, quitarAcentosYMinusculasYEspacios(id)))
+        const nuevoArchivo = new File([imageSrc], quitarAcentosYMinusculasYEspacios(id))
+        uploadImageMutation.mutate({img:nuevoArchivo})
         setHideWebcam(true)
         setHideButtonWebcam(true)   
     }
@@ -144,7 +143,6 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
                             
                         </div>
                     ):null}
-                    {/* {imgArray.length==1 && !showArray && <Image width={220} height={220} src= {base64photo} alt={""}  className="" />} */}
                         {imgArray?.length>0 && showArray ? (
                             <>
                             <div className="w-full flex justify-center ">
@@ -155,7 +153,6 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
                                     <div className="p-1">
                                     <Card>
                                         <CardContent className="flex aspect-square items-center justify-center p-0">
-                                        {/* <span className="text-4xl font-semibold"> */}
                                             <Image
                                                 width={280}
                                                 height={280}
@@ -163,7 +160,6 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
                                                 alt="Imagen"
                                                 className="w-42 h-42 object-contain bg-gray-200 rounded-lg" 
                                             />
-                                        {/* </span> */}
                                         </CardContent>
                                     </Card>
                                     </div>

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect } from "react";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Imagen } from "@/lib/update-pass";
@@ -12,11 +12,9 @@ interface CalendarDaysProps {
   id: string;
   titulo: string; 
   setDocs: Dispatch<SetStateAction<Imagen[]>>;
-//   setErrorImagen:Dispatch<SetStateAction<string>>;
   docArray:Imagen[];
   limit:number;
 }
-
 
 const LoadFile: React.FC<CalendarDaysProps>= ({id, titulo, setDocs, docArray, limit})=> {
     const { uploadImageMutation, response, isLoading} = useUploadImage();
@@ -31,7 +29,6 @@ const LoadFile: React.FC<CalendarDaysProps>= ({id, titulo, setDocs, docArray, li
 
     function cleanPhoto(){
         setDocs([])
-        // setErrorImagen("")
     }
 
     useEffect(()=>{

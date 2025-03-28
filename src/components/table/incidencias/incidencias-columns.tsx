@@ -1,4 +1,3 @@
-import { EliminarFallaModal } from "@/components/modals/delete-falla-modal";
 import { EliminarIncidenciaModal } from "@/components/modals/delete-incidencia-modal";
 import { EditarIncidenciaModal } from "@/components/modals/editar-incidencia";
 import { LoadingModal } from "@/components/modals/loading-modal";
@@ -91,7 +90,7 @@ export type Incidencia = {
         
         <EditarIncidenciaModal
           title="Editar Incidencia"
-          data={incidencia} setShowLoadingModal={setShowLoadingModal} showLoadingModal={showLoadingModal}/>
+          data={incidencia} setShowLoadingModal={setShowLoadingModal} />
 
         <EliminarIncidenciaModal
           title="Eliminar Incidencia" arrayFolios={[incidencia.folio]}>

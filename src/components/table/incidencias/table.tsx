@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import * as React from "react";
@@ -13,7 +14,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChevronDown, FileX2, Plus, Search, Trash2 } from "lucide-react";
+import { ChevronDown, FileX2, Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -25,8 +26,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -34,22 +33,28 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Incidencia_record, incidenciasColumns } from "./incidencias-columns";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { EliminarIncidenciaModal } from "@/components/modals/delete-incidencia-modal";
 import { downloadCSV } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
 import ChangeLocation from "@/components/changeLocation";
 
 interface ListProps {
-  refetch:() => void;
-  data: Incidencia_record[];
-  setPrioridades: React.Dispatch<React.SetStateAction<string[]>>;
-  isLoading:boolean;
-  openModal: () => void;
-  setSelectedIncidencias:React.Dispatch<React.SetStateAction<string[]>>;
-  selectedIncidencias:string[]
+	refetch:() => void;
+	data: Incidencia_record[];
+	setPrioridades: React.Dispatch<React.SetStateAction<string[]>>;
+	isLoading:boolean;
+	openModal: () => void;
+	setSelectedIncidencias:React.Dispatch<React.SetStateAction<string[]>>;
+	selectedIncidencias:string[];
+
+  	setUbicacionSeleccionada: React.Dispatch<React.SetStateAction<string>>;
+	setAreaSeleccionada:React.Dispatch<React.SetStateAction<string>>;
+	areaSeleccionada:string;
+	ubicacionSeleccionada:string;
+	setAll:React.Dispatch<React.SetStateAction<boolean>>;
+	all:boolean;
 }
 
 const fallasColumnsCSV = [
@@ -61,7 +66,9 @@ const fallasColumnsCSV = [
   { label: 'Reporta', key: 'reporta_incidencia' },
 ];
 
-const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, setPrioridades, isLoading, openModal,setSelectedIncidencias,selectedIncidencias })=> {
+const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, setPrioridades, isLoading, openModal,setSelectedIncidencias,selectedIncidencias,
+	setUbicacionSeleccionada, setAreaSeleccionada, areaSeleccionada, ubicacionSeleccionada, setAll, all
+ })=> {
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -150,8 +157,8 @@ const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, setPrioridades, i
 			</div>
 
 			<div className="flex w-1/3 gap-2"> 
-				<ChangeLocation location={""} area={""} all={false} setAreas={() => { } } setLocations={() => { } } 
-				setAll={()=>{}}>
+				<ChangeLocation ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} 
+        		setUbicacionSeleccionada={setUbicacionSeleccionada} setAreaSeleccionada={setAreaSeleccionada} setAll={setAll} all={all}>
 				</ChangeLocation>
 			</div>
 

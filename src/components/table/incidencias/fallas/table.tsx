@@ -33,8 +33,6 @@ import {Fallas_record, fallasColumns } from "./fallas-columns";
 import { EliminarFallaModal } from "@/components/modals/delete-falla-modal";
 import { downloadCSV } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
-import { useState } from "react";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ChangeLocation from "@/components/changeLocation";
 
@@ -46,6 +44,13 @@ import ChangeLocation from "@/components/changeLocation";
     openModal: () => void;
     setSelectedFallas:React.Dispatch<React.SetStateAction<string[]>>;
     selectedFallas:string[]
+
+	setUbicacionSeleccionada: React.Dispatch<React.SetStateAction<string>>;
+	setAreaSeleccionada:React.Dispatch<React.SetStateAction<string>>;
+	areaSeleccionada:string;
+	ubicacionSeleccionada:string;
+	setAll:React.Dispatch<React.SetStateAction<boolean>>;
+	all:boolean;
   }
   const fallasColumnsCSV = [
     { label: 'Folio', key: 'folio' },
@@ -59,13 +64,13 @@ import ChangeLocation from "@/components/changeLocation";
     { label: 'Responsable', key: 'falla_responsable_solucionar_nombre' },
   ];
   
-  const FallasTable:React.FC<ListProps> = ({ refetch, data, openModal, setSelectedFallas, selectedFallas})=> {
+  const FallasTable:React.FC<ListProps> = ({ refetch, data, openModal, setSelectedFallas, selectedFallas,
+	setUbicacionSeleccionada, setAreaSeleccionada, areaSeleccionada, ubicacionSeleccionada, setAll, all
+  })=> {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
-  const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState<string>("");
-  const { dataAreas:catAreas, dataLocations:ubicaciones, isLoadingAreas:loadingCatAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true, ubicacionSeleccionada?true:false);
   
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -141,8 +146,8 @@ return (
 			</div>
 
 			<div className="flex w-1/3 gap-2"> 
-				<ChangeLocation location={""} area={""} all={false} setAreas={() => { } } setLocations={() => { } } 
-				setAll={()=>{}}>
+				<ChangeLocation ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} 
+        		setUbicacionSeleccionada={setUbicacionSeleccionada} setAreaSeleccionada={setAreaSeleccionada} setAll={setAll} all={all}>
 				</ChangeLocation>
 			</div>
 
