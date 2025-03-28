@@ -40,7 +40,7 @@ import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 interface ListProps {
   refetch:() => void;
   data: Bitacora_record[];
-  setSelectedOption: React.Dispatch<React.SetStateAction<string>>;
+  setSelectedOption: React.Dispatch<React.SetStateAction<string[]>>;
   isLoading:boolean;
 
   setUbicacionSeleccionada: React.Dispatch<React.SetStateAction<string>>;
@@ -114,7 +114,7 @@ const BitacorasTable:React.FC<ListProps> = ({ refetch, data, setSelectedOption, 
 
 
 	const handleSelectChange = (value:string) => {
-		setSelectedOption(value); // Actualiza el estado con el valor seleccionado
+		setSelectedOption([value]); // Actualiza el estado con el valor seleccionado
 	  };
 
 return (
@@ -150,8 +150,8 @@ return (
 						<SelectValue placeholder="Selecciona una opción" />
 						</SelectTrigger>
 					<SelectContent>
-						<SelectItem value="entrada">Abierto</SelectItem>
-						<SelectItem value="salida">Cerrado</SelectItem>
+						<SelectItem value="abierto">Abierto</SelectItem>
+						<SelectItem value="cerrado">Cerrado</SelectItem>
 					</SelectContent>
 					</Select>
 				</div>

@@ -9,12 +9,18 @@ import { useGetListBitacora } from "@/hooks/useGetListBitacora";
 import BitacorasTable from "@/components/table/bitacoras/table";
 import { Home, Users, Car, DoorClosed } from "lucide-react";
 import { useGetStats } from "@/hooks/useGetStats";
+import { useShiftStore } from "@/store/useShiftStore";
 
 const BitacorasPage = () => {
-  const [selectedOption, setSelectedOption] = useState<string[]>([]);
-  const { data: dataStats} = useGetStats("", "", "Bitacoras");
-  const { data,isLoading, refetch} = useGetListBitacora("", "",selectedOption);
- 
+  	const [selectedOption, setSelectedOption] = useState<string[]>([]);
+  	const { data: dataStats} = useGetStats("", "", "Bitacoras");
+  	const { data,isLoading, refetch} = useGetListBitacora("", "",selectedOption);
+
+  	const {location, area} = useShiftStore()
+	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
+	const [areaSeleccionada, setAreaSeleccionada] = useState(area)
+	const [all, setAll] = useState(false)
+
   useEffect(()=>{
     if(selectedOption){
       refetch()
@@ -77,7 +83,10 @@ return (
 				<TabsContent value="Personal">
 					
 				<div className="">
-					<BitacorasTable data={data} refetch={refetch} setSelectedOption={setSelectedOption} isLoading={isLoading}/>
+					<BitacorasTable data={data} refetch={refetch} setSelectedOption={setSelectedOption} isLoading={isLoading}
+					ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} setUbicacionSeleccionada={setUbicacionSeleccionada} 
+					setAreaSeleccionada={setAreaSeleccionada} setAll={setAll} all={all} 
+					/>
 				</div>
 				</TabsContent>
 				<TabsContent value="Locker">
