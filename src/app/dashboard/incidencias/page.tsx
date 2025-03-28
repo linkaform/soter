@@ -12,6 +12,7 @@ import { useGetFallas } from "@/hooks/useGetFallas";
 import { AddFallaModal } from "@/components/modals/add-falla";
 import { AddIncidenciaModal } from "@/components/modals/add-incidencia";
 import { useInciencias } from "@/hooks/useIncidencias";
+import { useShiftStore } from "@/store/useShiftStore";
 
 const IncidenciasPage = () => {
 
@@ -23,6 +24,12 @@ const IncidenciasPage = () => {
   const [selectedIncidencias, setSelectedIncidencias]= useState<string[]>([]);
   const { data:dataFallas,isLoading:isLoadingFallas, refetch:refetchFallas} = useGetFallas("", "","abierto");
   const { listIncidencias, refetchTableIncidencias, isLoadingListIncidencias , stats} = useInciencias([],  true, false);
+
+
+  const {location, area} = useShiftStore()
+  const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
+  const [areaSeleccionada, setAreaSeleccionada] = useState(area)
+  const [all, setAll] = useState(false)
 
   useEffect(()=>{
     if(prioridades){
@@ -78,13 +85,17 @@ const IncidenciasPage = () => {
             <TabsContent value="Incidencias">
               <div className="">
                 <IncidenciasTable data={listIncidencias} refetch={refetchTableIncidencias} setPrioridades={setPrioridades} 
-                isLoading={isLoadingListIncidencias} openModal={openModalIncidencia} setSelectedIncidencias={setSelectedIncidencias} selectedIncidencias={selectedIncidencias}/>
+                isLoading={isLoadingListIncidencias} openModal={openModalIncidencia} setSelectedIncidencias={setSelectedIncidencias} selectedIncidencias={selectedIncidencias} 
+				ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} setUbicacionSeleccionada={setUbicacionSeleccionada} 
+				setAreaSeleccionada={setAreaSeleccionada} setAll={setAll} all={all}/>
               </div>
             </TabsContent>
             <TabsContent value="Fallas">
               <div className="">
                 <FallasTable  data={dataFallas} refetch={refetchFallas} setPrioridades={setPrioridades} isLoading={isLoadingFallas} 
-                openModal={openModal} setSelectedFallas={setSelectedFallas} selectedFallas={selectedFallas} />
+                openModal={openModal} setSelectedFallas={setSelectedFallas} selectedFallas={selectedFallas} 
+				ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} setUbicacionSeleccionada={setUbicacionSeleccionada} 
+					setAreaSeleccionada={setAreaSeleccionada} setAll={setAll} all={all} />
               </div>
             </TabsContent>
           </Tabs>
