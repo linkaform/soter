@@ -7,7 +7,7 @@ export const useCatalogoPaseArea = (location:string) => {
     queryKey: ["getCatalogoPaseArea", location], 
     enabled:false,
     queryFn: async () => {
-        const data = await getCatalogoPasesArea({ location }); 
+        const data = await getCatalogoPasesArea(location); 
         return data.response?.data.areas_by_location; 
     },
    
