@@ -13,6 +13,7 @@ import { AddArticuloConModal } from "@/components/modals/add-article.con";
 import PaqueteriaTable from "@/components/table/articulos/paqueteria/table";
 import { usePaqueteria } from "@/hooks/usePaqueteria";
 import { useShiftStore } from "@/store/useShiftStore";
+import { AddPaqueteriaModal } from "@/components/modals/add-paqueteria";
 
 const ArticulosPage = () => {
 	const [stateArticle, setStateArticle] = useState("pendiente");
@@ -31,13 +32,14 @@ const ArticulosPage = () => {
 	const [selectedArticulos, setSelectedArticulos]= useState<string[]>([]);
 
 	const [isSuccessCon, setIsSuccessCon] = useState(false);
+	const [isSuccessPaq, setIsSuccessPaq] = useState(false);
 
-  const openModal = () => {
-	setIsSuccess(true);  
-	};
-  const closeModal = () => {
-		setIsSuccess(false);  
-	};
+	const openModal = () => {
+		setIsSuccess(true);  
+		};
+	const closeModal = () => {
+			setIsSuccess(false);  
+		};
 
 
 	const openModalCon = () => {
@@ -45,6 +47,12 @@ const ArticulosPage = () => {
 		};
 	const closeModalCon = () => {
 		setIsSuccessCon(false);  
+	};
+	const openModalPaq = () => {
+		setIsSuccessPaq(true);  
+		};
+	const closeModalPaq = () => {
+		setIsSuccessPaq(false);  
 	};
 	
   return (
@@ -116,7 +124,7 @@ const ArticulosPage = () => {
             <TabsContent value="Paqueteria"> 
               <div className="">
                 <PaqueteriaTable data={listPaqueteria} isLoadingListPaqueteria={isLoadingListPaqueteria} 
-				    openModal={openModalCon} setStateArticle={setStateArticle} selectedArticulos={selectedArticulos} setSelectedArticulos={setSelectedArticulos}
+				    openModal={openModalPaq} setStateArticle={setStateArticle} selectedArticulos={selectedArticulos} setSelectedArticulos={setSelectedArticulos}
 					ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} setUbicacionSeleccionada={setUbicacionSeleccionada} 
 				   setAreaSeleccionada={setAreaSeleccionada} setAll={setAll} all={all} />
 
@@ -125,7 +133,7 @@ const ArticulosPage = () => {
 
           </Tabs>
 
-		  <AddArticuloModal
+		<AddArticuloModal
 			title={"Crear Artículo Perdido"}
 			data={modalData}
 			isSuccess={isSuccess}
@@ -138,6 +146,14 @@ const ArticulosPage = () => {
 			setIsSuccess={setIsSuccessCon}
 			onClose={closeModalCon}
 		/>
+
+		<AddPaqueteriaModal
+			title={"Crear Paquetería"}
+			isSuccess={isSuccessPaq}
+			setIsSuccess={setIsSuccessPaq}
+			onClose={closeModalPaq}
+		/>
+
         </div>
       </div>
     </div>

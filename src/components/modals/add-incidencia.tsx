@@ -102,7 +102,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const [incidencia, setIncidencia] = useState("")
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState("");
 	const { dataAreas:areas, dataLocations:ubicaciones, isLoadingAreas:loadingAreas} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true,  ubicacionSeleccionada?true:false);
-	const [catAreas, setCatAreas] = useState<any| string[]>(areas);
+	// const [catAreas, setCatAreas] = useState<any| string[]>(areas);
 	const [personasInvolucradas, setPersonasInvolucradas] = useState<PersonasInvolucradas[]>([])
 	const [accionesTomadas, setAccionesTomadas] = useState<AccionesTomadas[]>([])
 	const [depositos, setDepositos] = useState<Depositos[]>([])
@@ -139,10 +139,8 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 			setEvidencia([])
 			setDocumento([])
 		}
-		if(areas){
-			setCatAreas(areas)
-		}
-	},[isSuccess, areas])
+		
+	},[isSuccess])
 
 	useEffect(()=>{
 		if(errorAreEmpleado){
@@ -253,9 +251,9 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 											)}
 										</SelectTrigger>
 										<SelectContent>
-										{catAreas? (
+										{areas? (
 											<>
-											{catAreas?.map((vehiculo:string, index:number) => (
+											{areas?.map((vehiculo:string, index:number) => (
 												<SelectItem key={index} value={vehiculo}>
 													{vehiculo}
 												</SelectItem>
@@ -436,7 +434,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 								control={form.control}
 								name="notificacion_incidencia"
 								render={({ field }:any) => (
-									<FormItem className="w-full">
+									<FormItem className="w-full mb-3">
 										<FormLabel>Notificaciones: *</FormLabel>
 										<FormControl>
 										<Select {...field} className="input"

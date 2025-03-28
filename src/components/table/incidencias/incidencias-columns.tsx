@@ -72,7 +72,6 @@ export type Incidencia = {
   }
   
   const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
-    // const {refetch} = useGetIncidencias("", "",[]);
     const incidencia = row.original;
     const [showLoadingModal, setShowLoadingModal] = useState(false);
 
@@ -98,30 +97,6 @@ export type Incidencia = {
                 <Trash2 />   
             </div>
         </EliminarIncidenciaModal>
-        {/* <EditarFallaModal
-                title="Editar Falla"
-                data={incidencia} refetchTableFallas={refetch}>
-            <div className="cursor-pointer">
-              <Edit /> 
-            </div>
-        </EditarFallaModal>
-
-        <SeguimientoFallaModal
-                title="Seguimiento Falla"
-                data={incidencia} refetchTableFallas={refetch}>
-            <div className="cursor-pointer">
-                <Check />   
-            </div>
-        </SeguimientoFallaModal>
-
-        <EliminarFallaModal
-          title="Eliminar Falla"
-          refetchTableFallas={refetch} arrayFolios={[incidencia.folio]}>
-            <div className="cursor-pointer">
-                <Trash2 />   
-            </div>
-        </EliminarFallaModal> */}
-        
       </div>
     );
   };

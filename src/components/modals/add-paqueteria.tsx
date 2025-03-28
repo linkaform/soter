@@ -29,9 +29,10 @@ import { useCatalogoAreaEmpleadoApoyo } from "@/hooks/useCatalogoAreaEmpleadoApo
 import DateTime from "../dateTime";
 import { Loader2 } from "lucide-react";
 import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
-import { useArticulosConcesionados } from "@/hooks/useArticulosConcesionados";
-import { useCatalogoConcesion } from "@/hooks/useCatalogoConcesion";
 import { useShiftStore } from "@/store/useShiftStore";
+import { usePaqueteria } from "@/hooks/usePaqueteria";
+import LoadImage from "../upload-Image";
+import { Imagen } from "@/lib/update-pass";
 
 interface AddFallaModalProps {
   	title: string;
@@ -41,17 +42,28 @@ interface AddFallaModalProps {
 }
 
 const formSchema = z.object({
-    status_concesion:z.string().optional(),
-    persona_nombre_concesion:z.string().optional(),
-	ubicacion_concesion: z.string().optional(),
-	caseta_concesion: z.string().optional(),
-	fecha_concesion: z.string().optional(),
-	solicita_concesion: z.string().min(2, {
+    ubicacion_paqueteria:z.string().min(2, {
+		message: "Ubicación campo es requerido.",
+	}),
+    area_paqueteria:z.string().min(2, {
+		message: "Area es campo requerido.",
+	}),
+	fotografia_paqueteria: z.array(
+        z.object({
+          file_url: z.string(),
+          file_name: z.string(),
+        })
+      ).optional(),
+	descripcion_paqueteria: z.string().min(2, {
 		message: "Este campo es requerido.",
 	}),
-	area_concesion: z.string().optional(),
-	equipo_concesion: z.string().optional(), 
-	observacion_concesion: z.string().optional(), 
+	quien_recibe_paqueteria: z.string().optional(),
+	guardado_en_paqueteria: z.string().min(2, {
+		message: "Este campo es requerido.",
+	}),
+	fecha_recibido_paqueteria:z.string().optional(),
+	estatus_paqueteria:z.string().optional(),
+	proveedor: z.string().optional(),
 });
 
 export const AddPaqueteriaModal: React.FC<AddFallaModalProps> = ({
@@ -60,26 +72,26 @@ export const AddPaqueteriaModal: React.FC<AddFallaModalProps> = ({
 	setIsSuccess,
 }) => {
 	const [conSelected, setConSelected] = useState<string>("");
-	const {location} = useShiftStore()
+	const {location, area} = useShiftStore()
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
 	const { dataAreas:areas, dataLocations:ubicaciones, isLoadingAreas:loadingAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true,  ubicacionSeleccionada?true:false);
 	const { data:dataAreaEmpleadoApoyo, isLoading:loadingAreaEmpleadoApoyo,} = useCatalogoAreaEmpleadoApoyo(isSuccess);
-	const { createArticulosConMutation, isLoading} = useArticulosConcesionados(false)
-    const { dataCon, dataConSub, isLoadingCon, isLoadingConSub  } = useCatalogoConcesion(ubicacionSeleccionada ,conSelected,  isSuccess);
+	const { createPaqueteriaMutation, isLoading} = usePaqueteria(ubicacionSeleccionada, area, "", false)
 	const [date, setDate] = useState<Date|"">("");
+	const [evidencia, setEvidencia] = useState<Imagen[]>([])
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-            status_concesion:"",
-            persona_nombre_concesion:"",
-            ubicacion_concesion:"",
-            caseta_concesion:"",
-            fecha_concesion:"",
-            solicita_concesion:"",
-            area_concesion:"",
-            equipo_concesion:"", 
-            observacion_concesion:"", 
+			ubicacion_paqueteria: "Guardado",
+			area_paqueteria:"",
+			fotografia_paqueteria: [],
+			descripcion_paqueteria:"",
+			quien_recibe_paqueteria:"",
+			guardado_en_paqueteria: "",
+			fecha_recibido_paqueteria: "",
+			estatus_paqueteria:"Guardado",
+			proveedor:  "",
 		},
 	});
 
@@ -102,19 +114,21 @@ export const AddPaqueteriaModal: React.FC<AddFallaModalProps> = ({
 		if(date){
 			const formattedDate = format( new Date(date), 'yyyy-MM-dd HH:mm:ss');
 			const formatData ={
-                    status_concesion: "abierto",
-                    persona_nombre_concesion:values.persona_nombre_concesion??"",
-                    ubicacion_concesion: values.ubicacion_concesion ?? "",
-                    caseta_concesion: values.caseta_concesion ?? "",
-                    fecha_concesion: formattedDate?? "",
-                    solicita_concesion: values.solicita_concesion ?? "persona",
-                    area_concesion: values.area_concesion?? "",
-                    equipo_concesion: values.equipo_concesion?? "", 
-                    observacion_concesion: values.observacion_concesion?? "", 
+					ubicacion_paqueteria: "Guardado",
+					area_paqueteria:values.area_paqueteria??"",
+					fotografia_paqueteria: evidencia ?? [],
+                    descripcion_paqueteria: values.descripcion_paqueteria ?? "",
+					quien_recibe_paqueteria: values.quien_recibe_paqueteria??"",
+					guardado_en_paqueteria: values.guardado_en_paqueteria??"",
+                    fecha_recibido_paqueteria: formattedDate?? "",
+					fecha_entregado_paqueteria: "",
+					entregado_a_paqueteria:"",
+                    estatus_paqueteria: values.estatus_paqueteria??"Guardado",
+                    proveedor: values.proveedor?? "",
 				}
-				createArticulosConMutation.mutate({data_article: formatData})
+				createPaqueteriaMutation.mutate({data_paquete: formatData})
 		}else{
-			form.setError("fecha_concesion", { type: "manual", message: "Fecha es un campo requerido." });
+			form.setError("fecha_recibido_paqueteria", { type: "manual", message: "Fecha es un campo requerido." });
 		}
 	}
 
@@ -138,7 +152,7 @@ export const AddPaqueteriaModal: React.FC<AddFallaModalProps> = ({
 			<form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-5">
             <FormField
 					control={form.control}
-					name="ubicacion_concesion"
+					name="ubicacion_paqueteria"
 					render={({ field }:any) => (
 						<FormItem>
 							<FormLabel>Ubicacion:</FormLabel>
@@ -170,7 +184,7 @@ export const AddPaqueteriaModal: React.FC<AddFallaModalProps> = ({
 
 				<FormField
 					control={form.control}
-					name="caseta_concesion"
+					name="area_paqueteria"
 					render={({ field }:any) => (
 						<FormItem>
 							<FormLabel>Area:</FormLabel>
@@ -208,10 +222,10 @@ export const AddPaqueteriaModal: React.FC<AddFallaModalProps> = ({
 
 				<FormField
 					control={form.control}
-					name="fecha_concesion"
+					name="fecha_recibido_paqueteria"
 					render={() => (
 						<FormItem>
-						<FormLabel> Fecha de la concesion:</FormLabel>
+						<FormLabel> Fecha de la recepcion:</FormLabel>
 						<FormControl>
 							{/* <Input type="datetime-local" placeholder="Fecha" {...field} /> */}
 							<DateTime date={date} setDate={setDate} />
@@ -221,127 +235,12 @@ export const AddPaqueteriaModal: React.FC<AddFallaModalProps> = ({
 						</FormItem>
 					)}
 					/>
-
-				<FormField
+					<FormField
 					control={form.control}
-					name="solicita_concesion"
+					name="quien_recibe_paqueteria"
 					render={({ field }:any) => (
 						<FormItem>
-							<FormLabel>Tipo de concesion:</FormLabel>
-							<FormControl>
-							<Select {...field} className="input"
-								onValueChange={(value:string) => {
-								field.onChange(value); 
-							}}
-							value={field.value} 
-						>
-							<SelectTrigger className="w-full">
-									<SelectValue placeholder="Seleciona una opcion..." />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem key={"persona"} value={"persona"}>Persona</SelectItem>
-								<SelectItem key={"área"} value={"área"}>Area</SelectItem>
-								<SelectItem key={"compartida"} value={"compartida"}>Compartida</SelectItem>
-							</SelectContent>
-						</Select>
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>	
-
-				<FormField
-					control={form.control}
-					name="area_concesion"
-					render={({ field }:any) => (
-						<FormItem>
-							<FormLabel>Nombre del area:</FormLabel>
-							<FormControl>
-							<Select {...field} className="input"
-								onValueChange={(value:string) => {
-								field.onChange(value); 
-								setConSelected(value)
-							}}
-							value={field.value} 
-						>
-							<SelectTrigger className="w-full">
-								{isLoadingCon && conSelected ? (
-									<SelectValue placeholder="Cargando articulos..." />
-								):(<>
-								{dataCon?.length > 0 ?(<SelectValue placeholder="Selecciona una opción..." />)
-								:(<SelectValue placeholder="Selecciona una categoria para ver las opciones..." />)
-								}
-								</>)}
-								
-							</SelectTrigger>
-							<SelectContent>
-							{dataCon?.length>0 ? (
-								dataCon?.map((item:string, index:number) => {
-									return (
-										<SelectItem key={index} value={item}>
-											{item}
-										</SelectItem>
-									)
-								})
-							):(
-								<><SelectItem disabled value={"no opciones"}>No hay opciones disponibles</SelectItem></>
-							)}
-							</SelectContent>
-						</Select>
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>	
-				<FormField
-					control={form.control}
-					name="equipo_concesion"
-					render={({ field }:any) => (
-						<FormItem>
-							<FormLabel>Nombre del equipo:</FormLabel>
-							<FormControl>
-							<Select {...field} className="input"
-								onValueChange={(value:string) => {
-								field.onChange(value); 
-							}}
-							value={field.value} 
-						>
-							<SelectTrigger className="w-full">
-								{isLoadingConSub && conSelected ? (
-									<SelectValue placeholder="Cargando articulos..." />
-								):(<>
-								{dataConSub?.length > 0 ?(<SelectValue placeholder="Selecciona una opción..." />)
-								:(<SelectValue placeholder="Selecciona una categoria para ver las opciones..." />)
-								}
-								</>)}
-								
-							</SelectTrigger>
-							<SelectContent>
-							{dataConSub?.length>0 ? (
-								dataConSub?.map((item:string, index:number) => {
-									return (
-										<SelectItem key={index} value={item}>
-											{item}
-										</SelectItem>
-									)
-								})
-							):(
-								<><SelectItem disabled value={"no opciones"}>No hay opciones disponibles</SelectItem></>
-							)}
-							</SelectContent>
-						</Select>
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>	
-			
-            <FormField
-					control={form.control}
-					name="persona_nombre_concesion"
-					render={({ field }:any) => (
-						<FormItem>
-							<FormLabel>Persona:</FormLabel>
+							<FormLabel>Quien recibe:</FormLabel>
 							<FormControl>
 							<Select {...field} className="input"
 								onValueChange={(value:string) => {
@@ -379,16 +278,16 @@ export const AddPaqueteriaModal: React.FC<AddFallaModalProps> = ({
 					)}
 				/>	
 
-                <FormField
+				<FormField
                     control={form.control}
-                    name="observacion_concesion"
+                    name="descripcion_paqueteria"
                     render={({ field }:any) => (
-                        <FormItem className="col-span-2">
-                        <FormLabel>Observaciones: </FormLabel>
-                        <FormControl>
+                        <FormItem>
+                        <FormLabel>Descripción: </FormLabel>
+                        <FormControl className="col-span-2">
                             <Textarea
                             placeholder="Texto"
-                            className="resize-none"
+                            className="resize-none "
                             {...field}
                             />
                         </FormControl>
@@ -397,6 +296,106 @@ export const AddPaqueteriaModal: React.FC<AddFallaModalProps> = ({
                         </FormItem>
                     )}
                     />
+
+				<div className="flex justify-between">
+                    <LoadImage
+                        id="evidencia" 
+                        titulo={"Fotografia"} 
+                        setImg={setEvidencia}
+                        showWebcamOption={true}
+                        facingMode="environment"
+                        imgArray={evidencia}
+                        showArray={true}
+                        limit={10}
+                        />
+				</div>
+
+				<FormField
+					control={form.control}
+					name="proveedor"
+					render={({ field }:any) => (
+						<FormItem>
+							<FormLabel>Proveedor:</FormLabel>
+							<FormControl>
+							<Select {...field} className="input"
+								onValueChange={(value:string) => {
+								field.onChange(value); 
+							}}
+							value={field.value} 
+						>
+							<SelectTrigger className="w-full">
+								{loadingAreaEmpleadoApoyo ? (
+									<SelectValue placeholder="Cargando articulos..." />
+								):(<>
+								{dataAreaEmpleadoApoyo?.length > 0 ?(<SelectValue placeholder="Selecciona una opción..." />)
+								:(<SelectValue placeholder="Selecciona una categoria para ver las opciones..." />)
+								}
+								</>)}
+								
+							</SelectTrigger>
+							<SelectContent>
+							{dataAreaEmpleadoApoyo?.length>0 ? (
+								dataAreaEmpleadoApoyo?.map((item:string, index:number) => {
+									return (
+										<SelectItem key={index} value={item}>
+											{item}
+										</SelectItem>
+									)
+								})
+							):(
+								<><SelectItem disabled value={"no opciones"}>No hay opciones disponibles</SelectItem></>
+							)}
+							</SelectContent>
+						</Select>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>	
+
+				<FormField
+					control={form.control}
+					name="guardado_en_paqueteria"
+					render={({ field }:any) => (
+						<FormItem>
+							<FormLabel>Guardado en:</FormLabel>
+							<FormControl>
+							<Select {...field} className="input"
+								onValueChange={(value:string) => {
+								field.onChange(value); 
+							}}
+							value={field.value} 
+						>
+							<SelectTrigger className="w-full">
+								{loadingAreaEmpleadoApoyo ? (
+									<SelectValue placeholder="Cargando articulos..." />
+								):(<>
+								{dataAreaEmpleadoApoyo?.length > 0 ?(<SelectValue placeholder="Selecciona una opción..." />)
+								:(<SelectValue placeholder="Selecciona una categoria para ver las opciones..." />)
+								}
+								</>)}
+								
+							</SelectTrigger>
+							<SelectContent>
+							{dataAreaEmpleadoApoyo?.length>0 ? (
+								dataAreaEmpleadoApoyo?.map((item:string, index:number) => {
+									return (
+										<SelectItem key={index} value={item}>
+											{item}
+										</SelectItem>
+									)
+								})
+							):(
+								<><SelectItem disabled value={"no opciones"}>No hay opciones disponibles</SelectItem></>
+							)}
+							</SelectContent>
+						</Select>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>	
+
 			</form>
 			</Form>
 		</div>

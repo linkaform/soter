@@ -145,7 +145,7 @@ import { usePaseEntrada } from "@/hooks/usePaseEntrada";
 	const [modalData, setModalData] = useState<any>(null);
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState('');
 	const { dataAreas:catAreas, dataLocations:ubicaciones, isLoadingAreas:loadingCatAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true, ubicacionSeleccionada?true:false);
-	const[ userIdSoter] = useState<number|null>(()=>{
+	const [userIdSoter] = useState<number|null>(()=>{
 			return Number(typeof window !== "undefined"? window.localStorage.getItem("userId_soter"):0) 
 	});
 

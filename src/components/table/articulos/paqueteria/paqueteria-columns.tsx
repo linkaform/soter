@@ -4,6 +4,8 @@ import {
 import { Imagen } from "@/lib/update-pass";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { capitalizeFirstLetter } from "@/lib/utils";
+import { ViewPaqueteria } from "@/components/modals/view-paqueteria";
+import { Eye } from "lucide-react";
 
 
 export interface Paquete_record {
@@ -29,13 +31,16 @@ const OptionsCell: React.FC<{ row: any }> = ({ row}) => {
 	console.log(paquete)
   return (
     <div className="flex space-x-2">
-		{/* <ViewArticulo 
-          title="Información del Artículo"
+
+      <ViewPaqueteria 
+          title="Información del Paquete"
           data={paquete} isSuccess={false}>
             <div className="cursor-pointer">
               <Eye /> 
             </div>
-        </ViewArticulo>
+      </ViewPaqueteria>
+
+		{/* 
 
 		<LoadingModal isOpen={showLoadingModal} text="Cargando..."/>
 		

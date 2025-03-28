@@ -29,10 +29,9 @@ import { format } from 'date-fns';
 import DateTime from "../dateTime";
 import LoadFile from "../upload-file";
 import { Edit, Loader2 } from "lucide-react";
-import { AccionesTomadas, Depositos, InputIncidencia, PersonasInvolucradas } from "@/lib/incidencias";
+import { AccionesTomadas, Depositos, PersonasInvolucradas } from "@/lib/incidencias";
 import PersonasInvolucradasList from "../personas-involucradas-list";
 import AccionesTomadasList from "../acciones-tomadas-list";
-import { toast } from "sonner";
 import { useShiftStore } from "@/store/useShiftStore";
 import { useInciencias } from "@/hooks/useIncidencias";
 import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
@@ -91,10 +90,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 	setShowLoadingModal,
 	data
 }) => {
-	const [modalData, setModalData] = useState<InputIncidencia | null>(null);
 	const { location, isLoading } = useShiftStore();
-	// const [ubicaciones] = useState<any| string[]>([location]);
-	// const [areas] = useState<any| string[]>([area]);
 	const [isSuccess, setIsSuccess] = useState(false)
 	const [evidencia , setEvidencia] = useState<Imagen[]>([]);
 	const [documento , setDocumento] = useState<Imagen[]>([]);
@@ -105,9 +101,9 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 	const [personasInvolucradas, setPersonasInvolucradas] = useState<PersonasInvolucradas[]>(data.personas_involucradas_incidencia)
 	const [accionesTomadas, setAccionesTomadas] = useState<AccionesTomadas[]>(data.acciones_tomadas_incidencia)
 	const [depositos] = useState<Depositos[]>(data.depositos)
-	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado, error:errorAreEmpleado } = useCatalogoAreaEmpleado(isSuccess, location, "Incidencias" );
+	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado } = useCatalogoAreaEmpleado(isSuccess, location, "Incidencias" );
 	const { editarIncidenciaMutation, catIncidencias, isLoadingCatIncidencias , loading} = useInciencias([],  false, isSuccess);
-	const [ setCatAreas] = useState<any| string[]>(areas);
+	// const [ setCatAreas] = useState<any| string[]>(areas);
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -138,23 +134,9 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 			setShowLoadingModal(false)
 		}
 		if(areas){
-			setCatAreas(areas)
+			// setCatAreas(areas)
 		}
 	},[isSuccess, areas])
-
-
-	useEffect(()=>{
-		if(errorAreEmpleado){
-			toast.error("Error al cargar catalogo de area empleado")
-			handleClose()
-		}
-	},[ errorAreEmpleado])
-
-	useEffect(()=>{
-		if(modalData){
-			editarIncidenciaMutation.mutate({ data_incidencia: modalData, folio: data.folio });
-		}
-	},[modalData])
 
 	useEffect(()=>{
 		if(!loading){
@@ -183,7 +165,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 					notificacion_incidencia:values.notificacion_incidencia||"",
 					datos_deposito_incidencia: depositos||[],
 				}
-				 setModalData(formatData);
+				editarIncidenciaMutation.mutate({ data_incidencia: formatData, folio: data.folio });
 		}else{
 			form.setError("fecha_hora_incidencia", { type: "manual", message: "Fecha es un campo requerido." });
 		}
@@ -427,7 +409,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 								control={form.control}
 								name="notificacion_incidencia"
 								render={({ field }:any) => (
-									<FormItem className="w-full">
+									<FormItem className="w-full mb-3">
 										<FormLabel>Notificaciones: *</FormLabel>
 										<FormControl>
 										<Select {...field} className="input"
