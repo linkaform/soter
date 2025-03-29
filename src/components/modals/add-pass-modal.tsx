@@ -150,7 +150,7 @@ export const EntryPassModal: React.FC<EntryPassUpdateModalProps> = ({
 
   useEffect(()=>{
     if(sendPreSms && sendData ){
-      createPaseEntradaMutation.mutate({ access_pass:sendData, location:dataPass?.ubicacion, enviar_pre_sms: sendPreSms })
+      createPaseEntradaMutation.mutate({ access_pass:sendData, location:dataPass?.ubicacion??"", enviar_pre_sms: sendPreSms })
     }
   },[ sendData, sendPreSms])
 

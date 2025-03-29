@@ -59,7 +59,7 @@ export type Access_pass={
 export const usePaseEntrada = (locationConfSeguridad:string) => {
 
     const { data: dataConfigLocation, isLoading:isLoadingConfigLocation, error: errorConfigLocation} = useQuery<any>({
-        queryKey: ["getConfSeguridad", location], 
+        queryKey: ["getConfSeguridad", locationConfSeguridad], 
         enabled: locationConfSeguridad!=="" ? true:false, 
         queryFn: async () => {
             const data = await getConfSeguridad(locationConfSeguridad); 
