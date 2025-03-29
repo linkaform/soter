@@ -157,15 +157,19 @@ import { usePaseEntrada } from "@/hooks/usePaseEntrada";
 	})
 
 
-	const [host, setHost] = useState<string|undefined>();
-	const [protocol, setProtocol] = useState<string|undefined>();
+	const [host] = useState<string>(()=>{
+		return typeof window !== "undefined"? window.location.host:""
+	});
+	const [protocol] = useState<string>(()=>{
+		return typeof window !== "undefined"? window.location.protocol:""
+	});
 
-	useEffect(() => {
-		if (typeof window !== "undefined") {
-			setHost("window.location.host");
-			setProtocol("window.location.protocol");
-		}
-	}, []); 
+	// useEffect(() => {
+	// 	if (typeof window !== "undefined") {
+	// 		setHost(window.location.host);
+	// 		setProtocol(window.location.protocol);
+	// 	}
+	// }, []); 
 
 	const { dataConfigLocation, isLoadingConfigLocation } = usePaseEntrada(ubicacionSeleccionada)
 	const [enviar_correo_pre_registro, set_enviar_correo_pre_registro] = useState<string[]>([]);
