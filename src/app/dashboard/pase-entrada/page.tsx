@@ -162,8 +162,8 @@ import { usePaseEntrada } from "@/hooks/usePaseEntrada";
 
 	useEffect(() => {
 		if (typeof window !== "undefined") {
-			setHost(window.location.host);
-			setProtocol(window.location.protocol);
+			setHost("window.location.host");
+			setProtocol("window.location.protocol");
 		}
 	}, []); 
 
