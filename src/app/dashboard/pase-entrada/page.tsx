@@ -951,7 +951,7 @@ return (
 					<AreasList
 						areas={areasList}
 						setAreas={setAreasList}
-						location={ubicacionSeleccionada}
+						location={ubicacionSeleccionada ??''}
 						catAreas={catAreas}
 						loadingCatAreas={loadingCatAreas} existingAreas={false} 
 					/>
