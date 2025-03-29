@@ -27,7 +27,6 @@ const formSchema =
 		onDelete: () => void;
 
 		areaRaw: Areas;
-		location:string;
 		loadingCatAreas:boolean;
 		catAreas:string[];
 		updateArea: (value: string, fieldName:string ) => void;

@@ -24,7 +24,6 @@ import AreasItem from "./areas-item";
 import { Areas } from "@/hooks/useCreateAccessPass";
 
 interface AreasListProps {
-    location:string;
     areas: Areas[];
     setAreas: Dispatch<SetStateAction<Areas[]>>
     catAreas:string[]
@@ -38,7 +37,7 @@ const formSchema =
       commentario_area: z.string().optional(),
 });
 
-const AreasList:React.FC<AreasListProps> = ({ location, areas, setAreas, catAreas, loadingCatAreas, existingAreas})=> {
+const AreasList:React.FC<AreasListProps> = ({ areas, setAreas, catAreas, loadingCatAreas, existingAreas})=> {
     const [collapsedIndex, setCollapsedIndex] = useState<number | null>(null);
 
     const form = useForm<z.infer<typeof formSchema>>({
@@ -115,7 +114,6 @@ const AreasList:React.FC<AreasListProps> = ({ location, areas, setAreas, catArea
             index={index}
             onDelete={() => handleDeleteArea(index)}
             catAreas={catAreas}
-            location={location} 
             loadingCatAreas={loadingCatAreas} 
             updateArea={(value:string, fieldName:string) => updatedArea(index, value, fieldName)}/>
         </div>
