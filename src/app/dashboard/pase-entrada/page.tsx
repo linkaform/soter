@@ -157,12 +157,15 @@ import { usePaseEntrada } from "@/hooks/usePaseEntrada";
 	})
 
 
-	const [host] = useState<string|null>(()=>{
-		return typeof window.location !== "undefined"? window.location.host:""
-	});
-	const [protocol] = useState<string | null>(()=>{
-		return typeof window.location !== "undefined"? window.location.protocol:""
-	});
+	const [host, setHost] = useState<string|undefined>();
+	const [protocol, setProtocol] = useState<string|undefined>();
+
+	useEffect(() => {
+		if (typeof window !== "undefined") {
+			setHost(window.location.host);
+			setProtocol(window.location.protocol);
+		}
+	}, []); 
 
 	const { dataConfigLocation, isLoadingConfigLocation } = usePaseEntrada(ubicacionSeleccionada)
 	const [enviar_correo_pre_registro, set_enviar_correo_pre_registro] = useState<string[]>([]);
@@ -265,7 +268,7 @@ import { usePaseEntrada } from "@/hooks/usePaseEntrada";
 			visita_a: userNameSoter?? "",//userNameSoter,
 			custom:true,
 			link:{
-				link : data.link.link,
+				link : `${protocol}//${host}/dashboard/pase-update`,
 				docs : formatedDocs,
 				creado_por_id: userIdSoter ,// userIdSoter,
 				creado_por_email: userEmailSoter,// userEmailSoter
