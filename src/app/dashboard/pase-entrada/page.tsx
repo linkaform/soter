@@ -156,11 +156,12 @@ import { usePaseEntrada } from "@/hooks/usePaseEntrada";
 		return typeof window !== "undefined"? window.localStorage.getItem("userEmail_soter"):""
 	})
 
-	const [host] = useState(()=>{
-		return typeof window !== "undefined"? window.location.host:""
+
+	const [host] = useState<string|null>(()=>{
+		return typeof window.location !== "undefined"? window.location.host:""
 	});
-	const [protocol] = useState(()=>{
-		return typeof window !== "undefined"? window.location.protocol:""
+	const [protocol] = useState<string | null>(()=>{
+		return typeof window.location !== "undefined"? window.location.protocol:""
 	});
 
 	const { dataConfigLocation, isLoadingConfigLocation } = usePaseEntrada(ubicacionSeleccionada)
@@ -227,6 +228,7 @@ import { usePaseEntrada } from "@/hooks/usePaseEntrada";
 		});
 		
 	};
+
 
 	useEffect(()=>{
 		if ( selected ) {

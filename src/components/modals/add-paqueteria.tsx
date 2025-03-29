@@ -55,7 +55,7 @@ const formSchema = z.object({
         })
       ).optional(),
 	descripcion_paqueteria: z.string().min(2, {
-		message: "Este campo es requerido.",
+		message: "Este campo es requerido."
 	}),
 	quien_recibe_paqueteria: z.string().optional(),
 	guardado_en_paqueteria: z.string().min(2, {
