@@ -162,7 +162,7 @@ import { usePaseEntrada } from "@/hooks/usePaseEntrada";
 	const [protocol,setProtocol] = useState<string>();
 	//()=>{	return typeof window !== "undefined"? window.location.protocol:""	}
 	useEffect(() => {
-		if (typeof window !== "undefined") {
+		if (typeof window !== "undefined" && typeof window.location !== "undefined") {
 			setHost(window.location.host);
 			setProtocol(window.location.protocol);
 		}
