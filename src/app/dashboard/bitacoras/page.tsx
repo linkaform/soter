@@ -56,7 +56,8 @@ const BitacorasPage = () => {
 			}
 	};
 
-	const handleTabChangeE = (newTab: string) => {
+	const handleTabChangeE = (newTab: any) => {
+		console.log("NEW TAB",newTab)
 		setSelectedTab(newTab);  // Actualiza el estado con la nueva pestaña seleccionada
 	  };
 
@@ -161,7 +162,7 @@ return (
 			</div>
 		</div> 
 
-			<Tabs defaultValue="Personal" className="w-full"  value={selectedTab}  onChange={handleTabChangeE}>
+			<Tabs defaultValue="Personal" className="w-full"  value={selectedTab}  onValueChange={handleTabChangeE}>
 				<TabsContent value="Personal">
 				<div className="">
 					<BitacorasTable data={data} isLoading={isLoading}
