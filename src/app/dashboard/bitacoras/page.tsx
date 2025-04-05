@@ -28,37 +28,25 @@ const BitacorasPage = () => {
 
 
 
-	const handleTabChange = (tab:string) => {
-		if(tab == selectedTab){
+	const handleTabChange = (tab:string, option:string[]) => {
+		console.log("TAB", tab, selectedTab)
 
-		}
-		switch(tab){
-			case "entrada":
-				setSelectedOption([tab]); 
-				setSelectedTab("Personal")
-				break;
-			  case "salida":
-				setSelectedOption([tab]);
-				setSelectedTab("Personal")
-				break;
-			  case "Vehiculos":
-				setSelectedOption([]);
-				setSelectedTab(tab)
-				break;
-			case "Equipos":
-				setSelectedOption([]);
-				setSelectedTab(tab)
-				break;
-			  default:
-				setSelectedOption([]);
-				setSelectedTab("Personal")
-				break;
+		if(tab == selectedTab){
+			if(option[0] == selectedOption[0]){
+				setSelectedOption([]); 
+			}else{
+				setSelectedOption(option)
 			}
+			setSelectedTab("Personal")
+		}else{
+			setSelectedOption(option); 
+			setSelectedTab(tab)
+		}
+		
 	};
 
 	const handleTabChangeE = (newTab: any) => {
-		console.log("NEW TAB",newTab)
-		setSelectedTab(newTab);  // Actualiza el estado con la nueva pestaña seleccionada
+		setSelectedTab(newTab); 
 	  };
 
 
@@ -97,7 +85,7 @@ return (
 				<div  className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
 					selectedTab === 'Vehiculos' ? 'bg-blue-100' : 'hover:bg-gray-100'
 					}`} 
-					onClick={() => handleTabChange('Vehiculos')}>
+					onClick={() => handleTabChange("Vehiculos", [])}>
 					<div className="flex gap-6">
 						<Car className="text-primary w-10 h-10" />
 						<span className="flex items-center font-bold text-4xl">
@@ -114,7 +102,7 @@ return (
 				<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
 					selectedTab === 'Equipos' ? 'bg-blue-100' : 'hover:bg-gray-100'
 					}`} 
-					onClick={() => handleTabChange('Equipos')} >
+					onClick={() => handleTabChange("Equipos",[])} >
 					<div className="flex gap-6">
 						<Computer className="text-primary w-10 h-10" />
 						<span className="flex items-center font-bold text-4xl">
@@ -131,7 +119,7 @@ return (
 
 
 				<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
-					selectedOption[0] === 'entrada' ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => handleTabChange("entrada")} >
+					selectedOption[0] === 'entrada' ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => handleTabChange("Personal",["entrada"])}>
 					<div className="flex gap-6">
 						<Users className="text-primary w-10 h-10" />
 						<span className="flex items-center font-bold text-4xl">
@@ -146,7 +134,7 @@ return (
 				</div>
 
 				<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
-					selectedOption[0] === 'salida' ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => handleTabChange("salida")} >
+					selectedOption[0] === 'salida' ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => handleTabChange("Personal", ["salida"])}>
 					<div className="flex gap-6">
 						<DoorClosed className="text-primary w-10 h-10" />
 						<span className="flex items-center font-bold text-4xl">
