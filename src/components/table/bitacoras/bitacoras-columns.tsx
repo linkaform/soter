@@ -4,7 +4,6 @@ import { AddVehicleModal } from "@/components/modals/add-vehicle-modal";
 import { DoOutModal } from "@/components/modals/do-out-modal";
 import { ReturnGafeteModal } from "@/components/modals/return-gafete-modal";
 import { ViewListBitacoraModal } from "@/components/modals/view-bitacora";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useGetListBitacora } from "@/hooks/useGetListBitacora";
 import {
 		ColumnDef,  
@@ -80,7 +79,7 @@ export interface Areas_bitacora {
 }
 
 const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
-	const {refetch} = useGetListBitacora("", "",[]);
+	const {refetch} = useGetListBitacora("", "",[], false);
 	const bitacora = row.original;
 	bitacora.formated_visita = bitacora.visita_a.map((item: VisitaA) => item.nombre).join(', ');
 	bitacora.formated_comentarios = bitacora.comentarios.map((item: Comentarios_bitacoras) => item.comentario).join(', ');
@@ -116,7 +115,7 @@ const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
 		)}
 
 		{ !bitacora.fecha_salida ? (
-			<DoOutModal title={"Registar Salida"} refetchTable={refetch} id_bitacora={bitacora._id} ubicacion={bitacora.ubicacion} 
+			<DoOutModal title={"Registar Salida"} refetchTable={refetch} id_bitacora={bitacora.codigo_qr} ubicacion={bitacora.ubicacion} 
 				area={bitacora.status_visita.toLowerCase() == "entrada" ? bitacora.caseta_entrada : bitacora.caseta_salida || ""} fecha_salida={bitacora.fecha_salida}>
 					<Forward />
 				</DoOutModal>
@@ -145,22 +144,6 @@ export const bitacorasColumns: ColumnDef<Bitacora_record>[] = [
 		enableSorting: true,
 	},
 	{
-		accessorKey:"foto_url",
-		header:"Fotografía",
-		cell: ({ row }) => {
-			const foto = row.original.foto_url ?? '/nouser.svg';
-			// const ultimaImagen = foto && foto.length > 0 ? foto[foto.length - 1].foto_url : '/nouser.svg'; 
-			return(
-			  <>
-				<Avatar>
-					<AvatarImage src={foto|| "/nouser.svg"} alt="Avatar" />
-					<AvatarFallback>CN</AvatarFallback>
-				</Avatar>
-				</>
-			)},
-		  enableSorting: false,
-	},
-	{
 		accessorKey: "fecha_entrada",
 		header: "Entrada",
 		cell: ({ row }) => (
@@ -176,7 +159,6 @@ export const bitacorasColumns: ColumnDef<Bitacora_record>[] = [
 		),
 		enableSorting: true,
 	},
-
 	{
 		accessorKey: "perfil_visita",
 		header: "Tipo",

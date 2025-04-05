@@ -93,7 +93,7 @@ export const usePaqueteria = (location:string, area:string, status:string, enabl
 
        //Crear Devolucion de Paquetes
      const devolverPaqueteriaMutation = useMutation({
-        mutationFn: async ({data_paquete_actualizar, folio} : {data_paquete_actualizar: InputPaqueteriaDevolver, folio:string, location:string, area:string, status:string }) => {
+        mutationFn: async ({data_paquete_actualizar, folio} : {data_paquete_actualizar: InputPaqueteriaDevolver, folio:string}) => {
             const response = await editarPaqueteria(data_paquete_actualizar, folio);
             const hasError= response.response.data.status_code
 

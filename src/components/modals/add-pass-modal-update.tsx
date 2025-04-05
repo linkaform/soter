@@ -44,11 +44,7 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
   const [sendDataUpdate, setSendDataUpdate] = useState<Access_pass_update|null>(null)
   const [link, setLink] = useState("");
   const account_id = userIdSoter;
-  // const { data:responseUpdateFull, isLoading:loadingUpdateFull, refetch: refetchUpdateFull } = useUpdatePaseFull(sendDataUpdate, id, folio, dataPass?.ubicacion);
   const { updatePaseEntradaFullMutation, responseCreatePase, isLoading } = usePaseEntrada("")
-  // const protocol = window.location.protocol;  
-  // const host = window.location.host;  
-
   const [hostPro, setHostPro] = useState({ protocol: '', host: '' });
 
 	useEffect(() => {

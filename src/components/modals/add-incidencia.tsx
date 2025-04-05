@@ -135,7 +135,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	useEffect(()=>{
 		if(isSuccess){
 			reset()
-			setDate("")
+			setDate(new Date())
 			setEvidencia([])
 			setDocumento([])
 		}

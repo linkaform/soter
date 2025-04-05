@@ -121,7 +121,7 @@ const ArticulosPage = () => {
               </div>
             </TabsContent>
 
-            <TabsContent value="Paqueteria"> 
+            <TabsContent value="Paqueteria">
               <div className="">
                 <PaqueteriaTable data={listPaqueteria} isLoadingListPaqueteria={isLoadingListPaqueteria} 
 				    openModal={openModalPaq} setStateArticle={setStateArticle} selectedArticulos={selectedArticulos} setSelectedArticulos={setSelectedArticulos}

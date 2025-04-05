@@ -139,7 +139,7 @@ export const ContactsTable: React.FC<ContactsTableProps> = ({ setSelected }) => 
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header: { id: React.Key | null | undefined; isPlaceholder: any; column: { columnDef: { header: any; }; }; getContext: () => any; }) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} className="px-1">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -161,7 +161,7 @@ export const ContactsTable: React.FC<ContactsTableProps> = ({ setSelected }) => 
                   onClick={() => handleRowSelect(row.original)}
                 >
                   {row.getVisibleCells().map((cell: { id: React.Key | null | undefined; column: { columnDef: { cell: any; }; }; getContext: () => any; }) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="p-1 pl-1">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

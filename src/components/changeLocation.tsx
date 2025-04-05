@@ -6,28 +6,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Checkbox } from "./ui/checkbox";
-import { Label } from "./ui/label";
 import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
+// import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
 
 interface InputChangeLocation {
 	ubicacionSeleccionada: string;
 	setUbicacionSeleccionada: Dispatch<SetStateAction<string>>;
 	areaSeleccionada: string
 	setAreaSeleccionada: Dispatch<SetStateAction<string>>;
-	all:boolean;
-	setAll:Dispatch<SetStateAction<boolean>>;
 }
 
-const ChangeLocation:React.FC<InputChangeLocation> = ({ ubicacionSeleccionada, setUbicacionSeleccionada, areaSeleccionada, setAreaSeleccionada, all, setAll })=> {
+const ChangeLocation:React.FC<InputChangeLocation> = ({ ubicacionSeleccionada, setUbicacionSeleccionada, areaSeleccionada, setAreaSeleccionada })=> {
 	const { dataAreas, dataLocations} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true, ubicacionSeleccionada?true:false);
-	
-	const handleCheckboxChange = () => {
-		setAll(!all);
-	};
 
-return (
-    <div className="flex w-full gap-2">
+	return (
+    <div className="flex flex-col w-full gap-2">
 		<Select defaultValue={ubicacionSeleccionada} 
 		onValueChange={(value:string) => {
 			setUbicacionSeleccionada(value); 
@@ -44,7 +37,7 @@ return (
 			))}
 			</SelectContent>
 		</Select>
-		<Select defaultValue={areaSeleccionada} disabled={all}
+		<Select defaultValue={areaSeleccionada}
 		onValueChange={(value:string) => {
 			setAreaSeleccionada(value); 
 		}}>
@@ -52,6 +45,7 @@ return (
 				<SelectValue placeholder="Caseta" />
 			</SelectTrigger>
 			<SelectContent>
+			<SelectItem key={"todas"} value={"todas"}> Todas las Casetas </SelectItem>
 			{dataAreas?.length >0 ? (
 				<>
 				{dataAreas?.map((area:string, index:number) => {
@@ -64,15 +58,6 @@ return (
 			):<SelectItem key={"1"} value={"1"} disabled>No hay opciones disponibles.</SelectItem>}
 			</SelectContent>
 		</Select>
-
-		<div className="flex items-center gap-2">
-			<Checkbox id="terms" defaultChecked={all} onCheckedChange={handleCheckboxChange} />
-			<Label
-				htmlFor="terms"
-				className="whitespace-nowrap text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-				Todas las casetas
-			</Label>
-		</div>
     </div>
   );
 };

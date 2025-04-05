@@ -103,8 +103,6 @@ const AreasList:React.FC<AreasListProps> = ({ areas, setAreas, catAreas, loading
     <div >
       {areas.map((area, index) => 
       { 
-      console.log("areas", area)
-
         return(
         <div key={index} className="border rounded mt-2">
           <AreasItem

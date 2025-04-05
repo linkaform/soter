@@ -410,16 +410,6 @@ async function onDescargarPDF(){
               Cancelar
             </Button>
           </DialogClose>
-            {/* {
-              isLoading ? (
-                <>
-                <Button className="w-full h-12  bg-blue-500" disabled>
-                  <Loader2 className="animate-spin"/>
-                  Cargando...
-                </Button>
-                </>
-              ):(
-                <> */}
                <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white" onClick={() => {
                  navigator.clipboard.writeText(data?.link?.link).then(() => {
                   toast("¡Enlace copiado!", {
@@ -457,9 +447,6 @@ async function onDescargarPDF(){
                 <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white"  onClick={onDescargarPDF} disabled={loadingPdf}>
                 {!loadingPdf ? ("Descargar PDF"):(<><Loader2 className="animate-spin"/>Descargando PDF...</>)}
                 </Button>
-          {/*</>
-               )
-            } */}
         </div>
       </DialogContent>
     </Dialog>

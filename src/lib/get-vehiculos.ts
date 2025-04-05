@@ -2,6 +2,7 @@
     tipo: string,
     account_id: number,
     marca?:string
+    isModalOpen?: boolean;
   }
   
   export const getVehiculos = async ({

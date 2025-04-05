@@ -13,8 +13,12 @@ export const useUploadImage = () => {
      //Subir Imagen
     const uploadImageMutation = useMutation({
       mutationFn: async ({ img } : { img: File | null}) => {
+        console.log("IMGG", img)
+
           const response = await uploadImage(img);
+          console.log("IMGG2", response)
           const data = {file_name:response?.file_name, file_url:response?.file}; 
+
           setResponse(data)
           return data;
       },

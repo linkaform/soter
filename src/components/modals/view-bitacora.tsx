@@ -60,7 +60,7 @@ return (
 				<div className="flex justify-between flex-col sm:flex-row  sm:space-x-5 space-y-5 sm:space-y-0">
 					<div className="w-full flex gap-2 ">
 						<p className="font-bold flex-shrink-0">Visita a : </p>
-						<p > {data?.visita_a[0].nombre}</p>
+						<p > {data?.visita_a.length>0 ? data?.visita_a[0].nombre: ""}</p>
 					</div>
 					
 				</div>
@@ -95,7 +95,7 @@ return (
 
 						{data?.file_url!== undefined ?(
 								<><div className="w-full ">
-								<p className="font-bold mb-1">Fotografia:</p>
+								<p className="font-bold mb-1">Identificación:</p>
 								<div className="flex justify-center">
 									<Carousel className="w-36 ">
 										<CarouselContent>
@@ -240,7 +240,7 @@ return (
 			<div className="flex gap-1 my-5">
 				<DialogClose asChild>
 					<Button className="w-full h-12 bg-gray-100 hover:bg-gray-200 text-gray-700">
-						Cancelar
+						Cerrar
 					</Button>
 				</DialogClose>
 				

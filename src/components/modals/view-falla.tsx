@@ -253,15 +253,12 @@ export const ViewFalla: React.FC<ViewFallaModalProps> = ({
 			):(<div>No hay seguimientos disponibles.</div>)}
 		</div>
 
-        <div className="flex  gap-1 my-5">
-          <DialogClose asChild>
-            <Button className="w-1/2  bg-gray-100 hover:bg-gray-200 text-gray-700">
+        <div className="flex gap-1 my-5">
+          <DialogClose asChild> 
+            <Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700">
               Cerrar
             </Button>
           </DialogClose>
-          {/* <Button className="w-1/2  bg-blue-500 hover:bg-blue-600 text-white">
-              Cerrar falla
-            </Button> */}
         </div>
         </DialogContent>
     </Dialog>

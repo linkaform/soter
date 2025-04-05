@@ -86,11 +86,12 @@ export const AddBadgeModal: React.FC<AddBadgeModalProps> = ({
 	ubicacion
 }) => {
 	const [dataGafete, setDataGafete]= useState< dataGafetParamas | null>(null)
-	const { data:responseGetLockers, isLoading:loadingGetLockers, refetch: refetchLockers } = useGetLockers(ubicacion ?? null,"", status);
-	const { data:responseGetGafetes, isLoading:loadingGetGafetes, refetch: refetchGafetes } = useGetGafetes(ubicacion ?? null,"", status);
+	const [isOpen, setIsOpen] = useState(false);
+
+	const { data:responseGetLockers, isLoading:loadingGetLockers, refetch: refetchLockers } = useGetLockers(ubicacion ?? null,"", status, isOpen);
+	const { data:responseGetGafetes, isLoading:loadingGetGafetes, refetch: refetchGafetes } = useGetGafetes(ubicacion ?? null,"", status, isOpen);
 	const { data:responseAsignarGafete, isLoading:loadingAsginarGafete, refetch: refetchAsignarGafete, error:errorAsignarGafete } = useAsignarGafete(dataGafete ?? null, 
 		id_bitacora ?? null, tipo_movimiento?? null );
-	const [isOpen, setIsOpen] = useState(false);
 
 	const form = useForm<z.infer<typeof FormSchema>>({
 		resolver: zodResolver(FormSchema),
@@ -145,28 +146,26 @@ return (
 		<div className="cursor-pointer" onClick={handleOpenModal}>
 			<IdCard />
 		</div>
-		<DialogContent className="max-w-3xl overflow-y-auto max-h-[80vh] flex flex-col" aria-describedby="">
+		<DialogContent className="max-w-xl overflow-y-auto max-h-[80vh] flex flex-col" aria-describedby="">
 			<DialogHeader className="flex-shrink-0">
 			<DialogTitle className="text-2xl text-center font-bold">
 				{title}
 			</DialogTitle>
 			</DialogHeader>
-			<div className="overflow-y-auto">
+			<div className="flex-grow overflow-y-auto p-4 py-2">
 				<Form {...form}>
-					<form
+					<form className="grid md:grid-cols-2 gap-5 mb-3"
 						onSubmit={form.handleSubmit(onSubmit)}
-						className="w-full space-y-6 "
 					>
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-5">
 							<FormField
 								control={form.control}
 								name="gafete"
 								render={({ field }:any) => (
-									<FormItem>
+									<FormItem >
 										<FormLabel>
-											<span className="text-red-500">*</span> Gafete
+											<div className="text-red-500 "> *<span className="text-black"> Gafete</span> </div> 
 										</FormLabel>
-										<Select
+										<Select 
 											onValueChange={field.onChange}
 											defaultValue={field.value}
 										>
@@ -183,7 +182,7 @@ return (
 													)}
 												</SelectTrigger>
 											</FormControl>
-											<SelectContent>
+											<SelectContent >
 											{responseGetGafetes?.map((gafete:gafete, index:string) => (
 														<SelectItem key={index} value={gafete.gafete_id}>
 															{gafete.gafete_id}
@@ -201,15 +200,15 @@ return (
 								control={form.control}
 								name="locker"
 								render={({ field }:any) => (
-									<FormItem>
+									<FormItem >
 										<FormLabel>
-											<span className="text-red-500">*</span> Locker
+										<div className="text-red-500"> *<span className="text-black"> Locker</span> </div> 
 										</FormLabel>
-										<Select
+										<Select 
 											onValueChange={field.onChange}
 											defaultValue={field.value}
 										>
-											<FormControl>
+											<FormControl >
 												<SelectTrigger>
 												{loadingGetLockers?(
 														<>
@@ -235,6 +234,7 @@ return (
 									</FormItem>
 								)}
 							/>
+						<div className="w-full">
 							<FormField
 								control={form.control}
 								name="documentos"
@@ -246,41 +246,39 @@ return (
 										</FormLabel>
 										<div className="space-y-2 my-5">
 												<FormControl >
-													<div className="flex items-center space-x-2">
-														<RadioGroup 
+														<RadioGroup className="flex flex-col align-middle justify-center"
 															defaultValue={field.value}
 															onValueChange={field.onChange}
 														>
-														<FormItem className="flex items-center space-x-3 space-y-0">
-															<FormControl>
-																<RadioGroupItem value="ine" />
-															</FormControl>
-															<FormLabel className="font-normal">
-																INE
-															</FormLabel>
-														</FormItem>
-														<FormItem className="flex items-center space-x-3 space-y-0">
-															<FormControl>
-																<RadioGroupItem value="licencia de conducir" />
-															</FormControl>
-															<FormLabel className="font-normal">Licencia de conducir</FormLabel>
-														</FormItem>
+															<FormItem >
+																	<FormControl className="mr-2">
+																		<RadioGroupItem value="ine" />
+																	</FormControl>
+																	<FormLabel className="font-normal">
+																		INE
+																	</FormLabel>
+															</FormItem>
+															<FormItem>
+																<FormControl className="mr-2">
+																	<RadioGroupItem value="licencia de conducir" />
+																</FormControl>
+																<FormLabel className="font-normal">Licencia de conducir</FormLabel>
+															</FormItem>
 
-														<FormItem className="flex items-center space-x-3 space-y-0">
-															<FormControl>
-																<RadioGroupItem value="pase de estacionamiento" />
-															</FormControl>
-															<FormLabel className="font-normal">Pase de Estacionamiento</FormLabel>
-														</FormItem>
-														<FormItem className="flex items-center space-x-3 space-y-0">
-															<FormControl>
-																<RadioGroupItem value="otro" />
-															</FormControl>
-															<FormLabel className="font-normal">Otro</FormLabel>
-														</FormItem>
+															<FormItem>
+																<FormControl className="mr-2">
+																	<RadioGroupItem value="pase de estacionamiento" />
+																</FormControl>
+																<FormLabel className="font-normal">Pase de Estacionamiento</FormLabel>
+															</FormItem>
+															<FormItem>
+																<FormControl className="mr-2">
+																	<RadioGroupItem value="otro" />
+																</FormControl>
+																<FormLabel className="font-normal">Otro</FormLabel>
+															</FormItem>
 
 														</RadioGroup>
-													</div>
 												</FormControl>
 										</div>
 										<FormMessage />
@@ -288,8 +286,6 @@ return (
 								)}
 							/>
 						</div>
-
-						
 					</form>
 				</Form>
 			</div>

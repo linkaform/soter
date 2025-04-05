@@ -8,15 +8,15 @@ export interface InputPaqueteria {
     quien_recibe_paqueteria: string,
     guardado_en_paqueteria: string,
     fecha_recibido_paqueteria: string,
-    fecha_entregado_paqueteria: string,
-    estatus_paqueteria: string,
+    fecha_entregado_paqueteria?: string,
+    estatus_paqueteria?: string[],
     entregado_a_paqueteria:string,
     proveedor:string
 }
 
 export interface InputPaqueteriaDevolver {
-    estatus_paqueteria: string,
-    fecha_recibido_paqueteria: Imagen[],
+    estatus_paqueteria: string[],
+    fecha_entregado_paqueteria: string,
     entregado_a_paqueteria:string,
 }
   
@@ -44,6 +44,27 @@ export const getListPaqueteria  = async (
     const data = await response.json();
     return data;
   };
+
+  export const getCatalogoProveedores  = async () => {
+    const payload = {
+        option: "get_catalogo_paquetes",
+        script_name: "paqueteria.py",
+    };
+  
+    const userJwt = localStorage.getItem("access_token"); 
+  
+    const response = await fetch(`https://app.linkaform.com/api/infosync/scripts/run/`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${userJwt}`,
+        },
+        body: JSON.stringify(payload),
+    });
+    const data = await response.json();
+    return data;
+  };
+
 
 export const crearPaqueteria  = async (data_paquete: InputPaqueteria  | null)=> {
     const payload = {

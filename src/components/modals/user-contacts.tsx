@@ -43,7 +43,7 @@ return (
 		</div>
 	
 	<Button className="w-full h-12 bg-gray-100 hover:bg-gray-200 text-gray-700" onClick={closeModal}>
-	Cancelar
+	Cerrar
 </Button>
 </DialogContent>
 </Dialog>

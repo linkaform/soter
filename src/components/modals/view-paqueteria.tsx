@@ -116,11 +116,11 @@ export const ViewPaqueteria: React.FC<ViewFallaModalProps> = ({
 
 			<Separator className="" />
 			
-			<div className="flex justify-between my-2">
+			<div className="flex flex-col justify-between my-2">
 				<div className="w-full">
 					<h1 className="font-bold text-xl">Información de la entrega </h1>
 				</div>     
-				<div className="w-full flex flex-col space-y-5">
+				<div className="w-full flex flex-col space-y-5 mt-2">
 					<div className=" flex justify-between">
 						<div className="w-full flex gap-2">
 						<p className="font-bold">Entregado a: <span className="font-normal">{data?.entregado_a_paqueteria}</span></p>
@@ -129,7 +129,7 @@ export const ViewPaqueteria: React.FC<ViewFallaModalProps> = ({
 
                     <div className=" flex justify-between">
 						<div className="w-full flex gap-2">
-						<p className="font-bold">Fecha de entregado: <span className="font-normal">{data?.fecha_entregado_paqueteria}</span></p>
+						<p className="font-bold">Fecha en que se realizo la entrega: <span className="font-normal">{formatDateToText(data?.fecha_recibido_paqueteria.slice(0, -3))}</span></p>
 						</div>
 					</div>
 				</div>
@@ -138,7 +138,7 @@ export const ViewPaqueteria: React.FC<ViewFallaModalProps> = ({
 
         <div className="flex  gap-1 my-5">
           <DialogClose asChild>
-            <Button className="w-1/2  bg-gray-100 hover:bg-gray-200 text-gray-700">
+            <Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700">
               Cerrar
             </Button>
           </DialogClose>

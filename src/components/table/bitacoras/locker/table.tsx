@@ -12,7 +12,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChevronDown, FileX2 } from "lucide-react";
+import { ChevronDown, FileX2, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -31,6 +31,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Locker, lockerColumns } from "./locker-columns";
+import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const data: Locker[] = [
   {
@@ -113,20 +114,26 @@ export function LockerTable() {
 
   return (
     <div className="w-full">
-      <div className="my-5">
-        <h1 className="text-2xl font-bold">
-          Registro y Seguimiento de Recorridos
-        </h1>
-      </div>
-      <div className="flex justify-between items-center my-5">
-        {/* Campo de búsqueda a la izquierda */}
-        <input
-          type="text"
-          placeholder="Buscar en todos los campos..."
-          value={globalFilter}
-          onChange={(e) => setGlobalFilter(e.target.value)}
-          className="border border-gray-300 rounded-md p-2 h-12 w-full max-w-xs"
-        />
+		<div className="flex justify-between items-start my-1 gap-3">
+			<div className="flex w-full justify-start gap-4">
+				<TabsList className="bg-blue-500 text-white">
+					<TabsTrigger value="Personal">Personal</TabsTrigger>
+					<TabsTrigger value="Vehiculos">Vehiculos</TabsTrigger>
+          <TabsTrigger value="Equipos">Equipos</TabsTrigger>
+					<TabsTrigger value="Locker">Locker</TabsTrigger>
+				</TabsList>
+
+        <div className="flex w-full max-w-sm items-center space-x-2">
+				<input
+					type="text"
+					placeholder="Buscar"
+					value={globalFilter}
+					onChange={(e) => setGlobalFilter(e.target.value)}
+					className=" border border-gray-300 rounded-md p-2 placeholder-gray-600 w-full" 
+				/>
+					<Search />
+				</div>
+			</div> 
 
         {/* Botones a la derecha */}
         <div className="flex items-center justify-end space-x-4">

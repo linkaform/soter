@@ -7,7 +7,7 @@ import { useUploadImage } from "@/hooks/useUploadImage";
 import { Button } from "./ui/button";
 import { Camera, Trash } from "lucide-react";
 import Webcam from "react-webcam";
-import { quitarAcentosYMinusculasYEspacios } from "@/lib/utils";
+import { base64ToFile, quitarAcentosYMinusculasYEspacios } from "@/lib/utils";
 import Image from "next/image";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "./ui/carousel";
 import { Card, CardContent } from "./ui/card";
@@ -45,9 +45,12 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
             const extension = tipoMime.split('/')[1];
             const nuevoNombre = `${quitarAcentosYMinusculasYEspacios(id)}.${extension}`;
             const nuevoArchivo = new File([file], nuevoNombre, { type: file.type });
+            console.log("NUEVO ARCHI", nuevoArchivo)
             uploadImageMutation.mutate({img:nuevoArchivo})
             setHideWebcam(true)
             setHideButtonWebcam(true)
+        }else{
+            console.log("NO FILE", file, event)
         }
     }
 
@@ -59,10 +62,14 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
 
     function takeAndSavePhoto(){
         const imageSrc = webcamRef.current?.getScreenshot() || "";
-        const nuevoArchivo = new File([imageSrc], quitarAcentosYMinusculasYEspacios(id))
+        const base64 =base64ToFile(imageSrc, quitarAcentosYMinusculasYEspacios(id));
+        const tipoMime = base64.type;
+        const extension = tipoMime.split('/')[1];
+        const nuevoNombre = `${quitarAcentosYMinusculasYEspacios(id)}.${extension}`;
+        const nuevoArchivo = new File([base64], nuevoNombre, { type: base64.type });
         uploadImageMutation.mutate({img:nuevoArchivo})
         setHideWebcam(true)
-        setHideButtonWebcam(true)   
+        setHideButtonWebcam(true)
     }
 
     useEffect(()=>{
@@ -84,13 +91,13 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
                 <Label htmlFor="picture" className="font-bold text-base">{titulo}</Label>
                     
                 <div className="ml-3 flex justify-between gap-2">
-                    <Button className="bg-yellow-500 rounded hover:bg-yellow-600 w-8 h-8"
+                    <Button className="bg-yellow-500 rounded hover:bg-yellow-600 w-8 h-8" type="button"
                         onClick={cleanPhoto}>
                         <Trash  size={24} className="p-0 " />
                     </Button>
                     {showWebcamOption && !hideButtonWebcam ? (<>
                         {hideWebcam && 
-                            <Button className=" rounded bg-blue-600 hover:bg-blue-600 w-8 h-8"
+                            <Button className=" rounded bg-blue-600 hover:bg-blue-600 w-8 h-8" type="button"
                             onClick={() => {
                                 setloadingWebcam(true)
                                 setHideWebcam(false); 
@@ -99,7 +106,7 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
                             </Button>}
                         {!hideWebcam && !loadingWebcam?(
                             <>
-                            <Button className="bg-green-600 rounded hover:bg-green-700 h-8"
+                            <Button className="bg-green-600 rounded hover:bg-green-700 h-8" type="button"
                                 onClick={takeAndSavePhoto}>
                                 Tomar foto
                             </Button>

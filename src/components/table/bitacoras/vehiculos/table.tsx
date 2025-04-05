@@ -29,11 +29,9 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {  Bitacora_record, bitacorasColumns } from "./bitacoras-columns";
+import {  Bitacora_record, vehiculosColumns } from "./vehiculos-columns";
 import { downloadCSV } from "@/lib/utils";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useMemo, useState } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 // import { SelectTrigger } from "@radix-ui/react-select";
 // import { Select, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 
@@ -66,7 +64,7 @@ const fallasColumnsCSV = [
   { label: 'Comentarios', key: 'formated_comentarios' },
 ];
 
-const BitacorasTable:React.FC<ListProps> = ({ data, isLoading })=> {
+const VehiculosTable:React.FC<ListProps> = ({ data, isLoading })=> {
 	const [sorting, setSorting] = React.useState<SortingState>([]);
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
 		[]
@@ -80,12 +78,10 @@ const BitacorasTable:React.FC<ListProps> = ({ data, isLoading })=> {
 	});
 
   	const [globalFilter, setGlobalFilter] = React.useState("");
-   	const columns = useMemo(() => (isLoading ? [] : bitacorasColumns), [isLoading]);
-   	const memoizedData = useMemo(() => data || [], [data]);
-
+ 
   	const table = useReactTable({
-    data: memoizedData,
-    columns: columns,
+    data: data||[],
+    columns: isLoading ? []:vehiculosColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
@@ -107,36 +103,17 @@ const BitacorasTable:React.FC<ListProps> = ({ data, isLoading })=> {
     }
   	});
 
-	const [selectedOptionFilter, setSelectedOptionFilter] = useState<string>("Hoy");
-	const [dateRange, setDateRange] = useState<{ start: Date | null, end: Date | null }>({ start: null, end: null });
-
-	const handleOptionChange = (value: string) => {
-		setSelectedOptionFilter(value);
-		// const range = getDateRange(value); // Obtener el rango de fechas según la opción seleccionada
-		// console.log('Fecha seleccionada: ', range);
-	};
-	const catalogoFechas = () => {
-		return [
-		  "Hoy", "Ayer", "Esta semana", "Semana pasada", "Este mes", 
-		  "Mes pasado", "Últimos 7 días", "Últimos 30 días", "Personalizado"
-		];
-	  };
-
-	// if(isLoading){
-	// 	return(
-	// 		<div className="flex justify-center items-center h-screen">
-    //      	 <div className="w-24 h-24 border-8 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
-    //     	</div>
-	// 	);
-	// }
+	// const handleSelectChange = (value:string) => {
+	// 	setSelectedOption([value]); // Actualiza el estado con el valor seleccionado
+	//   };
 
 return (
     <div className="w-full">
 		<div className="flex justify-between items-start my-1 gap-3">
-			<div className="flex w-1/2 justify-start gap-4 ">
+			<div className="flex w-full justify-start gap-4">
 				<TabsList className="bg-blue-500 text-white">
 					<TabsTrigger value="Personal">Personal</TabsTrigger>
-					<TabsTrigger value="Vehiculos">Vehiculos</TabsTrigger>
+                    <TabsTrigger value="Vehiculos">Vehiculos</TabsTrigger>
                     <TabsTrigger value="Equipos">Equipos</TabsTrigger>
 					<TabsTrigger value="Locker">Locker</TabsTrigger>
 				</TabsList>
@@ -153,21 +130,8 @@ return (
 				</div>
 			</div> 
 
-			<div className="flex w-full justify-end">
-				<div className="w-48"> 
-				<Select value={selectedOptionFilter} onValueChange={handleOptionChange}>
-					<SelectTrigger className="w-full">
-					<SelectValue placeholder="Selecciona un filtro de fecha" />
-					</SelectTrigger>
-					<SelectContent>
-					{catalogoFechas().map((option: string) => (
-						<SelectItem key={option} value={option}>
-						{option}
-						</SelectItem>
-					))}
-					</SelectContent>
-				</Select>
-				</div>
+			<div className="flex justify-start">
+				
 			</div>
 
 
@@ -246,7 +210,6 @@ return (
 					</TableRow>
 					))}
 				</TableHeader>
-				
 				<TableBody >
 					{table.getRowModel().rows?.length ? (
 					table.getRowModel().rows.map((row:any) => (
@@ -268,16 +231,14 @@ return (
 					) : (
 					<TableRow>
 						<TableCell
-						colSpan={bitacorasColumns.length}
-						className="h-36 text-center font-medium"
+						colSpan={vehiculosColumns.length}
+						className="h-24 text-center"
 						>
-							{isLoading? (<div className='text-xl font-semibold'>Cargando registros... </div>): 
-							(<div className='text-xl font-semibold'>No hay registros disponibles...</div>)}
+						No hay registros disponibles{" "}
 						</TableCell>
 					</TableRow>
 					)}
 				</TableBody>
-					
 			</Table>
 		</div>
 
@@ -304,4 +265,4 @@ return (
     </div>
 );
 }
-export default BitacorasTable;
+export default VehiculosTable;

@@ -36,7 +36,6 @@ const formSchema =
 });
 
 const PersonasInvolucradasList:React.FC<PersonasInvolucradasListProps> = ({ personasInvolucradas, setPersonasInvolucradas})=> {
-  console.log("QUE PASA INVOLUIC",personasInvolucradas)
     const [collapsedIndex, setCollapsedIndex] = useState<number | null>(null);
 
     const form = useForm<z.infer<typeof formSchema>>({

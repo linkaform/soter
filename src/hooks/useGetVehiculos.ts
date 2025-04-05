@@ -1,9 +1,10 @@
 import { getVehiculos, getVehiculosParams } from "@/lib/get-vehiculos";
 import { useQuery } from "@tanstack/react-query";
 
-export const useGetVehiculos = ({account_id, tipo, marca}: getVehiculosParams) => {
+export const useGetVehiculos = ({account_id, tipo, marca , isModalOpen}: getVehiculosParams) => {
   const { data, isLoading, error, isFetching, refetch } = useQuery<any>({
-    queryKey: ["useGetVehiculos", account_id,tipo,marca], // Agregamos los parámetros necesarios aquí
+    queryKey: ["useGetVehiculos", account_id,tipo,marca],
+    enabled:isModalOpen,
     queryFn: async () => {
       const data = await getVehiculos({
         account_id,

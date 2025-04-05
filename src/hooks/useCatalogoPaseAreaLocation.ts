@@ -41,7 +41,6 @@ export const useCatalogoPaseAreaLocation = (location:string, enableLocation:bool
         if (textMsj){
           throw new Error (`Error al obtener catalogo de locations, Error: ${data.error}`);
         }else {
-          console.log("QUE PASA", data.response?.data.ubicaciones_user)
           setLocations(data.response?.data.ubicaciones_user)
           return data.response?.data.ubicaciones_user
         }

@@ -85,7 +85,7 @@ export const AddVehicleModal: React.FC<AddVehicleModalProps> = ({
 				<div className="overflow-y-auto">
 					<VehicleList
 						vehicles={vehiculos}
-						setVehicles={setVehiculos} account_id={account_id}/>
+						setVehicles={setVehiculos} account_id={account_id} isModalOpen={isOpen}/>
 					<p className="text-red-500" hidden={!showError}> Agrega almenos un elemento para actualizar. </p>
 				</div>
 				

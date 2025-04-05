@@ -80,7 +80,7 @@ const ArticulosConTable:React.FC<ListProps> = ({ data, isLoadingListArticulosCon
   const [rowSelection, setRowSelection] = React.useState({});
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
-    pageSize: 5,
+    pageSize: 23,
   });
 
   const [globalFilter, setGlobalFilter] = React.useState("");
@@ -179,35 +179,6 @@ const ArticulosConTable:React.FC<ListProps> = ({ data, isLoadingListArticulosCon
 						Descargar
 					</Button>
 				</div>
-
-				{/* <div>
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-						<Button variant="outline" className="ml-auto">
-							Columnas <ChevronDown />
-						</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end" className="bg-blue-500">
-						{table
-							.getAllColumns()
-							.filter((column) => column.getCanHide())
-							.map((column) => {
-							return (
-								<DropdownMenuCheckboxItem
-								key={column.id}
-								className="capitalize bg-blue-500"
-								checked={column.getIsVisible()}
-								onCheckedChange={(value) =>
-									column.toggleVisibility(!!value)
-								}
-								>
-								{column.id}
-								</DropdownMenuCheckboxItem>
-							);
-							})}
-						</DropdownMenuContent>
-					</DropdownMenu>
-				</div> */}
 			</div>
 		</div>
 
@@ -218,7 +189,7 @@ const ArticulosConTable:React.FC<ListProps> = ({ data, isLoadingListArticulosCon
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead key={header.id} className="px-1">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -239,7 +210,7 @@ const ArticulosConTable:React.FC<ListProps> = ({ data, isLoadingListArticulosCon
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="p-1 pl-1">
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

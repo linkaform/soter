@@ -77,7 +77,7 @@ import ChangeLocation from "@/components/changeLocation";
   const [rowSelection, setRowSelection] = React.useState({});
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
-    pageSize: 5,
+    pageSize: 23,
   });
 
   const [globalFilter, setGlobalFilter] = React.useState("");
@@ -228,7 +228,7 @@ return (
 				<TableRow key={headerGroup.id}>
 					{headerGroup.headers.map((header) => {
 					return (
-						<TableHead key={header.id}>
+						<TableHead key={header.id} className="px-1">
 						{header.isPlaceholder
 							? null
 							: flexRender(
@@ -249,7 +249,7 @@ return (
 					data-state={row.getIsSelected() && "selected"}
 					>
 					{row.getVisibleCells().map((cell) => (
-						<TableCell key={cell.id}>
+						<TableCell key={cell.id} className="p-1 pl-1">
 						{flexRender(
 							cell.column.columnDef.cell,
 							cell.getContext()

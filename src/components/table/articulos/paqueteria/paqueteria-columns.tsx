@@ -6,6 +6,10 @@ import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { capitalizeFirstLetter } from "@/lib/utils";
 import { ViewPaqueteria } from "@/components/modals/view-paqueteria";
 import { Eye } from "lucide-react";
+import { LoadingModal } from "@/components/modals/loading-modal";
+import { useState } from "react";
+import { EditarPaqueteria } from "@/components/modals/editar-paqueteria";
+import { DevolucionPaqModal } from "@/components/modals/entregar-paqueteria";
 
 
 export interface Paquete_record {
@@ -27,8 +31,8 @@ export interface Paquete_record {
 
 const OptionsCell: React.FC<{ row: any }> = ({ row}) => {
   	const paquete = row.original;
-	//const [showLoadingModal, setShowLoadingModal] = useState(false);
-	console.log(paquete)
+	  const [showLoadingModal, setShowLoadingModal] = useState(false);
+	  console.log(paquete)
   return (
     <div className="flex space-x-2">
 
@@ -40,17 +44,22 @@ const OptionsCell: React.FC<{ row: any }> = ({ row}) => {
             </div>
       </ViewPaqueteria>
 
-		{/* 
 
-		<LoadingModal isOpen={showLoadingModal} text="Cargando..."/>
-		
-		<EditarArticuloModal 
-        title="Editar Artículo"
+      <LoadingModal isOpen={showLoadingModal} text="Cargando..."/>
+
+      <EditarPaqueteria
+        title="Editar Paqueteria"
         data={paquete} setShowLoadingModal={setShowLoadingModal} showLoadingModal={showLoadingModal}/>
 
-		<DevolucionArticuloModal 
-        title="Devolver Artículo"
-        data={paquete} /> */}
+      <DevolucionPaqModal 
+              title="Devolver paquete"
+              data={paquete} />
+		{/* 
+
+		
+		
+
+		 */}
 
     </div>
   );
@@ -93,10 +102,10 @@ export const paqueteriaColumns: ColumnDef<Paquete_record>[] = [
         enableSorting: false,
     },
     {
-      accessorKey: "fecha_entregado_paqueteria",
+      accessorKey: "quien_recibe_paqueteria",
       header: "Quién recibe",
       cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("fecha_entregado_paqueteria")}</div>
+        <div className="capitalize">{row.getValue("quien_recibe_paqueteria")}</div>
       ),
       enableSorting: true,
     },
@@ -125,22 +134,14 @@ export const paqueteriaColumns: ColumnDef<Paquete_record>[] = [
       enableSorting: true,
     },
     {
-      accessorKey: "date_hallazgo_perdido",
+      accessorKey: "fecha_entregado_paqueteria",
       header: "Fecha de devolucion",
       cell: ({ row }) => (
-        <div>{row.getValue("date_hallazgo_perdido")}</div>
+        <div>{row.getValue("fecha_entregado_paqueteria")}</div>
       ),
       enableSorting: true,
     },
-    {
-      accessorKey: "locker_perdido",
-      header: "Área de Resguardo",
-      cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("locker_perdido")}</div>
-      ),
-      enableSorting: true,
-    },
-	{
+ 	{
 		accessorKey: "proveedor",
 		header: "Proveedor",
 		cell: ({ row }) => (
@@ -148,14 +149,6 @@ export const paqueteriaColumns: ColumnDef<Paquete_record>[] = [
 		),
 		enableSorting: true,
 	  },
-    {
-      accessorKey: "date_entrega_perdido",
-      header: "Fecha de Devolución",
-      cell: ({ row }) => (
-        <div>{row.getValue("date_entrega_perdido")}</div>
-      ),
-      enableSorting: true,
-    },
 
   ];
   

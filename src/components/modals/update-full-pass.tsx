@@ -170,22 +170,15 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
 	const [isSuccess, setIsSuccess] = useState(false);
 	const [modalData, setModalData] = useState<any>(null);
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(dataPass.ubicacion);
-	// const {dataAreas,isLoadingAreas } = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true, ubicacionSeleccionada);
 	const { dataLocations , dataAreas, isLoadingAreas:loadingCatAreas } = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true, ubicacionSeleccionada  ? true : false)
-	console.log("UBICACIONES", dataLocations)
-	// const { isLoading: loadingCatAreas} = useCatalogoPaseArea(ubicacionSeleccionada);
 	const userEmailSoter = localStorage.getItem("userEmail_soter")||"";
 	const userIdSoter = parseInt(localStorage.getItem("userId_soter") || "0", 10);
 	const [enviar_correo_pre_registro, set_enviar_correo_pre_registro] = useState<string[]>(dataPass.enviar_correo_pre_registro ||[]);
 	const { data: configLocation, isLoading: loadingConfigLocation } = useGetConfSeguridad(ubicacionSeleccionada);
 	const [formatedDocs, setFormatedDocs] = useState<string[]>(configLocation)
-
 	const [isActiveRangoFecha, setIsActiveRangoFecha] = useState(dataPass.tipo_visita_pase=="rango_de_fechas");
-	// const {data:catAreas, isLoading: loadingCatAreas, refetch:refetchAreas } = useCatalogoPaseArea(ubicacionSeleccionada)
-
 	const [comentariosList, setComentariosList] = useState<Comentarios[]>(dataPass.comentarios);
 	const [areasList, setAreasList] = useState<Areas[]>(formatArea(dataPass.areas));
-
 	const [isActive, setIsActive] = useState(dataPass.enviar_correo_pre_registro.includes("enviar_correo_pre_registro"));
 	const [isActiveSMS, setIsActiveSMS] = useState(dataPass.enviar_correo_pre_registro.includes("enviar_sms_pre_registro"));
 	const [isActiveFechaFija, setIsActiveFechaFija] = useState(dataPass.tipo_visita_pase=="fecha_fija");

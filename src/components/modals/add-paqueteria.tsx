@@ -33,6 +33,8 @@ import { useShiftStore } from "@/store/useShiftStore";
 import { usePaqueteria } from "@/hooks/usePaqueteria";
 import LoadImage from "../upload-Image";
 import { Imagen } from "@/lib/update-pass";
+import { useCatalogoProveedores } from "@/hooks/useCatalogoProveedores";
+import { useGetLockers } from "@/hooks/useGetLockers";
 
 interface AddFallaModalProps {
   	title: string;
@@ -62,7 +64,7 @@ const formSchema = z.object({
 		message: "Este campo es requerido.",
 	}),
 	fecha_recibido_paqueteria:z.string().optional(),
-	estatus_paqueteria:z.string().optional(),
+	estatus_paqueteria: z.array(z.string()).optional(),
 	proveedor: z.string().optional(),
 });
 
@@ -76,8 +78,11 @@ export const AddPaqueteriaModal: React.FC<AddFallaModalProps> = ({
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
 	const { dataAreas:areas, dataLocations:ubicaciones, isLoadingAreas:loadingAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true,  ubicacionSeleccionada?true:false);
 	const { data:dataAreaEmpleadoApoyo, isLoading:loadingAreaEmpleadoApoyo,} = useCatalogoAreaEmpleadoApoyo(isSuccess);
+	const { dataProveedores, isLoadingProveedores} = useCatalogoProveedores(isSuccess)
 	const { createPaqueteriaMutation, isLoading} = usePaqueteria(ubicacionSeleccionada, area, "", false)
+	const { data:responseGetLockers, isLoading:loadingGetLockers } = useGetLockers(ubicacionSeleccionada ?? false,"", "Disponible", isSuccess);
 	const [date, setDate] = useState<Date|"">("");
+	console.log("PORVEEDORES, " , dataProveedores)
 	const [evidencia, setEvidencia] = useState<Imagen[]>([])
 
 	const form = useForm<z.infer<typeof formSchema>>({
@@ -90,7 +95,7 @@ export const AddPaqueteriaModal: React.FC<AddFallaModalProps> = ({
 			quien_recibe_paqueteria:"",
 			guardado_en_paqueteria: "",
 			fecha_recibido_paqueteria: "",
-			estatus_paqueteria:"Guardado",
+			estatus_paqueteria:["guardado"],
 			proveedor:  "",
 		},
 	});
@@ -100,7 +105,7 @@ export const AddPaqueteriaModal: React.FC<AddFallaModalProps> = ({
 	useEffect(()=>{
 		if(isSuccess){
 			reset()
-			setDate("")
+			setDate(new Date())
 		}
 	},[isSuccess])
 
@@ -114,7 +119,7 @@ export const AddPaqueteriaModal: React.FC<AddFallaModalProps> = ({
 		if(date){
 			const formattedDate = format( new Date(date), 'yyyy-MM-dd HH:mm:ss');
 			const formatData ={
-					ubicacion_paqueteria: "Guardado",
+					ubicacion_paqueteria: ubicacionSeleccionada,
 					area_paqueteria:values.area_paqueteria??"",
 					fotografia_paqueteria: evidencia ?? [],
                     descripcion_paqueteria: values.descripcion_paqueteria ?? "",
@@ -123,7 +128,7 @@ export const AddPaqueteriaModal: React.FC<AddFallaModalProps> = ({
                     fecha_recibido_paqueteria: formattedDate?? "",
 					fecha_entregado_paqueteria: "",
 					entregado_a_paqueteria:"",
-                    estatus_paqueteria: values.estatus_paqueteria??"Guardado",
+                    estatus_paqueteria:["guardado"],
                     proveedor: values.proveedor?? "",
 				}
 				createPaqueteriaMutation.mutate({data_paquete: formatData})
@@ -150,7 +155,7 @@ export const AddPaqueteriaModal: React.FC<AddFallaModalProps> = ({
 		<div className="flex-grow overflow-y-auto p-4">
 			<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <FormField
+            	<FormField
 					control={form.control}
 					name="ubicacion_paqueteria"
 					render={({ field }:any) => (
@@ -324,18 +329,18 @@ export const AddPaqueteriaModal: React.FC<AddFallaModalProps> = ({
 							value={field.value} 
 						>
 							<SelectTrigger className="w-full">
-								{loadingAreaEmpleadoApoyo ? (
+								{isLoadingProveedores ? (
 									<SelectValue placeholder="Cargando articulos..." />
 								):(<>
-								{dataAreaEmpleadoApoyo?.length > 0 ?(<SelectValue placeholder="Selecciona una opción..." />)
+								{dataProveedores?.length > 0 ?(<SelectValue placeholder="Selecciona una opción..." />)
 								:(<SelectValue placeholder="Selecciona una categoria para ver las opciones..." />)
 								}
 								</>)}
 								
 							</SelectTrigger>
 							<SelectContent>
-							{dataAreaEmpleadoApoyo?.length>0 ? (
-								dataAreaEmpleadoApoyo?.map((item:string, index:number) => {
+							{dataProveedores?.length>0 ? (
+								dataProveedores?.map((item:string, index:number) => {
 									return (
 										<SelectItem key={index} value={item}>
 											{item}
@@ -367,21 +372,21 @@ export const AddPaqueteriaModal: React.FC<AddFallaModalProps> = ({
 							value={field.value} 
 						>
 							<SelectTrigger className="w-full">
-								{loadingAreaEmpleadoApoyo ? (
+								{loadingGetLockers ? (
 									<SelectValue placeholder="Cargando articulos..." />
 								):(<>
-								{dataAreaEmpleadoApoyo?.length > 0 ?(<SelectValue placeholder="Selecciona una opción..." />)
+								{responseGetLockers?.length > 0 ?(<SelectValue placeholder="Selecciona una opción..." />)
 								:(<SelectValue placeholder="Selecciona una categoria para ver las opciones..." />)
 								}
 								</>)}
 								
 							</SelectTrigger>
 							<SelectContent>
-							{dataAreaEmpleadoApoyo?.length>0 ? (
-								dataAreaEmpleadoApoyo?.map((item:string, index:number) => {
+							{responseGetLockers?.length>0 ? (
+								responseGetLockers?.map((item:any, index:number) => {
 									return (
-										<SelectItem key={index} value={item}>
-											{item}
+										<SelectItem key={index} value={item.locker_id}>
+											{item.locker_id}
 										</SelectItem>
 									)
 								})

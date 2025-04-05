@@ -29,6 +29,8 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
   children,
 }) => {
 
+	console.log("CON",data )
+
   function sumDepositos(item:Depositos[]){
     const sumaTotal = item.reduce((total: any, item: { cantidad: number; }) => total + item.cantidad, 0);
     return formatCurrency(sumaTotal)
@@ -58,9 +60,9 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 						<p className="font-bold">Area: </p>
 						<p >{data?.area_incidencia} </p>
 					</div>
-					<div className="w-full flex gap-2">
-						<p className="font-bold">Incidencia: </p>
-						<p >{data?.incidencia} </p>
+					<div className="w-full flex gap-2 mb-2">
+						<p className="font-bold">Incidencia: <span className="font-normal">{data?.incidencia}</span></p>
+						
 					</div>
 				</div>	
 				
@@ -260,10 +262,10 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 			</div>
 		</div>
         
-        <div className="flex gap-1 my-5">
+        <div className="flex gap-1 my-5 col-span-2">
           <DialogClose asChild>
-            <Button className="w-full  bg-gray-100 hover:bg-gray-200 text-gray-700">
-              Cancelar
+            <Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700">
+              Cerrar
             </Button>
           </DialogClose>
         </div>

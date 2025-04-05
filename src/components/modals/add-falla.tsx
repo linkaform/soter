@@ -112,7 +112,7 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 	useEffect(()=>{
 		if(isSuccess){
 			reset()
-			setDate("")
+			setDate(new Date())
 			setEvidencia([])
 			setDocumento([])
 			refetchAreaEmpleado()

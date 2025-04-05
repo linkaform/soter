@@ -32,34 +32,43 @@ export const DoOutModal: React.FC<AddBadgeModalProps> = ({
   id_bitacora,
   ubicacion,
 }) => {
-  const { data:responseDoOut, isLoading:loadingDoOut, refetch: refetchDoOut, error:errorDoOut } = useDoOut(id_bitacora ?? null, ubicacion?? null, area??null );
+  const {  isLoading:loadingDoOut, doOutMutation, isLoading} = useDoOut(id_bitacora ?? null, ubicacion?? null, area??null );
   const [isOpen, setIsOpen] = useState(false);
 
-  useEffect(()=>{
-    if(errorDoOut){
-      setIsOpen(false)
-      toast.error( "Error al asignar registrar la salida.")
-      // errorAlert(errorDoOut, "Error al asignar registrar la salida.", "warning")
-    }
-    },[errorDoOut])
+  // useEffect(()=>{
+  //   if(errorDoOut){
+  //     setIsOpen(false)
+  //     toast.error( "Error al asignar registrar la salida.")
+  //     // errorAlert(errorDoOut, "Error al asignar registrar la salida.", "warning")
+  //   }
+  //   },[errorDoOut])
 
   function onSubmit() {
-    refetchDoOut()
+    console.log("DATAAA", id_bitacora, ubicacion, area)
+    doOutMutation.mutate({
+      qr_code:id_bitacora,location:ubicacion, area
+    })
   }
 
-  useEffect(()=>{
-    if(responseDoOut){
-        if(responseDoOut.success==false){
-            setIsOpen(false)
-            toast.error("Error")
-        }else{
-            setIsOpen(false)
-            toast.success( "Salida registrada exitosamente.")
-            refetchTable()
-        }
+  // useEffect(()=>{
+	// 	if(!isLoading){
+	// 		handleClose()			
+	// 	}
+	// },[isLoading])
+
+  // useEffect(()=>{
+  //   if(responseDoOut){
+  //       if(responseDoOut.success==false){
+  //           setIsOpen(false)
+  //           toast.error("Error")
+  //       }else{
+  //           setIsOpen(false)
+  //           toast.success( "Salida registrada exitosamente.")
+  //           refetchTable()
+  //       }
       
-    }
-  }, [refetchTable, responseDoOut])
+  //   }
+  // }, [refetchTable, responseDoOut])
 
 //   if (open) {
 //     return (

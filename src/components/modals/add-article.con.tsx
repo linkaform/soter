@@ -88,7 +88,7 @@ export const AddArticuloConModal: React.FC<AddFallaModalProps> = ({
 	useEffect(()=>{
 		if(isSuccess){
 			reset()
-			setDate("")
+			setDate(new Date())
 		}
 	},[isSuccess])
 

@@ -31,6 +31,7 @@ interface VehicleListProps {
     account_id: number;
     vehicles: Vehiculo[];
     setVehicles: Dispatch<SetStateAction<Vehiculo[]>>;
+    isModalOpen:boolean;
   }
 
   export const formSchema = 
@@ -43,12 +44,12 @@ interface VehicleListProps {
       color: z.string().optional()
     });
 
-const VehicleList:React.FC<VehicleListProps> = ({ account_id, vehicles, setVehicles})=> {
+const VehicleList:React.FC<VehicleListProps> = ({ account_id, vehicles, setVehicles, isModalOpen})=> {
     const [tipoVehiculoState, setTipoVehiculoState] = useState("");
     const [catalogSearch, setCatalogSearch] = useState("");
     const [marcaState, setMarcaState] = useState("");
-    const {data:dataVehiculos,isLoading: loadingCat, refetch } = useGetVehiculos({account_id, tipo:tipoVehiculoState, marca:marcaState})
-    const { data:catEstados, isLoading: loadingCatEstados } = useCatalogoEstados(account_id)
+    const {data:dataVehiculos,isLoading: loadingCat, refetch } = useGetVehiculos({account_id, tipo:tipoVehiculoState, marca:marcaState, isModalOpen})
+    const { data:catEstados, isLoading: loadingCatEstados } = useCatalogoEstados(account_id, isModalOpen)
 
     const [tiposCat, setTiposCat] = useState<string[]>([]);
     const [marcasCat, setMarcasCat] = useState<string[]>([]);
