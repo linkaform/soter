@@ -1,3 +1,5 @@
+import { Update_full_pass } from "@/hooks/usePaseEntrada"
+
 export type Vehiculo ={
     tipo:string,
     marca:string,
@@ -30,7 +32,7 @@ export type Access_pass_update = {
 
 }
   interface updatePase {
-    access_pass : Access_pass_update,
+    access_pass : Update_full_pass | Access_pass_update,
     id: string,
     account_id: number,
   }

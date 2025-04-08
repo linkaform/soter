@@ -155,12 +155,12 @@ return (
 			</div> */}
 
 			<div className="flex flex-wrap gap-2">
-				<div>
+				{/* <div>
 					<Button className="bg-blue-500 w-full md:w-auto hover:bg-blue-600 text-white px-4 py-2" onClick={()=>{downloadCSV(data, fallasColumnsCSV, "bitacora.csv")}}>
 						<FileX2 />
 						Descargar
 					</Button>
-				</div>
+				</div> */}
 
 				<div>
 					<DropdownMenu>
@@ -234,7 +234,8 @@ return (
 						colSpan={vehiculosColumns.length}
 						className="h-24 text-center"
 						>
-						No hay registros disponibles{" "}
+						{isLoading? (<div className='text-xl font-semibold'>Cargando registros... </div>): 
+							(<div className='text-xl font-semibold'>No hay registros disponibles...</div>)}
 						</TableCell>
 					</TableRow>
 					)}

@@ -9,6 +9,7 @@ import {
 		ColumnDef,  
 	} from "@tanstack/react-table";
 import { Eye, Forward, IdCard} from "lucide-react";
+import { useState } from "react";
 
 export interface Bitacora_record {
 	equipos: Equipo_bitacora[] 
@@ -79,7 +80,9 @@ export interface Areas_bitacora {
 }
 
 const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
-	const {refetch} = useGetListBitacora("", "",[], false);
+	const [date1, setrDate1] = useState("")
+	const [date2, setDate2]= useState("")
+	const {refetch} = useGetListBitacora("", "",[], false, date1, date2);
 	const bitacora = row.original;
 	bitacora.formated_visita = bitacora.visita_a.map((item: VisitaA) => item.nombre).join(', ');
 	bitacora.formated_comentarios = bitacora.comentarios.map((item: Comentarios_bitacoras) => item.comentario).join(', ');
@@ -115,7 +118,7 @@ const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
 		)}
 
 		{ !bitacora.fecha_salida ? (
-			<DoOutModal title={"Registar Salida"} refetchTable={refetch} id_bitacora={bitacora.codigo_qr} ubicacion={bitacora.ubicacion} 
+			<DoOutModal title={"Registar Salida"} id_bitacora={bitacora.codigo_qr} ubicacion={bitacora.ubicacion} 
 				area={bitacora.status_visita.toLowerCase() == "entrada" ? bitacora.caseta_entrada : bitacora.caseta_salida || ""} fecha_salida={bitacora.fecha_salida}>
 					<Forward />
 				</DoOutModal>

@@ -11,14 +11,13 @@ import {
 import { Separator } from "../ui/separator";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { CalendarClock, Loader2 } from "lucide-react";
-import { Access_pass_update } from "@/lib/update-pass";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import { GeneratedPassModal } from "./generated-pass-modal";
 import CalendarDays from "../calendar-days";
-import { renameKeyTipoComentario } from "@/lib/utils";
 import { Areas, Comentarios } from "@/hooks/useCreateAccessPass";
 import useAuthStore from "@/store/useAuthStore";
-import { usePaseEntrada } from "@/hooks/usePaseEntrada";
+import { Update_full_pass, usePaseEntrada } from "@/hooks/usePaseEntrada";
+import { Access_pass_update_full } from "@/lib/update-bitacora-entrada";
 
 interface EntryPassModalUpdateProps {
   title: string;
@@ -41,18 +40,28 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
 }) => {
   const {userEmailSoter , userIdSoter}= useAuthStore()
   const [openGeneratedPass, setOpenGeneratedPass] = useState<boolean>(false);
-  const [sendDataUpdate, setSendDataUpdate] = useState<Access_pass_update|null>(null)
+  const [sendDataUpdate, setSendDataUpdate] = useState<Update_full_pass|null>(null)
+
+ 
+
+  const [docs, setDocs] = useState("");
   const [link, setLink] = useState("");
   const account_id = userIdSoter;
   const { updatePaseEntradaFullMutation, responseCreatePase, isLoading } = usePaseEntrada("")
   const [hostPro, setHostPro] = useState({ protocol: '', host: '' });
 
+  console.log("DATAPASS", dataPass)
 	useEffect(() => {
 	  if (typeof window !== "undefined") {
 		const protocol = window.location.protocol;
 		const host = window.location.host;
 		setHostPro({ protocol, host });
 	  }
+
+    const params = new URLSearchParams(dataPass?.link.link.split('?')[1]);
+    const docs = params.get('docs')??""; 
+    console.log("split", dataPass?.link, docs)
+    setDocs(docs)
 	}, []);
 
   const items =
@@ -87,13 +96,13 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
       descripcion: dataPass.descripcion,
       perfil_pase: dataPass.perfil_pase,
       status_pase: dataPass.status_pase,
-      visita_a: dataPass.visita_a.nombre,
+      visita_a: dataPass.visita_a,
       link: {
         link: `${hostPro?.protocol}//${hostPro?.host}/pase-update.html`,
-        docs: dataPass.link.docs,
+        docs: docs,
         qr_code: dataPass._id,
-        creado_por_id: userIdSoter,
-        creado_por_email: userEmailSoter
+        creado_por_id: userIdSoter ?? 0,
+        creado_por_email: userEmailSoter ?? ""
       },
       qr_pase:dataPass.qr_pase,
       tipo_visita: "alta_de_nuevo_visitante",
@@ -105,15 +114,15 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
       config_dias_acceso: dataPass.config_dias_acceso,
       config_limitar_acceso: dataPass.config_limitar_acceso,
       grupo_areas_acceso: dataPass.areas,
-      grupo_instrucciones_pase:renameKeyTipoComentario(dataPass.comentarios) ,
-      grupo_vehiculos:dataPass.grupo_vehichulos,
+      grupo_instrucciones_pase:dataPass.comentarios,
+      grupo_vehiculos:dataPass.grupo_vehiculos,
       grupo_equipos: dataPass.grupo_equipos,
-      autorizado_por: userEmailSoter,
+      autorizado_por: userEmailSoter ??"",
       walkin_fotografia:dataPass.foto,
       walkin_identificacion:dataPass.identificacion,
       enviar_correo:[]
     };
-
+		console.log("INFO ENVIAR",accessPassData)
       setSendDataUpdate(accessPassData)
   };
 
@@ -124,7 +133,6 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
 
   useEffect(()=>{
     if(sendDataUpdate ){
-      // refetchUpdateFull()
       updatePaseEntradaFullMutation.mutate({access_pass: sendDataUpdate, id, folio, location: dataPass?.ubicacion})
     }
   },[sendDataUpdate])

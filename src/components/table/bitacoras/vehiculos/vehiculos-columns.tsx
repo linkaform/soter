@@ -1,3 +1,4 @@
+import { AddVehicleModal } from "@/components/modals/add-vehicle-modal";
 import { ViewListBitacoraModal } from "@/components/modals/view-bitacora";
 import {
 		ColumnDef,  
@@ -86,6 +87,8 @@ const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
 						<Eye /> 
 					</div>
 			</ViewListBitacoraModal>
+
+            <AddVehicleModal title="Agregar vehiculo" id={bitacora._id} refetchTable={()=>{}} />
         </div>
 	);
 };

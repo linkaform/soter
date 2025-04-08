@@ -17,7 +17,7 @@ import { useMenuStore } from "@/store/useGetMenuStore";
 
 export const Header = () => {
   const currentPath = usePathname();
-  const { logout } = useAuthStore();
+  const { logout, userPhoto } = useAuthStore();
   const { labels } = useMenuStore();
 
   return (
@@ -162,7 +162,7 @@ export const Header = () => {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Avatar>
-                    <AvatarImage src="/image/profile.png" alt="Avatar" />
+                    <AvatarImage src={userPhoto??undefined} alt="Avatar" />
                     <AvatarFallback>CN</AvatarFallback>
                   </Avatar>
                 </DropdownMenuTrigger>

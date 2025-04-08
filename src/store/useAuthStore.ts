@@ -6,8 +6,9 @@ interface AuthState {
   userNameSoter : string | null;
   userEmailSoter : string | null;
   userIdSoter: number | null;
+  userPhoto:string| null;
   isAuth: boolean;
-  setAuth: (token: string, userId: string, userNameSoter: string, userEmailSoter: string, userIdSoter: number) => void;
+  setAuth: (token: string, userId: string, userNameSoter: string, userEmailSoter: string, userIdSoter: number, userPhoto:string) => void;
   logout: () => void;
 }
 
@@ -17,6 +18,7 @@ const useAuthStore = create<AuthState>((set) => {
   const userId = typeof window !== "undefined" ? localStorage.getItem("user_id") : null;
   const userNameSoter = typeof window !== "undefined" ? localStorage.getItem("userName_soter") : null;
   const userEmailSoter = typeof window !== "undefined" ? localStorage.getItem("userEmail_soter") : null;
+  const userPhoto = typeof window !== "undefined" ? localStorage.getItem("userPhoto") : null;
   const userIdSoter = typeof window !== "undefined" 
   ? parseInt(localStorage.getItem("userId_soter") ?? "") // Si es null, pasará una cadena vacía
   : null;
@@ -28,17 +30,19 @@ const useAuthStore = create<AuthState>((set) => {
     userNameSoter,
     userEmailSoter,
     userIdSoter,
+    userPhoto,
     isAuth,
 
-    setAuth: (token: string, userId: string, userNameSoter: string, userEmailSoter: string, userIdSoter:number) => {
+    setAuth: (token: string, userId: string, userNameSoter: string, userEmailSoter: string, userIdSoter:number, userPhoto:string) => {
       // Guarda los valores en localStorage
       localStorage.setItem("access_token", token);
       localStorage.setItem("user_id", userId);
       localStorage.setItem("userName_soter", userNameSoter);
       localStorage.setItem("userEmail_soter", userEmailSoter);
       localStorage.setItem("userId_soter", userIdSoter.toString() );
+      localStorage.setItem("userPhoto_soter", userPhoto);
       // Actualiza el estado
-      set({ token, userId, userNameSoter, userEmailSoter, userIdSoter,isAuth: true });
+      set({ token, userId, userNameSoter, userEmailSoter, userIdSoter,isAuth: true , userPhoto});
     },
 
     logout: () => {
@@ -46,8 +50,13 @@ const useAuthStore = create<AuthState>((set) => {
       localStorage.removeItem("access_token");
       localStorage.removeItem("user_id");
 
+      localStorage.removeItem("userName_soter");
+      localStorage.removeItem("userEmail_soter");
+      localStorage.removeItem("userId_soter" );
+      localStorage.removeItem("userPhoto_soter");
+
       // Restablece el estado
-      set({ token: null, userId: null,userNameSoter: null, userEmailSoter: null, userIdSoter: null ,isAuth: false });
+      set({ token: null, userId: null,userNameSoter: null, userEmailSoter: null, userIdSoter: null ,isAuth: false , userPhoto:null});
     },
   };
 });

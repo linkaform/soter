@@ -228,16 +228,82 @@ export function errorMsj(data:any, title = "Error", type="warning"){
   return undefined
 }
 
-export function renameKeyTipoComentario(array:any) {
-  return array.map((item: { [x: string]: any; tipo_de_comentario: any }) => {
-    // Crear una copia del objeto con el key renombrado
-    const { tipo_de_comentario, ...rest } = item;
-    return {
-      ...rest,
-      tipo_comentario: tipo_de_comentario, // Renombrar la clave
-    };
-  });
+// export function renameKeyTipoComentario(array:any) {
+//   return array.map((item: { [x: string]: any; tipo_de_comentario: any }) => {
+//     // Crear una copia del objeto con el key renombrado
+//     const { tipo_de_comentario, ...rest } = item;
+//     return {
+//       ...rest,
+//       tipo_comentario: tipo_de_comentario, // Renombrar la clave
+//     };
+//   });
+// }
+
+export function obtenerFechas(rango:string) {
+  const hoy = new Date();
+
+  switch (rango) {
+    case "Hoy":
+      return [hoy, hoy];
+
+    case "Ayer":
+      const ayer = new Date(hoy);
+      ayer.setDate(hoy.getDate() - 1);
+      return [ayer, ayer];
+
+    case "Esta semana":
+      const inicioSemana = new Date(hoy);
+      inicioSemana.setDate(hoy.getDate() - hoy.getDay()); // Lunes de esta semana
+      const finSemana = new Date(inicioSemana);
+      finSemana.setDate(inicioSemana.getDate() + 6); // Domingo de esta semana
+      return [inicioSemana, finSemana];
+
+    case "Semana pasada":
+      const inicioSemanaPasada = new Date(hoy);
+      inicioSemanaPasada.setDate(hoy.getDate() - hoy.getDay() - 7); // Lunes de la semana pasada
+      const finSemanaPasada = new Date(inicioSemanaPasada);
+      finSemanaPasada.setDate(inicioSemanaPasada.getDate() + 6); // Domingo de la semana pasada
+      return [inicioSemanaPasada, finSemanaPasada];
+
+    case "Este mes":
+      const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1); // Primer día del mes
+      const finMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0); // Último día del mes
+      return [inicioMes, finMes];
+
+    case "Mes pasado":
+      const inicioMesPasado = new Date(hoy.getFullYear(), hoy.getMonth() - 1, 1); // Primer día del mes pasado
+      const finMesPasado = new Date(hoy.getFullYear(), hoy.getMonth(), 0); // Último día del mes pasado
+      return [inicioMesPasado, finMesPasado];
+
+    case "Últimos 7 días":
+      const hace7Dias = new Date(hoy);
+      hace7Dias.setDate(hoy.getDate() - 7);
+      return [hace7Dias, hoy];
+
+    case "Últimos 30 días":
+      const hace30Dias = new Date(hoy);
+      hace30Dias.setDate(hoy.getDate() - 30);
+      return [hace30Dias, hoy];
+
+    case "Personalizado":
+      // Aquí puedes dejar espacio para que el usuario ingrese un rango personalizado.
+      return [null, null]; // Esto sería solo un ejemplo, ya que el rango sería proporcionado por el usuario.
+
+    default:
+      return [null, null];
+  }
 }
+
+
+
+export const formatoFecha = (fecha:Date) => {
+  const year = fecha.getFullYear();
+  const month = String(fecha.getMonth() + 1).padStart(2, '0'); // Los meses en JavaScript van de 0 a 11, por eso se suma 1
+  const day = String(fecha.getDate()).padStart(2, '0');
+  
+  return `${year}-${month}-${day}`;
+  };
+
 
 export function formatDateToText(dateString: string): string {
   const date = new Date(dateString);

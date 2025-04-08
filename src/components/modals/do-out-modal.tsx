@@ -8,16 +8,13 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Loader2 } from "lucide-react";
-// import { errorAlert, sweetAlert } from "@/lib/utils";
 import { useDoOut } from "@/hooks/useDoOut";
-import { toast } from "sonner";
 
 interface AddBadgeModalProps {
   title: string;
   children: React.ReactNode;
-  refetchTable:()=>void;
   id_bitacora:string;
   ubicacion:string;
   area:string;
@@ -28,58 +25,17 @@ export const DoOutModal: React.FC<AddBadgeModalProps> = ({
   title,
   children,
   area,
-  refetchTable, 
   id_bitacora,
   ubicacion,
 }) => {
   const {  isLoading:loadingDoOut, doOutMutation, isLoading} = useDoOut(id_bitacora ?? null, ubicacion?? null, area??null );
   const [isOpen, setIsOpen] = useState(false);
 
-  // useEffect(()=>{
-  //   if(errorDoOut){
-  //     setIsOpen(false)
-  //     toast.error( "Error al asignar registrar la salida.")
-  //     // errorAlert(errorDoOut, "Error al asignar registrar la salida.", "warning")
-  //   }
-  //   },[errorDoOut])
-
   function onSubmit() {
-    console.log("DATAAA", id_bitacora, ubicacion, area)
     doOutMutation.mutate({
       qr_code:id_bitacora,location:ubicacion, area
     })
   }
-
-  // useEffect(()=>{
-	// 	if(!isLoading){
-	// 		handleClose()			
-	// 	}
-	// },[isLoading])
-
-  // useEffect(()=>{
-  //   if(responseDoOut){
-  //       if(responseDoOut.success==false){
-  //           setIsOpen(false)
-  //           toast.error("Error")
-  //       }else{
-  //           setIsOpen(false)
-  //           toast.success( "Salida registrada exitosamente.")
-  //           refetchTable()
-  //       }
-      
-  //   }
-  // }, [refetchTable, responseDoOut])
-
-//   if (open) {
-//     return (
-//       <SuccessModal
-//         title={"Gafete Recibido"}
-//         description={"El gafete ha sido recibido correctamente."}
-//         open={open}
-//         setOpen={setOpen}
-//       />
-//     );
-//   }
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>

@@ -386,10 +386,9 @@ return (
 					{agregarVehiculosActive ? (
 							<>
 							<VehicleList
-									account_id={account_id??0}
-									vehicles = {vehicles}
-									setVehicles={setVehicles}
-							/>
+								account_id={account_id ?? 0}
+								vehicles={vehicles}
+								setVehicles={setVehicles} isModalOpen={false}/>
 							</>
 						):null}
 
@@ -488,7 +487,7 @@ return (
 								
 							</div>
 
-							<VehicleList account_id={10} vehicles={vehiculos} setVehicles={setVehiculos}/>
+							<VehicleList account_id={10} vehicles={vehiculos} setVehicles={setVehiculos} isModalOpen={false}/>
 
 							<EquipoList equipos={equipos} setEquipos={setEquipos}/>
 

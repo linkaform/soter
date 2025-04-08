@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { LockerTable } from "@/components/table/bitacoras/locker/table";
@@ -13,20 +13,66 @@ import { useShiftStore } from "@/store/useShiftStore";
 import VehiculosTable from "@/components/table/bitacoras/vehiculos/table";
 import EquiposTable from "@/components/table/bitacoras/equipos/table";
 import ChangeLocation from "@/components/changeLocation";
+import { Comentarios_bitacoras, VisitaA } from "@/components/table/bitacoras/equipos/equipos-columns";
+import { Bitacora_record } from "@/components/table/bitacoras/bitacoras-columns";
+import { formatoFecha, obtenerFechas } from "@/lib/utils";
 
 const BitacorasPage = () => {
   	const [selectedOption, setSelectedOption] = useState<string[]>([]);
   	const {location, area} = useShiftStore()
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
 	const [areaSeleccionada, setAreaSeleccionada] = useState(area);
-
+	const [equiposData, setEquiposData] = useState<Bitacora_record[]>([]);
   	const { data: dataStats} = useGetStats(ubicacionSeleccionada, areaSeleccionada, "Bitacoras");
-  	const { data,isLoading} = useGetListBitacora(ubicacionSeleccionada, areaSeleccionada, selectedOption, ubicacionSeleccionada&& areaSeleccionada? true:false );
+	const [dates, setDates] = useState<string[]>([])
 
+	const [date1, setDate1] = useState<Date|"">("")
+	const [date2, setDate2] = useState<Date|"">("")
+	
+  	const { data,isLoading} = useGetListBitacora(ubicacionSeleccionada, areaSeleccionada, selectedOption, ubicacionSeleccionada&& areaSeleccionada? true:false , date1?formatoFecha(date1):"", date2?formatoFecha(date2):"");
 
 	const [selectedTab, setSelectedTab] = useState<string>('Personal'); 
 
+	const processBitacoras = (bitacoras: any[]) => {
+        
+        return bitacoras?.flatMap(bitacora => {
+			console.log("procesando===")
+            if (!bitacora.equipos || !Array.isArray(bitacora.equipos) || bitacora.equipos.length === 0) {
+                return [];  
+            }
+            const hasValidVehicle = bitacora.equipos.some((eq: any) => {
+                return eq.tipo_equipo && eq.tipo_equipo.trim() !== ''; 
+            });
+        
+            if (!hasValidVehicle) {
+                return [];
+            }
+			
+            return bitacora.equipos.map((eq: any) => {
+				if(bitacora.folio =='2746-10'){
+					console.log("PROCESANDO", eq)
+				}
+				return {
+					...bitacora,         
+					equipos: [eq],
+					formated_visita: bitacora.visita_a.map((item: VisitaA) => item.nombre).join(', '),
+					formated_comentarios: bitacora.comentarios.map((item: Comentarios_bitacoras) => item.comentario).join(', '),
+				};
+            });
+        });
+    };
 
+	useEffect(()=>{
+		if(ubicacionSeleccionada=="todas"){
+			setSelectedOption([])
+		}
+	},[ubicacionSeleccionada])
+	
+	useEffect(()=>{
+		if(data){
+			setEquiposData(processBitacoras(data))
+		}
+	}, [data])
 
 	const handleTabChange = (tab:string, option:string[]) => {
 		console.log("TAB", tab, selectedTab)
@@ -48,6 +94,34 @@ const BitacorasPage = () => {
 	const handleTabChangeE = (newTab: any) => {
 		setSelectedTab(newTab); 
 	  };
+
+
+
+	const onChangeFilterDate = (op: string) => {
+		if(op !=="Personalizado"){
+			const range = obtenerFechas(op);
+		
+			const fecha1 = range[0];
+			const fecha2 = range[1];
+	
+			let fech1= ""
+			let fech2=""
+			if (fecha1 instanceof Date && !isNaN(fecha1.getTime())) {
+				setDate1(fecha1)
+			} else {
+				console.error("Fecha no válida", fecha1);
+			}
+			if (fecha2 instanceof Date && !isNaN(fecha2.getTime())) {
+				// fech2 = formatoFecha(fecha2)
+				setDate2(fecha2)
+			} else {
+				console.error("Fecha no válida", fecha2);
+			}
+				console.log("OBNT", fech1, fech2)
+		}
+	};
+
+
 
 
 return (
@@ -153,7 +227,7 @@ return (
 			<Tabs defaultValue="Personal" className="w-full"  value={selectedTab}  onValueChange={handleTabChangeE}>
 				<TabsContent value="Personal">
 				<div className="">
-					<BitacorasTable data={data} isLoading={isLoading}
+					<BitacorasTable data={data} isLoading={isLoading} onChangeFilterDate={onChangeFilterDate} date1={date1} date2={date2} setDate1={setDate1} setDate2={setDate2}
 					/>
 				</div>
 				</TabsContent>
@@ -167,7 +241,7 @@ return (
 
 				<TabsContent value="Equipos">
 				<div className="">
-					<EquiposTable data={data}  isLoading={isLoading}
+					<EquiposTable data={equiposData}  isLoading={isLoading}
 					/>
 				</div>
 				</TabsContent>

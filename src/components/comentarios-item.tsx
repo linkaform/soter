@@ -37,6 +37,7 @@ interface ComentariosItemProps {
 
 	function loadNewArea(item:Comentarios){
 	  	form.setValue('tipo_comentario', tipo)
+
 	  	form.setValue('comentario_pase', item?.comentario_pase)
 	}
 

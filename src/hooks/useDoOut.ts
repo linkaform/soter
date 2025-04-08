@@ -24,7 +24,7 @@ export const useDoOut = ( qr_code:string, location:string, area:string) => {
      //Crear Devolucion de Paquetes
     const doOutMutation = useMutation({
       mutationFn: async ({qr_code, location, area} : {qr_code: string, location:string, area:string}) => {
-          const response = await doOut(qr_code, "P", area);
+          const response = await doOut(qr_code, location , area);
           const hasError= response.error? response.error.status : undefined
           if(hasError == 400 || hasError == 401){
               const textMsj =response.error.msg.msg //errorMsj(response.response.data) 

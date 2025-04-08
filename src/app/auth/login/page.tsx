@@ -54,7 +54,7 @@ export default function LoginPage() {
 
 
         
-        setAuth(response.jwt, response.session_id, response.user.name, response.user.email, response.user.id);
+        setAuth(response.jwt, response.session_id, response.user.name, response.user.email, response.user.id, response.user.thumb);
 
         router.push("/");
       } else {

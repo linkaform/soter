@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { FileX2, Search } from "lucide-react";
+import { CalendarDays, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -30,10 +30,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {  Bitacora_record, bitacorasColumns } from "./bitacoras-columns";
-import { downloadCSV } from "@/lib/utils";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useMemo, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import DateTime from "@/components/dateTime";
 // import { SelectTrigger } from "@radix-ui/react-select";
 // import { Select, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
 
@@ -42,7 +42,13 @@ interface ListProps {
   data: Bitacora_record[];
 //   setSelectedOption: React.Dispatch<React.SetStateAction<string[]>>;
   isLoading:boolean;
-
+	// setDate1:React.Dispatch<React.SetStateAction<string>>;
+	// setDate2:React.Dispatch<React.SetStateAction<string>>;
+	onChangeFilterDate:(filter: string) => void;
+	setDate1 :React.Dispatch<React.SetStateAction<Date | "">>;
+	setDate2 :React.Dispatch<React.SetStateAction<Date | "">>;
+	date1:Date| ""
+	date2:Date| ""
 //   setUbicacionSeleccionada: React.Dispatch<React.SetStateAction<string>>;
 //   setAreaSeleccionada:React.Dispatch<React.SetStateAction<string>>;
 //   areaSeleccionada:string;
@@ -66,7 +72,7 @@ const fallasColumnsCSV = [
   { label: 'Comentarios', key: 'formated_comentarios' },
 ];
 
-const BitacorasTable:React.FC<ListProps> = ({ data, isLoading })=> {
+const BitacorasTable:React.FC<ListProps> = ({ data, isLoading ,onChangeFilterDate, setDate1, setDate2, date1, date2})=> {
 	const [sorting, setSorting] = React.useState<SortingState>([]);
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
 		[]
@@ -108,13 +114,9 @@ const BitacorasTable:React.FC<ListProps> = ({ data, isLoading })=> {
   	});
 
 	const [selectedOptionFilter, setSelectedOptionFilter] = useState<string>("Hoy");
-	const [dateRange, setDateRange] = useState<{ start: Date | null, end: Date | null }>({ start: null, end: null });
+	// const [dateRange, setDateRange] = useState<{ start: Date | null, end: Date | null }>({ start: null, end: null });
 
-	const handleOptionChange = (value: string) => {
-		setSelectedOptionFilter(value);
-		// const range = getDateRange(value); // Obtener el rango de fechas según la opción seleccionada
-		// console.log('Fecha seleccionada: ', range);
-	};
+
 	const catalogoFechas = () => {
 		return [
 		  "Hoy", "Ayer", "Esta semana", "Semana pasada", "Este mes", 
@@ -152,21 +154,32 @@ return (
 					<Search />
 				</div>
 			</div> 
-
+			<div className="flex justify-end gap-4 ">
+				
+			</div> 
 			<div className="flex w-full justify-end">
-				<div className="w-48"> 
-				<Select value={selectedOptionFilter} onValueChange={handleOptionChange}>
+				{selectedOptionFilter == "Personalizado" ?
+				<div className="flex items-center gap-2 mr-14">
+					<DateTime date={date1} setDate={setDate1} />
+					<DateTime date={date2} setDate={setDate2} />
+				</div>:null}
+				<div className="flex items-center w-48 gap-2"> 
+				<Select value={selectedOptionFilter}  onValueChange={(value) => { 
+						setSelectedOptionFilter(value); 
+						onChangeFilterDate(value); 
+						}}> 
 					<SelectTrigger className="w-full">
 					<SelectValue placeholder="Selecciona un filtro de fecha" />
 					</SelectTrigger>
 					<SelectContent>
 					{catalogoFechas().map((option: string) => (
-						<SelectItem key={option} value={option}>
+						<SelectItem key={option} value={option}> 
 						{option}
 						</SelectItem>
 					))}
 					</SelectContent>
 				</Select>
+				<CalendarDays />
 				</div>
 			</div>
 
@@ -191,12 +204,12 @@ return (
 			</div> */}
 
 			<div className="flex flex-wrap gap-2">
-				<div>
+				{/* <div>
 					<Button className="bg-blue-500 w-full md:w-auto hover:bg-blue-600 text-white px-4 py-2" onClick={()=>{downloadCSV(data, fallasColumnsCSV, "bitacora.csv")}}>
 						<FileX2 />
 						Descargar
 					</Button>
-				</div>
+				</div> */}
 
 				<div>
 					<DropdownMenu>

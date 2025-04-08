@@ -187,7 +187,6 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
 	const [isActiveCualquierDia, setIsActiveCualquierDia] = useState(true);
 	const [isActivelimitarDiasSemana, setIsActiveLimitarDiasSemana] = useState(false);
 	const [isActiveAdvancedOptions, setIsActiveAdvancedOptions] = useState(dataPass.areas.length>0);
-	
 	const [date, setDate] = React.useState<Date| "">(dataPass.tipo_visita_pase=="fecha_fija" ?
 				new Date(dataPass.fecha_desde_visita): new Date(dataPass.fecha_desde_visita));
 	const [fechaDesde, setFechaDesde] = useState<string>('');
@@ -250,19 +249,6 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
 		form.setValue("fecha_desde_hasta", dataPass.fecha_desde_hasta.split(" ")[0])
 	},[])
 
-
-	// useEffect(()=>{
-	// 	if(ubicacionSeleccionada){
-	// 		refetchConfLocation()
-	// 	}
-	// }, [refetchConfLocation, ubicacionSeleccionada])
-
-	// useEffect(()=>{
-	// 	if(ubicacionSeleccionada && isActiveAdvancedOptions){
-	// 		refetchAreas()
-	// 	}
-	// }, [ubicacionSeleccionada, isActiveAdvancedOptions, refetchAreas])
-
 	useEffect(()=>{
 		if(configLocation){
 			const docs: string[] = []
@@ -316,14 +302,18 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
 					(data.fecha_desde_visita !== "" ? data.fecha_desde_visita: ""),
 			fecha_desde_hasta: data.fecha_desde_hasta ? data?.fecha_desde_hasta.split(" ")[0] : "",
 			grupo_equipos: dataPass.grupo_equipos,
-			grupo_vehiculos:dataPass.grupo_vehiculos
+			grupo_vehiculos:dataPass.grupo_vehiculos,
+			foto:dataPass.foto || [],
+			identificacion:dataPass.identificacion || [],
+
 		};
 
 		if(tipoVisita == "fecha_fija" && date == ""){
 			form.setError("fechaFija", { type: "manual", message: "Fecha Fija es requerida cuando el tipo de pase es 'fecha fija'." });
-		}else if(tipoVisita == "rango_de_fechas" && (formattedData.fecha_desde_visita == "" || formattedData.fecha_desde_hasta == "" ) ){
+		}else if(tipoVisita == "rango_de_fechas" && (formattedData.fecha_desde_visita == "" || formattedData.fecha_desde_hasta == "" )){
 			form.setError("fecha_desde_hasta", { type: "manual", message: "Ambas fechas son requeridas" });
 		}else{
+
 			setModalData(formattedData);
 			setIsSuccess(true);
 		}
@@ -340,8 +330,8 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
 			const email= "enviar_correo_pre_registro"
 			set_enviar_correo_pre_registro((prev) => {
 				const pre = prev.includes(email)
-					? prev.filter((d) => d !== email) // Si ya está seleccionado, lo quitamos
-					: [...prev, email]; // Si no está seleccionado, lo añadimos
+					? prev.filter((d) => d !== email)
+					: [...prev, email];
 				return pre;
 			});
 		setIsActive(!isActive);
@@ -357,8 +347,8 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
 			const sms= "enviar_sms_pre_registro"
 			set_enviar_correo_pre_registro((prev) => {
 				const pre = prev.includes(sms)
-					? prev.filter((d) => d !== sms) // Si ya está seleccionado, lo quitamos
-					: [...prev, sms]; // Si no está seleccionado, lo añadimos
+					? prev.filter((d) => d !== sms)
+					: [...prev, sms];
 				return pre;
 			});
 		setIsActiveSMS(!isActiveSMS);
@@ -405,12 +395,12 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
 
 	function getNextDay(date: string | number | Date) {
 		const currentDate = new Date(date);
-		currentDate.setDate(currentDate.getDate() + 1); // Añadir un día
-		return currentDate.toISOString().split('T')[0]; // Retornar la fecha en formato 'YYYY-MM-DD'
+		currentDate.setDate(currentDate.getDate() + 1); 
+		return currentDate.toISOString().split('T')[0]; 
 	}
 
 	const closeModal = () => {
-		setIsSuccess(false);  // Reinicia el estado para que el modal no se quede abierto.
+		setIsSuccess(false); 
 	};
 
 return (
@@ -953,7 +943,7 @@ return (
 							<ComentariosList
 								comentarios={comentariosList}
 								setComentarios={setComentariosList}
-								tipo={"Pase"}
+								tipo={"pase"}
 							/>
 
 					{loadingCatAreas == false && loadingConfigLocation == false && loadingCatAreas == false ? (<>

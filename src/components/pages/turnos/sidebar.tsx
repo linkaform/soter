@@ -9,7 +9,7 @@ import React from "react";
 const Sidebar = () => {
   const { shift } = useGetShift();
 
-  const { userEmailSoter, userNameSoter } = useAuthStore();
+  const { userEmailSoter, userNameSoter, userPhoto } = useAuthStore();
 
   const getInitials = (name: string | null) => {
     if (!name) return "N/A"; // Si no hay nombre, usa "N/A"
@@ -27,7 +27,7 @@ const Sidebar = () => {
           <AvatarImage
             width="300"
             height="300"
-            src={shift?.guard?.picture || "/image/sidebar.png"}
+            src={userPhoto|| "/image/sidebar.png"}
             alt="Avatar"
           />
           <AvatarFallback>{getInitials(userNameSoter)}</AvatarFallback>

@@ -49,8 +49,7 @@ export interface PaseEntrada {
 
 const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
   const rowData = row.original;
- 
-  
+
   const dataFull= {
     _id:rowData._id,
     folio:rowData.folio,
@@ -83,7 +82,7 @@ const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
     config_dias_acceso: rowData.limitado_a_dias,
     config_limitar_acceso: rowData.limite_de_acceso,
     areas: replaceNullsInArrayDynamic(rowData.grupo_areas_acceso),
-    comentarios: rowData.grupo_instrucciones_pase||[],
+    comentarios: rowData.comentarios||[],
     enviar_pre_sms: {
       from: rowData.from || "",
       mensaje: rowData.mensaje || "",

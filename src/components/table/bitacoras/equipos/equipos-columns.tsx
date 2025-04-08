@@ -1,3 +1,4 @@
+import { AddEquipmentModal } from "@/components/modals/add-equipment-modal";
 import { ViewListBitacoraModal } from "@/components/modals/view-bitacora";
 import {
 		ColumnDef,  
@@ -72,6 +73,7 @@ export interface Areas_bitacora {
 	commentario_area: string
 }
 
+
 const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
 	const bitacora = row.original;
 	bitacora.formated_visita = bitacora.visita_a.map((item: VisitaA) => item.nombre).join(', ');
@@ -86,7 +88,11 @@ const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
 						<Eye /> 
 					</div>
 			</ViewListBitacoraModal>
+
+      <AddEquipmentModal title="Agregar equipo" id={bitacora._id} refetchTable={()=>{}}/>
 		</div>
+
+    
 	);
 };
 
@@ -95,11 +101,18 @@ export const equiposColumns: ColumnDef<Bitacora_record>[] = [
 		id: "options",
 		header: "Opciones",
 		cell: ({ row }) => {
-			
-			return <OptionsCell row={row} key={row.original._id} />;
+        return <OptionsCell row={row} key={row.original._id} />;
 		},
 		enableSorting: false,
 		enableHiding: false,
+	},
+  {
+		accessorKey: "folio",
+		header: "folio",
+		cell: ({ row }) => (
+			<div className="capitalize">{row.getValue("folio")}</div>
+		),
+		enableSorting: true,
 	},
 	{
 		accessorKey: "nombre_visitante",

@@ -31,11 +31,11 @@ const formSchema =
 const ComentariosList:React.FC<ComentariosListProps> = ({comentarios, setComentarios, tipo })=> {
 	const form = useForm<z.infer<typeof formSchema>>({
 			resolver: zodResolver(formSchema),
-			defaultValues: { tipo_comentario: tipo, comentario_pase: "",}});
+			defaultValues: { tipo_comentario: tipo||"pase", comentario_pase: "",}});
 
 	const onSubmitComentarios = (data: z.infer<typeof formSchema>) => {
 		const newComentario = {
-			tipo_comentario:tipo ||"",  
+			tipo_comentario:tipo ||"pase",  
 			comentario_pase: data.comentario_pase||"",  
 		};
 		setComentarios([...comentarios, newComentario]);
@@ -63,6 +63,7 @@ const ComentariosList:React.FC<ComentariosListProps> = ({comentarios, setComenta
 	const updateComentario = (index: number, newComentario: string) => {
 		const updatedComentarios = [...comentarios];
 		updatedComentarios[index].comentario_pase = newComentario;
+		updatedComentarios[index].tipo_comentario = tipo;
 		setComentarios(updatedComentarios);
 	};
 

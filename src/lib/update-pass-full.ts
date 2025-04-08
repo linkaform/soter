@@ -1,3 +1,6 @@
+import { Update_full_pass } from "@/hooks/usePaseEntrada"
+import { Access_pass_update_full } from "./update-bitacora-entrada"
+
 export type Vehiculo ={
     tipo:string,
     marca:string,
@@ -30,7 +33,7 @@ export type Access_pass_update = {
 
 }
   interface updatePase {
-    access_pass : Access_pass_update |null,
+    access_pass : Update_full_pass| Access_pass_update |null,
     id: string,
     folio:string,
     location:string

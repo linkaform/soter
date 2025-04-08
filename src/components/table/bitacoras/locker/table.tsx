@@ -137,12 +137,12 @@ export function LockerTable() {
 
         {/* Botones a la derecha */}
         <div className="flex items-center justify-end space-x-4">
-          <Button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2">
+          {/* <Button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2">
             <FileX2 />
             Descargar
-          </Button>
+          </Button> */}
 
-          <DropdownMenu>
+          {/* <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="ml-auto">
                 Columnas <ChevronDown />
@@ -167,7 +167,7 @@ export function LockerTable() {
                   );
                 })}
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenu> */}
         </div>
       </div>
 

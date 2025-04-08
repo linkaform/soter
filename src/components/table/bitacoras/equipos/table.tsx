@@ -32,6 +32,7 @@ import {
 import {  Bitacora_record, equiposColumns } from "./equipos-columns";
 import { downloadCSV } from "@/lib/utils";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Comentarios_bitacoras, Vehiculo_bitacora, VisitaA } from "../vehiculos/vehiculos-columns";
 
 interface ListProps {
   data: Bitacora_record[];
@@ -67,9 +68,9 @@ const EquiposTable:React.FC<ListProps> = ({ data, isLoading })=> {
 	});
 
   	const [globalFilter, setGlobalFilter] = React.useState("");
- 
+
   	const table = useReactTable({
-    data: data||[],
+    data: (data) ||[],
     columns: isLoading ? []:equiposColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -124,7 +125,7 @@ return (
         		setUbicacionSeleccionada={setUbicacionSeleccionada} setAreaSeleccionada={setAreaSeleccionada} setAll={setAll} all={all}>
 				</ChangeLocation> 
 			</div> */}
-{/* 
+            {/* 
 			<div className="flex items-center gap-2">
 				<span className="text-lg font-semibold whitespace-nowrap">Tipo de Movimiento:</span>
 				<Select defaultValue={""}>
@@ -139,14 +140,14 @@ return (
 			</div> */}
 
 			<div className="flex flex-wrap gap-2">
-				<div>
+				{/* <div>
 					<Button className="bg-blue-500 w-full md:w-auto hover:bg-blue-600 text-white px-4 py-2" onClick={()=>{downloadCSV(data, fallasColumnsCSV, "bitacora.csv")}}>
 						<FileX2 />
 						Descargar
 					</Button>
-				</div>
+				</div> */}
 
-				<div>
+				{/* <div>
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
 						</DropdownMenuTrigger>
@@ -170,7 +171,7 @@ return (
 							})}
 						</DropdownMenuContent>
 					</DropdownMenu>
-				</div>
+				</div> */}
 			</div>
 		</div>
 
@@ -218,7 +219,8 @@ return (
 						colSpan={equiposColumns.length}
 						className="h-24 text-center"
 						>
-						No hay registros disponibles{" "}
+						{isLoading? (<div className='text-xl font-semibold'>Cargando registros... </div>): 
+							(<div className='text-xl font-semibold'>No hay registros disponibles...</div>)}
 						</TableCell>
 					</TableRow>
 					)}
