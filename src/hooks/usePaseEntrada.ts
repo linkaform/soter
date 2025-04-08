@@ -1,7 +1,6 @@
 import { createPase } from "@/lib/create-access-pass";
 import { getConfSeguridad } from "@/lib/get-configuracion-seguridad";
-import { Access_pass_update_full } from "@/lib/update-bitacora-entrada";
-import { Access_pass_update, Imagen, UpdatePase } from "@/lib/update-pass";
+import { Imagen, UpdatePase } from "@/lib/update-pass";
 import { Equipo, UpdatePaseFull, Vehiculo } from "@/lib/update-pass-full";
 import { errorMsj } from "@/lib/utils";
 import { useShiftStore } from "@/store/useShiftStore";

@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { FileX2, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -30,7 +30,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {  Bitacora_record, vehiculosColumns } from "./vehiculos-columns";
-import { downloadCSV } from "@/lib/utils";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 // import { SelectTrigger } from "@radix-ui/react-select";
 // import { Select, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
@@ -49,20 +48,20 @@ interface ListProps {
 //   all:boolean;
 }
 
-const fallasColumnsCSV = [
-  { label: 'Folio', key: 'folio' },
-  { label: 'Visitante', key: 'nombre_visitante' },
-  { label: 'Fecha de entrada', key: 'fecha_entrada' },
-  { label: 'Fecha de salida', key: 'fecha_salida' },
-  { label: 'Tipo', key: 'perfil_visita' },
-  { label: 'Contratista', key: 'contratista' },
-  { label: 'Visita a', key: 'formated_visita' },
-  { label: 'Caseta de entrada', key: 'caseta_entrada' },
-  { label: 'Caseta de salida', key: 'caseta_salida' },
-  { label: 'Gafete', key: 'id_gafet' },
-  { label: 'Locker', key: 'id_locker' },
-  { label: 'Comentarios', key: 'formated_comentarios' },
-];
+// const fallasColumnsCSV = [
+//   { label: 'Folio', key: 'folio' },
+//   { label: 'Visitante', key: 'nombre_visitante' },
+//   { label: 'Fecha de entrada', key: 'fecha_entrada' },
+//   { label: 'Fecha de salida', key: 'fecha_salida' },
+//   { label: 'Tipo', key: 'perfil_visita' },
+//   { label: 'Contratista', key: 'contratista' },
+//   { label: 'Visita a', key: 'formated_visita' },
+//   { label: 'Caseta de entrada', key: 'caseta_entrada' },
+//   { label: 'Caseta de salida', key: 'caseta_salida' },
+//   { label: 'Gafete', key: 'id_gafet' },
+//   { label: 'Locker', key: 'id_locker' },
+//   { label: 'Comentarios', key: 'formated_comentarios' },
+// ];
 
 const VehiculosTable:React.FC<ListProps> = ({ data, isLoading })=> {
 	const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -78,6 +77,7 @@ const VehiculosTable:React.FC<ListProps> = ({ data, isLoading })=> {
 	});
 
   	const [globalFilter, setGlobalFilter] = React.useState("");
+
  
   	const table = useReactTable({
     data: data||[],

@@ -28,7 +28,7 @@ export const DoOutModal: React.FC<AddBadgeModalProps> = ({
   id_bitacora,
   ubicacion,
 }) => {
-  const {  isLoading:loadingDoOut, doOutMutation, isLoading} = useDoOut(id_bitacora ?? null, ubicacion?? null, area??null );
+  const {  isLoading:loadingDoOut, doOutMutation} = useDoOut(id_bitacora ?? null, ubicacion?? null, area??null );
   const [isOpen, setIsOpen] = useState(false);
 
   function onSubmit() {

@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { FileX2, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -23,36 +23,28 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import {  Bitacora_record, equiposColumns } from "./equipos-columns";
-import { downloadCSV } from "@/lib/utils";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Comentarios_bitacoras, Vehiculo_bitacora, VisitaA } from "../vehiculos/vehiculos-columns";
 
 interface ListProps {
   data: Bitacora_record[];
   isLoading:boolean;
 }
 
-const fallasColumnsCSV = [
-  { label: 'Folio', key: 'folio' },
-  { label: 'Visitante', key: 'nombre_visitante' },
-  { label: 'Fecha de entrada', key: 'fecha_entrada' },
-  { label: 'Fecha de salida', key: 'fecha_salida' },
-  { label: 'Tipo', key: 'perfil_visita' },
-  { label: 'Contratista', key: 'contratista' },
-  { label: 'Visita a', key: 'formated_visita' },
-  { label: 'Caseta de entrada', key: 'caseta_entrada' },
-  { label: 'Caseta de salida', key: 'caseta_salida' },
-  { label: 'Gafete', key: 'id_gafet' },
-  { label: 'Locker', key: 'id_locker' },
-  { label: 'Comentarios', key: 'formated_comentarios' },
-];
+// const fallasColumnsCSV = [
+//   { label: 'Folio', key: 'folio' },
+//   { label: 'Visitante', key: 'nombre_visitante' },
+//   { label: 'Fecha de entrada', key: 'fecha_entrada' },
+//   { label: 'Fecha de salida', key: 'fecha_salida' },
+//   { label: 'Tipo', key: 'perfil_visita' },
+//   { label: 'Contratista', key: 'contratista' },
+//   { label: 'Visita a', key: 'formated_visita' },
+//   { label: 'Caseta de entrada', key: 'caseta_entrada' },
+//   { label: 'Caseta de salida', key: 'caseta_salida' },
+//   { label: 'Gafete', key: 'id_gafet' },
+//   { label: 'Locker', key: 'id_locker' },
+//   { label: 'Comentarios', key: 'formated_comentarios' },
+// ];
 
 const EquiposTable:React.FC<ListProps> = ({ data, isLoading })=> {
 	const [sorting, setSorting] = React.useState<SortingState>([]);

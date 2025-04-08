@@ -1,5 +1,4 @@
 import { Update_full_pass } from "@/hooks/usePaseEntrada"
-import { Access_pass_update_full } from "./update-bitacora-entrada"
 
 export type Vehiculo ={
     tipo:string,

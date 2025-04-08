@@ -24,7 +24,6 @@ const BitacorasPage = () => {
 	const [areaSeleccionada, setAreaSeleccionada] = useState(area);
 	const [equiposData, setEquiposData] = useState<Bitacora_record[]>([]);
   	const { data: dataStats} = useGetStats(ubicacionSeleccionada, areaSeleccionada, "Bitacoras");
-	const [dates, setDates] = useState<string[]>([])
 
 	const [date1, setDate1] = useState<Date|"">("")
 	const [date2, setDate2] = useState<Date|"">("")
@@ -104,20 +103,12 @@ const BitacorasPage = () => {
 			const fecha1 = range[0];
 			const fecha2 = range[1];
 	
-			let fech1= ""
-			let fech2=""
 			if (fecha1 instanceof Date && !isNaN(fecha1.getTime())) {
 				setDate1(fecha1)
-			} else {
-				console.error("Fecha no válida", fecha1);
 			}
 			if (fecha2 instanceof Date && !isNaN(fecha2.getTime())) {
-				// fech2 = formatoFecha(fecha2)
 				setDate2(fecha2)
-			} else {
-				console.error("Fecha no válida", fecha2);
 			}
-				console.log("OBNT", fech1, fech2)
 		}
 	};
 

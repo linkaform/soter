@@ -17,7 +17,6 @@ import CalendarDays from "../calendar-days";
 import { Areas, Comentarios } from "@/hooks/useCreateAccessPass";
 import useAuthStore from "@/store/useAuthStore";
 import { Update_full_pass, usePaseEntrada } from "@/hooks/usePaseEntrada";
-import { Access_pass_update_full } from "@/lib/update-bitacora-entrada";
 
 interface EntryPassModalUpdateProps {
   title: string;
@@ -50,7 +49,6 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
   const { updatePaseEntradaFullMutation, responseCreatePase, isLoading } = usePaseEntrada("")
   const [hostPro, setHostPro] = useState({ protocol: '', host: '' });
 
-  console.log("DATAPASS", dataPass)
 	useEffect(() => {
 	  if (typeof window !== "undefined") {
 		const protocol = window.location.protocol;
