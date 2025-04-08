@@ -146,7 +146,7 @@ const ArticulosConTable:React.FC<ListProps> = ({ data, isLoadingListArticulosCon
 
 			<div className="flex w-1/3 gap-2"> 
 				<ChangeLocation ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} 
-        setUbicacionSeleccionada={setUbicacionSeleccionada} setAreaSeleccionada={setAreaSeleccionada} setAll={setAll} all={all}>
+        setUbicacionSeleccionada={setUbicacionSeleccionada} setAreaSeleccionada={setAreaSeleccionada} >
 				</ChangeLocation>
 			</div>
 
