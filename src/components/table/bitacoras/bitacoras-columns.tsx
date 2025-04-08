@@ -80,9 +80,7 @@ export interface Areas_bitacora {
 }
 
 const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
-	const [date1, setrDate1] = useState("")
-	const [date2, setDate2]= useState("")
-	const {refetch} = useGetListBitacora("", "",[], false, date1, date2);
+	const {refetch} = useGetListBitacora("", "",[], false, "", "");
 	const bitacora = row.original;
 	bitacora.formated_visita = bitacora.visita_a.map((item: VisitaA) => item.nombre).join(', ');
 	bitacora.formated_comentarios = bitacora.comentarios.map((item: Comentarios_bitacoras) => item.comentario).join(', ');
