@@ -84,7 +84,7 @@ export const EditarArticuloModal: React.FC<EditarFallaModalProps> = ({
 	const [evidencia , setEvidencia] = useState<Imagen[]>([]);
 	const [date, setDate] = useState<Date|"">("");
     const [isActiveInterno, setIsActiveInterno] = useState< string | null>(data?.quien_entrega ? data?.quien_entrega.toLocaleLowerCase():"");
-    const { data:responseGetLockers, isLoading:loadingGetLockers } = useGetLockers(ubicacionSeleccionada ?? null,"", "Disponible");
+    const { data:responseGetLockers, isLoading:loadingGetLockers } = useGetLockers(ubicacionSeleccionada ?? null,"", "Disponible", isSuccess);
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
