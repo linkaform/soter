@@ -42,14 +42,7 @@ interface ListProps {
   data: Paquete_record[];
   isLoadingListPaqueteria:boolean;
   openModal: () => void;
-  setStateArticle: React.Dispatch<React.SetStateAction<string>>;
   setSelectedArticulos:React.Dispatch<React.SetStateAction<string[]>>;
-  selectedArticulos:string[];
-
-  // setUbicacionSeleccionada: React.Dispatch<React.SetStateAction<string>>;
-  // setAreaSeleccionada:React.Dispatch<React.SetStateAction<string>>;
-  // areaSeleccionada:string;
-  // ubicacionSeleccionada:string;
 
   setDate1 :React.Dispatch<React.SetStateAction<Date | "">>;
   setDate2 :React.Dispatch<React.SetStateAction<Date | "">>;
@@ -74,8 +67,8 @@ interface ListProps {
 // 	  { label: 'Comentarios', key: 'comentario_perdido' },
 //   ];
 
-const PaqueteriaTable:React.FC<ListProps> = ({ data, isLoadingListPaqueteria, openModal, setStateArticle,
-	setSelectedArticulos,selectedArticulos,//, setUbicacionSeleccionada, setAreaSeleccionada, areaSeleccionada, ubicacionSeleccionada
+const PaqueteriaTable:React.FC<ListProps> = ({ data, isLoadingListPaqueteria, openModal,
+	setSelectedArticulos,//, setUbicacionSeleccionada, setAreaSeleccionada, areaSeleccionada, ubicacionSeleccionada
   setDate1, setDate2, date1, date2, dateFilter, setDateFilter,Filter
 })=> {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -116,9 +109,7 @@ const PaqueteriaTable:React.FC<ListProps> = ({ data, isLoadingListPaqueteria, op
     },
   });
 
-//   const handleCheckboxChange = (value:any) => {
-// 	  setStateArticle(value)
-//   };
+
 
 	useEffect(()=>{
 		if(table.getFilteredSelectedRowModel().rows.length>0){
@@ -178,20 +169,6 @@ const PaqueteriaTable:React.FC<ListProps> = ({ data, isLoadingListPaqueteria, op
 				<CalendarDays />
 				</div>
 
-				{/* <div className="flex items-center gap-2">
-					<span className="text-lg font-semibold">Prioridad:</span>
-					<Select defaultValue="Pendiente" onValueChange={handleCheckboxChange}>
-						<SelectTrigger className="w-[280px]">
-							<SelectValue placeholder="Seleccione un estado" />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectGroup>
-							<SelectItem value="Pendiente">Guardado</SelectItem>
-							<SelectItem value="Entregado">Entregado</SelectItem>
-							</SelectGroup>
-						</SelectContent>
-					</Select>
-				</div> */}
 				<div className="flex flex-wrap gap-2">
 					<div>
 						<Button className="w-full md:w-auto bg-blue-500 hover:bg-blue-600" onClick={openModal}>
@@ -200,12 +177,6 @@ const PaqueteriaTable:React.FC<ListProps> = ({ data, isLoadingListPaqueteria, op
 						</Button>
 					</div>
 
-					{/* <div>
-						<Button className="w-full md:w-auto bg-blue-500 hover:bg-blue-600" onClick={()=>{downloadCSV(selectedArticulos, articulosColumnsCSV, "incidencias.csv")}}>
-							<FileX2 />
-							Descargar
-						</Button>
-					</div> */}
 				</div>
 			</div>
 		</div>
