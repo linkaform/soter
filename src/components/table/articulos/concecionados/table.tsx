@@ -50,8 +50,6 @@ interface ListProps {
   setAreaSeleccionada:React.Dispatch<React.SetStateAction<string>>;
   areaSeleccionada:string;
   ubicacionSeleccionada:string;
-  setAll:React.Dispatch<React.SetStateAction<boolean>>;
-  all:boolean;
 }
 
 const articulosColumnsCSV = [
@@ -69,7 +67,7 @@ const articulosColumnsCSV = [
   ];
 
 const ArticulosConTable:React.FC<ListProps> = ({ data, isLoadingListArticulosCon, openModal, setStateArticle,
-	setSelectedArticulos,selectedArticulos, setUbicacionSeleccionada, setAreaSeleccionada, areaSeleccionada, ubicacionSeleccionada, setAll, all
+	setSelectedArticulos,selectedArticulos, setUbicacionSeleccionada, setAreaSeleccionada, areaSeleccionada, ubicacionSeleccionada
 })=> {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(

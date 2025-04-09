@@ -116,7 +116,7 @@ const ArticulosPage = () => {
                 <ArticulosConTable data={listArticulosCon} isLoadingListArticulosCon={isLoadingListArticulosCon} 
 				   openModal={openModalCon} setStateArticle={setStateArticle} selectedArticulos={selectedArticulos} setSelectedArticulos={setSelectedArticulos}
 				   ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} setUbicacionSeleccionada={setUbicacionSeleccionada} 
-				   setAreaSeleccionada={setAreaSeleccionada} setAll={setAll} all={all} 
+				   setAreaSeleccionada={setAreaSeleccionada} 
 				   />
               </div>
             </TabsContent>
