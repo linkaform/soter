@@ -58,7 +58,7 @@ export const formSchema =
 		const [catalogSearch, setCatalogSearch] = useState("");
 
 		const { data:dataVehiculos,isLoading: loadingCat, refetch } = useGetVehiculos({account_id, tipo:tipoVehiculoState, marca:marcaState})
-		const { data:catEstados, isLoading: loadingCatEstados } = useCatalogoEstados(account_id)
+		const { data:catEstados, isLoading: loadingCatEstados } = useCatalogoEstados(account_id, true)
 
 		const [tiposCat, setTiposCat] = useState<string[]>(tiposCatPadre);
 		const [marcasCat, setMarcasCat] = useState<string[]>(marcasCatPadre);
