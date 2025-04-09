@@ -53,8 +53,6 @@ interface ListProps {
 	setAreaSeleccionada:React.Dispatch<React.SetStateAction<string>>;
 	areaSeleccionada:string;
 	ubicacionSeleccionada:string;
-	setAll:React.Dispatch<React.SetStateAction<boolean>>;
-	all:boolean;
 }
 
 const fallasColumnsCSV = [
@@ -67,7 +65,7 @@ const fallasColumnsCSV = [
 ];
 
 const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, setPrioridades, isLoading, openModal,setSelectedIncidencias,selectedIncidencias,
-	setUbicacionSeleccionada, setAreaSeleccionada, areaSeleccionada, ubicacionSeleccionada, setAll, all
+	setUbicacionSeleccionada, setAreaSeleccionada, areaSeleccionada, ubicacionSeleccionada
  })=> {
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
@@ -158,7 +156,7 @@ const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, setPrioridades, i
 
 			<div className="flex w-1/3 gap-2"> 
 				<ChangeLocation ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} 
-        		setUbicacionSeleccionada={setUbicacionSeleccionada} setAreaSeleccionada={setAreaSeleccionada} setAll={setAll} all={all}>
+        		setUbicacionSeleccionada={setUbicacionSeleccionada} setAreaSeleccionada={setAreaSeleccionada}>
 				</ChangeLocation>
 			</div>
 

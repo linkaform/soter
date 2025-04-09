@@ -29,7 +29,6 @@ const IncidenciasPage = () => {
   const {location, area} = useShiftStore()
   const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
   const [areaSeleccionada, setAreaSeleccionada] = useState(area)
-  const [all, setAll] = useState(false)
 
   useEffect(()=>{
     if(prioridades){
@@ -87,7 +86,7 @@ const IncidenciasPage = () => {
                 <IncidenciasTable data={listIncidencias} refetch={refetchTableIncidencias} setPrioridades={setPrioridades} 
                 isLoading={isLoadingListIncidencias} openModal={openModalIncidencia} setSelectedIncidencias={setSelectedIncidencias} selectedIncidencias={selectedIncidencias} 
 				ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} setUbicacionSeleccionada={setUbicacionSeleccionada} 
-				setAreaSeleccionada={setAreaSeleccionada} setAll={setAll} all={all}/>
+				setAreaSeleccionada={setAreaSeleccionada} />
               </div>
             </TabsContent>
             <TabsContent value="Fallas">
@@ -95,7 +94,7 @@ const IncidenciasPage = () => {
                 <FallasTable  data={dataFallas} refetch={refetchFallas} setPrioridades={setPrioridades} isLoading={isLoadingFallas} 
                 openModal={openModal} setSelectedFallas={setSelectedFallas} selectedFallas={selectedFallas} 
 				ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} setUbicacionSeleccionada={setUbicacionSeleccionada} 
-					setAreaSeleccionada={setAreaSeleccionada} setAll={setAll} all={all} />
+					setAreaSeleccionada={setAreaSeleccionada}/>
               </div>
             </TabsContent>
           </Tabs>
