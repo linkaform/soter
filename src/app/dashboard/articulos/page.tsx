@@ -21,7 +21,6 @@ const ArticulosPage = () => {
 	const {location, area} = useShiftStore()
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
 	const [areaSeleccionada, setAreaSeleccionada] = useState(area)
-	const [all, setAll] = useState(false)
 
 	const { listArticulosPerdidos, isLoadingListArticulosPerdidos , stats} = useArticulosPerdidos(ubicacionSeleccionada, areaSeleccionada, stateArticle, true);
 	const { listArticulosCon, isLoadingListArticulosCon} = useArticulosConcesionados( true);
@@ -106,7 +105,7 @@ const ArticulosPage = () => {
                   <ArticulosPerdidosTable data={listArticulosPerdidos} isLoadingListArticulosPerdidos={isLoadingListArticulosPerdidos} 
 				   openModal={openModal} setStateArticle={setStateArticle} selectedArticulos={selectedArticulos} setSelectedArticulos={setSelectedArticulos}
 				   ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} setUbicacionSeleccionada={setUbicacionSeleccionada} 
-				   setAreaSeleccionada={setAreaSeleccionada} setAll={setAll} all={all} 
+				   setAreaSeleccionada={setAreaSeleccionada} 
 				   />
                 </div>
              
@@ -126,7 +125,7 @@ const ArticulosPage = () => {
                 <PaqueteriaTable data={listPaqueteria} isLoadingListPaqueteria={isLoadingListPaqueteria} 
 				    openModal={openModalPaq} setStateArticle={setStateArticle} selectedArticulos={selectedArticulos} setSelectedArticulos={setSelectedArticulos}
 					ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} setUbicacionSeleccionada={setUbicacionSeleccionada} 
-				   setAreaSeleccionada={setAreaSeleccionada} setAll={setAll} all={all} />
+				   setAreaSeleccionada={setAreaSeleccionada}/>
 
               </div>
             </TabsContent>

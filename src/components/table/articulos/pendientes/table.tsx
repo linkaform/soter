@@ -50,8 +50,7 @@ interface ListProps {
   setAreaSeleccionada:React.Dispatch<React.SetStateAction<string>>;
   areaSeleccionada:string;
   ubicacionSeleccionada:string;
-  setAll:React.Dispatch<React.SetStateAction<boolean>>;
-  all:boolean;
+
 }
 
 const articulosColumnsCSV = [
@@ -69,7 +68,7 @@ const articulosColumnsCSV = [
   ];
 
 const ArticulosPerdidosTable:React.FC<ListProps> = ({ data, isLoadingListArticulosPerdidos, openModal, setStateArticle,
-	setSelectedArticulos,selectedArticulos , setUbicacionSeleccionada, setAreaSeleccionada, areaSeleccionada, ubicacionSeleccionada, setAll, all
+	setSelectedArticulos,selectedArticulos , setUbicacionSeleccionada, setAreaSeleccionada, areaSeleccionada, ubicacionSeleccionada
 })=> {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -147,7 +146,7 @@ const ArticulosPerdidosTable:React.FC<ListProps> = ({ data, isLoadingListArticul
 
 			<div className="flex w-1/3 gap-2"> 
 				<ChangeLocation ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} 
-        setUbicacionSeleccionada={setUbicacionSeleccionada} setAreaSeleccionada={setAreaSeleccionada} setAll={setAll} all={all}>
+        setUbicacionSeleccionada={setUbicacionSeleccionada} setAreaSeleccionada={setAreaSeleccionada} >
 				</ChangeLocation>
 			</div>
 
