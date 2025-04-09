@@ -14,7 +14,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChevronDown, FileX2, Plus, Trash2 } from "lucide-react";
+import { CalendarDays, FileX2, Plus, Search, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -26,19 +26,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+// import {
+//   DropdownMenu,
+//   DropdownMenuCheckboxItem,
+//   DropdownMenuContent,
+//   DropdownMenuTrigger,
+// } from "@/components/ui/dropdown-menu";
 import { Incidencia_record, incidenciasColumns } from "./incidencias-columns";
 import { useEffect } from "react";
 import { EliminarIncidenciaModal } from "@/components/modals/delete-incidencia-modal";
-import { downloadCSV } from "@/lib/utils";
+import { catalogoFechas, downloadCSV } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ChangeLocation from "@/components/changeLocation";
+import DateTime from "@/components/dateTime";
+// import ChangeLocation from "@/components/changeLocation";
 
 interface ListProps {
 	refetch:() => void;
@@ -49,10 +50,18 @@ interface ListProps {
 	setSelectedIncidencias:React.Dispatch<React.SetStateAction<string[]>>;
 	selectedIncidencias:string[];
 
-  	setUbicacionSeleccionada: React.Dispatch<React.SetStateAction<string>>;
-	setAreaSeleccionada:React.Dispatch<React.SetStateAction<string>>;
-	areaSeleccionada:string;
-	ubicacionSeleccionada:string;
+  	// setUbicacionSeleccionada: React.Dispatch<React.SetStateAction<string>>;
+	// setAreaSeleccionada:React.Dispatch<React.SetStateAction<string>>;
+	// areaSeleccionada:string;
+	// ubicacionSeleccionada:string;
+
+	setDate1 :React.Dispatch<React.SetStateAction<Date | "">>;
+	setDate2 :React.Dispatch<React.SetStateAction<Date | "">>;
+	date1:Date| ""
+	date2:Date| ""
+	dateFilter: string;
+	setDateFilter :React.Dispatch<React.SetStateAction<string>>;
+	Filter:() => void;
 }
 
 const fallasColumnsCSV = [
@@ -64,8 +73,9 @@ const fallasColumnsCSV = [
   { label: 'Reporta', key: 'reporta_incidencia' },
 ];
 
-const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, setPrioridades, isLoading, openModal,setSelectedIncidencias,selectedIncidencias,
-	setUbicacionSeleccionada, setAreaSeleccionada, areaSeleccionada, ubicacionSeleccionada
+const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, isLoading, openModal,setSelectedIncidencias,selectedIncidencias,
+	setDate1, setDate2, date1, date2, dateFilter, setDateFilter,Filter
+	// setUbicacionSeleccionada, setAreaSeleccionada, areaSeleccionada, ubicacionSeleccionada
  })=> {
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
@@ -82,17 +92,17 @@ const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, setPrioridades, i
 
   const [globalFilter, setGlobalFilter] = React.useState("");
 
-  const handleCheckboxChange = (event:any) => {
-    const { id, checked } = event.target;
+//   const handleCheckboxChange = (event:any) => {
+//     const { id, checked } = event.target;
 
-    setPrioridades((prevPrioridades) => {
-      if (checked) {
-        return [...prevPrioridades, id]; // Agregar la opción seleccionada
-      } else {
-        return prevPrioridades.filter((item) => item !== id); // Eliminar la opción deseleccionada
-      }
-    });
-  };
+//     setPrioridades((prevPrioridades) => {
+//       if (checked) {
+//         return [...prevPrioridades, id]; // Agregar la opción seleccionada
+//       } else {
+//         return prevPrioridades.filter((item) => item !== id); // Eliminar la opción deseleccionada
+//       }
+//     });
+//   };
 
 
   const table = useReactTable({
@@ -137,45 +147,71 @@ const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, setPrioridades, i
   return (
     <div className="w-full">
 		<div className="flex justify-between items-center my-2 ">
-			<div className="flex">
-				<TabsList className="bg-blue-500 text-white">
-				<TabsTrigger value="Incidencias">Incidencias</TabsTrigger>
-				<TabsTrigger value="Fallas">Fallas</TabsTrigger>
-				</TabsList>
+			<div className="flex w-1/2 justify-start gap-4 ">
+				<div className="flex">
+					<TabsList className="bg-blue-500 text-white">
+					<TabsTrigger value="Incidencias">Incidencias</TabsTrigger>
+					<TabsTrigger value="Fallas">Fallas</TabsTrigger>
+					</TabsList>
+				</div> 
+
+				<div className="flex w-full max-w-sm items-center space-x-2">
+				<input
+					type="text"
+					placeholder="Buscar"
+					value={globalFilter || ''}
+					onChange={(e) => setGlobalFilter(e.target.value)}
+					className=" border border-gray-300 rounded-md p-2 placeholder-gray-600 w-full" 
+				/>
+					<Search />
+				</div>
 			</div>
 			
-			<div className="flex items-center">
-				<input
-				type="text"
-				placeholder="Buscar en todos los campos..."
-				value={globalFilter}
-				onChange={(e) => setGlobalFilter(e.target.value)}
-				className="w-full border border-gray-300 rounded-md p-2"
-				/>
-			</div>
+		
 
-			<div className="flex w-1/3 gap-2"> 
-				<ChangeLocation ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} 
-        		setUbicacionSeleccionada={setUbicacionSeleccionada} setAreaSeleccionada={setAreaSeleccionada}>
-				</ChangeLocation>
-			</div>
-
-			<div className="flex items-center gap-2">
-				<span className="text-lg font-semibold">Prioridad:</span>
-				<Select onValueChange={handleCheckboxChange} defaultValue={""}>
-					<SelectTrigger>
-						<SelectValue placeholder="Selecciona una opción" />
+			<div className="flex w-full justify-end gap-3">
+				{dateFilter == "range" ?
+				<div className="flex items-center gap-2 mr-14">
+					<DateTime date={date1} setDate={setDate1} />
+					<DateTime date={date2} setDate={setDate2} />
+					<Button type="button"  className={"bg-blue-500 hover:bg-blue-600"} onClick={Filter}> Filtrar</Button>
+				</div>:null}
+				<div className="flex items-center w-48 gap-2"> 
+				<Select value={dateFilter}  onValueChange={(value) => { 
+						setDateFilter(value); 
+						}}> 
+					<SelectTrigger className="w-full">
+					<SelectValue placeholder="Selecciona un filtro de fecha" />
 					</SelectTrigger>
 					<SelectContent>
-						<SelectItem value="alta">Alta</SelectItem>
-						<SelectItem value="media">Media</SelectItem>
-						<SelectItem value="baja">Baja</SelectItem>
-						<SelectItem value="crítica">Crítica</SelectItem>
+					{catalogoFechas().map((option:any) => {
+						return (
+							<SelectItem key={option.key} value={option.key}> 
+							{option.label}
+							</SelectItem>
+						)
+					})}
 					</SelectContent>
 				</Select>
-			</div>
+				<CalendarDays />
+				</div>
 
-			<div className="flex flex-wrap gap-2">
+				{/* <div className="flex items-center gap-2">
+					<span className="text-lg font-semibold">Prioridad:</span>
+					<Select onValueChange={handleCheckboxChange} defaultValue={""}>
+						<SelectTrigger>
+							<SelectValue placeholder="Selecciona una opción" />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectItem value="alta">Alta</SelectItem>
+							<SelectItem value="media">Media</SelectItem>
+							<SelectItem value="baja">Baja</SelectItem>
+							<SelectItem value="crítica">Crítica</SelectItem>
+						</SelectContent>
+					</Select>
+				</div> */}
+
+				<div className="flex flex-wrap gap-2">
 				<div>
 					<Button className="w-full md:w-auto bg-blue-500 hover:bg-blue-600" onClick={openModal}>
 						<Plus />
@@ -199,7 +235,7 @@ const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, setPrioridades, i
 					</EliminarIncidenciaModal>
 				</div>
 
-				<div>
+				{/* <div>
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
 						<Button variant="outline" className="ml-auto">
@@ -226,7 +262,8 @@ const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, setPrioridades, i
 							})}
 						</DropdownMenuContent>
 					</DropdownMenu>
-				</div>
+				</div> */}
+			</div>
 			</div>
 		</div>
 

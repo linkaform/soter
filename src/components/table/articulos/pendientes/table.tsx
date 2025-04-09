@@ -26,49 +26,58 @@ import {
 import {
   Select,
   SelectContent,
-  SelectGroup,
+//   SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { FileX2, Plus } from "lucide-react";
+import { CalendarDays, Plus } from "lucide-react";
 import { Articulo_perdido_record, pendientesColumns } from "./pendientes-columns";
-import { downloadCSV } from "@/lib/utils";
-import ChangeLocation from "@/components/changeLocation";
+import { catalogoFechas } from "@/lib/utils";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEffect } from "react";
+import DateTime from "@/components/dateTime";
 
 interface ListProps {
   data: Articulo_perdido_record[];
   isLoadingListArticulosPerdidos:boolean;
   openModal: () => void;
-  setStateArticle: React.Dispatch<React.SetStateAction<string>>;
+//   setStateArticle: React.Dispatch<React.SetStateAction<string>>;
   setSelectedArticulos:React.Dispatch<React.SetStateAction<string[]>>;
-  selectedArticulos:string[];
+//   selectedArticulos:string[];
 
-  setUbicacionSeleccionada: React.Dispatch<React.SetStateAction<string>>;
-  setAreaSeleccionada:React.Dispatch<React.SetStateAction<string>>;
-  areaSeleccionada:string;
-  ubicacionSeleccionada:string;
+  // setUbicacionSeleccionada: React.Dispatch<React.SetStateAction<string>>;
+  // setAreaSeleccionada:React.Dispatch<React.SetStateAction<string>>;
+  // areaSeleccionada:string;
+  // ubicacionSeleccionada:string;
+
+  setDate1 :React.Dispatch<React.SetStateAction<Date | "">>;
+	setDate2 :React.Dispatch<React.SetStateAction<Date | "">>;
+	date1:Date| ""
+	date2:Date| ""
+	dateFilter: string;
+	setDateFilter :React.Dispatch<React.SetStateAction<string>>;
+	Filter:() => void;
 
 }
 
-const articulosColumnsCSV = [
-    { label: 'Folio', key: 'folio' },
-    { label: 'Nombre', key: 'articulo_perdido' },
-    { label: 'Articulo', key: 'articulo_seleccion' },
-    { label: 'Color', key: 'color_perdido' },
-    { label: 'Categoria', key: 'tipo_articulo_perdido' },
-    { label: 'Fecha del Hallazgo', key: 'date_hallazgo_perdido' },
-    { label: 'Area de Resguardo', key: 'locker_perdido' },
-    { label: 'Reporta Interno', key: 'quien_entrega_interno' },
-	  { label: 'Reporta Externo', key: 'quien_entrega_externo' },
-    { label: 'Fecha de Devolucion', key: 'date_entrega_perdido' },
-	  { label: 'Comentarios', key: 'comentario_perdido' },
-  ];
+// const articulosColumnsCSV = [
+//     { label: 'Folio', key: 'folio' },
+//     { label: 'Nombre', key: 'articulo_perdido' },
+//     { label: 'Articulo', key: 'articulo_seleccion' },
+//     { label: 'Color', key: 'color_perdido' },
+//     { label: 'Categoria', key: 'tipo_articulo_perdido' },
+//     { label: 'Fecha del Hallazgo', key: 'date_hallazgo_perdido' },
+//     { label: 'Area de Resguardo', key: 'locker_perdido' },
+//     { label: 'Reporta Interno', key: 'quien_entrega_interno' },
+// 	  { label: 'Reporta Externo', key: 'quien_entrega_externo' },
+//     { label: 'Fecha de Devolucion', key: 'date_entrega_perdido' },
+// 	  { label: 'Comentarios', key: 'comentario_perdido' },
+//   ];
 
-const ArticulosPerdidosTable:React.FC<ListProps> = ({ data, isLoadingListArticulosPerdidos, openModal, setStateArticle,
-	setSelectedArticulos,selectedArticulos , setUbicacionSeleccionada, setAreaSeleccionada, areaSeleccionada, ubicacionSeleccionada
+const ArticulosPerdidosTable:React.FC<ListProps> = ({ data, isLoadingListArticulosPerdidos, openModal,
+	setSelectedArticulos ,// setUbicacionSeleccionada, setAreaSeleccionada, areaSeleccionada, ubicacionSeleccionada
+  setDate1, setDate2, date1, date2, dateFilter, setDateFilter,Filter
 })=> {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -108,10 +117,9 @@ const ArticulosPerdidosTable:React.FC<ListProps> = ({ data, isLoadingListArticul
     },
   });
 
-  const handleCheckboxChange = (value:any) => {
-    console.log("VALOR", value)
-    setStateArticle(value)
-  };
+//   const handleCheckboxChange = (value:any) => {
+//     setStateArticle(value)
+//   };
 
 	useEffect(()=>{
 		if(table.getFilteredSelectedRowModel().rows.length>0){
@@ -130,7 +138,7 @@ const ArticulosPerdidosTable:React.FC<ListProps> = ({ data, isLoadingListArticul
 				<TabsList className="bg-blue-500 text-white mr-2">
 					<TabsTrigger value="Perdidos">Artículos perdidos</TabsTrigger>
 					<TabsTrigger value="Concecionados">Artículos concecionados</TabsTrigger>
-          <TabsTrigger value="Paqueteria">Paqueteria</TabsTrigger>
+          			<TabsTrigger value="Paqueteria">Paqueteria</TabsTrigger>
 				</TabsList>
 			</div>
 			
@@ -144,71 +152,48 @@ const ArticulosPerdidosTable:React.FC<ListProps> = ({ data, isLoadingListArticul
 				/>
 			</div>
 
-			<div className="flex w-1/3 gap-2"> 
-				<ChangeLocation ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} 
-        setUbicacionSeleccionada={setUbicacionSeleccionada} setAreaSeleccionada={setAreaSeleccionada} >
-				</ChangeLocation>
-			</div>
-
-			<div className="flex items-center gap-2">
-				<span className="text-lg font-semibold">Prioridad:</span>
-        <Select defaultValue="Pendiente" onValueChange={handleCheckboxChange}>
-              <SelectTrigger className="w-[280px]">
-                <SelectValue placeholder="Seleccione un estado" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="Pendiente">Pendiente</SelectItem>
-                  <SelectItem value="Entregado">Entregado</SelectItem>
-                  <SelectItem value="Donado">Donado</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-			</div>
-
-			<div className="flex flex-wrap gap-2">
-				<div>
-					<Button className="w-full md:w-auto bg-blue-500 hover:bg-blue-600" onClick={openModal}>
-						<Plus />
-						Nuevo Artículo
-					</Button>
+      		<div className="flex w-full justify-end gap-3">
+				{dateFilter == "range" ?
+				<div className="flex items-center gap-2 mr-14">
+					<DateTime date={date1} setDate={setDate1} />
+					<DateTime date={date2} setDate={setDate2} />
+					<Button type="button"  className={"bg-blue-500 hover:bg-blue-600"} onClick={Filter}> Filtrar</Button>
+				</div>:null}
+				<div className="flex items-center w-48 gap-2"> 
+				<Select value={dateFilter}  onValueChange={(value) => { 
+						setDateFilter(value); 
+						}}> 
+					<SelectTrigger className="w-full">
+					<SelectValue placeholder="Selecciona un filtro de fecha" />
+					</SelectTrigger>
+					<SelectContent>
+					{catalogoFechas().map((option:any) => {
+						return (
+							<SelectItem key={option.key} value={option.key}> 
+							{option.label}
+							</SelectItem>
+						)
+					})}
+					</SelectContent>
+				</Select>
+				<CalendarDays />
 				</div>
 
-				<div>
-					<Button className="w-full md:w-auto bg-blue-500 hover:bg-blue-600" onClick={()=>{downloadCSV(selectedArticulos, articulosColumnsCSV, "incidencias.csv")}}>
-						<FileX2 />
-						Descargar
-					</Button>
-				</div>
-
-				{/* <div>
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-						<Button variant="outline" className="ml-auto">
-							Columnas <ChevronDown />
+				<div className="flex flex-wrap gap-2">
+					<div>
+						<Button className="w-full md:w-auto bg-blue-500 hover:bg-blue-600" onClick={openModal}>
+							<Plus />
+							Nuevo Artículo
 						</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end" className="bg-blue-500">
-						{table
-							.getAllColumns()
-							.filter((column) => column.getCanHide())
-							.map((column) => {
-							return (
-								<DropdownMenuCheckboxItem
-								key={column.id}
-								className="capitalize bg-blue-500"
-								checked={column.getIsVisible()}
-								onCheckedChange={(value) =>
-									column.toggleVisibility(!!value)
-								}
-								>
-								{column.id}
-								</DropdownMenuCheckboxItem>
-							);
-							})}
-						</DropdownMenuContent>
-					</DropdownMenu>
-				</div> */}
+					</div>
+
+					{/* <div>
+						<Button className="w-full md:w-auto bg-blue-500 hover:bg-blue-600" onClick={()=>{downloadCSV(selectedArticulos, articulosColumnsCSV, "incidencias.csv")}}>
+							<FileX2 />
+							Descargar
+						</Button>
+					</div> */}
+				</div>
 			</div>
 		</div>
 
@@ -255,7 +240,8 @@ const ArticulosPerdidosTable:React.FC<ListProps> = ({ data, isLoadingListArticul
                   colSpan={pendientesColumns.length}
                   className="h-24 text-center"
                 >
-                  No hay registros disponibles{" "}
+                  {isLoadingListArticulosPerdidos? (<div className='text-xl font-semibold'>Cargando registros... </div>): 
+							(<div className='text-xl font-semibold'>No hay registros disponibles...</div>)}
                 </TableCell>
               </TableRow>
             )}

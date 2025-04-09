@@ -12,38 +12,64 @@ import { useGetFallas } from "@/hooks/useGetFallas";
 import { AddFallaModal } from "@/components/modals/add-falla";
 import { AddIncidenciaModal } from "@/components/modals/add-incidencia";
 import { useInciencias } from "@/hooks/useIncidencias";
+import { dateToString } from "@/lib/utils";
+import { toast } from "sonner";
+import ChangeLocation from "@/components/changeLocation";
 import { useShiftStore } from "@/store/useShiftStore";
 
 const IncidenciasPage = () => {
 
   const [prioridades, setPrioridades] = useState<string[]>([]);
   const [isSuccess, setIsSuccess] = useState(false);
+  
+  const {location, area} = useShiftStore()
+  const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
+  const [areaSeleccionada, setAreaSeleccionada] = useState(area);
+
   const [isSuccessIncidencia, setIsSuccessIncidencia] = useState(false);
   const [modalData] = useState<any>(null);
   const [selectedFallas, setSelectedFallas]= useState<string[]>([]);
   const [selectedIncidencias, setSelectedIncidencias]= useState<string[]>([]);
+
+  const [date1, setDate1] = useState<Date|"">("")
+  const [date2, setDate2] = useState<Date|"">("")
+
+  const [dates, setDates] = useState<string[]>([])
+  const [dateFilter, setDateFilter] = useState<string>("this_month")
+  console.log(dates)
+
   const { data:dataFallas,isLoading:isLoadingFallas, refetch:refetchFallas} = useGetFallas("", "","abierto");
   const { listIncidencias, refetchTableIncidencias, isLoadingListIncidencias , stats} = useInciencias([],  true, false);
 
 
-  const {location, area} = useShiftStore()
-  const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
-  const [areaSeleccionada, setAreaSeleccionada] = useState(area)
+//   const {location, area} = useShiftStore()
+//   const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
+//   const [areaSeleccionada, setAreaSeleccionada] = useState(area)
 
-  useEffect(()=>{
-    if(prioridades){
-      refetchTableIncidencias()
-    }
-  },[prioridades, refetchTableIncidencias])
+  	useEffect(()=>{
+		if(prioridades){
+		refetchTableIncidencias()
+		}
+ 	},[prioridades, refetchTableIncidencias])
   
-  const closeModal = () => {
+ 	 const closeModal = () => {
 		setIsSuccess(false);  
 	};
-  const openModal = () => {
+  	const openModal = () => {
 		setIsSuccess(true);  
 	};
-  const openModalIncidencia = () => {
+  	const openModalIncidencia = () => {
 		setIsSuccessIncidencia(true);  
+	};
+
+	const Filter = () => {
+		if(date1 && date2){
+			const f1= dateToString(new Date(date1)) 
+			const f2= dateToString(new Date(date2)) 
+			setDates([f1,f2])
+		}else{
+			toast.error("Escoge un rango de fechas.")
+		}
 	};
 
   return (
@@ -55,6 +81,14 @@ const IncidenciasPage = () => {
 				<PageTitle title="Registro de Incidencias y Fallas" />	
 			</div>
 			<div className="flex gap-5">
+				<div>
+					<ChangeLocation
+						ubicacionSeleccionada={ubicacionSeleccionada}
+						areaSeleccionada={areaSeleccionada}
+						setUbicacionSeleccionada={setUbicacionSeleccionada}
+						setAreaSeleccionada={setAreaSeleccionada}
+					/>
+				</div>
 				<div className="border px-12 py-1 rounded-md">
 					<div className="flex gap-6"><TriangleAlert className="text-primary w-10 h-10" />
 						<span className="flex items-center font-bold text-4xl"> {stats?.incidentes_x_dia}</span>
@@ -85,16 +119,20 @@ const IncidenciasPage = () => {
               <div className="">
                 <IncidenciasTable data={listIncidencias} refetch={refetchTableIncidencias} setPrioridades={setPrioridades} 
                 isLoading={isLoadingListIncidencias} openModal={openModalIncidencia} setSelectedIncidencias={setSelectedIncidencias} selectedIncidencias={selectedIncidencias} 
-				ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} setUbicacionSeleccionada={setUbicacionSeleccionada} 
-				setAreaSeleccionada={setAreaSeleccionada} />
+				date1={date1} date2={date2} setDate1={setDate1} setDate2={setDate2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter}
+				// ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} setUbicacionSeleccionada={setUbicacionSeleccionada} 
+				// setAreaSeleccionada={setAreaSeleccionada} 
+				/>
               </div>
             </TabsContent>
             <TabsContent value="Fallas">
               <div className="">
                 <FallasTable  data={dataFallas} refetch={refetchFallas} setPrioridades={setPrioridades} isLoading={isLoadingFallas} 
                 openModal={openModal} setSelectedFallas={setSelectedFallas} selectedFallas={selectedFallas} 
-				ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} setUbicacionSeleccionada={setUbicacionSeleccionada} 
-					setAreaSeleccionada={setAreaSeleccionada}/>
+				date1={date1} date2={date2} setDate1={setDate1} setDate2={setDate2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter}
+				// ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} setUbicacionSeleccionada={setUbicacionSeleccionada} 
+				// 	setAreaSeleccionada={setAreaSeleccionada}
+					/>
               </div>
             </TabsContent>
           </Tabs>

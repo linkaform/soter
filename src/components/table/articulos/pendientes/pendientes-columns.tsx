@@ -4,7 +4,7 @@ import {
 import { Imagen } from "@/lib/update-pass";
 import { useState } from "react";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
-import { ViewArticulo } from "@/components/modals/veiw-articulo";
+import { ViewArticulo } from "@/components/modals/view-articulo";
 import { Eye } from "lucide-react";
 import { EditarArticuloModal } from "@/components/modals/editar-article-modal";
 import { LoadingModal } from "@/components/modals/loading-modal";
@@ -77,34 +77,6 @@ export const pendientesColumns: ColumnDef<Articulo_perdido_record>[] = [
       enableSorting: false,
       enableHiding: false,
     },
-    // {
-    //   id: "select",
-    //   cell: ({ row }) => {
-    //     return (
-    //       <>
-    //       <div className="flex space-x-3 items-center">
-    //         <Checkbox
-    //           checked={row.getIsSelected()}
-    //           onCheckedChange={(value) => row.toggleSelected(!!value)}
-    //           aria-label="Select row" />
-    //         <OptionsCell row={row} key={row.original._id}/>
-    //       </div>
-    //       </>
-    //     )
-    //   },
-    //   header: ({ table }) => (
-    //     <Checkbox
-    //       checked={
-    //         table.getIsAllPageRowsSelected() ||
-    //         (table.getIsSomePageRowsSelected() && "indeterminate")
-    //       }
-    //       onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-    //       aria-label="Select all"
-    //     />
-    //   ),
-    //   enableSorting: false,
-    //   enableHiding: false,
-    // },
     {
       accessorKey: "articulo_perdido",
       header: "Nombre",

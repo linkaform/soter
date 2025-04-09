@@ -79,7 +79,7 @@ export interface Areas_bitacora {
 }
 
 const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
-	const {refetch} = useGetListBitacora("", "",[], false, "", "");
+	const {refetch} = useGetListBitacora("", "",[], false, "", "","this_month");
 	const bitacora = row.original;
 	bitacora.formated_visita = bitacora.visita_a.map((item: VisitaA) => item.nombre).join(', ');
 	bitacora.formated_comentarios = bitacora.comentarios.map((item: Comentarios_bitacoras) => item.comentario).join(', ');
@@ -184,6 +184,7 @@ export const bitacorasColumns: ColumnDef<Bitacora_record>[] = [
 			<div className="capitalize">{visita_a.length>0 ? visita_a[0]?.nombre:""}</div>
 		)},
 		enableSorting: true,
+		enableGlobalFilter: true
 	},
 	{
 		accessorKey: "caseta_entrada",

@@ -6,16 +6,16 @@ import { useShiftStore } from "@/store/useShiftStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-export const useBitacoras = (location:string, area:string,prioridades:string[], enableList:boolean) => {
+export const useBitacoras = (location:string, area:string,prioridades:string[], enableList:boolean, date1:string, date2:string, dateFilter:string) => {
     const queryClient = useQueryClient();
     const {isLoading, setLoading} = useShiftStore();
 
     //Obtener lista de Bitacoras
     const {data: listBitacoras, isLoading:isLoadingListBitacoras, error:errorListBitacoras } = useQuery<any>({
-        queryKey: ["getListBitacoras", area, location, prioridades],
+        queryKey: ["getListBitacoras", area, location, prioridades, date1, date2, dateFilter],
         enabled:enableList,
         queryFn: async () => {
-            const data = await getListBitacora(location, area, prioridades);
+            const data = await getListBitacora(location, area, prioridades, date1, date2, dateFilter);
             const textMsj = errorMsj(data) 
             if (textMsj){
               throw new Error (`Error al obtener lista de bitacoras, Error: ${data.error}`);

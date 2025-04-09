@@ -228,16 +228,20 @@ export function errorMsj(data:any, title = "Error", type="warning"){
   return undefined
 }
 
-// export function renameKeyTipoComentario(array:any) {
-//   return array.map((item: { [x: string]: any; tipo_de_comentario: any }) => {
-//     // Crear una copia del objeto con el key renombrado
-//     const { tipo_de_comentario, ...rest } = item;
-//     return {
-//       ...rest,
-//       tipo_comentario: tipo_de_comentario, // Renombrar la clave
-//     };
-//   });
-// }
+export const catalogoFechas = () => {
+  return [
+    {label:"Hoy", key:"today"},
+    {label:"Ayer", key:"yesterday"},
+    {label:"Esta semana", key:"this_week"},
+    {label:"Semana pasada", key:"last_week"},
+    {label:"Últimos 15 días", key:"last_fifteen_days"},
+    {label:"Este mes", key:"this_month"},
+    {label:"Mes pasado", key:"last_month"},
+    {label:"Este año", key:"this_year"},
+    // {label:"Últimos 30 días", key:""},
+    {label:"Personalizado", key:"range"},
+  ];
+};
 
 export function obtenerFechas(rango:string) {
   const hoy = new Date();
@@ -296,7 +300,7 @@ export function obtenerFechas(rango:string) {
 
 
 
-export const formatoFecha = (fecha:Date) => {
+export const dateToString = (fecha:Date) => {
   const year = fecha.getFullYear();
   const month = String(fecha.getMonth() + 1).padStart(2, '0'); // Los meses en JavaScript van de 0 a 11, por eso se suma 1
   const day = String(fecha.getDate()).padStart(2, '0');

@@ -26,7 +26,6 @@ export const ViewArticulo: React.FC<ViewArtModalProps> = ({
   data,
   children,
 }) => {
-//   const seguimientos = data.falla_grupo_seguimiento_formated || []
   return (
     <Dialog >
       <DialogTrigger asChild>{children}</DialogTrigger>

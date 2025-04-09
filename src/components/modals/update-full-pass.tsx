@@ -28,8 +28,6 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 
 import { Mail, MessageCircleMore } from "lucide-react";
-// import { useCatalogoPaseLocation } from "@/hooks/useCatalogoPaseLocation";
-// import { useCatalogoPaseArea } from "@/hooks/useCatalogoPaseAreaLocation";
 import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
 import { formatDateToString } from "@/lib/utils";
 import { useGetConfSeguridad } from "@/hooks/useGetConfSeguridad";
@@ -134,7 +132,7 @@ import { EntryPassModalUpdate } from "./add-pass-modal-update";
 		return true;
 	}, {
 		message: "Ambas fechas (Desde y Hasta) son requeridas cuando el tipo de pase es 'rango de fechas'.",
-		path: ['fecha_desde_hasta'], // Error para 'fecha_desde_hasta'
+		path: ['fecha_desde_hasta'],
 	})
 
 	.refine((data) => {
@@ -236,13 +234,11 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
 	const toggleDia = (dia: string) => {
 		set_config_dias_acceso((prev) => {
 			const updatedDias = prev.includes(dia)
-				? prev.filter((d) => d !== dia) // Si ya está seleccionado, lo quitamos
-				: [...prev, dia]; // Si no está seleccionado, lo añadimos
+				? prev.filter((d) => d !== dia)
+				: [...prev, dia];
 			return updatedDias;
 		});
 	};
-
-
 
 	useEffect(()=>{
 		form.setValue("fecha_desde_visita", dataPass.fecha_desde_visita.split(" ")[0])
@@ -313,7 +309,6 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
 		}else if(tipoVisita == "rango_de_fechas" && (formattedData.fecha_desde_visita == "" || formattedData.fecha_desde_hasta == "" )){
 			form.setError("fecha_desde_hasta", { type: "manual", message: "Ambas fechas son requeridas" });
 		}else{
-
 			setModalData(formattedData);
 			setIsSuccess(true);
 		}
@@ -326,14 +321,13 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
 		} else {
 			form.clearErrors("email");
 		}
-
-			const email= "enviar_correo_pre_registro"
-			set_enviar_correo_pre_registro((prev) => {
-				const pre = prev.includes(email)
-					? prev.filter((d) => d !== email)
-					: [...prev, email];
-				return pre;
-			});
+		const email= "enviar_correo_pre_registro"
+		set_enviar_correo_pre_registro((prev) => {
+			const pre = prev.includes(email)
+				? prev.filter((d) => d !== email)
+				: [...prev, email];
+			return pre;
+		});
 		setIsActive(!isActive);
 
 	};
@@ -344,13 +338,13 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
 		} else {
 			form.clearErrors("telefono");
 		}
-			const sms= "enviar_sms_pre_registro"
-			set_enviar_correo_pre_registro((prev) => {
-				const pre = prev.includes(sms)
-					? prev.filter((d) => d !== sms)
-					: [...prev, sms];
-				return pre;
-			});
+		const sms= "enviar_sms_pre_registro"
+		set_enviar_correo_pre_registro((prev) => {
+			const pre = prev.includes(sms)
+				? prev.filter((d) => d !== sms)
+				: [...prev, sms];
+			return pre;
+		});
 		setIsActiveSMS(!isActiveSMS);
 	};
 
@@ -772,7 +766,7 @@ return (
 														min={fechaDesde ? getNextDay(fechaDesde) : new Date().toISOString().split('T')[0]}
 														disabled={!fechaDesde}
 														onChange={(e) => {
-															field.onChange(e); // Propagar el valor a react-hook-form
+															field.onChange(e);
 
 														}}
 													/>

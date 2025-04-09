@@ -14,7 +14,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ChevronDown,  FileX2,  Plus,  Trash2 } from "lucide-react";
+import { CalendarDays,  FileX2,  Plus,  Search,  Trash2 } from "lucide-react";
 
 
 
@@ -28,13 +28,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+// import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import {Fallas_record, fallasColumns } from "./fallas-columns";
 import { EliminarFallaModal } from "@/components/modals/delete-falla-modal";
-import { downloadCSV } from "@/lib/utils";
+import { catalogoFechas, downloadCSV } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
-import ChangeLocation from "@/components/changeLocation";
+import DateTime from "@/components/dateTime";
+// import ChangeLocation from "@/components/changeLocation";
 
   interface ListProps {
     refetch:() => void;
@@ -45,10 +46,18 @@ import ChangeLocation from "@/components/changeLocation";
     setSelectedFallas:React.Dispatch<React.SetStateAction<string[]>>;
     selectedFallas:string[]
 
-	setUbicacionSeleccionada: React.Dispatch<React.SetStateAction<string>>;
-	setAreaSeleccionada:React.Dispatch<React.SetStateAction<string>>;
-	areaSeleccionada:string;
-	ubicacionSeleccionada:string;
+	// setUbicacionSeleccionada: React.Dispatch<React.SetStateAction<string>>;
+	// setAreaSeleccionada:React.Dispatch<React.SetStateAction<string>>;
+	// areaSeleccionada:string;
+	// ubicacionSeleccionada:string;
+
+	setDate1 :React.Dispatch<React.SetStateAction<Date | "">>;
+	setDate2 :React.Dispatch<React.SetStateAction<Date | "">>;
+	date1:Date| ""
+	date2:Date| ""
+	dateFilter: string;
+	setDateFilter :React.Dispatch<React.SetStateAction<string>>;
+	Filter:() => void;
   }
   const fallasColumnsCSV = [
     { label: 'Folio', key: 'folio' },
@@ -63,7 +72,8 @@ import ChangeLocation from "@/components/changeLocation";
   ];
   
   const FallasTable:React.FC<ListProps> = ({ refetch, data, openModal, setSelectedFallas, selectedFallas,
-	setUbicacionSeleccionada, setAreaSeleccionada, areaSeleccionada, ubicacionSeleccionada
+	setDate1, setDate2, date1, date2, dateFilter, setDateFilter,Filter
+	// setUbicacionSeleccionada, setAreaSeleccionada, areaSeleccionada, ubicacionSeleccionada
   })=> {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -118,39 +128,65 @@ import ChangeLocation from "@/components/changeLocation";
     }
   },[table.getFilteredSelectedRowModel().rows])
   
-  const handleSelectChange = (value:string) => {
-    // setSelectedOption([value]);
-	console.log("Bitacoras",value)
-  };
+//   const handleSelectChange = (value:string) => {
+//     // setSelectedOption([value]);
+// 	console.log("Bitacoras",value)
+//   };
 
 return (
     <div className="w-full">
+		
 		<div className="flex justify-between items-center my-2 gap-3">
-			<div className="flex">
-				<TabsList className="bg-blue-500 text-white">
-				<TabsTrigger value="Incidencias">Incidencias</TabsTrigger>
-				<TabsTrigger value="Fallas">Fallas</TabsTrigger>
-				</TabsList>
-			</div> 
+			<div className="flex w-1/2 justify-start gap-4 ">
+				<div className="flex">
+					<TabsList className="bg-blue-500 text-white">
+					<TabsTrigger value="Incidencias">Incidencias</TabsTrigger>
+					<TabsTrigger value="Fallas">Fallas</TabsTrigger>
+					</TabsList>
+				</div> 
 
-			<div className="flex items-center">
+				<div className="flex w-full max-w-sm items-center space-x-2">
 				<input
-				type="text"
-				placeholder="Buscar en todos los campos..."
-				value={globalFilter}
-				onChange={(e) => setGlobalFilter(e.target.value)}
-				className="w-full border border-gray-300 rounded-md p-2"
+					type="text"
+					placeholder="Buscar"
+					value={globalFilter || ''}
+					onChange={(e) => setGlobalFilter(e.target.value)}
+					className=" border border-gray-300 rounded-md p-2 placeholder-gray-600 w-full" 
 				/>
+					<Search />
+				</div>
 			</div>
 
-			<div className="flex w-1/3 gap-2"> 
-				<ChangeLocation ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} 
-        		setUbicacionSeleccionada={setUbicacionSeleccionada} setAreaSeleccionada={setAreaSeleccionada}>
-				</ChangeLocation>
-			</div>
 
-			<div className="flex items-center gap-2">
-				<span className="text-lg font-semibold whitespace-nowrap">Tipo de Movimiento:</span>
+			<div className="flex w-full justify-end gap-3">
+				{dateFilter == "range" ?
+				<div className="flex items-center gap-2 mr-14">
+					<DateTime date={date1} setDate={setDate1} />
+					<DateTime date={date2} setDate={setDate2} />
+					<Button type="button"  className={"bg-blue-500 hover:bg-blue-600"} onClick={Filter}> Filtrar</Button>
+				</div>:null}
+				<div className="flex items-center w-48 gap-2"> 
+				<Select value={dateFilter}  onValueChange={(value) => { 
+						setDateFilter(value); 
+						}}> 
+					<SelectTrigger className="w-full">
+					<SelectValue placeholder="Selecciona un filtro de fecha" />
+					</SelectTrigger>
+					<SelectContent>
+					{catalogoFechas().map((option:any) => {
+						return (
+							<SelectItem key={option.key} value={option.key}> 
+							{option.label}
+							</SelectItem>
+						)
+					})}
+					</SelectContent>
+				</Select>
+				<CalendarDays />
+				</div>
+
+				{/* <div className="flex items-center gap-2">
+					<span className="text-lg font-semibold whitespace-nowrap">Tipo de Movimiento:</span>
 					<Select onValueChange={handleSelectChange} defaultValue={""}>
 						<SelectTrigger>
 						<SelectValue placeholder="Selecciona una opción" />
@@ -160,9 +196,9 @@ return (
 						<SelectItem value="salida">Cerrado</SelectItem>
 					</SelectContent>
 					</Select>
-				</div>
+				</div> */}
 
-			<div className="flex flex-wrap gap-2">
+				<div className="flex flex-wrap gap-2">
 				<div>
 					<Button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2" onClick={openModal}>
 						<Plus />        
@@ -187,36 +223,18 @@ return (
 						</div>
 					</EliminarFallaModal>
 				</div>
-
-				<div>
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<Button variant="outline" className="ml-auto">
-							Columnas <ChevronDown />
-							</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end">
-							{table
-							.getAllColumns()
-							.filter((column) => column.getCanHide())
-							.map((column) => {
-								return (
-								<DropdownMenuCheckboxItem
-									key={column.id}
-									className="capitalize"
-									checked={column.getIsVisible()}
-									onCheckedChange={(value) =>
-									column.toggleVisibility(!!value)
-									}
-								>
-									{column.id}
-								</DropdownMenuCheckboxItem>
-								)
-							})}
-						</DropdownMenuContent>
-					</DropdownMenu>
 				</div>
 			</div>
+			
+			{/* <div className="flex w-1/3 gap-2"> 
+				<ChangeLocation ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} 
+        		setUbicacionSeleccionada={setUbicacionSeleccionada} setAreaSeleccionada={setAreaSeleccionada}>
+				</ChangeLocation>
+			</div> */}
+
+			
+
+
 
 		</div>
 		<div className="">

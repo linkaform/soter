@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { Search } from "lucide-react";
+import { CalendarDays, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -25,10 +25,21 @@ import {
 } from "@/components/ui/table";
 import {  Bitacora_record, equiposColumns } from "./equipos-columns";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
+import DateTime from "@/components/dateTime";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { catalogoFechas } from "@/lib/utils";
 
 interface ListProps {
   data: Bitacora_record[];
   isLoading:boolean;
+
+  setDate1 :React.Dispatch<React.SetStateAction<Date | "">>;
+  setDate2 :React.Dispatch<React.SetStateAction<Date | "">>;
+  date1:Date| ""
+  date2:Date| ""
+  dateFilter: string;
+  setDateFilter :React.Dispatch<React.SetStateAction<string>>;
+  Filter:() => void;
 }
 
 // const fallasColumnsCSV = [
@@ -46,7 +57,7 @@ interface ListProps {
 //   { label: 'Comentarios', key: 'formated_comentarios' },
 // ];
 
-const EquiposTable:React.FC<ListProps> = ({ data, isLoading })=> {
+const EquiposTable:React.FC<ListProps> = ({ data, isLoading, setDate1, setDate2, date1, date2, dateFilter, setDateFilter,Filter })=> {
 	const [sorting, setSorting] = React.useState<SortingState>([]);
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
 		[]
@@ -85,10 +96,6 @@ const EquiposTable:React.FC<ListProps> = ({ data, isLoading })=> {
     }
   	});
 
-	// const handleSelectChange = (value:string) => {
-	// 	setSelectedOption([value]); // Actualiza el estado con el valor seleccionado
-	//   };
-
 return (
     <div className="w-full">
 		<div className="flex justify-between items-start my-1 gap-3">
@@ -112,58 +119,32 @@ return (
 				</div>
 			</div> 
 
-			{/* <div className="flex w-1/3 gap-2"> 
-				 <ChangeLocation ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} 
-        		setUbicacionSeleccionada={setUbicacionSeleccionada} setAreaSeleccionada={setAreaSeleccionada} setAll={setAll} all={all}>
-				</ChangeLocation> 
-			</div> */}
-            {/* 
-			<div className="flex items-center gap-2">
-				<span className="text-lg font-semibold whitespace-nowrap">Tipo de Movimiento:</span>
-				<Select defaultValue={""}>
-					<SelectTrigger>
-					<SelectValue placeholder="Selecciona una opción" />
+			<div className="flex w-full justify-end">
+				{dateFilter == "range" ?
+				<div className="flex items-center gap-2 mr-14">
+					<DateTime date={date1} setDate={setDate1} />
+					<DateTime date={date2} setDate={setDate2} />
+					<Button type="button"  className={"bg-blue-500 hover:bg-blue-600"} onClick={Filter}> Filtrar</Button>
+				</div>:null}
+				<div className="flex items-center w-48 gap-2"> 
+				<Select value={dateFilter}  onValueChange={(value) => { 
+						setDateFilter(value); 
+						}}> 
+					<SelectTrigger className="w-full">
+					<SelectValue placeholder="Selecciona un filtro de fecha" />
 					</SelectTrigger>
-				<SelectContent>
-					<SelectItem value="abierto">Abierto</SelectItem>
-					<SelectItem value="cerrado">Cerrado</SelectItem>
-				</SelectContent>
+					<SelectContent>
+					{catalogoFechas().map((option:any) => {
+						return (
+							<SelectItem key={option.key} value={option.key}> 
+							{option.label}
+							</SelectItem>
+						)
+					})}
+					</SelectContent>
 				</Select>
-			</div> */}
-
-			<div className="flex flex-wrap gap-2">
-				{/* <div>
-					<Button className="bg-blue-500 w-full md:w-auto hover:bg-blue-600 text-white px-4 py-2" onClick={()=>{downloadCSV(data, fallasColumnsCSV, "bitacora.csv")}}>
-						<FileX2 />
-						Descargar
-					</Button>
-				</div> */}
-
-				{/* <div>
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end">
-						{table
-							.getAllColumns()
-							.filter((column:any) => column.getCanHide())
-							.map((column:any) => {
-							return (
-								<DropdownMenuCheckboxItem
-								key={column.id}
-								className="capitalize"
-								checked={column.getIsVisible()}
-								onCheckedChange={(value:boolean) =>
-									column.toggleVisibility(!!value)
-								}
-								>
-								{column.id}
-								</DropdownMenuCheckboxItem>
-							);
-							})}
-						</DropdownMenuContent>
-					</DropdownMenu>
-				</div> */}
+				<CalendarDays />
+				</div>
 			</div>
 		</div>
 
