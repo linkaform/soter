@@ -96,7 +96,7 @@ export const useBitacoras = (location:string, area:string,prioridades:string[], 
         queryKey: ["getStatsBitacoras", area, location],
         enabled:enableList,
         queryFn: async () => {
-            const data = await getStats( area, location, "Bitacoras" );
+            const data = await getStats( location, area, "Bitacoras" );
             const responseData = data.response?.data || {};
             return responseData;
         },

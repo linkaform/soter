@@ -1,7 +1,7 @@
 export const getListBitacora = async (
     location:string, area:string,prioridades:string[], date1:string, date2:string, dateFilter:string) => {
     const payload = {
-        dateFilter,
+        filterDate: dateFilter,
         dateFrom: date1,
         dateTo:date2,
         area:area,

@@ -195,10 +195,10 @@ export const bitacorasColumns: ColumnDef<Bitacora_record>[] = [
 		enableSorting: true,
 	},
 	{
-		accessorKey: "caseta_salida",
+		accessorKey: "nombre_area_salida",
 		header: "Caseta Salida",
 		cell: ({ row }) => (
-			<div className="capitalize">{row.getValue("caseta_salida")}</div>
+			<div className="capitalize">{row.getValue("nombre_area_salida")}</div>
 		),
 		enableSorting: true,
 	},

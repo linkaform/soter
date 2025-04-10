@@ -7,7 +7,7 @@ import { LockerTable } from "@/components/table/bitacoras/locker/table";
 import PageTitle from "@/components/page-title";
 import BitacorasTable from "@/components/table/bitacoras/table";
 import { Home, Users, Car, DoorClosed, Computer } from "lucide-react";
-import { useGetStats } from "@/hooks/useGetStats";
+// import { useGetStats } from "@/hooks/useGetStats";
 import { useShiftStore } from "@/store/useShiftStore";
 import VehiculosTable from "@/components/table/bitacoras/vehiculos/table";
 import EquiposTable from "@/components/table/bitacoras/equipos/table";
@@ -25,14 +25,14 @@ const BitacorasPage = () => {
 	const [areaSeleccionada, setAreaSeleccionada] = useState(area);
 	const [equiposData, setEquiposData] = useState<Bitacora_record[]>([]);
 	const [vehiculosData, setVehiculosData] = useState<Bitacora_record[]>([]);
-  	const { data: dataStats} = useGetStats(ubicacionSeleccionada, areaSeleccionada, "Bitacoras");
+  	// const { data: stats} = useGetStats(areaSeleccionada,ubicacionSeleccionada, "Bitacoras");
 
 	const [date1, setDate1] = useState<Date|"">("")
 	const [date2, setDate2] = useState<Date|"">("")
 
 	const [dates, setDates] = useState<string[]>([])
-	const [dateFilter, setDateFilter] = useState<string>("this_month")
-	const { listBitacoras,isLoadingListBitacoras} = useBitacoras(ubicacionSeleccionada, areaSeleccionada, selectedOption, dateFilter?true:false , dates[0], dates[1], dateFilter)
+	const [dateFilter, setDateFilter] = useState<string>("")
+	const { listBitacoras,isLoadingListBitacoras, stats} = useBitacoras(ubicacionSeleccionada, areaSeleccionada == "todas" ? "": areaSeleccionada, selectedOption, true , dates[0], dates[1], dateFilter)
 	const [selectedTab, setSelectedTab] = useState<string>('Personal'); 
 
 	const processBitacorasE = (bitacoras: any[]) => {
@@ -109,6 +109,7 @@ const BitacorasPage = () => {
 			setSelectedOption(option); 
 			setSelectedTab(tab)
 		}
+		setDateFilter("this_month")
 	};
 
 	const handleTabChangeE = (newTab: any) => {
@@ -143,12 +144,13 @@ return (
 							setAreaSeleccionada={setAreaSeleccionada}
 						/>
 					</div>
-					
-					<div className={`border px-12 py-1 rounded-md`}>
+
+					<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
+						dateFilter== "today" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => { setDateFilter("today")}}>
 						<div className="flex gap-6">
 							<Home className="text-primary w-10 h-10" />
 							<span className="flex items-center font-bold text-4xl">
-							{dataStats?.visitas_en_dia}
+							{stats?.visitas_en_dia}
 							</span>
 						</div>
 						<div className="flex items-center space-x-0">
@@ -158,6 +160,21 @@ return (
 						<span className="text-md">Visitas en el día</span>
 					</div>
 
+					<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
+						selectedOption[0] === 'entrada'&& dateFilter !== "today" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => {handleTabChange("Personal",["entrada"]);}}>
+						<div className="flex gap-6">
+							<Users className="text-primary w-10 h-10" />
+							<span className="flex items-center font-bold text-4xl">
+							{stats?.personal_dentro}
+							</span>
+						</div>
+						<div className="flex items-center space-x-0">
+							<div className="h-1 w-1/2 bg-cyan-100"></div>
+							<div className="h-1 w-1/2 bg-blue-500"></div>
+						</div>
+						<span className="text-md">Personal dentro</span>
+					</div>
+
 					<div  className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
 						selectedTab === 'Vehiculos' ? 'bg-blue-100' : 'hover:bg-gray-100'
 						}`} 
@@ -165,7 +182,7 @@ return (
 						<div className="flex gap-6">
 							<Car className="text-primary w-10 h-10" />
 							<span className="flex items-center font-bold text-4xl">
-							{dataStats?.total_vehiculos_dentro}
+							{stats?.total_vehiculos_dentro}
 							</span>
 						</div>
 						<div className="flex items-center space-x-0">
@@ -182,7 +199,7 @@ return (
 						<div className="flex gap-6">
 							<Computer className="text-primary w-10 h-10" />
 							<span className="flex items-center font-bold text-4xl">
-							{dataStats?.total_equipos_dentro}
+							{stats?.total_equipos_dentro}
 							</span>
 						</div>
 						<div className="flex items-center space-x-0">
@@ -191,28 +208,13 @@ return (
 						</div>
 						<span className="text-md">Equipos Dentro</span>
 					</div>
-					
-					<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
-						selectedOption[0] === 'entrada' ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => handleTabChange("Personal",["entrada"])}>
-						<div className="flex gap-6">
-							<Users className="text-primary w-10 h-10" />
-							<span className="flex items-center font-bold text-4xl">
-							{dataStats?.personal_dentro}
-							</span>
-						</div>
-						<div className="flex items-center space-x-0">
-							<div className="h-1 w-1/2 bg-cyan-100"></div>
-							<div className="h-1 w-1/2 bg-blue-500"></div>
-						</div>
-						<span className="text-md">Personal dentro</span>
-					</div>
 
 					<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
 						selectedOption[0] === 'salida' ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => handleTabChange("Personal", ["salida"])}>
 						<div className="flex gap-6">
 							<DoorClosed className="text-primary w-10 h-10" />
 							<span className="flex items-center font-bold text-4xl">
-							{dataStats?.salidas_registradas}
+							{stats?.salidas_registradas}
 							</span>
 						</div>
 						<div className="flex items-center space-x-0">

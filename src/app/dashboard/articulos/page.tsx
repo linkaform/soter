@@ -95,7 +95,7 @@ const ArticulosPage = () => {
 								setAreaSeleccionada={setAreaSeleccionada}
 							/>
 						</div>
-						<div className="border px-12 py-1 rounded-md">
+						<div className="border px-9 py-1 rounded-md">
 							<div className="flex gap-6"><Archive className="text-primary w-10 h-10" />
 								<span className="flex items-center font-bold text-4xl"> {stats?.articulos_concesionados_pendientes}</span>
 							</div>
@@ -103,7 +103,7 @@ const ArticulosPage = () => {
 								<div className="h-1 w-1/2 bg-cyan-100"></div>
 								<div className="h-1 w-1/2 bg-blue-500"></div>
 							</div>
-							<span className="text-md">Artículos Concesionados Pendientes</span>
+							<span className="text-md">Artículos Concesionados</span>
 						</div>
 
 						<div className="border p-4 px-12 py-1 rounded-md">
