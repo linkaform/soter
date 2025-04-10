@@ -361,3 +361,42 @@ export const downloadCSV = (data: any[], columns: Column[], fileName: string = '
   }
 
 };
+
+
+export const catalogoEstados = () => {
+  return [
+      "Aguascalientes",
+      "Baja California",
+      "Baja California Sur",
+      "Campeche",
+      "Chiapas",
+      "Chihuahua",
+      "Ciudad de M\u00e9xico",
+      "Coahuila",
+      "Colima",
+      "Durango",
+      "Guanajuato",
+      "Guerrero",
+      "Hidalgo",
+      "Jalisco",
+      "M\u00e9xico",
+      "Michoac\u00e1n",
+      "Morelos",
+      "Nayarit",
+      "Nuevo Le\u00f3n",
+      "Oaxaca",
+      "Puebla",
+      "Quer\u00e9taro",
+      "Quintana Roo",
+      "San Luis Potos\u00ed",
+      "Sinaloa",
+      "Sonora",
+      "Tabasco",
+      "Tamaulipas",
+      "Tlaxcala",
+      "Veracruz",
+      "Yucat\u00e1n",
+      "Zacatecas"
+  ]
+
+}

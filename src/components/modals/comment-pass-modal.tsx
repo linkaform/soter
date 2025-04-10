@@ -19,6 +19,9 @@ import {
 import { Textarea } from "../ui/textarea";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useAccessStore } from "@/store/useAccessStore";
+import { toast } from "sonner";
+import { useState } from "react";
 
 interface CommentPassModalProps {
   title: string;
@@ -35,6 +38,26 @@ export const CommentPassModal: React.FC<CommentPassModalProps> = ({
   title,
   children,
 }) => {
+
+
+    const [open, setOpen] = useState(false); 
+  
+
+
+  const {
+    newCommentsPase, 
+    setNewCommentsPase,
+ 
+  } = useAccessStore();
+
+
+  const addNewComment = (comment: string) => {
+    setNewCommentsPase([{ comentario_pase: comment, tipo_de_comentario: "pase"}, ...newCommentsPase, ])
+  }
+
+
+
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -42,15 +65,29 @@ export const CommentPassModal: React.FC<CommentPassModalProps> = ({
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  function onSubmit(data: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values);
+
+    addNewComment(data.comment)
+    form.reset()
+
+
+
+    toast.success("Comentario de Pase listo para agregar al registro de ingreso.");
+
+    setOpen(false)
+
+
+
+
   }
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+    <Dialog open={open} onOpenChange={setOpen}>
+    <DialogTrigger asChild onClick={() => setOpen(true)}>
+        {children}
+        </DialogTrigger>
 
       <DialogContent className="max-w-xl">
         <DialogHeader>

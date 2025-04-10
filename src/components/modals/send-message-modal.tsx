@@ -19,6 +19,8 @@ import {
 import { Textarea } from "../ui/textarea";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { useSearchPass } from "@/hooks/useSearchPass";
+import { Input } from "../ui/input";
 
 interface SendMessageModalProps {
   title: string;
@@ -26,19 +28,28 @@ interface SendMessageModalProps {
 }
 
 const formSchema = z.object({
-  comment: z.string().min(2, {
-    message: "Campo requerido.",
+  title: z.string().min(2, {
+    message: "Campo requerido",
   }),
-});
+  message: z.string().min(2, {
+    message: "Campo requerido",
+  }),
+})
 
 export const SendMessageModal: React.FC<SendMessageModalProps> = ({
   title,
   children,
 }) => {
+
+  const { searchPass } = useSearchPass();
+
+
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      comment: "",
+      title: `Mensaje de ${searchPass?.nombre} enviado desde Accesos.`, 
+      message: `${searchPass?.nombre} quiere ponerse en contacto contigo.`
     },
   });
 
@@ -59,11 +70,45 @@ export const SendMessageModal: React.FC<SendMessageModalProps> = ({
           </DialogTitle>
         </DialogHeader>
 
+
+    {/*     <div className="">
+            <p>
+              <Label className="">Para:</Label>
+              {searchPass?.nombre}
+            </p>
+
+            <p>
+              <Label className="">Correo:</Label>
+              {searchPass?.email || "No hay email configurado"}
+            </p>
+          </div> */}
+
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+
+
+          <FormField
+              control={form.control}
+              name="title"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>* Título</FormLabel>
+                  <FormControl>
+                  <Input placeholder="Texto" {...field} />
+
+                  </FormControl>
+
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+  
+
             <FormField
               control={form.control}
-              name="comment"
+              name="message"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>* Comentario</FormLabel>

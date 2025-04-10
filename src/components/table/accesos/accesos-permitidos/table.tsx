@@ -24,58 +24,26 @@ import {
 } from "@/components/ui/table";
 
 import {
-  AccesosPermitidos,
   accesosPermitidosColumns,
 } from "./accesos-permitidos-columns";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
-
-const data: AccesosPermitidos[] = [
-  {
-    acceso: "Almacén",
-    estatus: "Autorizado",
-    comentario: "S/N",
-  },
-  {
-    acceso: "Azotea",
-    estatus: "Autorizado",
-    comentario: "S/N",
-  },
-  {
-    acceso: "Recursos eléctricos",
-    estatus: "Autorizado",
-    comentario: "S/N",
-  },
-  {
-    acceso: "Oficina principal",
-    estatus: "No Autorizado",
-    comentario: "Sin permiso vigente",
-  },
-  {
-    acceso: "Estacionamiento",
-    estatus: "Autorizado",
-    comentario: "S/N",
-  },
-  {
-    acceso: "Cuarto de máquinas",
-    estatus: "No Autorizado",
-    comentario: "Falta capacitación",
-  },
-  {
-    acceso: "Planta baja",
-    estatus: "Autorizado",
-    comentario: "S/N",
-  },
-  {
-    acceso: "Terraza",
-    estatus: "Autorizado",
-    comentario: "S/N",
-  },
-
-];
+import { SearchAccessPass } from "@/hooks/useSearchPass";
 
 
-export function AccesosPermitidosTable() {
+
+
+
+interface TableProps {
+  searchPass: SearchAccessPass | undefined;
+}
+
+
+  export const AccesosPermitidosTable: React.FC<TableProps> = ({ searchPass }) => {
+
+
+
+
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -91,7 +59,7 @@ export function AccesosPermitidosTable() {
   const [globalFilter, setGlobalFilter] = React.useState("");
 
   const table = useReactTable({
-    data,
+ data: searchPass?.grupo_areas_acceso || [],
     columns: accesosPermitidosColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,

@@ -2,26 +2,16 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 
 export interface VehiculoAutorizado {
-  tipo: string;
-  marca: string;
-  modelo: string;
-  matricula: string;
-  color: string;
+  tipo_vehiculo: string;
+  marca_vehiculo: string;
+  modelo_vehiculo: string;
+  placas_vehiculo: string;
+  color_vehiculo: string;
 }
 
 export const VehiculoAutorizadoColumns: ColumnDef<VehiculoAutorizado>[] = [
   {
     id: "select",
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate")
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
@@ -33,43 +23,46 @@ export const VehiculoAutorizadoColumns: ColumnDef<VehiculoAutorizado>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "tipo",
+    accessorKey: "tipo_vehiculo",
     header: "Tipo",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("tipo")}</div>
+      <div className="capitalize">{row.original.tipo_vehiculo}</div>
     ),
     enableSorting: true,
   },
   {
-    accessorKey: "marca",
+    accessorKey: "marca_vehiculo",
     header: "Marca",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("marca")}</div>
+      <div className="capitalize">{row.original.marca_vehiculo}</div>
     ),
     enableSorting: true,
   },
   {
-    accessorKey: "modelo",
+    accessorKey: "modelo_vehiculo",
     header: "Modelo",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("modelo")}</div>
+      <div className="capitalize">{row.original.modelo_vehiculo}</div>
     ),
     enableSorting: true,
   },
   {
-    accessorKey: "matricula",
+    accessorKey: "placas_vehiculo",
     header: "Matrícula",
     cell: ({ row }) => (
-      <div className="uppercase">{row.getValue("matricula")}</div>
+      <div className="uppercase">{row.original.placas_vehiculo}</div>
     ),
     enableSorting: true,
   },
   {
-    accessorKey: "color",
+    accessorKey: "color_vehiculo",
     header: "Color",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("color")}</div>
+      <div className="capitalize">{row.original.color_vehiculo}</div>
     ),
     enableSorting: true,
   },
 ];
+
+
+

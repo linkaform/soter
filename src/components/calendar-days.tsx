@@ -1,7 +1,7 @@
 import React from "react";
 
 interface CalendarDaysProps {
-  diasDisponibles: string[]; // Un array de cadenas (días de la semana)
+  diasDisponibles: string | string[]; // Un array de cadenas (días de la semana)
 }
 
 const CalendarDays: React.FC<CalendarDaysProps> = ({ diasDisponibles })=> {

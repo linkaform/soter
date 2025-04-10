@@ -7,26 +7,18 @@ export interface PermisosCertificaciones {
 
 export const PermisosCertificacionesColumns: ColumnDef<PermisosCertificaciones>[] = [
   {
-    accessorKey: "permiso",
+    accessorKey: "nombre_certificacion",
     header: "Permiso/Certificación",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("permiso")}</div>
+      <div className="capitalize">{row.getValue("nombre_certificacion")}</div>
     ),
     enableSorting: true,
   },
   {
-    accessorKey: "estatus",
+    accessorKey: "tipo_vigencia",
     header: "Estatus",
     cell: ({ row }) => (
-      <div
-        className={`capitalize ${
-          row.getValue("estatus") === "Vencido"
-            ? "text-red-500"
-            : "text-green-500"
-        }`}
-      >
-        {row.getValue("estatus")}
-      </div>
+      <div className="capitalize">{row.getValue("tipo_vigencia")}</div>
     ),
     enableSorting: true,
   },

@@ -26,37 +26,33 @@ import {
 } from "@/components/ui/table";
 
 import {
-  AccesosComentario,
   AccesosComentarioColumns,
 } from "./accesos-comentarios-columns";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CommentPassModal } from "@/components/modals/comment-pass-modal";
+import { SearchAccessPass } from "@/hooks/useSearchPass";
 
-export const data: AccesosComentario[] = [
-  {
-    comentario: "Entrega de documentos",
-    tipoComentario: "Pase",
-  },
-  {
-    comentario: "Mantenimiento programado",
-    tipoComentario: "Reunión",
-  },
-  {
-    comentario: "Inspección de seguridad",
-    tipoComentario: "Acceso",
-  },
-  {
-    comentario: "Carga de material",
-    tipoComentario: "Pase",
-  },
-  {
-    comentario: "Reunión con el supervisor",
-    tipoComentario: "Reunión",
-  },  
- 
-];
 
-export function ComentariosAccesosTable() {
+
+
+interface TableProps {
+  searchPass: SearchAccessPass | undefined;
+  allComments?: any[]
+}
+
+
+  export const ComentariosAccesosTable: React.FC<TableProps> = ({ allComments }) => {
+
+
+
+  
+
+
+
+
+    
+
+
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -72,7 +68,7 @@ export function ComentariosAccesosTable() {
   const [globalFilter, setGlobalFilter] = React.useState("");
 
   const table = useReactTable({
-    data,
+    data: allComments || [],
     columns: AccesosComentarioColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -98,7 +94,7 @@ export function ComentariosAccesosTable() {
   return (
     <div className="w-full">
       <div className="mb-3">
-        <h1 className="text-2xl font-bold">Comentarios/Instrucciones de visita AA</h1>
+        <h1 className="text-2xl font-bold">Comentarios/Instrucciones</h1>
       </div>
 
     

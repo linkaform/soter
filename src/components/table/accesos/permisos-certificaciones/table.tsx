@@ -22,58 +22,27 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import {
-  PermisosCertificaciones,
-  PermisosCertificacionesColumns,
-} from "./permisos-certificaciones-columns";
+import { PermisosCertificacionesColumns } from "./permisos-certificaciones-columns";
 import { ScrollArea } from "@/components/ui/scroll-area";
-
- 
-const data: PermisosCertificaciones[] = [
-  {
-    permiso: "Permiso trabajo en alturas",
-    estatus: "Vencido",
-  },
-  {
-    permiso: "Licencia de conducir",
-    estatus: "Vencido",
-  },
-  {
-    permiso: "SUA IMSS",
-    estatus: "Autorizado",
-  },
-  {
-    permiso: "Certificado médico",
-    estatus: "Vencido",
-  },
-  {
-    permiso: "Curso de seguridad",
-    estatus: "Autorizado",
-  },
-  {
-    permiso: "Certificación de montacargas",
-    estatus: "Vencido",
-  },
-  {
-    permiso: "Permiso para soldadura",
-    estatus: "Autorizado",
-  },
-  {
-    permiso: "Capacitación en primeros auxilios",
-    estatus: "Autorizado",
-  },
-  {
-    permiso: "Licencia ambiental",
-    estatus: "Vencido",
-  },
-  {
-    permiso: "Permiso de transporte",
-    estatus: "Autorizado",
-  },
-];
+import { SearchAccessPass } from "@/hooks/useSearchPass";
 
 
-export function AccesosPermisosTable() {
+
+
+
+interface TableProps {
+  searchPass: SearchAccessPass | undefined;
+}
+
+
+  export const AccesosPermisosTable: React.FC<TableProps> = ({ searchPass }) => {
+
+
+
+  const certificaciones = Array.isArray(searchPass?.certificaciones)
+    ? searchPass.certificaciones
+    : [];
+
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -89,7 +58,8 @@ export function AccesosPermisosTable() {
   const [globalFilter, setGlobalFilter] = React.useState("");
 
   const table = useReactTable({
-    data,
+    data: certificaciones,
+
     columns: PermisosCertificacionesColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -118,7 +88,6 @@ export function AccesosPermisosTable() {
         <h1 className="text-2xl font-bold">Permisos/Certificaciones</h1>
       </div>
 
-    
       <div className="w-full">
         <ScrollArea className="h-60 w-full border rounded-md">
           <Table>
@@ -170,7 +139,7 @@ export function AccesosPermisosTable() {
             </TableBody>
           </Table>
         </ScrollArea>
-      </div>   
+      </div>
     </div>
   );
 }

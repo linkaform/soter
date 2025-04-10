@@ -12,7 +12,7 @@ export const useGetVehiculos = ({account_id, tipo, marca , isModalOpen}: getVehi
         marca
       });
       
-      return data.response?.data;
+      return data.response?.data  || []
     },
     refetchOnWindowFocus: true,
     refetchInterval: 60000,

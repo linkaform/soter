@@ -1,17 +1,15 @@
 import { ColumnDef } from "@tanstack/react-table";
 
-export interface UltimosAccesos {
-  visito: string;
-  fecha: string;
-  duracion: string
-}
 
-export const UltimosAccesosColumns: ColumnDef<UltimosAccesos>[] = [
+
+export const UltimosAccesosColumns: ColumnDef<any>[] = [
   {
-    accessorKey: "visito",
+    accessorKey: "visita_a", // Se mantiene la clave principal
     header: "Visitó",
     cell: ({ row }) => (
-      <div className="capitalize">{row.getValue("visito")}</div>
+      <div className="capitalize">
+        {row.original.visita_a?.[0]?.nombre || "Desconocido"}
+      </div>
     ),
     enableSorting: true,
   },
@@ -24,11 +22,12 @@ export const UltimosAccesosColumns: ColumnDef<UltimosAccesos>[] = [
     enableSorting: true,
   },
   {
-    accessorKey: "duracion",
+    accessorKey: "duration",
     header: "Duración",
     cell: ({ row }) => (
-      <div>{row.getValue("duracion")}</div>
+      <div>{row.getValue("duration")}</div>
     ),
     enableSorting: true,
   },
 ];
+

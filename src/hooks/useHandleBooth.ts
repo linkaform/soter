@@ -19,7 +19,7 @@ export const useHandleBooth = () => {
       queryKey: ["getBooths"], 
       queryFn: async () => {
         const data = await getBooths()
-        return data.response?.data; 
+        return data.response?.data || []; 
       },
       refetchOnWindowFocus: false, 
       refetchInterval: 60000,
