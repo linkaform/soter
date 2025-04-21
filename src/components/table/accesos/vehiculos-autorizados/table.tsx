@@ -84,13 +84,15 @@ interface TableProps {
   });
 
   return (
-    <div className="w-full">
+    <div className="w-full mt-3">
+        
+
+        {/* Botones a la derecha */}
+        <div className="flex justify-between mb-3 space-x-1">
         <div className="mb-3">
           <h1 className="text-2xl font-bold">Vehículos Autorizados</h1>
         </div>
-
-        {/* Botones a la derecha */}
-        <div className="flex justify-end mb-3 space-x-1">
+       <div className="flex justify-end gap-2">
        <VehiclePassModal title="Nuevo Vehiculo">
           <Button className="bg-green-600 hover:bg-green-700 text-white">
             <Plus />
@@ -113,6 +115,7 @@ interface TableProps {
           >
             <Trash2 className="text-white" size={36} />
           </Button>
+       </div>
         </div>
 
 
@@ -120,7 +123,7 @@ interface TableProps {
    
 
       <div className="w-full">
-        <ScrollArea className="h-60 w-full border rounded-md">
+        <ScrollArea className="h-44 w-full border rounded-md">
           <Table>
             <TableHeader className="bg-[#F0F2F5]">
               {table.getHeaderGroups().map((headerGroup) => (

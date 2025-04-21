@@ -36,8 +36,8 @@ export const ViewArticulo: React.FC<ViewArtModalProps> = ({
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex justify-between">
-            <div className="w-full flex flex-col gap-3">
+        <div className="flex justify-start">
+            <div className="w-1/2 flex flex-col gap-3">
                 {data?.articulo_seleccion ? ( 
                   <div className="w-full flex gap-2">
                       <p className="font-bold">Articulo: <span className="font-normal">{data?.articulo_seleccion}</span></p>
@@ -90,36 +90,57 @@ export const ViewArticulo: React.FC<ViewArtModalProps> = ({
                 </div>
 
             </div>
-            <div className="w-full flex flex-col">
-                <p className="font-bold mb-2">Evidencia: </p>
-                <div className="flex justify-center">
-                  <Carousel className="w-36 ">
-                      <CarouselContent>
-                          {data.foto_perdido.map((a, index) => (
-                          <CarouselItem key={index}>
-                              <div className="p-1">
-                              <Card>
-                                  <CardContent className="flex aspect-square items-center justify-center p-0">
-                                  {/* <span className="text-4xl font-semibold"> */}
-                                      <Image
-                                          width={280}
-                                          height={280}
-                                          src= {a.file_url || "/nouser.svg"}
-                                          alt="Imagen"
-                                          className="w-42 h-42 object-contain bg-gray-200 rounded-lg" 
-                                      />
-                                  {/* </span> */}
-                                  </CardContent>
-                              </Card>
-                              </div>
-                          </CarouselItem>
-                          ))}
-                      </CarouselContent>
-                      <CarouselPrevious />
-                      <CarouselNext />
-                  </Carousel>
+            {data.foto_perdido.length > 0 ?
+            <>
+              {data.foto_perdido.length == 1?
+                <div className="flex justify-start flex-col">
+                  <p className="font-bold mb-2">Evidencia: </p> 
+                  <Image
+                      width={200}
+                      height={200}
+                      src= {data.foto_perdido[0].file_url ?? "/nouser.svg"}
+                      alt="Imagen"
+                      className="w-42 h-36 object-contain bg-gray-200 rounded-lg" 
+                  />
                 </div>
-            </div>
+              :
+                <>
+                  <div className="w-full flex flex-col">
+                    <p className="font-bold mb-2">Evidencia: </p>
+                    <div className="flex justify-center">
+                      <Carousel className="w-36 ">
+                          <CarouselContent>
+                              {data.foto_perdido.map((a, index) => (
+                              <CarouselItem key={index}>
+                                  <div className="p-1">
+                                  <Card>
+                                      <CardContent className="flex aspect-square items-center justify-center p-0">
+                                      {/* <span className="text-4xl font-semibold"> */}
+                                          <Image
+                                              width={280}
+                                              height={280}
+                                              src= {a.file_url || "/nouser.svg"}
+                                              alt="Imagen"
+                                              className="w-42 h-42 object-contain bg-gray-200 rounded-lg" 
+                                          />
+                                      {/* </span> */}
+                                      </CardContent>
+                                  </Card>
+                                  </div>
+                              </CarouselItem>
+                              ))}
+                          </CarouselContent>
+                          <CarouselPrevious />
+                          <CarouselNext />
+                      </Carousel>
+                    </div>
+                </div>
+                </>
+              }
+            </>
+            
+            
+            :null}
         </div>
 
         <Separator className="" />

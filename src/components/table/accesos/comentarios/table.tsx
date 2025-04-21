@@ -93,13 +93,14 @@ interface TableProps {
 
   return (
     <div className="w-full">
-      <div className="mb-3">
-        <h1 className="text-2xl font-bold">Comentarios/Instrucciones</h1>
-      </div>
+      
 
     
         {/* Botones a la derecha */}
-        <div className="flex justify-end mb-3">
+        <div className="flex justify-between mb-3">
+        <div className="mb-3">
+          <h1 className="text-2xl font-bold">Comentarios/Instrucciones</h1>
+        </div>
         <CommentPassModal title="Comentario al Pase">
 
 
@@ -112,7 +113,7 @@ interface TableProps {
         </div>
 
       <div className="w-full">
-        <ScrollArea className="h-60 w-full border rounded-md">
+        <ScrollArea className="h-36 w-full border rounded-md">
           <Table>
             <TableHeader className="bg-[#F0F2F5]">
               {table.getHeaderGroups().map((headerGroup) => (

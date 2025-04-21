@@ -5,16 +5,16 @@ import { useShiftStore } from "@/store/useShiftStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-export const useInciencias = (prioridades:string[], enabled:boolean, enabledIncidencias:boolean) => {
+export const useInciencias = (location:string, area:string, prioridades:string[], enabled:boolean, enabledIncidencias:boolean, dateFrom:string, dateTo:string, filterDate:string) => {
     const queryClient = useQueryClient();
     
-    const { area, location, isLoading: loading, setLoading} = useShiftStore();
+    const { isLoading: loading, setLoading} = useShiftStore();
     //Obtener lista de Incidencias
     const {data: listIncidencias, isLoading:isLoadingListIncidencias, error:errorListIncidencias, refetch:refetchTableIncidencias } = useQuery<any>({
-        queryKey: ["getListIncidencias", area, location, prioridades],
-        enabled:enabled,
+        queryKey: ["getListIncidencias",location, area, prioridades, dateFrom, dateTo, filterDate],
+        enabled: enabled,
         queryFn: async () => {
-            const data = await getListIncidencias(location, area, prioridades);
+            const data = await getListIncidencias(location, area, prioridades, dateFrom, dateTo, filterDate);
             return data.response?.data||[]; 
         },
         refetchOnWindowFocus: true,
@@ -23,9 +23,9 @@ export const useInciencias = (prioridades:string[], enabled:boolean, enabledInci
         staleTime: 1000 * 60 * 5,
     });
 
-    //Obtener lista de Incidencias
+    //Obtener Catalogo de Incidencias
     const {data: catIncidencias, isLoading:isLoadingCatIncidencias, error:errorCatIncidencias} = useQuery<any>({
-      queryKey: ["getCatIncidencias", area, location, prioridades],
+      queryKey: ["getCatIncidencias"],
       enabled:enabledIncidencias,
       queryFn: async () => {
           const data = await getCatIncidencias();

@@ -107,7 +107,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const [accionesTomadas, setAccionesTomadas] = useState<AccionesTomadas[]>([])
 	const [depositos, setDepositos] = useState<Depositos[]>([])
 	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado, error:errorAreEmpleado } = useCatalogoAreaEmpleado(isSuccess, location, "Incidencias");
-	const { createIncidenciaMutation, catIncidencias, isLoadingCatIncidencias , loading} = useInciencias([], false, isSuccess);
+	const { createIncidenciaMutation, catIncidencias, isLoadingCatIncidencias , loading} = useInciencias("","",[], false, isSuccess, "", "", "");
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),

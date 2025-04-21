@@ -92,7 +92,7 @@ interface TableProps {
      
 
       <div className="w-full">
-        <ScrollArea className="h-60 w-full border rounded-md">
+        <ScrollArea className="h-36 w-full border rounded-md">
           <Table>
             <TableHeader className="bg-[#F0F2F5]">
               {table.getHeaderGroups().map((headerGroup) => (

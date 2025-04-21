@@ -69,7 +69,6 @@ const DateTime:React.FC<DateTimeListProps> = ({date, setDate})=> {
   };
 
   const handlePopoverOpenChange = (open: boolean) => {
-    console.log("QUE PASA", open)
     setIsOpen(open);
   };
 

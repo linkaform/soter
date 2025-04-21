@@ -50,7 +50,7 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
             setHideWebcam(true)
             setHideButtonWebcam(true)
         }else{
-            console.log("NO FILE", file, event)
+            console.log("No file", file, event)
         }
     }
 

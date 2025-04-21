@@ -69,7 +69,7 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 	const [documento , setDocumento] = useState<Imagen[]>([]);
 	const [date, setDate] = useState<Date|"">("");
 	const [dateFin, setDateFin] = useState<Date|"">("");
-	const { seguimientoFallaMutation, isLoading} = useFallas("","", "abierto", false)
+	const { seguimientoFallaMutation, isLoading} = useFallas("","", "abierto", false, "", "", "")
 
 
 	const form = useForm<z.infer<typeof formSchema>>({

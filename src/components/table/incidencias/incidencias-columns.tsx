@@ -1,8 +1,8 @@
 import { EliminarIncidenciaModal } from "@/components/modals/delete-incidencia-modal";
 import { EditarIncidenciaModal } from "@/components/modals/editar-incidencia";
 import { LoadingModal } from "@/components/modals/loading-modal";
+import ViewImage from "@/components/modals/view-image";
 import { ViewIncidencia } from "@/components/modals/view-incidencia";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
     ColumnDef,  
@@ -159,15 +159,8 @@ export type Incidencia = {
 			header: "Evidencia",
 			cell: ({ row }) => {
 			const foto = row.original.evidencia_incidencia;
-			const primeraImagen = foto && foto.length > 0 ? foto[0].file_url : '/nouser.svg';
-			return(
-				<>
-				<Avatar>
-				<AvatarImage src={primeraImagen|| "/nouser.svg"} alt="Avatar" />
-				<AvatarFallback>CN</AvatarFallback>
-				</Avatar>
-				</>
-			)},
+			// const primeraImagen = foto && foto.length > 0 ? foto[0].file_url : '/nouser.svg';
+			return(<ViewImage imageUrl={foto ?? []} /> )},
 			enableSorting: false,
      	},
       	{

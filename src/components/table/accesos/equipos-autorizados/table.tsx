@@ -89,13 +89,15 @@ interface TableProps {
 
 
 
-      <div className="mb-3">
-        <h1 className="text-2xl font-bold">Equipos Autorizados</h1>
-      </div>
+     
 
       {/* Botones a la derecha */}
-      <div className="flex justify-end mb-3 space-x-3">
-          <EqipmentPassModal title="Nuevo Equipo">
+      <div className="flex justify-between mb-3 space-x-3">
+        <div className="mb-3">
+          <h1 className="text-2xl font-bold">Equipos Autorizados</h1>
+        </div>
+         <div className="flex gap-2">
+         <EqipmentPassModal title="Nuevo Equipo">
           <Button className="bg-green-600 hover:bg-green-700 text-white">
             <Plus />
             Agregar Equipo
@@ -117,6 +119,7 @@ interface TableProps {
         >
           <Trash2 className="text-white" />
         </Button>
+         </div>
       </div>
 
 
@@ -128,7 +131,7 @@ interface TableProps {
    
 
       <div className="w-full">
-        <ScrollArea className="h-60 w-full border rounded-md">
+        <ScrollArea className="h-44 w-full border rounded-md">
           <Table>
             <TableHeader className="bg-[#F0F2F5]">
               {table.getHeaderGroups().map((headerGroup) => (

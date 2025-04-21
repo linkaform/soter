@@ -35,6 +35,7 @@ import { catalogoFechas, downloadCSV } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DateTime from "@/components/dateTime";
+import { useMemo } from "react";
 // import ChangeLocation from "@/components/changeLocation";
 
   interface ListProps {
@@ -71,7 +72,7 @@ import DateTime from "@/components/dateTime";
     { label: 'Responsable', key: 'falla_responsable_solucionar_nombre' },
   ];
   
-  const FallasTable:React.FC<ListProps> = ({ refetch, data, openModal, setSelectedFallas, selectedFallas,
+  const FallasTable:React.FC<ListProps> = ({ isLoading, refetch, data, openModal, setSelectedFallas, selectedFallas,
 	setDate1, setDate2, date1, date2, dateFilter, setDateFilter,Filter
 	// setUbicacionSeleccionada, setAreaSeleccionada, areaSeleccionada, ubicacionSeleccionada
   })=> {
@@ -89,10 +90,12 @@ import DateTime from "@/components/dateTime";
   });
 
   const [globalFilter, setGlobalFilter] = React.useState("");
+  const columns = useMemo(() => (isLoading ? [] : fallasColumns), [isLoading]);
+  const memoizedData = useMemo(() => data || [], [data]);
 
   const table = useReactTable({
-    data:data||[],
-    columns: fallasColumns,
+    data:memoizedData,
+    columns: columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
@@ -280,7 +283,9 @@ return (
 					colSpan={fallasColumns.length}
 					className="h-24 text-center"
 					>
-					No hay registros disponibles</TableCell>
+					{isLoading? (<div className='text-xl font-semibold'>Cargando registros... </div>): 
+							(<div className='text-xl font-semibold'>No hay registros disponibles...</div>)}
+					</TableCell>
 				</TableRow>
 				)}
 			</TableBody>

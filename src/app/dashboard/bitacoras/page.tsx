@@ -20,12 +20,11 @@ import { toast } from "sonner";
 
 const BitacorasPage = () => {
   	const [selectedOption, setSelectedOption] = useState<string[]>([]);
-  	const {location, area} = useShiftStore()
+  	const {location} = useShiftStore()
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
-	const [areaSeleccionada, setAreaSeleccionada] = useState(area);
+	const [areaSeleccionada, setAreaSeleccionada] = useState("todas");
 	const [equiposData, setEquiposData] = useState<Bitacora_record[]>([]);
 	const [vehiculosData, setVehiculosData] = useState<Bitacora_record[]>([]);
-  	// const { data: stats} = useGetStats(areaSeleccionada,ubicacionSeleccionada, "Bitacoras");
 
 	const [date1, setDate1] = useState<Date|"">("")
 	const [date2, setDate2] = useState<Date|"">("")
@@ -97,19 +96,21 @@ const BitacorasPage = () => {
 		}
 	}, [listBitacoras])
 
-	const handleTabChange = (tab:string, option:string[]) => {
+	const handleTabChange = (tab:string, option:string[], dateFilter="") => {
 		if(tab == selectedTab){
 			if(option[0] == selectedOption[0]){
-				setSelectedOption([]); 
+				setSelectedOption([]);
+				setSelectedTab("Personal")  
+				setDateFilter( dateFilter=="today"? dateFilter:"")
 			}else{
 				setSelectedOption(option)
+				setSelectedTab(tab)  
 			}
-			setSelectedTab("Personal")
 		}else{
+			setDateFilter( dateFilter=="today"? dateFilter:"")
 			setSelectedOption(option); 
 			setSelectedTab(tab)
 		}
-		setDateFilter("this_month")
 	};
 
 	const handleTabChangeE = (newTab: any) => {
@@ -146,7 +147,8 @@ return (
 					</div>
 
 					<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
-						dateFilter== "today" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => { setDateFilter("today")}}>
+						dateFilter== "today" && selectedTab === 'Personal' &&  selectedOption.length==0 ? 'bg-blue-100' : 'hover:bg-gray-100'}`} 
+						onClick={() => {handleTabChange("Personal",[], "today");}}>
 						<div className="flex gap-6">
 							<Home className="text-primary w-10 h-10" />
 							<span className="flex items-center font-bold text-4xl">
@@ -161,7 +163,7 @@ return (
 					</div>
 
 					<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
-						selectedOption[0] === 'entrada'&& dateFilter !== "today" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => {handleTabChange("Personal",["entrada"]);}}>
+						selectedOption[0] === 'entrada'&& dateFilter !== "today" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => {handleTabChange("Personal",["entrada"], "this_month");}}>
 						<div className="flex gap-6">
 							<Users className="text-primary w-10 h-10" />
 							<span className="flex items-center font-bold text-4xl">

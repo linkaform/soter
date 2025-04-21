@@ -33,184 +33,167 @@ const Credentials: React.FC<Props> = ({ searchPass }) => {
   };
 
   return (
-    <Card className="">
-      <CardContent className="p-6">
-        <div className="flex justify-end">
-          <Badge
-            className={`text-white text-md mb-10 ${
-              searchPass?.tipo_movimiento === "Salida"
-                ? "bg-red-600 hover:bg-red-600"
-                : "bg-green-600 hover:bg-green-600"
-            }`}
-          >
-            {searchPass?.tipo_movimiento ?? "Entrada"}
-          </Badge>
-        </div>
+	<div className=" h-fit overflow-y-auto p-4 ">
+		<Card className="w-full max-w-xl">
+		<CardContent className="p-10 pt-8 flex flex-col">
+			<div className="flex justify-between mb-2">
+				<div>
+					<span className="text-gray-500">Folio: <span className="text-black"> {searchPass?.folio}</span></span>
+				</div>
+				<Badge
+					className={`text-white text-md  ${
+					searchPass?.tipo_movimiento === "Salida"
+						? "bg-red-600 hover:bg-red-600"
+						: "bg-green-600 hover:bg-green-600"
+					}`}
+				>
+					{searchPass?.tipo_movimiento ?? "Entrada"}
+				</Badge>
+			</div>
 
-        <div className="flex flex-wrap gap-6">
-          <div className="space-y-6">
-            <div className="flex gap-4">
-              <div className="w-[140px] h-[140px] overflow-hidden rounded-lg">
-                <Image
-                  src={
-                    searchPass?.identificacion?.[0]?.file_url || "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png"
-                  }
-                  alt="Identificación"
-                  width={140}
-                  height={140}
-                  className="w-full h-full"
-                />
-              </div>
+			<div className="flex flex-col flex-wrap gap-6">
+			<div className="space-y-3">
+				
+				<div className="flex gap-4">
+					<div className="w-[140px] h-[140px] overflow-hidden rounded-lg">
+						<Image
+						src={
+							searchPass?.identificacion?.[0]?.file_url || "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png"
+						}
+						alt="Identificación"
+						width={140}
+						height={140}
+						className="w-full h-full"
+						/>
+					</div>
 
-              <div className="w-[140px] h-[140px] overflow-hidden rounded-lg">
-                <Image
-                  src={
-                    searchPass?.foto?.[0]?.file_url ||
-                    "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png"
-                  }
-                  alt="Foto"
-                  width={140}
-                  height={140}
-                  className="w-full h-full"
-                />
-              </div>
-            </div>
+					<div className="w-[140px] h-[140px] overflow-hidden rounded-lg">
+						<Image
+						src={
+							searchPass?.foto?.[0]?.file_url ||
+							"https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png"
+						}
+						alt="Foto"
+						width={140}
+						height={140}
+						className="w-full h-full"
+						/>
+					</div>
+				</div>
 
-            <div className="space-y-2">
-              <div>
-                <p>Folio</p>
-                <div>
-                  <p>{searchPass?.folio}</p>
-                </div>
-              </div>
+				<div className="space-y-2">
+					<div>
+						<span className="text-gray-500">Tipo de pase:  <span className="text-black">{searchPass?.tipo_de_pase}</span></span>
+					</div>
 
-              <div>
-                <p>Tipo de pase</p>
-                <div>
-                  <p>{searchPass?.tipo_de_pase}</p>
-                </div>
-              </div>
+					<div>
+						<span className="text-gray-500">Estatus:  <span className={`text-${getStatusColor(
+							searchPass?.status_pase ?? ""
+						)}-600`}>{searchPass?.status_pase}</span></span>
+					</div>
 
-              <div>
-                <p>Estatus </p>
+					<div>
+						<span className="text-gray-500">Vigencia del pase:  <span className="text-black">{searchPass?.fecha_de_caducidad?.toString()}</span></span>
+					</div>
 
-                <p
-                  className={`text-${getStatusColor(
-                    searchPass?.status_pase ?? ""
-                  )}-600`}
-                >
-                  {searchPass?.status_pase}
-                </p>
-              </div>
+					
+				</div>
+			</div>
 
-              <div>
-                <p>Vigencia del pase:</p>
-                <div className="flex justify-between">
-                  <p>{searchPass?.fecha_de_caducidad?.toString()}</p>
-                </div>
-              </div>
+			<div className="space-y-6">
+				<div className="space-y-4">
+				<div>
+					<span className="text-gray-500">Nombre:  <span className="text-black">{searchPass?.nombre}</span></span>
+				</div>
 
-              <div>
-                <p>Disponible los días:</p>
+				<div>
+					<span className="text-gray-500">Empresa:  <span className="text-black">{searchPass?.empresa}</span></span>
+				</div>
 
-                {searchPass?.limitado_a_dias && (
-                  <div className="">
-                    <CalendarDays
-                      diasDisponibles={searchPass?.limitado_a_dias}
-                    />
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
+				<div>
+					<span className="text-gray-500">Motivo de visita:  <span className="text-black">{searchPass?.motivo_visita}</span></span>
+				</div>
 
-          <div className="space-y-6">
-            <div className="space-y-4">
-              <div>
-                <p>Nombre:</p>
-                <p>{searchPass?.nombre}</p>
-              </div>
+				<div className="flex">
+					<p className="w-1/4 text-gray-500">Visita a:</p>
+					<div className="flex space-y-2 w-full justify-start">
+					{searchPass?.visita_a?.map((visita, index) => (
+						<div
+						key={index}
+						className="flex items-center justify-between space-x-6"
+						>
+						<span>{visita.nombre}</span>
+						<div className="space-x-2">
+							{/* Botón de Llamada */}
+							<MakeCallModal
+							title="¿Realizar llamada?"
+							description="Al realizar la llamada, se contactará al número de la persona seleccionada."
+							>
+							<Button
+								size="icon"
+								variant="secondary"
+								className="bg-gray-700 text-white hover:bg-gray-600"
+								onClick={() => {
+								if (!visita.phone) {
+									toast.error(
+									"¡El teléfono no ha sido configurado para esta persona!"
+									);
+									return;
+								}
+								}}
+							>
+								<Phone className="h-4 w-4" />
+							</Button>
+							</MakeCallModal>
 
-              <div>
-                <p>Empresa:</p>
-                <p>{searchPass?.empresa}</p>
-              </div>
+							{/* Botón de Mensaje */}
+							<SendMessageModal title="Enviar Recordatorio">
+							<Button
+								size="icon"
+								variant="secondary"
+								className="bg-gray-700 text-white hover:bg-gray-600"
+								onClick={() => {
+								if (!visita.email) {
+									toast.error(
+									"¡El email no ha sido configurado para esta persona!"
+									);
+									return;
+								}
+								}}
+							>
+								<MessageSquare className="h-4 w-4" />
+							</Button>
+							</SendMessageModal>
+						</div>
+						</div>
+					))}
+					</div>
+				</div>
+				</div>
 
-              <div>
-                <p>Motivo de visita:</p>
-                <p>{searchPass?.motivo_visita}</p>
-              </div>
+				<div className="grid grid-cols-2 gap-4">
+				<div>
+					<span className="text-gray-500">Gafete:  <span className="text-black">{searchPass?.gafete_id}</span></span>
+				</div>
+				<div>
+					<span className="text-gray-500">Locker:  <span className="text-black">{searchPass?.locker_id}</span></span>
+				</div>
+				</div>
+			</div>
 
-              <div>
-                <p>Visita a:</p>
-                <div className="space-y-2 w-full flex">
-                  {searchPass?.visita_a?.map((visita, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between space-x-6"
-                    >
-                      <span>{visita.nombre}</span>
-                      <div className="space-x-2">
-                        {/* Botón de Llamada */}
-                        <MakeCallModal
-                          title="¿Realizar llamada?"
-                          description="Al realizar la llamada, se contactará al número de la persona seleccionada."
-                        >
-                          <Button
-                            size="icon"
-                            variant="secondary"
-                            className="bg-gray-700 text-white hover:bg-gray-600"
-                            onClick={() => {
-                              if (!visita.phone) {
-                                toast.error(
-                                  "¡El teléfono no ha sido configurado para esta persona!"
-                                );
-                                return;
-                              }
-                            }}
-                          >
-                            <Phone className="h-4 w-4" />
-                          </Button>
-                        </MakeCallModal>
-
-                        {/* Botón de Mensaje */}
-                        <SendMessageModal title="Enviar Recordatorio">
-                          <Button
-                            size="icon"
-                            variant="secondary"
-                            className="bg-gray-700 text-white hover:bg-gray-600"
-                            onClick={() => {
-                              if (!visita.email) {
-                                toast.error(
-                                  "¡El email no ha sido configurado para esta persona!"
-                                );
-                                return;
-                              }
-                            }}
-                          >
-                            <MessageSquare className="h-4 w-4" />
-                          </Button>
-                        </SendMessageModal>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p>Gafete:</p>
-              </div>
-              <div>
-                <p>Locker:</p>
-                <p className="text-purple-500">{searchPass?.locker_id}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
+			<div className="max-w-sm">
+				{searchPass?.limitado_a_dias && (
+					<div className="">
+						<CalendarDays
+						diasDisponibles={searchPass?.limitado_a_dias}
+						/>
+					</div>
+					)}
+				</div>
+			</div>
+		</CardContent>
+		</Card>
+	</div>
   );
 };
 

@@ -3,12 +3,12 @@ import {
 } from "@tanstack/react-table";
 import { Imagen } from "@/lib/update-pass";
 import { useState } from "react";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import { ViewArticulo } from "@/components/modals/view-articulo";
 import { Eye } from "lucide-react";
 import { EditarArticuloModal } from "@/components/modals/editar-article-modal";
 import { LoadingModal } from "@/components/modals/loading-modal";
 import { DevolucionArticuloModal } from "@/components/modals/devolucion-article-modal";
+import ViewImage from "@/components/modals/view-image";
 
 
 export interface Articulo_perdido_record {
@@ -94,19 +94,25 @@ export const pendientesColumns: ColumnDef<Articulo_perdido_record>[] = [
       enableSorting: true,
     },
     {
+      accessorKey:"estatus_perdido",
+      header:"Estatus",
+      cell: ({ row }) => {
+        const isAbierto = row.getValue("estatus_perdido") === "entregado";
+    
+        return (
+          <div className={`capitalize font-semibold ${isAbierto ? 'text-green-600' : 'text-red-600'}`}>
+          {row.getValue("estatus_perdido")}
+          </div>
+        );
+      },
+    },
+    {
       accessorKey:"foto_perdido",
       header:"Fotografía",
       cell: ({ row }) => {
-		const foto = row.original.foto_perdido;
-        const ultimaImagen = foto && foto.length > 0 ? foto[foto.length - 1].file_url : '/nouser.svg'; 
-        return(
-          <>
-          <Avatar>
-            <AvatarImage src={ultimaImagen|| "/nouser.svg"} alt="Avatar" style={{ objectFit: 'cover', width: '100%', height: '100%' }}/>
-          </Avatar>
-          </>
-        )},
-        enableSorting: false,
+        const foto = row.original.foto_perdido;
+          return <ViewImage imageUrl={foto} />;
+      }
     },
     {
       accessorKey: "color_perdido",

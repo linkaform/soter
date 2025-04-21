@@ -1,6 +1,9 @@
 export const getListFallas = async (
-    location:string, area:string,status:string) => {
+    location:string, area:string,status:string,  dateFrom:string, dateTo:string, filterDate:string) => {
     const payload = {
+        dateFrom, 
+        dateTo, 
+        filterDate,
         area:area,
         location: location,
         status:status,

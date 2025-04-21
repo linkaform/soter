@@ -9,9 +9,9 @@ import { ViewFalla } from "@/components/modals/view-falla";
 import { EditarFallaModal } from "@/components/modals/editar-falla";
 import { SeguimientoFallaModal } from "@/components/modals/seguimiento-falla";
 import { EliminarFallaModal } from "@/components/modals/delete-falla-modal";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { LoadingModal } from "@/components/modals/loading-modal";
 import { useState } from "react";
+import ViewImage from "@/components/modals/view-image";
 
   export interface Fallas_record{
     falla_responsable_solucionar_nombre: string
@@ -126,9 +126,15 @@ import { useState } from "react";
     {
       accessorKey: "falla_estatus",
       header: "Estado",
-      cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("falla_estatus")}</div>
-      ),
+      cell: ({ row }) => {
+        const isAbierto = row.getValue("falla_estatus") === "abierto";
+
+        return (
+          <div className={`capitalize font-semibold ${isAbierto ? 'text-green-600' : 'text-red-600'}`}>
+            {row.getValue("falla_estatus")}
+          </div>
+        );
+      },
       enableSorting: true,
     },
     {
@@ -160,15 +166,8 @@ import { useState } from "react";
       header: "Evidencia",
       cell: ({ row }) => {
         const foto = row.original.falla_evidencia;
-        const ultimaImagen = foto && foto.length > 0 ? foto[foto.length - 1].file_url : '/nouser.svg'; 
-        return(
-          <>
-					<Avatar>
-						<AvatarImage src={ultimaImagen|| "/nouser.svg"} alt="Avatar" />
-						<AvatarFallback>CN</AvatarFallback>
-					</Avatar>
-					</>
-        )},
+        // const ultimaImagen = foto && foto.length > 0 ? foto[foto.length - 1].file_url : '/nouser.svg'; 
+        return(<ViewImage imageUrl={foto ?? []} /> )},
       enableSorting: false,
     },
     {

@@ -5,16 +5,16 @@ import { useShiftStore } from "@/store/useShiftStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-export const usePaqueteria = (location:string, area:string, status:string, enableList:boolean) => {
+export const usePaqueteria = (location:string, area:string, status:string, enableList:boolean, date1:string, date2:string, filterDate:string) => {
     const queryClient = useQueryClient();
     const {isLoading, setLoading} = useShiftStore();
 
     //Obtener lista de Paquetes
     const {data: listPaqueteria ,isLoading:isLoadingListPaqueteria , error:errorListPaqueteria } = useQuery<any>({
-        queryKey: ["getListPaqueteria", location, area , status],
+        queryKey: ["getListPaqueteria", location, area , status, date1, date2, filterDate],
         enabled:enableList,
         queryFn: async () => {
-            const data = await getListPaqueteria(location, status, area);
+            const data = await getListPaqueteria(location, status, area, date1, date2, filterDate);
             const textMsj = errorMsj(data) 
             if (textMsj){
               toast.error(`Error al obtener lista de paquetes, Error: ${data.error}`);
