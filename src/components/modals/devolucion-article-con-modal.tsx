@@ -44,7 +44,7 @@ export const DevolucionArticuloConModal: React.FC<AddACModalProps> = ({
 }) => {
 	// const { area, location } = useShiftStore();
 	const [isSuccess, setIsSuccess] =useState(false)
-	const { editarArticulosConMutation, isLoading} = useArticulosConcesionados(false)
+	const { editarArticulosConMutation, isLoading} = useArticulosConcesionados(false, "", "", "")
 	// const [isActiveDevolucion, setIsActiveDevolucion] = useState<string>("entregado");
 	const [date, setDate] = useState<Date|"">("");
 
