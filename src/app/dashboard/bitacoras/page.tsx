@@ -96,18 +96,19 @@ const BitacorasPage = () => {
 		}
 	}, [listBitacoras])
 
-	const handleTabChange = (tab:string, option:string[], dateFilter="") => {
-		if(tab == selectedTab){
+	const handleTabChange = (tab:string, option:string[], filter="") => {
+		if(tab == selectedTab && filter == dateFilter){
 			if(option[0] == selectedOption[0]){
 				setSelectedOption([]);
 				setSelectedTab("Personal")  
-				setDateFilter( dateFilter=="today"? dateFilter:"")
+				setDateFilter("")
 			}else{
 				setSelectedOption(option)
 				setSelectedTab(tab)  
+				setDateFilter( filter=="today"? filter:"")
 			}
 		}else{
-			setDateFilter( dateFilter=="today"? dateFilter:"")
+			setDateFilter( filter=="today"? filter:"")
 			setSelectedOption(option); 
 			setSelectedTab(tab)
 		}
