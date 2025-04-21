@@ -80,7 +80,7 @@ export const AddArticuloModal: React.FC<AddFallaModalProps> = ({
 
 	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado, refetch: refetchAreaEmpleado, } = useCatalogoAreaEmpleado(isSuccess, ubicacionSeleccionada,"Objetos Perdidos" );
 	const { data:dataArticulos, isLoading:isLoadingArticulos,dataArticuloSub, isLoadingArticuloSub } = useCatalogoArticulos(tipoArt, isSuccess);
-	const { createArticulosPerdidosMutation, isLoading} = useArticulosPerdidos("","", "abierto", false)
+	const { createArticulosPerdidosMutation, isLoading} = useArticulosPerdidos("","", "abierto", false,  "", "", "")
 	const { data:responseGetLockers, isLoading:loadingGetLockers } = useGetLockers(ubicacionSeleccionada ?? false,"", "Disponible", isSuccess);
     const [isActiveInterno, setIsActiveInterno] = useState<string|null>("interno");
 

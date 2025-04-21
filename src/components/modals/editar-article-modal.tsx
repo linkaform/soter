@@ -80,7 +80,7 @@ export const EditarArticuloModal: React.FC<EditarFallaModalProps> = ({
     const [tipoArt, setTipoArt] = useState<string>(data.tipo_articulo_perdido);
 	
     const { data: dataArticulos ,dataArticuloSub, isLoading: isLoadingArticles,isLoadingArticuloSub} = useCatalogoArticulos(tipoArt, showLoadingModal|| isSuccess);
-	const { editarArticulosPerdidosMutation, isLoading} = useArticulosPerdidos("","", "abierto", false)
+	const { editarArticulosPerdidosMutation, isLoading} = useArticulosPerdidos("","", "abierto", false, "", "", "")
 	const [evidencia , setEvidencia] = useState<Imagen[]>([]);
 	const [date, setDate] = useState<Date|"">("");
     const [isActiveInterno, setIsActiveInterno] = useState< string | null>(data?.quien_entrega ? data?.quien_entrega.toLocaleLowerCase():"");

@@ -59,7 +59,7 @@ export const DevolucionArticuloModal: React.FC<AddFallaModalProps> = ({
 	const [isSuccess, setIsSuccess] =useState(false)
 	const [foto, setFoto] = useState<Imagen[]>([]);
 	const [iden , setIden] = useState<Imagen[]>([]);
-	const { devolverArticulosPerdidosMutation, isLoading} = useArticulosPerdidos(location,area, "", false)
+	const { devolverArticulosPerdidosMutation, isLoading} = useArticulosPerdidos(location,area, "", false, "", "", "")
 	const [isActiveDevolucion, setIsActiveDevolucion] = useState<string>("entregado");
 
 	const form = useForm<z.infer<typeof formSchema>>({
