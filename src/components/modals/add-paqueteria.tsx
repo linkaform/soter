@@ -79,7 +79,7 @@ export const AddPaqueteriaModal: React.FC<AddFallaModalProps> = ({
 	const { dataAreas:areas, dataLocations:ubicaciones, isLoadingAreas:loadingAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true,  ubicacionSeleccionada?true:false);
 	const { data:dataAreaEmpleadoApoyo, isLoading:loadingAreaEmpleadoApoyo,} = useCatalogoAreaEmpleadoApoyo(isSuccess);
 	const { dataProveedores, isLoadingProveedores} = useCatalogoProveedores(isSuccess)
-	const { createPaqueteriaMutation, isLoading} = usePaqueteria(ubicacionSeleccionada, area, "", false)
+	const { createPaqueteriaMutation, isLoading} = usePaqueteria(ubicacionSeleccionada, area, "", false, "", "", "")
 	const { data:responseGetLockers, isLoading:loadingGetLockers } = useGetLockers(ubicacionSeleccionada ?? false,"", "Disponible", isSuccess);
 	const [date, setDate] = useState<Date|"">("");
 	console.log("PORVEEDORES, " , dataProveedores)
