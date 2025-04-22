@@ -11,6 +11,7 @@ interface MenuStore {
   labels:string[]
   setLabels: (items:string[])=>void;
   setMenuItems: (items:MenuItem[]) =>void;
+  clearMenu: () => void;
 }
 
 export const useMenuStore = create(
@@ -20,6 +21,7 @@ export const useMenuStore = create(
       labels:[],
       setLabels: (items) => set({ labels: items }),
       setMenuItems: (items) => set({ menuItems: items }),
+      clearMenu: () => set({ menuItems: [], labels: [] })
     }),
     {
       name: "menu-store",

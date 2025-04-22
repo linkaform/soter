@@ -1,4 +1,9 @@
 import { create } from "zustand";
+import { useAccessStore } from "./useAccessStore";
+import { useAreasLocationStore } from "./useGetAreaLocationByUser";
+import { useMenuStore } from "./useGetMenuStore";
+import { useGuardSelectionStore } from "./useGuardStore";
+import { useShiftStore } from "./useShiftStore";
 
 interface AuthState {
   token: string | null;
@@ -46,6 +51,7 @@ const useAuthStore = create<AuthState>((set) => {
     },
 
     logout: () => {
+
       // Elimina los valores de localStorage
       localStorage.removeItem("access_token");
       localStorage.removeItem("user_id");
@@ -54,9 +60,17 @@ const useAuthStore = create<AuthState>((set) => {
       localStorage.removeItem("userEmail_soter");
       localStorage.removeItem("userId_soter" );
       localStorage.removeItem("userPhoto_soter");
+      
+      set({ token: null, userId: null,userNameSoter: null, userEmailSoter: null, userIdSoter: null ,isAuth: false , userPhoto:null});
+      useAccessStore.getState().clearPassCode();
+      useAreasLocationStore.getState().clearAreasLocation();
+      useMenuStore.getState().clearMenu();
+      useGuardSelectionStore.getState().clearSelectedGuards();
+      useShiftStore.getState().clearShift();
 
       // Restablece el estado
-      set({ token: null, userId: null,userNameSoter: null, userEmailSoter: null, userIdSoter: null ,isAuth: false , userPhoto:null});
+      localStorage.clear();
+      window.location.href = '/auth/login'; // O cualquier ruta de tu app
     },
   };
 });

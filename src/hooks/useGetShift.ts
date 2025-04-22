@@ -6,6 +6,7 @@ import { toast } from "sonner"; // Importar Sonner
 import { useShiftStore } from "@/store/useShiftStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import useAuthStore from "@/store/useAuthStore";
+import { errorMsj } from "@/lib/utils";
 
 export const useGetShift = () => {
   const queryClient = useQueryClient();
@@ -19,6 +20,9 @@ export const useGetShift = () => {
     isLoading: loading,
     setCheckin_id,
     checkin_id,
+    setArea,
+    setLocation,
+    setTurno,
   } = useShiftStore();
 
   const {
@@ -31,16 +35,19 @@ export const useGetShift = () => {
     queryKey: ["getShift", area, location],
     queryFn: async () => {
       const data = await getShift({ area, location });
-
-  
-      const filteredGuards = data.response?.data?.support_guards?.filter((guard: any) => {
+      const textMsj = errorMsj(data) 
+      console.log("mensaje",textMsj)
+      if (textMsj){
+        toast.error(`Error al obtener informacion, Error: ${textMsj.text}`);
+        return []
+      }else {
+        console.log("que pasa...")
+        const filteredGuards = data.response?.data?.support_guards?.filter((guard: any) => {
           return guard.name !== userNameSoter; 
         });
- 
-      return {
-        ...data.response?.data,
-        support_guards: filteredGuards,
-      };
+        return {...data.response?.data,
+          support_guards: filteredGuards,}
+      }
     },
     refetchOnWindowFocus: true,
     refetchInterval: 600000,
@@ -76,11 +83,12 @@ export const useGetShift = () => {
       if (checkin_id) {
         setCheckin_id(checkin_id);
       }
-
       queryClient.invalidateQueries({ queryKey: ["getShift"] });
 
       queryClient.invalidateQueries({ queryKey: ["getGuardSupport"] });
-
+      setArea(area)
+      setLocation(location)
+      setTurno(true)
 
 
 
@@ -115,7 +123,7 @@ export const useGetShift = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["getShift"] });
-  
+      setTurno(false)
       // ✅ Notificación de éxito
       toast.success("Turno cerrado correctamente.");
     },

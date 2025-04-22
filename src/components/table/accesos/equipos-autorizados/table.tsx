@@ -138,7 +138,7 @@ interface TableProps {
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {
                     return (
-                      <TableHead key={header.id}>
+                      <TableHead key={header.id} className="h-7">
                         {header.isPlaceholder
                           ? null
                           : flexRender(

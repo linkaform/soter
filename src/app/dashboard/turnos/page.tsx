@@ -13,40 +13,18 @@ import { useEffect } from "react";
 
 
 export default function Home() {
+    const { isLoading, loading, shift} = useGetShift()
+    const { setCheckin_id, setTurno } = useShiftStore()
 
-
-
-
-
-    const { isLoading, loading, shift } = useGetShift()
-
-
-    const { setCheckin_id } = useShiftStore()
-
-
-
-    
-
-   
-  useEffect(() => {
-    if ( shift?.guard?.status_turn !== "Turno Cerrado") {     
-      setCheckin_id(shift?.booth_status?.checkin_id);
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shift]);
-
-
-
-
-
-
-  
-
-
-
-
-
-  
+	useEffect(() => {
+		if ( shift?.guard?.status_turn !== "Turno Cerrado") {     
+			setCheckin_id(shift?.booth_status?.checkin_id);
+			setTurno(true)
+		}else{
+			setTurno(false)
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [shift]);
 
     if (isLoading || loading) {
       return (
@@ -56,10 +34,6 @@ export default function Home() {
       );
     }
   
-  
-
-
-
   return (
      <>
      <link rel="icon" href="/turnos.svg" type="image/svg+xml" /><div className="flex flex-col lg:flex-row">
@@ -68,14 +42,11 @@ export default function Home() {
           </div>
           <div className="w-full lg:w-3/4 p-8 flex flex-col">
               <TurnStatus />
-
               <div className="flex flex-col sm:flex-row justify-between">
                   <ActivitySummary />
-
                   <div className="w-full">
                       <GuardiasApoyoTable />
                   </div>
-
               </div>
 
               {/* Notas Table */}

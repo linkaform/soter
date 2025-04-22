@@ -39,10 +39,10 @@ import { useGetShift } from "@/hooks/useGetShift";
 import { exitRegister, registerIncoming } from "@/lib/access";
 import ChangeLocation from "@/components/changeLocation";
 import GrupoCarousel from "@/components/grupo-carrusel";
+import { PermisosTable } from "@/components/table/accesos/permisos-certificaciones/table";
 
 const AccesosPage = () => {
-  const { area, location, setLoading } = useShiftStore();
-
+  const { area, location, setLoading, turno } = useShiftStore();
   const { shift } = useGetShift();
 
   const { passCode, setPassCode } = useAccessStore();
@@ -60,13 +60,13 @@ const AccesosPage = () => {
       return responseData;
     },
     refetchOnWindowFocus: true,
-    refetchInterval: 60000,
+    refetchInterval: 600000,
     refetchOnReconnect: true,
     staleTime: 1000 * 60 * 5,
   });
 
   const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
-  const [areaSeleccionada, setAreaSeleccionada] = useState("todas")
+  const [areaSeleccionada, setAreaSeleccionada] = useState(area)
 
   const exitRegisterAccess = useMutation({
     mutationFn: async () => {
@@ -195,6 +195,7 @@ const AccesosPage = () => {
   });
 
 
+  console.log("vyeee", turno)
 
 
   if (isLoading || loading) {
@@ -203,6 +204,13 @@ const AccesosPage = () => {
         <div className="w-16 h-16 border-8 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
       </div>
     );
+  }
+
+  if (!turno) {
+	return (
+	<div className="flex justify-center items-center h-screen">
+		<div className="text-3xl font-bold">Inicia turno para habilitar accesos...</div>
+    </div>)
   }
 
   return (
@@ -339,7 +347,7 @@ const AccesosPage = () => {
 					</div>
 					<div className="flex flex-col h-fit p-4 gap-3 ">
 						<ComentariosAccesosTable allComments={allComments} searchPass={searchPass} />
-						<UltimosAccesosTable searchPass={searchPass} />
+						<PermisosTable searchPass={searchPass} />
 					</div>
 
 					{/* {searchPass?.grupo_areas_acceso && searchPass?.grupo_areas_acceso?.length > 0 && ( */}
@@ -349,7 +357,7 @@ const AccesosPage = () => {
 							<AccesosPermitidosTable searchPass={searchPass} />
 						</div>
 					<div className="col-span-2 col-start-2 pr-4">
-						<div className="fbg-slate-400">
+						<div className="fbg-slate-400 ml-5">
 							<div className="">
 								<EquiposAutorizadosTable allEquipments={allEquipments} searchPass={searchPass} />
 							</div>
@@ -364,8 +372,7 @@ const AccesosPage = () => {
 			</>
 			)}
 		</div>
-	{!searchPass ?
-
+		{!searchPass ?
 	  	<div className="flex flex-col justify-center items-center gap-10 mt-32">
 				<div className="flex justify-center w-1/6">
 					<ChangeLocation

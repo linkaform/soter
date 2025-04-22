@@ -2,11 +2,12 @@ import { CloseShiftModal } from "@/components/modals/close-shift-modal";
 import { StartShiftModal } from "@/components/modals/start-shift-modal";
 import { Button } from "@/components/ui/button";
 import { useGetShift } from "@/hooks/useGetShift";
+import { useShiftStore } from "@/store/useShiftStore";
 import React, { useEffect, useState } from "react";
 
 const TurnStatus = () => {
   const { shift } = useGetShift();
-
+  const { area } = useShiftStore();
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
 
   useEffect(() => {
@@ -16,7 +17,6 @@ const TurnStatus = () => {
 
     return () => clearInterval(interval); 
   }, []);
-
 
   const formattedDate = currentDateTime.toLocaleDateString("es-MX", {
     year: "numeric",
@@ -57,22 +57,33 @@ const TurnStatus = () => {
           </div>
         </div>
       </div>
+	<div>
+	<StartShiftModal title="Confirmación">
+			{shift?.guard?.status_turn === "Turno Cerrado" && (
+				<Button className="w-[520px] md:w-[300px] bg-blue-500 hover:bg-blue-600" disabled={area==""?true:false}>
+				Iniciar turno
+				</Button>
+				
+			)}
+		</StartShiftModal>
 
-      <StartShiftModal title="Confirmación">
-        {shift?.guard?.status_turn === "Turno Cerrado" && (
-          <Button className="w-[520px] md:w-[300px] bg-blue-500 hover:bg-blue-600">
-            Iniciar turno
-          </Button>
-        )}
-      </StartShiftModal>
-
-      <CloseShiftModal title="Confirmación">
-        {shift?.guard?.status_turn !== "Turno Cerrado" && (
-          <Button className="w-[520px] md:w-[300px] bg-red-600 hover:bg-red-700">
-            Cerrar turno
-          </Button>
-        )}
-      </CloseShiftModal>
+     	 <CloseShiftModal title="Confirmación">
+			{shift?.guard?.status_turn !== "Turno Cerrado" && (
+				<Button className="w-[520px] md:w-[300px] bg-red-600 hover:bg-red-700"  disabled={area==""?true:false}>
+				Cerrar turno
+				</Button>
+				
+			)}
+      	</CloseShiftModal>
+		{area==""?
+			<div className="text-red-500">
+				Selecciona una caseta para iniciar turno
+			</div>
+		:null}
+	 	
+	</div>
+		
+     
     </div>
   );
 };
