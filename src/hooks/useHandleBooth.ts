@@ -22,7 +22,7 @@ export const useHandleBooth = () => {
         return data.response?.data || []; 
       },
       refetchOnWindowFocus: false, 
-      refetchInterval: 60000,
+      refetchInterval: 600000,
       refetchOnReconnect: true, 
       staleTime: 1000 * 60 * 5, 
     });

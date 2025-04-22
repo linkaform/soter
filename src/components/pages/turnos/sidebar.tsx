@@ -27,7 +27,7 @@ const Sidebar = () => {
           <AvatarImage
             width="300"
             height="300"
-            src={userPhoto|| "/image/sidebar.png"}
+            src={userPhoto ?? "/nouser.svg"}
             alt="Avatar"
           />
           <AvatarFallback>{getInitials(userNameSoter)}</AvatarFallback>

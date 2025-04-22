@@ -18,7 +18,7 @@ const useAuthStore = create<AuthState>((set) => {
   const userId = typeof window !== "undefined" ? localStorage.getItem("user_id") : null;
   const userNameSoter = typeof window !== "undefined" ? localStorage.getItem("userName_soter") : null;
   const userEmailSoter = typeof window !== "undefined" ? localStorage.getItem("userEmail_soter") : null;
-  const userPhoto = typeof window !== "undefined" ? localStorage.getItem("userPhoto") : null;
+  const userPhoto = typeof window !== "undefined" ? localStorage.getItem("userPhoto_soter") : null;
   const userIdSoter = typeof window !== "undefined" 
   ? parseInt(localStorage.getItem("userId_soter") ?? "") // Si es null, pasará una cadena vacía
   : null;
