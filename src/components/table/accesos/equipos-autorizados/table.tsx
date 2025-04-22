@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import * as React from "react";
@@ -29,6 +30,7 @@ import { EquipoAutorizadoColumns } from "./equipos-autorizados-columns";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SearchAccessPass } from "@/hooks/useSearchPass";
 import { EqipmentPassModal } from "@/components/modals/equipment-access-modal";
+import { useMemo } from "react";
 
 
 
@@ -58,11 +60,12 @@ interface TableProps {
   });
 
   const [globalFilter, setGlobalFilter] = React.useState("");
+  const columns = useMemo(() => (EquipoAutorizadoColumns),[true]);
+  const memoizedData = useMemo(() => allEquipments || [], [allEquipments]);
 
   const table = useReactTable({
-    data: allEquipments || [],
-
-    columns: EquipoAutorizadoColumns,
+    data: memoizedData || [],
+    columns: columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,

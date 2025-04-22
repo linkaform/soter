@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import * as React from "react";
@@ -29,6 +30,7 @@ import { VehiculoAutorizadoColumns } from "./vehiculos-autorizados-columns";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SearchAccessPass } from "@/hooks/useSearchPass";
 import { VehiclePassModal } from "@/components/modals/vehicle-access-modal";
+import { useMemo } from "react";
 
 
 
@@ -57,11 +59,12 @@ interface TableProps {
   });
 
   const [globalFilter, setGlobalFilter] = React.useState("");
+  const columns = useMemo(() => (VehiculoAutorizadoColumns),[true]);
+  const memoizedData = useMemo(() => allVehicles || [], [allVehicles]);
 
   const table = useReactTable({
-    data: allVehicles|| [],
-
-    columns: VehiculoAutorizadoColumns,
+    data: memoizedData,
+    columns: columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import * as React from "react";
@@ -31,6 +32,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CommentPassModal } from "@/components/modals/comment-pass-modal";
 import { SearchAccessPass } from "@/hooks/useSearchPass";
+import { useMemo } from "react";
 
 
 
@@ -66,10 +68,12 @@ interface TableProps {
   });
 
   const [globalFilter, setGlobalFilter] = React.useState("");
+  const columns = useMemo(() => (AccesosComentarioColumns),[true]);
+  const memoizedData = useMemo(() => allComments || [], [allComments]);
 
   const table = useReactTable({
-    data: allComments || [],
-    columns: AccesosComentarioColumns,
+    data: memoizedData || [],
+    columns: columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,

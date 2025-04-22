@@ -41,10 +41,11 @@ export const useGetShift = () => {
         toast.error(`Error al obtener informacion, Error: ${textMsj.text}`);
         return []
       }else {
-        console.log("que pasa...")
-        const filteredGuards = data.response?.data?.support_guards?.filter((guard: any) => {
+          const filteredGuards = data.response?.data?.support_guards?.filter((guard: any) => {
           return guard.name !== userNameSoter; 
         });
+        setArea(data.response?.data?.location?.area ?? "")
+        setLocation(data.response?.data?.location?.name ?? "")
         return {...data.response?.data,
           support_guards: filteredGuards,}
       }
