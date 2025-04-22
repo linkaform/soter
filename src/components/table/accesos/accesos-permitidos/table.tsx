@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import * as React from "react";
@@ -29,6 +30,7 @@ import {
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SearchAccessPass } from "@/hooks/useSearchPass";
+import { useMemo } from "react";
 
 
 
@@ -58,9 +60,12 @@ interface TableProps {
 
   const [globalFilter, setGlobalFilter] = React.useState("");
 
+  const columns = useMemo(() => (accesosPermitidosColumns),[true]);
+  const memoizedData = useMemo(() => searchPass?.grupo_areas_acceso  || [], [searchPass?.grupo_areas_acceso ]);
+  
   const table = useReactTable({
- data: searchPass?.grupo_areas_acceso || [],
-    columns: accesosPermitidosColumns,
+    data: memoizedData,
+    columns: columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import * as React from "react";
@@ -25,6 +26,7 @@ import {
 import { PermisosCertificacionesColumns } from "./permisos-certificaciones-columns";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SearchAccessPass } from "@/hooks/useSearchPass";
+import { useMemo } from "react";
 
 
 
@@ -56,11 +58,12 @@ interface TableProps {
   });
 
   const [globalFilter, setGlobalFilter] = React.useState("");
+  const columns = useMemo(() => (PermisosCertificacionesColumns),[true]);
+  const memoizedData = useMemo(() => certificaciones || [], [certificaciones]);
 
   const table = useReactTable({
-    data: certificaciones,
-
-    columns: PermisosCertificacionesColumns,
+    data: memoizedData,
+    columns: columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
