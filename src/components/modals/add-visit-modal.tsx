@@ -82,12 +82,12 @@ const formSchema = z.object({
 
 export const AddVisitModal: React.FC<Props> = ({ title, children }) => {
   const { location } = useShiftStore();
-
+  const [openModal, setOpenModal] = useState(false);
 
 const [fotoSubida, setFotoSubida] = useState<Imagen | null>(null);
 const [identificacionSubida, setIdentificacionSubida] = useState<Imagen | null>(null);
 
-  const { assets, registerNewVisit } = useSearchPass();
+  const { assets, registerNewVisit } = useSearchPass(openModal);
 
   const { uploadImageMutation, response } = useUploadImage();
 
@@ -163,7 +163,7 @@ const handleFileUploadId = (event: React.ChangeEvent<HTMLInputElement>) => {
   };
 
   return (
-    <Dialog>
+    <Dialog open={openModal} onOpenChange={setOpenModal}>
       <DialogTrigger asChild>{children}</DialogTrigger>
 
       <DialogContent className="max-w-xl max-h-[90vh] overflow-scroll">

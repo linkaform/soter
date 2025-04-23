@@ -34,7 +34,7 @@ export const searchAccessPass = async (
 export const fetchTemporalPasses = async ({
   area = "Caseta Principal",
   location = "Planta Monterrey",
-  inActive = "",
+  inActive = "true",
 }) => {
   const payload = {
     caseta: area,

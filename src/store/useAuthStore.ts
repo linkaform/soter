@@ -51,6 +51,7 @@ const useAuthStore = create<AuthState>((set) => {
     },
 
     logout: () => {
+      window.location.href = '/auth/login';
 
       // Elimina los valores de localStorage
       localStorage.removeItem("access_token");
@@ -70,7 +71,6 @@ const useAuthStore = create<AuthState>((set) => {
 
       // Restablece el estado
       localStorage.clear();
-      window.location.href = '/auth/login'; // O cualquier ruta de tu app
     },
   };
 });

@@ -7,7 +7,7 @@ import useAuthStore from "@/store/useAuthStore";
 import React from "react";
 
 const Sidebar = () => {
-  const { shift } = useGetShift();
+  const { shift } = useGetShift(false, false);
 
   const { userEmailSoter, userNameSoter, userPhoto } = useAuthStore();
 

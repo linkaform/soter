@@ -131,11 +131,6 @@ import { useMemo } from "react";
     }
   },[table.getFilteredSelectedRowModel().rows])
   
-//   const handleSelectChange = (value:string) => {
-//     // setSelectedOption([value]);
-// 	console.log("Bitacoras",value)
-//   };
-
 return (
     <div className="w-full">
 		

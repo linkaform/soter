@@ -8,7 +8,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import useAuthStore from "@/store/useAuthStore";
 import { errorMsj } from "@/lib/utils";
 
-export const useGetShift = () => {
+export const useGetShift = (enableTurnosStats:boolean,enableShift:boolean) => {
   const queryClient = useQueryClient();
 
   const { userNameSoter } = useAuthStore();
@@ -33,10 +33,11 @@ export const useGetShift = () => {
     refetch,
   } = useQuery<any>({
     queryKey: ["getShift", area, location],
+    enabled: enableShift,
     queryFn: async () => {
+      console.log("habilitar peticion",enableShift)
       const data = await getShift({ area, location });
       const textMsj = errorMsj(data) 
-      console.log("mensaje",textMsj)
       if (textMsj){
         toast.error(`Error al obtener informacion, Error: ${textMsj.text}`);
         return []
@@ -46,14 +47,15 @@ export const useGetShift = () => {
         });
         setArea(data.response?.data?.location?.area ?? "")
         setLocation(data.response?.data?.location?.name ?? "")
+        setTurno(data?.response.data?.guard?.status_turn=="Turno Abierto" ? true:false)
         return {...data.response?.data,
           support_guards: filteredGuards,}
       }
     },
     refetchOnWindowFocus: true,
-    refetchInterval: 600000,
+    // refetchInterval: 600000,
     refetchOnReconnect: true,
-    staleTime: 1000 * 60 * 5,
+    // staleTime: 1000 * 60 * 5,
   });
 
   const startShiftMutation = useMutation({
@@ -145,15 +147,16 @@ export const useGetShift = () => {
     error: statsError,
   } = useQuery<any>({
     queryKey: ["getTurnStats", area, location],
+    enabled:enableTurnosStats,
     queryFn: async () => {
       const data = await getStats({ area, location });
       const responseData = data.response?.data || {};
       return responseData;
     },
     refetchOnWindowFocus: true,
-    refetchInterval: 600000,
+    // refetchInterval: 600000,
     refetchOnReconnect: true,
-    staleTime: 1000 * 60 * 5,
+    // staleTime: 1000 * 60 * 5,
   });
 
   return {

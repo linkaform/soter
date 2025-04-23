@@ -1,11 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { ActivePassesModal } from "@/components/modals/active-passes-modal";
 import {
+	ArrowBigLeft,
 	Car,
   DoorOpen,
   DoorOpenIcon,
@@ -40,13 +41,15 @@ import { exitRegister, registerIncoming } from "@/lib/access";
 import ChangeLocation from "@/components/changeLocation";
 import GrupoCarousel from "@/components/grupo-carrusel";
 import { PermisosTable } from "@/components/table/accesos/permisos-certificaciones/table";
+import useAuthStore from "@/store/useAuthStore";
 
 const AccesosPage = () => {
-  const { area, location, setLoading, turno } = useShiftStore();
-  const { shift } = useGetShift();
-
+  const {isAuth} = useAuthStore()
+  const [enableShift, setEnableShift] = useState(true)
+  const { shift, isLoading:loadingShift } = useGetShift(false,enableShift);
+  const { area, location, setLoading , turno, setArea, setLocation} = useShiftStore();
   const { passCode, setPassCode } = useAccessStore();
-  const { isLoading, loading, searchPass } = useSearchPass();
+  const { isLoading, loading, searchPass } = useSearchPass(false);
 
   const [inputValue, setInputValue] = useState("");
 
@@ -54,19 +57,23 @@ const AccesosPage = () => {
 
   const { data: stats } = useQuery<any>({
     queryKey: ["getAccessStats", area, location],
+	enabled:location && area ? true:false,
     queryFn: async () => {
       const data = await getStats({ area, location, page: "Accesos" });
       const responseData = data.response?.data || {};
       return responseData;
     },
     refetchOnWindowFocus: true,
-    refetchInterval: 600000,
+    // refetchInterval: 600000,
     refetchOnReconnect: true,
-    staleTime: 1000 * 60 * 5,
+    // staleTime: 1000 * 60 * 5,
   });
 
-  const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
-  const [areaSeleccionada, setAreaSeleccionada] = useState(area)
+  useEffect(()=>{
+	if(shift)
+		console.log("shift response")
+		setEnableShift(false)
+  },[shift])
 
   const exitRegisterAccess = useMutation({
     mutationFn: async () => {
@@ -89,8 +96,6 @@ const AccesosPage = () => {
       queryClient.invalidateQueries({ queryKey: ["serchPass"] });
     },
     onError: (error) => {
-      console.log(error);
-
       const errorMsg = `❌ Hubo un error en la salida: ${error.message}`;
 
       console.log(errorMsg);
@@ -195,21 +200,26 @@ const AccesosPage = () => {
   });
 
 
-  console.log("vyeee", turno)
+  
 
-
-  if (isLoading || loading) {
+  if (isLoading || loading || loadingShift) {
     return (
       <div className="flex justify-center items-center h-screen">
         <div className="w-16 h-16 border-8 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
       </div>
     );
   }
-
-  if (!turno) {
+  if (!turno && isAuth) {
 	return (
 	<div className="flex justify-center items-center h-screen">
 		<div className="text-3xl font-bold">Inicia turno para habilitar accesos...</div>
+		<Button
+			variant="ghost"
+			size="icon"
+			className="absolute right-0 top-0 h-full border rounded-tl-none rounded-bl-none rounded-tr-sm rounded-br-sm"
+		>
+			<ArrowBigLeft className="h-4 w-4" />
+		</Button>
     </div>)
   }
 
@@ -376,10 +386,10 @@ const AccesosPage = () => {
 	  	<div className="flex flex-col justify-center items-center gap-10 mt-32">
 				<div className="flex justify-center w-1/6">
 					<ChangeLocation
-						ubicacionSeleccionada={ubicacionSeleccionada}
-						areaSeleccionada={areaSeleccionada}
-						setUbicacionSeleccionada={setUbicacionSeleccionada}
-						setAreaSeleccionada={setAreaSeleccionada}
+						ubicacionSeleccionada={location}
+						areaSeleccionada={area}
+						setUbicacionSeleccionada={setLocation}
+						setAreaSeleccionada={setArea}
 					/>
 				</div>
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-5">

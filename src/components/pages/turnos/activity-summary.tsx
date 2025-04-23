@@ -8,7 +8,7 @@ import Badges from "@/components/icon/badges";
 import { useGetShift } from "@/hooks/useGetShift";
 
 const ActivitySummary = () => {
-  const { stats } = useGetShift();
+  const { stats } = useGetShift(false, false);
 
 
 

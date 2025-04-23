@@ -37,16 +37,16 @@ export const ActivePassesModal: React.FC<ActivePassesModalProps> = ({
 
   const { data: activePasses, isLoading } = useQuery<any>({
     queryKey: ["getActivePasses"],
-    enabled: Boolean(area && location),
+    enabled: Boolean(area && location && open),
     queryFn: async () => {
       const data = await fetchTemporalPasses({ area, location });
 
       return data.response?.data || [];
     },
     refetchOnWindowFocus: false,
-    refetchInterval: 60000,
+    // refetchInterval: 60000,
     refetchOnReconnect: true,
-    staleTime: 1000 * 60 * 5,
+    // staleTime: 1000 * 60 * 5,
   });
 
   const filteredTemporaryPasses = activePasses?.filter((item: any) =>

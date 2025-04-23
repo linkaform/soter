@@ -13,15 +13,13 @@ import { useEffect } from "react";
 
 
 export default function Home() {
-    const { isLoading, loading, shift} = useGetShift()
-    const { setCheckin_id, setTurno } = useShiftStore()
+	const {location } = useShiftStore()
+    const { isLoading, loading, shift} = useGetShift(location?true:false, true)
+    const { setCheckin_id } = useShiftStore()
 
 	useEffect(() => {
 		if ( shift?.guard?.status_turn !== "Turno Cerrado") {     
 			setCheckin_id(shift?.booth_status?.checkin_id);
-			setTurno(true)
-		}else{
-			setTurno(false)
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [shift]);

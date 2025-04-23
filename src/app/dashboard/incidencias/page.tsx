@@ -42,10 +42,6 @@ const IncidenciasPage = () => {
   const { listIncidencias, refetchTableIncidencias, isLoadingListIncidencias , stats} = useInciencias(ubicacionSeleccionada, areaSeleccionada == "todas" ? "" : areaSeleccionada, [],  true, false, dates[0], dates[1], dateFilter);
   const [selectedTab, setSelectedTab] = useState<string>('Incidencias'); 
 
-//   const {location, area} = useShiftStore()
-//   const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
-//   const [areaSeleccionada, setAreaSeleccionada] = useState(area)
-
   	useEffect(()=>{
 		if(prioridades){
 		refetchTableIncidencias()

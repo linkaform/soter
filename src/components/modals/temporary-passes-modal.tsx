@@ -21,18 +21,18 @@ import {
   
   export const TemporaryPassesModal: React.FC<Props> = ({ title, children }) => {
     const { setPassCode } = useAccessStore();
-  
+    
     const { area, location } = useShiftStore();
   
     const [searchText, setSearchText] = useState("");
   
-    const [open, setOpen] = useState(false); // Estado para manejar la visibilidad del modal
-  
+    const [open, setOpen] = useState(false);
   
     const { data: temporaryPasses, isLoading } = useQuery<any>({
       queryKey: ["getTemporaryPasses"],
-      enabled: Boolean(area && location),
+      enabled: Boolean(area && location && open),
       queryFn: async () => {
+        console.log("entrada==")
         const data = await fetchTemporalPasses({
           area,
           location,
@@ -42,9 +42,9 @@ import {
         return data.response?.data || [];
       },
       refetchOnWindowFocus: false,
-      refetchInterval: 60000,
+      // refetchInterval: 60000,
       refetchOnReconnect: true,
-      staleTime: 1000 * 60 * 5,
+      // staleTime: 1000 * 60 * 5,
     });
   
     const filteredTemporaryPasses = temporaryPasses?.filter((item: any) =>

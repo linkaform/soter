@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction} from "react";
+import React from "react";
 import {
   Select,
   SelectContent,
@@ -11,9 +11,9 @@ import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation
 
 interface InputChangeLocation {
 	ubicacionSeleccionada: string;
-	setUbicacionSeleccionada: Dispatch<SetStateAction<string>>;
+	setUbicacionSeleccionada: (location: string) => void;
 	areaSeleccionada: string
-	setAreaSeleccionada: Dispatch<SetStateAction<string>>;
+	setAreaSeleccionada:(area: string) => void;
 }
 
 const ChangeLocation:React.FC<InputChangeLocation> = ({ ubicacionSeleccionada, setUbicacionSeleccionada, areaSeleccionada, setAreaSeleccionada })=> {
