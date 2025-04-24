@@ -23,8 +23,9 @@ const Sidebar = () => {
   return (
     <div className="max-w-[520px]  lg:max-w-[320px] mx-auto">
       <div className="flex  flex-col space-y-5 mb-10 ">
-        <Avatar className="w-32 h-32 mx-auto">
+        <Avatar className="w-32 h-32 mx-auto shadow-[0_2px_8px_rgba(0,0,0,0.2)] rounded-full overflow-hidden">
           <AvatarImage
+           className="object-contain "
             width="300"
             height="300"
             src={userPhoto ?? "/nouser.svg"}

@@ -28,7 +28,7 @@ export const Header = () => {
           <div className="flex lg:mb-0 justify-center items-center">
             <Link href="/">
               <Image
-                className="dark:invert"
+                className="dark:invert "
                 src="/logo.svg"
                 alt="Next.js logo"
                 width={150}
@@ -161,8 +161,8 @@ export const Header = () => {
               {/* Avatar */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Avatar>
-                    <AvatarImage src={userPhoto??undefined} alt="Avatar" />
+                  <Avatar className="shadow-[0_0_3px_rgba(0,0,0,0.4)] rounded-full overflow-hidden">
+                    <AvatarImage src={userPhoto??undefined} alt="Avatar" className="object-contain"/>
                     <AvatarFallback>CN</AvatarFallback>
                   </Avatar>
                 </DropdownMenuTrigger>

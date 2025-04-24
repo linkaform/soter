@@ -80,11 +80,12 @@ console.log("pasconde vaslor",passCode)
     refetch,
   } = useQuery<SearchAccessPass>({
     queryKey: ["searchPass", passCode],
-    enabled: passCode?true:false,
+    enabled: passCode!==""?true:false,
     // enabled: Boolean(passCode) ,
     queryFn: async () => {
-      // console.log("passcode", passCode)
       const data = await searchAccessPass(area, location, passCode)
+      console.log("peticion de search", data)
+
       const textMsj = errorMsj(data) 
       if (textMsj){
         toast.error(`Error al buscar pase, Error: ${textMsj.text}`);
