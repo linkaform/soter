@@ -8,11 +8,13 @@ import {
 
 import SearchInput from "../search-input";
 import { useQuery } from "@tanstack/react-query";
-import { useAccessStore } from "@/store/useAccessStore";
 import { useShiftStore } from "@/store/useShiftStore";
-import { fetchTemporalPasses } from "@/lib/access";
+import { fetchPasesActivos } from "@/lib/access";
 import { useState } from "react";
 import Image from "next/image";
+import { esHexadecimal } from "@/lib/utils";
+import { useAccessStore } from "@/store/useAccessStore";
+// import { useAccessStore } from "@/store/useAccessStore";
 
 interface ActivePassesModalProps {
   title: string;
@@ -26,27 +28,22 @@ export const ActivePassesModal: React.FC<ActivePassesModalProps> = ({
   children,
 }) => {
   const { setPassCode } = useAccessStore();
-
+console.log("dentro de lista de activos")
   const { area, location } = useShiftStore();
 
   const [searchText, setSearchText] = useState("");
 
   const [open, setOpen] = useState(false); 
 
-
-
   const { data: activePasses, isLoading } = useQuery<any>({
-    queryKey: ["getActivePasses"],
-    enabled: Boolean(area && location && open),
-    queryFn: async () => {
-      const data = await fetchTemporalPasses({ area, location });
-
-      return data.response?.data || [];
+    queryKey: ["getActivePasses", area, location],
+    enabled: open,
+    queryFn: async () => { 
+      const data = await fetchPasesActivos({ area, location });
+      return Array.isArray(data.response?.data)? data?.response?.data : [];
     },
-    refetchOnWindowFocus: false,
-    // refetchInterval: 60000,
+    refetchOnWindowFocus: true,
     refetchOnReconnect: true,
-    // staleTime: 1000 * 60 * 5,
   });
 
   const filteredTemporaryPasses = activePasses?.filter((item: any) =>
@@ -54,7 +51,7 @@ export const ActivePassesModal: React.FC<ActivePassesModalProps> = ({
   );
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog>
       <DialogTrigger asChild onClick={() => setOpen(true)}>
         {children}
       </DialogTrigger>
@@ -86,9 +83,10 @@ export const ActivePassesModal: React.FC<ActivePassesModalProps> = ({
                     key={item._id}
                     className="flex  items-center justify-between px-4 py-4 border-b hover:bg-gray-100 cursor-pointer transition-colors"
                     onClick={() => {
-                      setPassCode(item._id);
-                      setOpen(false); 
-
+							        console.log("valor", item._id)
+                      if(esHexadecimal(item._id)){
+                        setPassCode(item._id)
+                      }
                     }}
                   >
                     <div className="flex items-center space-x-4 ">

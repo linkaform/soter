@@ -43,9 +43,6 @@ interface TableProps {
 
   export const VehiculosAutorizadosTable: React.FC<TableProps> = ({ allVehicles }) => {
 
-
-
-
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []

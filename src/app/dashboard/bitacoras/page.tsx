@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-
+console.log("entrando==")
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { LockerTable } from "@/components/table/bitacoras/locker/table";
 import PageTitle from "@/components/page-title";
@@ -34,54 +34,62 @@ const BitacorasPage = () => {
 	const { listBitacoras,isLoadingListBitacoras, stats} = useBitacoras(ubicacionSeleccionada, areaSeleccionada == "todas" ? "": areaSeleccionada, selectedOption, true , dates[0], dates[1], dateFilter)
 	const [selectedTab, setSelectedTab] = useState<string>('Personal'); 
 
-	const processBitacorasE = (bitacoras: any[]) => {
-        return bitacoras?.flatMap(bitacora => {
-            if (!bitacora.equipos || !Array.isArray(bitacora.equipos) || bitacora.equipos.length === 0) {
-                return [];  
-            }
-            const hasValidVehicle = bitacora.equipos.some((eq: any) => {
-                return eq.tipo_equipo && eq.tipo_equipo.trim() !== ''; 
-            });
-        
-            if (!hasValidVehicle) {
-                return [];
-            }
-			
-            return bitacora.equipos.map((eq: any) => {
-				return {
-					...bitacora,         
-					equipos: [eq],
-					formated_visita: bitacora.visita_a.map((item: VisitaA) => item.nombre).join(', '),
-					formated_comentarios: bitacora.comentarios.map((item: Comentarios_bitacoras) => item.comentario).join(', '),
-				};
-            });
-        });
+	const processBitacorasE = (bitacoras: Bitacora_record[]) => {
+		console.log("array",bitacoras)
+		return bitacoras.flatMap(bitacora => {
+			if (
+				!bitacora.equipos ||
+				!Array.isArray(bitacora.equipos) ||
+				bitacora.equipos.length === 0
+			) {
+				return [];
+			}
+	
+			const hasValidVehicle = bitacora.equipos.some((eq: any) => {
+				return eq.tipo_equipo && eq.tipo_equipo.trim() !== '';
+			});
+	
+			if (!hasValidVehicle) {
+				return [];
+			}
+	
+			return bitacora.equipos.map((eq: any) => ({
+				...bitacora,
+				equipos: [eq],
+				formated_visita: bitacora.visita_a
+					?.map((item: VisitaA) => item.nombre)
+					.join(', ') || '',
+				formated_comentarios: bitacora.comentarios
+					?.map((item: Comentarios_bitacoras) => item.comentario)
+					.join(', ') || '',
+			}));
+		});
     };
 
-	const processBitacorasV = (bitacoras: any[]) => {
-        return bitacoras?.flatMap(bitacora => {
-            if (!bitacora.vehiculos || !Array.isArray(bitacora.vehiculos) || bitacora.vehiculos.length === 0) {
-                return [];  
-            }
-            const hasValidVehicle = bitacora.vehiculos.some((eq: any) => {
-                return eq.tipo && eq.tipo.trim() !== ''; 
-            });
-        
-            if (!hasValidVehicle) {
-                return [];
-            }
+	const processBitacorasV = (bitacoras: Bitacora_record[]) => {
+		console.log("array",bitacoras)
+		return bitacoras?.flatMap(bitacora => {
+			if (!bitacora.vehiculos || !Array.isArray(bitacora.vehiculos) || bitacora.vehiculos.length === 0) {
+				return [];  
+			}
+			const hasValidVehicle = bitacora.vehiculos.some((eq: any) => {
+				return eq.tipo && eq.tipo.trim() !== ''; 
+			});
+		
+			if (!hasValidVehicle) {
+				return [];
+			}
 			
-            return bitacora.vehiculos.map((eq: any) => {
+			return bitacora.vehiculos.map((eq: any) => {
 				return {
 					...bitacora,         
 					vehiculos: [eq],
 					formated_visita: bitacora.visita_a.map((item: VisitaA) => item.nombre).join(', '),
 					formated_comentarios: bitacora.comentarios.map((item: Comentarios_bitacoras) => item.comentario).join(', '),
 				};
-            });
-        });
+			});
+		});
     };
-
 
 	useEffect(()=>{
 		if(ubicacionSeleccionada=="todas"){
@@ -90,9 +98,12 @@ const BitacorasPage = () => {
 	},[ubicacionSeleccionada])
 	
 	useEffect(()=>{
-		if(listBitacoras){
+		if(Array.isArray(listBitacoras)){
 			setEquiposData(processBitacorasE(listBitacoras))
 			setVehiculosData(processBitacorasV(listBitacoras))
+		}else{
+			setEquiposData(processBitacorasE([]))
+			setVehiculosData(processBitacorasV([]))
 		}
 	}, [listBitacoras])
 

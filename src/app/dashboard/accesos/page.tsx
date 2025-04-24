@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { ActivePassesModal } from "@/components/modals/active-passes-modal";
@@ -42,16 +42,17 @@ import ChangeLocation from "@/components/changeLocation";
 import GrupoCarousel from "@/components/grupo-carrusel";
 import { PermisosTable } from "@/components/table/accesos/permisos-certificaciones/table";
 import useAuthStore from "@/store/useAuthStore";
+import { esHexadecimal } from "@/lib/utils";
 
 const AccesosPage = () => {
   const {isAuth} = useAuthStore()
-  const [enableShift, setEnableShift] = useState(true)
-  const { shift, isLoading:loadingShift } = useGetShift(false,enableShift);
+  const { shift, isLoading:loadingShift } = useGetShift(false,true);
   const { area, location, setLoading , turno, setArea, setLocation} = useShiftStore();
   const { passCode, setPassCode } = useAccessStore();
   const { isLoading, loading, searchPass } = useSearchPass(false);
 
   const [inputValue, setInputValue] = useState("");
+//   const [debouncedValue] = useState('');
 
   const queryClient = useQueryClient();
 
@@ -64,16 +65,21 @@ const AccesosPage = () => {
       return responseData;
     },
     refetchOnWindowFocus: true,
-    // refetchInterval: 600000,
     refetchOnReconnect: true,
-    // staleTime: 1000 * 60 * 5,
   });
+  console.log("dentro de lista de accesos")
+//   useEffect(()=>{
+// 	if(shift)
+// 		setEnableShift(false)
+//   },[shift])
 
-  useEffect(()=>{
-	if(shift)
-		console.log("shift response")
-		setEnableShift(false)
-  },[shift])
+//   useEffect(()=>{
+// 	if(searchPass){
+// 		if(!noEsObjetoVacio(searchPass)){
+// 			setPassCode("")
+// 		}
+// 	}
+//   },[searchPass])
 
   const exitRegisterAccess = useMutation({
     mutationFn: async () => {
@@ -97,9 +103,7 @@ const AccesosPage = () => {
     },
     onError: (error) => {
       const errorMsg = `❌ Hubo un error en la salida: ${error.message}`;
-
       console.log(errorMsg);
-
       toast.error(error.message);
     },
     onSettled: () => {
@@ -200,12 +204,32 @@ const AccesosPage = () => {
   });
 
 
+//   useEffect(() => {
+// 	console.log("entrada value")
+//    	if(inputValue){
+// 		const handler = setTimeout(() => {
+// 			if(esHexadecimal(inputValue)){
+// 				// setInputValue("")
+// 				// setPassCode(inputValue)
+// 			}else{
+// 				console.log("No es hexadecimal", inputValue)
+// 			}
+// 		}, 700);
+// 		return () => clearTimeout(handler); 
+//    	}
+//   }, [inputValue]);
+
+//   useEffect(() => {
+//     if (debouncedValue) {
+		
+//     }
+//   }, [debouncedValue]);
   
 
   if (isLoading || loading || loadingShift) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <div className="w-16 h-16 border-8 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+			<div className="w-24 h-24 border-8 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
       </div>
     );
   }
@@ -243,7 +267,11 @@ const AccesosPage = () => {
 						size="icon"
 						className="absolute right-10 border rounded-none top-0 h-full "
 						onClick={() => {
-							setPassCode(inputValue);
+							if(esHexadecimal(inputValue)){
+								setPassCode(inputValue)
+							}else{
+								console.log("No es hexadecimal", inputValue)
+							}
 						}}
 						>
 						<Search className="h-4 w-4" />

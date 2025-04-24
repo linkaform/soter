@@ -58,7 +58,7 @@ const Credentials: React.FC<Props> = ({ searchPass }) => {
 					<div className="w-[140px] h-[140px] overflow-hidden rounded-lg">
 						<Image
 						src={
-							searchPass?.identificacion?.[0]?.file_url || "https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png"
+							searchPass?.identificacion?.[0]?.file_url || "/noiden.svg"
 						}
 						alt="Identificación"
 						width={140}
@@ -71,7 +71,7 @@ const Credentials: React.FC<Props> = ({ searchPass }) => {
 						<Image
 						src={
 							searchPass?.foto?.[0]?.file_url ||
-							"https://upload.wikimedia.org/wikipedia/commons/a/a3/Image-not-found.png"
+							"/nouser.svg"
 						}
 						alt="Foto"
 						width={140}

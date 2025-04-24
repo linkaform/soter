@@ -1,7 +1,9 @@
 import { AccessPass, addNewVisit, exitRegister, getAccessAssets, searchAccessPass } from "@/lib/access"
+import { errorMsj } from "@/lib/utils"
 import { useAccessStore } from "@/store/useAccessStore"
 import { useShiftStore } from "@/store/useShiftStore"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { toast } from "sonner"
 
 
 export interface SearchAccessPass {
@@ -69,7 +71,7 @@ export const useSearchPass = (enable:boolean) => {
   const { passCode, setPassCode } = useAccessStore()
 
   const queryClient = useQueryClient()
-
+console.log("pasconde vaslor",passCode)
   const {
     data: searchPass,
     isLoading,
@@ -77,16 +79,24 @@ export const useSearchPass = (enable:boolean) => {
     isFetching,
     refetch,
   } = useQuery<SearchAccessPass>({
-    queryKey: ["serchPass", passCode],
-    enabled: Boolean(area && location && passCode),
+    queryKey: ["searchPass", passCode],
+    enabled: passCode?true:false,
+    // enabled: Boolean(passCode) ,
     queryFn: async () => {
+      // console.log("passcode", passCode)
       const data = await searchAccessPass(area, location, passCode)
-      return data.response?.data || {}
+      const textMsj = errorMsj(data) 
+      if (textMsj){
+        toast.error(`Error al buscar pase, Error: ${textMsj.text}`);
+        return {}
+      }else {
+        return data ? data?.response?.data : {};
+      }
     },
-    refetchOnWindowFocus: false,
-    refetchInterval: 600000,
-    refetchOnReconnect: true,
-    staleTime: 100000 * 60 * 5,
+    // refetchOnWindowFocus: true,
+    // refetchInterval: 600000,
+    // refetchOnReconnect: true,
+    // staleTime: 1000 * 60 * 5,
   })
 
 
@@ -120,7 +130,7 @@ export const useSearchPass = (enable:boolean) => {
     onSuccess: (response: any) => {
       console.log("exitRegisterAccess:", response)
 
-      queryClient.invalidateQueries({ queryKey: ["serchPass"] })
+      queryClient.invalidateQueries({ queryKey: ["searchPass"] })
     },
     onError: (err) => {
       console.log(err)

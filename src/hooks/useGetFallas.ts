@@ -6,7 +6,7 @@ export const useGetFallas= (location:string, area:string, status:string, dateFro
     queryKey: ["getListFallas", location, area, status, dateFrom, dateTo, filterDate], 
     queryFn: async () => {
         const data = await getListFallas(location, area , status,  dateFrom, dateTo, filterDate); 
-        return data.response?.data||[]; 
+        return Array.isArray(data.response?.data) ? data?.response?.data : []; 
     },
    
     refetchOnWindowFocus: true, 

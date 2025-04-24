@@ -19,7 +19,7 @@ export const useFallas = (location:string, area:string,status:string, enableList
             if (textMsj){
               throw new Error (`Error al obtener catalogo de locations, Error: ${data.error}`);
             }else {
-              return data.response?.data||[];
+              return Array.isArray(data.response?.data)? data.response?.data : [];
             }
         },
         refetchOnWindowFocus: true,

@@ -15,7 +15,7 @@ export const useGetVehiculos = ({account_id, tipo, marca , isModalOpen}: getVehi
       return data.response?.data  || []
     },
     refetchOnWindowFocus: true,
-    refetchInterval: 60000,
+    refetchInterval: 600000,
     refetchOnReconnect: true,
     staleTime: 1000 * 60 * 5,
   });

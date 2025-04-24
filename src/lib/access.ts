@@ -34,7 +34,7 @@ export const searchAccessPass = async (
 export const fetchTemporalPasses = async ({
   area = "Caseta Principal",
   location = "Planta Monterrey",
-  inActive = "true",
+  inActive = "",
 }) => {
   const payload = {
     caseta: area,
@@ -60,6 +60,34 @@ export const fetchTemporalPasses = async ({
   const data = await response.json();
   return data;
 };
+
+export const fetchPasesActivos = async ({
+  area = "",
+  location = "",
+}) => {
+  const payload = {
+    caseta: area,
+    location,
+    option: "lista_pases",
+    script_name: "script_turnos.py",
+  };
+  
+  const userJwt = localStorage.getItem("access_token");
+  const response = await fetch(
+    `https://app.linkaform.com/api/infosync/scripts/run/`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userJwt}`,
+      },
+      body: JSON.stringify(payload),
+    }
+  );
+  const data = await response.json();
+  return data;
+};
+
 
 export interface RegisterIncomingProps {
   area?: string;

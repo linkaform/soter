@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -35,13 +35,15 @@ export const AddGuardModal: React.FC<AddGuardModalProps> = ({
   const { location, area, checkin_id } = useShiftStore();
   const [selectedGuard, setSelectedGuard] = useState<any>("");
   const [searchText, setSearchText] = useState<string>("");
-
-  const filteredGuards = supportGuards?.filter((guardia: any) =>
-    guardia.name.toLowerCase().includes(searchText.toLowerCase())
-  );
-
-
-
+  const filteredGuards = useMemo(() => {
+    const uniqueGuards = supportGuards?.filter((guardia: any, index: number, self: any[]) =>
+      index === self.findIndex((g) => g.id === guardia.id)
+    );
+  
+    return uniqueGuards?.filter((guardia: any) =>
+      guardia.name.toLowerCase().includes(searchText.toLowerCase())
+    );
+  }, [supportGuards, searchText]);
 
   return (
     <Dialog>

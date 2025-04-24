@@ -10,7 +10,7 @@ interface AuthState {
   userId: string | null;
   userNameSoter : string | null;
   userEmailSoter : string | null;
-  userIdSoter: number | null;
+  userIdSoter: number;
   userPhoto:string| null;
   isAuth: boolean;
   setAuth: (token: string, userId: string, userNameSoter: string, userEmailSoter: string, userIdSoter: number, userPhoto:string) => void;
@@ -24,9 +24,7 @@ const useAuthStore = create<AuthState>((set) => {
   const userNameSoter = typeof window !== "undefined" ? localStorage.getItem("userName_soter") : null;
   const userEmailSoter = typeof window !== "undefined" ? localStorage.getItem("userEmail_soter") : null;
   const userPhoto = typeof window !== "undefined" ? localStorage.getItem("userPhoto_soter") : null;
-  const userIdSoter = typeof window !== "undefined" 
-  ? parseInt(localStorage.getItem("userId_soter") ?? "") // Si es null, pasará una cadena vacía
-  : null;
+  const userIdSoter = typeof window !== "undefined" ? parseInt(localStorage.getItem("userId_soter") || "") : 0;
   const isAuth = !!token; // isAuth es true si hay un token
 
   return {
@@ -62,7 +60,7 @@ const useAuthStore = create<AuthState>((set) => {
       localStorage.removeItem("userId_soter" );
       localStorage.removeItem("userPhoto_soter");
       
-      set({ token: null, userId: null,userNameSoter: null, userEmailSoter: null, userIdSoter: null ,isAuth: false , userPhoto:null});
+      set({ token: null, userId: null,userNameSoter: null, userEmailSoter: null, userIdSoter: 0 ,isAuth: false , userPhoto:null});
       useAccessStore.getState().clearPassCode();
       useAreasLocationStore.getState().clearAreasLocation();
       useMenuStore.getState().clearMenu();

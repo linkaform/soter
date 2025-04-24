@@ -32,7 +32,6 @@ import {
       queryKey: ["getTemporaryPasses"],
       enabled: Boolean(area && location && open),
       queryFn: async () => {
-        console.log("entrada==")
         const data = await fetchTemporalPasses({
           area,
           location,

@@ -31,7 +31,7 @@ import DateTime from "@/components/dateTime";
 import { catalogoFechas } from "@/lib/utils";
 
 interface ListProps {
-	data: Bitacora_record[];
+	data: Bitacora_record[]|undefined;
 	isLoading:boolean;
 	
 	setDate1 :React.Dispatch<React.SetStateAction<Date | "">>;

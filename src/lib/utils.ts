@@ -194,7 +194,7 @@ export function errorMsj(data:any, title = "Error", type="warning"){
       }
       return {title: title, text:errores.join(", "), type}
   	}
-	if (data.response.data.hasOwnProperty("json")){
+	  if (data.response.data.hasOwnProperty("json")){
         const dataInner=data.response.data
         const errores=[]
         for(const err in dataInner.json){
@@ -298,16 +298,13 @@ export function obtenerFechas(rango:string) {
   }
 }
 
-
-
 export const dateToString = (fecha:Date) => {
   const year = fecha.getFullYear();
   const month = String(fecha.getMonth() + 1).padStart(2, '0'); // Los meses en JavaScript van de 0 a 11, por eso se suma 1
   const day = String(fecha.getDate()).padStart(2, '0');
   
   return `${year}-${month}-${day}`;
-  };
-
+};
 
 export function formatDateToText(dateString: string): string {
   const date = new Date(dateString);
@@ -332,7 +329,6 @@ export function formatCurrency(number:number) {
     currency: 'MXN'
   }).format(number);
 }
-
 
 type Column = {
   label: string; 
@@ -361,7 +357,6 @@ export const downloadCSV = (data: any[], columns: Column[], fileName: string = '
   }
 
 };
-
 
 export const catalogoEstados = () => {
   return [
@@ -399,4 +394,13 @@ export const catalogoEstados = () => {
       "Zacatecas"
   ]
 
+}
+
+export function esHexadecimal(str:string) {
+  const regex = /^[0-9a-fA-F]+$/;
+  return regex.test(str);
+}
+
+export function noEsObjetoVacio(obj:any) {
+  return obj && typeof obj === 'object' && !Array.isArray(obj) && Object.keys(obj).length > 0;
 }

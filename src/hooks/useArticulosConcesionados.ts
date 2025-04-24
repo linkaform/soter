@@ -18,11 +18,11 @@ export const useArticulosConcesionados = (enableList:boolean, date1:string, date
             if (textMsj){
               throw new Error (`Error al obtener lista de artículos concesionados, Error: ${data.error}`);
             }else {
-              return data.response?.data||[];
+              return Array.isArray(data.response?.data) ? data.response?.data : [];
             }
         },
         refetchOnWindowFocus: true,
-        refetchInterval: 15000,
+        refetchInterval: 600000,
         refetchOnReconnect: true,
         staleTime: 1000 * 60 * 5,
     });

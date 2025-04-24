@@ -60,7 +60,7 @@ const TurnStatus = () => {
 	<div>
 	<StartShiftModal title="Confirmación">
 			{shift?.guard?.status_turn === "Turno Cerrado" && (
-				<Button className="w-[520px] md:w-[300px] bg-blue-500 hover:bg-blue-600">
+				<Button className="w-[520px] md:w-[300px] bg-blue-500 hover:bg-blue-600" disabled ={area==""?true:false}>
 				Iniciar turno
 				</Button>
 				
@@ -69,7 +69,7 @@ const TurnStatus = () => {
 
      	 <CloseShiftModal title="Confirmación">
 			{shift?.guard?.status_turn !== "Turno Cerrado" && (
-				<Button className="w-[520px] md:w-[300px] bg-red-600 hover:bg-red-700" >
+				<Button className="w-[520px] md:w-[300px] bg-red-600 hover:bg-red-700" disabled ={area==""?true:false}>
 				Cerrar turno
 				</Button>
 				

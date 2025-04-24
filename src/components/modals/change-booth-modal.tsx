@@ -19,7 +19,7 @@ export const ChangeBoothModal: React.FC<ChangeBoothProps> = ({
   children,
 }) => {
   const { booths, changeBoothMutation, isLoading } = useHandleBooth();
-
+console.log("casetas", booths)
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -44,7 +44,7 @@ export const ChangeBoothModal: React.FC<ChangeBoothProps> = ({
                   onClick={() =>
                     changeBoothMutation.mutate({
                       area: item?.area,
-                      location: item?.address_name,
+                      location: item?.location,
                     })
                   }
                 >
@@ -54,7 +54,7 @@ export const ChangeBoothModal: React.FC<ChangeBoothProps> = ({
 
                   <div className="flex-1 space-y-1">
                     <p className="text-base">{item?.area}</p>
-                    <p className="text-sm">{item?.address_name}</p>
+                    <p className="text-sm">{item?.location}</p>
                   </div>
 
 

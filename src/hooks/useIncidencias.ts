@@ -15,7 +15,7 @@ export const useInciencias = (location:string, area:string, prioridades:string[]
         enabled: enabled,
         queryFn: async () => {
             const data = await getListIncidencias(location, area, prioridades, dateFrom, dateTo, filterDate);
-            return data.response?.data||[]; 
+            return Array.isArray( data.response?.data) ?  data.response?.data: []; 
         },
         refetchOnWindowFocus: true,
         refetchInterval: 15000,
@@ -29,7 +29,7 @@ export const useInciencias = (location:string, area:string, prioridades:string[]
       enabled:enabledIncidencias,
       queryFn: async () => {
           const data = await getCatIncidencias();
-          return data.response?.data||[]; 
+          return Array.isArray(data.response?.data) ? data.response?.data: []; 
       },
       refetchOnWindowFocus: true,
       refetchInterval: 15000,

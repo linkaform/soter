@@ -20,11 +20,11 @@ export const useArticulosPerdidos = (location:string, area:string, status:string
               toast.error(`Error al obtener lista de artículos perdidos, Error: ${data.error}`);
               return []
             }else {
-              return data ? data?.response?.data : [];
+              return Array.isArray(data?.response?.data) ? data?.response?.data : [];
             }
         },
         refetchOnWindowFocus: true,
-        refetchInterval: 15000,
+        refetchInterval: 600000,
         refetchOnReconnect: true,
         staleTime: 1000 * 60 * 5,
     });
