@@ -1,55 +1,26 @@
-"use client";
+'use client'
 
-import React from "react";
-
-import { FolderOpen, Package, Sun } from "lucide-react";
-
-import { ListaNotasTable } from "@/components/table/notas/lista-notas/table";
-import ReusableAccordion from "@/components/resuable-accordion";
-import PageTitle from "@/components/page-title";
+import { ListaNotasTable } from '@/components/table/notas/lista-notas/table'
+import PageTitle from '@/components/page-title'
+import Stats from '@/components/pages/notas/StatsNotas'
+import { useState } from 'react'
 
 const NotasPage = () => {
+  const [statusFilter, setStatusFilter] = useState<string>('')
+
   return (
-    <div className="">
-      <div className="flex flex-col">
-        <div className="p-6 space-y-6 w-full mx-auto">
-          <ReusableAccordion
-            ubicaciones={[
-              { value: "planta-monterrey", label: "Planta Monterrey" },
-              { value: "planta-saltillo", label: "Planta Saltillo" },
-            ]}
-            casetas={[
-              { value: "caseta-6", label: "Caseta 6 Poniente" },
-              { value: "caseta-5", label: "Caseta 5 Norte" },
-            ]}
-            jefe="Emiliano Zapata"
-            estadisticas={[
-              {
-                label: "Notas del Día",
-                value: 0,
-                icon: <Sun />,
-              },
-              {
-                label: "Notas abiertas",
-                value: 0,
-                icon: <FolderOpen />,
-              },
-              {
-                label: "Notas Estancadas",
-                value: 6,
-                icon: <Package />,
-              },
-            ]}
-          />
-
-          <PageTitle title="Listado de Notas" />
-          <div className="">
-            <ListaNotasTable />
-          </div>
+    <main className='mt-4 mx-4'>
+      <header className='flex flex-col md:flex-row md:justify-between'>
+        <PageTitle title='Listado de Notas' />
+        <div className='w-full md:w-3/5'>
+          <Stats setStatusFilter={setStatusFilter} />
         </div>
-      </div>
-    </div>
-  );
-};
+      </header>
+      <section>
+        <ListaNotasTable statusFilter={statusFilter} />
+      </section>
+    </main>
+  )
+}
 
-export default NotasPage;
+export default NotasPage
