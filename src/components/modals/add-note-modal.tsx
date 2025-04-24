@@ -33,8 +33,8 @@ import {
 interface AddNoteModalProps {
   title: string
   children: React.ReactNode
-  open: boolean
-  setOpen: (open: boolean) => void
+  open?: boolean
+  setOpen?: (open: boolean) => void
 }
 
 const formSchema = z.object({
@@ -80,7 +80,9 @@ export const AddNoteModal: React.FC<AddNoteModalProps> = ({
       { data_notes: formatData },
       {
         onSuccess: () => {
-          setOpen(false)
+          if (setOpen) {
+            setOpen(false)
+          }
           form.reset()
         },
       }

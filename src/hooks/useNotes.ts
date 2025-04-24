@@ -40,8 +40,8 @@ export const useNotes = (area:string, location:string, pageIndex: number = 0, pa
       setLoading(true);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['stats', area, location, 'Notas'] });
-      queryClient.invalidateQueries({ queryKey: ['getNotes', area, location] });
+      queryClient.invalidateQueries({ queryKey: ['stats'] });
+      queryClient.invalidateQueries({ queryKey: ['getNotes'] });
       toast.success("Nota creada correctamente.");
     },
     onError: (err: any) => {
@@ -71,8 +71,8 @@ export const useNotes = (area:string, location:string, pageIndex: number = 0, pa
       setLoading(true);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['stats', area, location, 'Notas'] });
-      queryClient.invalidateQueries({ queryKey: ['getNotes', area, location] });
+      queryClient.invalidateQueries({ queryKey: ['stats'] });
+      queryClient.invalidateQueries({ queryKey: ['getNotes'] });
       toast.success("Nota editada correctamente.");
     },
     onError: (err: any) => {
@@ -102,8 +102,8 @@ export const useNotes = (area:string, location:string, pageIndex: number = 0, pa
       setLoading(true);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['stats', area, location, 'Notas'] });
-      queryClient.invalidateQueries({ queryKey: ['getNotes', area, location] });
+      queryClient.invalidateQueries({ queryKey: ['stats'] });
+      queryClient.invalidateQueries({ queryKey: ['getNotes'] });
       toast.success("Nota cerrada correctamente.");
     },
     onError: (err: any) => {
