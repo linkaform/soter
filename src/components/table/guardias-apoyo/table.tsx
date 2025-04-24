@@ -39,22 +39,13 @@ import { useGuardSelectionStore } from "@/store/useGuardStore";
 export function GuardiasApoyoTable() {
   const { checkoutSupportGuardsMutation } = useGetSupportGuards();
 
-  const { shift } = useGetShift();
-
-  const { location, area } = useShiftStore();
-
-
+    const { shift } = useGetShift(false, false);
+    const { location, area } = useShiftStore();
     const {toggleGuardSelection, clearSelectedGuards} =   useGuardSelectionStore()
-  
-
   
     React.useEffect(() => {
       clearSelectedGuards(); // 🔥 Reinicia la selección de guardias
     }, [clearSelectedGuards]);
-
-
-
-
 
   const handleConfirmCheckout = (guardia: any) => {
     checkoutSupportGuardsMutation.mutate({
@@ -63,11 +54,6 @@ export function GuardiasApoyoTable() {
       guards: [guardia.user_id],
     });
   };
-
-
-
-  
-
 
   const columns: ColumnDef<any>[] = [
     {

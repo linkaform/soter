@@ -37,6 +37,7 @@ import React from "react";
 import { Loader2 } from "lucide-react";
 import { useAccessStore } from "@/store/useAccessStore";
 import { toast } from "sonner";
+import useAuthStore from "@/store/useAuthStore";
 
 interface Props {
   title: string;
@@ -68,9 +69,9 @@ const formSchema = z.object({
 
 export const VehiclePassModal: React.FC<Props> = ({ title, children }) => {
   const { newVehicle, setNewVehicle } = useAccessStore();
-
+  const { userIdSoter } = useAuthStore();
   const [open, setOpen] = useState(false);
-
+console.log("user id", userIdSoter)
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -101,7 +102,7 @@ export const VehiclePassModal: React.FC<Props> = ({ title, children }) => {
 
   const { data: tiposVehiculo,  } = useGetVehiculos({
     tipo,
-    account_id: 10,
+    account_id: userIdSoter,
     marca,
     isModalOpen: true,
   });
@@ -110,11 +111,11 @@ export const VehiclePassModal: React.FC<Props> = ({ title, children }) => {
 
   const { data: marcasVehiculo, isLoading: isLoadingMarcas } = useGetVehiculos({
     tipo,
-    account_id: 10
+    account_id: userIdSoter
   });
 
   const { data: modelosVehiculo, isLoading: isLoadingModelos } =
-    useGetVehiculos({ tipo,  account_id: 10, marca });
+    useGetVehiculos({ tipo,  account_id: userIdSoter, marca });
 
   const addNewVehicle = (data: z.infer<typeof formSchema>) => {
     setNewVehicle([

@@ -5,26 +5,26 @@ import { useShiftStore } from "@/store/useShiftStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-export const useArticulosPerdidos = (location:string, area:string, status:string, enableList:boolean) => {
+export const useArticulosPerdidos = (location:string, area:string, status:string, enableList:boolean, date1:string, date2:string, filterDate:string ) => {
     const queryClient = useQueryClient();
     const {isLoading, setLoading} = useShiftStore();
 
     //Obtener lista de ArtículosPerdidos
     const {data: listArticulosPerdidos, isLoading:isLoadingListArticulosPerdidos, error:errorListArticulosPerdidos, refetch } = useQuery<any>({
-        queryKey: ["getListArticulosPerdidos", location, status],
+        queryKey: ["getListArticulosPerdidos", location, status, date1, date2, filterDate],
         enabled:enableList,
         queryFn: async () => {
-            const data = await getListArticulosPerdidos(location, status);
+            const data = await getListArticulosPerdidos(location, status, date1, date2, filterDate);
             const textMsj = errorMsj(data) 
             if (textMsj){
               toast.error(`Error al obtener lista de artículos perdidos, Error: ${data.error}`);
               return []
             }else {
-              return data ? data?.response?.data : [];
+              return Array.isArray(data?.response?.data) ? data?.response?.data : [];
             }
         },
         refetchOnWindowFocus: true,
-        refetchInterval: 15000,
+        refetchInterval: 600000,
         refetchOnReconnect: true,
         staleTime: 1000 * 60 * 5,
     });

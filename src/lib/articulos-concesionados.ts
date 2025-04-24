@@ -15,8 +15,11 @@ export interface InputOutArticuloCon {
 }
 
 
-export const getListArticulosCon = async () => {
+export const getListArticulosCon = async (date1:string, date2:string, filterDate:string) => {
     const payload = {
+        dateFrom:date1,
+        dateTo: date2, 
+        filterDate,
         tipo:"",
         option: "get_articles",
         script_name: "articulos_consecionados.py",

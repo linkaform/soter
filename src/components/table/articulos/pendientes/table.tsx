@@ -35,7 +35,7 @@ import { CalendarDays, Plus } from "lucide-react";
 import { Articulo_perdido_record, pendientesColumns } from "./pendientes-columns";
 import { catalogoFechas } from "@/lib/utils";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import DateTime from "@/components/dateTime";
 
 interface ListProps {
@@ -76,8 +76,7 @@ interface ListProps {
 //   ];
 
 const ArticulosPerdidosTable:React.FC<ListProps> = ({ data, isLoadingListArticulosPerdidos, openModal,
-	setSelectedArticulos ,// setUbicacionSeleccionada, setAreaSeleccionada, areaSeleccionada, ubicacionSeleccionada
-  setDate1, setDate2, date1, date2, dateFilter, setDateFilter,Filter
+	setSelectedArticulos, setDate1, setDate2, date1, date2, dateFilter, setDateFilter,Filter
 })=> {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -92,10 +91,12 @@ const ArticulosPerdidosTable:React.FC<ListProps> = ({ data, isLoadingListArticul
   });
 
   const [globalFilter, setGlobalFilter] = React.useState("");
+  const columns = useMemo(() => (isLoadingListArticulosPerdidos ? [] : pendientesColumns), [isLoadingListArticulosPerdidos]);
+  const memoizedData = useMemo(() => data || [], [data]);
 
   const table = useReactTable({
-    data: data || [],
-    columns: isLoadingListArticulosPerdidos ? []: pendientesColumns,
+    data: memoizedData,
+    columns: columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
@@ -241,7 +242,7 @@ const ArticulosPerdidosTable:React.FC<ListProps> = ({ data, isLoadingListArticul
                   className="h-24 text-center"
                 >
                   {isLoadingListArticulosPerdidos? (<div className='text-xl font-semibold'>Cargando registros... </div>): 
-							(<div className='text-xl font-semibold'>No hay registros disponibles...</div>)}
+							  (<div className='text-xl font-semibold'>No hay registros disponibles...</div>)}
                 </TableCell>
               </TableRow>
             )}

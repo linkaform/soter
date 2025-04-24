@@ -1,3 +1,4 @@
+import { Bitacora_record } from "@/components/table/bitacoras/bitacoras-columns";
 import { asignarGafete, dataGafetParamas, getListBitacora } from "@/lib/bitacoras";
 import { crearFalla, InputFalla } from "@/lib/fallas";
 import { getStats } from "@/lib/get-stats";
@@ -11,7 +12,7 @@ export const useBitacoras = (location:string, area:string,prioridades:string[], 
     const {isLoading, setLoading} = useShiftStore();
 
     //Obtener lista de Bitacoras
-    const {data: listBitacoras, isLoading:isLoadingListBitacoras, error:errorListBitacoras } = useQuery<any>({
+    const {data: listBitacoras, isLoading:isLoadingListBitacoras, error:errorListBitacoras } = useQuery<Bitacora_record[]>({
         queryKey: ["getListBitacoras", area, location, prioridades, date1, date2, dateFilter],
         enabled:enableList,
         queryFn: async () => {
@@ -20,13 +21,13 @@ export const useBitacoras = (location:string, area:string,prioridades:string[], 
             if (textMsj){
               throw new Error (`Error al obtener lista de bitacoras, Error: ${data.error}`);
             }else {
-              return data.response?.data||[];
+              	return Array.isArray(data?.response?.data) ? data?.response?.data : [];
             }
         },
         refetchOnWindowFocus: true,
-        refetchInterval: 15000,
+        // refetchInterval: 15000,
         refetchOnReconnect: true,
-        staleTime: 1000 * 60 * 5,
+        // staleTime: 1000 * 60 * 5,
     });
 
     //Salida
@@ -34,12 +35,11 @@ export const useBitacoras = (location:string, area:string,prioridades:string[], 
         mutationFn: async ({ data_failure} : { data_failure: InputFalla }) => {
             const response = await crearFalla(data_failure);
             const hasError= response.response.data.status_code
-
             if(hasError == 400|| hasError == 401){
                 const textMsj = errorMsj(response.response.data) 
                 throw new Error(`Error al realizar la salida, Error: ${textMsj?.text}`);
             }else{
-                return response.response?.data
+                return response.response?.data ?? []
             }
         },
         onMutate: () => {
@@ -101,7 +101,7 @@ export const useBitacoras = (location:string, area:string,prioridades:string[], 
             return responseData;
         },
         refetchOnWindowFocus: true,
-        refetchInterval: 60000,
+        refetchInterval: 600000,
         refetchOnReconnect: true,
         staleTime: 1000 * 60 * 5,
     });

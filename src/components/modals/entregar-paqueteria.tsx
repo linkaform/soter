@@ -45,7 +45,7 @@ export const DevolucionPaqModal: React.FC<DevPaqModalProps> = ({
 }) => {
 	// const { area, location } = useShiftStore();
 	const [isSuccess, setIsSuccess] =useState(false)
-	const { devolverPaqueteriaMutation, isLoading} = usePaqueteria("", "", "guardado",false)
+	const { devolverPaqueteriaMutation, isLoading} = usePaqueteria("", "", "guardado",false, "", "", "")
 	// const [isActiveDevolucion, setIsActiveDevolucion] = useState<string>("entregado");
 	const [date, setDate] = useState<Date|"">("");
 

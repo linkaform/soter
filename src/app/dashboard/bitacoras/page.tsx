@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-
+console.log("entrando==")
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { LockerTable } from "@/components/table/bitacoras/locker/table";
 import PageTitle from "@/components/page-title";
@@ -20,12 +20,11 @@ import { toast } from "sonner";
 
 const BitacorasPage = () => {
   	const [selectedOption, setSelectedOption] = useState<string[]>([]);
-  	const {location, area} = useShiftStore()
+  	const {location} = useShiftStore()
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
-	const [areaSeleccionada, setAreaSeleccionada] = useState(area);
+	const [areaSeleccionada, setAreaSeleccionada] = useState("todas");
 	const [equiposData, setEquiposData] = useState<Bitacora_record[]>([]);
 	const [vehiculosData, setVehiculosData] = useState<Bitacora_record[]>([]);
-  	// const { data: stats} = useGetStats(areaSeleccionada,ubicacionSeleccionada, "Bitacoras");
 
 	const [date1, setDate1] = useState<Date|"">("")
 	const [date2, setDate2] = useState<Date|"">("")
@@ -35,54 +34,62 @@ const BitacorasPage = () => {
 	const { listBitacoras,isLoadingListBitacoras, stats} = useBitacoras(ubicacionSeleccionada, areaSeleccionada == "todas" ? "": areaSeleccionada, selectedOption, true , dates[0], dates[1], dateFilter)
 	const [selectedTab, setSelectedTab] = useState<string>('Personal'); 
 
-	const processBitacorasE = (bitacoras: any[]) => {
-        return bitacoras?.flatMap(bitacora => {
-            if (!bitacora.equipos || !Array.isArray(bitacora.equipos) || bitacora.equipos.length === 0) {
-                return [];  
-            }
-            const hasValidVehicle = bitacora.equipos.some((eq: any) => {
-                return eq.tipo_equipo && eq.tipo_equipo.trim() !== ''; 
-            });
-        
-            if (!hasValidVehicle) {
-                return [];
-            }
-			
-            return bitacora.equipos.map((eq: any) => {
-				return {
-					...bitacora,         
-					equipos: [eq],
-					formated_visita: bitacora.visita_a.map((item: VisitaA) => item.nombre).join(', '),
-					formated_comentarios: bitacora.comentarios.map((item: Comentarios_bitacoras) => item.comentario).join(', '),
-				};
-            });
-        });
+	const processBitacorasE = (bitacoras: Bitacora_record[]) => {
+		console.log("array",bitacoras)
+		return bitacoras.flatMap(bitacora => {
+			if (
+				!bitacora.equipos ||
+				!Array.isArray(bitacora.equipos) ||
+				bitacora.equipos.length === 0
+			) {
+				return [];
+			}
+	
+			const hasValidVehicle = bitacora.equipos.some((eq: any) => {
+				return eq.tipo_equipo && eq.tipo_equipo.trim() !== '';
+			});
+	
+			if (!hasValidVehicle) {
+				return [];
+			}
+	
+			return bitacora.equipos.map((eq: any) => ({
+				...bitacora,
+				equipos: [eq],
+				formated_visita: bitacora.visita_a
+					?.map((item: VisitaA) => item.nombre)
+					.join(', ') || '',
+				formated_comentarios: bitacora.comentarios
+					?.map((item: Comentarios_bitacoras) => item.comentario)
+					.join(', ') || '',
+			}));
+		});
     };
 
-	const processBitacorasV = (bitacoras: any[]) => {
-        return bitacoras?.flatMap(bitacora => {
-            if (!bitacora.vehiculos || !Array.isArray(bitacora.vehiculos) || bitacora.vehiculos.length === 0) {
-                return [];  
-            }
-            const hasValidVehicle = bitacora.vehiculos.some((eq: any) => {
-                return eq.tipo && eq.tipo.trim() !== ''; 
-            });
-        
-            if (!hasValidVehicle) {
-                return [];
-            }
+	const processBitacorasV = (bitacoras: Bitacora_record[]) => {
+		console.log("array",bitacoras)
+		return bitacoras?.flatMap(bitacora => {
+			if (!bitacora.vehiculos || !Array.isArray(bitacora.vehiculos) || bitacora.vehiculos.length === 0) {
+				return [];  
+			}
+			const hasValidVehicle = bitacora.vehiculos.some((eq: any) => {
+				return eq.tipo && eq.tipo.trim() !== ''; 
+			});
+		
+			if (!hasValidVehicle) {
+				return [];
+			}
 			
-            return bitacora.vehiculos.map((eq: any) => {
+			return bitacora.vehiculos.map((eq: any) => {
 				return {
 					...bitacora,         
 					vehiculos: [eq],
 					formated_visita: bitacora.visita_a.map((item: VisitaA) => item.nombre).join(', '),
 					formated_comentarios: bitacora.comentarios.map((item: Comentarios_bitacoras) => item.comentario).join(', '),
 				};
-            });
-        });
+			});
+		});
     };
-
 
 	useEffect(()=>{
 		if(ubicacionSeleccionada=="todas"){
@@ -91,25 +98,31 @@ const BitacorasPage = () => {
 	},[ubicacionSeleccionada])
 	
 	useEffect(()=>{
-		if(listBitacoras){
+		if(Array.isArray(listBitacoras)){
 			setEquiposData(processBitacorasE(listBitacoras))
 			setVehiculosData(processBitacorasV(listBitacoras))
+		}else{
+			setEquiposData(processBitacorasE([]))
+			setVehiculosData(processBitacorasV([]))
 		}
 	}, [listBitacoras])
 
-	const handleTabChange = (tab:string, option:string[]) => {
-		if(tab == selectedTab){
+	const handleTabChange = (tab:string, option:string[], filter="") => {
+		if(tab == selectedTab && filter == dateFilter){
 			if(option[0] == selectedOption[0]){
-				setSelectedOption([]); 
+				setSelectedOption([]);
+				setSelectedTab("Personal")  
+				setDateFilter("")
 			}else{
 				setSelectedOption(option)
+				setSelectedTab(tab)  
+				setDateFilter( filter=="today"? filter:"")
 			}
-			setSelectedTab("Personal")
 		}else{
+			setDateFilter( filter=="today"? filter:"")
 			setSelectedOption(option); 
 			setSelectedTab(tab)
 		}
-		setDateFilter("this_month")
 	};
 
 	const handleTabChangeE = (newTab: any) => {
@@ -146,7 +159,8 @@ return (
 					</div>
 
 					<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
-						dateFilter== "today" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => { setDateFilter("today")}}>
+						dateFilter== "today" && selectedTab === 'Personal' &&  selectedOption.length==0 ? 'bg-blue-100' : 'hover:bg-gray-100'}`} 
+						onClick={() => {handleTabChange("Personal",[], "today");}}>
 						<div className="flex gap-6">
 							<Home className="text-primary w-10 h-10" />
 							<span className="flex items-center font-bold text-4xl">
@@ -161,7 +175,7 @@ return (
 					</div>
 
 					<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
-						selectedOption[0] === 'entrada'&& dateFilter !== "today" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => {handleTabChange("Personal",["entrada"]);}}>
+						selectedOption[0] === 'entrada'&& dateFilter !== "today" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => {handleTabChange("Personal",["entrada"], "this_month");}}>
 						<div className="flex gap-6">
 							<Users className="text-primary w-10 h-10" />
 							<span className="flex items-center font-bold text-4xl">

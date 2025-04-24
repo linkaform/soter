@@ -5,8 +5,8 @@ interface GetShiftParams {
   }
   
   export const getShift = async ({
-    area = "Caseta Principal",
-    location = "Planta Monterrey",
+    area = "",
+    location = "",
   }: GetShiftParams = {}) => {
     const payload = {
       area,
@@ -32,7 +32,7 @@ interface GetShiftParams {
   
 
   export const getStats = async ({
-    area = "Caseta Principal",
+    area = "",
     location = "Planta Monterrey",
     page = "Turnos",
   }) => {

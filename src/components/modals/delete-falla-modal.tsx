@@ -24,7 +24,7 @@ export const EliminarFallaModal: React.FC<AddFallaModalProps> = ({
 	arrayFolios,
 	children
 }) => {
-	const { eliminarFallaMutation, isLoading} = useFallas("","", "abierto", false)
+	const { eliminarFallaMutation, isLoading} = useFallas("","", "abierto", false, "", "", "")
 
 	const [isSuccess, setIsSuccess] =useState(false)
 

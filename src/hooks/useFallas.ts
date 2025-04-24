@@ -5,7 +5,7 @@ import { useShiftStore } from "@/store/useShiftStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-export const useFallas = (location:string, area:string,status:string, enableList:boolean) => {
+export const useFallas = (location:string, area:string,status:string, enableList:boolean, dateFrom:string, dateTo:string, filterDate:string) => {
     const queryClient = useQueryClient();
     const {isLoading, setLoading} = useShiftStore();
 
@@ -14,12 +14,12 @@ export const useFallas = (location:string, area:string,status:string, enableList
         queryKey: ["getListFallas", area, location, status],
         enabled:enableList,
         queryFn: async () => {
-            const data = await getListFallas(location, area, status);
+            const data = await getListFallas(location, area, status, dateFrom, dateTo, filterDate);
             const textMsj = errorMsj(data) 
             if (textMsj){
               throw new Error (`Error al obtener catalogo de locations, Error: ${data.error}`);
             }else {
-              return data.response?.data||[];
+              return Array.isArray(data.response?.data)? data.response?.data : [];
             }
         },
         refetchOnWindowFocus: true,

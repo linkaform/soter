@@ -8,6 +8,7 @@ interface locationAreaStore {
   locations:string[]
   setAreas: (items:string[])=>void;
   setLocations: (items:string[]) =>void;
+  clearAreasLocation: () => void;
 }
 
 export const useAreasLocationStore = create(
@@ -15,6 +16,7 @@ export const useAreasLocationStore = create(
     (set) => ({
       areas:[],
       locations:[],
+      clearAreasLocation: () => set({ areas: [], locations: [] }),
       setAreas: (items) => set({ areas: items }),
       setLocations: (items) => set({ locations: items }),
       fetchAreas: async (parametros: string ) => {

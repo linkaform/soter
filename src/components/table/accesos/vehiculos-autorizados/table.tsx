@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import * as React from "react";
@@ -29,6 +30,7 @@ import { VehiculoAutorizadoColumns } from "./vehiculos-autorizados-columns";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SearchAccessPass } from "@/hooks/useSearchPass";
 import { VehiclePassModal } from "@/components/modals/vehicle-access-modal";
+import { useMemo } from "react";
 
 
 
@@ -40,9 +42,6 @@ interface TableProps {
 
 
   export const VehiculosAutorizadosTable: React.FC<TableProps> = ({ allVehicles }) => {
-
-
-
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -57,11 +56,12 @@ interface TableProps {
   });
 
   const [globalFilter, setGlobalFilter] = React.useState("");
+  const columns = useMemo(() => (VehiculoAutorizadoColumns),[true]);
+  const memoizedData = useMemo(() => allVehicles || [], [allVehicles]);
 
   const table = useReactTable({
-    data: allVehicles|| [],
-
-    columns: VehiculoAutorizadoColumns,
+    data: memoizedData,
+    columns: columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
@@ -84,13 +84,15 @@ interface TableProps {
   });
 
   return (
-    <div className="w-full">
+    <div className="w-full mt-3">
+        
+
+        {/* Botones a la derecha */}
+        <div className="flex justify-between mb-3 space-x-1">
         <div className="mb-3">
           <h1 className="text-2xl font-bold">Vehículos Autorizados</h1>
         </div>
-
-        {/* Botones a la derecha */}
-        <div className="flex justify-end mb-3 space-x-1">
+       <div className="flex justify-end gap-2">
        <VehiclePassModal title="Nuevo Vehiculo">
           <Button className="bg-green-600 hover:bg-green-700 text-white">
             <Plus />
@@ -113,6 +115,7 @@ interface TableProps {
           >
             <Trash2 className="text-white" size={36} />
           </Button>
+       </div>
         </div>
 
 
@@ -120,14 +123,14 @@ interface TableProps {
    
 
       <div className="w-full">
-        <ScrollArea className="h-60 w-full border rounded-md">
+        <ScrollArea className="h-44 w-full border rounded-md">
           <Table>
             <TableHeader className="bg-[#F0F2F5]">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {
                     return (
-                      <TableHead key={header.id}>
+                      <TableHead key={header.id} className="h-7">
                         {header.isPlaceholder
                           ? null
                           : flexRender(
@@ -148,7 +151,7 @@ interface TableProps {
                     data-state={row.getIsSelected() && "selected"}
                   >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
+                      <TableCell key={cell.id} >
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()

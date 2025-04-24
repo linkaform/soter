@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import * as React from "react";
@@ -29,6 +30,7 @@ import {
 
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SearchAccessPass } from "@/hooks/useSearchPass";
+import { useMemo } from "react";
 
 
 
@@ -58,9 +60,12 @@ interface TableProps {
 
   const [globalFilter, setGlobalFilter] = React.useState("");
 
+  const columns = useMemo(() => (accesosPermitidosColumns),[true]);
+  const memoizedData = useMemo(() => searchPass?.grupo_areas_acceso  || [], [searchPass?.grupo_areas_acceso ]);
+  
   const table = useReactTable({
- data: searchPass?.grupo_areas_acceso || [],
-    columns: accesosPermitidosColumns,
+    data: memoizedData,
+    columns: columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
@@ -92,14 +97,14 @@ interface TableProps {
      
 
       <div className="w-full">
-        <ScrollArea className="h-60 w-full border rounded-md">
+        <ScrollArea className="h-36 w-full border rounded-md">
           <Table>
             <TableHeader className="bg-[#F0F2F5]">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {
                     return (
-                      <TableHead key={header.id}>
+                      <TableHead key={header.id} className="h-7">
                         {header.isPlaceholder
                           ? null
                           : flexRender(

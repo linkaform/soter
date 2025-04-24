@@ -1,8 +1,11 @@
 import { Imagen } from "./update-pass";
 
 export const getListIncidencias = async (
-    location:string, area:string,prioridades:string[]) => {
+    location:string, area:string,prioridades:string[], dateFrom:string, dateTo:string, filterDate:string) => {
     const payload = {
+        dateFrom,
+        dateTo,
+        filterDate,
         area:area,
         location: location,
         prioridades:prioridades,

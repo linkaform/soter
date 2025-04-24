@@ -1,7 +1,9 @@
 import { AccessPass, addNewVisit, exitRegister, getAccessAssets, searchAccessPass } from "@/lib/access"
+import { errorMsj } from "@/lib/utils"
 import { useAccessStore } from "@/store/useAccessStore"
 import { useShiftStore } from "@/store/useShiftStore"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { toast } from "sonner"
 
 
 export interface SearchAccessPass {
@@ -63,13 +65,13 @@ export interface QrPase {
   file: string
 }
 
-export const useSearchPass = () => {
+export const useSearchPass = (enable:boolean) => {
   const { area, location, setLoading, isLoading: loading } = useShiftStore()
 
   const { passCode, setPassCode } = useAccessStore()
 
   const queryClient = useQueryClient()
-
+console.log("pasconde vaslor",passCode)
   const {
     data: searchPass,
     isLoading,
@@ -77,16 +79,25 @@ export const useSearchPass = () => {
     isFetching,
     refetch,
   } = useQuery<SearchAccessPass>({
-    queryKey: ["serchPass", passCode],
-    enabled: Boolean(area && location && passCode),
+    queryKey: ["searchPass", passCode],
+    enabled: passCode!==""?true:false,
+    // enabled: Boolean(passCode) ,
     queryFn: async () => {
       const data = await searchAccessPass(area, location, passCode)
-      return data.response?.data || {}
+      console.log("peticion de search", data)
+
+      const textMsj = errorMsj(data) 
+      if (textMsj){
+        toast.error(`Error al buscar pase, Error: ${textMsj.text}`);
+        return {}
+      }else {
+        return data ? data?.response?.data : {};
+      }
     },
-    refetchOnWindowFocus: false,
-    refetchInterval: 600000,
-    refetchOnReconnect: true,
-    staleTime: 100000 * 60 * 5,
+    // refetchOnWindowFocus: true,
+    // refetchInterval: 600000,
+    // refetchOnReconnect: true,
+    // staleTime: 1000 * 60 * 5,
   })
 
 
@@ -94,14 +105,15 @@ export const useSearchPass = () => {
 
   const { data: assets } = useQuery<any>({
     queryKey: ["getAssetsAccess"],
+    enabled:enable,
     queryFn: async () => {
       const data = await getAccessAssets(location)
       return data.response?.data || {}
     },
     refetchOnWindowFocus: false,
-    refetchInterval: 60000,
+    // refetchInterval: 60000,
     refetchOnReconnect: true,
-    staleTime: 1000 * 60 * 5,
+    // staleTime: 1000 * 60 * 5,
   })
 
 
@@ -119,7 +131,7 @@ export const useSearchPass = () => {
     onSuccess: (response: any) => {
       console.log("exitRegisterAccess:", response)
 
-      queryClient.invalidateQueries({ queryKey: ["serchPass"] })
+      queryClient.invalidateQueries({ queryKey: ["searchPass"] })
     },
     onError: (err) => {
       console.log(err)

@@ -1,31 +1,33 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import React, { useState } from "react";
 
-import Vehicles from "@/components/icon/vehicles";
-import Exit from "@/components/icon/exit";
 import { Button } from "@/components/ui/button";
 import { ActivePassesModal } from "@/components/modals/active-passes-modal";
 import {
+	ArrowBigLeft,
+	Car,
   DoorOpen,
-  Home,
+  DoorOpenIcon,
+  Eraser,
+  HomeIcon,
+  Laptop,
   List,
   LogIn,
   Menu,
   Plus,
   Search,
-  Trash2,
-  Users,
+  User,
+  Users2Icon,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { ComentariosAccesosTable } from "@/components/table/accesos/comentarios/table";
 import Credentials from "@/components/pages/accesos/credential";
 import { AccesosPermitidosTable } from "@/components/table/accesos/accesos-permitidos/table";
 import { UltimosAccesosTable } from "@/components/table/accesos/ultimos-accesos/table";
-import { AccesosPermisosTable } from "@/components/table/accesos/permisos-certificaciones/table";
 import { VehiculosAutorizadosTable } from "@/components/table/accesos/vehiculos-autorizados/table";
 import { EquiposAutorizadosTable } from "@/components/table/accesos/equipos-autorizados/table";
-import ReusableAccordion from "@/components/resuable-accordion";
 import { useShiftStore } from "@/store/useShiftStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getStats } from "@/lib/get-shift";
@@ -36,33 +38,49 @@ import { AddVisitModal } from "@/components/modals/add-visit-modal";
 import { toast } from "sonner";
 import { useGetShift } from "@/hooks/useGetShift";
 import { exitRegister, registerIncoming } from "@/lib/access";
+import ChangeLocation from "@/components/changeLocation";
+import GrupoCarousel from "@/components/grupo-carrusel";
+import { PermisosTable } from "@/components/table/accesos/permisos-certificaciones/table";
+import useAuthStore from "@/store/useAuthStore";
+import { esHexadecimal } from "@/lib/utils";
 
 const AccesosPage = () => {
-  const { area, location, setLoading } = useShiftStore();
-
-  const { shift } = useGetShift();
-
+  const {isAuth} = useAuthStore()
+  const { shift, isLoading:loadingShift } = useGetShift(false,true);
+  const { area, location, setLoading , turno, setArea, setLocation} = useShiftStore();
   const { passCode, setPassCode } = useAccessStore();
-  const { isLoading, loading, searchPass } = useSearchPass();
+  const { isLoading, loading, searchPass } = useSearchPass(false);
 
   const [inputValue, setInputValue] = useState("");
+//   const [debouncedValue] = useState('');
 
   const queryClient = useQueryClient();
 
   const { data: stats } = useQuery<any>({
     queryKey: ["getAccessStats", area, location],
+	enabled:location && area ? true:false,
     queryFn: async () => {
       const data = await getStats({ area, location, page: "Accesos" });
       const responseData = data.response?.data || {};
       return responseData;
     },
     refetchOnWindowFocus: true,
-    refetchInterval: 60000,
     refetchOnReconnect: true,
-    staleTime: 1000 * 60 * 5,
   });
+  console.log("dentro de lista de accesos")
+//   useEffect(()=>{
+// 	if(shift)
+// 		setEnableShift(false)
+//   },[shift])
 
- 
+//   useEffect(()=>{
+// 	if(searchPass){
+// 		if(!noEsObjetoVacio(searchPass)){
+// 			setPassCode("")
+// 		}
+// 	}
+//   },[searchPass])
+
   const exitRegisterAccess = useMutation({
     mutationFn: async () => {
       const data = await exitRegister(area, location, passCode);
@@ -84,12 +102,8 @@ const AccesosPage = () => {
       queryClient.invalidateQueries({ queryKey: ["serchPass"] });
     },
     onError: (error) => {
-      console.log(error);
-
       const errorMsg = `❌ Hubo un error en la salida: ${error.message}`;
-
       console.log(errorMsg);
-
       toast.error(error.message);
     },
     onSettled: () => {
@@ -97,9 +111,9 @@ const AccesosPage = () => {
     },
   });
 
-  const certificaciones = Array.isArray(searchPass?.certificaciones)
-    ? searchPass.certificaciones
-    : [];
+//   const certificaciones = Array.isArray(searchPass?.certificaciones)
+//     ? searchPass.certificaciones
+//     : [];
 
   const { newCommentsPase, setAllComments, newVehicle, setSelectedVehicle } =
     useAccessStore();
@@ -190,243 +204,292 @@ const AccesosPage = () => {
   });
 
 
+//   useEffect(() => {
+// 	console.log("entrada value")
+//    	if(inputValue){
+// 		const handler = setTimeout(() => {
+// 			if(esHexadecimal(inputValue)){
+// 				// setInputValue("")
+// 				// setPassCode(inputValue)
+// 			}else{
+// 				console.log("No es hexadecimal", inputValue)
+// 			}
+// 		}, 700);
+// 		return () => clearTimeout(handler); 
+//    	}
+//   }, [inputValue]);
 
+//   useEffect(() => {
+//     if (debouncedValue) {
+		
+//     }
+//   }, [debouncedValue]);
+  
 
-  if (isLoading || loading) {
+  if (isLoading || loading || loadingShift) {
     return (
       <div className="flex justify-center items-center h-screen">
-        <div className="w-16 h-16 border-8 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+			<div className="w-24 h-24 border-8 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
       </div>
     );
   }
+  if (!turno && isAuth) {
+	return (
+	<div className="flex justify-center items-center h-screen">
+		<div className="text-3xl font-bold">Inicia turno para habilitar accesos...</div>
+		<Button
+			variant="ghost"
+			size="icon"
+			className="absolute right-0 top-0 h-full border rounded-tl-none rounded-bl-none rounded-tr-sm rounded-br-sm"
+		>
+			<ArrowBigLeft className="h-4 w-4" />
+		</Button>
+    </div>)
+  }
 
   return (
-    <div className="">
-      <div className="flex flex-col">
-        <div className="p-6 space-y-6 w-full mx-auto">
-          <ReusableAccordion
-            ubicaciones={[
-              { value: "planta-monterrey", label: "Planta Monterrey" },
-              { value: "planta-saltillo", label: "Planta Saltillo" },
-            ]}
-            casetas={[
-              { value: "caseta-6", label: "Caseta 6 Poniente" },
-              { value: "caseta-5", label: "Caseta 5 Norte" },
-            ]}
-            jefe="Emiliano Zapata"
-            estadisticas={[
-              {
-                label: "Visitas en el Día",
-                value: stats?.visitas_en_dia || 0,
-                icon: <Home className="text-primary " />,
-              },
-              {
-                label: "Visitas Dentro",
-                value: stats?.personal_dentro || 0,
-                icon: <Users className="text-primary" />,
-              },
-              {
-                label: "Vehículos Estacionados",
-                value: stats?.total_vehiculos_dentro || 0,
-                icon: <Vehicles />,
-              },
-              {
-                label: "Salidas Registradas",
-                value: stats?.salidas_registradas || 0,
-                icon: <Exit />,
-              },
-            ]}
-          />
+    <div className="h-screen ">
+		<div className="flex flex-col w-full">
+			<div className="p-6 space-y-6 w-full mx-auto pb-0">
+				<div className="flex justify-center flex-col md:flex-row gap-3 ">
+					<div className="flex justify-center mb-5 mr-5 w-full md:max-w-lg ">
+					<div className="relative w-full flex items-center">
+						<Input
+						type="text"
+						placeholder="Escanear Pase"
+						className="pl-5 pr-10 w-full"
+						value={inputValue} // Enlazamos el input con su estado
+						onChange={(e) => setInputValue(e.target.value)} // Actualizamos el estado
+						/>
 
-          <div className="flex flex-col md:flex-row gap-3">
-            <div className="flex mb-5 mr-5 w-full md:max-w-lg  mx-auto">
-              <div className="relative w-full flex items-center">
-                <Input
-                  type="text"
-                  placeholder="Escanear Pase"
-                  className="pl-5 pr-10 w-full"
-                  value={inputValue} // Enlazamos el input con su estado
-                  onChange={(e) => setInputValue(e.target.value)} // Actualizamos el estado
-                />
+						<Button
+						variant="ghost"
+						size="icon"
+						className="absolute right-10 border rounded-none top-0 h-full "
+						onClick={() => {
+							if(esHexadecimal(inputValue)){
+								setPassCode(inputValue)
+							}else{
+								console.log("No es hexadecimal", inputValue)
+							}
+						}}
+						>
+						<Search className="h-4 w-4" />
+						</Button>
 
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="absolute right-10 border rounded-none top-0 h-full "
-                  onClick={() => {
-                    setPassCode(inputValue);
-                  }}
-                >
-                  <Search className="h-4 w-4" />
-                </Button>
+						<ActivePassesModal title="Pases Activos">
+						<Button
+							variant="ghost"
+							size="icon"
+							className="absolute right-0 top-0 h-full border rounded-tl-none rounded-bl-none rounded-tr-sm rounded-br-sm"
+						>
+							<Menu className="h-4 w-4" />
+						</Button>
+						</ActivePassesModal>
+					</div>
+					</div>
 
-                <ActivePassesModal title="Pases Activos">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-0 top-0 h-full border rounded-tl-none rounded-bl-none rounded-tr-sm rounded-br-sm"
-                  >
-                    <Menu className="h-4 w-4" />
-                  </Button>
-                </ActivePassesModal>
-              </div>
-            </div>
+					<div className="flex flex-col sm:flex-row gap-2">
+					{searchPass?.tipo_movimiento === "Entrada" && (
+						<Button
+						className="bg-green-600 hover:bg-green-700"
+						onClick={() => {
+							if (shift?.guard?.status_turn === "Turno Cerrado") {
+							toast.error(
+								"¡Debes iniciar turno antes de registrar un ingreso!."
+							);
+							return;
+							}
 
-            <div className="flex flex-col sm:flex-row gap-2">
-              {searchPass?.tipo_movimiento === "Entrada" && (
-                <Button
-                  className="bg-green-600 hover:bg-green-700"
-                  onClick={() => {
-                    if (shift?.guard?.status_turn === "Turno Cerrado") {
-                      toast.error(
-                        "¡Debes iniciar turno antes de registrar un ingreso!."
-                      );
-                      return;
-                    }
+							doAccess.mutate();
+						}}
+						>
+						<LogIn />
+						Registrar ingreso
+						</Button>
+					)}
 
-                    doAccess.mutate();
-                  }}
-                >
-                  <LogIn />
-                  Registrar ingreso
-                </Button>
-              )}
+					{searchPass?.tipo_movimiento === "Salida" && (
+						<Button
+						className="bg-red-500 hover:bg-red-600 text-white"
+						onClick={() => {
+							if (shift?.guard?.status_turn === "Turno Cerrado") {
+							toast.error(
+								"¡Debes iniciar turno antes de registrar una salida!."
+							);
+							return;
+							}
 
-              {searchPass?.tipo_movimiento === "Salida" && (
-                <Button
-                  className="bg-red-500 hover:bg-red-600 text-white"
-                  onClick={() => {
-                    if (shift?.guard?.status_turn === "Turno Cerrado") {
-                      toast.error(
-                        "¡Debes iniciar turno antes de registrar una salida!."
-                      );
-                      return;
-                    }
+							exitRegisterAccess.mutate();
+						}}
+						>
+						<DoorOpen />
+						Registrar Salida
+						</Button>
+					)}
 
-                    exitRegisterAccess.mutate();
-                  }}
-                >
-                  <DoorOpen />
-                  Registrar Salida
-                </Button>
-              )}
+					{!passCode && (
+						<AddVisitModal title="Nueva Visita">
+						<Button className="bg-green-600 hover:bg-green-700 text-white">
+							<Plus />
+							Nueva Visita
+						</Button>
+						</AddVisitModal>
+					)}
 
-              {!passCode && (
-                <AddVisitModal title="Nueva Visita">
-                  <Button className="bg-green-600 hover:bg-green-700 text-white">
-                    <Plus />
-                    Nueva Visita
-                  </Button>
-                </AddVisitModal>
-              )}
+					{/*   <ScanMethodModal title="Dispositivo a utilizar">
+						<Button className="bg-amber-400 hover:bg-amber-500 text-black">
+						<ScanQrCode />
+						Escanear un pase
+						</Button>
+					</ScanMethodModal> */}
 
-            {/*   <ScanMethodModal title="Dispositivo a utilizar">
-                <Button className="bg-amber-400 hover:bg-amber-500 text-black">
-                  <ScanQrCode />
-                  Escanear un pase
-                </Button>
-              </ScanMethodModal> */}
+					{/* <ScanMethodModal title="Dispositivo a utilizar">
+					<Button className="bg-white text-black hover:bg-black hover:text-white border border-gray-300">
 
-              {/* <ScanMethodModal title="Dispositivo a utilizar">
-              <Button className="bg-white text-black hover:bg-black hover:text-white border border-gray-300">
-
-                  <LogIn />
+						<LogIn />
 
 
-                  Habilitar auto acceso
-                </Button>
-              </ScanMethodModal> */}
+						Habilitar auto acceso
+						</Button>
+					</ScanMethodModal> */}
 
-              <TemporaryPassesModal title="Pases Temporales">
-                <Button
-                  variant="secondary"
-                  className="bg-blue-500 hover:bg-blue-600 text-white"
-                >
-                  <List className="text-white" />
-                  Pases Temporales
-                </Button>
-              </TemporaryPassesModal>
+					<TemporaryPassesModal title="Pases Temporales">
+						<Button
+						variant="secondary"
+						className="bg-blue-500 hover:bg-blue-600 text-white"
+						>
+						<List className="text-white" />
+						Pases Temporales
+						</Button>
+					</TemporaryPassesModal>
 
-              <Button
-                className="bg-red-500 hover:bg-red-600 text-white"
-                variant="secondary"
-                onClick={() => setPassCode("")}
-              >
-                <Trash2 className="text-white" />
-                Limpiar
-              </Button>
-            </div>
-          </div>
+					<Button
+						className="bg-red-500 hover:bg-red-600 text-white"
+						variant="secondary"
+						onClick={() => setPassCode("")}
+					>
+						<Eraser className="text-white" />
+						
+					</Button>
+					</div>
+				</div>
+			</div>
 
+			{passCode && (
+			<>
+				<div className="grid grid-cols-1 md:grid-cols-3 gap-4 ">
+					<div className="row-span-3  flex flex-col p-4 pt-0 ">
+						<Credentials searchPass={searchPass} />
+						<GrupoCarousel titulo={"Miembros del grupo"} />
+					</div>
+					<div className="flex flex-col h-fit p-4 gap-3 ">
+						<ComentariosAccesosTable allComments={allComments} searchPass={searchPass} />
+						<PermisosTable searchPass={searchPass} />
+					</div>
 
+					{/* {searchPass?.grupo_areas_acceso && searchPass?.grupo_areas_acceso?.length > 0 && ( */}
+						<div className="flex flex-col h-fit p-4 gap-3 ">
+						<UltimosAccesosTable searchPass={searchPass} />
+						
+							<AccesosPermitidosTable searchPass={searchPass} />
+						</div>
+					<div className="col-span-2 col-start-2 pr-4">
+						<div className="fbg-slate-400 ml-5">
+							<div className="">
+								<EquiposAutorizadosTable allEquipments={allEquipments} searchPass={searchPass} />
+							</div>
 
-    
-        </div>
+							<div className="">
+								<VehiculosAutorizadosTable allVehicles={allVehicles} searchPass={searchPass} />
+							</div>
+						</div>
+					</div>
+				</div>
+				
+			</>
+			)}
+		</div>
+		{!searchPass ?
+	  	<div className="flex flex-col justify-center items-center gap-10 mt-32">
+				<div className="flex justify-center w-1/6">
+					<ChangeLocation
+						ubicacionSeleccionada={location}
+						areaSeleccionada={area}
+						setUbicacionSeleccionada={setLocation}
+						setAreaSeleccionada={setArea}
+					/>
+				</div>
+				<div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100`}>
+						<div className="flex gap-6"><HomeIcon className="text-primary w-14 h-14" />
+							<span className="flex items-center font-bold text-5xl"> {stats?.articulos_concesionados_pendientes}0</span>
+						</div>
+						<div className="flex items-center space-x-0">
+							<div className="h-1 w-1/2 bg-cyan-100"></div>
+							<div className="h-1 w-1/2 bg-blue-500"></div>
+						</div>
+						<span className="text-lg">Visitas en el dia</span>
+					</div>
 
+					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100 `}>
+						<div className="flex gap-6"><Users2Icon className="text-primary w-14 h-14"/>
+							<span className="flex items-center font-bold text-5xl"> {stats?.articulos_perdidos}0</span>
+						</div>
+						<div className="flex items-center space-x-0">
+							<div className="h-1 w-1/2 bg-cyan-100"></div>
+							<div className="h-1 w-1/2 bg-blue-500"></div>
+						</div>
+						<span className="text-lg">Personas dentro</span>
+					</div>
 
+					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100 `} >
+						<div className="flex gap-6"><DoorOpenIcon className="text-primary w-14 h-14"/>
+							<span className="flex items-center font-bold text-5xl"> {stats?.articulos_perdidos}0</span>
+						</div>
+						<div className="flex items-center space-x-0">
+							<div className="h-1 w-1/2 bg-cyan-100"></div>
+							<div className="h-1 w-1/2 bg-blue-500"></div>
+						</div>
+						<span className="text-lg">Salidas registradas</span>
+					</div>
 
+					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100 `} >
+						<div className="flex gap-6"><User className="text-primary w-14 h-14"/>
+							<span className="flex items-center font-bold text-5xl"> {stats?.articulos_perdidos}0</span>
+						</div>
+						<div className="flex items-center space-x-0">
+							<div className="h-1 w-1/2 bg-cyan-100"></div>
+							<div className="h-1 w-1/2 bg-blue-500"></div>
+						</div>
+						<span className="text-lg">Personal Dentro</span>
+					</div>
 
+					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100 `} >
+						<div className="flex gap-6"><Car className="text-primary w-14 h-14"/>
+							<span className="flex items-center font-bold text-5xl"> {stats?.articulos_perdidos}0</span>
+						</div>
+						<div className="flex items-center space-x-0">
+							<div className="h-1 w-1/2 bg-cyan-100"></div>
+							<div className="h-1 w-1/2 bg-blue-500"></div>
+						</div>
+						<span className="text-lg">Vehiculos Dentro</span>
+					</div>
 
-        {passCode && (
-          <div className="grid grid-cols-1 md:grid-cols-2">
-            {/* Tabla de credenciales */}
-            <div className="w-full p-4">
-              <Credentials searchPass={searchPass} />
-            </div>
+					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100 `} >
+						<div className="flex gap-6"><Laptop className="text-primary w-14 h-14"/>
+							<span className="flex items-center font-bold text-5xl"> {stats?.articulos_perdidos}0</span>
+						</div>
+						<div className="flex items-center space-x-0">
+							<div className="h-1 w-1/2 bg-cyan-100"></div>
+							<div className="h-1 w-1/2 bg-blue-500"></div>
+						</div>
+						<span className="text-lg">Equipos Dentro</span>
+					</div>
 
-            {/* Tabla de comentarios de accesos */}
-
-            <div className="w-full p-4">
-              <ComentariosAccesosTable
-                allComments={allComments}
-                searchPass={searchPass}
-              />
-            </div>
-
-            {/* Tabla de últimos accesos */}
-
-            {/* Tabla de accesos permitidos */}
-            {searchPass?.grupo_areas_acceso &&
-              searchPass.grupo_areas_acceso.length > 0 && (
-                <div className="w-full p-4">
-                  <UltimosAccesosTable searchPass={searchPass} />
-                </div>
-              )}
-
-            {certificaciones.length > 0 && (
-              <div className="w-full p-4">
-                <AccesosPermisosTable searchPass={searchPass} />
-              </div>
-            )}
-
-            {/* Tabla de accesos permitidos */}
-            {searchPass?.grupo_areas_acceso &&
-              searchPass.grupo_areas_acceso.length > 0 && (
-                <div className="w-full p-4">
-                  <AccesosPermitidosTable searchPass={searchPass} />
-                </div>
-              )}
-
-            {/* Tabla de equipos permitidos */}
-
-            <div className="w-full p-4">
-              <EquiposAutorizadosTable
-                allEquipments={allEquipments}
-                searchPass={searchPass}
-              />
-            </div>
-
-            {/* Tabla de vehículos autorizados */}
-
-            <div className="w-full p-4">
-              <VehiculosAutorizadosTable
-                allVehicles={allVehicles}
-                searchPass={searchPass}
-              />
-            </div>
-          </div>
-        )}
-      </div>
+				</div>
+		</div>
+	:null}
     </div>
   );
 };

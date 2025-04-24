@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import * as React from "react";
@@ -29,6 +30,7 @@ import { EquipoAutorizadoColumns } from "./equipos-autorizados-columns";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SearchAccessPass } from "@/hooks/useSearchPass";
 import { EqipmentPassModal } from "@/components/modals/equipment-access-modal";
+import { useMemo } from "react";
 
 
 
@@ -58,11 +60,12 @@ interface TableProps {
   });
 
   const [globalFilter, setGlobalFilter] = React.useState("");
+  const columns = useMemo(() => (EquipoAutorizadoColumns),[true]);
+  const memoizedData = useMemo(() => allEquipments || [], [allEquipments]);
 
   const table = useReactTable({
-    data: allEquipments || [],
-
-    columns: EquipoAutorizadoColumns,
+    data: memoizedData || [],
+    columns: columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
@@ -89,13 +92,15 @@ interface TableProps {
 
 
 
-      <div className="mb-3">
-        <h1 className="text-2xl font-bold">Equipos Autorizados</h1>
-      </div>
+     
 
       {/* Botones a la derecha */}
-      <div className="flex justify-end mb-3 space-x-3">
-          <EqipmentPassModal title="Nuevo Equipo">
+      <div className="flex justify-between mb-3 space-x-3">
+        <div className="mb-3">
+          <h1 className="text-2xl font-bold">Equipos Autorizados</h1>
+        </div>
+         <div className="flex gap-2">
+         <EqipmentPassModal title="Nuevo Equipo">
           <Button className="bg-green-600 hover:bg-green-700 text-white">
             <Plus />
             Agregar Equipo
@@ -117,6 +122,7 @@ interface TableProps {
         >
           <Trash2 className="text-white" />
         </Button>
+         </div>
       </div>
 
 
@@ -128,14 +134,14 @@ interface TableProps {
    
 
       <div className="w-full">
-        <ScrollArea className="h-60 w-full border rounded-md">
+        <ScrollArea className="h-44 w-full border rounded-md">
           <Table>
             <TableHeader className="bg-[#F0F2F5]">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {
                     return (
-                      <TableHead key={header.id}>
+                      <TableHead key={header.id} className="h-7">
                         {header.isPlaceholder
                           ? null
                           : flexRender(

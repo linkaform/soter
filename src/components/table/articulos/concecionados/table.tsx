@@ -35,7 +35,7 @@ import { CalendarDays, Plus } from "lucide-react";
 import { Articulo_con_record, conColumns } from "./concecionados-columns";
 import { catalogoFechas } from "@/lib/utils";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import DateTime from "@/components/dateTime";
 
 interface ListProps {
@@ -85,10 +85,12 @@ const ArticulosConTable:React.FC<ListProps> = ({ data, isLoadingListArticulosCon
   });
 
   const [globalFilter, setGlobalFilter] = React.useState("");
+  const columns = useMemo(() => (isLoadingListArticulosCon ? [] : conColumns), [isLoadingListArticulosCon]);
+  const memoizedData = useMemo(() => data || [], [data]);
 
   const table = useReactTable({
-    data: data || [],
-    columns: isLoadingListArticulosCon ? []: conColumns,
+    data:memoizedData,
+    columns: columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
@@ -229,7 +231,8 @@ const ArticulosConTable:React.FC<ListProps> = ({ data, isLoadingListArticulosCon
                   colSpan={conColumns.length}
                   className="h-24 text-center"
                 >
-                  No hay registros disponibles{" "}
+                  {isLoadingListArticulosCon? (<div className='text-xl font-semibold'>Cargando registros... </div>): 
+							    (<div className='text-xl font-semibold'>No hay registros disponibles...</div>)}
                 </TableCell>
               </TableRow>
             )}

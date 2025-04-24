@@ -27,8 +27,11 @@ export interface InputDevolver {
 }
   
 export const getListArticulosPerdidos = async (
-    location:string,status:string) => {
+    location:string,status:string, date1:string, date2:string, filterDate:string) => {
     const payload = {
+        dateFrom:date1, 
+        dateTo:date2, 
+        filterDate,
         location: location,
         status:status,
         option: "get_articles",

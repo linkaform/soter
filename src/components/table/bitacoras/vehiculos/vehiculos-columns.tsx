@@ -104,6 +104,14 @@ export const vehiculosColumns: ColumnDef<Bitacora_record>[] = [
 		enableSorting: false,
 		enableHiding: false,
 	},
+	{
+		accessorKey: "folio",
+		header: "folio",
+		cell: ({ row }) => (
+			<div className="capitalize">{row.getValue("folio")}</div>
+		),
+		enableSorting: true,
+	},
     {
 		accessorKey: "nombre_visitante",
 		header: "Nombre",

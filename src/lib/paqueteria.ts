@@ -21,8 +21,11 @@ export interface InputPaqueteriaDevolver {
 }
   
 export const getListPaqueteria  = async (
-    location:string,status:string, area:string) => {
+    location:string,status:string, area:string, date1:string, date2:string, filterDate:string) => {
     const payload = {
+        dateFom:date1,
+        dateTo:date2,
+        filterDate,
         location: location,
         area,
         status:status,

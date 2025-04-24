@@ -41,7 +41,7 @@ export const SendMessageModal: React.FC<SendMessageModalProps> = ({
   children,
 }) => {
 
-  const { searchPass } = useSearchPass();
+  const { searchPass } = useSearchPass(false);
 
 
 

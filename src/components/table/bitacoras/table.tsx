@@ -23,24 +23,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-// import {
-//   DropdownMenu,
-//   DropdownMenuCheckboxItem,
-//   DropdownMenuContent,
-//   DropdownMenuTrigger,
-// } from "@/components/ui/dropdown-menu";
 import {  Bitacora_record, bitacorasColumns } from "./bitacoras-columns";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useMemo } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import DateTime from "@/components/dateTime";
 import { catalogoFechas } from "@/lib/utils";
-// import { SelectTrigger } from "@radix-ui/react-select";
-// import { Select, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
-
 
 interface ListProps {
-	data: Bitacora_record[];
+	data: Bitacora_record[]|undefined;
 	isLoading:boolean;
 	
 	setDate1 :React.Dispatch<React.SetStateAction<Date | "">>;

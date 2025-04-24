@@ -33,7 +33,7 @@ import {
 //   DropdownMenuTrigger,
 // } from "@/components/ui/dropdown-menu";
 import { Incidencia_record, incidenciasColumns } from "./incidencias-columns";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { EliminarIncidenciaModal } from "@/components/modals/delete-incidencia-modal";
 import { catalogoFechas, downloadCSV } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -91,23 +91,12 @@ const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, isLoading, openMo
   });
 
   const [globalFilter, setGlobalFilter] = React.useState("");
-
-//   const handleCheckboxChange = (event:any) => {
-//     const { id, checked } = event.target;
-
-//     setPrioridades((prevPrioridades) => {
-//       if (checked) {
-//         return [...prevPrioridades, id]; // Agregar la opción seleccionada
-//       } else {
-//         return prevPrioridades.filter((item) => item !== id); // Eliminar la opción deseleccionada
-//       }
-//     });
-//   };
-
+  const columns = useMemo(() => (isLoading ? [] : incidenciasColumns), [isLoading]);
+  const memoizedData = useMemo(() => data || [], [data]);
 
   const table = useReactTable({
-    data:data || [],
-    columns:  isLoading ? [] : incidenciasColumns,
+    data:memoizedData,
+    columns: columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
@@ -310,7 +299,8 @@ const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, isLoading, openMo
 					colSpan={incidenciasColumns.length}
 					className="h-24 text-center"
 					>
-					No hay registros disponibles{" "}
+					{isLoading? (<div className='text-xl font-semibold'>Cargando registros... </div>): 
+							(<div className='text-xl font-semibold'>No hay registros disponibles...</div>)}
 					</TableCell>
 				</TableRow>
 				)}
@@ -318,10 +308,13 @@ const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, isLoading, openMo
 			</Table>
 		</div>
 		<div className="flex items-center justify-end space-x-2 py-4">
-			<div className="flex-1 text-sm text-muted-foreground">
-			{table.getFilteredSelectedRowModel().rows.length} de{" "}
-			{table.getFilteredRowModel().rows.length} items seleccionados.
-			</div>
+			{!isLoading? 
+				<div className="flex-1 text-sm text-muted-foreground">
+				{table.getFilteredSelectedRowModel().rows.length} de{" "}
+				{table.getFilteredRowModel().rows.length} items seleccionados.
+				</div>
+			:null}
+			
 
 			<div className="space-x-2">
 			<Button

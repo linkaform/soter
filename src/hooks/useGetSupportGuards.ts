@@ -37,7 +37,7 @@ export const useGetSupportGuards = () => {
     retry: 3,
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
     refetchOnWindowFocus: true,
-    refetchInterval: 60000,
+    refetchInterval: 600000,
     refetchOnReconnect: true,
     staleTime: 1000 * 60 * 5,
   });

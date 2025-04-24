@@ -36,15 +36,11 @@ const IncidenciasPage = () => {
 
   const [dates, setDates] = useState<string[]>([])
   const [dateFilter, setDateFilter] = useState<string>("this_month")
-  console.log(dates)
 
-  const { data:dataFallas,isLoading:isLoadingFallas, refetch:refetchFallas} = useGetFallas("", "","abierto");
-  const { listIncidencias, refetchTableIncidencias, isLoadingListIncidencias , stats} = useInciencias([],  true, false);
-
-
-//   const {location, area} = useShiftStore()
-//   const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
-//   const [areaSeleccionada, setAreaSeleccionada] = useState(area)
+  const [fallasStatus, setFallasStatus] = useState<string>("")
+  const { data:dataFallas,isLoading:isLoadingFallas, refetch:refetchFallas} = useGetFallas(ubicacionSeleccionada, areaSeleccionada == "todas" ? "" : areaSeleccionada ,fallasStatus,  dates[0], dates[1], dateFilter);
+  const { listIncidencias, refetchTableIncidencias, isLoadingListIncidencias , stats} = useInciencias(ubicacionSeleccionada, areaSeleccionada == "todas" ? "" : areaSeleccionada, [],  true, false, dates[0], dates[1], dateFilter);
+  const [selectedTab, setSelectedTab] = useState<string>('Incidencias'); 
 
   	useEffect(()=>{
 		if(prioridades){
@@ -72,6 +68,25 @@ const IncidenciasPage = () => {
 		}
 	};
 
+	const handleTabChangeTab = (newTab: any) => {
+		setSelectedTab(newTab); 
+	  };
+
+	const handleTabChange = (tab:string, option:string) => {
+		if(tab == "Fallas"){
+			if(tab == selectedTab && fallasStatus=="abierto"){
+				setFallasStatus(""); 
+				setSelectedTab(tab);
+			}else{
+				setFallasStatus(option); 
+				setSelectedTab(tab)
+			}
+		}else if (tab == "Incidencias"){
+			setDateFilter(option); 
+			setSelectedTab(tab)
+		}
+	};
+
   return (
     <div className="">
 		
@@ -89,7 +104,8 @@ const IncidenciasPage = () => {
 						setAreaSeleccionada={setAreaSeleccionada}
 					/>
 				</div>
-				<div className="border px-12 py-1 rounded-md">
+				<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
+						dateFilter== "today"&& selectedTab!=="Fallas" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() =>  handleTabChange("Incidencias","today")}>
 					<div className="flex gap-6"><TriangleAlert className="text-primary w-10 h-10" />
 						<span className="flex items-center font-bold text-4xl"> {stats?.incidentes_x_dia}</span>
 					</div>
@@ -99,7 +115,8 @@ const IncidenciasPage = () => {
 					</div>
 					<span className="text-md">Incidencias del Día</span>
 				</div>
-				<div className="border px-8 py-1 rounded-md">
+				<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
+						dateFilter== "this_week" && selectedTab!=="Fallas"? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => handleTabChange("Incidencias","this_week")}>
 					<div className="flex gap-6"><TriangleAlert className="text-primary w-8 h-10" />
 						<span className="flex items-center font-bold text-4xl"> {stats?.incidentes_x_dia}</span>
 					</div>
@@ -109,7 +126,8 @@ const IncidenciasPage = () => {
 					</div>
 					<span className="text-md">Incidencias de la Semana</span>
 				</div>
-				<div className="border px-12 py-1 rounded-md">
+				<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
+						dateFilter== "this_month" && selectedTab!=="Fallas"? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => handleTabChange("Incidencias","this_month")}>
 					<div className="flex gap-6"><TriangleAlert className="text-primary w-10 h-10" />
 						<span className="flex items-center font-bold text-4xl"> {stats?.incidentes_x_dia}</span>
 					</div>
@@ -120,7 +138,8 @@ const IncidenciasPage = () => {
 					<span className="text-md">Incidentes del Mes</span>
 				</div>
 
-				<div className="border p-4 px-12 py-1 rounded-md">
+				<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
+						fallasStatus== "abierto" && selectedTab!=="Incidencias" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => handleTabChange("Fallas","abierto")}>
 					<div className="flex gap-6"><UndoDot className="text-primary w-10 h-10"/>
 						<span className="flex items-center font-bold text-4xl"> {stats?.fallas_pendientes}</span>
 					</div>
@@ -133,7 +152,7 @@ const IncidenciasPage = () => {
 			</div>
 		</div>
 		
-          	<Tabs defaultValue="Incidencias" className="w-full">
+          	<Tabs defaultValue="Incidencias" className="w-full" value={selectedTab}  onValueChange={handleTabChangeTab}>
 			
             <TabsContent value="Incidencias">
               <div className="">

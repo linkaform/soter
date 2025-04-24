@@ -6,12 +6,12 @@ import { toast } from "sonner"; // Importar Sonner
 import { useShiftStore } from "@/store/useShiftStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import useAuthStore from "@/store/useAuthStore";
+import { errorMsj } from "@/lib/utils";
 
-export const useGetShift = () => {
+export const useGetShift = (enableTurnosStats:boolean,enableShift:boolean) => {
   const queryClient = useQueryClient();
 
   const { userNameSoter } = useAuthStore();
-
 
   const {
     area,
@@ -20,6 +20,9 @@ export const useGetShift = () => {
     isLoading: loading,
     setCheckin_id,
     checkin_id,
+    setArea,
+    setLocation,
+    setTurno,
   } = useShiftStore();
 
   const {
@@ -30,23 +33,28 @@ export const useGetShift = () => {
     refetch,
   } = useQuery<any>({
     queryKey: ["getShift", area, location],
+    enabled: enableShift,
     queryFn: async () => {
       const data = await getShift({ area, location });
-
-  
-      const filteredGuards = data.response?.data?.support_guards?.filter((guard: any) => {
+      const textMsj = errorMsj(data) 
+      if (textMsj){
+        toast.error(`Error al obtener informacion, Error: ${textMsj.text}`);
+        return []
+      }else {
+          const filteredGuards = data.response?.data?.support_guards?.filter((guard: any) => {
           return guard.name !== userNameSoter; 
         });
- 
-      return {
-        ...data.response?.data,
-        support_guards: filteredGuards,
-      };
+        setArea(data.response?.data?.location?.area ?? "")
+        setLocation(data.response?.data?.location?.name ?? "")
+        setTurno(data?.response.data?.guard?.status_turn=="Turno Abierto" ? true:false)
+        return {...data.response?.data,
+          support_guards: filteredGuards,}
+      }
     },
     refetchOnWindowFocus: true,
-    refetchInterval: 15000,
+    // refetchInterval: 600000,
     refetchOnReconnect: true,
-    staleTime: 1000 * 60 * 5,
+    // staleTime: 1000 * 60 * 5,
   });
 
   const startShiftMutation = useMutation({
@@ -77,11 +85,12 @@ export const useGetShift = () => {
       if (checkin_id) {
         setCheckin_id(checkin_id);
       }
-
       queryClient.invalidateQueries({ queryKey: ["getShift"] });
 
       queryClient.invalidateQueries({ queryKey: ["getGuardSupport"] });
-
+      setArea(area)
+      setLocation(location)
+      setTurno(true)
 
 
 
@@ -116,7 +125,7 @@ export const useGetShift = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["getShift"] });
-  
+      setTurno(false)
       // ✅ Notificación de éxito
       toast.success("Turno cerrado correctamente.");
     },
@@ -137,15 +146,16 @@ export const useGetShift = () => {
     error: statsError,
   } = useQuery<any>({
     queryKey: ["getTurnStats", area, location],
+    enabled:enableTurnosStats,
     queryFn: async () => {
       const data = await getStats({ area, location });
       const responseData = data.response?.data || {};
       return responseData;
     },
     refetchOnWindowFocus: true,
-    refetchInterval: 60000,
+    // refetchInterval: 600000,
     refetchOnReconnect: true,
-    staleTime: 1000 * 60 * 5,
+    // staleTime: 1000 * 60 * 5,
   });
 
   return {

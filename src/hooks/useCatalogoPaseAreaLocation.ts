@@ -12,7 +12,7 @@ export const useCatalogoPaseAreaLocation = (location:string, enableLocation:bool
   } = useAreasLocationStore();
 
   const { data: dataAreas, isLoading:isLoadingAreas, error:errorAreas, isFetching:isFetchingAreas, refetch:refetchAreas } = useQuery<any>({
-    queryKey: ["getCatalogoPaseArea", location], 
+    queryKey: ["getCatalogoPasesArea", location], 
     enabled:enableArea,
     queryFn: async () => {
         const data = await getCatalogoPasesArea(location); 
@@ -26,9 +26,9 @@ export const useCatalogoPaseAreaLocation = (location:string, enableLocation:bool
     },
    
     refetchOnWindowFocus: true, 
-    refetchInterval: 60000,
+    // refetchInterval: 60000,
     refetchOnReconnect: true, 
-    staleTime: 1000 * 60 * 5, 
+    // staleTime: 1000 * 60 * 5, 
   });
 
   const { data: dataLocations, isLoading:isLoadingLocations, error:errorLocations, isFetching:isFetchingLocations, refetch:refetchLocations } = useQuery<any>({
@@ -47,9 +47,9 @@ export const useCatalogoPaseAreaLocation = (location:string, enableLocation:bool
     },
    
     refetchOnWindowFocus: true, 
-    refetchInterval: 60000,
+    // refetchInterval: 60000,
     refetchOnReconnect: true, 
-    staleTime: 1000 * 60 * 5, 
+    // staleTime: 1000 * 60 * 5, 
   });
 
   return {

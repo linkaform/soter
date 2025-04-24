@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import * as React from "react";
@@ -25,6 +26,7 @@ import {
 import { UltimosAccesosColumns } from "./ultimos-accesos-columns";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SearchAccessPass } from "@/hooks/useSearchPass";
+import { useMemo } from "react";
 
 interface TableProps {
   searchPass: SearchAccessPass | undefined;
@@ -44,11 +46,13 @@ export const UltimosAccesosTable: React.FC<TableProps> = ({ searchPass }) => {
   });
 
   const [globalFilter, setGlobalFilter] = React.useState("");
+  const columns = useMemo(() => (UltimosAccesosColumns),[true]);
+  const memoizedData = useMemo(() => searchPass?.ultimo_acceso || [], [searchPass?.ultimo_acceso]);
 
   const table = useReactTable({
-    data: searchPass?.ultimo_acceso || [],
+    data: memoizedData,
 
-    columns: UltimosAccesosColumns,
+    columns: columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
@@ -77,14 +81,14 @@ export const UltimosAccesosTable: React.FC<TableProps> = ({ searchPass }) => {
       </div>
 
       <div className="w-full">
-        <ScrollArea className="h-60 w-full border rounded-md">
+        <ScrollArea className="h-36 w-full border rounded-md">
           <Table>
             <TableHeader className="bg-[#F0F2F5]">
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {
                     return (
-                      <TableHead key={header.id}>
+                      <TableHead key={header.id} className="h-7">
                         {header.isPlaceholder
                           ? null
                           : flexRender(

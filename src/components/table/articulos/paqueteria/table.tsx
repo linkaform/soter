@@ -34,7 +34,7 @@ import {
 import { CalendarDays, Plus } from "lucide-react";
 import { catalogoFechas } from "@/lib/utils";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { Paquete_record, paqueteriaColumns } from "./paqueteria-columns";
 import DateTime from "@/components/dateTime";
 
@@ -84,10 +84,12 @@ const PaqueteriaTable:React.FC<ListProps> = ({ data, isLoadingListPaqueteria, op
   });
 
   const [globalFilter, setGlobalFilter] = React.useState("");
-
+  const columns = useMemo(() => (isLoadingListPaqueteria ? [] : paqueteriaColumns), [isLoadingListPaqueteria]);
+  const memoizedData = useMemo(() => data || [], [data]);
+  
   const table = useReactTable({
-    data: data || [],
-    columns: isLoadingListPaqueteria ? []: paqueteriaColumns,
+    data: memoizedData,
+    columns: columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
@@ -224,7 +226,8 @@ const PaqueteriaTable:React.FC<ListProps> = ({ data, isLoadingListPaqueteria, op
                   colSpan={paqueteriaColumns.length}
                   className="h-24 text-center"
                 >
-                  No hay registros disponibles{" "}
+                  {isLoadingListPaqueteria ? (<div className='text-xl font-semibold'>Cargando registros... </div>): 
+							    (<div className='text-xl font-semibold'>No hay registros disponibles...</div>)}
                 </TableCell>
               </TableRow>
             )}

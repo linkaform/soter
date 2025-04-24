@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Archive, CircleHelp } from "lucide-react";
+import { Archive, CircleHelp, Package } from "lucide-react";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import PageTitle from "@/components/page-title";
 import { useArticulosPerdidos } from "@/hooks/useArticulosPerdidos";
@@ -21,19 +21,21 @@ import ChangeLocation from "@/components/changeLocation";
 const ArticulosPage = () => {
 	// const [stateArticle, setStateArticle] = useState("pendiente");
 	
-	const {location, area} = useShiftStore()
+	const {location} = useShiftStore()
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
-	const [areaSeleccionada, setAreaSeleccionada] = useState(area)
+	const [areaSeleccionada, setAreaSeleccionada] = useState("todas")
 
 	const [date1, setDate1] = useState<Date|"">("")
 	const [date2, setDate2] = useState<Date|"">("")
 
 	const [dates, setDates] = useState<string[]>([])
 	const [dateFilter, setDateFilter] = useState<string>("this_month")
-	console.log(dates)
-	const { listArticulosPerdidos, isLoadingListArticulosPerdidos , stats} = useArticulosPerdidos(ubicacionSeleccionada, areaSeleccionada, "", true);
-	const { listArticulosCon, isLoadingListArticulosCon} = useArticulosConcesionados( true);
-	const { listPaqueteria, isLoadingListPaqueteria} = usePaqueteria("", "", "guardado", true);
+
+	const { listArticulosPerdidos, isLoadingListArticulosPerdidos , stats} = useArticulosPerdidos(ubicacionSeleccionada,  areaSeleccionada == "todas" ? "": areaSeleccionada, "", true, dates[0], dates[1], dateFilter);
+	const { listArticulosCon, isLoadingListArticulosCon} = useArticulosConcesionados( true, dates[0], dates[1], dateFilter);
+	const { listPaqueteria, isLoadingListPaqueteria} = usePaqueteria("", "", "guardado", true, dates[0], dates[1], dateFilter);
+
+	const [selectedTab, setSelectedTab] = useState<string>('Perdidos'); 
 
 	const [isSuccess, setIsSuccess] = useState(false);
 	const [modalData] = useState<any>(null);
@@ -78,6 +80,21 @@ const ArticulosPage = () => {
 		}
 	};
 
+	const handleTabChangeTab = (newTab: any) => {
+		setSelectedTab(newTab); 
+		
+		
+	  };
+
+	const handleTabChange = (tab:string, option:string) => {
+		if(tab == selectedTab){
+			setSelectedTab("Perdidos")
+		}else{
+			setDateFilter(option); 
+			setSelectedTab(tab)
+		}
+	};
+
   return (
     <div className="">
       	<div className="p-6 space-y-1 pt-3 w-full mx-auto ">
@@ -95,7 +112,8 @@ const ArticulosPage = () => {
 								setAreaSeleccionada={setAreaSeleccionada}
 							/>
 						</div>
-						<div className="border px-9 py-1 rounded-md">
+						<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
+						selectedTab=="Concecionados" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() =>  handleTabChange("Concecionados","")}>
 							<div className="flex gap-6"><Archive className="text-primary w-10 h-10" />
 								<span className="flex items-center font-bold text-4xl"> {stats?.articulos_concesionados_pendientes}</span>
 							</div>
@@ -106,7 +124,8 @@ const ArticulosPage = () => {
 							<span className="text-md">Artículos Concesionados</span>
 						</div>
 
-						<div className="border p-4 px-12 py-1 rounded-md">
+						<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
+						 selectedTab=="Perdidos"? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => handleTabChange("Perdidos","")}>
 							<div className="flex gap-6"><CircleHelp className="text-primary w-10 h-10"/>
 								<span className="flex items-center font-bold text-4xl"> {stats?.articulos_perdidos}</span>
 							</div>
@@ -117,8 +136,9 @@ const ArticulosPage = () => {
 							<span className="text-md">Artículos perdidos</span>
 						</div>
 
-						<div className="border p-4 px-12 py-1 rounded-md">
-							<div className="flex gap-6"><CircleHelp className="text-primary w-10 h-10"/>
+						<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
+						selectedTab== "Paqueteria" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => handleTabChange("Paqueteria","")}>
+							<div className="flex gap-6"><Package className="text-primary w-10 h-10"/>
 								<span className="flex items-center font-bold text-4xl"> {stats?.articulos_perdidos}</span>
 							</div>
 							<div className="flex items-center space-x-0">
@@ -130,15 +150,13 @@ const ArticulosPage = () => {
 					</div>
 				</div>
 
-				<Tabs defaultValue="Perdidos" className="w-full">
+				<Tabs defaultValue="Perdidos" className="w-full" value={selectedTab}  onValueChange={handleTabChangeTab}>
 					
 					<TabsContent value="Perdidos">
 						<div className="">
 						<ArticulosPerdidosTable data={listArticulosPerdidos} isLoadingListArticulosPerdidos={isLoadingListArticulosPerdidos} 
 						openModal={openModal} setSelectedArticulos={setSelectedArticulos}
 						date1={date1} date2={date2} setDate1={setDate1} setDate2={setDate2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter}
-						//    ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} setUbicacionSeleccionada={setUbicacionSeleccionada} 
-						//    setAreaSeleccionada={setAreaSeleccionada} 
 						/>
 						</div>
 				
@@ -148,8 +166,6 @@ const ArticulosPage = () => {
 						<ArticulosConTable data={listArticulosCon} isLoadingListArticulosCon={isLoadingListArticulosCon} 
 						openModal={openModalCon}  setSelectedArticulos={setSelectedArticulos}
 						date1={date1} date2={date2} setDate1={setDate1} setDate2={setDate2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter}
-						//    ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} setUbicacionSeleccionada={setUbicacionSeleccionada} 
-						//    setAreaSeleccionada={setAreaSeleccionada} 
 						/>
 					</div>
 					</TabsContent>
@@ -159,10 +175,7 @@ const ArticulosPage = () => {
 						<PaqueteriaTable data={listPaqueteria} isLoadingListPaqueteria={isLoadingListPaqueteria} 
 							openModal={openModalPaq} setSelectedArticulos={setSelectedArticulos}
 							date1={date1} date2={date2} setDate1={setDate1} setDate2={setDate2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter}
-						// 	ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} setUbicacionSeleccionada={setUbicacionSeleccionada} 
-						//    setAreaSeleccionada={setAreaSeleccionada}
 						/>
-
 					</div>
 					</TabsContent>
 

@@ -32,7 +32,7 @@ const formSchema = z.object({
 export default function LoginPage() {
   const router = useRouter();
 
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const { setAuth, isAuth } = useAuthStore();
 
@@ -127,10 +127,10 @@ export default function LoginPage() {
                               className="absolute right-3 top-4"
                               onClick={() => setShowPassword(!showPassword)}
                             >
-                              {showPassword && (
+                              {!showPassword && (
                                 <Eye className="text-gray-light" />
                               )}
-                              {!showPassword && (
+                              {showPassword && (
                                 <EyeOff className="text-gray-light" />
                               )}
                             </div>

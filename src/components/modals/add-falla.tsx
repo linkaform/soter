@@ -84,7 +84,7 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado, refetch: refetchAreaEmpleado,  } = useCatalogoAreaEmpleado(isSuccess, location, "Incidencias");
 	const { data:dataAreaEmpleadoApoyo, isLoading:loadingAreaEmpleadoApoyo, refetch: refetchAreaEmpleadoApoyo, } = useCatalogoAreaEmpleadoApoyo(isSuccess);
 	const { data:dataFallas, isLoading:isLoadingFallas, refetch: refetchFallas} = useCatalogoFallas(subconcepto, isSuccess);
-	const { createFallaMutation, isLoading} = useFallas("","", "abierto", false)
+	const { createFallaMutation, isLoading} = useFallas("","", "abierto", false, "", "", "")
 
 	const [evidencia , setEvidencia] = useState<Imagen[]>([]);
 	const [documento , setDocumento] = useState<Imagen[]>([]);
