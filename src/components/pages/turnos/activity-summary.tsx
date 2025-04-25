@@ -10,10 +10,6 @@ import { useGetShift } from "@/hooks/useGetShift";
 const ActivitySummary = () => {
   const { stats } = useGetShift(false, false);
 
-
-
-  console.log("stats", stats)
-
   const items = [
     {
       icon: <Guest />,

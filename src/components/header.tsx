@@ -28,7 +28,7 @@ export const Header = () => {
           <div className="flex lg:mb-0 justify-center items-center">
             <Link href="/">
               <Image
-                className="dark:invert "
+                className="dark:invert"
                 src="/logo.svg"
                 alt="Next.js logo"
                 width={150}

@@ -44,17 +44,6 @@ interface TableProps {
 
 
   export const ComentariosAccesosTable: React.FC<TableProps> = ({ allComments }) => {
-
-
-
-  
-
-
-
-
-    
-
-
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -66,14 +55,12 @@ interface TableProps {
     pageIndex: 0,
     pageSize: 8,
   });
-
+  console.log("🔁 Render ComentariosAccesosTable");
   const [globalFilter, setGlobalFilter] = React.useState("");
-  const columns = useMemo(() => (AccesosComentarioColumns),[true]);
-  const memoizedData = useMemo(() => allComments || [], [allComments]);
 
   const table = useReactTable({
-    data: memoizedData || [],
-    columns: columns,
+    data: allComments || [],
+    columns: AccesosComentarioColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,

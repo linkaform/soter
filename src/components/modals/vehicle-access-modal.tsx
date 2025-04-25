@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+// /* eslint-disable @typescript-eslint/no-unused-vars */
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
 import {
@@ -31,17 +31,21 @@ import { Input } from "../ui/input";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { catalogoColores, catalogoEstados } from "@/lib/utils";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { useGetVehiculos } from "@/hooks/useGetVehiculos";
 import React from "react";
 import { Loader2 } from "lucide-react";
 import { useAccessStore } from "@/store/useAccessStore";
 import { toast } from "sonner";
 import useAuthStore from "@/store/useAuthStore";
+import VehicleList from "../vehicle-list";
+import { Vehiculo } from "@/lib/update-pass-full";
 
 interface Props {
   title: string;
   children: React.ReactNode;
+  vehiculos:Vehiculo[]
+  setVehiculos: Dispatch<SetStateAction<Vehiculo[]>>;
 }
 
 
@@ -67,11 +71,11 @@ const formSchema = z.object({
   }),
 })
 
-export const VehiclePassModal: React.FC<Props> = ({ title, children }) => {
+export const VehiclePassModal: React.FC<Props> = ({ title, children, vehiculos, setVehiculos }) => {
   const { newVehicle, setNewVehicle } = useAccessStore();
   const { userIdSoter } = useAuthStore();
   const [open, setOpen] = useState(false);
-console.log("user id", userIdSoter)
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -148,7 +152,14 @@ console.log("user id", userIdSoter)
             {title}
           </DialogTitle>
         </DialogHeader>
-
+{/* 
+				<div className="overflow-y-auto">
+					<VehicleList
+						vehicles={vehiculos}
+						setVehicles={setVehiculos} account_id={userIdSoter} isModalOpen={open}/>
+					<p className="text-red-500" > Agrega almenos un elemento para actualizar. </p>
+				</div> */}
+				
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <div className="grid md:grid-cols-2 gap-x-4 gap-y-8">
@@ -328,25 +339,6 @@ console.log("user id", userIdSoter)
         </Form>
       </DialogContent>
 
-      {/* 
-      <Dialog open={isLoading && tiposVehiculo?.length > 0}>
-   
-        <DialogContent className="sm:max-w-[425px] h-[250px] flex flex-col justify-center items-center">
-
-        <DialogHeader>
-          <DialogTitle className="text-2xl	 text-center  font-bold my-5">
-            Cargando
-          </DialogTitle>
-        </DialogHeader>
-
-      
-        <div className="flex justify-center items-center h-screen">
-          <div className="w-16 h-16 border-8 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
-        </div>
-      
-       
-      </DialogContent>
-    </Dialog> */}
     </Dialog>
   );
 };

@@ -32,20 +32,11 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { SearchAccessPass } from "@/hooks/useSearchPass";
 import { useMemo } from "react";
 
-
-
-
-
 interface TableProps {
   searchPass: SearchAccessPass | undefined;
 }
 
-
   export const AccesosPermitidosTable: React.FC<TableProps> = ({ searchPass }) => {
-
-
-
-
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -92,10 +83,6 @@ interface TableProps {
       <div className="mb-3">
         <h1 className="text-2xl font-bold">Accesos Permitidos</h1>
       </div>
-
-    
-     
-
       <div className="w-full">
         <ScrollArea className="h-36 w-full border rounded-md">
           <Table>

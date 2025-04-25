@@ -30,19 +30,16 @@ import { VehiculoAutorizadoColumns } from "./vehiculos-autorizados-columns";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SearchAccessPass } from "@/hooks/useSearchPass";
 import { VehiclePassModal } from "@/components/modals/vehicle-access-modal";
-import { useMemo } from "react";
-
-
-
+import { Dispatch, SetStateAction, useMemo } from "react";
+import { Vehiculo } from "@/lib/update-pass-full";
 
 interface TableProps {
   searchPass: SearchAccessPass | undefined;
-  allVehicles?: any[]
+  allVehicles?: any[];
+  vehiculos:Vehiculo[];
+  setVehiculos: Dispatch<SetStateAction<Vehiculo[]>>;
 }
-
-
-  export const VehiculosAutorizadosTable: React.FC<TableProps> = ({ allVehicles }) => {
-
+  export const VehiculosAutorizadosTable: React.FC<TableProps> = ({ allVehicles, vehiculos, setVehiculos }) => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -85,21 +82,18 @@ interface TableProps {
 
   return (
     <div className="w-full mt-3">
-        
-
         {/* Botones a la derecha */}
         <div className="flex justify-between mb-3 space-x-1">
         <div className="mb-3">
           <h1 className="text-2xl font-bold">Vehículos Autorizados</h1>
         </div>
        <div className="flex justify-end gap-2">
-       <VehiclePassModal title="Nuevo Vehiculo">
+       <VehiclePassModal title="Nuevo Vehiculo" vehiculos={vehiculos} setVehiculos={setVehiculos}>
           <Button className="bg-green-600 hover:bg-green-700 text-white">
             <Plus />
             Agregar Vehiculo
           </Button>
         </VehiclePassModal>
-
           <Button
             className="bg-blue-500 text-white hover:text-white hover:bg-blue-600"
             variant="outline"
@@ -117,11 +111,6 @@ interface TableProps {
           </Button>
        </div>
         </div>
-
-
-
-   
-
       <div className="w-full">
         <ScrollArea className="h-44 w-full border rounded-md">
           <Table>
@@ -174,9 +163,6 @@ interface TableProps {
           </Table>
         </ScrollArea>
       </div>
-
-
-
     </div>
   );
 }

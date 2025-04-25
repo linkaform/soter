@@ -26,24 +26,13 @@ import {
 import { PermisosCertificacionesColumns } from "./permisos-certificaciones-columns";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SearchAccessPass } from "@/hooks/useSearchPass";
-import { useMemo } from "react";
-
-
 
 
 
 interface TableProps {
-  searchPass: SearchAccessPass | undefined;
+  certificaciones:any[]
 }
-
-
-  export const PermisosTable: React.FC<TableProps> = ({ searchPass }) => {
-
-
-
-  const certificaciones = Array.isArray(searchPass?.certificaciones)
-    ? searchPass.certificaciones
-    : [];
+  export const PermisosTable: React.FC<TableProps> = ({certificaciones}) => {
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -58,12 +47,10 @@ interface TableProps {
   });
 
   const [globalFilter, setGlobalFilter] = React.useState("");
-  const columns = useMemo(() => (PermisosCertificacionesColumns),[true]);
-  const memoizedData = useMemo(() => certificaciones || [], [certificaciones]);
 
   const table = useReactTable({
-    data: memoizedData,
-    columns: columns,
+    data: certificaciones|| [],
+    columns: PermisosCertificacionesColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
@@ -90,7 +77,6 @@ interface TableProps {
       <div className="mb-3">
         <h1 className="text-2xl font-bold">Permisos/Certificaciones</h1>
       </div>
-
       <div className="w-full">
         <ScrollArea className="h-36 w-full border rounded-md">
           <Table>

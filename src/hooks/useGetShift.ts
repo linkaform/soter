@@ -35,6 +35,7 @@ export const useGetShift = (enableTurnosStats:boolean,enableShift:boolean) => {
     queryKey: ["getShift", area, location],
     enabled: enableShift,
     queryFn: async () => {
+      console.log("peticion load shift")
       const data = await getShift({ area, location });
       const textMsj = errorMsj(data) 
       if (textMsj){
@@ -51,9 +52,9 @@ export const useGetShift = (enableTurnosStats:boolean,enableShift:boolean) => {
           support_guards: filteredGuards,}
       }
     },
-    refetchOnWindowFocus: true,
+    // refetchOnWindowFocus: true,
     // refetchInterval: 600000,
-    refetchOnReconnect: true,
+    // refetchOnReconnect: true,
     // staleTime: 1000 * 60 * 5,
   });
 

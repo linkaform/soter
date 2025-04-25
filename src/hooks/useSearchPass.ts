@@ -67,11 +67,9 @@ export interface QrPase {
 
 export const useSearchPass = (enable:boolean) => {
   const { area, location, setLoading, isLoading: loading } = useShiftStore()
-
-  const { passCode, setPassCode } = useAccessStore()
-
+  const { passCode , setPassCode, clearPassCode} = useAccessStore()
   const queryClient = useQueryClient()
-console.log("pasconde vaslor",passCode)
+
   const {
     data: searchPass,
     isLoading,
@@ -79,25 +77,22 @@ console.log("pasconde vaslor",passCode)
     isFetching,
     refetch,
   } = useQuery<SearchAccessPass>({
-    queryKey: ["searchPass", passCode],
-    enabled: passCode!==""?true:false,
-    // enabled: Boolean(passCode) ,
+    queryKey: ["serchPass",area, location, passCode],
+    enabled:!!(area && location && passCode),
     queryFn: async () => {
       const data = await searchAccessPass(area, location, passCode)
-      console.log("peticion de search", data)
-
       const textMsj = errorMsj(data) 
       if (textMsj){
         toast.error(`Error al buscar pase, Error: ${textMsj.text}`);
+        clearPassCode()
         return {}
       }else {
+        // setPassCode(passCode)
         return data ? data?.response?.data : {};
       }
     },
-    // refetchOnWindowFocus: true,
-    // refetchInterval: 600000,
-    // refetchOnReconnect: true,
-    // staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
   })
 
 
@@ -120,9 +115,6 @@ console.log("pasconde vaslor",passCode)
   const exitRegisterAccess = useMutation({
     mutationFn: async () => {
       const data = await exitRegister(area, location, passCode)
-
-      console.log("exitRegisterAccess", data)
-
       return data.response?.data || []
     },
     onMutate: () => {

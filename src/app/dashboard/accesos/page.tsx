@@ -1,12 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { ActivePassesModal } from "@/components/modals/active-passes-modal";
 import {
 	ArrowBigLeft,
+	ArrowBigRight,
+	ArrowRight,
 	Car,
   DoorOpen,
   DoorOpenIcon,
@@ -30,7 +32,7 @@ import { VehiculosAutorizadosTable } from "@/components/table/accesos/vehiculos-
 import { EquiposAutorizadosTable } from "@/components/table/accesos/equipos-autorizados/table";
 import { useShiftStore } from "@/store/useShiftStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getStats } from "@/lib/get-shift";
+// import { getStats } from "@/lib/get-shift";
 import { TemporaryPassesModal } from "@/components/modals/temporary-passes-modal";
 import { useSearchPass } from "@/hooks/useSearchPass";
 import { useAccessStore } from "@/store/useAccessStore";
@@ -43,43 +45,37 @@ import GrupoCarousel from "@/components/grupo-carrusel";
 import { PermisosTable } from "@/components/table/accesos/permisos-certificaciones/table";
 import useAuthStore from "@/store/useAuthStore";
 import { esHexadecimal } from "@/lib/utils";
+import { getStats } from "@/lib/get-shift";
+import Link from "next/link";
 
 const AccesosPage = () => {
-  const {isAuth} = useAuthStore()
-  const { shift, isLoading:loadingShift } = useGetShift(false,true);
+  const { isAuth } = useAuthStore()
   const { area, location, setLoading , turno, setArea, setLocation} = useShiftStore();
-  const { passCode, setPassCode } = useAccessStore();
+  const { shift, isLoading:loadingShift } = useGetShift(false, true);
+
+  const { passCode, setPassCode, clearPassCode} = useAccessStore();
+
+//   const [pass, setPass] =useState("")
   const { isLoading, loading, searchPass } = useSearchPass(false);
 
   const [inputValue, setInputValue] = useState("");
-//   const [debouncedValue] = useState('');
-
+  const [ openActivePases , setOpenActivePases ] = useState(false)
   const queryClient = useQueryClient();
+
+  const [debouncedValue,setDebouncedValue]=useState("")
+  const [input,setInput]=useState("")
 
   const { data: stats } = useQuery<any>({
     queryKey: ["getAccessStats", area, location],
-	enabled:location && area ? true:false,
+	enabled: !!(location && area),
     queryFn: async () => {
       const data = await getStats({ area, location, page: "Accesos" });
       const responseData = data.response?.data || {};
       return responseData;
     },
-    refetchOnWindowFocus: true,
-    refetchOnReconnect: true,
+    // refetchOnWindowFocus: true,
+    // refetchOnReconnect: true,
   });
-  console.log("dentro de lista de accesos")
-//   useEffect(()=>{
-// 	if(shift)
-// 		setEnableShift(false)
-//   },[shift])
-
-//   useEffect(()=>{
-// 	if(searchPass){
-// 		if(!noEsObjetoVacio(searchPass)){
-// 			setPassCode("")
-// 		}
-// 	}
-//   },[searchPass])
 
   const exitRegisterAccess = useMutation({
     mutationFn: async () => {
@@ -111,9 +107,10 @@ const AccesosPage = () => {
     },
   });
 
-//   const certificaciones = Array.isArray(searchPass?.certificaciones)
-//     ? searchPass.certificaciones
-//     : [];
+  //COMENTADO
+  const certificaciones = Array.isArray(searchPass?.certificaciones)
+    ? searchPass.certificaciones
+    : [];
 
   const { newCommentsPase, setAllComments, newVehicle, setSelectedVehicle } =
     useAccessStore();
@@ -128,6 +125,7 @@ const AccesosPage = () => {
       setAllComments(allComments);
     }
   }, [newCommentsPase]);
+
 
   const allVehicles = [
     ...(newVehicle || []),
@@ -203,27 +201,35 @@ const AccesosPage = () => {
     },
   });
 
+ 
 
-//   useEffect(() => {
-// 	console.log("entrada value")
-//    	if(inputValue){
-// 		const handler = setTimeout(() => {
-// 			if(esHexadecimal(inputValue)){
-// 				// setInputValue("")
-// 				// setPassCode(inputValue)
-// 			}else{
-// 				console.log("No es hexadecimal", inputValue)
-// 			}
-// 		}, 700);
-// 		return () => clearTimeout(handler); 
-//    	}
-//   }, [inputValue]);
+  useEffect(() => {
+   	if(inputValue){
+		const handler = setTimeout(() => {
+			setDebouncedValue(inputValue)
+		}, 700);
+		return () => clearTimeout(handler); 
+   	}
+  }, [inputValue]);
 
-//   useEffect(() => {
-//     if (debouncedValue) {
-		
-//     }
-//   }, [debouncedValue]);
+  useEffect(() => {
+    if (debouncedValue) {
+		if(esHexadecimal(inputValue)){
+			setInputValue("")
+			setPassCode(inputValue)
+		}else{
+			setInput(inputValue)
+			setOpenActivePases(true)
+			setPassCode("")
+			setInputValue("")
+		}
+    }else{
+		setOpenActivePases(false)
+		setPassCode("")
+		setPassCode("")
+		setInputValue("")
+	}
+  }, [debouncedValue]);
   
 
   if (isLoading || loading || loadingShift) {
@@ -235,16 +241,25 @@ const AccesosPage = () => {
   }
   if (!turno && isAuth) {
 	return (
-	<div className="flex justify-center items-center h-screen">
-		<div className="text-3xl font-bold">Inicia turno para habilitar accesos...</div>
-		<Button
-			variant="ghost"
-			size="icon"
-			className="absolute right-0 top-0 h-full border rounded-tl-none rounded-bl-none rounded-tr-sm rounded-br-sm"
-		>
-			<ArrowBigLeft className="h-4 w-4" />
-		</Button>
-    </div>)
+		<>
+		<div className="flex justify-center items-center h-screen">
+		  <div className="flex items-center flex-col gap-2">
+			<div className="text-2xl font-bold">Inicia turno para habilitar accesos...</div>
+			<Link href="/dashboard/turnos">
+			<Button
+			  className="px-3 py-1 border border-blue-500 text-blue-500 bg-transparent hover:bg-blue-100 rounded-md text-sm font-medium hover:text-blue-500"
+			  variant="ghost"
+			  
+			>
+			  Ir a turnos
+			<ArrowRight className="w-4 h-4" />
+			</Button>
+			</Link>
+		  </div>
+		</div>
+	  </>
+	  
+		)
   }
 
   return (
@@ -267,17 +282,17 @@ const AccesosPage = () => {
 						size="icon"
 						className="absolute right-10 border rounded-none top-0 h-full "
 						onClick={() => {
-							if(esHexadecimal(inputValue)){
-								setPassCode(inputValue)
-							}else{
-								console.log("No es hexadecimal", inputValue)
+							if(inputValue){
+								setDebouncedValue(inputValue)
+							} else{
+								toast.error("Escribe algo para buscar...")
 							}
 						}}
 						>
 						<Search className="h-4 w-4" />
 						</Button>
 
-						<ActivePassesModal title="Pases Activos">
+						<ActivePassesModal title="Pases Activos"  input={input} setOpen={setOpenActivePases} open={openActivePases}>
 						<Button
 							variant="ghost"
 							size="icon"
@@ -367,7 +382,7 @@ const AccesosPage = () => {
 					<Button
 						className="bg-red-500 hover:bg-red-600 text-white"
 						variant="secondary"
-						onClick={() => setPassCode("")}
+						onClick={() =>{ setDebouncedValue(""); clearPassCode(); }}
 					>
 						<Eraser className="text-white" />
 						
@@ -376,7 +391,7 @@ const AccesosPage = () => {
 				</div>
 			</div>
 
-			{passCode && (
+			{ searchPass ? (
 			<>
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-4 ">
 					<div className="row-span-3  flex flex-col p-4 pt-0 ">
@@ -385,30 +400,31 @@ const AccesosPage = () => {
 					</div>
 					<div className="flex flex-col h-fit p-4 gap-3 ">
 						<ComentariosAccesosTable allComments={allComments} searchPass={searchPass} />
-						<PermisosTable searchPass={searchPass} />
+						<PermisosTable certificaciones={certificaciones}/>
 					</div>
 
-					{/* {searchPass?.grupo_areas_acceso && searchPass?.grupo_areas_acceso?.length > 0 && ( */}
-						<div className="flex flex-col h-fit p-4 gap-3 ">
-						<UltimosAccesosTable searchPass={searchPass} />
+					<div className="flex flex-col h-fit p-4 gap-3 ">
+						<UltimosAccesosTable searchPass={searchPass} /> 
 						
 							<AccesosPermitidosTable searchPass={searchPass} />
 						</div>
-					<div className="col-span-2 col-start-2 pr-4">
-						<div className="fbg-slate-400 ml-5">
-							<div className="">
-								<EquiposAutorizadosTable allEquipments={allEquipments} searchPass={searchPass} />
-							</div>
 
-							<div className="">
-								<VehiculosAutorizadosTable allVehicles={allVehicles} searchPass={searchPass} />
-							</div>
-						</div>
-					</div>
+						
+					  <div className="col-span-2 col-start-2 pr-4">
+					 	<div className="fbg-slate-400 ml-5">
+					 		<div className="">
+					 			<EquiposAutorizadosTable allEquipments={allEquipments} searchPass={searchPass} />
+					 		</div>
+
+					 		<div className="">
+					 			<VehiculosAutorizadosTable allVehicles={allVehicles} searchPass={searchPass} vehiculos={allVehicles} setVehiculos={setSelectedVehicle}/>
+					 		</div>
+					 	</div>
+					 </div>
 				</div>
 				
 			</>
-			)}
+			):null}
 		</div>
 		{!searchPass ?
 	  	<div className="flex flex-col justify-center items-center gap-10 mt-32">
@@ -423,7 +439,7 @@ const AccesosPage = () => {
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-5">
 					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100`}>
 						<div className="flex gap-6"><HomeIcon className="text-primary w-14 h-14" />
-							<span className="flex items-center font-bold text-5xl"> {stats?.articulos_concesionados_pendientes}0</span>
+							<span className="flex items-center font-bold text-5xl"> {stats?.visitas_en_dia}</span>
 						</div>
 						<div className="flex items-center space-x-0">
 							<div className="h-1 w-1/2 bg-cyan-100"></div>
@@ -434,7 +450,7 @@ const AccesosPage = () => {
 
 					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100 `}>
 						<div className="flex gap-6"><Users2Icon className="text-primary w-14 h-14"/>
-							<span className="flex items-center font-bold text-5xl"> {stats?.articulos_perdidos}0</span>
+							<span className="flex items-center font-bold text-5xl"> {stats?.personas_dentro}</span>
 						</div>
 						<div className="flex items-center space-x-0">
 							<div className="h-1 w-1/2 bg-cyan-100"></div>
@@ -445,7 +461,7 @@ const AccesosPage = () => {
 
 					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100 `} >
 						<div className="flex gap-6"><DoorOpenIcon className="text-primary w-14 h-14"/>
-							<span className="flex items-center font-bold text-5xl"> {stats?.articulos_perdidos}0</span>
+							<span className="flex items-center font-bold text-5xl"> {stats?.salidas_registradas}</span>
 						</div>
 						<div className="flex items-center space-x-0">
 							<div className="h-1 w-1/2 bg-cyan-100"></div>
@@ -456,7 +472,7 @@ const AccesosPage = () => {
 
 					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100 `} >
 						<div className="flex gap-6"><User className="text-primary w-14 h-14"/>
-							<span className="flex items-center font-bold text-5xl"> {stats?.articulos_perdidos}0</span>
+							<span className="flex items-center font-bold text-5xl"> {stats?.personal_dentro}</span>
 						</div>
 						<div className="flex items-center space-x-0">
 							<div className="h-1 w-1/2 bg-cyan-100"></div>
@@ -467,7 +483,7 @@ const AccesosPage = () => {
 
 					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100 `} >
 						<div className="flex gap-6"><Car className="text-primary w-14 h-14"/>
-							<span className="flex items-center font-bold text-5xl"> {stats?.articulos_perdidos}0</span>
+							<span className="flex items-center font-bold text-5xl"> {stats?.total_vehiculos_dentro}</span>
 						</div>
 						<div className="flex items-center space-x-0">
 							<div className="h-1 w-1/2 bg-cyan-100"></div>
@@ -478,7 +494,7 @@ const AccesosPage = () => {
 
 					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100 `} >
 						<div className="flex gap-6"><Laptop className="text-primary w-14 h-14"/>
-							<span className="flex items-center font-bold text-5xl"> {stats?.articulos_perdidos}0</span>
+							<span className="flex items-center font-bold text-5xl"> {stats?.total_equipos_dentro}</span>
 						</div>
 						<div className="flex items-center space-x-0">
 							<div className="h-1 w-1/2 bg-cyan-100"></div>

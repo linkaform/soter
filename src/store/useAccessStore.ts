@@ -14,7 +14,6 @@ interface UseStoreState {
   allEquipments: any[]; 
   selectedVehicle: any
 
-
   setNewCommentsAccesos: (comments: any[]) => void;
   setNewCommentsPase: (comments: any[]) => void;
   setNewVehicle: (vehicles: any[]) => void;
@@ -63,7 +62,7 @@ export const useAccessStore = create<UseStoreState>((set) => ({
   newEquipment: [],
   allEquipments: [],
   allCommentsPase: [],
-
+  
   setNewCommentsAccesos: (comments) => set({ newCommentsAccesos: comments }),
   setNewCommentsPase: (comments) => set({ newCommentsPase: comments }),
   setNewVehicle: (vehicles) => set({ newVehicle: vehicles }),

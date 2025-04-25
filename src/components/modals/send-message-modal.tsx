@@ -43,8 +43,6 @@ export const SendMessageModal: React.FC<SendMessageModalProps> = ({
 
   const { searchPass } = useSearchPass(false);
 
-
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {

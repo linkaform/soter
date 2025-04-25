@@ -38,11 +38,7 @@ export const CommentPassModal: React.FC<CommentPassModalProps> = ({
   title,
   children,
 }) => {
-
-
-    const [open, setOpen] = useState(false); 
-  
-
+  const [open, setOpen] = useState(false); 
 
   const {
     newCommentsPase, 

@@ -43,10 +43,6 @@ interface TableProps {
 
   export const EquiposAutorizadosTable: React.FC<TableProps> = ({ allEquipments }) => {
 
-
-
-  
-
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -89,11 +85,6 @@ interface TableProps {
 
   return (
     <div className="w-full">
-
-
-
-     
-
       {/* Botones a la derecha */}
       <div className="flex justify-between mb-3 space-x-3">
         <div className="mb-3">
@@ -124,15 +115,6 @@ interface TableProps {
         </Button>
          </div>
       </div>
-
-
-
-
-
-
-
-   
-
       <div className="w-full">
         <ScrollArea className="h-44 w-full border rounded-md">
           <Table>

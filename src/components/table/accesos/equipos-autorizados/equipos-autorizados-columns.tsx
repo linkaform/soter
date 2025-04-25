@@ -1,8 +1,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 
-
-
 export const EquipoAutorizadoColumns: ColumnDef<any>[] = [
   {
     id: "select", 

@@ -5,7 +5,7 @@ import { errorMsj } from "@/lib/utils";
 import { useAreasLocationStore } from "@/store/useGetAreaLocationByUser";
 import { useQuery } from "@tanstack/react-query";
 
-export const useCatalogoPaseAreaLocation = (location:string, enableLocation:boolean, enableArea:boolean) => {
+export const useCatalogoPaseAreaLocationUseApi = (location:string, enableLocation:boolean, enableArea:boolean) => {
   const {
     setAreas,
     setLocations

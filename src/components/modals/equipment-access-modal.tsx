@@ -87,28 +87,14 @@ export const EqipmentPassModal: React.FC<Props> = ({ title, children }) => {
   });
 
   function onSubmit(data: z.infer<typeof formSchema>) {
- 
     console.log(data);
-
-
     addNewEquipment(data)
-
-
-
-
     form.reset();
-
     toast.success(
       "Equipo listo para agregar al registro de ingreso."
     );
-
-    
-
-
     setOpen(false);
   }
-
-
 
   const addNewEquipment = (data: z.infer<typeof formSchema>) => {
     setNewEquipment([
@@ -123,12 +109,6 @@ export const EqipmentPassModal: React.FC<Props> = ({ title, children }) => {
       ...newEquipment,
     ])
   }
-
-
-
-  console.log( newEquipment ,"newEquipment")
-
-
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

@@ -18,7 +18,6 @@ interface Props {
 }
 
 const Credentials: React.FC<Props> = ({ searchPass }) => {
-
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Vencido":
@@ -87,7 +86,7 @@ const Credentials: React.FC<Props> = ({ searchPass }) => {
 					</div>
 
 					<div>
-						<span className="text-gray-500">Estatus:  <span className={`text-${getStatusColor(
+						<span className="text-gray-500">Estatus:  <span className={`font-bold text-${getStatusColor(
 							searchPass?.status_pase ?? ""
 						)}-600`}>{searchPass?.status_pase}</span></span>
 					</div>
