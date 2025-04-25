@@ -414,7 +414,7 @@ const AccesosPage = () => {
 					 		</div>
 
 					 		<div className="">
-					 			<VehiculosAutorizadosTable allVehicles={allVehicles} searchPass={searchPass} vehiculos={allVehicles} setVehiculos={setSelectedVehicle}/>
+					 			<VehiculosAutorizadosTable allVehicles={allVehicles} searchPass={searchPass} />
 					 		</div>
 					 	</div>
 					 </div>

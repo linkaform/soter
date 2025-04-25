@@ -130,7 +130,7 @@ export const VehiclePassModal: React.FC<Props> = ({ title, children }) => {
     ]);
   };
 
-  const isLoading = isLoadingMarcas || isLoadingModelos;
+  // const isLoading = isLoadingMarcas || isLoadingModelos;
 
 
 

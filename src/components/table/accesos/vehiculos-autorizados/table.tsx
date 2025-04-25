@@ -36,10 +36,8 @@ import { Vehiculo } from "@/lib/update-pass-full";
 interface TableProps {
   searchPass: SearchAccessPass | undefined;
   allVehicles?: any[];
-  vehiculos:Vehiculo[];
-  setVehiculos: Dispatch<SetStateAction<Vehiculo[]>>;
 }
-  export const VehiculosAutorizadosTable: React.FC<TableProps> = ({ allVehicles, vehiculos, setVehiculos }) => {
+  export const VehiculosAutorizadosTable: React.FC<TableProps> = ({ allVehicles }) => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
