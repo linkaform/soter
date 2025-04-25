@@ -25,9 +25,6 @@ import {
 
 import { PermisosCertificacionesColumns } from "./permisos-certificaciones-columns";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { SearchAccessPass } from "@/hooks/useSearchPass";
-
-
 
 interface TableProps {
   certificaciones:any[]

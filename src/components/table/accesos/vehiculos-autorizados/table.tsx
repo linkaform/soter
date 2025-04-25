@@ -88,7 +88,7 @@ interface TableProps {
           <h1 className="text-2xl font-bold">Vehículos Autorizados</h1>
         </div>
        <div className="flex justify-end gap-2">
-       <VehiclePassModal title="Nuevo Vehiculo" vehiculos={vehiculos} setVehiculos={setVehiculos}>
+       <VehiclePassModal title="Nuevo Vehiculo" >
           <Button className="bg-green-600 hover:bg-green-700 text-white">
             <Plus />
             Agregar Vehiculo

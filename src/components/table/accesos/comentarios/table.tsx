@@ -32,16 +32,11 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CommentPassModal } from "@/components/modals/comment-pass-modal";
 import { SearchAccessPass } from "@/hooks/useSearchPass";
-import { useMemo } from "react";
-
-
-
 
 interface TableProps {
   searchPass: SearchAccessPass | undefined;
   allComments?: any[]
 }
-
 
   export const ComentariosAccesosTable: React.FC<TableProps> = ({ allComments }) => {
   const [sorting, setSorting] = React.useState<SortingState>([]);

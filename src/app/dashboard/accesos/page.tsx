@@ -6,8 +6,6 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ActivePassesModal } from "@/components/modals/active-passes-modal";
 import {
-	ArrowBigLeft,
-	ArrowBigRight,
 	ArrowRight,
 	Car,
   DoorOpen,
@@ -32,7 +30,6 @@ import { VehiculosAutorizadosTable } from "@/components/table/accesos/vehiculos-
 import { EquiposAutorizadosTable } from "@/components/table/accesos/equipos-autorizados/table";
 import { useShiftStore } from "@/store/useShiftStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-// import { getStats } from "@/lib/get-shift";
 import { TemporaryPassesModal } from "@/components/modals/temporary-passes-modal";
 import { useSearchPass } from "@/hooks/useSearchPass";
 import { useAccessStore } from "@/store/useAccessStore";

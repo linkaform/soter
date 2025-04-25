@@ -31,21 +31,16 @@ import { Input } from "../ui/input";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { catalogoColores, catalogoEstados } from "@/lib/utils";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import { useGetVehiculos } from "@/hooks/useGetVehiculos";
 import React from "react";
-import { Loader2 } from "lucide-react";
 import { useAccessStore } from "@/store/useAccessStore";
 import { toast } from "sonner";
 import useAuthStore from "@/store/useAuthStore";
-import VehicleList from "../vehicle-list";
-import { Vehiculo } from "@/lib/update-pass-full";
 
 interface Props {
   title: string;
   children: React.ReactNode;
-  vehiculos:Vehiculo[]
-  setVehiculos: Dispatch<SetStateAction<Vehiculo[]>>;
 }
 
 
@@ -71,7 +66,7 @@ const formSchema = z.object({
   }),
 })
 
-export const VehiclePassModal: React.FC<Props> = ({ title, children, vehiculos, setVehiculos }) => {
+export const VehiclePassModal: React.FC<Props> = ({ title, children }) => {
   const { newVehicle, setNewVehicle } = useAccessStore();
   const { userIdSoter } = useAuthStore();
   const [open, setOpen] = useState(false);
