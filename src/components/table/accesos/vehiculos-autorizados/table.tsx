@@ -30,8 +30,7 @@ import { VehiculoAutorizadoColumns } from "./vehiculos-autorizados-columns";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { SearchAccessPass } from "@/hooks/useSearchPass";
 import { VehiclePassModal } from "@/components/modals/vehicle-access-modal";
-import { Dispatch, SetStateAction, useMemo } from "react";
-import { Vehiculo } from "@/lib/update-pass-full";
+import { useMemo } from "react";
 
 interface TableProps {
   searchPass: SearchAccessPass | undefined;

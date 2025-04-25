@@ -108,12 +108,12 @@ export const VehiclePassModal: React.FC<Props> = ({ title, children }) => {
 
  
 
-  const { data: marcasVehiculo, isLoading: isLoadingMarcas } = useGetVehiculos({
+  const { data: marcasVehiculo} = useGetVehiculos({
     tipo,
     account_id: userIdSoter
   });
 
-  const { data: modelosVehiculo, isLoading: isLoadingModelos } =
+  const { data: modelosVehiculo } =
     useGetVehiculos({ tipo,  account_id: userIdSoter, marca });
 
   const addNewVehicle = (data: z.infer<typeof formSchema>) => {
