@@ -7,9 +7,7 @@ import {
 } from "../ui/dialog";
 
 import SearchInput from "../search-input";
-import { useQuery } from "@tanstack/react-query";
 import { useShiftStore } from "@/store/useShiftStore";
-import { fetchPasesActivos } from "@/lib/access";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Image from "next/image";
 import { esHexadecimal } from "@/lib/utils";
