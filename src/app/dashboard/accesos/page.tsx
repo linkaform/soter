@@ -29,7 +29,7 @@ import { UltimosAccesosTable } from "@/components/table/accesos/ultimos-accesos/
 import { VehiculosAutorizadosTable } from "@/components/table/accesos/vehiculos-autorizados/table";
 import { EquiposAutorizadosTable } from "@/components/table/accesos/equipos-autorizados/table";
 import { useShiftStore } from "@/store/useShiftStore";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { TemporaryPassesModal } from "@/components/modals/temporary-passes-modal";
 import { useSearchPass } from "@/hooks/useSearchPass";
 import { useAccessStore } from "@/store/useAccessStore";
@@ -42,8 +42,8 @@ import GrupoCarousel from "@/components/grupo-carrusel";
 import { PermisosTable } from "@/components/table/accesos/permisos-certificaciones/table";
 import useAuthStore from "@/store/useAuthStore";
 import { esHexadecimal } from "@/lib/utils";
-import { getStats } from "@/lib/get-shift";
 import Link from "next/link";
+import { useGetStats } from "@/hooks/useGetStats";
 
 const AccesosPage = () => {
   const { isAuth } = useAuthStore()
@@ -62,17 +62,7 @@ const AccesosPage = () => {
   const [debouncedValue,setDebouncedValue]=useState("")
   const [input,setInput]=useState("")
 
-  const { data: stats } = useQuery<any>({
-    queryKey: ["getAccessStats", area, location],
-	enabled: !!(location && area),
-    queryFn: async () => {
-      const data = await getStats({ area, location, page: "Accesos" });
-      const responseData = data.response?.data || {};
-      return responseData;
-    },
-    // refetchOnWindowFocus: true,
-    // refetchOnReconnect: true,
-  });
+  const { data: stats } = useGetStats(area, location, 'Accesos')
 
   const exitRegisterAccess = useMutation({
     mutationFn: async () => {
@@ -93,6 +83,7 @@ const AccesosPage = () => {
       toast.success("Salida Exitosa");
 
       queryClient.invalidateQueries({ queryKey: ["serchPass"] });
+      queryClient.invalidateQueries({ queryKey: ['getStats'] });
     },
     onError: (error) => {
       const errorMsg = `❌ Hubo un error en la salida: ${error.message}`;
@@ -107,7 +98,15 @@ const AccesosPage = () => {
   //COMENTADO
   const certificaciones = Array.isArray(searchPass?.certificaciones)
     ? searchPass.certificaciones
-    : [];
+    : []
+
+  const ultimosAccesos = Array.isArray(searchPass?.ultimo_acceso)
+    ? searchPass.ultimo_acceso
+    : []
+
+  const accesosPermitidos = Array.isArray(searchPass?.grupo_areas_acceso)
+    ? searchPass.grupo_areas_acceso
+    : []
 
   const { newCommentsPase, setAllComments, newVehicle, setSelectedVehicle } =
     useAccessStore();
@@ -181,6 +180,7 @@ const AccesosPage = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["serchPass"] });
+      queryClient.invalidateQueries({ queryKey: ['getStats'] });
 
       setPassCode("");
 
@@ -395,25 +395,25 @@ const AccesosPage = () => {
 						<GrupoCarousel titulo={"Miembros del grupo"} />
 					</div>
 					<div className="flex flex-col h-fit p-4 gap-3 ">
-						<ComentariosAccesosTable allComments={allComments} searchPass={searchPass} />
+						<ComentariosAccesosTable allComments={allComments} />
 						<PermisosTable certificaciones={certificaciones}/>
 					</div>
 
 					<div className="flex flex-col h-fit p-4 gap-3 ">
-						<UltimosAccesosTable searchPass={searchPass} /> 
+						<UltimosAccesosTable ultimosAccesos={ultimosAccesos} /> 
 						
-							<AccesosPermitidosTable searchPass={searchPass} />
+							<AccesosPermitidosTable accesosPermitidos={accesosPermitidos} />
 						</div>
 
 						
 					  <div className="col-span-2 col-start-2 pr-4">
 					 	<div className="fbg-slate-400 ml-5">
 					 		<div className="">
-					 			<EquiposAutorizadosTable allEquipments={allEquipments} searchPass={searchPass} />
+					 			<EquiposAutorizadosTable allEquipments={allEquipments} />
 					 		</div>
 
 					 		<div className="">
-					 			<VehiculosAutorizadosTable allVehicles={allVehicles} searchPass={searchPass} />
+					 			<VehiculosAutorizadosTable allVehicles={allVehicles} />
 					 		</div>
 					 	</div>
 					 </div>

@@ -25,14 +25,12 @@ import {
 
 import { UltimosAccesosColumns } from "./ultimos-accesos-columns";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { SearchAccessPass } from "@/hooks/useSearchPass";
-import { useMemo } from "react";
 
 interface TableProps {
-  searchPass: SearchAccessPass | undefined;
+  ultimosAccesos: any[] | undefined;
 }
 
-export const UltimosAccesosTable: React.FC<TableProps> = ({ searchPass }) => {
+export const UltimosAccesosTable: React.FC<TableProps> = ({ ultimosAccesos }) => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -46,13 +44,11 @@ export const UltimosAccesosTable: React.FC<TableProps> = ({ searchPass }) => {
   });
 
   const [globalFilter, setGlobalFilter] = React.useState("");
-  const columns = useMemo(() => (UltimosAccesosColumns),[true]);
-  const memoizedData = useMemo(() => searchPass?.ultimo_acceso || [], [searchPass?.ultimo_acceso]);
 
   const table = useReactTable({
-    data: memoizedData,
+    data: ultimosAccesos || [],
 
-    columns: columns,
+    columns: UltimosAccesosColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,

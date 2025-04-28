@@ -28,15 +28,11 @@ import {
 
 import { EquipoAutorizadoColumns } from "./equipos-autorizados-columns";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { SearchAccessPass } from "@/hooks/useSearchPass";
 import { EqipmentPassModal } from "@/components/modals/equipment-access-modal";
-import { useMemo } from "react";
-
 
 
 
 interface TableProps {
-  searchPass: SearchAccessPass | undefined;
   allEquipments: any[]
 }
 
@@ -56,12 +52,10 @@ interface TableProps {
   });
 
   const [globalFilter, setGlobalFilter] = React.useState("");
-  const columns = useMemo(() => (EquipoAutorizadoColumns),[true]);
-  const memoizedData = useMemo(() => allEquipments || [], [allEquipments]);
 
   const table = useReactTable({
-    data: memoizedData || [],
-    columns: columns,
+    data: allEquipments || [],
+    columns: EquipoAutorizadoColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,

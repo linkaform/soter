@@ -15,6 +15,7 @@ import Image from "next/image";
 import { esHexadecimal } from "@/lib/utils";
 import { toast } from "sonner";
 import { useAccessStore } from "@/store/useAccessStore";
+import { usePasses } from "@/hooks/usePasses";
 
 interface ActivePassesModalProps {
   title: string;
@@ -30,19 +31,10 @@ export const ActivePassesModal: React.FC<ActivePassesModalProps> = ({
   title,
   children, open, setOpen, input
 }) => {
-  const { area, location } = useShiftStore();
+  const { location } = useShiftStore();
   const { setPassCode , passCode} = useAccessStore();
   const [searchText, setSearchText] = useState("");
-  const { data: activePasses, isLoading } = useQuery<any>({
-    queryKey: ["getActivePasses", area, location],
-    enabled: open,
-    queryFn: async () => {
-      const data = await fetchPasesActivos({ area, location });
-      return Array.isArray(data.response?.data) ? data?.response?.data : [];
-    },
-    refetchOnWindowFocus: true,
-    refetchOnReconnect: true,
-  });
+  const { data: activePasses, isLoading } = usePasses(location);
 console.log("input", input)
   useEffect(() => {
 	console.log("use effect", open, input)

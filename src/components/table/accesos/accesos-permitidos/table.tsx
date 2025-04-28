@@ -29,14 +29,12 @@ import {
 } from "./accesos-permitidos-columns";
 
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { SearchAccessPass } from "@/hooks/useSearchPass";
-import { useMemo } from "react";
 
 interface TableProps {
-  searchPass: SearchAccessPass | undefined;
+  accesosPermitidos: any[] | undefined;
 }
 
-  export const AccesosPermitidosTable: React.FC<TableProps> = ({ searchPass }) => {
+  export const AccesosPermitidosTable: React.FC<TableProps> = ({ accesosPermitidos }) => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -51,12 +49,9 @@ interface TableProps {
 
   const [globalFilter, setGlobalFilter] = React.useState("");
 
-  const columns = useMemo(() => (accesosPermitidosColumns),[true]);
-  const memoizedData = useMemo(() => searchPass?.grupo_areas_acceso  || [], [searchPass?.grupo_areas_acceso ]);
-  
   const table = useReactTable({
-    data: memoizedData,
-    columns: columns,
+    data: accesosPermitidos || [],
+    columns: accesosPermitidosColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,

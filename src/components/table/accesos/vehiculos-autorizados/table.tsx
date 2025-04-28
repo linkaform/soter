@@ -28,12 +28,9 @@ import {
 
 import { VehiculoAutorizadoColumns } from "./vehiculos-autorizados-columns";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { SearchAccessPass } from "@/hooks/useSearchPass";
 import { VehiclePassModal } from "@/components/modals/vehicle-access-modal";
-import { useMemo } from "react";
 
 interface TableProps {
-  searchPass: SearchAccessPass | undefined;
   allVehicles?: any[];
 }
   export const VehiculosAutorizadosTable: React.FC<TableProps> = ({ allVehicles }) => {
@@ -50,12 +47,10 @@ interface TableProps {
   });
 
   const [globalFilter, setGlobalFilter] = React.useState("");
-  const columns = useMemo(() => (VehiculoAutorizadoColumns),[true]);
-  const memoizedData = useMemo(() => allVehicles || [], [allVehicles]);
 
   const table = useReactTable({
-    data: memoizedData,
-    columns: columns,
+    data: allVehicles || [],
+    columns: VehiculoAutorizadoColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,

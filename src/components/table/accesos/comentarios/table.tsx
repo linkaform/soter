@@ -31,11 +31,9 @@ import {
 } from "./accesos-comentarios-columns";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { CommentPassModal } from "@/components/modals/comment-pass-modal";
-import { SearchAccessPass } from "@/hooks/useSearchPass";
 
 interface TableProps {
-  searchPass: SearchAccessPass | undefined;
-  allComments?: any[]
+  allComments?: any[] | undefined
 }
 
   export const ComentariosAccesosTable: React.FC<TableProps> = ({ allComments }) => {

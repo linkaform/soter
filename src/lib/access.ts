@@ -62,11 +62,9 @@ export const fetchTemporalPasses = async ({
 };
 
 export const fetchPasesActivos = async ({
-  area = "",
   location = "",
 }) => {
   const payload = {
-    caseta: area,
     location,
     option: "lista_pases",
     script_name: "script_turnos.py",
