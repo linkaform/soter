@@ -437,13 +437,23 @@ return (
 								<Image
 									width={280}
 									height={280}
-									src={dataCatalogos?.pass_selected?.qr_pase[0]?.file_url ? "/nouser.svg":"/nouser.svg" } 
+									src={dataCatalogos?.pass_selected?.qr_pase[0]?.file_url ?? "/nouser.svg" } 
 									alt="Imagen"
 									className="w-42 h-42 object-contain bg-gray-200 rounded-lg" 
 								/>
 							</div>
 							</>
-						:null}
+						:<>
+						<div className="w-full flex justify-center">
+							<Image
+								width={280}
+								height={280}
+								src={"/nouser.svg" } 
+								alt="Imagen"
+								className="w-42 h-42 object-contain bg-gray-200 rounded-lg" 
+							/>
+						</div>
+						</>}
 					</div>
 
 					<Button className="w-40 h-12  bg-yellow-500 hover:bg-yellow-600" type="submit" onClick={onDescargarPDF} disabled={loadingPdf}>

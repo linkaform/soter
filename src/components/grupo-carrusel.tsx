@@ -37,7 +37,7 @@ const GrupoCarousel = ({ titulo = "Miembros del grupo" }: {titulo:string}) => {
           },
         ];
   return (
-    <div className="flex flex-col justify-center w-full py-3">
+    <div className="flex flex-col w-full max-w-xl ">
         <h2 className="text-2xl font-bold mb-4 text-center">{titulo}</h2>
         <small className="text-center mt-0 mb-2 text-gray-500">Seleccione a los miembros presentes</small>
       <div className="flex justify-center">

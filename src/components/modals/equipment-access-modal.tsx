@@ -69,7 +69,6 @@ export const EqipmentPassModal: React.FC<Props> = ({ title, children }) => {
 
   const {
     newEquipment,
-
     setNewEquipment,
   } = useAccessStore()
 

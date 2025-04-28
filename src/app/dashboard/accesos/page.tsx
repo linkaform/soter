@@ -312,7 +312,6 @@ const AccesosPage = () => {
 							);
 							return;
 							}
-
 							doAccess.mutate();
 						}}
 						>
@@ -391,7 +390,7 @@ const AccesosPage = () => {
 			{ searchPass ? (
 			<>
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-4 ">
-					<div className="row-span-3  flex flex-col p-4 pt-0 ">
+					<div className="row-span-3  flex flex-col p-4 pt-0">
 						<Credentials searchPass={searchPass} />
 						<GrupoCarousel titulo={"Miembros del grupo"} />
 					</div>

@@ -1,5 +1,6 @@
 import { CloseShiftModal } from "@/components/modals/close-shift-modal";
 import { StartShiftModal } from "@/components/modals/start-shift-modal";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useGetShift } from "@/hooks/useGetShift";
 import { useShiftStore } from "@/store/useShiftStore";
@@ -35,16 +36,16 @@ const TurnStatus = () => {
         <div className="flex space-x-10">
           <div>
             <p>Fecha:</p>
-       <p>{formattedDate}</p>
+            <p className="mt-1">{formattedDate}</p>
          </div>
 
           <div>
             <p>Hora:</p>
-             <p>{formattedTime}</p>
+             <p className="mt-1">{formattedTime}</p>
          </div>
 
           <div>
-            <p>Estatus del Turno:</p>
+            {/* <p>Estatus del Turno:</p>
             <p
               className={
                 shift?.guard?.status_turn === "Turno Cerrado"
@@ -53,8 +54,20 @@ const TurnStatus = () => {
               }
             >
               {shift?.guard?.status_turn}
-            </p>
+            </p> */}
+            <p>Estatus del Turno:</p>
+             <Badge
+              className={`text-white text-md  ${
+              shift?.guard?.status_turn === "Turno Cerrado"
+                ? "bg-red-600 hover:bg-red-600"
+                : "bg-green-600 hover:bg-green-600"
+              }`}
+            >
+              {shift?.guard?.status_turn}
+            </Badge>
           </div>
+
+         
         </div>
       </div>
 	<div>
