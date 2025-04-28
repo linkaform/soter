@@ -17,6 +17,7 @@ import {
   LogIn,
   Menu,
   Plus,
+  Scan,
   Search,
   User,
   Users2Icon,
@@ -44,6 +45,7 @@ import useAuthStore from "@/store/useAuthStore";
 import { esHexadecimal } from "@/lib/utils";
 import Link from "next/link";
 import { useGetStats } from "@/hooks/useGetStats";
+import { ScanPassWithCameraModal } from "@/components/modals/scan-pass-with-camera";
 
 const AccesosPage = () => {
   const { isAuth } = useAuthStore()
@@ -338,7 +340,12 @@ const AccesosPage = () => {
 						Registrar Salida
 						</Button>
 					)}
-
+          <ScanPassWithCameraModal title="Escanea un pase con la camara" >
+						<Button className="bg-yellow-400 hover:bg-yellow-500 text-black">
+              <Scan />
+							Escanear un pase
+						</Button>
+          </ScanPassWithCameraModal>
 					{!passCode && (
 						<AddVisitModal title="Nueva Visita">
 						<Button className="bg-green-600 hover:bg-green-700 text-white">
