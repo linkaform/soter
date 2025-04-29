@@ -100,7 +100,7 @@ export const usePaseEntrada = (locationConfSeguridad:string) => {
         enabled: locationConfSeguridad!=="" ? true:false, 
         queryFn: async () => {
             const data = await getConfSeguridad(locationConfSeguridad); 
-            return data.response?.data.requerimientos || []; 
+            return data.response?.data || []; 
         },
        
         refetchOnWindowFocus: true, 

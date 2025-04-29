@@ -28,7 +28,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 
 import { EntryPassModal } from "@/components/modals/add-pass-modal";
-import { List, Mail, MessageCircleMore } from "lucide-react";
+import { List } from "lucide-react";
 import { formatDateToString, formatFecha } from "@/lib/utils";
 import AreasList from "@/components/areas-list";
 import { Areas, Comentarios } from "@/hooks/useCreateAccessPass";
@@ -169,12 +169,13 @@ import { usePaseEntrada } from "@/hooks/usePaseEntrada";
 	}, []); 
 
 	const { dataConfigLocation, isLoadingConfigLocation } = usePaseEntrada(ubicacionSeleccionada)
-	const [enviar_correo_pre_registro, set_enviar_correo_pre_registro] = useState<string[]>([]);
+	const [enviar_correo_pre_registro] = useState<string[]>([]);
 	const [formatedDocs, setFormatedDocs] = useState<string[]>([])
+	const [formatedEnvio, setFormatedEnvio] = useState<string[]>([])
 	const [comentariosList, setComentariosList] = useState<Comentarios[]>([]);
 	const [areasList, setAreasList] = useState<Areas[]>([]);
-	const [isActive, setIsActive] = useState(false);
-	const [isActiveSMS, setIsActiveSMS] = useState(false);
+	// const [isActive, setIsActive] = useState(false);
+	// const [isActiveSMS, setIsActiveSMS] = useState(false);
 	const [isActiveFechaFija, setIsActiveFechaFija] = useState(true);
 	const [isActiveRangoFecha, setIsActiveRangoFecha] = useState(false);
 	const [isActivelimitarDias, setIsActiveLimitarDias] = useState(true);
@@ -245,14 +246,25 @@ import { usePaseEntrada } from "@/hooks/usePaseEntrada";
 
 	useEffect(()=>{
 		if(dataConfigLocation){
-		const docs: string[] = []
-		dataConfigLocation?.map((value:string)=>{
-			if(value=="identificacion") {
-				docs.push("agregarIdentificacion")}
-			if(value=="fotografia") {
-				docs.push("agregarFoto")}
-		})
-		setFormatedDocs(docs)
+			const docs: string[] = []
+			dataConfigLocation?.requerimientos?.map((value:string)=>{
+				if(value=="identificacion") {
+					docs.push("agregarIdentificacion")}
+				if(value=="fotografia") {
+					docs.push("agregarFoto")}
+			})
+			setFormatedDocs(docs)
+
+			const envioCS: string[] = []
+			dataConfigLocation?.envios?.map((envio: string) => {
+				if(envio == "correo") {
+					envioCS.push("enviar_correo_pre_registro")
+				}
+				if(envio == "sms") {
+					envioCS.push("enviar_sms_pre_registro")
+				}
+			})
+			setFormatedEnvio(envioCS)
 		}
 	},[dataConfigLocation])
 
@@ -274,7 +286,7 @@ import { usePaseEntrada } from "@/hooks/usePaseEntrada";
 				creado_por_id: userIdSoter ,// userIdSoter,
 				creado_por_email: userEmailSoter,// userEmailSoter
 			},
-			enviar_correo_pre_registro: enviar_correo_pre_registro, 
+			enviar_correo_pre_registro: formatedEnvio, 
 			tipo_visita_pase: tipoVisita,
 			fechaFija: date !=="" ? formatDateToString(date):"",
 			fecha_desde_visita: tipoVisita === "fecha_fija"? 
@@ -303,39 +315,39 @@ import { usePaseEntrada } from "@/hooks/usePaseEntrada";
 		
 	};
 
-	const handleToggleEmail = () => {
-		if (form.getValues("email")=="") { 
-			form.setError("email", { type: "manual", message: "El campo email debe tener datos." });
-		} else {
-			form.clearErrors("email");
-		}
+	// const handleToggleEmail = () => {
+	// 	if (form.getValues("email")=="") { 
+	// 		form.setError("email", { type: "manual", message: "El campo email debe tener datos." });
+	// 	} else {
+	// 		form.clearErrors("email");
+	// 	}
 
-		const email= "enviar_correo_pre_registro"
-		set_enviar_correo_pre_registro((prev) => {
-			const pre = prev.includes(email)
-			? prev.filter((d) => d !== email) 
-			: [...prev, email];
-			return pre;
-		});
-		setIsActive(!isActive);
+	// 	const email= "enviar_correo_pre_registro"
+	// 	set_enviar_correo_pre_registro((prev) => {
+	// 		const pre = prev.includes(email)
+	// 		? prev.filter((d) => d !== email) 
+	// 		: [...prev, email];
+	// 		return pre;
+	// 	});
+	// 	setIsActive(!isActive);
 
-	};
+	// };
 
-	const handleToggleSMS = () => {
-		if (!form.getValues("telefono")) {
-			form.setError("telefono", { type: "manual", message: "El campo telefono debe tener datos." });
-		} else {
-			form.clearErrors("telefono");
-		}
-		const sms= "enviar_sms_pre_registro"
-		set_enviar_correo_pre_registro((prev) => {
-			const pre = prev.includes(sms)
-			? prev.filter((d) => d !== sms)
-			: [...prev, sms];
-			return pre;
-		});
-		setIsActiveSMS(!isActiveSMS);
-	};
+	// const handleToggleSMS = () => {
+	// 	if (!form.getValues("telefono")) {
+	// 		form.setError("telefono", { type: "manual", message: "El campo telefono debe tener datos." });
+	// 	} else {
+	// 		form.clearErrors("telefono");
+	// 	}
+	// 	const sms= "enviar_sms_pre_registro"
+	// 	set_enviar_correo_pre_registro((prev) => {
+	// 		const pre = prev.includes(sms)
+	// 		? prev.filter((d) => d !== sms)
+	// 		: [...prev, sms];
+	// 		return pre;
+	// 	});
+	// 	setIsActiveSMS(!isActiveSMS);
+	// };
 
 	const handleToggleAdvancedOptions = () => {
 		setIsActiveAdvancedOptions(!isActiveAdvancedOptions);
@@ -607,7 +619,7 @@ return (
 						/>         
 					</div>
 					
-					<div className="flex gap-2 flex-col">
+					{/* <div className="flex gap-2 flex-col">
 						<FormLabel className="mb-2">
 							Selecciona una opción:
 						</FormLabel>
@@ -618,7 +630,7 @@ return (
 								onClick={handleToggleEmail}
 								className={`px-4 py-2 rounded-md transition-all duration-300 ${
 									isActive ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
-								} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}  //hover:bg-transparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]
+								} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
 								>
 								<div className="flex flex-wrap items-center">
 									{isActive ? (
@@ -660,7 +672,7 @@ return (
 							</div>
 						</div>
 						
-					</div>
+					</div> */}
 
 					<h1 className="font-bold text-xl">Sobre vigencia y acceso</h1>
 					<div className="flex items-center flex-wrap gap-5">
