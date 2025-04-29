@@ -6,6 +6,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { replaceNullsInArrayDynamic } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
 import { Eye, Pencil} from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 type Imagen = {
   file_name: string;
@@ -45,6 +46,8 @@ export interface PaseEntrada {
   enviar_pre_sms:enviar_pre_sms[]
   grupo_vehiculos: string[];  
   grupo_equipos: string[]; 
+  total_entradas?: number;
+  limite_de_acceso?: number;
 }
 
 const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
@@ -187,6 +190,40 @@ export const pasesEntradaColumns: ColumnDef<PaseEntrada>[] = [
       return <div>{fechaSinSegundos}</div>;
     },
     enableSorting: true,
+  },
+  {
+    accessorKey: "limite_de_acceso",
+    header: "Limite de Entradas",
+    cell: ({ row }) => {
+      const total_entradas = row.original.total_entradas;
+      const limite_entradas = row.original.limite_de_acceso ?? 1;
+      return <div>{total_entradas} / {limite_entradas}</div>;
+    },
+    enableSorting: true,
+  },
+  {
+    accessorKey: "limitado_a_dias",
+    header: "Días de acceso",
+    cell: ({ row }) => {
+      const dias = row.original.limitado_a_dias;
+  
+      if (!dias || dias.length === 0) {
+        return <span className="text-gray-400 italic">Todos los días</span>;
+      }
+  
+      return (
+        <div className="flex flex-wrap gap-1">
+          {dias.map((dia, index) => (
+            <Badge
+              key={index}
+              className="bg-blue-100 text-blue-800 hover:bg-blue-200 text-xs font-semibold px-2.5 py-0.5 rounded-full"
+            >
+              {dia}
+            </Badge>
+          ))}
+        </div>
+      );
+    },
   },
 
 ];
