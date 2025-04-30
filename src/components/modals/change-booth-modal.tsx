@@ -8,6 +8,7 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { useHandleBooth } from "@/hooks/useHandleBooth";
+import { useState } from "react";
 
 interface ChangeBoothProps {
   title: string;
@@ -18,10 +19,11 @@ export const ChangeBoothModal: React.FC<ChangeBoothProps> = ({
   title,
   children,
 }) => {
-  const { booths, changeBoothMutation, isLoading } = useHandleBooth();
-console.log("casetas", booths)
+  const[open, setIsOpen]= useState(false)
+  const { booths, changeBoothMutation, isLoading } = useHandleBooth(open);
+  console.log("casetas", open)
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
 
       <DialogContent className="max-w-xl">

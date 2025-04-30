@@ -31,7 +31,7 @@ import { Input } from "../ui/input";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { catalogoColores, catalogoEstados } from "@/lib/utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useGetVehiculos } from "@/hooks/useGetVehiculos";
 import React from "react";
 import { useAccessStore } from "@/store/useAccessStore";
@@ -71,6 +71,16 @@ export const VehiclePassModal: React.FC<Props> = ({ title, children }) => {
   const { userIdSoter } = useAuthStore();
   const [open, setOpen] = useState(false);
 
+  const [tipoVehiculoState, setTipoVehiculoState] = useState("");
+  const [catalogSearch, setCatalogSearch] = useState("");
+  const [marcaState, setMarcaState] = useState("");
+  
+  const [tiposCat, setTiposCat] = useState<string[]>([]);
+  const [marcasCat, setMarcasCat] = useState<string[]>([]);
+  const [modelosCat, setModelosCat] = useState<string[]>([]);
+
+  const {data:dataVehiculos,isLoading: loadingCat } = useGetVehiculos({ account_id: userIdSoter, tipo:tipoVehiculoState, marca:marcaState, isModalOpen:true})
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -82,6 +92,23 @@ export const VehiclePassModal: React.FC<Props> = ({ title, children }) => {
       color: [],
     },
   });
+
+
+    useEffect(() => {
+      setTiposCat(dataVehiculos)
+  }, []);
+
+  useEffect(() => {
+    if(!tiposCat && dataVehiculos){
+      setTiposCat(dataVehiculos)
+    }
+    if(dataVehiculos && tipoVehiculoState && catalogSearch=="marcas"){
+      setMarcasCat(dataVehiculos)
+    }
+    if(dataVehiculos && tipoVehiculoState && marcaState && catalogSearch=="modelos"){
+      setModelosCat(dataVehiculos)
+    }
+  }, [dataVehiculos]);
 
   function onSubmit(data: z.infer<typeof formSchema>) {
     addNewVehicle(data);
@@ -95,26 +122,23 @@ export const VehiclePassModal: React.FC<Props> = ({ title, children }) => {
     setOpen(false);
   }
 
-  const [tipo, setTipo] = useState<string>("");
-  const [marca, setMarca] = useState<string>();
 
-
-  const { data: tiposVehiculo,  } = useGetVehiculos({
-    tipo,
-    account_id: userIdSoter,
-    marca,
-    isModalOpen: true,
-  });
+  // const { data: tiposVehiculo,  } = useGetVehiculos({
+  //   tipo,
+  //   account_id: userIdSoter,
+  //   marca,
+  //   isModalOpen: true,
+  // });
 
  
 
-  const { data: marcasVehiculo} = useGetVehiculos({
-    tipo,
-    account_id: userIdSoter
-  });
+  // const { data: marcasVehiculo} = useGetVehiculos({
+  //   tipo,
+  //   account_id: userIdSoter
+  // });
 
-  const { data: modelosVehiculo } =
-    useGetVehiculos({ tipo,  account_id: userIdSoter, marca });
+  // const { data: modelosVehiculo } =
+  //   useGetVehiculos({ tipo,  account_id: userIdSoter, marca });
 
   const addNewVehicle = (data: z.infer<typeof formSchema>) => {
     setNewVehicle([
@@ -167,16 +191,27 @@ export const VehiclePassModal: React.FC<Props> = ({ title, children }) => {
                     <Select
                       onValueChange={(value) => {
                         field.onChange([value]);
-                        setTipo(value);
+                        setCatalogSearch("marcas")
+                        setTipoVehiculoState(value);
+                        setMarcaState("")
+                        setMarcasCat([])
                       }}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Seleccione una opción" />
+                        {loadingCat?(
+                        <>
+                        <SelectValue placeholder="Cargando tipos de vehiculo..." />
+                        </>
+                      ): (
+                        <>
+                        <SelectValue placeholder="Selecciona un tipo de vehiculo" />
+                        </>
+                      )}
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {tiposVehiculo?.map((item: string) => (
+                        {tiposCat?.map((item: string) => (
                           <SelectItem key={item} value={item}>
                             {item}
                           </SelectItem>
@@ -197,16 +232,34 @@ export const VehiclePassModal: React.FC<Props> = ({ title, children }) => {
                     <Select
                       onValueChange={(value) => {
                         field.onChange([value]);
-                        setMarca(value);
+                        setMarcaState(value);
+                        setModelosCat([])
+                        setCatalogSearch("modelos")
                       }}
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Seleccione una opción" />
+                        {loadingCat?(
+                        <>
+                        <SelectValue placeholder="Cargando marcas de vehículos..." />
+                        </>
+                      ): (
+                        <>
+                          {marcasCat?.length <= 0 ?(
+                          <>  
+                            <SelectValue placeholder="Selecciona tipo de vehiculo para ver los registros " />
+                          </>
+                          ):(
+                            <>
+                            <SelectValue placeholder="Selecciona una opción" />
+                            </>
+                          )}
+                        </>
+                      )}
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {marcasVehiculo?.map((item: string) => (
+                        {marcasCat?.map((item: string) => (
                           <SelectItem key={item} value={item}>
                             {item}
                           </SelectItem>
@@ -227,11 +280,27 @@ export const VehiclePassModal: React.FC<Props> = ({ title, children }) => {
                     <Select onValueChange={(value) => field.onChange([value])}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Seleccione una opción" />
+                        {loadingCat?(
+                        <>
+                        <SelectValue placeholder="Cargando modelos..." />
+                        </>
+                      ):(
+                        <>
+                          {modelosCat?.length <= 0 ?(
+                          <>  
+                            <SelectValue placeholder="Selecciona una marca para ver los registros" />
+                          </>
+                          ):(
+                            <>
+                            <SelectValue placeholder="Selecciona una opción" />
+                            </>
+                          )}
+                        </>
+                      )}
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {modelosVehiculo?.map((item: string) => (
+                        {modelosCat?.map((item: string) => (
                           <SelectItem key={item} value={item}>
                             {item}
                           </SelectItem>

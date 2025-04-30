@@ -177,20 +177,24 @@ export function errorMsj(data:any, title = "Error", type="warning"){
   	}
   	if (data.hasOwnProperty("json")){
       const errores=[]
-      for(const err in data.json){
-           if(data.json[err].hasOwnProperty('label')){
-              errores.push(data.json[err].label+': '+data.json[err].msg[0]+" ")
-          }else {
-               const subData = data.json[err];
-               if (typeof subData === 'object' && subData !== null) {
-                   for (const subKey in subData) {
-                       const subItem = subData[subKey];
-                       if (subItem && subItem.hasOwnProperty('label') && subItem.hasOwnProperty('msg')) {
-                           errores.push(subItem.label + ': ' + subItem.msg + " ");
-                       }
-                   }
-               }
-          }
+      if(data.json.hasOwnProperty("error") && typeof data.json.error ==='string'){
+        errores.push(data.json.error);
+      }else{
+        for(const err in data.json){
+             if(data.json[err].hasOwnProperty('label')){
+                errores.push(data.json[err].label+': '+data.json[err].msg[0]+" ")
+            }else {
+                 const subData = data.json[err];
+                 if (typeof subData === 'object' && subData !== null) {
+                     for (const subKey in subData) {
+                         const subItem = subData[subKey];
+                         if (subItem && subItem.hasOwnProperty('label') && subItem.hasOwnProperty('msg')) {
+                             errores.push(subItem.label + ': ' + subItem.msg + " ");
+                         }
+                     }
+                 }
+            }
+        }
       }
       return {title: title, text:errores.join(", "), type}
   	}

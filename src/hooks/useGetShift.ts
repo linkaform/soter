@@ -153,9 +153,9 @@ export const useGetShift = (enableTurnosStats:boolean,enableShift:boolean) => {
       const responseData = data.response?.data || {};
       return responseData;
     },
-    refetchOnWindowFocus: true,
+    // refetchOnWindowFocus: true,
     // refetchInterval: 600000,
-    refetchOnReconnect: true,
+    // refetchOnReconnect: true,
     // staleTime: 1000 * 60 * 5,
   });
 

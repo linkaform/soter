@@ -174,21 +174,19 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
 	const [enviar_correo_pre_registro, set_enviar_correo_pre_registro] = useState<string[]>(dataPass.enviar_correo_pre_registro ||[]);
 	const { data: configLocation, isLoading: loadingConfigLocation } = useGetConfSeguridad(ubicacionSeleccionada);
 	const [formatedDocs, setFormatedDocs] = useState<string[]>(configLocation)
-	const [isActiveRangoFecha, setIsActiveRangoFecha] = useState(dataPass.tipo_visita_pase=="rango_de_fechas");
+	const [isActiveRangoFecha, setIsActiveRangoFecha] = useState(dataPass.tipo_visita_pase||"rango_de_fechas");
 	const [comentariosList, setComentariosList] = useState<Comentarios[]>(dataPass.comentarios);
 	const [areasList, setAreasList] = useState<Areas[]>(formatArea(dataPass.areas));
 	const [isActive, setIsActive] = useState(dataPass.enviar_correo_pre_registro.includes("enviar_correo_pre_registro"));
 	const [isActiveSMS, setIsActiveSMS] = useState(dataPass.enviar_correo_pre_registro.includes("enviar_sms_pre_registro"));
 	const [isActiveFechaFija, setIsActiveFechaFija] = useState(dataPass.tipo_visita_pase=="fecha_fija");
 	const [isActivelimitarDias, setIsActiveLimitarDias] = useState(dataPass.config_limitar_acceso >0 ? true: false);
-
 	const [isActiveCualquierDia, setIsActiveCualquierDia] = useState(true);
 	const [isActivelimitarDiasSemana, setIsActiveLimitarDiasSemana] = useState(false);
 	const [isActiveAdvancedOptions, setIsActiveAdvancedOptions] = useState(dataPass.areas.length>0);
 	const [date, setDate] = React.useState<Date| "">(dataPass.tipo_visita_pase=="fecha_fija" ?
 				new Date(dataPass.fecha_desde_visita): new Date(dataPass.fecha_desde_visita));
 	const [fechaDesde, setFechaDesde] = useState<string>('');
-
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -243,6 +241,7 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
 	useEffect(()=>{
 		form.setValue("fecha_desde_visita", dataPass.fecha_desde_visita.split(" ")[0])
 		form.setValue("fecha_desde_hasta", dataPass.fecha_desde_hasta.split(" ")[0])
+		console.log("data para editar==", dataPass)
 	},[])
 
 	useEffect(()=>{

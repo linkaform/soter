@@ -86,37 +86,41 @@ export const ViewFalla: React.FC<ViewFallaModalProps> = ({
 					</div>
 				</div>
 				<div className="w-full flex flex-col">
-					<p className="font-bold mb-2">Evidencia: </p>
-					<div className="flex justify-center">
-						<Carousel className="w-36 ">
-							<CarouselContent>
-								{data.falla_evidencia.map((a, index) => (
-								<CarouselItem key={index}>
-									<div className="p-1">
-									<Card>
-										<CardContent className="flex aspect-square items-center justify-center p-0">
-										{/* <span className="text-4xl font-semibold"> */}
-											<Image
-												width={280}
-												height={280}
-												src= {a.file_url || "/nouser.svg"}
-												alt="Imagen"
-												className="w-42 h-42 object-contain bg-gray-200 rounded-lg" 
-											/>
-										{/* </span> */}
-										</CardContent>
-									</Card>
-									</div>
-								</CarouselItem>
-								))}
-							</CarouselContent>
-							<CarouselPrevious />
-							<CarouselNext />
-						</Carousel>
-					</div>
+					{data?.falla_evidencia !== undefined && data?.falla_evidencia.length > 0 ?
+						<>
+						<p className="font-bold mb-2">Evidencia: </p>
+						<div className="flex justify-center">
+							<Carousel className="w-36 ">
+								<CarouselContent>
+									{data?.falla_evidencia.map((a, index) => (
+									<CarouselItem key={index}>
+										<div className="p-1">
+										<Card>
+											<CardContent className="flex aspect-square items-center justify-center p-0">
+											{/* <span className="text-4xl font-semibold"> */}
+												<Image
+													width={280}
+													height={280}
+													src= {a.file_url || "/nouser.svg"}
+													alt="Imagen"
+													className="w-42 h-42 object-contain bg-gray-200 rounded-lg" 
+												/>
+											{/* </span> */}
+											</CardContent>
+										</Card>
+										</div>
+									</CarouselItem>
+									))}
+								</CarouselContent>
+								 
+							</Carousel>
+						</div>
+						</>
+					:null}
+					<p className="font-bold">Documentos:</p>
+					{data?.falla_documento && data?.falla_documento.length > 0 ? (
 					<div className="mt-5">
-						<p className="font-bold">Documentos:</p>
-						{data?.falla_documento && data.falla_documento.length > 0 ? (
+						
 							<ul>
 							{data.falla_documento.map((documento, index) => (
 								<li key={index}>
@@ -131,10 +135,10 @@ export const ViewFalla: React.FC<ViewFallaModalProps> = ({
 								</li>
 							))}
 							</ul>
-						) : (
-							<p>No hay documentos disponibles</p>
-						)}
 					</div>
+					) : (
+						<p>No hay documentos disponibles</p>
+					)}
 				</div>
 			</div>
 
@@ -188,23 +192,23 @@ export const ViewFalla: React.FC<ViewFallaModalProps> = ({
 				<tbody>
 					{seguimientos.map((item: FallaGrupoSeguimiento, index: number) => (
 					<tr key={index}>
-						<td className="px-4 py-2"><small>{item.accion_correctiva || "N/A"}</small></td>
-						<td className="px-4 py-2"><small>{item.comentario || "N/A"}</small></td>
-						<td className="px-4 py-2"><small>{item.fecha_inicio || "N/A"}</small></td>
-						<td className="px-4 py-2"><small>{item.fecha_fin || "N/A"}</small></td>
+						<td className="px-4 py-2"><small>{item?.accion_correctiva || "N/A"}</small></td>
+						<td className="px-4 py-2"><small>{item?.comentario || "N/A"}</small></td>
+						<td className="px-4 py-2"><small>{item?.fecha_inicio || "N/A"}</small></td>
+						<td className="px-4 py-2"><small>{item?.fecha_fin || "N/A"}</small></td>
 						<td className="px-4 py-2">
-						{item.evidencia.length > 0 ? (
+						{item?.evidencia.length > 0 ? (
 							<div className="w-full flex justify-center">
 							<Carousel className="w-16">
 								<CarouselContent>
-								{item.evidencia.map((a: Imagen, index: number) => (
+								{item?.evidencia.map((a: Imagen, index: number) => (
 									<CarouselItem key={index}>
 									<Card>
 										<CardContent className="flex aspect-square items-center justify-center p-0">
 										<Image
 											width={280}
 											height={280}
-											src={a.file_url || "/nouser.svg"}
+											src={a?.file_url || "/nouser.svg"}
 											alt="Imagen"
 											className="w-42 h-42 object-contain bg-gray-200 rounded-lg"
 										/>
@@ -222,12 +226,12 @@ export const ViewFalla: React.FC<ViewFallaModalProps> = ({
 						)}
 						</td>
 						<td className="px-4 py-2">
-						{item.documento && item.documento.length > 0 ? (
+						{item?.documento && item?.documento.length > 0 ? (
 							<ul className="ms-2">
-							{item.documento.map((file, index) => (
+							{item?.documento.map((file, index) => (
 								<li key={index}>
 								<a
-									href={file.file_url}
+									href={file?.file_url}
 									target="_blank"
 									rel="noopener noreferrer"
 									className="text-blue-600 hover:underline"

@@ -7,7 +7,7 @@ import { toast } from "sonner"; // Importar Sonner
 
 
 
-export const useHandleBooth = () => {
+export const useHandleBooth = (enableGetBooths:boolean) => {
   
     const { setArea, setLocation, setLoading } = useShiftStore();
 
@@ -17,13 +17,14 @@ export const useHandleBooth = () => {
 
     const { data: booths, isLoading, error, isFetching } = useQuery<any[]>({
       queryKey: ["getBooths"], 
+      enabled:enableGetBooths,
       queryFn: async () => {
         const data = await getBooths()
         return data.response?.data || []; 
       },
-      refetchOnWindowFocus: false, 
+      // refetchOnWindowFocus: false, 
       // refetchInterval: 600000,
-      refetchOnReconnect: true, 
+      // refetchOnReconnect: true, 
       // staleTime: 1000 * 60 * 5, 
     });
 

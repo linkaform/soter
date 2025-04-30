@@ -120,7 +120,6 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
       walkin_identificacion:dataPass.identificacion,
       enviar_correo:[]
     };
-		console.log("INFO ENVIAR",accessPassData)
       setSendDataUpdate(accessPassData)
   };
 
@@ -135,6 +134,12 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
     }
   },[sendDataUpdate])
 
+	// useEffect(()=>{
+  //   console.log("abrir cerrar", isLoading)
+	// 	if(!isLoading){
+	// 		handleClose()	
+	// 	}
+	// },[isLoading])
 
   useEffect(()=>{
     if(responseCreatePase?.status_code == 201){

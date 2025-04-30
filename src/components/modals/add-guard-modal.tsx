@@ -31,7 +31,9 @@ export const AddGuardModal: React.FC<AddGuardModalProps> = ({
   title,
   children,
 }) => {
-  const { supportGuards, addSupportGuardMutation, isLoading } = useGetSupportGuards();
+  const [open, setIsOpen] = useState(false)
+
+  const { supportGuards, addSupportGuardMutation, isLoading } = useGetSupportGuards(open);
   const { location, area, checkin_id } = useShiftStore();
   const [selectedGuard, setSelectedGuard] = useState<any>("");
   const [searchText, setSearchText] = useState<string>("");
@@ -46,7 +48,7 @@ export const AddGuardModal: React.FC<AddGuardModalProps> = ({
   }, [supportGuards, searchText]);
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
 
       <DialogContent className="max-w-xl min-h-[50vh]   max-h-[90vh] overflow-scroll">

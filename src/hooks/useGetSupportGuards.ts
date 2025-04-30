@@ -8,7 +8,7 @@ import { useShiftStore } from "@/store/useShiftStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import useAuthStore from "@/store/useAuthStore";
 
-export const useGetSupportGuards = () => {
+export const useGetSupportGuards = (enableGetGuards:boolean) => {
   const queryClient = useQueryClient();
 
   const { area, location, setLoading } = useShiftStore();
@@ -22,6 +22,7 @@ export const useGetSupportGuards = () => {
     isFetching,
   } = useQuery<any>({
     queryKey: ["getGuardSupport", area, location],
+    enabled:enableGetGuards,
     queryFn: async () => {
       const response = await getSupportGuards({ area, location });
 

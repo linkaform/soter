@@ -5,6 +5,7 @@ import { Equipo, UpdatePaseFull, Vehiculo } from "@/lib/update-pass-full";
 import { errorMsj } from "@/lib/utils";
 import { useShiftStore } from "@/store/useShiftStore";
 import { useMutation, useQuery ,useQueryClient} from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 export type Link = {
@@ -94,7 +95,7 @@ export type Update_full_pass = {
       enviar_correo: string[]
 }
 export const usePaseEntrada = (locationConfSeguridad:string) => {
-
+  const router = useRouter(); 
     const { data: dataConfigLocation, isLoading:isLoadingConfigLocation, error: errorConfigLocation} = useQuery<any>({
         queryKey: ["getConfSeguridad", locationConfSeguridad], 
         enabled: locationConfSeguridad!=="" ? true:false, 
@@ -202,12 +203,13 @@ export const usePaseEntrada = (locationConfSeguridad:string) => {
           toast.success("Pase de entrada editado correctamente.");
         },
         onError: (err) => {
-          console.error("Error al editar pase de entrada:", err);
+          // console.error("Error al editar pase de entrada:", err);
           toast.error(err.message || "Hubo un error al editar el pase entrada.");
     
         },
         onSettled: () => {
           setLoading(false);
+          router.push(`/dashboard/pases`)
         },
       });
 

@@ -172,7 +172,7 @@ const PaseUpdate = () =>{
 			}, 
 			id:id, account_id: account_id ??0});
 			if(apiResponse.success){
-				router.push(`/dashboard/`)
+				router.push(`/`)
 				setIsSuccess(true); 
 			}else{
 				setIsSuccess(false); 

@@ -165,7 +165,7 @@ import ViewImage from "@/components/modals/view-image";
       accessorKey: "falla_evidencia",
       header: "Evidencia",
       cell: ({ row }) => {
-        const foto = row.original.falla_evidencia;
+        const foto = row.original?.falla_evidencia;
         // const ultimaImagen = foto && foto.length > 0 ? foto[foto.length - 1].file_url : '/nouser.svg'; 
         return(<ViewImage imageUrl={foto ?? []} /> )},
       enableSorting: false,

@@ -314,6 +314,14 @@ const AccesosPage = () => {
 							);
 							return;
 							}
+							// console.log({area,
+							// 	location,
+							// 	visita_a: searchPass?.visita_a,
+							// 	qr_code: passCode,
+							// 	vehiculo: allVehicles?.[0] ? [allVehicles[0]] : [],
+							// 	equipo: allEquipments,
+							// 	comentario_acceso: [],
+							// 	comentario_pase: []})
 							doAccess.mutate();
 						}}
 						>
