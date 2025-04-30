@@ -32,7 +32,15 @@ const BitacorasPage = () => {
 	const [dates, setDates] = useState<string[]>([])
 	const [dateFilter, setDateFilter] = useState<string>("")
 	const { listBitacoras,isLoadingListBitacoras, stats} = useBitacoras(ubicacionSeleccionada, areaSeleccionada == "todas" ? "": areaSeleccionada, selectedOption, true , dates[0], dates[1], dateFilter)
-	const [selectedTab, setSelectedTab] = useState<string>('Personal'); 
+	const { tab, setTab } = useShiftStore()
+	const [selectedTab, setSelectedTab] = useState<string>(tab ? tab: "Personal"); 
+
+	useEffect(()=>{
+		if(tab){
+			setTab("")
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	},[])
 
 	const processBitacorasE = (bitacoras: Bitacora_record[]) => {
 		console.log("array",bitacoras)

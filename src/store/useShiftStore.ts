@@ -7,7 +7,9 @@ interface ShiftStore {
   checkin_id: string | undefined;
   isLoading: boolean;
   turno: boolean;
+  tab:string;
 
+  setTab: (tab: string) => void;
   setArea: (area: string) => void;
   setLocation: (location: string) => void;
   setCheckin_id: (id: string | undefined) => void;
@@ -25,8 +27,10 @@ export const useShiftStore = create(
       checkin_id: undefined,
       isLoading: false,
       turno:false,
+      tab:"",
 
       // Funciones
+      setTab:(tab) => set({tab}),
       setArea: (area) => set({ area }),
       setLocation: (location) => set({ location }),
       setCheckin_id: (id) => set({ checkin_id: id }),
@@ -37,7 +41,8 @@ export const useShiftStore = create(
         location: "",
         checkin_id: undefined,
         isLoading: false,
-        turno:false
+        turno:false,
+        tab:""
       }),
   
     }),

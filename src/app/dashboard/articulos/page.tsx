@@ -34,8 +34,8 @@ const ArticulosPage = () => {
 	const { listArticulosPerdidos, isLoadingListArticulosPerdidos , stats} = useArticulosPerdidos(ubicacionSeleccionada,  areaSeleccionada == "todas" ? "": areaSeleccionada, "", true, dates[0], dates[1], dateFilter);
 	const { listArticulosCon, isLoadingListArticulosCon} = useArticulosConcesionados( true, dates[0], dates[1], dateFilter);
 	const { listPaqueteria, isLoadingListPaqueteria} = usePaqueteria("", "", "guardado", true, dates[0], dates[1], dateFilter);
-
-	const [selectedTab, setSelectedTab] = useState<string>('Perdidos'); 
+	const { tab, setTab } = useShiftStore()
+	const [selectedTab, setSelectedTab] = useState<string>(tab ? tab:'Perdidos'); 
 
 	const [isSuccess, setIsSuccess] = useState(false);
 	const [modalData] = useState<any>(null);
@@ -43,6 +43,13 @@ const ArticulosPage = () => {
 	console.log(selectedArticulos)
 	const [isSuccessCon, setIsSuccessCon] = useState(false);
 	const [isSuccessPaq, setIsSuccessPaq] = useState(false);
+
+	useEffect(()=>{
+		if(tab){
+			setTab("")
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	},[])
 
 	const openModal = () => {
 		setIsSuccess(true);  
