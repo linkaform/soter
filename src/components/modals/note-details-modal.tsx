@@ -19,6 +19,7 @@ import {
 import { Separator } from '../ui/separator'
 import File from '../icon/file'
 import { CloseNoteModal } from './close-note-modal'
+import { Imagen } from '@/lib/update-pass-full'
 
 interface NoteDetailsModalProps {
   title: string
@@ -27,25 +28,21 @@ interface NoteDetailsModalProps {
 }
 
 interface Note {
-  _id: string
+  note_open_date?: string
   folio: string
-  created_by_name: string
-  note_status: string
-  note_open_date: string
-  note: string
-  note_close_date?: string
-  note_file?: NoteFiles[]
-  note_pic?: NoteFiles[]
-  note_comments?: NoteComments[]
+  note_comments?: NoteComment[]
+  created_by_name?: string
+  note_file?: Imagen[]
+  note_status?: string
+  note_pic?: any[]
+  note?: string
+  created_by_id?: number
+  created_by_email?: string
+  _id: string
 }
 
-interface NoteComments {
+interface NoteComment {
   note_comments: string
-}
-
-interface NoteFiles {
-  file_name: string
-  file_url: string
 }
 
 export const NoteDetailsModal: React.FC<NoteDetailsModalProps> = ({

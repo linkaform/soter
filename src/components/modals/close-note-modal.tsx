@@ -13,6 +13,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { useNotes } from '@/hooks/useNotes'
 import { useState } from 'react'
+import { Imagen } from '@/lib/update-pass-full'
 
 interface CloseNoteModalProps {
   title: string
@@ -21,26 +22,24 @@ interface CloseNoteModalProps {
 }
 
 interface Note {
-  _id: string
+  note_open_date?: string
   folio: string
-  created_by_name: string
-  note_status: string
-  note_open_date: string
-  note: string
-  note_close_date?: string
-  note_file?: NoteFiles[]
-  note_pic?: NoteFiles[]
-  note_comments?: NoteComments[]
+  note_comments?: NoteComment[]
+  created_by_name?: string
+  note_file?: Imagen[]
+  note_status?: string
+  note_pic?: any[]
+  note?: string
+  created_by_id?: number
+  created_by_email?: string
+  _id: string
 }
 
-interface NoteComments {
+interface NoteComment {
   note_comments: string
 }
 
-interface NoteFiles {
-  file_name: string
-  file_url: string
-}
+
 
 const formSchema = z.object({})
 
@@ -53,6 +52,7 @@ export const CloseNoteModal: React.FC<CloseNoteModalProps> = ({
     resolver: zodResolver(formSchema),
   })
 
+  console.log("nota", note)
   const [open, setOpen] = useState(false)
   const { closeNoteMutation, isLoading } = useNotes('', '')
 
@@ -110,9 +110,9 @@ export const CloseNoteModal: React.FC<CloseNoteModalProps> = ({
 
         <div className='flex flex-col gap-2'>
           <p className='font-semibold'>Reporta</p>
-          <p className='text-sm'>{note?.created_by_name ?? ''}.</p>
+          <p className='text-sm'>{note?.created_by_name ?? ''}</p>
           <p className='font-semibold'>Nota:</p>
-          <p className='text-sm'>{note?.note ?? ''}.</p>
+          <p className='text-sm'>{note?.note ?? ''}</p>
         </div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>

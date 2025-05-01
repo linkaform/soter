@@ -42,6 +42,7 @@ export const useNotes = (area:string, location:string, pageIndex: number = 0, pa
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['stats'] });
       queryClient.invalidateQueries({ queryKey: ['getNotes'] });
+      queryClient.invalidateQueries({ queryKey: ['getShift'] });
       toast.success("Nota creada correctamente.");
     },
     onError: (err: any) => {

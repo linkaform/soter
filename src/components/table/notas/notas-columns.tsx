@@ -33,15 +33,7 @@ export const notasColumns: ColumnDef<Nota>[] = [
         {/* TODO: Checar porque no se le pasan los datos */}
         <CloseNoteModal
           title='Cerrar nota'
-          note={{
-            ...row.original,
-            _id: '',
-            folio: '',
-            created_by_name: '',
-            note_status: '',
-            note_open_date: '',
-            note: '',
-          }}>
+          note={row.original}>
           <div className='cursor-pointer'>
             <Check />
           </div>
@@ -50,15 +42,7 @@ export const notasColumns: ColumnDef<Nota>[] = [
         {/* TODO: Checar porque no se le pasan los datos */}
         <NoteDetailsModal
           title={row.original.note??""}
-          note={{
-            ...row.original,
-            _id: '',
-            folio: '',
-            created_by_name: '',
-            note_status: '',
-            note_open_date: '',
-            note: '',
-          }}>
+          note={row.original}>
           <div className='cursor-pointer'>
             <Eye />
           </div>
@@ -86,9 +70,12 @@ export const notasColumns: ColumnDef<Nota>[] = [
   {
     accessorKey: 'note_close_date',
     header: 'Cierre',
-    cell: ({ row }) => (
-      <div className='capitalize'>{row.original.note_open_date}</div>
-    ),
+    cell: ({ row }) => {
+      console.log(row)
+      return (
+        <div className='capitalize'>{""}</div>
+      )
+    },
   },
   {
     accessorKey: 'nota',
