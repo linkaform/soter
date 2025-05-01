@@ -18,7 +18,8 @@ export default function Home() {
     const { setCheckin_id } = useShiftStore()
 
 	useEffect(() => {
-		if ( shift?.guard?.status_turn !== "Turno Cerrado") {     
+    
+		if ( shift?.guard?.status_turn !== "Turno Cerrado") {  
 			setCheckin_id(shift?.booth_status?.checkin_id);
 		}
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -49,7 +50,7 @@ export default function Home() {
 
               {/* Notas Table */}
               <div className="w-full">
-                  <NotasTable />
+                  <NotasTable data={shift?.notes?.records} />
               </div>
 
           </div>

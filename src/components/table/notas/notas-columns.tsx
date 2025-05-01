@@ -1,23 +1,35 @@
 import { CloseNoteModal } from '@/components/modals/close-note-modal'
 import { NoteDetailsModal } from '@/components/modals/note-details-modal'
+import { Imagen } from '@/lib/update-pass-full'
 import { ColumnDef } from '@tanstack/react-table'
 import { Check, Eye } from 'lucide-react'
 
-export type Nota = {
-  id: string
-  empleado: string
-  apertura: string
-  cierre: string
-  nota: string
-  comentarios: string
+interface Nota {
+  note_open_date?: string
+  folio: string
+  note_comments?: NoteComment[]
+  created_by_name?: string
+  note_file?: Imagen[]
+  note_status?: string
+  note_pic?: any[]
+  note?: string
+  created_by_id?: number
+  created_by_email?: string
+  _id: string
+}
+
+export interface NoteComment {
+  note_comments: string
 }
 
 export const notasColumns: ColumnDef<Nota>[] = [
   {
     id: 'select',
     header: '',
-    cell: ({ row }) => (
-      <div className='flex space-x-4'>
+    cell: ({ row }) => {
+      console.log("row",row.original)
+      return(
+        <div className='flex space-x-4'>
         {/* TODO: Checar porque no se le pasan los datos */}
         <CloseNoteModal
           title='Cerrar nota'
@@ -37,7 +49,7 @@ export const notasColumns: ColumnDef<Nota>[] = [
 
         {/* TODO: Checar porque no se le pasan los datos */}
         <NoteDetailsModal
-          title={row.original.nota}
+          title={row.original.note??""}
           note={{
             ...row.original,
             _id: '',
@@ -52,34 +64,42 @@ export const notasColumns: ColumnDef<Nota>[] = [
           </div>
         </NoteDetailsModal>
       </div>
-    ),
+      )
+    },
     enableSorting: false,
     enableHiding: false,
   },
   {
-    accessorKey: 'empleado',
+    accessorKey: 'created_by_name',
     header: 'Empleado',
     cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue('empleado')}</div>
+      <div className='capitalize'>{row.original.created_by_name??""}</div>
     ),
   },
   {
-    accessorKey: 'cierre',
+    accessorKey: 'note_open_date',
+    header: 'Apertura',
+    cell: ({ row }) => (
+      <div className='capitalize'>{row.original.note_open_date}</div>
+    ),
+  },
+  {
+    accessorKey: 'note_close_date',
     header: 'Cierre',
     cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue('cierre')}</div>
+      <div className='capitalize'>{row.original.note_open_date}</div>
     ),
   },
   {
     accessorKey: 'nota',
     header: 'Nota',
-    cell: ({ row }) => <div className='capitalize'>{row.getValue('nota')}</div>,
+    cell: ({ row }) => <div className='capitalize'>{row.original.note}</div>,
   },
-  {
-    accessorKey: 'comentarios',
-    header: 'Comentarios',
-    cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue('comentarios')}</div>
-    ),
-  },
+  // {
+  //   accessorKey: 'comentarios',
+  //   header: 'Comentarios',
+  //   cell: ({ row }) => (
+  //     <div className='capitalize'>{row.getValue('comentarios')}</div>
+  //   ),
+  // },
 ]
