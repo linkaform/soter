@@ -125,7 +125,7 @@ export const pasesEntradaColumns: ColumnDef<PaseEntrada>[] = [
   {
     id: "options",
     header: "Opciones",
-    cell: ({row}) => <OptionsCell row={row}/>,
+    cell: ({row}) => <OptionsCell row={row} key={row.original._id}/>,
     enableSorting: false,
   },
   {

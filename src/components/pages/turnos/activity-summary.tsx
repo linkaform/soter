@@ -8,6 +8,7 @@ import Badges from "@/components/icon/badges";
 import { useGetShift } from "@/hooks/useGetShift";
 import Link from "next/link";
 import { useShiftStore } from "@/store/useShiftStore";
+import { TriangleAlert } from "lucide-react";
 
 const ActivitySummary = () => {
   const { stats } = useGetShift(false, false);
@@ -20,6 +21,13 @@ const ActivitySummary = () => {
       count: stats?.in_invitees || 0,
       link: "/dashboard/bitacoras",
       tab:"Personal"
+    },
+    {
+      icon: <TriangleAlert />,
+      title: "Incidencias x día",
+      count: stats?.in_invitees || 0,
+      link: "/dashboard/incidencias",
+      tab:"Incidencias"
     },
     {
       icon: <Fails />,
@@ -52,28 +60,26 @@ const ActivitySummary = () => {
   ];
 
   return (
-    <div className="w-full ">
-      <p className="font-bold text-2xl mb-5">Resumen de actividad</p>
+  <div className="w-full">
+    <p className="font-bold text-2xl mb-5">Resumen de actividad</p>
 
-      <div className="" >
-        <div className="max-w-96">
-          {items.map((item, index) => (
-            <Link key={index} href={item.link}>
-            <div onClick={() => {setTab(item.tab)}}
-              className="flex items-center space-x-4 rounded-md p-3 border m-2 cursor-pointer transition duration-100 hover:bg-gray-100"
-            >
-              <div className="mr-4 bg-gray-00 p-3 rounded-lg">{item.icon}</div>
-    
-              <div className="flex-1 space-y-1">
-                <p className="font-medium leading-none">{item.title}</p>
-                <p className="font-bold text-2xl">{item.count}</p>
-              </div>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 w-10/12 ">
+      {items.map((item, index) => (
+        <Link key={index} href={item.link}>
+          <div
+            onClick={() => setTab(item.tab)}
+            className="flex items-center space-x-4 rounded-md p-4 border cursor-pointer transition duration-100 hover:bg-gray-100 "
+          >
+            <div className="bg-gray-100 p-3 rounded-lg">{item.icon}</div>
+            <div className="flex-1 space-y-1">
+              <p className="font-medium leading-none">{item.title}</p>
+              <p className="font-bold text-2xl">{item.count}</p>
             </div>
-          </Link>
-          ))}
-        </div>
-      </div>
+          </div>
+        </Link>
+      ))}
     </div>
+  </div>
   );
 };
 

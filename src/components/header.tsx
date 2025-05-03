@@ -17,7 +17,8 @@ import { useMenuStore } from "@/store/useGetMenuStore";
 
 export const Header = () => {
   const currentPath = usePathname();
-  const { logout, userPhoto } = useAuthStore();
+  const userPhoto = useAuthStore((state) => state.userPhoto);
+  const { logout } = useAuthStore();
   const { labels } = useMenuStore();
 
   return (

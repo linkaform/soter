@@ -17,6 +17,7 @@ import CalendarDays from "../calendar-days";
 import { Areas, Comentarios } from "@/hooks/useCreateAccessPass";
 import useAuthStore from "@/store/useAuthStore";
 import { Update_full_pass, usePaseEntrada } from "@/hooks/usePaseEntrada";
+// import { useRouter } from "next/navigation";
 
 interface EntryPassModalUpdateProps {
   title: string;
@@ -42,11 +43,10 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
   const [sendDataUpdate, setSendDataUpdate] = useState<Update_full_pass|null>(null)
 
  
-
   const [docs, setDocs] = useState("");
   const [link, setLink] = useState("");
   const account_id = userIdSoter;
-  const { updatePaseEntradaFullMutation, responseCreatePase, isLoading } = usePaseEntrada("")
+  const { updatePaseEntradaFullMutation, responseCreatePase, isLoading} = usePaseEntrada("")
   const [hostPro, setHostPro] = useState({ protocol: '', host: '' });
 
 	useEffect(() => {
@@ -55,11 +55,12 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
 		const host = window.location.host;
 		setHostPro({ protocol, host });
 	  }
-
-    const params = new URLSearchParams(dataPass?.link.link.split('?')[1]);
-    const docs = params.get('docs')??""; 
-    console.log("split", dataPass?.link, docs)
-    setDocs(docs)
+   
+    console.log("pase",dataPass ,dataPass?.link.link.split('?')[0])
+    const params = new URLSearchParams(dataPass?.link.link.split('?')[0]);
+    const docss = params.get('docs')??""; 
+    console.log("split",params,  dataPass?.link, docss)
+    setDocs(docss)
 	}, []);
 
   const items =
@@ -83,6 +84,8 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
             date: dataPass?.fecha_desde_hasta,
           },
         ];
+
+
 
   const onSubmitEdit = async () => {
     const accessPassData = {
@@ -135,14 +138,15 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
   },[sendDataUpdate])
 
 	// useEffect(()=>{
-  //   console.log("abrir cerrar", isLoading)
-	// 	if(!isLoading){
-	// 		handleClose()	
+  //   console.log("abrir cerrar", responseUpdatePase)
+	// 	if(responseUpdatePase?.status_code == 202){
+  //     router.push(`/`); 
 	// 	}
-	// },[isLoading])
+	// },[responseUpdatePase])
 
   useEffect(()=>{
-    if(responseCreatePase?.status_code == 201){
+    console.log("response update pase", dataPass)
+    if(responseCreatePase?.status_code == 201|| responseCreatePase?.status_code == 202){
       let docs=""
       dataPass?.link.docs.map((d:string, index:number)=>{
         if(d == "agregarIdentificacion"){
@@ -155,6 +159,7 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
           docs+="-"
         }
       })
+
       setLink(`${hostPro.protocol}//${hostPro.host}/dashboard/pase-update?id=${responseCreatePase?.json.id}&user=${account_id}&docs=${docs}`)
       
     }

@@ -388,7 +388,7 @@ return (
 							<VehicleList
 								account_id={account_id ?? 0}
 								vehicles={vehicles}
-								setVehicles={setVehicles} isModalOpen={false}/>
+								setVehicles={setVehicles} isModalOpen={true}/>
 							</>
 						):null}
 

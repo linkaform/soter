@@ -2,14 +2,17 @@ import { ChangeBoothModal } from "@/components/modals/change-booth-modal";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useGetShift } from "@/hooks/useGetShift";
+import { changeUserPhoto, changeUserPhotoPatch } from "@/lib/change-user-photo";
 import useAuthStore from "@/store/useAuthStore";
-import React from "react";
+import React , { useRef } from "react";
+import { toast } from "sonner";
 
 const Sidebar = () => {
   const { shift } = useGetShift(false, false);
-
-  const { userEmailSoter, userNameSoter, userPhoto } = useAuthStore();
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const { userEmailSoter, userNameSoter, userPhoto, userIdSoter , setUserPhoto} = useAuthStore();
 
   const getInitials = (name: string | null) => {
     if (!name) return "N/A"; // Si no hay nombre, usa "N/A"
@@ -19,6 +22,24 @@ const Sidebar = () => {
       .join("")
       .toUpperCase(); 
   };
+
+    const handleButtonClick = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleFileChange = async (event:any) => {
+      const file = event.target.files[0];
+      if (file) {
+        const res= await changeUserPhoto( userIdSoter, file);
+        if(res.thumb){
+          const response= await changeUserPhotoPatch( userIdSoter, res.thumb);
+          if(response){
+            setUserPhoto(`${res.thumb}?t=${Date.now()}`);
+            toast.success("Foto de perfil cambiada correctamente")
+          }
+        }
+      }
+    };
 
   return (
     <div className="max-w-[520px]  lg:max-w-[320px] mx-auto">
@@ -41,8 +62,16 @@ const Sidebar = () => {
           <p className="">{shift?.guard?.position}</p>
           <p className="">{userEmailSoter}</p>
         </div>
+ 
+        <Input 
+          type="file" 
+          accept="image/*"
+          ref={fileInputRef}
+          style={{ display: 'none' }}
+          onChange={handleFileChange}
+        />
 
-        <Button className="bg-gray-100 hover:bg-gray-200 text-gray-700">
+        <Button className="bg-gray-100 hover:bg-gray-200 text-gray-700" onClick={handleButtonClick}>
           Cambiar Imagen
         </Button>
       </div>

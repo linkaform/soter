@@ -40,9 +40,9 @@ export const useNotes = (area:string, location:string, pageIndex: number = 0, pa
       setLoading(true);
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['getShift'] });
       queryClient.invalidateQueries({ queryKey: ['stats'] });
       queryClient.invalidateQueries({ queryKey: ['getNotes'] });
-      queryClient.invalidateQueries({ queryKey: ['getShift'] });
       toast.success("Nota creada correctamente.");
     },
     onError: (err: any) => {
@@ -72,6 +72,7 @@ export const useNotes = (area:string, location:string, pageIndex: number = 0, pa
       setLoading(true);
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['getShift'] });
       queryClient.invalidateQueries({ queryKey: ['stats'] });
       queryClient.invalidateQueries({ queryKey: ['getNotes'] });
       toast.success("Nota editada correctamente.");
@@ -93,7 +94,7 @@ export const useNotes = (area:string, location:string, pageIndex: number = 0, pa
         const hasError= response.response.data.status_code
 
         if(hasError == 400|| hasError == 401){
-            const textMsj = errorMsj(response.response.data) 
+            const textMsj = errorMsj(response.response.data|| response.error || "") 
             throw new Error(`Error al cerrar nota, Error: ${textMsj?.text}`);
         }else{
             return response.response?.data
@@ -103,6 +104,7 @@ export const useNotes = (area:string, location:string, pageIndex: number = 0, pa
       setLoading(true);
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['getShift'] });
       queryClient.invalidateQueries({ queryKey: ['stats'] });
       queryClient.invalidateQueries({ queryKey: ['getNotes'] });
       toast.success("Nota cerrada correctamente.");
