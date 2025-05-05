@@ -5,34 +5,35 @@ import Fails from "@/components/icon/fails";
 import Concessioned from "@/components/icon/concessioned";
 import Vehicles from "@/components/icon/vehicles";
 import Badges from "@/components/icon/badges";
-import { useGetShift } from "@/hooks/useGetShift";
 import Link from "next/link";
 import { useShiftStore } from "@/store/useShiftStore";
 import { TriangleAlert } from "lucide-react";
+import { useGetStats } from "@/hooks/useGetStats";
 
 const ActivitySummary = () => {
-  const { stats } = useGetShift(false, false);
+  const { area, location} = useShiftStore();
+  const { data: stats } = useGetStats(location, area, 'Turnos')
 
   const { setTab } = useShiftStore();
   const items = [
     {
       icon: <Guest />,
-      title: "Invitados Dentro",
+      title: "Personas Dentro",
       count: stats?.in_invitees || 0,
       link: "/dashboard/bitacoras",
       tab:"Personal"
     },
     {
       icon: <TriangleAlert />,
-      title: "Incidencias x día",
-      count: stats?.in_invitees || 0,
+      title: "Incidencias Pendientes",
+      count: stats?.incidentes_pendites || 0,
       link: "/dashboard/incidencias",
       tab:"Incidencias"
     },
     {
       icon: <Fails />,
       title: "Fallas Pendientes",
-      count: stats?.incidentes_pendites || 0,
+      count: stats?.fallas_pendientes || 0,
       link: "/dashboard/incidencias",
       tab:"Fallas"
     },
@@ -45,7 +46,7 @@ const ActivitySummary = () => {
     },
     {
       icon: <Vehicles />,
-      title: "Vehículos Estacionados",
+      title: "Vehículos Dentro",
       count: stats?.total_vehiculos_dentro || 0,
       link: "/dashboard/bitacoras",
       tab:"Vehiculos"
