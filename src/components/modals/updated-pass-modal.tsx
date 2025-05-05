@@ -10,7 +10,6 @@ import {
 } from "../ui/dialog";
 import { toast } from "sonner";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Form} from "../ui/form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -51,7 +50,6 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 	hasTelefono,
 	closePadre
 }) => {
-	const router = useRouter(); 
 	const [dataCorreo, setDataCorreo]= useState<data_correo|null>(null)
 	const [enviarCorreo, setEnviarCorreo] = useState<string[]>([]);
 	const [isActive, setIsActive] = useState(false);
