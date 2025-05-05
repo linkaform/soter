@@ -138,13 +138,13 @@ return (
 			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8"> 
 					<div className="flex flex-col justify-start items-center gap-3">
 						<div className="flex gap-2 flex-col">
-							<div className="flex gap-2 flex-wrap">
+							<div className="flex flex-col gap-2 flex-wrap items-center justify-center">
 								{hasEmail==true ? (
 									
 									<Button
 										type="button"
 										onClick={handleToggleEmail}
-										className={`px-4 py-2 rounded-md transition-all duration-300 ${
+										className={`px-4 py-2 rounded-md transition-all duration-300 w-full ${
 											isActive ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent "
 										} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
 										>
@@ -170,9 +170,9 @@ return (
 									<Button
 										type="button"
 										onClick={handleToggleSMS}
-										className={`px-4 py-2 rounded-md transition-all duration-300 ${
+										className={`px-4 py-2 rounded-md transition-all duration-300 w-full ${
 											isActiveSMS ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
-										} hover:bg-transparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
+										} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
 										>
 										<div className="flex flex-wrap items-center">
 											{isActiveSMS ? (
