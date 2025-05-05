@@ -72,7 +72,10 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 		setDataCorreo(dataPass)
 		await descargarPdfPase(responsePdf.response?.data?.data?.download_url)
 		toast.success("¡PDF descargado correctamente!");
-		router.push(`/`);
+
+		setTimeout(() => {
+			window.location.href = "https://www.soter.mx/";
+		}, 100);
 	};
 
 	useEffect(()=>{
@@ -112,6 +115,10 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 	const closeModal=()=>{
 		setOpenGeneratedPass(false)
 		closePadre()
+
+		setTimeout(() => {
+			window.location.href = "https://www.soter.mx/";
+		}, 100);
 	}
 
 return (
