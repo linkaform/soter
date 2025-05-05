@@ -461,7 +461,7 @@ return (
 					</Button>
 
 					{isActualizarOpen==true || isActualizarOpen==""?(
-						<Button className="w-1/3 h-12  bg-blue-500 hover:bg-blue-600" type="submit" onClick={()=>{setIsActualizarOpen(true)}}>
+						<Button className="sm:w-1/3 w-3/4 h-12 bg-blue-500 hover:bg-blue-600" type="submit" onClick={()=>{setIsActualizarOpen(true)}}>
 							Actualizar informacion
 						</Button>
 					):null}
