@@ -17,10 +17,11 @@ import { Bitacora_record } from "@/components/table/bitacoras/bitacoras-columns"
 import { dateToString } from "@/lib/utils";
 import { useBitacoras } from "@/hooks/useBitacoras";
 import { toast } from "sonner";
+import { useGetStats } from "@/hooks/useGetStats";
 
 const BitacorasPage = () => {
   	const [selectedOption, setSelectedOption] = useState<string[]>([]);
-  	const {location} = useShiftStore()
+  	const {location, area} = useShiftStore()
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
 	const [areaSeleccionada, setAreaSeleccionada] = useState("todas");
 	const [equiposData, setEquiposData] = useState<Bitacora_record[]>([]);
@@ -31,7 +32,8 @@ const BitacorasPage = () => {
 
 	const [dates, setDates] = useState<string[]>([])
 	const [dateFilter, setDateFilter] = useState<string>("")
-	const { listBitacoras,isLoadingListBitacoras, stats} = useBitacoras(ubicacionSeleccionada, areaSeleccionada == "todas" ? "": areaSeleccionada, selectedOption, true , dates[0], dates[1], dateFilter)
+	const { listBitacoras,isLoadingListBitacoras} = useBitacoras(ubicacionSeleccionada, areaSeleccionada == "todas" ? "": areaSeleccionada, selectedOption, true , dates[0], dates[1], dateFilter)
+	const { data: stats } = useGetStats(location, area, 'Bitacoras')
 	const { tab, setTab } = useShiftStore()
 	const [selectedTab, setSelectedTab] = useState<string>(tab ? tab: "Personal"); 
 
@@ -187,14 +189,14 @@ return (
 						<div className="flex gap-6">
 							<Users className="text-primary w-10 h-10" />
 							<span className="flex items-center font-bold text-4xl">
-							{stats?.personal_dentro}
+							{stats?.personas_dentro}
 							</span>
 						</div>
 						<div className="flex items-center space-x-0">
 							<div className="h-1 w-1/2 bg-cyan-100"></div>
 							<div className="h-1 w-1/2 bg-blue-500"></div>
 						</div>
-						<span className="text-md">Personal dentro</span>
+						<span className="text-md">Personas dentro</span>
 					</div>
 
 					<div  className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${

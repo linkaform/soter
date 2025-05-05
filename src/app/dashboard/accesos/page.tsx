@@ -64,7 +64,7 @@ const AccesosPage = () => {
   const [debouncedValue,setDebouncedValue]=useState("")
   const [input,setInput]=useState("")
 
-  const { data: stats } = useGetStats(area, location, 'Accesos')
+  const { data: stats } = useGetStats(location, area, 'Accesos')
 
   const exitRegisterAccess = useMutation({
     mutationFn: async () => {
