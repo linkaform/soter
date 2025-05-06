@@ -19,8 +19,8 @@ interface CloseNoteModalProps {
   title: string
   children: React.ReactNode
   note: Note
-  setIsOpen:Dispatch<SetStateAction<boolean>>;
-  isOpen:boolean
+  setIsOpen?:Dispatch<SetStateAction<boolean>>;
+  isOpen?:boolean
 }
 
 interface Note {
@@ -92,7 +92,7 @@ export const CloseNoteModal: React.FC<CloseNoteModalProps> = ({
       {
         onSuccess: () => {
           setOpen(false)
-          if(isOpen)
+          if(isOpen && setIsOpen)
             setIsOpen(false)
           form.reset()
         },

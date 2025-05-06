@@ -51,8 +51,9 @@ export const AddNoteModal: React.FC<AddNoteModalProps> = ({
   const [evidencia, setEvidencia] = useState<Imagen[]>([])
   const [documento, setDocumento] = useState<Imagen[]>([])
   const [open, setOpen] = useState(false)
-  const { createNoteMutation, isLoadingNotes } = useNotes('', '')
-  const { area } = useShiftStore()
+  const { area, location } = useShiftStore()
+
+  const { createNoteMutation, isLoadingNotes } = useNotes(area, location)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
