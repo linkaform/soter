@@ -146,7 +146,7 @@ const Credentials: React.FC<Props> = ({ searchPass }) => {
 							</MakeCallModal>
 
 							{/* Botón de Mensaje */}
-							<SendMessageModal title="Enviar Recordatorio">
+							<SendMessageModal title="Enviar Mensaje">
 							<Button
 								size="icon"
 								variant="secondary"
