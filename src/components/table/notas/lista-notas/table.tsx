@@ -51,7 +51,7 @@ export const ListaNotasTable = ({ statusFilter, ubicacionSeleccionada, areaSelec
     }
   }, [statusFilter])
 
-  const { data: notes, isLoading, isFetching } = useNotes(
+  const { data: notes, isLoadingListNotes, isFetching } = useNotes(
     areaSeleccionada,
     ubicacionSeleccionada,
     currentPage,
@@ -73,8 +73,6 @@ export const ListaNotasTable = ({ statusFilter, ubicacionSeleccionada, areaSelec
   const handlePageChange = (newPage: number) => {
     setCurrentPage(newPage - 1)
   }
-
-  const [open, setOpen] = useState(false)
 
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -232,7 +230,7 @@ export const ListaNotasTable = ({ statusFilter, ubicacionSeleccionada, areaSelec
             date1={date1}
             date2={date2}
           />
-          <AddNoteModal title='Nueva nota' open={open} setOpen={setOpen}>
+          <AddNoteModal title='Nueva nota' >
             <Button className='w-full md:w-auto bg-blue-500 text-white hover:bg-blue-600 px-4 py-2 rounded-md flex items-center'>
               <Plus />
               Nota
@@ -264,7 +262,7 @@ export const ListaNotasTable = ({ statusFilter, ubicacionSeleccionada, areaSelec
             ))}
           </TableHeader>
           <TableBody>
-            {isLoading || isFetching ? (
+            {isLoadingListNotes || isFetching ? (
               <TableRow>
                 <TableCell colSpan={listaNotasColumns.length} className="text-center">
                   Cargando registros...
