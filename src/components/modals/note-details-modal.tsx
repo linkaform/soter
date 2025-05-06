@@ -1,7 +1,7 @@
 import { Badge } from '../ui/badge'
 import { Button } from '../ui/button'
 import Image from 'next/image'
-import React from 'react'
+import React, { useState } from 'react'
 import {
   Carousel,
   CarouselContent,
@@ -58,9 +58,9 @@ export const NoteDetailsModal: React.FC<NoteDetailsModalProps> = ({
   //   note_open_date,
   //   created_by_name,
   // } = note
-
+  const [open, setIsOpen]= useState(false)
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
 
       <DialogContent className='max-w-xl max-h-[90vh] overflow-scroll'>
@@ -99,7 +99,7 @@ export const NoteDetailsModal: React.FC<NoteDetailsModalProps> = ({
           </Carousel>
         )}
 
-        <CloseNoteModal title='Cerrar nota' note={note}>
+        <CloseNoteModal title='Cerrar nota' note={note} setIsOpen={setIsOpen} isOpen={open}>
           <Button className='w-80 mx-auto bg-gray-100 hover:bg-gray-200 text-gray-700 mb-5'>
             Cerrar Nota
           </Button>

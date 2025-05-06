@@ -10,11 +10,11 @@ export const useCatalogoPaseAreaLocation = (location:string, enableLocation:bool
     setAreas,
     setLocations
   } = useAreasLocationStore();
-
   const { data: dataAreas, isLoading:isLoadingAreas, error:errorAreas, isFetching:isFetchingAreas, refetch:refetchAreas } = useQuery<any>({
     queryKey: ["getCatalogoPasesAreaNoApi", location], 
     enabled:enableArea,
     queryFn: async () => {
+        
         const data = await getCatalogoPasesAreaNoApi(location); 
         const textMsj = errorMsj(data) 
         if (textMsj){

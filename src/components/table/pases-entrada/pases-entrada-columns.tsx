@@ -3,7 +3,7 @@ import UpdateFullPassModal from "@/components/modals/update-full-pass";
 import { ViewPassModal } from "@/components/modals/view-pass-modal";
 import { Areas, Comentarios, enviar_pre_sms, Link } from "@/hooks/useCreateAccessPass";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { replaceNullsInArrayDynamic } from "@/lib/utils";
+import { capitalizeFirstLetter, replaceNullsInArrayDynamic } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
 import { Eye, Pencil} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -139,26 +139,35 @@ export const pasesEntradaColumns: ColumnDef<PaseEntrada>[] = [
 
       return (
         <div className="flex items-center space-x-4">
-			<div>
-				{primeraImagen ? (
-					<>
-					<Avatar>
-						<AvatarImage src={primeraImagen} alt="Avatar" />
-						<AvatarFallback>CN</AvatarFallback>
-					</Avatar>
-					</>
-				) : (
-				<span>No hay imagen</span>
-				)}
-			</div>
-
+        <div>
+          {primeraImagen ? (
+            <>
+            <Avatar>
+              <AvatarImage src={primeraImagen} alt="Avatar" />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+            </>
+          ) : (
+          <span>No hay imagen</span>
+          )}
+        </div>
 			<div className="flex flex-col">
-				<span className="font-bold">{nombre}</span>
-				<span
-				className={estatus === "Activo" ? "text-blue-500" : "text-red-500"}
-				>
-				{estatus}
-				</span>
+			<span className="font-bold">{nombre}</span>
+				<div>
+					<Badge
+					className={`text-white text-md ${
+						estatus.toLowerCase() == "vencido"
+						? "bg-red-600 hover:bg-red-600"
+						: estatus.toLowerCase() == "activo"
+						? "bg-green-600 hover:bg-green-600"
+						: estatus.toLowerCase() == "proceso"
+						? "bg-blue-600 hover:bg-blue-600"
+						: "bg-gray-400"
+					}`}
+					>
+					{capitalizeFirstLetter(estatus)}
+					</Badge>
+				</div>
 			</div>
         </div>
       );
@@ -169,6 +178,12 @@ export const pasesEntradaColumns: ColumnDef<PaseEntrada>[] = [
     accessorKey: "ubicacion",
     header: "Ubicación",
     cell: ({ row }) => <div>{row.getValue("ubicacion")}</div>,
+    enableSorting: true,
+  },
+  {
+    accessorKey: "folio",
+    header: "Folio",
+    cell: ({ row }) => <div>{row.getValue("folio")}</div>,
     enableSorting: true,
   },
   {

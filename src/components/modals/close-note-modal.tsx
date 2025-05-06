@@ -12,13 +12,15 @@ import { Form } from '../ui/form'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { useNotes } from '@/hooks/useNotes'
-import { useState } from 'react'
+import { Dispatch, SetStateAction, useState } from 'react'
 import { Imagen } from '@/lib/update-pass-full'
 
 interface CloseNoteModalProps {
   title: string
   children: React.ReactNode
   note: Note
+  setIsOpen:Dispatch<SetStateAction<boolean>>;
+  isOpen:boolean
 }
 
 interface Note {
@@ -47,6 +49,8 @@ export const CloseNoteModal: React.FC<CloseNoteModalProps> = ({
   title,
   children,
   note,
+  isOpen,
+  setIsOpen
 }: CloseNoteModalProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -54,7 +58,7 @@ export const CloseNoteModal: React.FC<CloseNoteModalProps> = ({
 
   console.log("nota", note)
   const [open, setOpen] = useState(false)
-  const { closeNoteMutation, isLoading } = useNotes('', '')
+  const { closeNoteMutation, isLoadingNotes } = useNotes('', '')
 
   function onSubmit() {
     const currentDate = new Date()
@@ -88,6 +92,8 @@ export const CloseNoteModal: React.FC<CloseNoteModalProps> = ({
       {
         onSuccess: () => {
           setOpen(false)
+          if(isOpen)
+            setIsOpen(false)
           form.reset()
         },
       }
@@ -125,9 +131,9 @@ export const CloseNoteModal: React.FC<CloseNoteModalProps> = ({
 
               <Button
                 type='submit'
-                disabled={isLoading}
+                disabled={isLoadingNotes}
                 className='w-full bg-red-600 hover:bg-red-700 text-white flex items-center justify-center gap-2'>
-                {isLoading ? (
+                {isLoadingNotes ? (
                   <>
                     <div className='w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin' />
                     Cerrando...

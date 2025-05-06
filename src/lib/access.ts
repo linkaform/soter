@@ -205,8 +205,8 @@ export interface AccessPass {
   empresa: string;
   visita_a: string;
   perfil_pase?: string;
-  foto: Foto | Image | undefined;
-  identificacion: Foto | Image | undefined;
+  foto: Foto | Image[] | undefined;
+  identificacion: Foto | Image[] | undefined;
   email?: string;
   telefono?: string;
 }

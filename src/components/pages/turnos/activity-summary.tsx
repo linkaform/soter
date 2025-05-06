@@ -53,10 +53,10 @@ const ActivitySummary = () => {
     },
     {
       icon: <Badges />,
-      title: "Gafetes Pendientes",
+      title: "Equipos dentro",
       count: stats?.gafetes_pendientes || 0,
       link: "/dashboard/bitacoras",
-      tab:"Locker"
+      tab:"Equipos"
     },
   ];
 

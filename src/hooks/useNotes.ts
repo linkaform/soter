@@ -1,15 +1,14 @@
 import { crearNota, editarNota, getNotes, InputNote, UpdateNote, CloseNote, cerrarNota } from "@/lib/notes";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { errorMsj } from "@/lib/utils";
-import { useShiftStore } from "@/store/useShiftStore";
 import { toast } from "sonner";
+import { useState } from "react";
 
 export const useNotes = (area:string, location:string, pageIndex: number = 0, pageSize: number = 10, dateFrom: string = "", dateTo: string="", status: string = "abierto") => {
   const offset = pageIndex * pageSize
   const limit = pageSize
   const queryClient = useQueryClient();
-  const {isLoading, setLoading} = useShiftStore();
-
+  const [isLoadingNotes, setLoadingNotes] = useState(false);
   //Obtener lista de notas
   const { data, isLoading: isLoadingListNotes, error, isFetching, refetch } = useQuery<any, Error>({
     queryKey: ["getNotes", area, location, pageIndex, pageSize, dateFrom, dateTo, status], 
@@ -37,10 +36,12 @@ export const useNotes = (area:string, location:string, pageIndex: number = 0, pa
         }
     },
     onMutate: () => {
-      setLoading(true);
+      setLoadingNotes(true);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['getShift'] });
+      queryClient.invalidateQueries({
+        predicate: (query) => query.queryKey[0] === 'getShift'
+      });
       queryClient.invalidateQueries({ queryKey: ['stats'] });
       queryClient.invalidateQueries({ queryKey: ['getNotes'] });
       toast.success("Nota creada correctamente.");
@@ -51,7 +52,7 @@ export const useNotes = (area:string, location:string, pageIndex: number = 0, pa
 
     },
     onSettled: () => {
-      setLoading(false);
+      setLoadingNotes(false);
     },
   });
 
@@ -69,10 +70,12 @@ export const useNotes = (area:string, location:string, pageIndex: number = 0, pa
         }
     },
     onMutate: () => {
-      setLoading(true);
+      setLoadingNotes(true);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['getShift'] });
+      queryClient.invalidateQueries({
+        predicate: (query) => query.queryKey[0] === 'getShift'
+      });
       queryClient.invalidateQueries({ queryKey: ['stats'] });
       queryClient.invalidateQueries({ queryKey: ['getNotes'] });
       toast.success("Nota editada correctamente.");
@@ -83,7 +86,7 @@ export const useNotes = (area:string, location:string, pageIndex: number = 0, pa
 
     },
     onSettled: () => {
-      setLoading(false);
+      setLoadingNotes(false);
     },
   });
 
@@ -101,10 +104,12 @@ export const useNotes = (area:string, location:string, pageIndex: number = 0, pa
         }
     },
     onMutate: () => {
-      setLoading(true);
+      setLoadingNotes(true);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['getShift'] });
+      queryClient.invalidateQueries({
+        predicate: (query) => query.queryKey[0] === 'getShift'
+      });
       queryClient.invalidateQueries({ queryKey: ['stats'] });
       queryClient.invalidateQueries({ queryKey: ['getNotes'] });
       toast.success("Nota cerrada correctamente.");
@@ -115,7 +120,7 @@ export const useNotes = (area:string, location:string, pageIndex: number = 0, pa
 
     },
     onSettled: () => {
-      setLoading(false);
+      setLoadingNotes(false);
     },
   });
 
@@ -126,7 +131,7 @@ export const useNotes = (area:string, location:string, pageIndex: number = 0, pa
     createNoteMutation,
     editNoteMutation,
     closeNoteMutation,
-    isLoading,
+    isLoadingNotes,
     error,
     isFetching,
     refetch,

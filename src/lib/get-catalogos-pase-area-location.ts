@@ -3,7 +3,7 @@ interface getCatalogoPasesArea {
   }
   
   export const getCatalogoPasesArea = async ({
-    location = "Caseta Principal",
+    location = "",
   }: getCatalogoPasesArea = {}) => {
     const payload = {
         location,

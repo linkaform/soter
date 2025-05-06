@@ -46,25 +46,28 @@ import { esHexadecimal } from "@/lib/utils";
 import Link from "next/link";
 import { useGetStats } from "@/hooks/useGetStats";
 import { ScanPassWithCameraModal } from "@/components/modals/scan-pass-with-camera";
+import Swal from "sweetalert2";
+import { useAreasLocationStore } from "@/store/useGetAreaLocationByUser";
 
 const AccesosPage = () => {
   const { isAuth } = useAuthStore()
   const { area, location, setLoading , turno, setArea, setLocation} = useShiftStore();
   const { shift, isLoading:loadingShift } = useGetShift(false, true);
-
   const { passCode, setPassCode, clearPassCode} = useAccessStore();
-
-//   const [pass, setPass] =useState("")
   const { isLoading, loading, searchPass } = useSearchPass(false);
-
   const [inputValue, setInputValue] = useState("");
   const [ openActivePases , setOpenActivePases ] = useState(false)
   const queryClient = useQueryClient();
-
   const [debouncedValue,setDebouncedValue]=useState("")
-  const [input,setInput]=useState("")
+  const { data: stats } = useGetStats(area, location, 'Accesos')
+  const { fetchAreas, fetchLocations, loading:loadingLocationArea} = useAreasLocationStore();
 
-  const { data: stats } = useGetStats(location, area, 'Accesos')
+  useEffect(() => {
+	fetchLocations();
+	if (location) {
+	  fetchAreas(location);
+	}
+  }, []);
 
   const exitRegisterAccess = useMutation({
     mutationFn: async () => {
@@ -82,15 +85,27 @@ const AccesosPage = () => {
     onSuccess: () => {
       setPassCode("");
 
-      toast.success("Salida Exitosa");
+	  toast.success("Salida Exitosa", {
+		style: {
+		  background: '#22c55e', 
+		  color: 'white',
+		},
+	  });
 
       queryClient.invalidateQueries({ queryKey: ["serchPass"] });
       queryClient.invalidateQueries({ queryKey: ['getStats'] });
     },
     onError: (error) => {
-      const errorMsg = `❌ Hubo un error en la salida: ${error.message}`;
-      console.log(errorMsg);
-      toast.error(error.message);
+	  Swal.fire({
+		icon: "error",
+		title: "Error al realizar la salida:",
+		text: error.message,
+		confirmButtonText: 'OK',
+		customClass: {
+		  confirmButton: 'bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow',
+		},
+		buttonsStyling: false, 
+	  });
     },
     onSettled: () => {
       setLoading(false);
@@ -150,16 +165,6 @@ const AccesosPage = () => {
 
   const doAccess = useMutation({
     mutationFn: async () => {
-      console.log(
-        "doAccess",
-        area,
-        location,
-        passCode,
-        searchPass?.visita_a,
-        searchPass?.grupo_vehiculos?.[0],
-        searchPass?.grupo_equipos
-      );
-
       const data = await registerIncoming({
         area,
         location,
@@ -186,14 +191,25 @@ const AccesosPage = () => {
 
       setPassCode("");
 
-      toast.success("Entrada Exitosa");
+	  toast.success("Entrada Exitosa", {
+		style: {
+		  background: '#22c55e', 
+		  color: 'white',
+		},
+	  });
+
     },
     onError: (error) => {
-      const errorMsg = `❌ Hubo un error en el ingreso: ${error.message}`;
-
-      console.log(errorMsg);
-
-      toast.error(error.message);
+	  Swal.fire({
+		icon: "error",
+		title: "Error al realizar ingreso:",
+		text: error.message,
+		confirmButtonText: 'OK',
+		customClass: {
+		  confirmButton: 'bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow',
+		},
+		buttonsStyling: false, 
+	  });
     },
     onSettled: () => {
       setLoading(false);
@@ -217,7 +233,7 @@ const AccesosPage = () => {
 			setInputValue("")
 			setPassCode(inputValue)
 		}else{
-			setInput(inputValue)
+			// setInput(inputValue)
 			setOpenActivePases(true)
 			setPassCode("")
 			setInputValue("")
@@ -231,7 +247,7 @@ const AccesosPage = () => {
   }, [debouncedValue]);
   
 
-  if (isLoading || loading || loadingShift) {
+  if (isLoading || loading || loadingShift || loadingLocationArea) {
     return (
       <div className="flex justify-center items-center h-screen">
 			<div className="w-24 h-24 border-8 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
@@ -267,7 +283,7 @@ const AccesosPage = () => {
 			<div className="p-6 space-y-6 w-full mx-auto pb-0">
 				<div className="flex justify-center flex-col md:flex-row gap-3 ">
 					<div className="flex justify-center mb-5 mr-5 w-full md:max-w-lg ">
-					<div className="relative w-full flex items-center">
+					<div className="relative w-full flex items-center ">
 						<Input
 						type="text"
 						placeholder="Escanear Pase"
@@ -275,23 +291,9 @@ const AccesosPage = () => {
 						value={inputValue} // Enlazamos el input con su estado
 						onChange={(e) => setInputValue(e.target.value)} // Actualizamos el estado
 						/>
+						 <Search className="absolute right-12 h-4 w-4 text-gray-500 pointer-events-none" />
 
-						<Button
-						variant="ghost"
-						size="icon"
-						className="absolute right-10 border rounded-none top-0 h-full "
-						onClick={() => {
-							if(inputValue){
-								setDebouncedValue(inputValue)
-							} else{
-								toast.error("Escribe algo para buscar...")
-							}
-						}}
-						>
-						<Search className="h-4 w-4" />
-						</Button>
-
-						<ActivePassesModal title="Pases Activos"  input={input} setOpen={setOpenActivePases} open={openActivePases}>
+						<ActivePassesModal title="Pases Activos"  input={debouncedValue} setInput={setDebouncedValue} setOpen={setOpenActivePases} open={openActivePases}>
 						<Button
 							variant="ghost"
 							size="icon"
@@ -314,14 +316,6 @@ const AccesosPage = () => {
 							);
 							return;
 							}
-							// console.log({area,
-							// 	location,
-							// 	visita_a: searchPass?.visita_a,
-							// 	qr_code: passCode,
-							// 	vehiculo: allVehicles?.[0] ? [allVehicles[0]] : [],
-							// 	equipo: allEquipments,
-							// 	comentario_acceso: [],
-							// 	comentario_pase: []})
 							doAccess.mutate();
 						}}
 						>
@@ -348,12 +342,12 @@ const AccesosPage = () => {
 						Registrar Salida
 						</Button>
 					)}
-          <ScanPassWithCameraModal title="Escanea un pase con la camara" >
-						<Button className="bg-yellow-400 hover:bg-yellow-500 text-black">
-              <Scan />
-							Escanear un pase
-						</Button>
-          </ScanPassWithCameraModal>
+					<ScanPassWithCameraModal title="Escanea un pase con la camara" >
+								<Button className="bg-yellow-400 hover:bg-yellow-500 text-black">
+					<Scan />
+									Escanear un pase
+								</Button>
+					</ScanPassWithCameraModal>
 					{!passCode && (
 						<AddVisitModal title="Nueva Visita">
 						<Button className="bg-green-600 hover:bg-green-700 text-white">
@@ -362,24 +356,7 @@ const AccesosPage = () => {
 						</Button>
 						</AddVisitModal>
 					)}
-
-					{/*   <ScanMethodModal title="Dispositivo a utilizar">
-						<Button className="bg-amber-400 hover:bg-amber-500 text-black">
-						<ScanQrCode />
-						Escanear un pase
-						</Button>
-					</ScanMethodModal> */}
-
-					{/* <ScanMethodModal title="Dispositivo a utilizar">
-					<Button className="bg-white text-black hover:bg-black hover:text-white border border-gray-300">
-
-						<LogIn />
-
-
-						Habilitar auto acceso
-						</Button>
-					</ScanMethodModal> */}
-
+					{ !searchPass ? (<>
 					<TemporaryPassesModal title="Pases Temporales">
 						<Button
 						variant="secondary"
@@ -388,8 +365,8 @@ const AccesosPage = () => {
 						<List className="text-white" />
 						Pases Temporales
 						</Button>
-					</TemporaryPassesModal>
-
+					</TemporaryPassesModal></>):null}
+					{ searchPass ? (<>
 					<Button
 						className="bg-red-500 hover:bg-red-600 text-white"
 						variant="secondary"
@@ -397,7 +374,7 @@ const AccesosPage = () => {
 					>
 						<Eraser className="text-white" />
 						
-					</Button>
+					</Button></>):null}
 					</div>
 				</div>
 			</div>

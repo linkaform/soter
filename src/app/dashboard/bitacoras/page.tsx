@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-console.log("entrando==")
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { LockerTable } from "@/components/table/bitacoras/locker/table";
 import PageTitle from "@/components/page-title";
@@ -45,7 +44,6 @@ const BitacorasPage = () => {
 	},[])
 
 	const processBitacorasE = (bitacoras: Bitacora_record[]) => {
-		console.log("array",bitacoras)
 		return bitacoras.flatMap(bitacora => {
 			if (
 				!bitacora.equipos ||
@@ -77,7 +75,6 @@ const BitacorasPage = () => {
     };
 
 	const processBitacorasV = (bitacoras: Bitacora_record[]) => {
-		console.log("array",bitacoras)
 		return bitacoras?.flatMap(bitacora => {
 			if (!bitacora.vehiculos || !Array.isArray(bitacora.vehiculos) || bitacora.vehiculos.length === 0) {
 				return [];  

@@ -1,4 +1,5 @@
-import React from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect } from "react";
 import {
   Select,
   SelectContent,
@@ -6,8 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
-// import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
+import { useAreasLocationStore } from "@/store/useGetAreaLocationByUser";
 
 interface InputChangeLocation {
 	ubicacionSeleccionada: string;
@@ -17,7 +17,16 @@ interface InputChangeLocation {
 }
 
 const ChangeLocation:React.FC<InputChangeLocation> = ({ ubicacionSeleccionada, setUbicacionSeleccionada, areaSeleccionada, setAreaSeleccionada })=> {
-	const { dataAreas, dataLocations} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true, ubicacionSeleccionada?true:false);
+
+	const {areas, locations, fetchAreas, fetchLocations} = useAreasLocationStore();
+	  console.log("objects",ubicacionSeleccionada, areaSeleccionada, locations, areas)
+	  useEffect(() => {
+		fetchLocations();
+
+		if (ubicacionSeleccionada) {
+		  fetchAreas(ubicacionSeleccionada);
+		}
+	  }, [ubicacionSeleccionada]);
 
 	return (
     <div className="flex flex-col w-full gap-2">
@@ -30,7 +39,7 @@ const ChangeLocation:React.FC<InputChangeLocation> = ({ ubicacionSeleccionada, s
 				<SelectValue placeholder="Ubicación" />
 			</SelectTrigger>
 			<SelectContent>
-			{dataLocations?.map((vehiculo:string, index:number) => (
+			{locations?.map((vehiculo:string, index:number) => (
 				<SelectItem key={index} value={vehiculo}>
 					{vehiculo}
 				</SelectItem>
@@ -46,9 +55,9 @@ const ChangeLocation:React.FC<InputChangeLocation> = ({ ubicacionSeleccionada, s
 			</SelectTrigger>
 			<SelectContent>
 			<SelectItem key={"todas"} value={"todas"}> Todas las Casetas </SelectItem>
-			{dataAreas?.length >0 ? (
+			{areas?.length >0 ? (
 				<>
-				{dataAreas?.map((area:string, index:number) => {
+				{areas?.map((area:string, index:number) => {
 				return(
 					<SelectItem key={index} value={area}>
 					{area}

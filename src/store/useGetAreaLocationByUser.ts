@@ -4,44 +4,63 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
 interface locationAreaStore {
-  areas:string[];
-  locations:string[]
-  setAreas: (items:string[])=>void;
-  setLocations: (items:string[]) =>void;
+  areas: string[];
+  locations: string[];
+  loading:boolean;
+  setAreas: (items: string[]) => void;
+  setLocations: (items: string[]) => void;
   clearAreasLocation: () => void;
+  fetchAreas: (location: string) => Promise<void>;
+  fetchLocations: () => Promise<void>;
+  setLoading: (value: boolean) => void;
 }
 
 export const useAreasLocationStore = create(
   persist<locationAreaStore>(
-    (set) => ({
-      areas:[],
-      locations:[],
-      clearAreasLocation: () => set({ areas: [], locations: [] }),
+    (set, get) => ({
+      areas: [],
+      locations: [],
+      loading: false,
+      setLoading: (value) => set({ loading: value }),
       setAreas: (items) => set({ areas: items }),
       setLocations: (items) => set({ locations: items }),
-      fetchAreas: async (parametros: string ) => {
-        const areasFromStorage = JSON.parse(localStorage.getItem('areaLocation-store') || '{}').areas || [];
-        if (areasFromStorage.length === 0) {
-          const fetchedAreas = await getCatalogoPasesArea({location:parametros});
-          const textMsj = errorMsj(fetchedAreas);
-          if (textMsj) {
-            throw new Error(`Error al obtener catalogo de areas, Error: ${fetchedAreas.error}`);
-          } else {
-            set({ areas: fetchedAreas.response?.data.ubicaciones_user });
+      clearAreasLocation: () => set({ areas: [], locations: [] }),
+
+      fetchAreas: async (location: string) => {
+        const { areas } = get();
+        if (!areas.length) {
+          set({ loading: true });
+          try {
+            const fetched = await getCatalogoPasesArea({ location });
+            const error = errorMsj(fetched);
+            if (error) throw new Error(error.text);
+            set({ areas: fetched.response?.data.areas_by_location || [] });
+          } catch (err) {
+            console.error("Error cargando áreas:", err);
+          } finally {
+            set({ loading: false });
           }
         }
       },
+
       fetchLocations: async () => {
-        const locationsFromStorage = JSON.parse(localStorage.getItem('areaLocation-store') || '{}').locations || [];
-        if (locationsFromStorage.length === 0) {
-          const fetchedLocations = await getCatalogoPasesLocation();
-          set({ locations: fetchedLocations });
+        const { locations } = get();
+        if (!locations.length) {
+          set({ loading: true });
+          try {
+            const fetched = await getCatalogoPasesLocation();
+            set({ locations: fetched.response?.data.ubicaciones_user || [] });
+          } catch (err) {
+            console.error("Error cargando ubicaciones:", err);
+          } finally {
+            set({ loading: false });
+          }
         }
       },
     }),
     {
       name: "areaLocation-store",
-      storage: createJSONStorage(() => localStorage), 
+      storage: createJSONStorage(() => localStorage),
     }
   )
 );

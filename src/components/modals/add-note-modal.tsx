@@ -33,8 +33,6 @@ import {
 interface AddNoteModalProps {
   title: string
   children: React.ReactNode
-  open?: boolean
-  setOpen?: (open: boolean) => void
 }
 
 const formSchema = z.object({
@@ -49,13 +47,11 @@ const formSchema = z.object({
 export const AddNoteModal: React.FC<AddNoteModalProps> = ({
   title,
   children,
-  open,
-  setOpen,
 }: AddNoteModalProps) => {
   const [evidencia, setEvidencia] = useState<Imagen[]>([])
   const [documento, setDocumento] = useState<Imagen[]>([])
-
-  const { createNoteMutation, isLoading } = useNotes('', '')
+  const [open, setOpen] = useState(false)
+  const { createNoteMutation, isLoadingNotes } = useNotes('', '')
   const { area } = useShiftStore()
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -80,7 +76,7 @@ export const AddNoteModal: React.FC<AddNoteModalProps> = ({
       { data_notes: formatData },
       {
         onSuccess: () => {
-          if (setOpen) {
+          if (open) {
             setOpen(false)
           }
           form.reset()
@@ -172,9 +168,9 @@ export const AddNoteModal: React.FC<AddNoteModalProps> = ({
 
               <Button
                 type='submit'
-                disabled={isLoading}
+                disabled={isLoadingNotes}
                 className='w-full bg-blue-500 hover:bg-blue-600 text-white flex items-center justify-center gap-2'>
-                {isLoading ? (
+                {isLoadingNotes ? (
                   <>
                     <div className='w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin' />
                     Agregando...

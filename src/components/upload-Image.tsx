@@ -25,7 +25,6 @@ interface CalendarDaysProps {
 
 
 const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOption, facingMode, imgArray, showArray, limit})=> {
-    // const [ setSelectedFile] = useState<File|null>(null);
     const [loadingWebcam, setloadingWebcam] = useState(false);
     const [hideWebcam, setHideWebcam] = useState(true)
     const [hideButtonWebcam, setHideButtonWebcam] = useState(false)
@@ -45,7 +44,6 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
             const extension = tipoMime.split('/')[1];
             const nuevoNombre = `${quitarAcentosYMinusculasYEspacios(id)}.${extension}`;
             const nuevoArchivo = new File([file], nuevoNombre, { type: file.type });
-            console.log("NUEVO ARCHI", nuevoArchivo)
             uploadImageMutation.mutate({img:nuevoArchivo})
             setHideWebcam(true)
             setHideButtonWebcam(true)

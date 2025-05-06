@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import {
   Dialog,
   DialogContent,
@@ -23,35 +24,41 @@ interface ActivePassesModalProps {
   setOpen:Dispatch<SetStateAction<boolean>>;
   open:boolean;
   input: string;
+  setInput:Dispatch<SetStateAction<string>>;
 }
 
 export const ActivePassesModal: React.FC<ActivePassesModalProps> = ({
   title,
-  children, open, setOpen, input
+  children, open, setOpen, input, setInput 
 }) => {
   const { location } = useShiftStore();
   const { setPassCode , passCode} = useAccessStore();
   const [searchText, setSearchText] = useState("");
   const { data: activePasses, isLoading } = usePasses(location);
-console.log("input", input)
+
   useEffect(() => {
-	console.log("use effect", open, input)
-    if (open && input) {
+    if (open) {
       setSearchText(input);
+    } else {
+      const timeout = setTimeout(() => {
+        setSearchText("");
+        setInput("");
+      }, 300); 
+      return () => clearTimeout(timeout);
     }
   }, [open, input]);
 
   const filteredTemporaryPasses = (search:string) => {
-    return  activePasses?.filter((item: any) =>
-      item.nombre?.toLowerCase().includes(search.toLowerCase()) )
+    return  (activePasses?.filter((item: any) =>
+      item.nombre?.toLowerCase().includes(search.toLowerCase()) ))
   }
 
   const handleSelectPass = (item: any) => {
     if (esHexadecimal(item._id) && item._id !== passCode) {
       	setPassCode(item._id); 
-		setSearchText("")
-		setOpen(false); 
-
+        setSearchText("")
+        setInput("")
+        setOpen(false); 
     }else{
 		toast.error("Escoge un pase diferente...")
 	}
@@ -78,7 +85,7 @@ console.log("input", input)
           <>
             <SearchInput
               value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
+              onChange={(e) =>{setSearchText(e.target.value);}}
             />
             <div className="flex-1 overflow-y-auto max-h-[500px] space-y-0 border-t border-b mt-2">
             {filteredTemporaryPasses(searchText)?.length === 0 ? (
