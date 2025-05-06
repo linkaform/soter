@@ -1,6 +1,5 @@
 'use client'
 import { useState } from 'react'
-import { useShiftStore } from '@/store/useShiftStore'
 import ChangeLocation from '@/components/changeLocation'
 import StatCard from './StatCard'
 import { Sun, FolderOpen, Package2 } from 'lucide-react'
@@ -8,15 +7,15 @@ import { useGetStats } from '@/hooks/useGetStats'
 
 interface StatsProps {
   setStatusFilter: (status: string) => void
+  ubicacionSeleccionada: string
+  areaSeleccionada: string
+  setUbicacionSeleccionada: (ubicacion: string) => void
+  setAreaSeleccionada: (area: string) => void
 }
 
-const Stats = ({ setStatusFilter }: StatsProps) => {
-  const { location, area } = useShiftStore()
-  const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location)
-  const [areaSeleccionada, setAreaSeleccionada] = useState(area)
+const Stats = ({ setStatusFilter, ubicacionSeleccionada, areaSeleccionada, setUbicacionSeleccionada, setAreaSeleccionada }: StatsProps) => {
 
-  const { data: stats } = useGetStats(location, area, 'Notas')
-
+  const { data: stats } = useGetStats(ubicacionSeleccionada, areaSeleccionada, 'Notas')
   const [selectedStat, setSelectedStat] = useState<string | null>(null)
 
   const handleCardClick = (status: string) => {

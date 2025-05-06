@@ -21,7 +21,6 @@ import {
 import { AddNoteModal } from '@/components/modals/add-note-modal'
 import { listaNotasColumns } from './lista-notas-columns'
 import { useNotes } from '@/hooks/useNotes'
-import { useShiftStore } from '@/store/useShiftStore'
 import { useState, useEffect } from 'react'
 import Pagination from '@/components/pages/notas/Pagination'
 import DateFilter from '@/components/pages/notas/DateFilter'
@@ -30,10 +29,11 @@ import { format } from 'date-fns'
 
 interface ListaNotasTableProps {
   statusFilter: string
+  ubicacionSeleccionada: string
+  areaSeleccionada: string
 }
 
-export const ListaNotasTable = ({ statusFilter }: ListaNotasTableProps) => {
-  const { location, area } = useShiftStore()
+export const ListaNotasTable = ({ statusFilter, ubicacionSeleccionada, areaSeleccionada }: ListaNotasTableProps) => {
   const [currentPage, setCurrentPage] = useState(0)
   const [registersPage, setRegistersPage] = useState(10)
   const [dateFromValue, setDateFromValue] = useState('')
@@ -52,8 +52,8 @@ export const ListaNotasTable = ({ statusFilter }: ListaNotasTableProps) => {
   }, [statusFilter])
 
   const { data: notes, isLoadingListNotes } = useNotes(
-    area,
-    location,
+    areaSeleccionada,
+    ubicacionSeleccionada,
     currentPage,
     registersPage,
     dateFromValue,
@@ -281,38 +281,37 @@ export const ListaNotasTable = ({ statusFilter }: ListaNotasTableProps) => {
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
                   </TableHead>
                 ))}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row: any) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}>
-                  {row.getVisibleCells().map((cell: any) => (
+            {isLoadingListNotes ? (
+              <TableRow>
+                <TableCell colSpan={listaNotasColumns.length} className="text-center">
+                  Cargando registros...
+                </TableCell>
+              </TableRow>
+            ) : records.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={listaNotasColumns.length} className="text-center">
+                  No hay registros disponibles. Intenta seleccionar una ubicación o un área diferente.
+                </TableCell>
+              </TableRow>
+            ) : (
+              table.getRowModel().rows.map((row) => (
+                <TableRow key={row.id}>
+                  {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={listaNotasColumns.length}
-                  className='h-24 text-center'>
-                  Cargando registros...
-                </TableCell>
-              </TableRow>
             )}
           </TableBody>
         </Table>
