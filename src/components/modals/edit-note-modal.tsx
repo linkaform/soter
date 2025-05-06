@@ -86,7 +86,7 @@ export const EditNoteModal: React.FC<EditNoteModalProps> = ({
   const [evidencia, setEvidencia] = useState<Imagen[]>([])
   const [documento, setDocumento] = useState<Imagen[]>([])
 
-  const { editNoteMutation, isLoading } = useNotes('', '')
+  const { editNoteMutation ,isLoadingNotes} = useNotes('', '')
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -277,9 +277,9 @@ export const EditNoteModal: React.FC<EditNoteModalProps> = ({
 
               <Button
                 type='submit'
-                disabled={isLoading}
+                disabled={isLoadingNotes}
                 className='w-full bg-blue-500 hover:bg-blue-600 text-white flex items-center justify-center gap-2'>
-                {isLoading ? (
+                {isLoadingNotes ? (
                   <>
                     <div className='w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin' />
                     Editando...
