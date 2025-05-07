@@ -32,12 +32,12 @@ import { Input } from "../ui/input";
 
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { useSearchPass } from "@/hooks/useSearchPass";
 import { useShiftStore } from "@/store/useShiftStore";
 
-import { Loader2 } from "lucide-react";
+// import { Loader2 } from "lucide-react";
 import { Imagen } from "@/lib/update-pass-full";
 import LoadImage from "../upload-Image";
 
@@ -64,9 +64,7 @@ const formSchema = z.object({
 		file_name: z.string(),
 	  })
 	).optional(),
-  area: z.string().min(1, {
-    message: "Campo requerido",
-  }).optional(),
+  area: z.string().optional(),
   visita_a: z.string().min(1, {
     message: "Campo requerido",
   }),
@@ -100,14 +98,20 @@ export const AddVisitModal: React.FC<Props> = ({ title, children }) => {
     const access_pass = {
       nombre: data.nombre,
       empresa: data.empresa,
+      // area:"",
       visita_a: data.visita_a,
       perfil_pase: data.perfil_pase,
       foto: fotografia ,
       identificacion: identificacion,
+      // status:"proceso"
     };
-
+    console.log("entrada", access_pass)
     registerNewVisit.mutate({ location, access_pass });
   }
+
+  useEffect(()=>{
+    console.log("errores", form.formState.errors)
+  },[form.formState.errors])
 
   return (
     <Dialog open={openModal} onOpenChange={setOpenModal}>
