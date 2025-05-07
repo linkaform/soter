@@ -3,6 +3,7 @@ import { twMerge } from "tailwind-merge"
 import { Equipo_bitacora, Vehiculo_bitacora } from "@/components/table/bitacoras/bitacoras-columns"
 import { Equipo, Vehiculo } from "./update-pass"
 import { toast } from "sonner"
+import catalogo from '../app/catalogo.json';
 
 
 export function cn(...inputs: ClassValue[]) {
@@ -407,4 +408,36 @@ export function esHexadecimal(str:string) {
 
 export function noEsObjetoVacio(obj:any) {
   return obj && typeof obj === 'object' && !Array.isArray(obj) && Object.keys(obj).length > 0;
+}
+
+export function getCatalogVehiculos({ tipo = "", marca = "" } = {}) {
+  if (!tipo && !marca) {
+    return [...new Set(catalogo.map(item => item["Tipo de vehículo"]))];
+  }
+
+  if (tipo && !marca) {
+    return [
+      ...new Set(
+        catalogo
+          .filter(item => item["Tipo de vehículo"] === tipo)
+          .map(item => item["Marca"])
+      ),
+    ];
+  }
+
+  if (tipo && marca) {
+    return [
+      ...new Set(
+        catalogo
+          .filter(
+            item =>
+              item["Tipo de vehículo"] === tipo &&
+              item["Marca"] === marca
+          )
+          .map(item => item["Modelo"])
+      ),
+    ];
+  }
+
+  return [];
 }

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
 import {
@@ -30,58 +31,61 @@ import { Input } from "../ui/input";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { catalogoColores, catalogoTipoEquipos } from "@/lib/utils";
-import { useState } from "react";
-import { useAccessStore } from "@/store/useAccessStore";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+// import { useAccessStore } from "@/store/useAccessStore";
 import { toast } from "sonner";
+import { Equipo } from "@/lib/update-pass-full";
 
 interface Props {
   title: string;
   children: React.ReactNode;
+  equipos: Equipo[]
+  setEquipos: Dispatch<SetStateAction<Equipo[]>>;
 }
 const formSchema = z.object({
-  tipo: z.array(z.string()).nonempty({
-    message: "Debe seleccionar al menos un tipo.",
+  tipo:z.string().min(2, {
+    message: "Campo requerido.",
   }),
 
-  equipo: z.string().min(2, {
+  nombre: z.string().min(2, {
     message: "Campo requerido.",
-  }).optional(),
+  }),
   marca: z.string().min(2, {
     message: "Campo requerido.",
-  }).optional(),
+  }),
   modelo: z.string().min(2, {
     message: "Campo requerido.",
-  }).optional(),
-  noSerie: z.string().min(2, {
+  }),
+  serie: z.string().min(2, {
     message: "Campo requerido.",
-  }).optional(),
-  color: z.array(z.string()).nonempty({
-    message: "Debe seleccionar al menos un color.",
-  }).optional(),
+  }),
+  color: z.string().min(2, {
+    message: "Campo requerido.",
+  }),
 });
 
-export const EqipmentPassModal: React.FC<Props> = ({ title, children }) => {
+export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equipos, setEquipos}) => {
 
 
 
   const [open, setOpen] = useState(false); 
 
 
-  const {
-    newEquipment,
-    setNewEquipment,
-  } = useAccessStore()
+//   const {
+//     newEquipment,
+//     setNewEquipment,
+//   } = useAccessStore()
 
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      tipo: [],
-      equipo: "",
+      tipo: "",
+      nombre: "",
       marca: "",
       modelo: "",
-      noSerie: "",
-      color: [],
+      serie: "",
+      color: "",
     },
   });
 
@@ -96,18 +100,31 @@ export const EqipmentPassModal: React.FC<Props> = ({ title, children }) => {
   }
 
   const addNewEquipment = (data: z.infer<typeof formSchema>) => {
-    setNewEquipment([
+    setEquipos([
       {
-        color_articulo: data.tipo?.[0],
-        marca_articulo: data.marca,
-        modelo_articulo: data.modelo,
-        nombre_articulo: data.equipo,
-        numero_serie: data.noSerie,
-        tipo_equipo: data.tipo?.[0],
+        color: data.tipo,
+        marca: data.marca,
+        modelo: data.modelo,
+        nombre: data.nombre,
+        serie: data.serie,
+        tipo: data.tipo,
       },
-      ...newEquipment,
+      ...equipos,
     ])
   }
+
+    useEffect(() => {
+        if(!open)
+        form.setValue("color", "")
+        form.setValue("marca", "")
+        form.setValue("modelo", "")
+        form.setValue("nombre", "")
+        form.setValue("serie", "")
+        form.setValue("tipo", "")
+        
+    }, [open]);
+
+
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -131,7 +148,7 @@ export const EqipmentPassModal: React.FC<Props> = ({ title, children }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>* Tipo</FormLabel>
-                  <Select onValueChange={(value) => field.onChange([value])}>
+                  <Select onValueChange={(value) => field.onChange(value)}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Selecciona una opción" />
@@ -152,7 +169,7 @@ export const EqipmentPassModal: React.FC<Props> = ({ title, children }) => {
 
             <FormField
               control={form.control}
-              name="equipo"
+              name="nombre"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>* Nombre del Equipo</FormLabel>
@@ -198,7 +215,7 @@ export const EqipmentPassModal: React.FC<Props> = ({ title, children }) => {
 
               <FormField
                 control={form.control}
-                name="noSerie"
+                name="serie"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>* Número de Serie</FormLabel>
@@ -217,7 +234,7 @@ export const EqipmentPassModal: React.FC<Props> = ({ title, children }) => {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>* Color</FormLabel>
-                    <Select onValueChange={(value) => field.onChange([value])}>
+                    <Select onValueChange={(value) => field.onChange(value)}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Selecciona un color" />

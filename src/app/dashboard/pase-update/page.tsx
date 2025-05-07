@@ -20,6 +20,13 @@ import { useGetPdf } from "@/hooks/usetGetPdf";
 import { descargarPdfPase } from "@/lib/download-pdf";
 import Image from "next/image";
 import router from "next/router";
+import { VehiclePassModal } from "@/components/modals/add-local-vehicule";
+// import EquipoItem from "@/components/equipo-item";
+// import VehicleItem from "@/components/vehicle-item";
+// import useAuthStore from "@/store/useAuthStore";
+// import VehicleLocalItem from "@/components/vehiculo-local-list";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { EqipmentLocalPassModal } from "@/components/modals/add-local-equpment";
 
  const grupoEquipos = z.array(
 	z.object({
@@ -83,20 +90,18 @@ const PaseUpdate = () =>{
 	const [id, setId] = useState("")
 	const [showIneIden, setShowIneIden] = useState<string[]|undefined>([])
 	const[account_id, setAccount_id] = useState<number|null>(null)
-
 	const { data: responsePdf, isLoading: loadingPdf, refetch: refetchPdf} = useGetPdf(account_id, id);
 	const { data: dataCatalogos, isLoading: loadingDataCatalogos , refetch:refetchCatalog} = useGetCatalogoPaseNoJwt(account_id, id);
 	const [agregarEquiposActive, setAgregarEquiposActive] = useState(false);
 	const [agregarVehiculosActive, setAgregarVehiculosActive] = useState(false);
 	const [isSuccess, setIsSuccess] = useState(false);
 	const [modalData, setModalData] = useState<any>(null);
-
+	const [equipos, setEquipos] = useState<Equipo[]>([]);
 	const [vehicles, setVehicles] = useState<Vehiculo[]>([]);
 	const [fotografia, setFotografia] = useState<Imagen[]>([])
 	const [identificacion, setIdentificacion] = useState<Imagen[]>([])
 
 	const [vehiculos, setVehiculos] = useState<Vehiculo[]>([]);
-	const [equipos, setEquipos] = useState<Equipo[]>([]);
 
 	const [errorFotografia, setErrorFotografia] = useState("")
 	const [errorIdentificacion, setErrorIdentificacion] = useState("")
@@ -105,6 +110,8 @@ const PaseUpdate = () =>{
 
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<unknown>();
+
+    // const [collapsedIndex, setCollapsedIndex] = useState<number | null>(null);
 
 	const form = useForm<z.infer<typeof formSchema>>({
 			resolver: zodResolver(formSchema),
@@ -149,9 +156,13 @@ const PaseUpdate = () =>{
 			}else{
 				setErrorIdentificacion("-")
 			}
-			
+			console.log("hola",formattedData)
 			setModalData(formattedData);
 	};
+
+	useEffect(()=>{
+		console.log("errors",form.formState.errors)
+	}, [form.formState.errors])
 
 	const SendUpdate = async () => {
 		const formattedData = {
@@ -260,6 +271,65 @@ const PaseUpdate = () =>{
 		setErrorIdentificacion("")
 		setIsSuccess(false);  // Reinicia el estado para que el modal no se quede abierto.
 	};
+
+
+
+    // const handleDeleteVehicle = (index: number) => {
+    //     setVehicles((prevState) => prevState.filter((_, i) => i !== index)); 
+    //   };
+
+
+    // const toggleCollapse = (index: number) => {
+    //   if (collapsedIndex === index) {
+    //     setCollapsedIndex(null);  
+    //   } else {
+    //     setCollapsedIndex(index);
+    //   }
+    // };
+
+    // useEffect(() => {
+    //     refetch()
+    //     setTiposCat(dataVehiculos)
+    // }, []);
+
+    // useEffect(() => {
+    //   if(!tiposCat && dataVehiculos){
+    //     setTiposCat(dataVehiculos)
+    //   }
+    //   if(dataVehiculos && tipoVehiculoState && catalogSearch=="marcas"){
+    //     setMarcasCat(dataVehiculos)
+    //   }
+    //   if(dataVehiculos && tipoVehiculoState && marcaState && catalogSearch=="modelos"){
+    //     setModelosCat(dataVehiculos)
+    //   }
+    // }, [dataVehiculos]);
+
+//   useEffect(() => {
+//       form.setValue('tipo', '');
+//       form.setValue('marca', '');
+//       form.setValue('modelo', '');
+//       form.setValue('placas', '');
+//       form.setValue('estado', '');
+//       form.setValue('color', '');
+//   }, [cleanMain]);
+
+//   const updatedVehicles = (index: number, value: string, fieldName:string) => {
+//     const updatedAreas = [...vehicles];
+//       updatedAreas[index] = {
+//         ...updatedAreas[index],   // Mantener las propiedades anteriores del área
+//         [fieldName]: value,       // Actualizar el campo específico
+//       };
+//     setVehicles(updatedAreas);
+//   };
+
+  const handleRemove = (index: number) => {
+	setVehicles((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  const handleRemoveEq = (index: number) => {
+	setEquipos((prev) => prev.filter((_, i) => i !== index))
+  }
+
 return (
 	<div className="p-8">
 		{dataCatalogos?.pass_selected?.estatus == "proceso" ? (
@@ -277,41 +347,48 @@ return (
 						<h1 className="font-bold text-2xl">Pase de Entrada</h1>
 				</div>
 				<div className="flex flex-col space-y-5">
-					<div className="flex flex-row justify-between ">
-							<div className="w-full flex gap-2">
-							<p className="font-bold whitespace-nowrap">Nombre: </p>
-							<p >{dataCatalogos?.pass_selected?.nombre}</p>
-							</div>
+					{/* Nombre */}
+					<div className="flex flex-col sm:flex-row justify-between gap-4">
+						<div className="w-full flex gap-2">
+						<p className="font-bold whitespace-nowrap">Nombre:</p>
+						<p>{dataCatalogos?.pass_selected?.nombre}</p>
+						</div>
 					</div>
 
-					<div className="flex justify-between">
-							<div className="w-full flex gap-2">
-							<p className="font-bold whitespace-nowrap">Email : </p>
-							<p className="w-full break-words">{dataCatalogos?.pass_selected?.email}</p>
-							</div>
+					{/* Email y Teléfono */}
+					<div className="flex flex-col sm:flex-row justify-between gap-4">
+						<div className="w-full flex gap-2">
+						<p className="font-bold whitespace-nowrap">Email:</p>
+						<p className="w-full break-words">{dataCatalogos?.pass_selected?.email}</p>
+						</div>
 
-							<div className="w-full flex gap-2">
-							<p className="font-bold whitespace-nowrap">Teléfono : </p>
-							<p className="text-sm">{dataCatalogos?.pass_selected?.telefono}</p>
-							</div>
+						<div className="w-full flex gap-2">
+						<p className="font-bold whitespace-nowrap">Teléfono:</p>
+						<p className="text-sm">{dataCatalogos?.pass_selected?.telefono}</p>
+						</div>
 					</div>
 
-					<div className="flex justify-between">
-							<div className="w-full flex gap-2">
-							<p className="font-bold whitespace-nowrap">Visita a: </p>
-							<p className="w-full break-words">{dataCatalogos?.pass_selected?.visita_a ? dataCatalogos?.pass_selected?.visita_a[0].nombre: ""}</p>
-							</div>
+					{/* Visita y Ubicación */}
+					<div className="flex flex-col sm:flex-row justify-between gap-4">
+						<div className="w-full flex gap-2">
+						<p className="font-bold whitespace-nowrap">Visita a:</p>
+						<p className="w-full break-words">
+							{dataCatalogos?.pass_selected?.visita_a?.[0]?.nombre || ""}
+						</p>
+						</div>
 
-							<div className="w-full flex gap-2">
-							<p className="font-bold whitespace-nowrap">Ubicación : </p>
-							<p className="w-full break-words">{dataCatalogos?.pass_selected?.ubicacion} </p>
-							</div>
+						<div className="w-full flex gap-2">
+						<p className="font-bold whitespace-nowrap">Ubicación:</p>
+						<p className="w-full break-words">
+							{dataCatalogos?.pass_selected?.ubicacion}
+						</p>
+						</div>
 					</div>
 					
 
-					<div className="flex justify-between "> 
+					<div className="flex justify-between flex-wrap">
 						{showIneIden?.includes("foto")&& 
-							<div className="w-full sm:w-1/3 md:w-1/2 lg:w-1/2 lg:mr-4 sm:mr-4">
+							<div className="w-full md:w-1/2 pr-2">
 									<LoadImage
 										id="fotografia"
 										titulo={"Fotografía"}
@@ -320,10 +397,10 @@ return (
 										facingMode="user" 
 										imgArray={fotografia} 
 										showArray={true} 
-										limit={1}									/>
+										limit={1}/>
 									{errorFotografia !=="" && <span className="text-red-500 text-sm">{errorFotografia}</span>}
 							</div>}
-							{showIneIden?.includes("iden")&& <div className="w-full sm:w-1/3 md:w-1/2 lg:w-1/2 lg:mr-4 sm:mr-4">
+							{showIneIden?.includes("iden")&& <div className="w-full md:w-1/2">
 									<LoadImage
 									id="identificacion"
 									titulo={"Identificación"}
@@ -337,8 +414,107 @@ return (
 									{errorIdentificacion !=="" && <span className="text-red-500 text-sm">{errorIdentificacion}</span>}
 							</div>}
 					</div> 
-	
-					<div className="flex flex-col mt-4 gap-y-3">
+					<div className="flex flex-col gap-y-6">
+					{/* Sección: Lista de Vehículos */}
+					<div>
+						<div className="flex items-center gap-x-7">
+						<span className="font-bold text-xl">Lista de Vehículos</span>
+						<VehiclePassModal title="Nuevo Vehiculo" vehicles={vehicles} setVehicles={setVehicles}>
+							<button
+							type="button"
+							onClick={() => handleCheckboxChange("agregar-vehiculos")}
+							className="px-4 py-2 rounded-md transition-all duration-300 border-2 border-blue-400 bg-transparent hover:bg-slate-100"
+							>
+							<div className="flex flex-wrap gap-2">
+								<Car className="text-blue-600" />
+								<div className="text-blue-600">Agregar Vehículos</div>
+							</div>
+							</button>
+						</VehiclePassModal>
+						</div>
+						<div className="mt-2 text-gray-600">
+							
+						<Accordion type="multiple" className="w-full">
+							{vehicles.map((vehiculo, index) => (
+								<AccordionItem key={index} value={`vehiculo-${index}`}>
+								<AccordionTrigger>
+									{vehiculo.tipo}
+								</AccordionTrigger>
+								<AccordionContent>
+									<div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 text-sm">
+									<p><strong>Tipo:</strong> {vehiculo.tipo}</p>
+									<p><strong>Marca:</strong> {vehiculo.marca}</p>
+									<p><strong>Modelo:</strong> {vehiculo.modelo}</p>
+									<p><strong>Placas:</strong> {vehiculo.placas}</p>
+									<p><strong>Estado:</strong> {vehiculo.estado}</p>
+									<p><strong>Color:</strong> {vehiculo.color}</p>
+									</div>
+						
+									<div className="flex justify-end px-4 pb-4">
+									<Button variant="destructive" size="sm" onClick={() => handleRemove(index)}>
+										Eliminar
+									</Button>
+									</div>
+								</AccordionContent>
+								</AccordionItem>
+							))}
+							{vehicles.length==0?(
+							<div>No se han agregado vehiculos.</div>):null}
+						</Accordion>
+						</div>
+					</div>
+
+					{/* Sección: Lista de Equipos */}
+					<div>
+						<div className="flex items-center gap-x-10">
+						<span className="font-bold text-xl">Lista de Equipos</span>
+						<EqipmentLocalPassModal title="Nuevo Vehiculo" equipos={equipos} setEquipos={setEquipos}>
+							<button
+							type="button"
+							onClick={() => handleCheckboxChange("agregar-equipos")}
+							className="px-4 py-2 rounded-md transition-all duration-300 border-2 border-blue-400 bg-transparent hover:bg-slate-100"
+							>
+							<div className="flex flex-wrap gap-2">
+								<Laptop className="text-blue-600" />
+								<div className="text-blue-600">Agregar Equipos</div>
+							</div>
+							</button>
+						</EqipmentLocalPassModal>
+						</div>
+						<div className="mt-2 text-gray-600">
+						<Accordion type="multiple" className="w-full">
+							{equipos.map((equipo, index) => (
+								<AccordionItem key={index} value={`equipo-${index}`}>
+								<AccordionTrigger>
+									{equipo.tipo}
+								</AccordionTrigger>
+								<AccordionContent>
+									<div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 text-sm">
+									<p><strong>Tipo:</strong> {equipo.tipo}</p>
+									<p><strong>Nombre:</strong> {equipo.nombre}</p>
+									<p><strong>Marca:</strong> {equipo.marca}</p>
+									<p><strong>Modelo:</strong> {equipo.modelo}</p>
+									<p><strong>No. Serie:</strong> {equipo.serie}</p>
+									<p><strong>Color:</strong> {equipo.color}</p>
+									</div>
+						
+									<div className="flex justify-end px-4 pb-4">
+									<Button variant="destructive" size="sm" onClick={() => handleRemoveEq(index)}>
+										Eliminar
+									</Button>
+									</div>
+								</AccordionContent>
+								</AccordionItem>
+							))}
+							{equipos.length==0?(
+							<div>No se han agregado equipos.</div>):null}
+						</Accordion>
+						</div>
+
+					</div>
+					</div>
+
+					{/* <div className="flex flex-col mt-4 gap-y-3">
 						<div className="flex items-center">
 									<button
 											type="button"
@@ -374,10 +550,10 @@ return (
 									</div>
 							</button>
 						</div>
-					</div>
+					</div> */}
 					
 				</div>
-					{agregarEquiposActive ? (<>
+					{/* {agregarEquiposActive ? (<>
 							<EquipoList
 									equipos = {equipos}
 									setEquipos={setEquipos}
@@ -390,7 +566,7 @@ return (
 								vehicles={vehicles}
 								setVehicles={setVehicles} isModalOpen={true}/>
 							</>
-						):null}
+						):null} */}
 
 					<Form {...form}>
 						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8"> 
