@@ -159,7 +159,6 @@ import { EntryPassModalUpdate } from "./add-pass-modal-update";
 		});
 	}
 const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, children }) => {
-console.log("Data actualizar", dataPass)
 
 	const [tipoVisita, setTipoVisita] = useState(dataPass.tipo_visita_pase || "fecha_fija");
 	const [config_dias_acceso, set_config_dias_acceso] = useState<string[]>(dataPass.config_dias_acceso||[]);

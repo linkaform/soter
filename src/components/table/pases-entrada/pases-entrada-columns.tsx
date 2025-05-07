@@ -143,7 +143,7 @@ export const pasesEntradaColumns: ColumnDef<PaseEntrada>[] = [
           {primeraImagen ? (
             <>
             <Avatar>
-              <AvatarImage src={primeraImagen} alt="Avatar" />
+              <AvatarImage src={primeraImagen} alt="Avatar" className="object-cover"/>
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
             </>

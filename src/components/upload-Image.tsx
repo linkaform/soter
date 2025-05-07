@@ -159,11 +159,11 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
                                     <Card>
                                         <CardContent className="flex aspect-square items-center justify-center p-0">
                                             <Image
-                                                width={280}
-                                                height={280}
+                                                height={10} 
+                                                width={240} 
                                                 src= {a.file_url || "/nouser.svg"}
                                                 alt="Imagen"
-                                                className="w-42 h-42 object-contain bg-gray-200 rounded-lg" 
+                                                className="w-42 h-42 object-cover bg-gray-200 rounded-lg" 
                                             />
                                         </CardContent>
                                     </Card>

@@ -363,7 +363,7 @@ const AccesosPage = () => {
 						className="bg-blue-500 hover:bg-blue-600 text-white"
 						>
 						<List className="text-white" />
-						Pases Temporales
+						Pases En Proceso
 						</Button>
 					</TemporaryPassesModal></>):null}
 					{ searchPass ? (<>
