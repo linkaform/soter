@@ -357,7 +357,7 @@ const AccesosPage = () => {
 						</AddVisitModal>
 					)}
 					{ !searchPass ? (<>
-					<TemporaryPassesModal title="Pases Temporales">
+					<TemporaryPassesModal title="Pases en Proceso">
 						<Button
 						variant="secondary"
 						className="bg-blue-500 hover:bg-blue-600 text-white"
