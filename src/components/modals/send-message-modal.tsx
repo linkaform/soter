@@ -21,7 +21,6 @@ import { Textarea } from "../ui/textarea";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useSearchPass } from "@/hooks/useSearchPass";
-import { Input } from "../ui/input";
 import { useState } from "react";
 import { useEnviarMensaje } from "@/hooks/useSendSMSAndEmail";
 
@@ -31,10 +30,6 @@ interface SendMessageModalProps {
 }
 
 const formSchema = z.object({
-  title: z.string().min(2, {
-    message: "Campo requerido",
-  })
-    .max(50, { message: "Máximo 50 caracteres" }),
   message: z.string().min(2, {
     message: "Campo requerido",
   })
@@ -53,7 +48,6 @@ export const SendMessageModal: React.FC<SendMessageModalProps> = ({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      title: '',
       message: ''
     },
   });
@@ -61,11 +55,10 @@ export const SendMessageModal: React.FC<SendMessageModalProps> = ({
   function onSubmit(values: z.infer<typeof formSchema>) {
     const data_msj = {
       "email_from": localStorage.getItem("userEmail_soter") ?? '',
-      "titulo": values.title,
       "nombre": searchPass?.nombre ?? '',
-      "email_to": searchPass?.visita_a[0].email[0],
+      "email_to": searchPass?.visita_a?.[0]?.email?.[0] ?? '',
       "mensaje": values.message,
-      "phone_to": searchPass?.visita_a[0].telefono[0] ?? ''
+      "phone_to": searchPass?.visita_a?.[0]?.telefono?.[0] ?? ''
     }
 
     if (setOpen) setOpen(false);
@@ -96,26 +89,6 @@ export const SendMessageModal: React.FC<SendMessageModalProps> = ({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-
-
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>* Motivo</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Escribe el motivo del mensaje"
-                      maxLength={50} {...field} />
-
-                  </FormControl>
-
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-
 
             <FormField
               control={form.control}

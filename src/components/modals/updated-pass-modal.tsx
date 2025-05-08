@@ -189,6 +189,10 @@ return (
 										</div>
 										</Button>
 								):null}
+
+								<button type="button" onClick={() => console.log('Agregar a Google Wallet')}>
+									<Image src="/esES_add_to_google_wallet_wallet-button.svg" alt="Add to Google Wallet" width={200} height={200} className="mt-2" />
+								</button>
 							</div>
 						</div>
 					</div>
