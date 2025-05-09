@@ -26,7 +26,7 @@ export const StartShiftModal: React.FC<StartShiftModalProps> = ({
 
   const { selectedGuards } = useGuardSelectionStore();
 
-  const { startShiftMutation } = useGetShift(false, false);
+  const { startShiftMutation } = useGetShift(false);
 
   const guardNames = selectedGuards
     ?.map((guardia: { name: string }) => guardia.name)

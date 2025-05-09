@@ -10,7 +10,7 @@ import React , { useRef } from "react";
 import { toast } from "sonner";
 
 const Sidebar = () => {
-  const { shift } = useGetShift(false, false);
+  const { shift } = useGetShift(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { userEmailSoter, userNameSoter, userPhoto, userIdSoter , setUserPhoto} = useAuthStore();
 

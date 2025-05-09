@@ -21,7 +21,7 @@ export const CloseShiftModal: React.FC<CloseShiftModalProps> = ({
   title,
   children,
 }) => {
-  const { shift, closeShiftMutation } = useGetShift(false, false);
+  const { shift, closeShiftMutation } = useGetShift( false);
 
   const { area, location } = useShiftStore();
 
