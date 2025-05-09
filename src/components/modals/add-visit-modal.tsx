@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
-import Image from "next/image";
 
 import {
   Dialog,
@@ -97,18 +96,18 @@ export const AddVisitModal: React.FC<Props> = ({ title, children }) => {
   });
 
   function onSubmit(data: z.infer<typeof formSchema>) {
-    const access_pass = {
-      nombre: data.nombre,
-      empresa: data.empresa,
-      // area:"",
-      visita_a: data.visita_a,
-      perfil_pase: data.perfil_pase,
-      foto: fotografia ,
-      identificacion: identificacion,
-      status_pase:"proceso"
-    };
-    console.log("entrada", access_pass)
-    registerNewVisit.mutate({ location, access_pass });
+      const access_pass = {
+        nombre: data.nombre,
+        empresa: data.empresa,
+        // area:"",
+        visita_a: data.visita_a,
+        perfil_pase: data.perfil_pase,
+        foto: fotografia ,
+        identificacion: identificacion,
+        status_pase:"proceso"
+      };
+      console.log("entrada", access_pass)
+      registerNewVisit.mutate({ location, access_pass });
   }
 
   useEffect(()=>{
