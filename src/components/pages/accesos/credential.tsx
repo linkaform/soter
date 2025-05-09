@@ -62,7 +62,7 @@ const Credentials: React.FC<Props> = ({ searchPass }) => {
 						alt="Identificación"
 						width={140}
 						height={140}
-						className="w-full h-full"
+						className="w-full object-cover"
 						/>
 					</div>
 
@@ -75,7 +75,7 @@ const Credentials: React.FC<Props> = ({ searchPass }) => {
 						alt="Foto"
 						width={140}
 						height={140}
-						className="w-full h-full"
+						className="w-full objet-cover"
 						/>
 					</div>
 				</div>

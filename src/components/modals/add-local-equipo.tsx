@@ -65,18 +65,7 @@ const formSchema = z.object({
 });
 
 export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equipos, setEquipos}) => {
-
-
-
   const [open, setOpen] = useState(false); 
-
-
-//   const {
-//     newEquipment,
-//     setNewEquipment,
-//   } = useAccessStore()
-
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -94,7 +83,7 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
     addNewEquipment(data)
     form.reset();
     toast.success(
-      "Equipo listo para agregar al registro de ingreso."
+      "Equipo agregado correctamente."
     );
     setOpen(false);
   }
@@ -133,13 +122,14 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
         
       </DialogTrigger>
 
-      <DialogContent className="max-w-xl">
-        <DialogHeader>
-          <DialogTitle className="text-2xl	 text-center  font-bold my-5">
+      <DialogContent className="max-w-xl  overflow-y-auto max-h-[90vh] flex flex-col" aria-describedby="">
+        <DialogHeader className="flex-shrink-0">
+          <DialogTitle className="text-2xl text-center font-bold">
             {title}
           </DialogTitle>
         </DialogHeader>
 
+        <div className="flex-grow overflow-y-auto p-4">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
@@ -161,11 +151,13 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
                         </SelectItem>
                       ))}
                     </SelectContent>
-                  </Select>
-                  <FormMessage />
+                  </Select> 
+               
+                  <FormMessage /> 
                 </FormItem>
               )}
             />
+
 
             <FormField
               control={form.control}
@@ -174,7 +166,7 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
                 <FormItem>
                   <FormLabel>* Nombre del Equipo</FormLabel>
                   <FormControl>
-                    <Input placeholder="Texto" {...field} />
+                    <Input placeholder="Nombre del equipo" {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -190,7 +182,7 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
                   <FormItem>
                     <FormLabel>* Marca</FormLabel>
                     <FormControl>
-                      <Input placeholder="Texto" {...field} />
+                      <Input placeholder="Marca" {...field} />
                     </FormControl>
 
                     <FormMessage />
@@ -205,7 +197,7 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
                   <FormItem>
                     <FormLabel>* Modelo</FormLabel>
                     <FormControl>
-                      <Input placeholder="Texto" {...field} />
+                      <Input placeholder="Modelo" {...field} />
                     </FormControl>
 
                     <FormMessage />
@@ -220,7 +212,11 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
                   <FormItem>
                     <FormLabel>* Número de Serie</FormLabel>
                     <FormControl>
-                      <Input placeholder="Texto" {...field} />
+                    <Input
+                      placeholder="No. de serie"
+                      {...field}
+                      onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                    />
                     </FormControl>
 
                     <FormMessage />
@@ -253,10 +249,12 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
                 )}
               />
             </div>
+            
+          </form>
+        </Form>
+        </div>
 
-            <p className="text-gray-400">**Campos requeridos </p>
-
-            <div className="flex gap-5">
+        <div className="flex gap-5">
               <DialogClose asChild>
                 <Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700">
                   Cancelar
@@ -265,13 +263,13 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
 
               <Button
                 type="submit"
+                onClick={form.handleSubmit(onSubmit)}
                 className="w-full  bg-blue-500 hover:bg-blue-600 text-white "
               >
                 Agregar
               </Button>
             </div>
-          </form>
-        </Form>
+
       </DialogContent>
     </Dialog>
   );

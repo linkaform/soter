@@ -52,14 +52,14 @@ import { useAreasLocationStore } from "@/store/useGetAreaLocationByUser";
 const AccesosPage = () => {
   const { isAuth } = useAuthStore()
   const { area, location, setLoading , turno, setArea, setLocation} = useShiftStore();
-  const { shift, isLoading:loadingShift } = useGetShift(false, true);
+  const { shift, isLoading:loadingShift } = useGetShift(true);
   const { passCode, setPassCode, clearPassCode} = useAccessStore();
   const { isLoading, loading, searchPass } = useSearchPass(false);
   const [inputValue, setInputValue] = useState("");
   const [ openActivePases , setOpenActivePases ] = useState(false)
   const queryClient = useQueryClient();
   const [debouncedValue,setDebouncedValue]=useState("")
-  const { data: stats } = useGetStats(area, location, 'Accesos')
+  const { data: stats } = useGetStats(true,area, location, 'Accesos')
   const { fetchAreas, fetchLocations, loading:loadingLocationArea} = useAreasLocationStore();
 
   useEffect(() => {

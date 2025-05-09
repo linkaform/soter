@@ -32,34 +32,32 @@ export const GeneratedPassModal: React.FC<GeneratedPassModalProps> = ({
     <Dialog open={openGeneratedPass} onOpenChange={setOpenGeneratedPass} >
       <DialogTrigger ></DialogTrigger>
 
-      <DialogContent className="max-w-xl">
-        <DialogHeader>
+      <DialogContent className="max-w-xl  overflow-y-auto max-h-[90vh] flex flex-col">
+        <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center  font-bold my-5">
             {title}
             <CheckCircleIcon className=" h-6 w-6 text-green-500 ml-2 inline-block" />
           </DialogTitle>
         </DialogHeader>
-        
-        <div className="px-16">
-          <p className="text-center">{description}</p>
-        </div>
 
-        <Separator />
-        <div className=" flex justify-center">
-          <input
-            className="text-gray-600 align-middle text-center w-1/2 "
-            disabled={true}
-            type="text"
-            value= {link}
-            min={new Date().toISOString().slice(0, 16)}
-          />
-        </div>
-        
+          <div className="px-16">
+            <p className="text-center">{description}</p>
+          </div>
+
+          <Separator />
+          <div className=" flex justify-center m-3">
+            <input
+              className="text-gray-600 align-middle text-center w-1/2 "
+              disabled={true}
+              type="text"
+              value= {link}
+              min={new Date().toISOString().slice(0, 16)}
+            />
+          </div>
         <Button
           variant="link"
           className="text-blue-600 hover:text-blue-800"
           onClick={() => {
-            
             navigator.clipboard.writeText(link).then(() => {
               toast("¡Enlace copiado!", {
                 description:

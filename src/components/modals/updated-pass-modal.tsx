@@ -1,4 +1,5 @@
-import { CheckCircleIcon, Mail, MessageCircleMore } from "lucide-react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { Mail, MessageCircleMore } from "lucide-react";
 import { Button } from "../ui/button";
 import {
 	Dialog,
@@ -14,11 +15,11 @@ import { Form} from "../ui/form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm} from "react-hook-form";
-import { useSendCorreo } from "@/hooks/useSendCorreo";
 import { data_correo } from "@/lib/send_correo";
 import { useGetPdf } from "@/hooks/usetGetPdf";
 import { descargarPdfPase } from "@/lib/download-pdf";
 import Image from "next/image";
+import { useSendCorreoSms } from "@/hooks/useSendCorreo";
 
 interface updatedPassModalProps {
 	title: string;
@@ -50,43 +51,20 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 	hasTelefono,
 	closePadre
 }) => {
-	const [dataCorreo, setDataCorreo]= useState<data_correo|null>(null)
 	const [enviarCorreo, setEnviarCorreo] = useState<string[]>([]);
 	const [isActive, setIsActive] = useState(false);
 	const [isActiveSMS, setIsActiveSMS] = useState(false);
-	// +++ Falta cambiar por mutation useSendCorreo
-	const { isLoading: loadingCorreo, refetch:refetchCorreo , error} = useSendCorreo(account_id, enviarCorreo ,dataCorreo,folio);
-	const { data: responsePdf, isLoading: loadingPdf} = useGetPdf(account_id,folio);
-
+	const { createSendCorreoSms, isLoadingCorreo} = useSendCorreoSms();
+	const [enablePdf, setEnablePdf] = useState(false)
+	const { data: responsePdf, isLoading: loadingPdf} = useGetPdf(account_id, folio, enablePdf);
+	const downloadUrl=responsePdf?.response?.data?.data?.download_url
+	
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			enviar_correo: enviarCorreo,
 		}
-		
 	});
-
-	const onSubmit = async () => {
-		setDataCorreo(dataPass)
-		await descargarPdfPase(responsePdf.response?.data?.data?.download_url)
-		toast.success("¡PDF descargado correctamente!");
-
-		setTimeout(() => {
-			window.location.href = "https://www.soter.mx/";
-		}, 100);
-	};
-
-	useEffect(()=>{
-		if(dataCorreo){
-			refetchCorreo()
-		}
-	},[dataCorreo,refetchCorreo])
-
-	useEffect(()=>{
-		if(error){
-			toast.error("Ocurrio un error al enviar correo")
-		}
-	},[error])
 
 	const handleToggleEmail = () => {
 		const email= "enviar_correo"
@@ -97,7 +75,6 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 			return pre;
 		});
 		setIsActive(!isActive);
-
 	};
 
 	const handleToggleSMS = () => {
@@ -110,32 +87,57 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 		});
 		setIsActiveSMS(!isActiveSMS);
 	};
+
 	const closeModal=()=>{
 		setOpenGeneratedPass(false)
 		closePadre()
-
-		setTimeout(() => {
-			window.location.href = "https://www.soter.mx/";
-		}, 100);
+		// setTimeout(() => {
+		// 	window.location.href = "https://www.soter.mx/";
+		// }, 100);
 	}
+
+	useEffect(()=>{
+		if(downloadUrl){
+			onDescargarPDF(downloadUrl)
+			setEnablePdf(false)
+			console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++", enviarCorreo)
+			if(enviarCorreo.includes("enviar_correo") || enviarCorreo.includes("enviar_sms")){
+				createSendCorreoSms.mutate({account_id, envio:enviarCorreo, data_for_msj:dataPass, folio})
+			}
+			toast.success("¡PDF descargado correctamente!");
+			// setTimeout(() => {
+			// 	window.location.href = "https://www.soter.mx/";
+			// }, 1800);
+		}
+	},[downloadUrl])
+
+	async function onDescargarPDF(download_url: string) {
+		try {
+		  await descargarPdfPase(download_url);
+		} catch (error) {
+		  toast.error("Error al descargar el PDF: " + error);
+		}
+	}
+
 
 return (
 	<Dialog open={openGeneratedPass} modal>
 		<DialogTrigger ></DialogTrigger>
 
-		<DialogContent className="max-w-xl">
-			<DialogHeader>
-				<DialogTitle className="text-2xl text-center  font-bold my-5">
-					{title}
-					<CheckCircleIcon className=" h-6 w-6 text-green-500 ml-2 inline-block" />
-				</DialogTitle>
-			</DialogHeader>
+	    <DialogContent className="max-w-xl  overflow-y-auto max-h-[90vh] flex flex-col" aria-describedby="">
+        <DialogHeader className="flex-shrink-0">
+          <DialogTitle className="text-2xl text-center font-bold">
+            {title}
+          </DialogTitle>
+        </DialogHeader>
+
+        <div className="flex-grow overflow-y-auto p-4">
 			
-			<div className="px-16">
-				<p className="text-center">{ !hasEmail && !hasTelefono ? "El pase ha sido completado con éxito.":description}</p>
+			<div className="flex justify-center mb-3">
+				<p className="text-center w-1/2 md:w-full">{ !hasEmail && !hasTelefono ? "El pase ha sido completado con éxito.":description}</p>
 			</div>
 			<Form {...form}>
-			<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8"> 
+			<form className="space-y-8"> 
 					<div className="flex flex-col justify-start items-center gap-3">
 						<div className="flex gap-2 flex-col">
 							<div className="flex flex-col gap-2 flex-wrap items-center justify-center">
@@ -212,19 +214,21 @@ return (
 						</div>
 						</>
 					):null}
-					<div className="flex gap-5 my-5">
+					
+			</form>
+			</Form>
+		</div>
+		<div className="flex gap-2 ">
 					<DialogClose asChild >
-						<Button className="w-full h-12 bg-gray-100 hover:bg-gray-200 text-gray-700" onClick={closeModal}>
+						<Button className="w-full  bg-gray-100 hover:bg-gray-200 text-gray-700" onClick={closeModal}>
 							Cerrar
 						</Button>
 					</DialogClose>
 					<Button
-						className="w-full bg-blue-500 hover:bg-blue-600 text-white" type="submit">
-						{loadingCorreo || loadingPdf ? ("Cargando..."): ("Descargar PDF")}
+						className="w-full bg-blue-500 hover:bg-blue-600 text-white" onClick={()=>{setEnablePdf(true)}} disabled={loadingPdf}>
+						{isLoadingCorreo || loadingPdf ? ("Cargando..."): ("Descargar PDF")}
 					</Button>
 					</div> 
-			</form>
-			</Form>
 		</DialogContent>
 	</Dialog>
 );

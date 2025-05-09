@@ -8,12 +8,9 @@ import Badges from "@/components/icon/badges";
 import Link from "next/link";
 import { useShiftStore } from "@/store/useShiftStore";
 import { TriangleAlert } from "lucide-react";
-import { useGetStats } from "@/hooks/useGetStats";
 
-const ActivitySummary = () => {
-  const { area, location} = useShiftStore();
-  const { data: stats } = useGetStats(location, area, 'Turnos')
-
+const ActivitySummary = (booth_stats:any) => {
+  const stats= booth_stats.booth_stats
   const { setTab } = useShiftStore();
   const items = [
     {

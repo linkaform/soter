@@ -1,10 +1,10 @@
 import { getPdf } from "@/lib/get-pdf";
 import { useQuery } from "@tanstack/react-query";
 
-export const useGetPdf = (account_id: number|null,qr_code:string) => {
+export const useGetPdf = (account_id: number|null,qr_code:string, enable:boolean) => {
   const { data, isLoading, error, isFetching, refetch } = useQuery<any>({
     queryKey: ["getPdf", account_id, qr_code],
-    enabled:false,
+    enabled:enable,
     queryFn: async () => {
       const data = await getPdf(
         account_id,
@@ -12,10 +12,6 @@ export const useGetPdf = (account_id: number|null,qr_code:string) => {
     );
       return data ;
     },
-    refetchOnWindowFocus: true,
-    refetchInterval: 60000,
-    refetchOnReconnect: true,
-    staleTime: 1000 * 60 * 5,
   });
 
   return {

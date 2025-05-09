@@ -50,14 +50,7 @@ export const NoteDetailsModal: React.FC<NoteDetailsModalProps> = ({
   children,
   note,
 }: NoteDetailsModalProps) => {
-  // const {
-  //   note_status,
-  //   note_pic,
-  //   note_comments,
-  //   note_file,
-  //   note_open_date,
-  //   created_by_name,
-  // } = note
+
   const [open, setIsOpen]= useState(false)
   return (
     <Dialog open={open} onOpenChange={setIsOpen}>

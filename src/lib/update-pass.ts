@@ -36,12 +36,24 @@ export type Access_pass_update = {
     id: string,
     account_id: number,
   }
+
+  interface updatePaseEmailPhone {
+    access_pass : mailPhone,
+    id: string,
+    account_id: number,
+  }
   
+
+  export type mailPhone = {
+    email_pase?: string,
+    telefono_pase?: string
+}
+
   export const UpdatePase = async ({
     access_pass,
     id,
     account_id
-  }: updatePase) => {
+  }: updatePase |updatePaseEmailPhone) => {
     const payload = {
         script_name: "pase_de_acceso_use_api.py",
         option: 'update_pass',

@@ -203,7 +203,6 @@ export const usePaseEntrada = (locationConfSeguridad:string) => {
           toast.success("Pase de entrada editado correctamente.");
         },
         onError: (err) => {
-          // console.error("Error al editar pase de entrada:", err);
           toast.error(err.message || "Hubo un error al editar el pase entrada.");
     
         },

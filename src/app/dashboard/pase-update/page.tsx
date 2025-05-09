@@ -10,23 +10,17 @@ import {
 } from "@/components/ui/form";
 import { toast } from "sonner";
 import { useGetCatalogoPaseNoJwt } from "@/hooks/useGetCatologoPaseNoJwt";
-import VehicleList from "@/components/vehicle-list";
-import { Equipo, Imagen, UpdatePase, Vehiculo } from "@/lib/update-pass";
-import EquipoList from "@/components/equipo-list";
+import { Equipo, Imagen, Vehiculo } from "@/lib/update-pass";
 import { EntryPassModal2 } from "@/components/modals/add-pass-modal-2";
 import LoadImage from "@/components/upload-Image";
 import { Car, Laptop, Loader2 } from "lucide-react";
 import { useGetPdf } from "@/hooks/usetGetPdf";
 import { descargarPdfPase } from "@/lib/download-pdf";
 import Image from "next/image";
-import router from "next/router";
 import { VehiclePassModal } from "@/components/modals/add-local-vehicule";
-// import EquipoItem from "@/components/equipo-item";
-// import VehicleItem from "@/components/vehicle-item";
-// import useAuthStore from "@/store/useAuthStore";
-// import VehicleLocalItem from "@/components/vehiculo-local-list";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { EqipmentLocalPassModal } from "@/components/modals/add-local-equpment";
+import { EqipmentLocalPassModal } from "@/components/modals/add-local-equipo";
+import { formatEquipos, formatVehiculos } from "@/lib/utils";
 
  const grupoEquipos = z.array(
 	z.object({
@@ -90,28 +84,29 @@ const PaseUpdate = () =>{
 	const [id, setId] = useState("")
 	const [showIneIden, setShowIneIden] = useState<string[]|undefined>([])
 	const[account_id, setAccount_id] = useState<number|null>(null)
-	const { data: responsePdf, isLoading: loadingPdf, refetch: refetchPdf} = useGetPdf(account_id, id);
-	const { data: dataCatalogos, isLoading: loadingDataCatalogos , refetch:refetchCatalog} = useGetCatalogoPaseNoJwt(account_id, id);
+	const [enablePdf, setEnablePdf] = useState(false)
+	const [enableInfo, setEnableInfo] = useState(false)
+	const { data: responsePdf, isLoading: loadingPdf} = useGetPdf(account_id, id, enablePdf);
+	const { data: dataCatalogos, isLoading: loadingDataCatalogos} = useGetCatalogoPaseNoJwt(account_id, id, enableInfo );
 	const [agregarEquiposActive, setAgregarEquiposActive] = useState(false);
 	const [agregarVehiculosActive, setAgregarVehiculosActive] = useState(false);
 	const [isSuccess, setIsSuccess] = useState(false);
 	const [modalData, setModalData] = useState<any>(null);
-	const [equipos, setEquipos] = useState<Equipo[]>([]);
-	const [vehicles, setVehicles] = useState<Vehiculo[]>([]);
-	const [fotografia, setFotografia] = useState<Imagen[]>([])
+
 	const [identificacion, setIdentificacion] = useState<Imagen[]>([])
 
-	const [vehiculos, setVehiculos] = useState<Vehiculo[]>([]);
-
+	const downloadUrl=responsePdf?.response?.data?.data?.download_url
+	
 	const [errorFotografia, setErrorFotografia] = useState("")
 	const [errorIdentificacion, setErrorIdentificacion] = useState("")
 
-	const [isActualizarOpen, setIsActualizarOpen] = useState<string|boolean>("");
+	const [isActualizarOpen, setIsActualizarOpen] = useState<string|boolean>(false);
+	const [equipos, setEquipos] = useState<Equipo[]>([]);
+	const [vehicles, setVehicles] = useState<Vehiculo[]>([]);
+	const [fotografia, setFotografia] = useState<Imagen[]>([])
 
-	const [isLoading, setIsLoading] = useState(false);
-	const [error, setError] = useState<unknown>();
-
-    // const [collapsedIndex, setCollapsedIndex] = useState<number | null>(null);
+	// const [isLoading, setIsLoading] = useState(false);
+	// const [error, setError] = useState<unknown>();
 
 	const form = useForm<z.infer<typeof formSchema>>({
 			resolver: zodResolver(formSchema),
@@ -168,33 +163,48 @@ const PaseUpdate = () =>{
 		const formattedData = {
 			grupo_vehiculos: vehicles,
 			grupo_equipos: equipos,
-			status_pase: "activo",
+			status_pase:"activo",
+			walkin_fotografia:dataCatalogos?.pass_selected?.foto ? dataCatalogos?.pass_selected?.foto:"/nouser.svg",
+			walkin_identificacion:dataCatalogos?.pass_selected?.identificacion ? dataCatalogos?.pass_selected?.identificacion : "/nouser.svg",
 			folio: id,
 			account_id: account_id,
+			nombre: dataCatalogos?.pass_selected?.nombre||"",
+			ubicacion: dataCatalogos?.pass_selected?.ubicacion||"",
+			email: dataCatalogos?.pass_selected?.email||"",
+			telefono:dataCatalogos?.pass_selected?.telefono||""
+
 		};
-		try {
-			setIsLoading(true);
-			const apiResponse = await UpdatePase({ access_pass: {
-				grupo_vehiculos: vehicles,
-				grupo_equipos: equipos,
-				status_pase: "activo",
-				walkin_fotografia:dataCatalogos?.pass_selected?.foto ?? [],
-				walkin_identificacion:dataCatalogos?.pass_selected?.identificacion ?? []
-			}, 
-			id:id, account_id: account_id ??0});
-			if(apiResponse.success){
-				router.push(`/`)
-				setIsSuccess(true); 
-			}else{
-				setIsSuccess(false); 
-			}
-			toast.success("Informacion actualizada correctamente.")
-		} catch (err) {
-			setError(err);
-		} finally {
-			setIsLoading(false);
-		}
+		console.log("entrada", formattedData)
 		setModalData(formattedData);
+
+		setIsSuccess(true)
+		// try {
+		// 	setIsSuccess(true)
+			// setIsLoading(true);
+			// const apiResponse = await UpdatePase({ access_pass: {
+			// 	grupo_vehiculos: vehicles,
+			// 	grupo_equipos: equipos,
+			// 	status_pase: "activo",
+			// 	walkin_fotografia:dataCatalogos?.pass_selected?.foto ?? [],
+			// 	walkin_identificacion:dataCatalogos?.pass_selected?.identificacion ?? []
+			// }, 
+			// id:id, account_id: account_id ??0});
+			// if(apiResponse?.response?.data?.status_code){
+			// 	setIsActualizarOpen(false)
+			// 	toast.success("Informacion actualizada correctamente.")
+			// 	setIsSuccess(true)
+			// 	// setTimeout(() => {
+			// 	// 	window.location.href = "https://www.soter.mx/";
+			// 	// }, 1800);
+			// }else{
+			// 	setIsSuccess(false)
+			// 	toast.success("Ocurrio un error al actualizar la informacion.")
+			// }
+		// } catch (err) {
+		// 	setError(err);
+		// } finally {
+		// 	setIsLoading(false);
+		// }
 	};
 
 
@@ -211,22 +221,30 @@ const PaseUpdate = () =>{
 		  		acc = Number(window.localStorage.getItem("userId_soter"))
 		  }
 		  setAccount_id(acc);
+		  setEnableInfo(true)
 		}
 	  }, []);
 
+	// useEffect(()=>{
+	// 	if(error){
+	// 		toast.success("Ocurrio un error al actualizar la informacion.")
+	// 	}
+	// },[error])
 
 	useEffect(()=>{
-		if(error){
-			toast.success("Ocurrio un error al actualizar la informacion.")
+		if(id && account_id && enableInfo){
+			setEnableInfo(false)
 		}
-	},[error])
+	},[id, account_id, enableInfo])
 
 	useEffect(()=>{
-		if(id || account_id){
-			refetchPdf()
-			refetchCatalog()
+		if(isActualizarOpen && dataCatalogos?.pass_selected?.grupo_equipos){
+			 setEquipos( formatEquipos(dataCatalogos?.pass_selected?.grupo_equipos))
 		}
-	},[id, account_id, refetchPdf, refetchCatalog])
+		if(isActualizarOpen && dataCatalogos?.pass_selected?.grupo_vehiculos){
+			setVehicles(formatVehiculos(dataCatalogos?.pass_selected?.grupo_vehiculos))
+		}
+	},[isActualizarOpen, dataCatalogos?.pass_selected ])
 
 	useEffect(()=>{
 		if (errorFotografia === "-" && errorIdentificacion === "-") {
@@ -245,15 +263,30 @@ const PaseUpdate = () =>{
 	}
 	};
 
-	async function onDescargarPDF(){
-		await descargarPdfPase(responsePdf.response?.data?.data?.download_url)
-		toast.success("¡PDF descargado correctamente!");
-	}
+	useEffect(()=>{
+		if(downloadUrl){
+			onDescargarPDF(downloadUrl)
+			setEnablePdf(false)
+			toast.success("¡PDF descargado correctamente!");
+			setTimeout(() => {
+				window.location.href = "https://www.soter.mx/";
+			}, 1000);
+		}
+	},[downloadUrl])
+
+	async function onDescargarPDF(download_url: string) {
+		try {
+		  await descargarPdfPase(download_url);
+		} catch (error) {
+		  toast.error("Error al descargar el PDF: " + error);
+		}
+	  }
+
 
 	if(loadingDataCatalogos){
 		return(
 			<div className="flex justify-center items-center mt-10">
-				<div role="status">
+				<div role="status" className="flex flex-col items-center text-center">
 					<span className="font-bold text-3xl text-slate-800">Cargando tu pase de entrada...</span>
 						<div className="flex justify-center items-center">
 						<svg aria-hidden="true" className="mt-10 w-20 h-20 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -272,56 +305,6 @@ const PaseUpdate = () =>{
 		setIsSuccess(false);  // Reinicia el estado para que el modal no se quede abierto.
 	};
 
-
-
-    // const handleDeleteVehicle = (index: number) => {
-    //     setVehicles((prevState) => prevState.filter((_, i) => i !== index)); 
-    //   };
-
-
-    // const toggleCollapse = (index: number) => {
-    //   if (collapsedIndex === index) {
-    //     setCollapsedIndex(null);  
-    //   } else {
-    //     setCollapsedIndex(index);
-    //   }
-    // };
-
-    // useEffect(() => {
-    //     refetch()
-    //     setTiposCat(dataVehiculos)
-    // }, []);
-
-    // useEffect(() => {
-    //   if(!tiposCat && dataVehiculos){
-    //     setTiposCat(dataVehiculos)
-    //   }
-    //   if(dataVehiculos && tipoVehiculoState && catalogSearch=="marcas"){
-    //     setMarcasCat(dataVehiculos)
-    //   }
-    //   if(dataVehiculos && tipoVehiculoState && marcaState && catalogSearch=="modelos"){
-    //     setModelosCat(dataVehiculos)
-    //   }
-    // }, [dataVehiculos]);
-
-//   useEffect(() => {
-//       form.setValue('tipo', '');
-//       form.setValue('marca', '');
-//       form.setValue('modelo', '');
-//       form.setValue('placas', '');
-//       form.setValue('estado', '');
-//       form.setValue('color', '');
-//   }, [cleanMain]);
-
-//   const updatedVehicles = (index: number, value: string, fieldName:string) => {
-//     const updatedAreas = [...vehicles];
-//       updatedAreas[index] = {
-//         ...updatedAreas[index],   // Mantener las propiedades anteriores del área
-//         [fieldName]: value,       // Actualizar el campo específico
-//       };
-//     setVehicles(updatedAreas);
-//   };
-
   const handleRemove = (index: number) => {
 	setVehicles((prev) => prev.filter((_, i) => i !== index))
   }
@@ -332,16 +315,15 @@ const PaseUpdate = () =>{
 
 return (
 	<div className="p-8">
-		{dataCatalogos?.pass_selected?.estatus == "proceso" ? (
-			<>
-			<EntryPassModal2
+		<EntryPassModal2
 				title={"Confirmación"}
 				data={modalData}
 				isSuccess={isSuccess}
 				setIsSuccess={setIsSuccess}
 				onClose={closeModal}
 			/>
-
+		{dataCatalogos?.pass_selected?.estatus == "proceso" ? (
+			<>
 			<div className="flex flex-col flex-wrap space-y-5 max-w-5xl mx-auto">
 				<div className="text-center">
 						<h1 className="font-bold text-2xl">Pase de Entrada</h1>
@@ -386,7 +368,7 @@ return (
 					</div>
 					
 
-					<div className="flex justify-between flex-wrap">
+					<div className="flex justify-between flex-wrap gap-3">
 						{showIneIden?.includes("foto")&& 
 							<div className="w-full md:w-1/2 pr-2">
 									<LoadImage
@@ -415,164 +397,109 @@ return (
 							</div>}
 					</div> 
 					<div className="flex flex-col gap-y-6">
-					{/* Sección: Lista de Vehículos */}
-					<div>
-						<div className="flex items-center gap-x-7">
-						<span className="font-bold text-xl">Lista de Vehículos</span>
-						<VehiclePassModal title="Nuevo Vehiculo" vehicles={vehicles} setVehicles={setVehicles}>
-							<button
-							type="button"
-							onClick={() => handleCheckboxChange("agregar-vehiculos")}
-							className="px-4 py-2 rounded-md transition-all duration-300 border-2 border-blue-400 bg-transparent hover:bg-slate-100"
-							>
-							<div className="flex flex-wrap gap-2">
-								<Car className="text-blue-600" />
-								<div className="text-blue-600">Agregar Vehículos</div>
+						<div>
+							<div className="flex items-center gap-x-10">
+							<span className="font-bold text-xl">Lista de Vehículos</span>
+							<VehiclePassModal title="Nuevo Vehiculo" vehicles={vehicles} setVehicles={setVehicles}>
+								<button
+								type="button"
+								onClick={() => handleCheckboxChange("agregar-vehiculos")}
+								className="px-4 py-2 rounded-md transition-all duration-300 border-2 border-blue-400 bg-transparent hover:bg-slate-100"
+								>
+								<div className="flex items-center gap-2">
+									<div className="text-blue-600 sm:hidden text-xl font-bold">+</div>
+									<Car className="text-blue-600" />
+									<div className="text-blue-600 hidden sm:block">Agregar Vehículos</div>
+								</div>
+								</button>
+							</VehiclePassModal>
 							</div>
-							</button>
-						</VehiclePassModal>
-						</div>
-						<div className="mt-2 text-gray-600">
+							<div className="mt-2 text-gray-600">
+								
+							<Accordion type="multiple" className="w-full">
+								{vehicles.map((vehiculo, index) => (
+									<AccordionItem key={index} value={`vehiculo-${index}`}>
+									<AccordionTrigger>
+										{vehiculo.tipo}
+									</AccordionTrigger>
+									<AccordionContent>
+										<div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 text-sm">
+										<p><strong>Tipo:</strong> {vehiculo.tipo}</p>
+										<p><strong>Marca:</strong> {vehiculo.marca}</p>
+										<p><strong>Modelo:</strong> {vehiculo.modelo}</p>
+										<p><strong>Placas:</strong> {vehiculo.placas}</p>
+										<p><strong>Estado:</strong> {vehiculo.estado}</p>
+										<p><strong>Color:</strong> {vehiculo.color}</p>
+										</div>
 							
-						<Accordion type="multiple" className="w-full">
-							{vehicles.map((vehiculo, index) => (
-								<AccordionItem key={index} value={`vehiculo-${index}`}>
-								<AccordionTrigger>
-									{vehiculo.tipo}
-								</AccordionTrigger>
-								<AccordionContent>
-									<div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 text-sm">
-									<p><strong>Tipo:</strong> {vehiculo.tipo}</p>
-									<p><strong>Marca:</strong> {vehiculo.marca}</p>
-									<p><strong>Modelo:</strong> {vehiculo.modelo}</p>
-									<p><strong>Placas:</strong> {vehiculo.placas}</p>
-									<p><strong>Estado:</strong> {vehiculo.estado}</p>
-									<p><strong>Color:</strong> {vehiculo.color}</p>
-									</div>
-						
-									<div className="flex justify-end px-4 pb-4">
-									<Button variant="destructive" size="sm" onClick={() => handleRemove(index)}>
-										Eliminar
-									</Button>
-									</div>
-								</AccordionContent>
-								</AccordionItem>
-							))}
-							{vehicles.length==0?(
-							<div>No se han agregado vehiculos.</div>):null}
-						</Accordion>
-						</div>
-					</div>
-
-					{/* Sección: Lista de Equipos */}
-					<div>
-						<div className="flex items-center gap-x-10">
-						<span className="font-bold text-xl">Lista de Equipos</span>
-						<EqipmentLocalPassModal title="Nuevo Vehiculo" equipos={equipos} setEquipos={setEquipos}>
-							<button
-							type="button"
-							onClick={() => handleCheckboxChange("agregar-equipos")}
-							className="px-4 py-2 rounded-md transition-all duration-300 border-2 border-blue-400 bg-transparent hover:bg-slate-100"
-							>
-							<div className="flex flex-wrap gap-2">
-								<Laptop className="text-blue-600" />
-								<div className="text-blue-600">Agregar Equipos</div>
+										<div className="flex justify-end px-4 pb-4">
+										<Button variant="destructive" size="sm" onClick={() => handleRemove(index)}>
+											Eliminar
+										</Button>
+										</div>
+									</AccordionContent>
+									</AccordionItem>
+								))}
+								{vehicles.length==0?(
+								<div>No se han agregado vehiculos.</div>):null}
+							</Accordion>
 							</div>
-							</button>
-						</EqipmentLocalPassModal>
-						</div>
-						<div className="mt-2 text-gray-600">
-						<Accordion type="multiple" className="w-full">
-							{equipos.map((equipo, index) => (
-								<AccordionItem key={index} value={`equipo-${index}`}>
-								<AccordionTrigger>
-									{equipo.tipo}
-								</AccordionTrigger>
-								<AccordionContent>
-									<div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 text-sm">
-									<p><strong>Tipo:</strong> {equipo.tipo}</p>
-									<p><strong>Nombre:</strong> {equipo.nombre}</p>
-									<p><strong>Marca:</strong> {equipo.marca}</p>
-									<p><strong>Modelo:</strong> {equipo.modelo}</p>
-									<p><strong>No. Serie:</strong> {equipo.serie}</p>
-									<p><strong>Color:</strong> {equipo.color}</p>
-									</div>
-						
-									<div className="flex justify-end px-4 pb-4">
-									<Button variant="destructive" size="sm" onClick={() => handleRemoveEq(index)}>
-										Eliminar
-									</Button>
-									</div>
-								</AccordionContent>
-								</AccordionItem>
-							))}
-							{equipos.length==0?(
-							<div>No se han agregado equipos.</div>):null}
-						</Accordion>
 						</div>
 
+						<div>
+							<div className="flex items-center gap-x-10">
+							<span className="font-bold text-xl">Lista de Equipos</span>
+							<EqipmentLocalPassModal title="Nuevo Equipo" equipos={equipos} setEquipos={setEquipos}>
+								<button
+								type="button"
+								onClick={() => handleCheckboxChange("agregar-equipos")}
+								className="px-4 py-2 rounded-md transition-all duration-300 border-2 border-blue-400 bg-transparent hover:bg-slate-100"
+								>
+								<div className="flex items-center gap-2">
+									<div className="text-blue-600 sm:hidden text-xl font-bold">+</div>
+									<Laptop className="text-blue-600" />
+									<div className="text-blue-600 hidden sm:block">Agregar Equipos</div>
+								</div>
+								</button>
+							</EqipmentLocalPassModal>
+							</div>
+							<div className="mt-2 text-gray-600">
+							<Accordion type="multiple" className="w-full">
+								{equipos.map((equipo, index) => (
+									<AccordionItem key={index} value={`equipo-${index}`}>
+									<AccordionTrigger>
+										{equipo.tipo}
+									</AccordionTrigger>
+									<AccordionContent>
+										<div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 text-sm">
+										<p><strong>Tipo:</strong> {equipo.tipo}</p>
+										<p><strong>Nombre:</strong> {equipo.nombre}</p>
+										<p><strong>Marca:</strong> {equipo.marca}</p>
+										<p><strong>Modelo:</strong> {equipo.modelo}</p>
+										<p><strong>No. Serie:</strong> {equipo.serie}</p>
+										<p><strong>Color:</strong> {equipo.color}</p>
+										</div>
+							
+										<div className="flex justify-end px-4 pb-4">
+										<Button variant="destructive" size="sm" onClick={() => handleRemoveEq(index)}>
+											Eliminar
+										</Button>
+										</div>
+									</AccordionContent>
+									</AccordionItem>
+								))}
+								{equipos.length==0?(
+								<div>No se han agregado equipos.</div>):null}
+							</Accordion>
+							</div>
+						</div>
 					</div>
-					</div>
-
-					{/* <div className="flex flex-col mt-4 gap-y-3">
-						<div className="flex items-center">
-									<button
-											type="button"
-											onClick={() => {handleCheckboxChange("agregar-vehiculos")}}
-											className={`px-4 py-2 rounded-md transition-all duration-300 ${
-													agregarVehiculosActive ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
-											}`}
-										>
-											<div className="flex flex-wrap gap-2">
-												{agregarVehiculosActive ? (
-													<> <Car className="bg-blue-600 text-white"/><div className="">Agregar vehiculos</div></>
-												):(
-													<> <Car className="text-blue-600"/><div className="text-blue-600">Agregar Vehiculos</div></>
-												)}
-											</div>
-									</button>
-						</div>
-
-						<div className="flex items-center">
-							<button
-									type="button"
-									onClick={() => {handleCheckboxChange("agregar-equipos")}}
-									className={`px-4 py-2 rounded-md transition-all duration-300 ${
-											agregarEquiposActive ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
-									}`}
-									>
-									<div className="flex flex-wrap gap-2">
-											{agregarEquiposActive ? (
-											<> <Laptop className="bg-blue-600 text-white"/><div className="">Agregar equipos</div></>
-											):(
-											<> <Laptop className="text-blue-600"/><div className="text-blue-600">Agregar equipos</div></>
-											)}
-									</div>
-							</button>
-						</div>
-					</div> */}
-					
 				</div>
-					{/* {agregarEquiposActive ? (<>
-							<EquipoList
-									equipos = {equipos}
-									setEquipos={setEquipos}
-							/>
-						</>):null}
-					{agregarVehiculosActive ? (
-							<>
-							<VehicleList
-								account_id={account_id ?? 0}
-								vehicles={vehicles}
-								setVehicles={setVehicles} isModalOpen={true}/>
-							</>
-						):null} */}
-
 					<Form {...form}>
 						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8"> 
 							<div className="text-center mt-10 flex justify-center">
 								<Button
-									className="bg-blue-500 hover:bg-blue-600 text-white w-full sm:w-2/3 md:w-1/3 lg:w-1/3"
+									className="bg-blue-500 hover:bg-blue-600 text-white w-full sm:w-1/2"
 									variant="secondary"
 									type="submit"
 								>
@@ -591,20 +518,20 @@ return (
 						<p className="font-bold whitespace-nowrap">Visita General </p>
 					</div>
 					<div className="flex flex-col gap-2">
-							<div className="w-full flex gap-2">
-								<p className="font-bold whitespace-nowrap">Visita a: </p>
-								<p className="w-full break-words">{dataCatalogos?.pass_selected?.visita_a[0] ? dataCatalogos?.pass_selected?.visita_a[0]?.nombre:""}</p>
-							</div>
+						<div className="w-full flex sm:flex-row gap-2">
+							<p className="font-bold whitespace-nowrap">Visita a: </p>
+							<p className="w-full break-words">{dataCatalogos?.pass_selected?.visita_a[0] ? dataCatalogos?.pass_selected?.visita_a[0]?.nombre:""}</p>
+						</div>
 
-							<div className="w-full flex gap-2">
-								<p className="font-bold whitespace-nowrap">Ubicación : </p>
-								<p className="w-full break-words">{dataCatalogos?.pass_selected?.ubicacion} </p>
-							</div>
+						<div className="w-full flex  gap-2">
+							<p className="font-bold whitespace-nowrap">Ubicación : </p>
+							<p className="w-full break-words">{dataCatalogos?.pass_selected?.ubicacion} </p>
+						</div>
 
-							<div className="w-full flex gap-2">
-								<p className="font-bold whitespace-nowrap">Fecha : </p>
-								<p className="text-sm">{dataCatalogos?.pass_selected?.fecha_de_expedicion}</p>
-							</div>
+						<div className="w-full flex  gap-2">
+							<p className="font-bold whitespace-nowrap">Fecha : </p>
+							<p className="text-sm">{dataCatalogos?.pass_selected?.fecha_de_expedicion}</p>
+						</div>
 					</div>
 					<div className="w-full flex-col">
 						{dataCatalogos?.pass_selected?.qr_pase[0]?.file_url ?
@@ -632,63 +559,173 @@ return (
 						</>}
 					</div>
 
+
 					<button type="button" onClick={() => console.log('Agregar a Google Wallet')}>
 						<Image src="/esES_add_to_google_wallet_wallet-button.svg" alt="Add to Google Wallet" width={200} height={200} className="mt-2" />
 					</button>
 
-					<Button className="w-40 h-12  bg-yellow-500 hover:bg-yellow-600" type="submit" onClick={onDescargarPDF} disabled={loadingPdf}>
-					{!loadingPdf ? ("Descargar PDF"):(<><Loader2 className="animate-spin"/>Descargando PDF...</>)}
-					</Button>
-
-					{isActualizarOpen==true || isActualizarOpen==""?(
-						<Button className="sm:w-1/3 w-3/4 h-12 bg-blue-500 hover:bg-blue-600" type="submit" onClick={()=>{setIsActualizarOpen(true)}}>
-							Actualizar informacion
+				
+					<div className="flex flex-col gap-2">
+						<Button className="w-40 m-0 bg-yellow-500 hover:bg-yellow-600" type="submit" onClick={()=>{setEnablePdf(true)}} disabled={loadingPdf}>
+						{!loadingPdf ? ("Descargar PDF"):(<><Loader2 className="animate-spin"/>Descargando PDF...</>)}
 						</Button>
-					):null}
-					{!isActualizarOpen==false?(
-						<Button className="w-1/3 h-12  bg-red-500 hover:bg-red-600" type="submit" onClick={()=>{setIsActualizarOpen(false)}}>
-							Cerrar
+
+						<Button
+						className={`w-40 m-0 ${
+							isActualizarOpen ? "bg-red-500 hover:bg-red-600" : "bg-blue-500 hover:bg-blue-600"
+						}`}
+						type="button"
+						onClick={() =>{
+							setIsActualizarOpen(!isActualizarOpen);
+						}}
+						disabled={loadingDataCatalogos}
+						>
+						{isActualizarOpen ? "Cerrar" : "Actualizar información"}
 						</Button>
-					):null}
+					</div>
 
-					{isActualizarOpen==true?(
-						<><div className="flex  flex-col items-center justify-start  gap-2  mx-auto h-screen">
+					{loadingDataCatalogos ?(
+							<div className="flex justify-center items-center h-screen">
+								<div className="w-24 h-24 border-8 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+					  		</div>
+					):(
+						<>
+							{isActualizarOpen==true?(
+							<><div className="flex flex-col items-center justify-start gap-5">
+								<div className="flex flex-col sm:flex-row gap-2 ">
+									<div className="w-full flex flex-col justify-center">
+										<p>Fotografia actual: </p>
+										<Image
+											width={180}
+											height={180}
+											src={dataCatalogos?.pass_selected?.foto ? dataCatalogos?.pass_selected?.foto[0]?.file_url?? "/nouser.svg":"/nouser.svg"}
+											alt="Imagen"
+											className="w-42 h-42 object-cover bg-gray-200 rounded-lg" />
+									</div>
+									<div >
+										<p>Identificacion actual: </p>
+										<Image
+											width={180}
+											height={180}
+											src={dataCatalogos?.pass_selected?.identificacion ? dataCatalogos?.pass_selected?.identificacion[0]?.file_url : "/nouser.svg"}
+											alt="Imagen"
+											className="w-42 h-42  object-cover bg-gray-200 rounded-lg mb-2" />
+									</div>
+								</div>
 
-							<div className="flex gap-2 ">
-								<div>
-									<p>Fotografia</p>
-									<Image
-										width={280}
-										height={280}
-										src={dataCatalogos?.pass_selected?.foto ? dataCatalogos?.pass_selected?.foto[0]?.file_url?? "/nouser.svg":"/nouser.svg"}
-										alt="Imagen"
-										className="w-42 h-42 object-contain bg-gray-200 rounded-lg" />
+								<div className="flex flex-col gap-y-6">
+									<div>
+										<div className="flex items-center gap-x-10">
+										<span className="font-bold text-xl">Lista de Vehículos</span>
+										<VehiclePassModal title="Nuevo Vehiculo" vehicles={vehicles} setVehicles={setVehicles}>
+											<button
+											type="button"
+											onClick={() => handleCheckboxChange("agregar-vehiculos")}
+											className="px-4 py-2 rounded-md transition-all duration-300 border-2 border-blue-400 bg-transparent hover:bg-slate-100"
+											>
+											<div className="flex items-center gap-2">
+												<div className="text-blue-600 sm:hidden text-xl font-bold">+</div>
+												<Car className="text-blue-600" />
+												<div className="text-blue-600 hidden sm:block">Agregar Vehículos</div>
+											</div>
+											</button>
+										</VehiclePassModal>
+										</div>
+										<div className="mt-2 text-gray-600">
+											
+										<Accordion type="multiple" className="w-full">
+											{vehicles.map((vehiculo, index) => (
+												<AccordionItem key={index} value={`vehiculo-${index}`}>
+												<AccordionTrigger>
+													{vehiculo.tipo}
+												</AccordionTrigger>
+												<AccordionContent>
+													<div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 text-sm">
+													<p><strong>Tipo:</strong> {vehiculo.tipo}</p>
+													<p><strong>Marca:</strong> {vehiculo.marca}</p>
+													<p><strong>Modelo:</strong> {vehiculo.modelo}</p>
+													<p><strong>Placas:</strong> {vehiculo.placas}</p>
+													<p><strong>Estado:</strong> {vehiculo.estado}</p>
+													<p><strong>Color:</strong> {vehiculo.color}</p>
+													</div>
+										
+													<div className="flex justify-end px-4 pb-4">
+													<Button variant="destructive" size="sm" onClick={() => handleRemove(index)}>
+														Eliminar
+													</Button>
+													</div>
+												</AccordionContent>
+												</AccordionItem>
+											))}
+											{vehicles.length==0?(
+											<div>No se han agregado vehiculos.</div>):null}
+										</Accordion>
+										</div>
+									</div>
+
+									<div>
+										<div className="flex items-center gap-x-10">
+										<span className="font-bold text-xl">Lista de Equipos</span>
+										<EqipmentLocalPassModal title="Nuevo Equipo" equipos={equipos} setEquipos={setEquipos}>
+											<button
+											type="button"
+											onClick={() => handleCheckboxChange("agregar-equipos")}
+											className="px-4 py-2 rounded-md transition-all duration-300 border-2 border-blue-400 bg-transparent hover:bg-slate-100"
+											>
+											<div className="flex items-center gap-2">
+												<div className="text-blue-600 sm:hidden text-xl font-bold">+</div>
+												<Laptop className="text-blue-600" />
+												<div className="text-blue-600 hidden sm:block">Agregar Equipos</div>
+											</div>
+											</button>
+										</EqipmentLocalPassModal>
+										</div>
+										<div className="mt-2 text-gray-600">
+										<Accordion type="multiple" className="w-full">
+											{equipos.map((equipo, index) => (
+												<AccordionItem key={index} value={`equipo-${index}`}>
+												<AccordionTrigger>
+													{equipo.tipo}
+												</AccordionTrigger>
+												<AccordionContent>
+													<div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 text-sm">
+													<p><strong>Tipo:</strong> {equipo.tipo}</p>
+													<p><strong>Nombre:</strong> {equipo.nombre}</p>
+													<p><strong>Marca:</strong> {equipo.marca}</p>
+													<p><strong>Modelo:</strong> {equipo.modelo}</p>
+													<p><strong>No. Serie:</strong> {equipo.serie}</p>
+													<p><strong>Color:</strong> {equipo.color}</p>
+													</div>
+										
+													<div className="flex justify-end px-4 pb-4">
+													<Button variant="destructive" size="sm" onClick={() => handleRemoveEq(index)}>
+														Eliminar
+													</Button>
+													</div>
+												</AccordionContent>
+												</AccordionItem>
+											))}
+											{equipos.length==0?(
+											<div>No se han agregado equipos.</div>):null}
+										</Accordion>
+										</div>
+									</div>
 								</div>
-								<div >
-									<p>Identificacion actual:</p>
-									<Image
-										width={280}
-										height={280}
-										src={dataCatalogos?.pass_selected?.identificacion ? dataCatalogos?.pass_selected?.identificacion[0]?.file_url : "/nouser.svg"}
-										alt="Imagen"
-										className="w-42 h-42 object-contain bg-gray-200 rounded-lg mb-2" />
-								</div>
-								
-								
+
+								{/* <Button className="w-1/2  bg-blue-500 hover:bg-blue-600 my-2" type="submit" onClick={SendUpdate} disabled={isLoading}>
+								{!isLoading ? ("Actualizar"):(<><Loader2 className="animate-spin"/>Actualizando...</>)}
+								</Button> */}
+
+								<Button className="w-1/2  bg-blue-500 hover:bg-blue-600 my-2" type="submit" onClick={SendUpdate} >
+								Actualizar
+								</Button>
 							</div>
-
-							<VehicleList account_id={10} vehicles={vehiculos} setVehicles={setVehiculos} isModalOpen={false}/>
-
-							<EquipoList equipos={equipos} setEquipos={setEquipos}/>
-
-							<Button className="w-1/3 h-12  bg-blue-500 hover:bg-blue-600 mt-2" type="submit" onClick={SendUpdate} disabled={isLoading}>
-							{!isLoading ? ("Confirmar"):(<><Loader2 className="animate-spin"/>Actualizando...</>)}
-						</Button>
-						</div>
-
-						
+							
+							</>
+							):null}
 						</>
-					):null}
+					)}
+					
 			</div>
 		</>):null}
 		</>)}

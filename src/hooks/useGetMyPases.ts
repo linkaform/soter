@@ -7,16 +7,11 @@ export const useGetMyPases = () => {
   const tab = "Todos"; 
 
   const { data: data, isLoading, error, isFetching } = useQuery<any>({
-    queryKey: ["getMyPases", tab], 
+    queryKey: ["getMyPases"], 
     queryFn: async () => {
         const data = await getMyPases({ tab }); 
         return data.response?.data; 
     },
-   
-    refetchOnWindowFocus: true, 
-    refetchInterval: 60000,
-    refetchOnReconnect: true, 
-    staleTime: 1000 * 60 * 5, 
   });
 
   return {

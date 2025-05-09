@@ -13,12 +13,10 @@ import { useEffect } from "react";
 
 
 export default function Home() {
-	const {location } = useShiftStore()
-    const { isLoading, loading, shift} = useGetShift(location?true:false, true)
-    const { setCheckin_id } = useShiftStore()
+  const { isLoading, loading, shift} = useGetShift(true)
+  const { setCheckin_id } = useShiftStore()
 
 	useEffect(() => {
-    
 		if ( shift?.guard?.status_turn !== "Turno Cerrado") {  
 			setCheckin_id(shift?.booth_status?.checkin_id);
 		}
@@ -42,7 +40,7 @@ export default function Home() {
           <div className="w-full lg:w-3/4 p-8 flex flex-col">
               <TurnStatus />
               <div className="flex flex-col sm:flex-row justify-between">
-                  <ActivitySummary />
+                  <ActivitySummary booth_stats={shift?.booth_stats}/>
                   <div className="w-full">
                       <GuardiasApoyoTable />
                   </div>

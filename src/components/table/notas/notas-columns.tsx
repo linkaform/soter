@@ -27,10 +27,8 @@ export const notasColumns: ColumnDef<Nota>[] = [
     id: 'select',
     header: '',
     cell: ({ row }) => {
-      console.log("row",row.original)
       return(
         <div className='flex space-x-4'>
-        {/* TODO: Checar porque no se le pasan los datos */}
         <CloseNoteModal
           title='Cerrar nota'
           note={row.original}>
@@ -39,7 +37,6 @@ export const notasColumns: ColumnDef<Nota>[] = [
           </div>
         </CloseNoteModal>
 
-        {/* TODO: Checar porque no se le pasan los datos */}
         <NoteDetailsModal
           title={row.original.note??""}
           note={row.original}>
@@ -68,25 +65,8 @@ export const notasColumns: ColumnDef<Nota>[] = [
     ),
   },
   {
-    accessorKey: 'note_close_date',
-    header: 'Cierre',
-    cell: ({ row }) => {
-      console.log(row)
-      return (
-        <div className='capitalize'>{""}</div>
-      )
-    },
-  },
-  {
     accessorKey: 'nota',
     header: 'Nota',
     cell: ({ row }) => <div className='capitalize'>{row.original.note}</div>,
   },
-  // {
-  //   accessorKey: 'comentarios',
-  //   header: 'Comentarios',
-  //   cell: ({ row }) => (
-  //     <div className='capitalize'>{row.getValue('comentarios')}</div>
-  //   ),
-  // },
 ]

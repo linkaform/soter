@@ -6,7 +6,6 @@ import { LockerTable } from "@/components/table/bitacoras/locker/table";
 import PageTitle from "@/components/page-title";
 import BitacorasTable from "@/components/table/bitacoras/table";
 import { Home, Users, Car, DoorClosed, Computer } from "lucide-react";
-// import { useGetStats } from "@/hooks/useGetStats";
 import { useShiftStore } from "@/store/useShiftStore";
 import VehiculosTable from "@/components/table/bitacoras/vehiculos/table";
 import EquiposTable from "@/components/table/bitacoras/equipos/table";
@@ -31,8 +30,8 @@ const BitacorasPage = () => {
 
 	const [dates, setDates] = useState<string[]>([])
 	const [dateFilter, setDateFilter] = useState<string>("")
-	const { listBitacoras,isLoadingListBitacoras} = useBitacoras(ubicacionSeleccionada, areaSeleccionada == "todas" ? "": areaSeleccionada, selectedOption, true , dates[0], dates[1], dateFilter)
-	const { data: stats } = useGetStats(location, area, 'Bitacoras')
+	const { listBitacoras,isLoadingListBitacoras} = useBitacoras(ubicacionSeleccionada, areaSeleccionada == "todas" ? "": areaSeleccionada, selectedOption, ubicacionSeleccionada&&areaSeleccionada?true:false, dates[0], dates[1], dateFilter)
+	const { data: stats } = useGetStats(ubicacionSeleccionada&& areaSeleccionada?true:false,ubicacionSeleccionada, areaSeleccionada, 'Bitacoras')
 	const { tab, setTab } = useShiftStore()
 	const [selectedTab, setSelectedTab] = useState<string>(tab ? tab: "Personal"); 
 
@@ -40,6 +39,9 @@ const BitacorasPage = () => {
 		if(tab){
 			setTab("")
 		}
+		console.log("ubciaciones",location, area)
+		setUbicacionSeleccionada(location)
+		setAreaSeleccionada(area)
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	},[])
 

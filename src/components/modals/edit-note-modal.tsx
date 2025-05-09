@@ -86,7 +86,7 @@ export const EditNoteModal: React.FC<EditNoteModalProps> = ({
   const [evidencia, setEvidencia] = useState<Imagen[]>([])
   const [documento, setDocumento] = useState<Imagen[]>([])
 
-  const { editNoteMutation ,isLoadingNotes} = useNotes('', '')
+  const { editNoteMutation ,isLoadingNotes} = useNotes(false,'', '')
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

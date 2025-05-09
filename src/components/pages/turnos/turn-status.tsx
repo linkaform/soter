@@ -7,7 +7,7 @@ import { useShiftStore } from "@/store/useShiftStore";
 import React, { useEffect, useState } from "react";
 
 const TurnStatus = () => {
-  const { shift } = useGetShift(false, false);
+  const { shift } = useGetShift( false);
   const { area } = useShiftStore();
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
 

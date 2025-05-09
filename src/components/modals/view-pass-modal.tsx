@@ -17,14 +17,12 @@ import CalendarDays from "../calendar-days";
 import { toast } from "sonner";
 import { descargarPdfPase } from "@/lib/download-pdf";
 import { useGetPdf } from "@/hooks/usetGetPdf";
-import { useSendCorreo } from "@/hooks/useSendCorreo";
-import { data_sms } from "@/lib/send-sms";
-import { data_correo } from "@/lib/send_correo";
-import { useSendSMS } from "@/hooks/useSendSMS";
+import { useSendCorreoSms } from "@/hooks/useSendCorreo";
 import { Equipo_bitacora } from "../table/bitacoras/bitacoras-columns";
 import Image from "next/image";
 import useAuthStore from "@/store/useAuthStore";
-
+import { AddEmailModal } from "./add-mail";
+import { AddSmsModal } from "./add-sms";
 
 type Vehiculo_custom={
     tipo_vehiculo:string,
@@ -77,92 +75,88 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
   data,
   children,
 }) => {
+  const [open, setOpen] = useState(false)
   const {userIdSoter}= useAuthStore()
   const account_id = userIdSoter;
-  const [selectedOptions, setSelectedOptions] = useState<string[]>(["enviar_correo"]); 
-  const [dataCorreo, setDataCorreo]= useState<data_correo|null>(null)
-  const [dataSMS, setDataSMS]= useState<data_sms|null>(null)
-  const { data: responsePdf, isLoading: loadingPdf} = useGetPdf(account_id, data._id);
-  const { data: responseSendCorreo, isLoading: loadingCorreo, refetch:refetchCorreo } = useSendCorreo(account_id, selectedOptions,dataCorreo,data._id);
-  const { data: responseSendSMS, isLoading: loadingSMS, refetch:refetchSMS} =  useSendSMS(account_id, selectedOptions, dataSMS, data._id)
+  const [ enablePdf, setEnablePdf] = useState(false)
+  const { data: responsePdf, isLoading: loadingPdf} = useGetPdf(account_id, data._id, enablePdf);
+  const { createSendCorreoSms, createSendSms,  isLoadingCorreo, isLoadingSms} = useSendCorreoSms();
+  const downloadUrl=responsePdf?.response?.data?.data?.download_url
 
+  const [openAddMail, setOpenAddMail]= useState(false)
+  const [openAddPhone, setOpenAddPhone]= useState(false)
 
-useEffect(()=>{
-  if(dataCorreo){
-    refetchCorreo()
-  }
-},[dataCorreo,refetchCorreo])
+	function onEnviarCorreo(){
+		if(data?.status_pase.toLowerCase()!='vencido'){
+			if(data?.email!==""){
+				const data_for_msj = {
+				email_to: data.email,
+				asunto: data.tema_cita,
+				email_from: data.visita_a.length>0 ? data.visita_a[0]?.email[0] :'',
+				nombre: data.nombre,
+				nombre_organizador: data.visita_a.length>0 ? data.visita_a[0].nombre :'',
+				ubicacion: data.ubicacion,
+				fecha: {desde: data.fecha_desde_visita, hasta: data.fecha_desde_hasta},
+				descripcion: data.descripcion,
+				}
+				createSendCorreoSms.mutate({account_id, envio: ["enviar_correo"], data_for_msj , folio:data._id} )
+			}else{  
+          setOpenAddMail(true)
+          // toast.error("Ingresa un correo valido.")
+			}
+		}else{
+		toast.error("El pase ha vencido, edita el pase para poder enviarlo.")
+		}
+	}
 
-useEffect(()=>{
-  if(dataSMS){
-    refetchSMS()
-  }
-},[dataSMS,refetchSMS])
-
-
-useEffect(()=>{
-  if(responseSendCorreo){
-    if(responseSendCorreo.success){
-      toast.success("¡Correo enviado correctamente!");
-    }
-  }
-},[responseSendCorreo])
-
-useEffect(()=>{
-  if(responseSendSMS){
-    if(responseSendSMS.success){
-      toast.success("¡Mensaje enviado correctamente!");
-    }
-  }
-},[responseSendSMS])
-
-function onEnviarCorreo(){
-  if(data?.status_pase.toLowerCase()=='activo'){
-      if(data?.email!==""){
+	function onEnviarSMS(){
+		console.log("hola")
+		if(data?.status_pase.toLowerCase()!='vencido'){
+			if(data?.telefono!==""){
+				// const data_cel_msj = {
+				// mensaje: `Estimado ${data.nombre}, ${data.visita_a.length>0 ? data.visita_a[0].nombre :''}, te esta invitando a: ${data.ubicacion}, Descarga tu pase en: `, //${responsePdf.response?.data?.data?.download_url}
+				// numero: data.telefono
+				// }
         const data_for_msj = {
-            email_to: data.email,
-            asunto: data.tema_cita,
-            email_from: data.visita_a.length>0 ? data.visita_a[0]?.email[0] :'',
-            nombre: data.nombre,
-            nombre_organizador: data.visita_a.length>0 ? data.visita_a[0].nombre :'',
-            ubicacion: data.ubicacion,
-            fecha: {desde: data.fecha_desde_visita, hasta: data.fecha_desde_hasta},
-            descripcion: data.descripcion,
-        }
-        setDataCorreo(data_for_msj)
-    }else{  
-      toast.error("Ingresa un correo valido.")
-    }
-  }else{
-    toast.error("El pase de entrada debe haber sido completado por el visitante con anterioridad para poder enviar el correo.")
-  }
-}
+          email_to: data.email,
+          asunto: data.tema_cita,
+          email_from: data.visita_a.length>0 ? data.visita_a[0]?.email[0] :'',
+          nombre: data.nombre,
+          nombre_organizador: data.visita_a.length>0 ? data.visita_a[0].nombre :'',
+          ubicacion: data.ubicacion,
+          fecha: {desde: data.fecha_desde_visita, hasta: data.fecha_desde_hasta},
+          descripcion: data.descripcion,
+          }
+				createSendSms.mutate({account_id, envio: ["enviar_sms"], data_for_msj: data_for_msj , folio:data._id} )
+			}else{
+        setOpenAddPhone(true)
+				// toast.error("Ingresa un teléfono valido.")
+			}
+		}else{
+		toast.error("El pase ha vencido, edita el pase para poder enviarlo.")
 
-function onEnviarSMS(){
-  if(data?.status_pase.toLowerCase()=='activo'){
-    if(data?.telefono!==""){
-      setSelectedOptions(["enviar_msj"])
-           const data_cel_msj = {
-            mensaje: `Estimado ${data.nombre}, ${data.visita_a.length>0 ? data.visita_a[0].nombre :''}, te esta invitando a: ${data.ubicacion}, Descarga tu pase en: ${responsePdf.response?.data?.data?.download_url}`,
-            numero: data.telefono
-        }
-        setDataSMS(data_cel_msj)
-    }else{
-      toast.error("Ingresa un teléfono valido.")
-    }
-  }else{
-    toast.error("El pase de entrada debe haber sido completado por el visitante con anterioridad para poder enviar el sms.")
+		}
+	}
 
-  }
-}
+	useEffect(()=>{
+		if(downloadUrl){
+			onDescargarPDF(downloadUrl)
+			setEnablePdf(false)
+			toast.success("¡PDF descargado correctamente!");
+		}
+	},[downloadUrl])
 
-async function onDescargarPDF(){
-  await descargarPdfPase(responsePdf.response?.data?.data?.download_url)
-  toast.success("¡PDF descargado correctamente!");
-}
+	async function onDescargarPDF(download_url: string) {
+		try {
+			await descargarPdfPase(download_url);
+		} catch (error) {
+			toast.error("Error al descargar el PDF: " + error);
+		}
+	}
+
 
   return (
-    <Dialog >
+    <Dialog open={open} onOpenChange={setOpen} modal>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-scroll">
         <DialogHeader>
@@ -170,6 +164,13 @@ async function onDescargarPDF(){
             {title}
           </DialogTitle>
         </DialogHeader>
+
+        <AddEmailModal
+          title={"Agregar Correo"} open={openAddMail} setOpen={setOpenAddMail} id={data._id} setOpenPadre={setOpen}/>
+          
+        <AddSmsModal
+          title={"Agregar Teléfono"} open={openAddPhone} setOpen={setOpenAddPhone} id={data._id} setOpenPadre={setOpen}/>
+
 
         {/* Sobre la visita */}
         <div className="w-full ">
@@ -332,78 +333,6 @@ async function onDescargarPDF(){
           ):null}
         </div>
 
-        {/* {data?.grupo_equipos.length>0 && (
-          <div className="">
-            <p className="text-2xl font-bold mb-2">Equipos</p>
-            <Accordion type="single" collapsible>
-              {data?.grupo_equipos.map((equipo, index) => (
-                <AccordionItem key={index} value={`equipo-${index}`}>
-                  <AccordionTrigger>{`Equipo ${index + 1}`}</AccordionTrigger>
-                  <AccordionContent>
-                    <p className="font-medium mb-1">
-                      Tipo: <span className="">{equipo.tipo || "N/A"}</span>
-                    </p>
-                    <p className="font-medium mb-1">
-                      Equipo: <span className="">{equipo.nombre || "N/A"}</span>
-                    </p>
-                    <p className="font-medium mb-1">
-                      Marca: <span className="">{equipo.marca || "N/A"}</span>
-                    </p>
-                    <p className="font-medium mb-1">
-                      Modelo: <span className="">{equipo.modelo || "N/A"}</span>
-                    </p>
-                    <p className="font-medium mb-1">
-                      Número de Serie:{" "}
-                      <span className="">{equipo.serie || "N/A"}</span>
-                    </p>
-                    <p className="font-medium mb-1">
-                      Color: <span className="">{equipo.color || "N/A"}</span>
-                    </p>
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </div>
-          )}
-
-          {data?.grupo_vehiculos.length>0 && (
-          <div className="">
-            <p className="text-2xl font-bold mb-2">Vehículos</p>
-            <Accordion type="single" collapsible>
-              {data?.grupo_vehiculos.map((vehiculo, index) => (
-                <AccordionItem key={index} value={`vehiculo-${index}`}>
-                  <AccordionTrigger>{`Vehículo ${index + 1}`}</AccordionTrigger>
-                  <AccordionContent>
-                    <p className="font-medium mb-1">
-                      Tipo de Vehículo:{" "}
-                      <span className="">{vehiculo.tipo || "N/A"}</span>
-                    </p>
-                    <p className="font-medium mb-1">
-                      Marca:{" "}
-                      <span className="">{vehiculo.marca || "N/A"}</span>
-                    </p>
-                    <p className="font-medium mb-1">
-                      Modelo:{" "}
-                      <span className="">{vehiculo.modelo || "N/A"}</span>
-                    </p>
-                    <p className="font-medium mb-1">
-                      Estado:{" "}
-                      <span className="">{vehiculo.estado || "N/A"}</span>
-                    </p>
-                    <p className="font-medium mb-1">
-                      Placas:{" "}
-                      <span className="">{vehiculo.placas || "N/A"}</span>
-                    </p>
-                    <p className="font-medium mb-1">
-                      Color:{" "}
-                      <span className="">{vehiculo.color || "N/A"}</span>
-                    </p>
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </div>
-          )} */}
         <div className="flex gap-1 my-5">
           <DialogClose asChild>
             <Button className="w-full h-12 bg-gray-100 hover:bg-gray-200 text-gray-700">
@@ -424,17 +353,12 @@ async function onDescargarPDF(){
                }}>
                   Copiar link
                 </Button>
-                <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white"  onClick={onEnviarCorreo} disabled={loadingCorreo}>
-                  {!loadingCorreo ? ("Enviar correo"):(<><Loader2 className="animate-spin"/>Enviando correo...</>)}
+                <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white"  onClick={onEnviarCorreo} disabled={isLoadingCorreo}>
+                  {!isLoadingCorreo ? ("Enviar correo"):(<><Loader2 className="animate-spin"/>Enviando correo...</>)}
                 </Button>
-                <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white"  onClick={onEnviarSMS} disabled={loadingPdf || loadingSMS}>
+                <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white"  onClick={onEnviarSMS} disabled={ isLoadingSms}>
                 {
-                  loadingPdf ? (
-                    <>
-                      <Loader2 className="animate-spin" />
-                      Cargando...
-                    </>
-                  ) : loadingSMS ? (
+                   isLoadingSms ? (
                     <>
                       <Loader2 className="animate-spin" />
                       Enviando SMS...
@@ -444,7 +368,7 @@ async function onDescargarPDF(){
                   )
                 }
                 </Button>
-                <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white"  onClick={onDescargarPDF} disabled={loadingPdf}>
+                <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white"  onClick={()=>{setEnablePdf(true)}} disabled={loadingPdf}>
                 {!loadingPdf ? ("Descargar PDF"):(<><Loader2 className="animate-spin"/>Descargando PDF...</>)}
                 </Button>
         </div>

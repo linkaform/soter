@@ -12,10 +12,10 @@ export const useUpdateAccessPass = (access_pass: Access_pass_update, id: string,
       });
       return data.response?.data.areas_by_location;
     },
-    refetchOnWindowFocus: true,
-    refetchInterval: 60000,
-    refetchOnReconnect: true,
-    staleTime: 1000 * 60 * 5,
+    // refetchOnWindowFocus: true,
+    // refetchInterval: 60000,
+    // refetchOnReconnect: true,
+    // staleTime: 1000 * 60 * 5,
   });
 
   return {

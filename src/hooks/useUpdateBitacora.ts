@@ -14,10 +14,6 @@ export const useUpdateBitacora = (vehiculo:Vehiculo_bitacora[]|null, equipo: Equ
       });
       return data.response?.data;
     },
-    refetchOnWindowFocus: true,
-    refetchInterval: 60000,
-    refetchOnReconnect: true,
-    staleTime: 1000 * 60 * 5,
   });
 
   return {

@@ -38,7 +38,7 @@ export const ListaNotasTable = ({ statusFilter, ubicacionSeleccionada, areaSelec
   const [registersPage, setRegistersPage] = useState(10)
   const [dateFromValue, setDateFromValue] = useState('')
   const [dateToValue, setDateToValue] = useState('')
-
+  console.log("abrir notas")
   if (statusFilter === '') {
     statusFilter = 'abierto'
   }
@@ -51,7 +51,7 @@ export const ListaNotasTable = ({ statusFilter, ubicacionSeleccionada, areaSelec
     }
   }, [statusFilter])
 
-  const { data: notes, isLoadingListNotes, isFetching } = useNotes(
+  const { data: notes, isLoadingListNotes, isFetching } = useNotes( true,
     areaSeleccionada,
     ubicacionSeleccionada,
     currentPage,
@@ -83,7 +83,7 @@ export const ListaNotasTable = ({ statusFilter, ubicacionSeleccionada, areaSelec
   const [rowSelection, setRowSelection] = React.useState({})
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: 23,
   })
   const [globalFilter, setGlobalFilter] = React.useState('')
 

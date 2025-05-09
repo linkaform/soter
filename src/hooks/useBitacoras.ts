@@ -1,7 +1,6 @@
 import { Bitacora_record } from "@/components/table/bitacoras/bitacoras-columns";
 import { asignarGafete, dataGafetParamas, getListBitacora } from "@/lib/bitacoras";
 import { crearFalla, InputFalla } from "@/lib/fallas";
-import { getStats } from "@/lib/get-stats";
 import { errorMsj } from "@/lib/utils";
 import { useShiftStore } from "@/store/useShiftStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -24,10 +23,6 @@ export const useBitacoras = (location:string, area:string,prioridades:string[], 
               	return Array.isArray(data?.response?.data) ? data?.response?.data : [];
             }
         },
-        refetchOnWindowFocus: true,
-        // refetchInterval: 15000,
-        refetchOnReconnect: true,
-        // staleTime: 1000 * 60 * 5,
     });
 
     //Salida
@@ -91,20 +86,7 @@ export const useBitacoras = (location:string, area:string,prioridades:string[], 
         },
       });
 
-    const { data: stats, isLoading: isStatsLoading, error: statsError,
-        } = useQuery<any>({
-        queryKey: ["getStatsBitacoras", area, location],
-        enabled:enableList,
-        queryFn: async () => {
-            const data = await getStats( location, area, "Bitacoras" );
-            const responseData = data.response?.data || {};
-            return responseData;
-        },
-        refetchOnWindowFocus: true,
-        refetchInterval: 600000,
-        refetchOnReconnect: true,
-        staleTime: 1000 * 60 * 5,
-    });
+
 
     return{
         //Lista de Bitacoras
@@ -116,9 +98,6 @@ export const useBitacoras = (location:string, area:string,prioridades:string[], 
         isLoading,
         //Asignar Gafete
         asignarGafeteMutation,
-        //Stats bitacoras
-        stats,
-        isStatsLoading,
-        statsError
+      
     }
 }

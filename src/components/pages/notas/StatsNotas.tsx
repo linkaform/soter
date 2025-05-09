@@ -15,7 +15,7 @@ interface StatsProps {
 
 const Stats = ({ setStatusFilter, ubicacionSeleccionada, areaSeleccionada, setUbicacionSeleccionada, setAreaSeleccionada }: StatsProps) => {
 
-  const { data: stats } = useGetStats(ubicacionSeleccionada, areaSeleccionada, 'Notas')
+  const { data: stats } = useGetStats(true,ubicacionSeleccionada, areaSeleccionada, 'Notas')
   const [selectedStat, setSelectedStat] = useState<string | null>(null)
 
   const handleCardClick = (status: string) => {

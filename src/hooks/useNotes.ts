@@ -4,7 +4,7 @@ import { errorMsj } from "@/lib/utils";
 import { toast } from "sonner";
 import { useState } from "react";
 
-export const useNotes = (area:string, location:string, pageIndex: number = 0, pageSize: number = 10, dateFrom: string = "", dateTo: string="", status: string = "abierto") => {
+export const useNotes = (enableGetNotes:boolean, area:string, location:string, pageIndex: number = 0, pageSize: number = 10, dateFrom: string = "", dateTo: string="", status: string = "abierto") => {
   const offset = pageIndex * pageSize
   const limit = pageSize
   const queryClient = useQueryClient();
@@ -17,7 +17,7 @@ export const useNotes = (area:string, location:string, pageIndex: number = 0, pa
       const fetchedData = await getNotes(area, location, limit, offset, dateFrom, dateTo, status); 
       return fetchedData.response?.data ?? {};
     },
-    enabled: !!area && !!location,
+    enabled: !!area && !!location && enableGetNotes,
     placeholderData: {} as any,
     staleTime: 1000 * 60 * 5,
   });

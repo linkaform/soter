@@ -315,40 +315,6 @@ import { usePaseEntrada } from "@/hooks/usePaseEntrada";
 		
 	};
 
-	// const handleToggleEmail = () => {
-	// 	if (form.getValues("email")=="") { 
-	// 		form.setError("email", { type: "manual", message: "El campo email debe tener datos." });
-	// 	} else {
-	// 		form.clearErrors("email");
-	// 	}
-
-	// 	const email= "enviar_correo_pre_registro"
-	// 	set_enviar_correo_pre_registro((prev) => {
-	// 		const pre = prev.includes(email)
-	// 		? prev.filter((d) => d !== email) 
-	// 		: [...prev, email];
-	// 		return pre;
-	// 	});
-	// 	setIsActive(!isActive);
-
-	// };
-
-	// const handleToggleSMS = () => {
-	// 	if (!form.getValues("telefono")) {
-	// 		form.setError("telefono", { type: "manual", message: "El campo telefono debe tener datos." });
-	// 	} else {
-	// 		form.clearErrors("telefono");
-	// 	}
-	// 	const sms= "enviar_sms_pre_registro"
-	// 	set_enviar_correo_pre_registro((prev) => {
-	// 		const pre = prev.includes(sms)
-	// 		? prev.filter((d) => d !== sms)
-	// 		: [...prev, sms];
-	// 		return pre;
-	// 	});
-	// 	setIsActiveSMS(!isActiveSMS);
-	// };
-
 	const handleToggleAdvancedOptions = () => {
 		setIsActiveAdvancedOptions(!isActiveAdvancedOptions);
 	};
@@ -415,10 +381,10 @@ return (
 				<h1 className="font-bold text-2xl">Crear pase de entrada</h1>
 			</div>
 
-			<div className="flex justify-between">
+			<div className="flex justify-between flex-col sm:flex-row">
 				<p className="font-bold text-xl">Sobre la visita</p>
 				<Button
-					className="bg-blue-500 text-white hover:text-white hover:bg-blue-600"
+					className="bg-blue-500 text-white hover:text-white hover:bg-blue-600 w-40"
 					variant="outline"
 					onClick={openModalContactos}
 				>

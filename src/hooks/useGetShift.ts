@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { closeShift } from "@/lib/close-shift";
-import { getShift, getStats } from "@/lib/get-shift";
+import { getShift } from "@/lib/get-shift";
 import { startShift } from "@/lib/start-shift";
 import { toast } from "sonner"; // Importar Sonner
 import { useShiftStore } from "@/store/useShiftStore";
@@ -8,7 +8,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import useAuthStore from "@/store/useAuthStore";
 import { errorMsj } from "@/lib/utils";
 
-export const useGetShift = (enableTurnosStats:boolean,enableShift:boolean) => {
+export const useGetShift = (enableShift:boolean) => {
   const queryClient = useQueryClient();
 
   const { userNameSoter } = useAuthStore();
@@ -32,7 +32,7 @@ export const useGetShift = (enableTurnosStats:boolean,enableShift:boolean) => {
     isFetching,
     refetch,
   } = useQuery<any>({
-    queryKey: ["getShift", area, location],
+    queryKey: ["getShift"],
     enabled: enableShift,
     queryFn: async () => {
       const data = await getShift({ area, location });
@@ -51,10 +51,6 @@ export const useGetShift = (enableTurnosStats:boolean,enableShift:boolean) => {
           support_guards: filteredGuards,}
       }
     },
-    // refetchOnWindowFocus: true,
-    // refetchInterval: 600000,
-    // refetchOnReconnect: true,
-    // staleTime: 1000 * 60 * 5,
   });
 
   const startShiftMutation = useMutation({
@@ -91,15 +87,10 @@ export const useGetShift = (enableTurnosStats:boolean,enableShift:boolean) => {
       setArea(area)
       setLocation(location)
       setTurno(true)
-
-
-
       toast.success("Turno iniciado correctamente.");
 
     },
     onError: (err) => {
-      console.error("Error al iniciar turno:", err);
-
       toast.error(err.message || "Hubo un error al iniciar el turno.");
 
     },
@@ -126,36 +117,14 @@ export const useGetShift = (enableTurnosStats:boolean,enableShift:boolean) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["getShift"] });
       setTurno(false)
-      // ✅ Notificación de éxito
       toast.success("Turno cerrado correctamente.");
     },
     onError: (err) => {
-      console.error("Error al cerrar turno:", err);
-  
-      // ❌ Notificación de error
       toast.error(err.message || "Hubo un error al cerrar el turno.");
     },
     onSettled: () => {
       setLoading(false);
     },
-  });
-
-  const {
-    data: stats,
-    isLoading: isStatsLoading,
-    error: statsError,
-  } = useQuery<any>({
-    queryKey: ["getTurnStats", area, location],
-    enabled:enableTurnosStats,
-    queryFn: async () => {
-      const data = await getStats({ area, location });
-      const responseData = data.response?.data || {};
-      return responseData;
-    },
-    // refetchOnWindowFocus: true,
-    // refetchInterval: 600000,
-    // refetchOnReconnect: true,
-    // staleTime: 1000 * 60 * 5,
   });
 
   return {
@@ -168,12 +137,5 @@ export const useGetShift = (enableTurnosStats:boolean,enableShift:boolean) => {
     startShiftMutation,
     closeShiftMutation,
     refetch,
-
-    // Estadísticas
-    stats,
-    isStatsLoading,
-    statsError,
-
-    // Guardias iniciar turno
   };
 };

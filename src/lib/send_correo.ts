@@ -9,7 +9,6 @@ export type data_correo={
     descripcion: string,
 }
 export const sendCorreo = async (account_id: number|null, envio: string[],data_for_msj:data_correo|null, folio:string) => {
-    if(data_for_msj!==null){
     const payload = {
       script_name: "pase_de_acceso_use_api.py",
       option: "enviar_correo",
@@ -29,7 +28,5 @@ export const sendCorreo = async (account_id: number|null, envio: string[],data_f
   
       const data = await response.json(); 
       return data 
-  }else{
-    return console.error("Se recibieron datos nulos en access_pass y/p enviar_pre_sms")
-  }
+ 
 }

@@ -34,7 +34,6 @@ import { z } from "zod";
 import { catalogoColores, catalogoEstados } from "@/lib/utils";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import React from "react";
-// import { useAccessStore } from "@/store/useAccessStore";
 import { toast } from "sonner";
 import { useGetLocalVehiculos } from "@/hooks/useLocalCatVehiculos";
 import { Vehiculo } from "@/lib/update-pass";
@@ -71,19 +70,14 @@ const formSchema = z.object({
 })
 
 export const VehiclePassModal: React.FC<Props> = ({ title, children, vehicles, setVehicles }) => {
-  // const { newVehicle, setNewVehicle } = useAccessStore();
   const [open, setOpen] = useState(false);
-
   const [tipoVehiculoState, setTipoVehiculoState] = useState("");
   const [catalogSearch, setCatalogSearch] = useState("");
   const [marcaState, setMarcaState] = useState("");
-  
   const [tiposCat, setTiposCat] = useState<string[]>([]);
   const [marcasCat, setMarcasCat] = useState<string[]>([]);
   const [modelosCat, setModelosCat] = useState<string[]>([]);
-
   const {data:dataVehiculos,isLoading: loadingCat } = useGetLocalVehiculos({ tipo:tipoVehiculoState, marca:marcaState, isModalOpen:true})
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -96,7 +90,6 @@ export const VehiclePassModal: React.FC<Props> = ({ title, children, vehicles, s
 
     },
   });
-
 
     useEffect(() => {
       setTiposCat(dataVehiculos)
@@ -120,29 +113,11 @@ export const VehiclePassModal: React.FC<Props> = ({ title, children, vehicles, s
     form.reset();
   
     toast.success(
-      "Vehiculo listo para agregar al registro de ingreso."
+      "Vehiculo agregado correctamente."
     );
 
     setOpen(false);
   }
-
-
-  // const { data: tiposVehiculo,  } = useGetVehiculos({
-  //   tipo,
-  //   account_id: userIdSoter,
-  //   marca,
-  //   isModalOpen: true,
-  // });
-
- 
-
-  // const { data: marcasVehiculo} = useGetVehiculos({
-  //   tipo,
-  //   account_id: userIdSoter
-  // });
-
-  // const { data: modelosVehiculo } =
-  //   useGetVehiculos({ tipo,  account_id: userIdSoter, marca });
 
   const addNewVehicle = (data: z.infer<typeof formSchema>) => {
     setVehicles([
@@ -166,213 +141,214 @@ export const VehiclePassModal: React.FC<Props> = ({ title, children, vehicles, s
 
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen} modal>
       <DialogTrigger asChild onClick={() => setOpen(true)}>
         {children}
       </DialogTrigger>
 
-      <DialogContent className="max-w-xl">
-        <DialogHeader>
-          <DialogTitle className="text-2xl	 text-center  font-bold my-5">
+      <DialogContent className="max-w-xl  overflow-y-auto max-h-[90vh] flex flex-col" aria-describedby="">
+        <DialogHeader className="flex-shrink-0">
+          <DialogTitle className="text-2xl text-center font-bold">
             {title}
           </DialogTitle>
         </DialogHeader>
-{/* 
-				<div className="overflow-y-auto">
-					<VehicleList
-						vehicles={vehiculos}
-						setVehicles={setVehiculos} account_id={userIdSoter} isModalOpen={open}/>
-					<p className="text-red-500" > Agrega almenos un elemento para actualizar. </p>
-				</div> */}
+
+        <div className="flex-grow overflow-y-auto p-4">
+			<Form {...form}>
+				<form  className="space-y-8 ">
+					<FormField
+					control={form.control}
+					name="tipo"
+					render={({ field }) => (
+						<FormItem>
+						<FormLabel>* Tipo de vehículo</FormLabel>
+						<Select
+							onValueChange={(value) => {
+							field.onChange([value]);
+							setCatalogSearch("marcas")
+							setTipoVehiculoState(value);
+							setMarcaState("")
+							setMarcasCat([])
+							}}
+						>
+							<FormControl>
+							<SelectTrigger>
+							{loadingCat?(
+							<>
+							<SelectValue placeholder="Cargando tipos de vehiculo..." />
+							</>
+							): (
+							<>
+							<SelectValue placeholder="Selecciona un tipo de vehiculo" />
+							</>
+							)}
+							</SelectTrigger>
+							</FormControl>
+							<SelectContent>
+							{tiposCat?.map((item: string) => (
+								<SelectItem key={item} value={item}>
+								{item}
+								</SelectItem>
+							))}
+							</SelectContent>
+						</Select>
+						<FormMessage />
+						</FormItem>
+					)}
+					/>
+
+					<FormField
+					control={form.control}
+					name="marca"
+					render={({ field }) => (
+						<FormItem>
+						<FormLabel>* Marca</FormLabel>
+						<Select
+							onValueChange={(value) => {
+							field.onChange([value]);
+							setMarcaState(value);
+							setModelosCat([])
+							setCatalogSearch("modelos")
+							}}
+						>
+							<FormControl>
+							<SelectTrigger>
+									<SelectValue placeholder="Selecciona una opción" />
+							</SelectTrigger>
+							</FormControl>
+							<SelectContent>
+								{marcasCat.length>0?(
+									<>
+									{marcasCat?.map((item: string) => (
+										<SelectItem key={item} value={item}>
+										{item}
+										</SelectItem>
+									))}
+									</>
+								):(
+									<SelectItem key={0} value={"0"} disabled> Selecciona un tipo para ver las opciones</SelectItem>
+								)}
+							
+							</SelectContent>
+						</Select>
+						<FormMessage />
+						</FormItem>
+					)}
+					/>
+
+					<FormField
+					control={form.control}
+					name="modelo"
+					render={({ field }) => (
+						<FormItem>
+						<FormLabel>* Modelo</FormLabel>
+						<Select onValueChange={(value) => field.onChange([value])}>
+							<FormControl>
+							<SelectTrigger>
+								<SelectValue placeholder="Selecciona una opción" />
+							</SelectTrigger>
+							</FormControl>
+							<SelectContent>
+							{modelosCat?.map((item: string) => (
+								<SelectItem key={item} value={item}>
+								{item}
+								</SelectItem>
+							))}
+							</SelectContent>
+						</Select>
+						<FormMessage />
+						</FormItem>
+					)}
+					/>
+
+					<FormField
+					control={form.control}
+					name="estado"
+					render={({ field }) => (
+						<FormItem>
+						<FormLabel>* Estado</FormLabel>
+						<Select onValueChange={(value) => field.onChange([value])}>
+							<FormControl>
+							<SelectTrigger>
+								<SelectValue placeholder="Seleccione una opción" />
+							</SelectTrigger>
+							</FormControl>
+							<SelectContent>
+							{catalogoEstados().map((estado: string) => (
+								<SelectItem key={estado} value={estado}>
+								{estado}
+								</SelectItem>
+							))}
+							</SelectContent>
+						</Select>
+						<FormMessage />
+						</FormItem>
+					)}
+					/>
+
+					<FormField
+					control={form.control}
+					name="matricula"
+					render={({ field }) => (
+						<FormItem>
+						<FormLabel>* Placas</FormLabel>
+						<FormControl>
+							<Input
+							{...field}
+							value={field.value?.toUpperCase() || ""}
+							onChange={(e) => field.onChange(e.target.value)}
+							/>
+						</FormControl>
+						<FormMessage />
+						</FormItem>
+					)}
+					/>
+
+					<FormField
+					control={form.control}
+					name="color"
+					render={({ field }) => (
+						<FormItem>
+						<FormLabel>* Color</FormLabel>
+						<Select onValueChange={(value) => field.onChange([value])}>
+							<FormControl>
+							<SelectTrigger>
+								<SelectValue placeholder="Seleccione una opción" />
+							</SelectTrigger>
+							</FormControl>
+							<SelectContent>
+							{catalogoColores().map((color) => (
+								<SelectItem key={color} value={color}>
+								{color}
+								</SelectItem>
+							))}
+							</SelectContent>
+						</Select>
+						<FormMessage />
+						</FormItem>
+					)}
+					/>
+
 				
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <div className="grid md:grid-cols-2 gap-x-4 gap-y-8">
-              <FormField
-                control={form.control}
-                name="tipo"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>* Tipo de vehículo</FormLabel>
-                    <Select
-                      onValueChange={(value) => {
-                        field.onChange([value]);
-                        setCatalogSearch("marcas")
-                        setTipoVehiculoState(value);
-                        setMarcaState("")
-                        setMarcasCat([])
-                      }}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                        {loadingCat?(
-                        <>
-                        <SelectValue placeholder="Cargando tipos de vehiculo..." />
-                        </>
-                      ): (
-                        <>
-                        <SelectValue placeholder="Selecciona un tipo de vehiculo" />
-                        </>
-                      )}
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {tiposCat?.map((item: string) => (
-                          <SelectItem key={item} value={item}>
-                            {item}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+				</form>
+			</Form>
+      	</div>
+	 	<div  className="flex gap-2">
+			<DialogClose asChild>
+			<Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700">
+				Cancelar
+			</Button>
+			</DialogClose>
 
-              <FormField
-                control={form.control}
-                name="marca"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>* Marca</FormLabel>
-                    <Select
-                      onValueChange={(value) => {
-                        field.onChange([value]);
-                        setMarcaState(value);
-                        setModelosCat([])
-                        setCatalogSearch("modelos")
-                      }}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecciona una opción" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {marcasCat?.map((item: string) => (
-                          <SelectItem key={item} value={item}>
-                            {item}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+			<Button
+			onClick={form.handleSubmit(onSubmit)}
+			type="submit"
+			className="w-full  bg-blue-500 hover:bg-blue-600 text-white "
+			>
+			Agregar
+			</Button>
+		</div>
 
-              <FormField
-                control={form.control}
-                name="modelo"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>* Modelo</FormLabel>
-                    <Select onValueChange={(value) => field.onChange([value])}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecciona una opción" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {modelosCat?.map((item: string) => (
-                          <SelectItem key={item} value={item}>
-                            {item}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="estado"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>* Estado</FormLabel>
-                    <Select onValueChange={(value) => field.onChange([value])}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Seleccione una opción" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {catalogoEstados().map((estado: string) => (
-                          <SelectItem key={estado} value={estado}>
-                            {estado}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="matricula"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>* Placas</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        value={field.value?.toUpperCase() || ""}
-                        onChange={(e) => field.onChange(e.target.value)}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="color"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>* Color</FormLabel>
-                    <Select onValueChange={(value) => field.onChange([value])}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Seleccione una opción" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {catalogoColores().map((color) => (
-                          <SelectItem key={color} value={color}>
-                            {color}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <p className="text-gray-400">**Campos requeridos </p>
-
-            <div className="flex gap-5">
-              <DialogClose asChild>
-                <Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700">
-                  Cancelar
-                </Button>
-              </DialogClose>
-
-              <Button
-                type="submit"
-                className="w-full  bg-blue-500 hover:bg-blue-600 text-white "
-              >
-                Agregar
-              </Button>
-            </div>
-          </form>
-        </Form>
       </DialogContent>
 
     </Dialog>

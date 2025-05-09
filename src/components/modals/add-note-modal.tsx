@@ -53,7 +53,7 @@ export const AddNoteModal: React.FC<AddNoteModalProps> = ({
   const [open, setOpen] = useState(false)
   const { area, location } = useShiftStore()
 
-  const { createNoteMutation, isLoadingNotes } = useNotes(area, location)
+  const { createNoteMutation, isLoadingNotes } = useNotes(false,area, location)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

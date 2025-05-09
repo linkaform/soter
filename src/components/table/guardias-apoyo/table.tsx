@@ -39,7 +39,7 @@ import { useGuardSelectionStore } from "@/store/useGuardStore";
 export function GuardiasApoyoTable() {
   const { checkoutSupportGuardsMutation } = useGetSupportGuards(false);
 
-    const { shift } = useGetShift(false, false);
+    const { shift } = useGetShift(false);
     const { location, area } = useShiftStore();
     const {toggleGuardSelection, clearSelectedGuards} =   useGuardSelectionStore()
   

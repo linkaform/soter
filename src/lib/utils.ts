@@ -117,17 +117,18 @@ export function replaceNullsInArrayDynamic(arr: any[]): any[] {
   });
 }
 
-export function formatVehiculos(arr: Vehiculo_bitacora[]): Vehiculo[] {
-  return arr.map(item => ({
-    tipo: item.tipo, 
-    marca: item.marca_vehiculo, 
-    modelo: item.modelo_vehiculo, 
-    estado: item.nombre_estado, 
-    placas: item.placas, 
-    color: item.color
+
+
+export function formatVehiculos(arr: any[]): Vehiculo[] {
+  return arr.map((item) => ({
+    tipo: item.tipo_vehiculo || item.tipo || "",
+    marca: item.marca_vehiculo || item.marca || "",
+    modelo: item.modelo_vehiculo || item.modelo || "",
+    estado: item.nombre_estado || item.estado || "",
+    placas: item.placas_vehiculo || item.placas || "",
+    color: item.color_vehiculo || item.color || "",
   }));
 }
-
 export function formatEquipos(arr: Equipo_bitacora[]): Equipo[] {
   return arr.map(item => ({
     color: item.color_articulo, 

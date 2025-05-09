@@ -55,10 +55,8 @@ export const CloseNoteModal: React.FC<CloseNoteModalProps> = ({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   })
-
-  console.log("nota", note)
   const [open, setOpen] = useState(false)
-  const { closeNoteMutation, isLoadingNotes } = useNotes('', '')
+  const { closeNoteMutation, isLoadingNotes } = useNotes(false,'', '')
 
   function onSubmit() {
     const currentDate = new Date()

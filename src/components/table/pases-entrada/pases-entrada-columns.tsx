@@ -111,12 +111,6 @@ const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
             <Pencil />
           </div>
       </UpdateFullPassModal>
-        
-      {/* <ResendPassModal title="Reenviar Pase">
-      <div className="cursor-pointer">
-        <Forward />
-      </div>
-      </ResendPassModal> */}
     </div>
   );
 };

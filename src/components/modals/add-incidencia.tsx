@@ -200,267 +200,267 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 			<div className="flex-grow overflow-y-auto p-4">
 				<Form {...form} >
 					<form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-5">
-							<FormField 
-								control={form.control}
-								name="ubicacion_incidencia"
-								render={({ field }:any) => (
-									<FormItem className="w-full">
-										<FormLabel>Ubicacion: *</FormLabel>
-										<FormControl>
-										<Select {...field} className="input"
-											onValueChange={(value:string) => {
-											field.onChange(value); 
-											setUbicacionSeleccionada(value)
-										}}
-										value={field.value} 
-									>
-										<SelectTrigger className="w-full">
-											<SelectValue placeholder="Selecciona una ubicacion" />
-										</SelectTrigger>
-										<SelectContent>
-										{ubicaciones?.map((vehiculo:string, index:number) => (
-											<SelectItem key={index} value={vehiculo}>
-												{vehiculo}
-											</SelectItem>
-										))}
-										</SelectContent>
-									</Select>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<FormField
-								control={form.control}
-								name="area_incidencia"
-								render={({ field }:any) => (
-									<FormItem className="w-full">
-										<FormLabel>Area: *</FormLabel>
-										<FormControl>
-										<Select {...field} className="input"
-											onValueChange={(value:string) => {
-											field.onChange(value); 
-										}}
-										value={field.value} 
-									>
-										<SelectTrigger className="w-full">
-											{loadingAreas ? (
-												<SelectValue placeholder="Cargando áreas..." />
-											):(
-												<SelectValue placeholder="Selecciona una opción" />
-											)}
-										</SelectTrigger>
-										<SelectContent>
-										{areas? (
-											<>
-											{areas?.map((vehiculo:string, index:number) => (
-												<SelectItem key={index} value={vehiculo}>
-													{vehiculo}
-												</SelectItem>
-											))}
-											</>
-										):(
-											<>
-											<SelectItem key={0} value={"0"} disabled>
-												No hay opciones disponibles
-											</SelectItem>
-											</>
-										)}
-										
-										</SelectContent>
-									</Select>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-
-							<FormField
+						<FormField 
 							control={form.control}
-							name="fecha_hora_incidencia"
-							render={() => (
-								<FormItem className="w-full">
-								<FormLabel>Fecha: *</FormLabel>
-								<FormControl>
-									{/* <Input type="datetime-local" placeholder="Fecha" {...field} /> */}
-									<DateTime date={date} setDate={setDate} />
-								</FormControl>
-
-								<FormMessage />
-								</FormItem>
-							)}
-							/>
-							<FormField
-								control={form.control}
-								name="reporta_incidencia"
-								render={({ field }:any) => (
-									<FormItem className="w-full">
-										<FormLabel>Reporta:</FormLabel>
-										<FormControl>
-										<Select {...field} className="input"
-											onValueChange={(value:string) => {
-											field.onChange(value); 
-										}}
-										value={field.value} 
-									>
-										<SelectTrigger className="w-full">
-										{loadingAreaEmpleado?(<>
-												<SelectValue placeholder="Cargando opciones..." />
-											</>):(<>
-												<SelectValue placeholder="Selecciona una opcion" />
-											</>)}
-										</SelectTrigger>
-										<SelectContent>
-										{dataAreaEmpleado?.map((vehiculo:string, index:number) => (
-											<SelectItem key={index} value={vehiculo}>
-												{vehiculo}
-											</SelectItem>
-										))}
-										</SelectContent>
-									</Select>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>	
-							<FormField
-								control={form.control}
-								name="prioridad_incidencia"
-								render={({ field }:any) => (
-									<FormItem className="w-full">
-										<FormLabel>Importancia: *</FormLabel>
-										<FormControl>
-										<Select {...field} className="input"
-											onValueChange={(value:string) => {
-											field.onChange(value); 
-										}}
-										value={field.value} 
-									>
-										<SelectTrigger className="w-full">
-										<SelectValue placeholder="Selecciona una opcion" />
-										</SelectTrigger>
-										<SelectContent>
-										<SelectItem key={"baja"} value={"baja"}>Baja</SelectItem>
-										<SelectItem key={"media"} value={"media"}>Media</SelectItem>
-										<SelectItem key={"alta"} value={"alta"}>Alta</SelectItem>
-										<SelectItem key={"crítica"} value={"crítica"}>Crítica</SelectItem>
-										</SelectContent>
-									</Select>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>	
-							<FormField
-								control={form.control}
-								name="incidencia"
-								render={({ field }:any) => (
-									<FormItem className="w-full">
-										<FormLabel>Incidencia: *</FormLabel>
-										<FormControl>
-										<Select {...field} className="input"
-											onValueChange={(value:string) => {
-											field.onChange(value);
-											if(value=="Depósitos") {
-												setIncidencia(value)
-											}
-										}}
-										value={field.value} 
-									>
-										<SelectTrigger className="w-full">
-											{isLoadingCatIncidencias ? (
-												<SelectValue placeholder="Cargando incidencias..." />
-											):
-											(
-												<SelectValue placeholder="Selecciona una incidencia" />
-											)}
-										</SelectTrigger>
-										<SelectContent>
-										{catIncidencias?.map((vehiculo:string, index:number) => {
-											return (
-												<SelectItem key={index} value={vehiculo}>
-													{vehiculo}
-												</SelectItem>
-											)
-										})}
-										</SelectContent>
-									</Select>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>	
-							{incidencia=="Depósitos" && 
-							<div className="col-span-1 md:col-span-2">
-								<DepositosList depositos={depositos} setDepositos={setDepositos} ></DepositosList>
-							</div>
-						}
-							<FormField
-							control={form.control}
-							name="comentario_incidencia"
+							name="ubicacion_incidencia"
 							render={({ field }:any) => (
-								<FormItem className="col-span-1 md:col-span-2">
-								<FormLabel>Comentarios: *</FormLabel>
-								<FormControl className="w-full">
-									<Textarea
-									placeholder="Texto"
-									className="resize-none w-full" 
-									{...field}
-									/>
-								</FormControl>
-								<FormMessage />
+								<FormItem className="w-full">
+									<FormLabel>Ubicacion: *</FormLabel>
+									<FormControl>
+									<Select {...field} className="input"
+										onValueChange={(value:string) => {
+										field.onChange(value); 
+										setUbicacionSeleccionada(value)
+									}}
+									value={field.value} 
+								>
+									<SelectTrigger className="w-full">
+										<SelectValue placeholder="Selecciona una ubicacion" />
+									</SelectTrigger>
+									<SelectContent>
+									{ubicaciones?.map((vehiculo:string, index:number) => (
+										<SelectItem key={index} value={vehiculo}>
+											{vehiculo}
+										</SelectItem>
+									))}
+									</SelectContent>
+								</Select>
+									</FormControl>
+									<FormMessage />
 								</FormItem>
 							)}
-							/>
-							
-							<LoadImage
-								id="evidencia" 
-								titulo={"Evidencia"} 
-								setImg={setEvidencia}
-								showWebcamOption={true}
-								facingMode="environment"
-								imgArray={evidencia}
-								showArray={true}
-								limit={10}/>
-
-							<LoadFile
-								id="documento"
-								titulo={"Documento"}
-								setDocs={setDocumento}
-								docArray={documento}
-								limit={10}/>
-							
-							<FormField
-								control={form.control}
-								name="notificacion_incidencia"
-								render={({ field }:any) => (
-									<FormItem className="w-full mb-3">
-										<FormLabel>Notificaciones: *</FormLabel>
-										<FormControl>
-										<Select {...field} className="input"
-											onValueChange={(value:string) => {
-											field.onChange(value); 
-										}}
-										value={field.value} 
-									>
-										<SelectTrigger className="w-full">
-										<SelectValue placeholder="Selecciona una opcion" />
-										</SelectTrigger>
-										<SelectContent>
-											<SelectItem key={"no"} value={"no"}>
-												No
+						/>
+						<FormField
+							control={form.control}
+							name="area_incidencia"
+							render={({ field }:any) => (
+								<FormItem className="w-full">
+									<FormLabel>Area: *</FormLabel>
+									<FormControl>
+									<Select {...field} className="input"
+										onValueChange={(value:string) => {
+										field.onChange(value); 
+									}}
+									value={field.value} 
+								>
+									<SelectTrigger className="w-full">
+										{loadingAreas ? (
+											<SelectValue placeholder="Cargando áreas..." />
+										):(
+											<SelectValue placeholder="Selecciona una opción" />
+										)}
+									</SelectTrigger>
+									<SelectContent>
+									{areas? (
+										<>
+										{areas?.map((vehiculo:string, index:number) => (
+											<SelectItem key={index} value={vehiculo}>
+												{vehiculo}
 											</SelectItem>
-											<SelectItem key={"correo"} value={"correo"}>
-											Correo
+										))}
+										</>
+									):(
+										<>
+										<SelectItem key={0} value={"0"} disabled>
+											No hay opciones disponibles
 										</SelectItem>
-										</SelectContent>
-									</Select>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>	
-						</form>
+										</>
+									)}
+									
+									</SelectContent>
+								</Select>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+						control={form.control}
+						name="fecha_hora_incidencia"
+						render={() => (
+							<FormItem className="w-full">
+							<FormLabel>Fecha: *</FormLabel>
+							<FormControl>
+								{/* <Input type="datetime-local" placeholder="Fecha" {...field} /> */}
+								<DateTime date={date} setDate={setDate} />
+							</FormControl>
+
+							<FormMessage />
+							</FormItem>
+						)}
+						/>
+						<FormField
+							control={form.control}
+							name="reporta_incidencia"
+							render={({ field }:any) => (
+								<FormItem className="w-full">
+									<FormLabel>Reporta:</FormLabel>
+									<FormControl>
+									<Select {...field} className="input"
+										onValueChange={(value:string) => {
+										field.onChange(value); 
+									}}
+									value={field.value} 
+								>
+									<SelectTrigger className="w-full">
+									{loadingAreaEmpleado?(<>
+											<SelectValue placeholder="Cargando opciones..." />
+										</>):(<>
+											<SelectValue placeholder="Selecciona una opcion" />
+										</>)}
+									</SelectTrigger>
+									<SelectContent>
+									{dataAreaEmpleado?.map((vehiculo:string, index:number) => (
+										<SelectItem key={index} value={vehiculo}>
+											{vehiculo}
+										</SelectItem>
+									))}
+									</SelectContent>
+								</Select>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>	
+						<FormField
+							control={form.control}
+							name="prioridad_incidencia"
+							render={({ field }:any) => (
+								<FormItem className="w-full">
+									<FormLabel>Importancia: *</FormLabel>
+									<FormControl>
+									<Select {...field} className="input"
+										onValueChange={(value:string) => {
+										field.onChange(value); 
+									}}
+									value={field.value} 
+								>
+									<SelectTrigger className="w-full">
+									<SelectValue placeholder="Selecciona una opcion" />
+									</SelectTrigger>
+									<SelectContent>
+									<SelectItem key={"baja"} value={"baja"}>Baja</SelectItem>
+									<SelectItem key={"media"} value={"media"}>Media</SelectItem>
+									<SelectItem key={"alta"} value={"alta"}>Alta</SelectItem>
+									<SelectItem key={"crítica"} value={"crítica"}>Crítica</SelectItem>
+									</SelectContent>
+								</Select>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>	
+						<FormField
+							control={form.control}
+							name="incidencia"
+							render={({ field }:any) => (
+								<FormItem className="w-full">
+									<FormLabel>Incidencia: *</FormLabel>
+									<FormControl>
+									<Select {...field} className="input"
+										onValueChange={(value:string) => {
+										field.onChange(value);
+										if(value=="Depósitos") {
+											setIncidencia(value)
+										}
+									}}
+									value={field.value} 
+								>
+									<SelectTrigger className="w-full">
+										{isLoadingCatIncidencias ? (
+											<SelectValue placeholder="Cargando incidencias..." />
+										):
+										(
+											<SelectValue placeholder="Selecciona una incidencia" />
+										)}
+									</SelectTrigger>
+									<SelectContent>
+									{catIncidencias?.map((vehiculo:string, index:number) => {
+										return (
+											<SelectItem key={index} value={vehiculo}>
+												{vehiculo}
+											</SelectItem>
+										)
+									})}
+									</SelectContent>
+								</Select>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>	
+						{incidencia=="Depósitos" && 
+						<div className="col-span-1 md:col-span-2">
+							<DepositosList depositos={depositos} setDepositos={setDepositos} ></DepositosList>
+						</div>
+					}
+						<FormField
+						control={form.control}
+						name="comentario_incidencia"
+						render={({ field }:any) => (
+							<FormItem className="col-span-1 md:col-span-2">
+							<FormLabel>Comentarios: *</FormLabel>
+							<FormControl className="w-full">
+								<Textarea
+								placeholder="Texto"
+								className="resize-none w-full" 
+								{...field}
+								/>
+							</FormControl>
+							<FormMessage />
+							</FormItem>
+						)}
+						/>
+						
+						<LoadImage
+							id="evidencia" 
+							titulo={"Evidencia"} 
+							setImg={setEvidencia}
+							showWebcamOption={true}
+							facingMode="environment"
+							imgArray={evidencia}
+							showArray={true}
+							limit={10}/>
+
+						<LoadFile
+							id="documento"
+							titulo={"Documento"}
+							setDocs={setDocumento}
+							docArray={documento}
+							limit={10}/>
+						
+						<FormField
+							control={form.control}
+							name="notificacion_incidencia"
+							render={({ field }:any) => (
+								<FormItem className="w-full mb-3">
+									<FormLabel>Notificaciones: *</FormLabel>
+									<FormControl>
+									<Select {...field} className="input"
+										onValueChange={(value:string) => {
+										field.onChange(value); 
+									}}
+									value={field.value} 
+								>
+									<SelectTrigger className="w-full">
+									<SelectValue placeholder="Selecciona una opcion" />
+									</SelectTrigger>
+									<SelectContent>
+										<SelectItem key={"no"} value={"no"}>
+											No
+										</SelectItem>
+										<SelectItem key={"correo"} value={"correo"}>
+										Correo
+									</SelectItem>
+									</SelectContent>
+								</Select>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>	
+					</form>
 				</Form>
 			
         
