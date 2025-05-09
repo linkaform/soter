@@ -209,6 +209,7 @@ export interface AccessPass {
   identificacion: Foto | Image[] | undefined;
   email?: string;
   telefono?: string;
+  status_pase?:string;
 }
 
 export const addNewVisit = async (
@@ -226,6 +227,7 @@ export const addNewVisit = async (
       identificacion: access_pass.identificacion || [],
       email: access_pass.email || "",
       telefono: access_pass.telefono || "",
+      status_pase: access_pass.status_pase || "",
     },
     option: "create_access_pass",
     script_name: "pase_de_acceso.py",

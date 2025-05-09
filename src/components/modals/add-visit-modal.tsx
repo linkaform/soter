@@ -71,6 +71,7 @@ const formSchema = z.object({
   perfil_pase: z.string().min(1, {
     message: "Campo requerido",
   }),
+  status_pase: z.string().optional()
 });
 
 export const AddVisitModal: React.FC<Props> = ({ title, children }) => {
@@ -91,6 +92,7 @@ export const AddVisitModal: React.FC<Props> = ({ title, children }) => {
       area: "",
       visita_a: "",
       perfil_pase: "",
+      status_pase:"proceso"
     },
   });
 
@@ -103,7 +105,7 @@ export const AddVisitModal: React.FC<Props> = ({ title, children }) => {
       perfil_pase: data.perfil_pase,
       foto: fotografia ,
       identificacion: identificacion,
-      // status:"proceso"
+      status_pase:"proceso"
     };
     console.log("entrada", access_pass)
     registerNewVisit.mutate({ location, access_pass });

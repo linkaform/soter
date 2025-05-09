@@ -41,6 +41,7 @@ export interface SearchAccessPass {
   tipo_de_pase: string
   _id: string
   qr_pase: QrPase[]
+  link:string
   limite_de_acceso?: number;}
 
 export interface Foto {

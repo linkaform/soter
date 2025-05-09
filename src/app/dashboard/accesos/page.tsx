@@ -11,6 +11,7 @@ import {
   DoorOpen,
   DoorOpenIcon,
   Eraser,
+  FileSymlink,
   HomeIcon,
   Laptop,
   List,
@@ -373,6 +374,26 @@ const AccesosPage = () => {
 						onClick={() =>{ setDebouncedValue(""); clearPassCode(); }}
 					>
 						<Eraser className="text-white" />
+						
+					</Button></>):null}
+					{ searchPass?.estatus=="proceso" ? (<>
+					<Button
+						className="bg-blue-500 hover:bg-blue-600 text-white"
+						variant="secondary"
+						onClick={() => {
+							navigator.clipboard.writeText(searchPass?.link).then(() => {
+							 toast("¡Enlace copiado!", {
+							   description:
+								 "El enlace ha sido copiado correctamente al portapapeles.",
+							   action: {
+								 label: "Abrir enlace",
+								 onClick: () => window.open(searchPass?.link, "_blank"), // Abre el enlace en una nueva pestaña
+							   },
+							 });
+						   });
+						  }}
+					>
+						<FileSymlink />  Copiar link
 						
 					</Button></>):null}
 					</div>
