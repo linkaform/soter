@@ -33,6 +33,7 @@ interface updatedPassModalProps {
 	hasEmail:boolean;
 	hasTelefono:boolean;
 	closePadre:()=>void;
+	passData: any;
 }
  const formSchema = z
 		.object({
@@ -49,7 +50,8 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 	folio,
 	hasEmail,
 	hasTelefono,
-	closePadre
+	closePadre,
+	passData
 }) => {
 	const [enviarCorreo, setEnviarCorreo] = useState<string[]>([]);
 	const [isActive, setIsActive] = useState(false);
@@ -58,6 +60,15 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 	const [enablePdf, setEnablePdf] = useState(false)
 	const { data: responsePdf, isLoading: loadingPdf} = useGetPdf(account_id, folio, enablePdf);
 	const downloadUrl=responsePdf?.response?.data?.data?.download_url
+
+	const handleClickGoogleButton = () => {
+		const url = passData?.pass_selected?.google_wallet_pass_url;
+		if (url) {
+			window.open(url, '_blank');
+		} else {
+			console.log('No hay URL disponible');
+		}
+	}
 	
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -192,7 +203,7 @@ return (
 										</Button>
 								):null}
 
-								<button type="button" onClick={() => console.log('Agregar a Google Wallet')}>
+								<button type="button" onClick={handleClickGoogleButton}>
 									<Image src="/esES_add_to_google_wallet_wallet-button.svg" alt="Add to Google Wallet" width={200} height={200} className="mt-2" />
 								</button>
 							</div>

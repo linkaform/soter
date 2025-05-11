@@ -23,6 +23,7 @@ interface EntryPassModal2Props {
 	isSuccess: boolean;
 	setIsSuccess: Dispatch<SetStateAction<boolean>>;
 	onClose: ()=> void;
+	passData: any;
 }
 
 export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
@@ -30,6 +31,7 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 	data,
 	isSuccess,
 	setIsSuccess,
+	passData
 }) => {
 	const [response, setResponse] = useState<any>(null);
 	const [isLoading, setIsLoading] = useState(false);
@@ -252,6 +254,7 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 							account_id={data?.account_id}
 							folio={response?.response?.data?.json?.id}
 							closePadre={handleClose}
+							passData={passData}
 							/>
 					):null}
 					

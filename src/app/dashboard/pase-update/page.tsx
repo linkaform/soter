@@ -321,6 +321,7 @@ return (
 				isSuccess={isSuccess}
 				setIsSuccess={setIsSuccess}
 				onClose={closeModal}
+				passData={dataCatalogos}
 			/>
 		{dataCatalogos?.pass_selected?.estatus == "proceso" ? (
 			<>
