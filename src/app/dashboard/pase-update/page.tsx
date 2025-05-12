@@ -108,6 +108,21 @@ const PaseUpdate = () =>{
 	// const [isLoading, setIsLoading] = useState(false);
 	// const [error, setError] = useState<unknown>();
 
+	const handleClickGoogleButton = () => {
+		const url = dataCatalogos?.pass_selected?.google_wallet_pass_url;
+		if (url) {
+			window.open(url, '_blank');
+		} else {
+			toast.error('No hay pase disponible', {
+                style: {
+                    background: "#dc2626",
+                    color: "#fff",
+                    border: 'none'
+                },
+            });
+		}
+	}
+
 	const form = useForm<z.infer<typeof formSchema>>({
 			resolver: zodResolver(formSchema),
 			defaultValues: {
@@ -561,7 +576,7 @@ return (
 					</div>
 
 
-					<button type="button" onClick={() => console.log('Agregar a Google Wallet')}>
+					<button type="button" onClick={handleClickGoogleButton}>
 						<Image src="/esES_add_to_google_wallet_wallet-button.svg" alt="Add to Google Wallet" width={200} height={200} className="mt-2" />
 					</button>
 

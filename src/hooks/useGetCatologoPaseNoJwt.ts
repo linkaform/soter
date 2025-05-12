@@ -35,7 +35,7 @@ export interface PassSelected {
   qr_pase: QrPase[]
   foto?: Foto[]
   identificacion?: Foto[]
-
+  google_wallet_pass_url: string
 }
 
 export interface VisitaA {
