@@ -60,7 +60,7 @@ const AccesosPage = () => {
   const [ openActivePases , setOpenActivePases ] = useState(false)
   const queryClient = useQueryClient();
   const [debouncedValue,setDebouncedValue]=useState("")
-  const { data: stats } = useGetStats(true,area, location, 'Accesos')
+  const { data: stats } = useGetStats(true,location, area, 'Accesos')
   const { fetchAreas, fetchLocations, loading:loadingLocationArea} = useAreasLocationStore();
 
   useEffect(() => {
