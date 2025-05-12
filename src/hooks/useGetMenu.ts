@@ -43,10 +43,10 @@ export const useGetMenu = () => {
 		
 		return data.response?.data.menus||null;
 	},
-	refetchOnWindowFocus: true, 
-	refetchInterval: 60000,
-	refetchOnReconnect: true, 
-	staleTime: 1000 * 60 * 5, 
+	refetchOnWindowFocus: false, 
+	refetchInterval: false,
+	refetchOnReconnect: false, 
+	staleTime: Infinity, 
 	});
 
   return {
