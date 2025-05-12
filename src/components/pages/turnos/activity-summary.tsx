@@ -61,16 +61,16 @@ const ActivitySummary = (booth_stats:any) => {
   <div className="w-full">
     <p className="font-bold text-2xl mb-5">Resumen de actividad</p>
 
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 w-10/12 ">
+    <div className="grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-2  gap-4  mr-5">
       {items.map((item, index) => (
         <Link key={index} href={item.link}>
           <div
             onClick={() => setTab(item.tab)}
-            className="flex items-center space-x-4 rounded-md p-4 border cursor-pointer transition duration-100 hover:bg-gray-100 "
+            className="flex items-center space-x-4 rounded-md p-4 border cursor-pointer transition duration-100 hover:bg-gray-100 overflow-hidden"
           >
-            <div className="bg-gray-100 p-3 rounded-lg">{item.icon}</div>
+            <div className="bg-gray-100 p-3 rounded-lg ">{item.icon}</div>
             <div className="flex-1 space-y-1">
-              <p className="font-medium leading-none">{item.title}</p>
+              <p className="font-medium leading-none flex-1 space-y-1 min-w-0">{item.title}</p>
               <p className="font-bold text-2xl">{item.count}</p>
             </div>
           </div>

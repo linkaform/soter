@@ -294,6 +294,7 @@ export const VehiclePassModal: React.FC<Props> = ({ title, children, vehicles, s
 						<FormLabel>* Placas</FormLabel>
 						<FormControl>
 							<Input
+							maxLength={20}
 							{...field}
 							value={field.value?.toUpperCase() || ""}
 							onChange={(e) => field.onChange(e.target.value)}

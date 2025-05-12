@@ -30,8 +30,8 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 	title,
 	data,
 	isSuccess,
-	setIsSuccess,
-	passData
+	passData,
+	setIsSuccess,onClose
 }) => {
 	const [response, setResponse] = useState<any>(null);
 	const [isLoading, setIsLoading] = useState(false);
@@ -71,8 +71,8 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 	};
 
 	const handleClose = () => {
-			setIsSuccess(false); 
-			// onClose(); 
+			// setIsSuccess(false); 
+			onClose(); 
 	};
 
 	useEffect(()=>{

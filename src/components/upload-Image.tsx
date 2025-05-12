@@ -148,7 +148,7 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
                             
                         </div>
                     ):null}
-                        {imgArray?.length>0 && showArray ? (
+                        {imgArray?.length>0 ? (
                             <>
                             <div className="w-full flex justify-center ">
                             <Carousel className="w-36 ">

@@ -91,7 +91,7 @@ export const AddVisitModal: React.FC<Props> = ({ title, children }) => {
       area: "",
       visita_a: "",
       perfil_pase: "",
-      status_pase:"proceso"
+      status_pase:"activo"
     },
   });
 
@@ -104,7 +104,7 @@ export const AddVisitModal: React.FC<Props> = ({ title, children }) => {
         perfil_pase: data.perfil_pase,
         foto: fotografia ,
         identificacion: identificacion,
-        status_pase:"proceso"
+        status_pase:"activo"
       };
       console.log("entrada", access_pass)
       registerNewVisit.mutate({ location, access_pass });
@@ -149,7 +149,7 @@ export const AddVisitModal: React.FC<Props> = ({ title, children }) => {
 								showWebcamOption={true}
 								facingMode="environment"
 								imgArray={fotografia}
-								showArray={true}
+								showArray={false}
 								limit={10}/>
 
                 <LoadImage
@@ -159,7 +159,7 @@ export const AddVisitModal: React.FC<Props> = ({ title, children }) => {
 								showWebcamOption={true}
 								facingMode="environment"
 								imgArray={identificacion}
-								showArray={true}
+								showArray={false}
 								limit={10}/>
 
             <FormField

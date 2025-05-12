@@ -166,7 +166,7 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
                 <FormItem>
                   <FormLabel>* Nombre del Equipo</FormLabel>
                   <FormControl>
-                    <Input placeholder="Nombre del equipo" {...field} />
+                    <Input placeholder="Nombre del equipo"  maxLength={20} {...field} />
                   </FormControl>
 
                   <FormMessage />
@@ -182,7 +182,7 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
                   <FormItem>
                     <FormLabel>* Marca</FormLabel>
                     <FormControl>
-                      <Input placeholder="Marca" {...field} />
+                      <Input placeholder="Marca" maxLength={20} {...field} />
                     </FormControl>
 
                     <FormMessage />
@@ -197,7 +197,7 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
                   <FormItem>
                     <FormLabel>* Modelo</FormLabel>
                     <FormControl>
-                      <Input placeholder="Modelo" {...field} />
+                      <Input placeholder="Modelo" maxLength={20} {...field} />
                     </FormControl>
 
                     <FormMessage />
@@ -215,6 +215,7 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
                     <Input
                       placeholder="No. de serie"
                       {...field}
+                      maxLength={20}
                       onChange={(e) => field.onChange(e.target.value.toUpperCase())}
                     />
                     </FormControl>

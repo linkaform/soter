@@ -40,7 +40,6 @@ import { toast } from "sonner";
 import { useGetShift } from "@/hooks/useGetShift";
 import { exitRegister, registerIncoming } from "@/lib/access";
 import ChangeLocation from "@/components/changeLocation";
-import GrupoCarousel from "@/components/grupo-carrusel";
 import { PermisosTable } from "@/components/table/accesos/permisos-certificaciones/table";
 import useAuthStore from "@/store/useAuthStore";
 import { esHexadecimal } from "@/lib/utils";
@@ -405,7 +404,6 @@ const AccesosPage = () => {
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-4 ">
 					<div className="row-span-3  flex flex-col p-4 pt-0">
 						<Credentials searchPass={searchPass} />
-						<GrupoCarousel titulo={"Miembros del grupo"} />
 					</div>
 					<div className="flex flex-col h-fit p-4 gap-3 ">
 						<ComentariosAccesosTable allComments={allComments} />

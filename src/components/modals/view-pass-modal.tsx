@@ -157,14 +157,15 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen} modal>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-scroll">
-        <DialogHeader>
-          <DialogTitle className="text-2xl text-center  font-bold my-5">
+          <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent className="max-w-3xl overflow-y-auto max-h-[90vh] flex flex-col" aria-describedby="">
+        <DialogHeader className="flex-shrink-0">
+          <DialogTitle className="text-2xl text-center font-bold">
             {title}
           </DialogTitle>
         </DialogHeader>
 
+        <div className="overflow-y-auto">
         <AddEmailModal
           title={"Agregar Correo"} open={openAddMail} setOpen={setOpenAddMail} id={data._id} setOpenPadre={setOpen}/>
           
@@ -216,9 +217,9 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
           </div>
           <Separator className="my-4" />
 
-          <div className="flex justify-between">
+          <div className="flex flex-col  justify-between  md:flex-row">
             {data?.foto!== undefined && data?.foto.length > 0 ?(
-                <><div className="w-full ">
+                <div className="w-full ">
                     <p className="font-bold mb-3">Fotografia:</p>
                     <div className="w-full flex justify-center">
                         <Image
@@ -230,12 +231,11 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
                         />
                     </div>
                 </div>
-                </>
             ):null}
 
 
             {data?.identificacion!== undefined && data?.identificacion.length > 0 ?(
-                <><div className="w-full ">
+              <div className="w-full ">
                         <p className="font-bold mb-3">Identificacion:</p>
                         <div className="w-full flex justify-center">
                             <Image
@@ -247,7 +247,6 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
                             />
                         </div>
                     </div>
-                </>
             ):null}
           </div>
 
@@ -332,45 +331,45 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
             </div>
           ):null}
         </div>
-
-        <div className="flex gap-1 my-5">
-          <DialogClose asChild>
-            <Button className="w-full h-12 bg-gray-100 hover:bg-gray-200 text-gray-700">
-              Cancelar
-            </Button>
-          </DialogClose>
-               <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white" onClick={() => {
-                 navigator.clipboard.writeText(data?.link?.link).then(() => {
-                  toast("¡Enlace copiado!", {
-                    description:
-                      "El enlace ha sido copiado correctamente al portapapeles.",
-                    action: {
-                      label: "Abrir enlace",
-                      onClick: () => window.open(data?.link?.link, "_blank"), // Abre el enlace en una nueva pestaña
-                    },
-                  });
+        </div>
+        <div className="flex flex-col md:flex-row gap-2 my-5">
+            <DialogClose asChild>
+              <Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700">
+                Cancelar
+              </Button>
+            </DialogClose>
+              <Button className="w-full bg-slate-500 hover:bg-slate-600 text-white" onClick={() => {
+                navigator.clipboard.writeText(data?.link?.link).then(() => {
+                toast("¡Enlace copiado!", {
+                  description:
+                    "El enlace ha sido copiado correctamente al portapapeles.",
+                  action: {
+                    label: "Abrir enlace",
+                    onClick: () => window.open(data?.link?.link, "_blank"), // Abre el enlace en una nueva pestaña
+                  },
                 });
-               }}>
-                  Copiar link
-                </Button>
-                <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white"  onClick={onEnviarCorreo} disabled={isLoadingCorreo}>
-                  {!isLoadingCorreo ? ("Enviar correo"):(<><Loader2 className="animate-spin"/>Enviando correo...</>)}
-                </Button>
-                <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white"  onClick={onEnviarSMS} disabled={ isLoadingSms}>
-                {
-                   isLoadingSms ? (
-                    <>
-                      <Loader2 className="animate-spin" />
-                      Enviando SMS...
-                    </>
-                  ) : (
-                    "Enviar SMS"
-                  )
-                }
-                </Button>
-                <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white"  onClick={()=>{setEnablePdf(true)}} disabled={loadingPdf}>
-                {!loadingPdf ? ("Descargar PDF"):(<><Loader2 className="animate-spin"/>Descargando PDF...</>)}
-                </Button>
+              });
+              }}>
+                Copiar link
+              </Button>
+              <Button className="w-full  bg-blue-500 hover:bg-blue-600 text-white"  onClick={onEnviarCorreo} disabled={isLoadingCorreo}>
+                {!isLoadingCorreo ? ("Enviar correo"):(<><Loader2 className="animate-spin"/>Enviando correo...</>)}
+              </Button>
+              <Button className="w-full  bg-green-600 hover:bg-green-700 text-white"  onClick={onEnviarSMS} disabled={ isLoadingSms}>
+              {
+                  isLoadingSms ? (
+                  <>
+                    <Loader2 className="animate-spin" />
+                    Enviando SMS...
+                  </>
+                ) : (
+                  "Enviar SMS"
+                )
+              }
+              </Button>
+              <Button className="w-full  bg-yellow-500 hover:bg-yellow-600 text-white"  onClick={()=>{setEnablePdf(true)}} disabled={loadingPdf}>
+              {!loadingPdf ? ("Descargar PDF"):(<><Loader2 className="animate-spin"/>Descargando PDF...</>)}
+              </Button>
         </div>
       </DialogContent>
     </Dialog>
