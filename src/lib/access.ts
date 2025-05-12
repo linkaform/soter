@@ -219,15 +219,16 @@ export const addNewVisit = async (
   const payload = {
     location,
     access_pass: {
+      site: 'accesos',
       nombre: access_pass.nombre,
       empresa: access_pass.empresa,
-      visita_a: [access_pass.visita_a],
+      visita_a: access_pass.visita_a,
       perfil_pase: access_pass.perfil_pase || "Visita general",
       foto: access_pass.foto || [],
       identificacion: access_pass.identificacion || [],
       email: access_pass.email || "",
       telefono: access_pass.telefono || "",
-      status_pase: access_pass.status_pase || "",
+      status_pase: 'activo',
     },
     option: "create_access_pass",
     script_name: "pase_de_acceso.py",
