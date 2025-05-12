@@ -50,7 +50,7 @@ const ActivitySummary = (booth_stats:any) => {
     },
     {
       icon: <Badges />,
-      title: "Equipos dentro",
+      title: "Equipos Dentro",
       count: stats?.gafetes_pendientes || 0,
       link: "/dashboard/bitacoras",
       tab:"Equipos"
