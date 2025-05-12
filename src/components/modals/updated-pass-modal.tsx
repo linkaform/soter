@@ -17,7 +17,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm} from "react-hook-form";
 import { data_correo } from "@/lib/send_correo";
 import { useGetPdf } from "@/hooks/usetGetPdf";
-import { descargarPdfPase } from "@/lib/download-pdf";
+// import { descargarPdfPase } from "@/lib/download-pdf";
 import Image from "next/image";
 import { useSendCorreoSms } from "@/hooks/useSendCorreo";
 
@@ -34,6 +34,7 @@ interface updatedPassModalProps {
 	hasTelefono:boolean;
 	closePadre:()=>void;
 	passData: any;
+	updateResponse: any;
 }
  const formSchema = z
 		.object({
@@ -51,7 +52,8 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 	hasEmail,
 	hasTelefono,
 	closePadre,
-	passData
+	passData,
+	updateResponse
 }) => {
 	const [enviarCorreo, setEnviarCorreo] = useState<string[]>([]);
 	const [isActive, setIsActive] = useState(false);
@@ -60,13 +62,20 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 	const [enablePdf, setEnablePdf] = useState(false)
 	const { data: responsePdf, isLoading: loadingPdf} = useGetPdf(account_id, folio, enablePdf);
 	const downloadUrl=responsePdf?.response?.data?.data?.download_url
-
+	const downloadImgUrl = updateResponse?.response?.data?.json?.pdf_to_img?.[0].file_url
+	
 	const handleClickGoogleButton = () => {
 		const url = passData?.pass_selected?.google_wallet_pass_url;
 		if (url) {
 			window.open(url, '_blank');
 		} else {
-			console.log('No hay URL disponible');
+			toast.error('No hay pase disponible', {
+                style: {
+                    background: "#dc2626",
+                    color: "#fff",
+                    border: 'none'
+                },
+            });
 		}
 	}
 	
@@ -109,7 +118,8 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 
 	useEffect(()=>{
 		if(downloadUrl){
-			onDescargarPDF(downloadUrl)
+			// onDescargarPDF(downloadUrl)
+			onDescargarPDF()
 			setEnablePdf(false)
 			console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++", enviarCorreo)
 			if(enviarCorreo.includes("enviar_correo") || enviarCorreo.includes("enviar_sms")){
@@ -122,9 +132,24 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 		}
 	},[downloadUrl])
 
-	async function onDescargarPDF(download_url: string) {
+	// async function onDescargarPDF(download_url: string) {
+	async function onDescargarPDF() {
 		try {
-		  await descargarPdfPase(download_url);
+		//   await descargarPdfPase(downloadImgUrl);
+			const response = await fetch(downloadImgUrl);
+			if (!response.ok) throw new Error("No se pudo obtener el archivo");
+
+			const blob = await response.blob();
+			const url = URL.createObjectURL(blob);
+
+			const a = document.createElement("a");
+			a.href = url;
+			a.download = "pase_de_entrada.png";
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+
+			URL.revokeObjectURL(url);
 		} catch (error) {
 		  toast.error("Error al descargar el PDF: " + error);
 		}
@@ -237,7 +262,7 @@ return (
 					</DialogClose>
 					<Button
 						className="w-full bg-blue-500 hover:bg-blue-600 text-white" onClick={()=>{setEnablePdf(true)}} disabled={loadingPdf}>
-						{isLoadingCorreo || loadingPdf ? ("Cargando..."): ("Descargar PDF")}
+						{isLoadingCorreo || loadingPdf ? ("Cargando..."): ("Descargar Pase")}
 					</Button>
 					</div> 
 		</DialogContent>

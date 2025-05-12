@@ -255,6 +255,7 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 							folio={response?.response?.data?.json?.id}
 							closePadre={handleClose}
 							passData={passData}
+							updateResponse={response}
 							/>
 					):null}
 					
