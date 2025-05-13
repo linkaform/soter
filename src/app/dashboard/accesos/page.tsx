@@ -388,7 +388,7 @@ const AccesosPage = () => {
 						
 					</Button></>):null}
 					{ searchPass?.estatus=="proceso" ? (<>
-					<UpdatePassModal title={"Completar Pase"} id={""} dataCatalogos={searchPass}>
+					<UpdatePassModal title={"Completar Pase"} id={searchPass._id} dataCatalogos={searchPass}>
 						<Button
 							className="bg-blue-500 hover:bg-blue-600 text-white"
 							variant="secondary"

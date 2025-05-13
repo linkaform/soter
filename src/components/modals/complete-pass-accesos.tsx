@@ -107,7 +107,7 @@ export const UpdatePassModal: React.FC<Props> = ({ title, children, id , dataCat
             foto: fotografia ,
             identificacion: identificacion,
             status_pase:"activo",
-            fecha_desde_visita:fechaDesde,
+            fecha_desde_visita:fechaDesde +" 00:00:00",
             fecha_desde_hasta:"",
             config_limitar_acceso: data.config_limitar_acceso,
         };
