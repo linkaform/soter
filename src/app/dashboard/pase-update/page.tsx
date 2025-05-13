@@ -384,7 +384,7 @@ return (
 					</div>
 					
 
-					<div className="flex justify-between flex-wrap gap-3">
+					<div className="flex justify-between gap-3">
 						{showIneIden?.includes("foto")&& 
 							<div className="w-full md:w-1/2 pr-2">
 									<LoadImage

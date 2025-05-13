@@ -28,12 +28,15 @@ import {
 
 import { VehiculoAutorizadoColumns } from "./vehiculos-autorizados-columns";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { VehiclePassModal } from "@/components/modals/vehicle-access-modal";
+import { Vehiculo } from "@/lib/update-pass-full";
+import { VehiclePassModal } from "@/components/modals/add-local-vehicule";
 
 interface TableProps {
   allVehicles?: any[];
+  vehiculos:Vehiculo[]
+  setVehiculos: React.Dispatch<React.SetStateAction<Vehiculo[]>>//(equipments: any[]) => void
 }
-  export const VehiculosAutorizadosTable: React.FC<TableProps> = ({ allVehicles }) => {
+  export const VehiculosAutorizadosTable: React.FC<TableProps> = ({ allVehicles , vehiculos, setVehiculos}) => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -80,7 +83,7 @@ interface TableProps {
           <h1 className="text-2xl font-bold">Vehículos Autorizados</h1>
         </div>
        <div className="flex justify-end gap-2">
-       <VehiclePassModal title="Nuevo Vehiculo" >
+       <VehiclePassModal title="Nuevo Vehiculo" vehicles={vehiculos} setVehicles={setVehiculos}>
           <Button className="bg-green-600 hover:bg-green-700 text-white">
             <Plus />
             Agregar Vehiculo

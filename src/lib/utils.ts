@@ -118,6 +118,16 @@ export function replaceNullsInArrayDynamic(arr: any[]): any[] {
 }
 
 
+export function formatVehiculosToSimpleForm(arr: any[]) {
+  return arr.map((item) => ({
+    tipo_vehiculo: item.tipo_vehiculo  || item.tipo || "",
+    marca_vehiculo: item.marca_vehiculo || item.marca || "",
+    modelo_vehiculo: item.modelo_vehiculo || item.modelo || "",
+    nombre_estado: item.nombre_estado || item.estado || "",
+    placas_vehiculo: item.placas_vehiculo || item.placas || "",
+    color_vehiculo: item.color_vehiculo || item.color || "",
+  }));
+}
 
 export function formatVehiculos(arr: any[]): Vehiculo[] {
   return arr.map((item) => ({

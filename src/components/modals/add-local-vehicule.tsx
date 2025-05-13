@@ -52,21 +52,11 @@ const formSchema = z.object({
     message: "Debe seleccionar al menos un tipo.",
   }),
 
-  marca: z.array(z.string()).nonempty({
-    message: "Campo requerido.",
-  }),
-  modelo: z.array(z.string()).nonempty({
-    message: "Campo requerido.",
-  }),
-  estado: z.array(z.string()).nonempty({
-    message: "Campo requerido.",
-  }),
-  matricula: z.string().min(2, {
-    message: "Campo requerido.",
-  }),
-  color: z.array(z.string()).nonempty({
-    message: "Debe seleccionar al menos un color.",
-  }),
+  marca: z.array(z.string()).optional(),
+  modelo: z.array(z.string()).optional(),
+  estado: z.array(z.string()).optional(),
+  placas: z.string().optional(),
+  color: z.array(z.string()).optional(),
 })
 
 export const VehiclePassModal: React.FC<Props> = ({ title, children, vehicles, setVehicles }) => {
@@ -85,7 +75,7 @@ export const VehiclePassModal: React.FC<Props> = ({ title, children, vehicles, s
       marca: [],
       estado: [],
       modelo: [],
-      matricula: "",
+      placas: "",
       color: [],
 
     },
@@ -122,11 +112,11 @@ export const VehiclePassModal: React.FC<Props> = ({ title, children, vehicles, s
   const addNewVehicle = (data: z.infer<typeof formSchema>) => {
     setVehicles([
       {
-        color: data.color[0],
-        marca: data.marca[0],
-        modelo: data.modelo[0],
-        estado: data.estado[0],
-        placas: data.matricula,
+        color: data.color?.length ? data.color[0] :"",
+        marca: data.marca?.length ? data.marca[0] :"",
+        modelo:data.modelo?.length ?  data.modelo[0] : "",
+        estado: data.estado?.length ? data.estado[0] :"",
+        placas: data.placas||"",
         tipo: data.tipo[0],
       },
       ...vehicles,
@@ -135,7 +125,7 @@ export const VehiclePassModal: React.FC<Props> = ({ title, children, vehicles, s
 
   useEffect(() => {
     if(!open)
-    form.setValue("matricula", "")
+    form.setValue("placas", "")
   }, [open]);
 
 
@@ -288,7 +278,7 @@ export const VehiclePassModal: React.FC<Props> = ({ title, children, vehicles, s
 
 					<FormField
 					control={form.control}
-					name="matricula"
+					name="placas"
 					render={({ field }) => (
 						<FormItem>
 						<FormLabel>* Placas</FormLabel>

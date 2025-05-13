@@ -47,21 +47,11 @@ const formSchema = z.object({
     message: "Campo requerido.",
   }),
 
-  nombre: z.string().min(2, {
-    message: "Campo requerido.",
-  }),
-  marca: z.string().min(2, {
-    message: "Campo requerido.",
-  }),
-  modelo: z.string().min(2, {
-    message: "Campo requerido.",
-  }),
-  serie: z.string().min(2, {
-    message: "Campo requerido.",
-  }),
-  color: z.string().min(2, {
-    message: "Campo requerido.",
-  }),
+  nombre: z.string().optional(),
+  marca: z.string().optional(),
+  modelo: z.string().optional(),
+  serie: z.string().optional(),
+  color: z.string().optional()
 });
 
 export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equipos, setEquipos}) => {
@@ -92,11 +82,11 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
     setEquipos([
       {
         color: data.tipo,
-        marca: data.marca,
-        modelo: data.modelo,
-        nombre: data.nombre,
-        serie: data.serie,
-        tipo: data.tipo,
+        marca: data.marca ||"",
+        modelo: data.modelo||"",
+        nombre: data.nombre||"",
+        serie: data.serie||"",
+        tipo: data.tipo||"",
       },
       ...equipos,
     ])

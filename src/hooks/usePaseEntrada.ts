@@ -94,6 +94,7 @@ export type Update_full_pass = {
       walkin_identificacion:Imagen[],
       enviar_correo: string[]
 }
+
 export const usePaseEntrada = (locationConfSeguridad:string) => {
   const router = useRouter(); 
     const { data: dataConfigLocation, isLoading:isLoadingConfigLocation, error: errorConfigLocation} = useQuery<any>({

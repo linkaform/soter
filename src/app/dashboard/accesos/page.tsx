@@ -42,12 +42,15 @@ import { exitRegister, registerIncoming } from "@/lib/access";
 import ChangeLocation from "@/components/changeLocation";
 import { PermisosTable } from "@/components/table/accesos/permisos-certificaciones/table";
 import useAuthStore from "@/store/useAuthStore";
-import { esHexadecimal } from "@/lib/utils";
+import { esHexadecimal, formatEquiposToBitacora, formatVehiculosToSimpleForm } from "@/lib/utils";
 import Link from "next/link";
 import { useGetStats } from "@/hooks/useGetStats";
 import { ScanPassWithCameraModal } from "@/components/modals/scan-pass-with-camera";
 import Swal from "sweetalert2";
 import { useAreasLocationStore } from "@/store/useGetAreaLocationByUser";
+import { Equipo, Vehiculo } from "@/lib/update-pass-full";
+import { UpdatePassModal } from "@/components/modals/complete-pass-accesos";
+// import { Equipo } from "@/lib/update-pass-full";
 
 const AccesosPage = () => {
   const { isAuth } = useAuthStore()
@@ -61,6 +64,8 @@ const AccesosPage = () => {
   const [debouncedValue,setDebouncedValue]=useState("")
   const { data: stats } = useGetStats(true,location, area, 'Accesos')
   const { fetchAreas, fetchLocations, loading:loadingLocationArea} = useAreasLocationStore();
+  const [equipos, setEquipos]= useState<Equipo[]>(searchPass?.grupo_equipos|| [])
+  const [vehiculos, setVehiculos]= useState<Vehiculo[]>(searchPass?.grupo_vehiculos|| [])
 
   useEffect(() => {
 	fetchLocations();
@@ -68,6 +73,13 @@ const AccesosPage = () => {
 	  fetchAreas(location);
 	}
   }, []);
+
+  useEffect(() => {
+	if(searchPass){
+		setEquipos(searchPass?.grupo_equipos)
+	}
+  }, [searchPass?.grupo_equipos]);
+
 
   const exitRegisterAccess = useMutation({
     mutationFn: async () => {
@@ -125,7 +137,7 @@ const AccesosPage = () => {
     ? searchPass.grupo_areas_acceso
     : []
 
-  const { newCommentsPase, setAllComments, newVehicle, setSelectedVehicle } =
+  const { newCommentsPase, setAllComments } =
     useAccessStore();
 
   const allComments = [
@@ -140,27 +152,27 @@ const AccesosPage = () => {
   }, [newCommentsPase]);
 
 
-  const allVehicles = [
-    ...(newVehicle || []),
-    ...(searchPass?.grupo_vehiculos || []),
-  ];
+//   const allVehicles = [
+//     ...(newVehicle || []),
+//     ...(searchPass?.grupo_vehiculos || []),
+//   ];
 
-  React.useEffect(() => {
-    if (allVehicles.length > 0) {
-      setSelectedVehicle(allVehicles[0]);
-    }
-  }, [newVehicle]);
+//   React.useEffect(() => {
+//     if (allVehicles.length > 0) {
+//       setSelectedVehicle(allVehicles[0]);
+//     }
+//   }, [newVehicle]);
 
-  const { newEquipment, setAllEquipments } = useAccessStore();
+//   const { newEquipment, setAllEquipments } = useAccessStore();
 
-  const allEquipments = [
-    ...(newEquipment || []),
-    ...(searchPass?.grupo_equipos || []),
-  ];
+//   const allEquipments = [
+//     ...(newEquipment || []),
+//     ...(searchPass?.grupo_equipos || []),
+//   ];
 
-  React.useEffect(() => {
-    setAllEquipments(allEquipments);
-  }, [newEquipment, searchPass?.grupo_equipos]);
+//   React.useEffect(() => {
+//     setAllEquipments(allEquipments);
+//   }, [newEquipment, searchPass?.grupo_equipos]);
 
 
   const doAccess = useMutation({
@@ -170,10 +182,10 @@ const AccesosPage = () => {
         location,
         visita_a: searchPass?.visita_a,
         qr_code: passCode,
-        vehiculo: allVehicles?.[0] ? [allVehicles[0]] : [],
-        equipo: allEquipments,
-        comentario_acceso: [],
-        comentario_pase: [],
+        vehiculo: vehiculos?.[0] ? [vehiculos[0]] : [],
+        equipo: equipos,
+        comentario_acceso:[],
+        comentario_pase: allComments,
       });
 
       if (!data.success) {
@@ -376,25 +388,30 @@ const AccesosPage = () => {
 						
 					</Button></>):null}
 					{ searchPass?.estatus=="proceso" ? (<>
-					<Button
-						className="bg-blue-500 hover:bg-blue-600 text-white"
-						variant="secondary"
-						onClick={() => {
-							navigator.clipboard.writeText(searchPass?.link).then(() => {
-							 toast("¡Enlace copiado!", {
-							   description:
-								 "El enlace ha sido copiado correctamente al portapapeles.",
-							   action: {
-								 label: "Abrir enlace",
-								 onClick: () => window.open(searchPass?.link, "_blank"), // Abre el enlace en una nueva pestaña
-							   },
-							 });
-						   });
-						  }}
-					>
-						<FileSymlink />  Copiar link
-						
-					</Button></>):null}
+					<UpdatePassModal title={"Completar Pase"} id={""} dataCatalogos={searchPass}>
+						<Button
+							className="bg-blue-500 hover:bg-blue-600 text-white"
+							variant="secondary"
+							// onClick={() => {
+							// 	navigator.clipboard.writeText(searchPass?.link).then(() => {
+							// 	toast("¡Enlace copiado!", {
+							// 	description:
+							// 		"El enlace ha sido copiado correctamente al portapapeles.",
+							// 	action: {
+							// 		label: "Abrir enlace",
+							// 		onClick: () => window.open(searchPass?.link, "_blank"), // Abre el enlace en una nueva pestaña
+							// 	},
+							// 	});
+							// });
+							// }}
+						>
+							<FileSymlink />  Completar Pase
+							
+						</Button>
+					</UpdatePassModal>
+					</>):null}
+					
+
 					</div>
 				</div>
 			</div>
@@ -420,11 +437,11 @@ const AccesosPage = () => {
 					  <div className="col-span-2 col-start-2 pr-4">
 					 	<div className="fbg-slate-400 ml-5">
 					 		<div className="">
-					 			<EquiposAutorizadosTable allEquipments={allEquipments} />
+					 			<EquiposAutorizadosTable all={formatEquiposToBitacora(equipos) } equipos={equipos} setEquipos={setEquipos} />
 					 		</div>
 
 					 		<div className="">
-					 			<VehiculosAutorizadosTable allVehicles={allVehicles} />
+					 			<VehiculosAutorizadosTable allVehicles={ formatVehiculosToSimpleForm(vehiculos)} vehiculos={vehiculos} setVehiculos={setVehiculos} />
 					 		</div>
 					 	</div>
 					 </div>

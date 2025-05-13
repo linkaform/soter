@@ -28,17 +28,21 @@ import {
 
 import { EquipoAutorizadoColumns } from "./equipos-autorizados-columns";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { EqipmentPassModal } from "@/components/modals/equipment-access-modal";
+import { EqipmentLocalPassModal } from "@/components/modals/add-local-equipo";
+import { Equipo } from "@/lib/update-pass";
+import { Equipo_bitacora } from "../../bitacoras/bitacoras-columns";
 
 
 
 interface TableProps {
-  allEquipments: any[]
+  all: Equipo_bitacora[]
+  equipos:Equipo[]
+  setEquipos: React.Dispatch<React.SetStateAction<Equipo[]>>//(equipments: any[]) => void
 }
 
 
-  export const EquiposAutorizadosTable: React.FC<TableProps> = ({ allEquipments }) => {
-
+  export const EquiposAutorizadosTable: React.FC<TableProps> = ({ all, equipos, setEquipos }) => {
+console.log("equipos", equipos)
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -54,7 +58,7 @@ interface TableProps {
   const [globalFilter, setGlobalFilter] = React.useState("");
 
   const table = useReactTable({
-    data: allEquipments || [],
+    data: all || [],
     columns: EquipoAutorizadoColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -85,12 +89,12 @@ interface TableProps {
           <h1 className="text-2xl font-bold">Equipos Autorizados</h1>
         </div>
          <div className="flex gap-2">
-         <EqipmentPassModal title="Nuevo Equipo">
+         <EqipmentLocalPassModal title="Nuevo Equipo" equipos = {equipos} setEquipos={setEquipos}>
           <Button className="bg-green-600 hover:bg-green-700 text-white">
             <Plus />
             Agregar Equipo
           </Button>
-        </EqipmentPassModal>
+        </EqipmentLocalPassModal>
 
         <Button
           className="bg-blue-500 text-white hover:text-white hover:bg-blue-600"

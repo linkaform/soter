@@ -111,9 +111,9 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 	const closeModal=()=>{
 		setOpenGeneratedPass(false)
 		closePadre()
-		// setTimeout(() => {
-		// 	window.location.href = "https://www.soter.mx/";
-		// }, 100);
+		setTimeout(() => {
+			window.location.href = "https://www.soter.mx/";
+		}, 100);
 	}
 
 	useEffect(()=>{
@@ -121,14 +121,13 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 			// onDescargarPDF(downloadUrl)
 			onDescargarPDF()
 			setEnablePdf(false)
-			console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++", enviarCorreo)
 			if(enviarCorreo.includes("enviar_correo") || enviarCorreo.includes("enviar_sms")){
 				createSendCorreoSms.mutate({account_id, envio:enviarCorreo, data_for_msj:dataPass, folio})
 			}
 			toast.success("¡PDF descargado correctamente!");
-			// setTimeout(() => {
-			// 	window.location.href = "https://www.soter.mx/";
-			// }, 1800);
+			setTimeout(() => {
+				window.location.href = "https://www.soter.mx/";
+			}, 1800);
 		}
 	},[downloadUrl])
 
