@@ -87,7 +87,7 @@ export const AddNoteModal: React.FC<AddNoteModalProps> = ({
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen} modal>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent
         className='max-w-xl'

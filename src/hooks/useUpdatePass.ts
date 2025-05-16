@@ -36,7 +36,10 @@ export type Update_pass = {
   autorizado_por?: string,
   walkin_fotografia?: Imagen[],
   walkin_identificacion?:Imagen[],
-  enviar_correo?: string[]
+  enviar_correo?: string[],
+  acepto_aviso_privacidad?:string,
+	acepto_aviso_datos_personales?:string,
+	conservar_datos_por?:string
 }
 
 
@@ -67,7 +70,7 @@ export const useUpdateAccessPass = () => {
 
             if(hasError == 400 || hasError == 401){
                 const textMsj = errorMsj(data.response.data) 
-                throw new Error(`Error al editar pase, Error: ${textMsj?.text}`);
+                throw new Error(`Error al actualizar pase, Error: ${textMsj?.text}`);
             }else{
                 return data.response?.data
             }

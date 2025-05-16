@@ -42,7 +42,7 @@ import { exitRegister, registerIncoming } from "@/lib/access";
 import ChangeLocation from "@/components/changeLocation";
 import { PermisosTable } from "@/components/table/accesos/permisos-certificaciones/table";
 import useAuthStore from "@/store/useAuthStore";
-import { esHexadecimal, formatEquiposToBitacora, formatVehiculosToSimpleForm } from "@/lib/utils";
+import { esHexadecimal } from "@/lib/utils";
 import Link from "next/link";
 import { useGetStats } from "@/hooks/useGetStats";
 import { ScanPassWithCameraModal } from "@/components/modals/scan-pass-with-camera";
@@ -50,13 +50,12 @@ import Swal from "sweetalert2";
 import { useAreasLocationStore } from "@/store/useGetAreaLocationByUser";
 import { Equipo, Vehiculo } from "@/lib/update-pass-full";
 import { UpdatePassModal } from "@/components/modals/complete-pass-accesos";
-// import { Equipo } from "@/lib/update-pass-full";
 
 const AccesosPage = () => {
   const { isAuth } = useAuthStore()
   const { area, location, setLoading , turno, setArea, setLocation} = useShiftStore();
   const { shift, isLoading:loadingShift } = useGetShift(true);
-  const { passCode, setPassCode, clearPassCode} = useAccessStore();
+  const { passCode, setPassCode, clearPassCode, selectedEquipos, setSelectedEquipos, setSelectedVehiculos, selectedVehiculos, setTipoMovimiento, tipoMovimiento} = useAccessStore();
   const { isLoading, loading, searchPass } = useSearchPass(false);
   const [inputValue, setInputValue] = useState("");
   const [ openActivePases , setOpenActivePases ] = useState(false)
@@ -64,8 +63,11 @@ const AccesosPage = () => {
   const [debouncedValue,setDebouncedValue]=useState("")
   const { data: stats } = useGetStats(true,location, area, 'Accesos')
   const { fetchAreas, fetchLocations, loading:loadingLocationArea} = useAreasLocationStore();
-  const [equipos, setEquipos]= useState<Equipo[]>(searchPass?.grupo_equipos|| [])
-  const [vehiculos, setVehiculos]= useState<Vehiculo[]>(searchPass?.grupo_vehiculos|| [])
+  const [equipos, setEquipos]= useState<Equipo[]>([])
+  const [vehiculos, setVehiculos]= useState<Vehiculo[]>([])
+//   const [selectedEquipos, setSelectedEquipos]= useState<Equipo[]>([])
+//   const [selectedVehiculos, setSelectedVehiculos]= useState<Vehiculo[]>([])
+
 
   useEffect(() => {
 	fetchLocations();
@@ -77,8 +79,13 @@ const AccesosPage = () => {
   useEffect(() => {
 	if(searchPass){
 		setEquipos(searchPass?.grupo_equipos)
+		setSelectedEquipos(searchPass?.grupo_equipos)
+		const ultimoVehiculo = searchPass?.grupo_vehiculos?.[searchPass.grupo_vehiculos.length - 1];
+		setVehiculos(searchPass?.grupo_vehiculos)
+		setSelectedVehiculos([ultimoVehiculo])
+		setTipoMovimiento(searchPass?.tipo_movimiento)
 	}
-  }, [searchPass?.grupo_equipos]);
+  }, [searchPass?.grupo_equipos, searchPass?.grupo_vehiculos, searchPass?.tipo_movimiento]);
 
 
   const exitRegisterAccess = useMutation({
@@ -151,30 +158,6 @@ const AccesosPage = () => {
     }
   }, [newCommentsPase]);
 
-
-//   const allVehicles = [
-//     ...(newVehicle || []),
-//     ...(searchPass?.grupo_vehiculos || []),
-//   ];
-
-//   React.useEffect(() => {
-//     if (allVehicles.length > 0) {
-//       setSelectedVehicle(allVehicles[0]);
-//     }
-//   }, [newVehicle]);
-
-//   const { newEquipment, setAllEquipments } = useAccessStore();
-
-//   const allEquipments = [
-//     ...(newEquipment || []),
-//     ...(searchPass?.grupo_equipos || []),
-//   ];
-
-//   React.useEffect(() => {
-//     setAllEquipments(allEquipments);
-//   }, [newEquipment, searchPass?.grupo_equipos]);
-
-
   const doAccess = useMutation({
     mutationFn: async () => {
       const data = await registerIncoming({
@@ -182,8 +165,8 @@ const AccesosPage = () => {
         location,
         visita_a: searchPass?.visita_a,
         qr_code: passCode,
-        vehiculo: vehiculos?.[0] ? [vehiculos[0]] : [],
-        equipo: equipos,
+        vehiculo: selectedVehiculos,
+        equipo: selectedEquipos,
         comentario_acceso:[],
         comentario_pase: allComments,
       });
@@ -437,11 +420,11 @@ const AccesosPage = () => {
 					  <div className="col-span-2 col-start-2 pr-4">
 					 	<div className="fbg-slate-400 ml-5">
 					 		<div className="">
-					 			<EquiposAutorizadosTable all={formatEquiposToBitacora(equipos) } equipos={equipos} setEquipos={setEquipos} />
+					 			<EquiposAutorizadosTable equipos={equipos} setEquipos={setEquipos} setSelectedEquipos={setSelectedEquipos} selectedEquipos={selectedEquipos} tipoMovimiento={tipoMovimiento}/>
 					 		</div>
 
 					 		<div className="">
-					 			<VehiculosAutorizadosTable allVehicles={ formatVehiculosToSimpleForm(vehiculos)} vehiculos={vehiculos} setVehiculos={setVehiculos} />
+					 			<VehiculosAutorizadosTable vehiculos={vehiculos} setVehiculos={setVehiculos} setSelectedVehiculos={setSelectedVehiculos} selectedVehiculos={selectedVehiculos} tipoMovimiento={tipoMovimiento}/>
 					 		</div>
 					 	</div>
 					 </div>
@@ -458,6 +441,7 @@ const AccesosPage = () => {
 						areaSeleccionada={area}
 						setUbicacionSeleccionada={setLocation}
 						setAreaSeleccionada={setArea}
+						ubicacion={"accesos"}
 					/>
 				</div>
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-5">

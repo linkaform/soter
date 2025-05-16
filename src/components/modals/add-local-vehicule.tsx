@@ -37,13 +37,15 @@ import React from "react";
 import { toast } from "sonner";
 import { useGetLocalVehiculos } from "@/hooks/useLocalCatVehiculos";
 import { Vehiculo } from "@/lib/update-pass";
+import { useAccessStore } from "@/store/useAccessStore";
 
 
 interface Props {
   title: string;
   children: React.ReactNode;
   vehicles: Vehiculo[];
-  setVehicles: Dispatch<SetStateAction<Vehiculo[]>>;
+  setVehiculos: Dispatch<SetStateAction<Vehiculo[]>>;
+  isAccesos:boolean;
 }
 
 
@@ -59,7 +61,7 @@ const formSchema = z.object({
   color: z.array(z.string()).optional(),
 })
 
-export const VehiclePassModal: React.FC<Props> = ({ title, children, vehicles, setVehicles }) => {
+export const VehiclePassModal: React.FC<Props> = ({ title, children, vehicles, setVehiculos, isAccesos }) => {
   const [open, setOpen] = useState(false);
   const [tipoVehiculoState, setTipoVehiculoState] = useState("");
   const [catalogSearch, setCatalogSearch] = useState("");
@@ -68,6 +70,8 @@ export const VehiclePassModal: React.FC<Props> = ({ title, children, vehicles, s
   const [marcasCat, setMarcasCat] = useState<string[]>([]);
   const [modelosCat, setModelosCat] = useState<string[]>([]);
   const {data:dataVehiculos,isLoading: loadingCat } = useGetLocalVehiculos({ tipo:tipoVehiculoState, marca:marcaState, isModalOpen:true})
+  const setSelectedVehiculos = useAccessStore((state) => state.setSelectedVehiculos);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -110,14 +114,35 @@ export const VehiclePassModal: React.FC<Props> = ({ title, children, vehicles, s
   }
 
   const addNewVehicle = (data: z.infer<typeof formSchema>) => {
-    setVehicles([
+	console.log("placas", data)
+	if(isAccesos){
+		setSelectedVehiculos([{
+			color: data.color?.length ? data.color[0] :"",
+			marca: data.marca?.length ? data.marca[0] :"",
+			modelo:data.modelo?.length ?  data.modelo[0] : "",
+			estado: data.estado?.length ? data.estado[0] :"",
+			placas: data.placas||"",
+			tipo: data?.tipo? data.tipo[0]: "",
+		  }])
+		setVehiculos([{
+			color: data.color?.length ? data.color[0] :"",
+			marca: data.marca?.length ? data.marca[0] :"",
+			modelo:data.modelo?.length ?  data.modelo[0] : "",
+			estado: data.estado?.length ? data.estado[0] :"",
+			placas: data.placas||"",
+			tipo:  data?.tipo? data.tipo[0]: "",
+		},
+		...vehicles,
+		]);
+	}
+    setVehiculos([
       {
         color: data.color?.length ? data.color[0] :"",
         marca: data.marca?.length ? data.marca[0] :"",
         modelo:data.modelo?.length ?  data.modelo[0] : "",
         estado: data.estado?.length ? data.estado[0] :"",
         placas: data.placas||"",
-        tipo: data.tipo[0],
+        tipo:  data?.tipo? data.tipo[0]: "",
       },
       ...vehicles,
     ]);

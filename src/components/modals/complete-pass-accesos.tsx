@@ -57,9 +57,6 @@ const formSchema = z.object({
 	).optional(),
   area: z.string().optional(),
   status_pase: z.string().optional(),
-  fecha_desde_visita: z.string().optional(),
-  fecha_desde_hasta: z.string().optional(),
-  config_limitar_acceso: z.number().optional(),
 });
 
 export const UpdatePassModal: React.FC<Props> = ({ title, children, id , dataCatalogos}) => {
@@ -88,9 +85,6 @@ export const UpdatePassModal: React.FC<Props> = ({ title, children, id , dataCat
         identificacion: [],
         area: "",
         status_pase:"activo",
-        fecha_desde_visita:"",
-        fecha_desde_hasta:"",
-        config_limitar_acceso:0
         },
     });
 
@@ -104,12 +98,18 @@ export const UpdatePassModal: React.FC<Props> = ({ title, children, id , dataCat
 
     function onSubmit(data: z.infer<typeof formSchema>) {
         const access_pass = {
-            foto: fotografia ,
-            identificacion: identificacion,
-            status_pase:"activo",
-            fecha_desde_visita:fechaDesde +" 00:00:00",
-            fecha_desde_hasta:"",
-            config_limitar_acceso: data.config_limitar_acceso,
+            grupo_vehiculos: vehicles,
+            grupo_equipos: equipos,
+            status_pase: "activo",
+            walkin_fotografia:fotografia,
+            walkin_identificacion:identificacion,
+            folio: id,
+            account_id: userIdSoter,
+            nombre: dataCatalogos?.nombre||"",
+            ubicacion: dataCatalogos?.ubicacion||"",
+            email: dataCatalogos?.email||"",
+            telefono:dataCatalogos?.telefono||""
+
         };
         if (showIneIden?.includes("foto") && fotografia.length<=0) {
             setErrorFotografia("Este campo es requerido.");
@@ -145,10 +145,6 @@ export const UpdatePassModal: React.FC<Props> = ({ title, children, id , dataCat
     }
 
 
-	const handleFechaDesdeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setFechaDesde(e.target.value);
-		form.setValue('fecha_desde_hasta', '');
-	};
 
     useEffect(()=>{
 		if (errorFotografia === "-" && errorIdentificacion === "-") {
@@ -361,81 +357,6 @@ export const UpdatePassModal: React.FC<Props> = ({ title, children, id , dataCat
                         </Form>  */}
                 </div>
                 </>
-     
-                <><div className="grid grid-cols-1 md:grid-cols-1 gap-2">
-                    <FormField
-                        control={form.control}
-                        name="fecha_desde_visita"
-                        render={({ field }:any) => (
-                        <FormItem>
-                            <FormLabel>
-                            <span className="text-red-500">*</span> Fecha y Hora
-                            de Visita:
-                            </FormLabel>
-                            <FormControl>
-                            <Input
-                                type="date"
-                                {...field}
-                                min={new Date().toISOString().split('T')[0]} // Corta el exceso de datos
-                                onChange={(e) => {
-                                field.onChange(e); // Propagar el valor a react-hook-form
-                                handleFechaDesdeChange(e); // Guardar la fecha seleccionada en el estado
-
-                                }}
-                            />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                        )} />
-
-                    <FormField
-                        control={form.control}
-                        name="fecha_desde_hasta"
-                        render={({ field }:any) => (
-                        <FormItem>
-                            <FormLabel>
-                            <span className="text-red-500">*</span> Fecha y Hora
-                            Hasta:
-                            </FormLabel>
-                            <FormControl>
-                            <Input
-                                type="date"
-                                {...field}
-                                min={fechaDesde ? getNextDay(fechaDesde) : new Date().toISOString().split('T')[0]}
-                                disabled={!fechaDesde}
-                                onChange={(e) => {
-                                field.onChange(e); 
-                                }}
-                            />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                        )} />
-                </div></>
-                    
-                <FormField
-                    control={form.control}
-                    name="config_limitar_acceso"
-                    render={({ field }:any) => (
-                        <FormItem>
-                            <FormLabel>Limitar número de accesos:</FormLabel>
-                                <FormControl>
-                                    <Input
-                                    placeholder="Ejemplo: 5"
-                                    type="number"
-                                    min={0} 
-                                    step={1} 
-                                    {...field} 
-                                    value={field.value ? Number(field.value) : 0}
-                                    onChange={(e) => {
-                                        const newValue = e.target.value ? Number(e.target.value) : 0;
-                                        field.onChange(newValue); 
-                                    }}/>  
-                                </FormControl>
-                            <FormMessage />
-                        </FormItem>
-                    )} 
-                />
 
                 <p className="text-gray-400">**Campos requeridos </p>
                 <div className="flex gap-5">

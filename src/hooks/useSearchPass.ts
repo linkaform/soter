@@ -1,4 +1,5 @@
 import { AccessPass, addNewVisit, exitRegister, getAccessAssets, searchAccessPass } from "@/lib/access"
+import { Equipo, Vehiculo } from "@/lib/update-pass-full"
 import { errorMsj } from "@/lib/utils"
 import { useAccessStore } from "@/store/useAccessStore"
 import { useShiftStore } from "@/store/useShiftStore"
@@ -17,7 +18,7 @@ export interface SearchAccessPass {
   motivo_visita: string
   comentario: any[]
   folio: string
-  grupo_vehiculos: any[]
+  grupo_vehiculos: Vehiculo[]
   status_pase: string
   visita_a_puesto: any[][]
   tipo_movimiento: string
@@ -31,7 +32,7 @@ export interface SearchAccessPass {
   gafete_id: any
   estatus: string
   visita_a_email: any[][]
-  grupo_equipos: any[]
+  grupo_equipos: Equipo[]
   ultimo_acceso: any[]
   identificacion: Identificacion[]
   visita_a: any[]
@@ -92,8 +93,6 @@ export const useSearchPass = (enable:boolean) => {
         return data ? data?.response?.data : {};
       }
     },
-    refetchOnWindowFocus: true,
-    refetchOnReconnect: true,
   })
 
 
@@ -172,8 +171,9 @@ export const useSearchPass = (enable:boolean) => {
         } else {
           console.error("No se encontró el ID en la respuesta.");
         }
-    
-        queryClient.invalidateQueries({ queryKey: ["searchPass"] });
+        queryClient.invalidateQueries({
+          predicate: (query) => query.queryKey[0] === 'searchPass'
+        });
         queryClient.invalidateQueries({ queryKey: ["getTemporaryPasses"] });
         
 

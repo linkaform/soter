@@ -1,5 +1,8 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Vehiculo } from "@/lib/update-pass-full";
+import { useAccessStore } from "@/store/useAccessStore";
 
 export interface VehiculoAutorizado {
   tipo_vehiculo: string;
@@ -9,35 +12,47 @@ export interface VehiculoAutorizado {
   color_vehiculo: string;
 }
 
-export const VehiculoAutorizadoColumns: ColumnDef<VehiculoAutorizado>[] = [
+export const VehiculoAutorizadoColumns: ColumnDef<Vehiculo>[] = [
   {
     id: "select",
     cell: ({ row }) => {
-      console.log("selec", row)
+      const vehiculo = row?.original;
+      const selectedVehiculos = useAccessStore((state) => state.selectedVehiculos);
+      const setSelectedVehiculos = useAccessStore((state) => state.setSelectedVehiculos);
+      const tipoMovimiento = useAccessStore((state) => state.tipoMovimiento);
+      const isSelected =
+        JSON.stringify(selectedVehiculos[0]) === JSON.stringify(vehiculo);
+    
+      const handleCheckedChange = () => {
+        setSelectedVehiculos([vehiculo]);
+      };
+    console.log("esta seleccionado",selectedVehiculos, vehiculo, isSelected)
       return (
         <Checkbox
-          checked={false}
-          onCheckedChange={(value) => row.toggleSelected(!!value)}
-          aria-label="Select row"
+          className="p-0 m-0 flex"
+          checked={isSelected}
+          onCheckedChange={handleCheckedChange}
+          aria-label="Select vehicle row"
+          disabled={tipoMovimiento=="Salida"}
         />
-      )
+      );
     },
     enableSorting: false,
     enableHiding: false,
   },
   {
-    accessorKey: "tipo_vehiculo",
+    accessorKey: "tipo",
     header: "Tipo",
     cell: ({ row }) => (
-      <div className="capitalize">{row.original.tipo_vehiculo}</div>
+      <div className="capitalize">{row?.original.tipo}</div>
     ),
     enableSorting: true,
   },
   {
-    accessorKey: "marca_vehiculo",
+    accessorKey: "marca",
     header: "Marca",
     cell: ({ row }) => (
-      <div className="capitalize">{row.original.marca_vehiculo}</div>
+      <div className="capitalize">{row?.original.marca}</div>
     ),
     enableSorting: true,
   },
@@ -45,23 +60,23 @@ export const VehiculoAutorizadoColumns: ColumnDef<VehiculoAutorizado>[] = [
     accessorKey: "modelo_vehiculo",
     header: "Modelo",
     cell: ({ row }) => (
-      <div className="capitalize">{row.original.modelo_vehiculo}</div>
+      <div className="capitalize">{row?.original.modelo}</div>
     ),
     enableSorting: true,
   },
   {
-    accessorKey: "placas_vehiculo",
+    accessorKey: "placas",
     header: "Matrícula",
     cell: ({ row }) => (
-      <div className="uppercase">{row.original.placas_vehiculo}</div>
+      <div className="uppercase">{row?.original.placas}</div>
     ),
     enableSorting: true,
   },
   {
-    accessorKey: "color_vehiculo",
+    accessorKey: "color",
     header: "Color",
     cell: ({ row }) => (
-      <div className="capitalize">{row.original.color_vehiculo}</div>
+      <div className="capitalize">{row?.original.color}</div>
     ),
     enableSorting: true,
   },

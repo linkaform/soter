@@ -138,7 +138,7 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
                             ref={webcamRef}
                             audio={false} 
                             height={10} 
-                            width={240} 
+                            width={220} 
                             className="rounded" 
                             screenshotFormat="image/jpeg" 
                             mirrored={true} 
@@ -150,32 +150,28 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
                     ):null}
                         {imgArray?.length>0 ? (
                             <>
-                            <div className="w-full flex justify-center ">
-                            <Carousel className="w-36 ">
-                            <CarouselContent>
-                                {imgArray.map((a:Imagen, index:number) => (
-                                <CarouselItem key={index}>
-                                    <div className="p-1">
-                                    <Card>
-                                        <CardContent className="flex aspect-square items-center justify-center p-0">
-                                            <Image
-                                                height={10} 
-                                                width={240} 
-                                                src= {a.file_url || "/nouser.svg"}
-                                                alt="Imagen"
-                                                className="w-42 h-42 object-cover bg-gray-200 rounded-lg" 
-                                            />
-                                        </CardContent>
-                                    </Card>
-                                    </div>
-                                </CarouselItem>
-                                ))}
-                            </CarouselContent>
-                                <CarouselPrevious />
-                                <CarouselNext />
-                            </Carousel>
-                            
-                            </div>
+                                <div className="w-full flex justify-center ">
+                                    <Carousel className="w-52">
+                                    <CarouselContent>
+                                        {imgArray.map((a:Imagen, index:number) => (
+                                        <CarouselItem key={index}>
+                                            <div className="p-1">
+                                                <Image
+                                                    height={20} 
+                                                    width={200} 
+                                                    src= {a.file_url || "/nouser.svg"}
+                                                    alt="Imagen"
+                                                    className="w-52 h-44 object-contain rounded-lg" 
+                                                />
+                                            </div>
+                                    </CarouselItem>
+                                    ))}
+                                    </CarouselContent>
+                                        {imgArray.length>1 ?
+                                        <><CarouselPrevious /><CarouselNext /></>
+                                        :null}
+                                    </Carousel>
+                                </div>
                             </>
                         ):null}
                     {showArray && imgArray.length<limit ?(

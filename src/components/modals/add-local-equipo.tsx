@@ -32,16 +32,18 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { catalogoColores, catalogoTipoEquipos } from "@/lib/utils";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-// import { useAccessStore } from "@/store/useAccessStore";
 import { toast } from "sonner";
 import { Equipo } from "@/lib/update-pass-full";
+import { useAccessStore } from "@/store/useAccessStore";
 
 interface Props {
   title: string;
   children: React.ReactNode;
   equipos: Equipo[]
   setEquipos: Dispatch<SetStateAction<Equipo[]>>;
+  isAccesos: boolean
 }
+
 const formSchema = z.object({
   tipo:z.string().min(2, {
     message: "Campo requerido.",
@@ -54,8 +56,11 @@ const formSchema = z.object({
   color: z.string().optional()
 });
 
-export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equipos, setEquipos}) => {
+export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equipos, setEquipos, isAccesos}) => {
   const [open, setOpen] = useState(false); 
+  const setSelectedEquipos = useAccessStore((state) => state.setSelectedEquipos);
+  const selectedEquipos = useAccessStore((state) => state.selectedEquipos);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -69,7 +74,6 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
   });
 
   function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log(data);
     addNewEquipment(data)
     form.reset();
     toast.success(
@@ -79,17 +83,40 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
   }
 
   const addNewEquipment = (data: z.infer<typeof formSchema>) => {
-    setEquipos([
-      {
-        color: data.tipo,
+    if( isAccesos ){
+      setSelectedEquipos([...selectedEquipos,  {
+        color: data.color||"",
         marca: data.marca ||"",
         modelo: data.modelo||"",
         nombre: data.nombre||"",
         serie: data.serie||"",
         tipo: data.tipo||"",
-      },
-      ...equipos,
-    ])
+      },]);
+      setEquipos([
+        {
+          color: data.color||"",
+          marca: data.marca ||"",
+          modelo: data.modelo||"",
+          nombre: data.nombre||"",
+          serie: data.serie||"",
+          tipo: data.tipo||"",
+        },
+        ...equipos,
+      ])
+    }else{
+      setEquipos([
+        {
+          color: data.color||"",
+          marca: data.marca ||"",
+          modelo: data.modelo||"",
+          nombre: data.nombre||"",
+          serie: data.serie||"",
+          tipo: data.tipo||"",
+        },
+        ...equipos,
+      ])
+    }
+    
   }
 
     useEffect(() => {

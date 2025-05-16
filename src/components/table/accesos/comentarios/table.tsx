@@ -41,14 +41,12 @@ interface TableProps {
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+  const [columnVisibility, setColumnVisibility] =React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
     pageSize: 8,
   });
-  console.log("🔁 Render ComentariosAccesosTable");
   const [globalFilter, setGlobalFilter] = React.useState("");
 
   const table = useReactTable({

@@ -28,7 +28,10 @@ export type Access_pass_update = {
     grupo_equipos: Equipo[],
     status_pase: string,
     walkin_fotografia:Imagen[],
-    walkin_identificacion: Imagen[]
+    walkin_identificacion: Imagen[],
+    acepto_aviso_privacidad:string,
+    acepto_aviso_datos_personales:string,
+    conservar_datos_por:string
 
 }
   interface updatePase {

@@ -7,13 +7,18 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import {
 	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
 } from "@/components/ui/form";
 import { toast } from "sonner";
 import { useGetCatalogoPaseNoJwt } from "@/hooks/useGetCatologoPaseNoJwt";
 import { Equipo, Imagen, Vehiculo } from "@/lib/update-pass";
 import { EntryPassModal2 } from "@/components/modals/add-pass-modal-2";
 import LoadImage from "@/components/upload-Image";
-import { Car, Laptop, Loader2 } from "lucide-react";
+import { ArrowLeft, Car, Laptop, Loader2 } from "lucide-react";
 import { useGetPdf } from "@/hooks/usetGetPdf";
 import { descargarPdfPase } from "@/lib/download-pdf";
 import Image from "next/image";
@@ -21,6 +26,8 @@ import { VehiclePassModal } from "@/components/modals/add-local-vehicule";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { EqipmentLocalPassModal } from "@/components/modals/add-local-equipo";
 import { formatEquipos, formatVehiculos } from "@/lib/utils";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
  const grupoEquipos = z.array(
 	z.object({
@@ -63,7 +70,11 @@ import { formatEquipos, formatVehiculos } from "@/lib/utils";
 	nombre:z.string().nullable().optional(),
 	ubicacion:z.string().nullable().optional(),
 	email:z.string().nullable().optional(),
-	telefono:z.string().nullable().optional()
+	telefono:z.string().nullable().optional(),
+	acepto_aviso_privacidad: z.boolean()
+    .refine((val) => val === true, {
+      message: "Debes aceptar el aviso de privacidad",
+    }),
 })
 
 
@@ -78,7 +89,10 @@ export type formatData = {
 	nombre:string,
 	ubicacion:string,
 	email:string,
-	telefono:string
+	telefono:string,
+	acepto_aviso_privacidad:boolean
+	acepto_aviso_datos_personales:boolean
+	conservar_datos_por:string
 }
 const PaseUpdate = () =>{
 	const [id, setId] = useState("")
@@ -92,7 +106,7 @@ const PaseUpdate = () =>{
 	const [agregarVehiculosActive, setAgregarVehiculosActive] = useState(false);
 	const [isSuccess, setIsSuccess] = useState(false);
 	const [modalData, setModalData] = useState<any>(null);
-
+	const [aceptado, setAceptado] = useState(false);
 	const [identificacion, setIdentificacion] = useState<Imagen[]>([])
 
 	const downloadUrl=responsePdf?.response?.data?.data?.download_url
@@ -105,8 +119,7 @@ const PaseUpdate = () =>{
 	const [vehicles, setVehicles] = useState<Vehiculo[]>([]);
 	const [fotografia, setFotografia] = useState<Imagen[]>([])
 
-	// const [isLoading, setIsLoading] = useState(false);
-	// const [error, setError] = useState<unknown>();
+	const [mostrarAviso, setMostrarAviso] = useState(false);
 
 	const handleClickGoogleButton = () => {
 		const url = dataCatalogos?.pass_selected?.google_wallet_pass_url;
@@ -137,6 +150,7 @@ const PaseUpdate = () =>{
 			ubicacion:"",
 			email:"",
 			telefono:"",
+			acepto_aviso_privacidad:false
 	}
 	});
 
@@ -152,7 +166,8 @@ const PaseUpdate = () =>{
 				nombre: dataCatalogos?.pass_selected?.nombre||"",
 				ubicacion: dataCatalogos?.pass_selected?.ubicacion||"",
 				email: dataCatalogos?.pass_selected?.email||"",
-				telefono:dataCatalogos?.pass_selected?.telefono||""
+				telefono:dataCatalogos?.pass_selected?.telefono||"",
+				acepto_aviso_privacidad:data.acepto_aviso_privacidad
 			};
 			
 			if (showIneIden?.includes("foto") && fotografia.length<=0) {
@@ -328,6 +343,101 @@ const PaseUpdate = () =>{
 	setEquipos((prev) => prev.filter((_, i) => i !== index))
   }
 
+
+  	if (mostrarAviso) {
+		return (
+			<div className="p-6 max-w-4xl mx-auto">
+				<div className="flex gap-3 mt-6 items-center">
+					<div>	
+						<ArrowLeft className="text-black w-8 h-8 cursor-pointer"  onClick={() => setMostrarAviso(false)}/>
+					</div>
+					<div className="flex w-full justify-center">
+						<h1 className="text-3xl font-bold mb-4">Aviso de Privacidad Integral </h1>
+					</div>
+				</div>
+
+			<div>
+				<div className="text-blue-950 text-2xl font-bold mb-2 mt-2">Responsable</div>
+				<div>
+				INFOSYNC, SAPI DE CV (en adelante, y de forma conjunta el “Responsable”) con domicilio convencional ubicado en José Maria Morelos Poniente no.177 int. 62, Colonia Monterrey Centro, Codigo Postal 64000, 
+				Teléfono (81) 8192-2973, correo electrónico info@linkaform.com, estamos conscientes que usted como visitante de nuestras oficinas y/o sitio web, consumidor o potencial consumidor de nuestros productos y/o 
+				servicios tiene derecho a conocer qué información recabamos de usted y nuestras prácticas en relación con dicha información.
+				Las condiciones contenidas en el presente son aplicables a la información que se recaba a nombre de y por el Responsable o cualquiera de sus empresas filiales o subsidiarias, por cualquier medio, 
+				incluyendo a través de o cualquier sitio web operado por el Responsable.
+				</div>
+			</div>
+					
+			<div>
+				<div className="text-blue-950 text-2xl font-bold mb-2 mt-2">Datos Personales</div>
+				<div>
+				Los datos personales que puede llegar a recabar el Responsable de forma directa o indirecta consisten en los siguientes: Los datos personales considerados como de identificación son todos los relativos 
+				a la identificación de la persona (nombre completo, dirección, teléfonos fijo y/o celular, empresa para la cual labora, huellas digitales, fecha de nacimiento, nacionalidad, lugar de nacimiento, ocupación 
+				y/o sus familiares directos). Nos comprometemos a que todos los datos obtenidos serán tratados bajo las más estrictas medidas de seguridad que garanticen su confidencialidad.
+				</div>
+			</div>
+					
+			<div>
+				<div className="text-blue-950 text-2xl font-bold mb-2 mt-2">Finalidades</div>
+				<div>
+						La finalidad principal para las que recabamos sus datos tiene por objeto ofrecer nuestros servicios y productos, dar acceso a la plataforma y atención a clientes , cumpliendo con los estándares mediante 
+						los procesos internos para asegurar la calidad y seguridad del cliente en nuestras instalaciones.
+						<br /><br />
+						Las finalidades secundarias para las que recabamos sus datos son: facturación, cobranza, informarle sobre nuevos productos, servicios o cambios en los mismos, mensajes promocionales; evaluar la calidad 
+						del servicio; cumplir con las obligaciones derivadas de la prestación del servicio; cumplir con la legislación aplicable vigente; contestar requerimientos de información de cualquier autoridad, ya sea por 
+						investigaciones, estadísticas o reportes normativos; atender a sus comentarios relacionados con la prestación de servicios; enviar avisos e información de nuestros servicios; y coadyuvar con el proceso 
+						de mejora continua.
+				</div>
+			</div>
+					
+			<div>
+				<div className="text-blue-950 text-2xl font-bold mb-2 mt-2">Transferencias y encargados de datos personales</div>
+				<div>
+				Asimismo, le informamos que sus datos personales podrán ser transferidos a terceros y podrán ser compartidos a encargados para su tratamiento dentro y fuera del país, por personas distintas al Responsable, quien girará las instrucciones para su tratamiento. En ese sentido, su información puede ser transferida o compartida con 
+				<br /><br />
+				(i) Diversos profesionales, técnicos y auxiliares, así como otros entes privados por cuestión de servicios subrogados en relación con la atención del cliente; 
+				(ii) Administradoras de programas de lealtad; 
+				(iii) Socios comerciales del Responsable, con la finalidad de que estos administren y operen servicios complementarios a los del Responsable; 
+				(iv) Sociedades o terceros que operen en forma conjunta con el Responsable algún producto, servicio o cualquier software o infraestructura informática que sirva como plataforma para la realización de operaciones o servicios; 
+				(v) Terceros prestadores de servicios o vendedores de productos necesarios para la operación de la responsable, así como comisionistas que realicen operaciones o brinden servicios a la responsable que esta pueda realizar de acuerdo con la legislación vigente y sus estatutos sociales, como son, entre otros, comisionistas, procesadores de datos, empresas de envío de material de marketing, empresas de mensajería, de seguridad, transporte de valores, agencias de publicidad, guarda de información, con el propósito de que estos asistan en la realización de las finalidades previstas en este aviso de privacidad; 
+				(vi) Profesionistas, asesores o consultores externos, para efecto de la administración de operaciones de venta, servicios y de los demás actos que la responsable pueda realizar de conformidad con la legislación vigente y sus estatutos sociales, así como para la defensa de sus intereses ante cualquier controversia legal que surja con motivo de dichas operaciones y servicios, tales como agencias de cobranza, auditores externos, legales, contables, etc.; y 
+				(vii) Todas aquellas dependencias gubernamentales y/o judiciales que por ministerio de ley soliciten y/o requieran de la responsable datos personales de sus clientes y/o familiares, necesarias para el cumplimiento de diversas legislaciones.
+				<br /><br />
+				Si usted no manifiesta su oposición para que sus datos personales sean transferidos, se entenderá que ha otorgado su consentimiento para ello.
+				<br /><br />
+				El Responsable informa que todos los contratos de prestación de servicios con terceros que impliquen el tratamiento de su información personal a nombre y por cuenta del Responsable incluirán una cláusula garantizando que otorgan el nivel de protección de datos personales, mediante el cual se constituyan encargados en términos del párrafo anterior. En cualquier caso, todo manejo de datos personales se realizará dando cumplimiento a la Ley Federal de Protección de Datos Personales en Posesión de Particulares (en adelante la “Ley”) y su Reglamento.
+				<br /><br />
+				La información que proporcione deberá ser veraz y completa. Por lo que queda bajo su responsabilidad la veracidad de los datos proporcionados y en ningún caso el Responsable será responsable a este respecto.
+				</div>
+			</div>
+					
+			<div>
+				<div className="text-blue-950 text-2xl font-bold mb-2 mt-2">Derechos ARCO</div>
+				<div>
+				En el momento que lo estime oportuno podrá ejercer sus derechos ARCO (acceso, rectificación, cancelación y oposición) sobre el tratamiento de los datos personales proporcionados, así como revocar el consentimiento otorgado en este documento, por lo cual deberá ponerse en contacto con nosotros a través del correo electrónico “info@linkaform.com”; el procedimiento y requisitos que deberá contener su solicitud de conformidad con lo dispuesto en la Ley y su Reglamento, son los siguientes:
+				<br /><br />
+				(1) Nombre y Domicilio, si no se incluye la dirección se dará por no recibida la solicitud. 
+				(2) El documento que acredite su identidad o la personalidad de su representante (copia de identificación oficial vigente.) El representante deberá acreditar la identidad del titular, identidad del representante, y sus facultades de representación mediante instrumento público o carta poder firmada ante dos testigos, o declaración en comparecencia personal del titular; 
+				(3) La descripción clara y precisa de los datos personales a los que desea acceder, rectificar, cancelar u oponerse; 
+				(4) Descripción de otros elementos que faciliten la localización de sus datos personales (sitio Web, Sucursal).Los documentos deberán ser escaneados y adjuntados al correo electrónico para verificar la veracidad de los mismos.
+				<br /><br />
+				Para conocer el procedimiento, requisitos y plazos del ejercicio de los derechos ARCO puedes ponerte en contacto al correo electrónico info@linkform.com.
+				</div>
+			</div>
+
+			<div>
+				<div className="text-blue-950 text-2xl font-bold mb-2 mt-2">Modificaciones al Aviso de Privacidad</div>
+				<div>
+				El Responsable se reserva el derecho de efectuar en cualquier momento modificaciones o actualizaciones al presente aviso de privacidad, para la atención de novedades legislativas o jurisprudenciales, políticas internas, nuevos requerimientos para la prestación u ofrecimiento de nuestros servicios y prácticas del mercado, cualquier modificación al Aviso de Privacidad estará disponible a través de nuestro portal Web; sección “aviso de privacidad”.
+				<br /><br />
+				El presente Aviso de Privacidad ha sido modificado el día 05 abril del 2019.
+				</div>
+			</div>
+
+			</div>
+		)
+	}
+
+
 return (
 	<div className="p-8">
 		<EntryPassModal2
@@ -396,7 +506,7 @@ return (
 										imgArray={fotografia} 
 										showArray={true} 
 										limit={1}/>
-									{errorFotografia !=="" && <span className="text-red-500 text-sm">{errorFotografia}</span>}
+									{fotografia.length==0 && errorFotografia !=="" && <span className="text-red-500 text-sm">{errorFotografia}</span>}
 							</div>}
 							{showIneIden?.includes("iden")&& <div className="w-full md:w-1/2">
 									<LoadImage
@@ -409,7 +519,7 @@ return (
 									showArray={true} 
 									limit={1}
 									/>
-									{errorIdentificacion !=="" && <span className="text-red-500 text-sm">{errorIdentificacion}</span>}
+									{identificacion.length==0 && errorIdentificacion !=="" && <span className="text-red-500 text-sm">{errorIdentificacion}</span>}
 							</div>}
 					</div> 
 					<div className="flex flex-col gap-y-6">
@@ -465,7 +575,7 @@ return (
 						<div>
 							<div className="flex items-center gap-x-10">
 							<span className="font-bold text-xl">Lista de Equipos</span>
-							<EqipmentLocalPassModal title="Nuevo Equipo" equipos={equipos} setEquipos={setEquipos}>
+							<EqipmentLocalPassModal title="Nuevo Equipo" equipos={equipos} setEquipos={setEquipos} isAccesos={false}>
 								<button
 								type="button"
 								onClick={() => handleCheckboxChange("agregar-equipos")}
@@ -511,8 +621,46 @@ return (
 						</div>
 					</div>
 				</div>
+
+				
+
+				<div className="flex items-center space-x-2 text-slate-500">
+					
+				</div>
+
 					<Form {...form}>
 						<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8"> 
+							<FormField
+								control={form.control}
+								name="acepto_aviso_privacidad"
+								render={({ field }) => (
+									<FormItem>
+									<FormControl>
+										<div className="flex items-center gap-2">
+										<Checkbox
+											checked={field.value}
+											onCheckedChange={field.onChange}
+											id="aviso"
+										/>
+										<Label htmlFor="aviso" className="text-sm text-slate-500">
+										<span className="text-red-500 mr-1">*</span> 
+											He leído y acepto el{" "}
+											<button
+											type="button"
+											onClick={() => setMostrarAviso(true)}
+											className="text-blue-600 underline hover:text-blue-800"
+											>
+											aviso de privacidad
+											</button>
+										</Label>
+										</div>
+									</FormControl>
+
+									<FormMessage />
+									</FormItem>
+								)}
+								/>
+
 							<div className="text-center mt-10 flex justify-center">
 								<Button
 									className="bg-blue-500 hover:bg-blue-600 text-white w-full sm:w-1/2"
@@ -682,7 +830,7 @@ return (
 									<div>
 										<div className="flex items-center gap-x-10">
 										<span className="font-bold text-xl">Lista de Equipos</span>
-										<EqipmentLocalPassModal title="Nuevo Equipo" equipos={equipos} setEquipos={setEquipos}>
+										<EqipmentLocalPassModal title="Nuevo Equipo" equipos={equipos} setEquipos={setEquipos} isAccesos={false}>
 											<button
 											type="button"
 											onClick={() => handleCheckboxChange("agregar-equipos")}
@@ -728,6 +876,7 @@ return (
 									</div>
 								</div>
 
+							
 								{/* <Button className="w-1/2  bg-blue-500 hover:bg-blue-600 my-2" type="submit" onClick={SendUpdate} disabled={isLoading}>
 								{!isLoading ? ("Actualizar"):(<><Loader2 className="animate-spin"/>Actualizando...</>)}
 								</Button> */}

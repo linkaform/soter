@@ -13,7 +13,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { List, Plus, Trash2 } from "lucide-react";
+import { Eraser, List, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -30,13 +30,16 @@ import { VehiculoAutorizadoColumns } from "./vehiculos-autorizados-columns";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Vehiculo } from "@/lib/update-pass-full";
 import { VehiclePassModal } from "@/components/modals/add-local-vehicule";
+import { SelectedVehiculosModal } from "@/components/modals/modal-selected-vehiculos";
 
 interface TableProps {
-  allVehicles?: any[];
+  setSelectedVehiculos: (equipos: Vehiculo[])=> void
+  selectedVehiculos: Vehiculo[]
   vehiculos:Vehiculo[]
-  setVehiculos: React.Dispatch<React.SetStateAction<Vehiculo[]>>//(equipments: any[]) => void
+  setVehiculos: React.Dispatch<React.SetStateAction<Vehiculo[]>>
+  tipoMovimiento:string;
 }
-  export const VehiculosAutorizadosTable: React.FC<TableProps> = ({ allVehicles , vehiculos, setVehiculos}) => {
+  export const VehiculosAutorizadosTable: React.FC<TableProps> = ({ vehiculos, setSelectedVehiculos, selectedVehiculos,setVehiculos, tipoMovimiento}) => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -52,7 +55,7 @@ interface TableProps {
   const [globalFilter, setGlobalFilter] = React.useState("");
 
   const table = useReactTable({
-    data: allVehicles || [],
+    data: vehiculos || [],
     columns: VehiculoAutorizadoColumns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -83,26 +86,35 @@ interface TableProps {
           <h1 className="text-2xl font-bold">Vehículos Autorizados</h1>
         </div>
        <div className="flex justify-end gap-2">
-       <VehiclePassModal title="Nuevo Vehiculo" vehicles={vehiculos} setVehicles={setVehiculos}>
-          <Button className="bg-green-600 hover:bg-green-700 text-white">
+       <VehiclePassModal title="Nuevo Vehiculo" vehicles={vehiculos}  setVehiculos={setVehiculos} isAccesos={true}>
+          <Button className="bg-green-600 hover:bg-green-700 text-white" disabled={tipoMovimiento=="Salida"}>
             <Plus />
             Agregar Vehiculo
           </Button>
         </VehiclePassModal>
-          <Button
-            className="bg-blue-500 text-white hover:text-white hover:bg-blue-600"
-            variant="outline"
-            size="icon"
-          >
-            <List size={36} />
-          </Button>
+
+          <SelectedVehiculosModal title={"Vehiculos seleccionados"} description={""} selectedVehiculos={selectedVehiculos}>
+            <Button
+              disabled={tipoMovimiento=="Salida"}
+              className="bg-blue-500 text-white hover:text-white hover:bg-blue-600"
+              variant="outline"
+              size="icon"
+            >
+              <List size={36} />
+            </Button>
+          </SelectedVehiculosModal>
 
           <Button
-            className="bg-red-500 hover:bg-red-600 text-black"
+            className="bg-yellow-500 hover:bg-yellow-600 text-black"
             variant="outline"
             size="icon"
+            disabled={tipoMovimiento=="Salida"}
+            onClick={() => {
+              setSelectedVehiculos([]);
+              table.resetRowSelection();
+            }}
           >
-            <Trash2 className="text-white" size={36} />
+            <Eraser/>
           </Button>
        </div>
         </div>

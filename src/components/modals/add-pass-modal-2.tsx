@@ -9,13 +9,15 @@ import {
 import { Separator } from "../ui/separator";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
-import { UpdatePase } from "@/lib/update-pass";
 import { UpdatedPassModal } from "./updated-pass-modal";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import { data_correo } from "@/lib/send_correo";
 import { formatData } from "@/app/dashboard/pase-update/page";
 import Image from "next/image";
-import { toast } from "sonner";
+import { Checkbox } from "../ui/checkbox";
+import { Label } from "../ui/label";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { useUpdateAccessPass } from "@/hooks/useUpdatePass";
 
 interface EntryPassModal2Props {
 	title: string;
@@ -34,52 +36,80 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 	setIsSuccess,onClose
 }) => {
 	const [response, setResponse] = useState<any>(null);
-	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<unknown>();
 	const [openGeneratedPass, setOpenGeneratedPass] = useState<boolean>(false);
 	const [responseformated, setResponseFormated] = useState<data_correo|null>(null);
+	const [radioSelected, setRadioSelected] = useState("");				
+	const [showRadioGroup, setShowRadioGroup] = useState(false);							
+	const{ updatePassMutation , isLoadingUpdate} = useUpdateAccessPass();
+
+
 	const onSubmit = async () => {
-		try {
-			setIsLoading(true);
-			const apiResponse = await UpdatePase({ access_pass: {
-					grupo_vehiculos: data?.grupo_vehiculos,
-					grupo_equipos: data.grupo_equipos,
-					status_pase: data.status_pase,
-					walkin_fotografia:data?.walkin_fotografia,
-					walkin_identificacion:data?.walkin_identificacion,
-			}, 
-			id:data.folio, account_id: data.account_id });
-			setResponseFormated({
-				email_to: data.email,
-				asunto: apiResponse?.response?.data?.json?.asunto,
-				email_from: apiResponse?.response?.data?.enviar_de_correo,
-				nombre: apiResponse?.response?.data?.json?.enviar_a,
-				nombre_organizador: apiResponse?.response?.data?.json?.enviar_de,
-				ubicacion: apiResponse?.response?.data?.json?.ubicacion,
-				fecha: {desde: apiResponse?.response?.data?.json?.fecha_desde, hasta:apiResponse?.response?.data?.json?.fecha_hasta },
-				descripcion: apiResponse?.response?.data?.json?.descripcion,
-			})
+		updatePassMutation.mutate({access_pass:{
+			grupo_vehiculos: data?.grupo_vehiculos,
+			grupo_equipos: data.grupo_equipos,
+			status_pase: data.status_pase,
+			walkin_fotografia: data?.walkin_fotografia,
+			walkin_identificacion: data?.walkin_identificacion,
+			acepto_aviso_privacidad: data?.acepto_aviso_privacidad ? "Sí":"No",
+			acepto_aviso_datos_personales: radioSelected=="default" ? "": radioSelected,
+			conservar_datos_por: radioSelected
+		},id: data.folio, account_id: data.account_id})
+		// try {
+		// 	setIsLoading(true);
+		// 	const apiResponse = await UpdatePase({ access_pass: {
+		// 			grupo_vehiculos: data?.grupo_vehiculos,
+		// 			grupo_equipos: data.grupo_equipos,
+		// 			status_pase: data.status_pase,
+		// 			walkin_fotografia: data?.walkin_fotografia,
+		// 			walkin_identificacion: data?.walkin_identificacion,
+		// 			acepto_aviso_privacidad: data?.acepto_aviso_privacidad ? "Sí":"No",
+		// 			acepto_aviso_datos_personales: radioSelected=="default" ? "": radioSelected,
+		// 			conservar_datos_por: radioSelected
+		// 	}, 
+		// 	id:data.folio, account_id: data.account_id });
+		// 	setResponseFormated({
+		// 		email_to: data.email,
+		// 		asunto: apiResponse?.response?.data?.json?.asunto,
+		// 		email_from: apiResponse?.response?.data?.enviar_de_correo,
+		// 		nombre: apiResponse?.response?.data?.json?.enviar_a,
+		// 		nombre_organizador: apiResponse?.response?.data?.json?.enviar_de,
+		// 		ubicacion: apiResponse?.response?.data?.json?.ubicacion,
+		// 		fecha: {desde: apiResponse?.response?.data?.json?.fecha_desde, hasta:apiResponse?.response?.data?.json?.fecha_hasta },
+		// 		descripcion: apiResponse?.response?.data?.json?.descripcion,
+		// 	})
 			
-			setResponse(apiResponse); 
-			setIsSuccess(true); 
-			setOpenGeneratedPass(true)
-		} catch (err) {
-			setError(err);
-		} finally {
-			setIsLoading(false);
-		}
+		// 	setResponse(apiResponse); 
+		// 	setIsSuccess(true); 
+		// 	setOpenGeneratedPass(true)
+		// } catch (err) {
+		// 	setError(err);
+		// } finally {
+		// 	setIsLoading(false);
+		// }
 	};
 
 	const handleClose = () => {
-			// setIsSuccess(false); 
+			actualizarEstados("", false)
 			onClose(); 
 	};
 
+	// useEffect(()=>{
+	// 	if(error){
+	// 		toast.error("Ocurrio un error al actualizar el pase")
+	// 	}
+	// },[error])
+
 	useEffect(()=>{
-		if(error){
-			toast.error("Ocurrio un error")
+		if(radioSelected){
+			console.log("radiogroup", radioSelected)
 		}
-	},[error])
+	},[radioSelected])
+
+	function actualizarEstados(radioSelect:string, showRadio:boolean){
+		//Actualizar estados de vista y seleccion
+		setRadioSelected(radioSelect); setShowRadioGroup(showRadio)
+	}
 
 	return (
 		<Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
@@ -93,7 +123,7 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 					<div className="w-full flex gap-2 mb-3">
 							<p className="font-bold ">Nombre Completo : </p>
 							<p className="">{data?.nombre} </p>
-						</div>
+					</div>
 
 					<div className="flex flex-col ">
 						<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -124,7 +154,7 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 												alt="Imagen"
 												width={150}
 												height={150}
-												className=" h-32 object-contain bg-gray-200 rounded-lg" 
+												className="h-32 object-cover rounded-lg" 
 												/>
 										</div>
 										):(
@@ -146,7 +176,7 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 												alt="Imagen"
 												width={150}
 												height={150}
-												className=" h-32 object-contain bg-gray-200 rounded-lg" 
+												className="h-32 object-cover rounded-lg" 
 												/>
 										</div>
 										):(
@@ -234,6 +264,89 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 						</div>
 						)}
 					</div>
+
+					<div className="flex items-center gap-2 mt-4">
+						<Checkbox
+							checked={radioSelected!==""}
+							onCheckedChange={()=>{radioSelected!==""? actualizarEstados("", false) :  actualizarEstados("default", true)}}
+							id="avisoPriv"
+						/>
+						<Label htmlFor="avisoPriv" className="text-sm text-slate-500">
+						<span className="text-red-500 mr-1">*</span> 
+							He leído y aceptado el{" "}
+							<button
+							type="button"
+							onClick={() => {setShowRadioGroup(!showRadioGroup)}}
+							className="text-blue-600 underline hover:text-blue-800"
+							>
+							aviso de privacidad sobre tus datos personales
+							</button>
+						</Label>
+					</div>
+					{showRadioGroup?
+						<div className="mt-3">
+							<label className="block text-sm font-medium text-gray-700 mb-2">
+								Eliminar tus datos personales no eliminará los registros históricos donde tu nombre haya sido utilizado, 
+								como visitas realizadas a alguna planta o accesos autorizados previamente. Esta información se mantiene 
+								por razones de trazabilidad y cumplimiento normativo.
+							</label>
+							<p className="block text-sm font-medium text-gray-700 mb-2">Conservar mis datos personales durante:</p>
+
+						<RadioGroup
+							className="flex flex-col gap-2 "
+							value={radioSelected}
+							onValueChange={(value) => setRadioSelected(value)}
+						>
+							<div className="flex items-center gap-2">
+							<RadioGroupItem
+								className="w-4 h-4 rounded-full border border-gray-400  "
+								value="1 semana"
+								id="r1"
+							/>
+							<label htmlFor="r1" className="text-sm text-gray-700">1 semana</label>
+							</div>
+
+							<div className="flex items-center gap-2">
+							<RadioGroupItem
+								className="w-4 h-4 rounded-full border border-gray-400 "
+								value="1 mes"
+								id="r2"
+							/>
+							<label htmlFor="r2" className="text-sm text-gray-700">1 mes</label>
+							</div>
+
+							<div className="flex items-center gap-2">
+							<RadioGroupItem
+								className="w-4 h-4 rounded-full border border-gray-400 "
+								value="3 meses"
+								id="r3"
+							/>
+							<label htmlFor="r3" className="text-sm text-gray-700">3 meses</label>
+							</div>
+
+							<div className="flex items-center gap-2">
+							<RadioGroupItem
+								className="w-4 h-4 rounded-full border border-gray-400 "
+								value="Hasta que yo los elimine manualmente"
+								id="r4"
+							/>
+							<label htmlFor="r4" className="text-sm text-gray-700">Hasta que yo los elimine manualmente</label>
+							</div>
+
+							<div className="flex items-center gap-2">
+							<RadioGroupItem
+								className="w-4 h-4 rounded-full border border-gray-400 "
+								value="Eliminar mis datos personales de forma definitiva"
+								id="r5"
+							/>
+							<label htmlFor="r5" className="text-sm text-gray-700">Eliminar mis datos personales de forma definitiva</label>
+							</div>
+
+						</RadioGroup>
+					</div>
+					:null}
+						
+				
 				</div>
 				<div className="flex gap-2">
 					<DialogClose asChild >
@@ -259,8 +372,8 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 							/>
 					):null}
 					
-						<Button className="w-full bg-blue-500 hover:bg-blue-600 text-white" type="submit" onClick={onSubmit} disabled={isLoading}>
-							{!isLoading ? ("Actualizar pase"):(<><Loader2 className="animate-spin"/>Actualizando pase...</>)}
+						<Button className="w-full bg-blue-500 hover:bg-blue-600 text-white" type="submit" onClick={onSubmit} disabled={isLoadingUpdate}>
+							{!isLoadingUpdate ? ("Actualizar pase"):(<><Loader2 className="animate-spin"/>Actualizando pase...</>)}
 						</Button>
 				</div>
 			</DialogContent>

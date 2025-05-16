@@ -12,24 +12,25 @@ import { SendMessageModal } from "@/components/modals/send-message-modal";
 import { SearchAccessPass } from "@/hooks/useSearchPass";
 import { toast } from "sonner";
 import CalendarDays from "@/components/calendar-days";
+import { capitalizeFirstLetter } from "@/lib/utils";
 
 interface Props {
   searchPass: SearchAccessPass | undefined;
 }
 
 const Credentials: React.FC<Props> = ({ searchPass }) => {
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "Vencido":
-        return "red";
-      case "Activo":
-        return "green";
-      case "Proceso":
-        return "blue";
-      default:
-        return "blue";
-    }
-  };
+//   const getStatusColor = (status: string) => {
+//     switch (status) {
+//       case "Vencido":
+//         return "red";
+//       case "Activo":
+//         return "green";
+//       case "Proceso":
+//         return "blue";
+//       default:
+//         return "blue";
+//     }
+//   };
 
   return (
 	<div className=" h-fit overflow-y-auto p-4 ">
@@ -51,10 +52,10 @@ const Credentials: React.FC<Props> = ({ searchPass }) => {
 			</div>
 
 			<div className="flex flex-col flex-wrap gap-6">
-			<div className="space-y-3">
+			<div className="mt-0">
 				
-				<div className="flex gap-4">
-					<div className="w-[140px] h-[140px] overflow-hidden rounded-lg">
+				<div className="flex justify-center gap-4">
+					<div className="w-[140px] overflow-hidden rounded-lg">
 						<Image
 						src={
 							searchPass?.identificacion?.[0]?.file_url || "/noiden.svg"
@@ -66,7 +67,7 @@ const Credentials: React.FC<Props> = ({ searchPass }) => {
 						/>
 					</div>
 
-					<div className="w-[140px] h-[140px] overflow-hidden rounded-lg">
+					<div className="w-[140px] overflow-hidden rounded-lg">
 						<Image
 						src={
 							searchPass?.foto?.[0]?.file_url ||
@@ -79,95 +80,115 @@ const Credentials: React.FC<Props> = ({ searchPass }) => {
 						/>
 					</div>
 				</div>
+				<div className="flex flex-col justify-center items-center text-xl font-bold">
+						<p>
+						{searchPass?.nombre}
+						</p> 
+						
+				</div>
 
-				<div className="space-y-2">
+				<div className="flex flex-col justify-center items-center mb-2">
+					{searchPass?.tipo_de_pase}
+				</div>
+						
+
+				<div className="flex flex-col gap-3">
 					<div>
-						<span className="text-gray-500">Tipo de pase:  <span className="text-black">{searchPass?.tipo_de_pase}</span></span>
+						<span className="text-gray-500">Ubicación:  <span className="text-black">{searchPass?.ubicacion}</span></span>
 					</div>
 
 					<div>
-						<span className="text-gray-500">Estatus:  <span className={`font-bold text-${getStatusColor(
-							searchPass?.status_pase ?? ""
-						)}-600`}>{searchPass?.status_pase}</span></span>
+						<span className="text-gray-500">Empresa:  <span className="text-black">{searchPass?.empresa}</span></span>
+					</div>
+					<div>
+						<span className="text-gray-500">Motivo de visita:  <span className="text-black">{searchPass?.motivo_visita}</span></span>
+					</div>
+	
+					<div className="flex">
+						<p className="w-1/4 text-gray-500">Visita a:</p>
+						<div className="flex space-y-2 w-full justify-start">
+						{searchPass?.visita_a?.map((visita, index) => (
+							<div
+							key={index}
+							className="flex items-center justify-between space-x-6"
+							>
+							<span>{visita.nombre}</span>
+							<div className="space-x-2">
+								{/* Botón de Llamada */}
+								<MakeCallModal
+								title="¿Realizar llamada?"
+								description="Al realizar la llamada, se contactará al número de la persona seleccionada."
+								>
+								<Button
+									size="icon"
+									variant="secondary"
+									className="bg-gray-700 text-white hover:bg-gray-600"
+									onClick={() => {
+									if (!visita.phone) {
+										toast.error(
+										"¡El teléfono no ha sido configurado para esta persona!"
+										);
+										return;
+									}
+									}}
+								>
+									<Phone className="h-4 w-4" />
+								</Button>
+								</MakeCallModal>
+
+								{/* Botón de Mensaje */}
+								<SendMessageModal title="Enviar Mensaje">
+								<Button
+									size="icon"
+									variant="secondary"
+									className="bg-gray-700 text-white hover:bg-gray-600"
+									onClick={() => {
+									if (!visita.email) {
+										toast.error(
+										"¡El email no ha sido configurado para esta persona!"
+										);
+										return;
+									}
+									}}
+								>
+									<MessageSquare className="h-4 w-4" />
+								</Button>
+								</SendMessageModal>
+							</div>
+							</div>
+						))}
+						</div>
+					</div>
+					<div>
+						<span className="text-gray-500">Estatus:  </span>
+						<Badge
+						className={`text-white text-md ${
+							searchPass?.estatus.toLowerCase() == "vencido"
+							? "bg-red-600 hover:bg-red-600"
+							: searchPass?.estatus.toLowerCase() == "activo"
+							? "bg-green-600 hover:bg-green-600"
+							: searchPass?.estatus.toLowerCase() == "proceso"
+							? "bg-blue-600 hover:bg-blue-600"
+							: "bg-gray-400"
+						}`}
+						>
+						{capitalizeFirstLetter(searchPass?.estatus ??"")}
+					</Badge>
+
 					</div>
 
 					<div>
 						<span className="text-gray-500">Vigencia del pase:  <span className="text-black">{searchPass?.fecha_de_caducidad?.toString()}</span></span>
 					</div>
-
-					
+				
 				</div>
 			</div>
 
 			<div className="space-y-6">
 				<div className="space-y-4">
-				<div>
-					<span className="text-gray-500">Nombre:  <span className="text-black">{searchPass?.nombre}</span></span>
-				</div>
+				
 
-				<div>
-					<span className="text-gray-500">Empresa:  <span className="text-black">{searchPass?.empresa}</span></span>
-				</div>
-
-				<div>
-					<span className="text-gray-500">Motivo de visita:  <span className="text-black">{searchPass?.motivo_visita}</span></span>
-				</div>
-
-				<div className="flex">
-					<p className="w-1/4 text-gray-500">Visita a:</p>
-					<div className="flex space-y-2 w-full justify-start">
-					{searchPass?.visita_a?.map((visita, index) => (
-						<div
-						key={index}
-						className="flex items-center justify-between space-x-6"
-						>
-						<span>{visita.nombre}</span>
-						<div className="space-x-2">
-							{/* Botón de Llamada */}
-							<MakeCallModal
-							title="¿Realizar llamada?"
-							description="Al realizar la llamada, se contactará al número de la persona seleccionada."
-							>
-							<Button
-								size="icon"
-								variant="secondary"
-								className="bg-gray-700 text-white hover:bg-gray-600"
-								onClick={() => {
-								if (!visita.phone) {
-									toast.error(
-									"¡El teléfono no ha sido configurado para esta persona!"
-									);
-									return;
-								}
-								}}
-							>
-								<Phone className="h-4 w-4" />
-							</Button>
-							</MakeCallModal>
-
-							{/* Botón de Mensaje */}
-							<SendMessageModal title="Enviar Mensaje">
-							<Button
-								size="icon"
-								variant="secondary"
-								className="bg-gray-700 text-white hover:bg-gray-600"
-								onClick={() => {
-								if (!visita.email) {
-									toast.error(
-									"¡El email no ha sido configurado para esta persona!"
-									);
-									return;
-								}
-								}}
-							>
-								<MessageSquare className="h-4 w-4" />
-							</Button>
-							</SendMessageModal>
-						</div>
-						</div>
-					))}
-					</div>
-				</div>
+				
 				</div>
 
 				<div className="grid grid-cols-2 gap-4">
