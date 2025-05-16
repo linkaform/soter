@@ -247,7 +247,7 @@ export const UpdatePassModal: React.FC<Props> = ({ title, children, id , dataCat
                             <div>
                                 <div className="flex items-center gap-x-10">
                                 <span className="font-bold text-xl">Lista de Vehículos</span>
-                                <VehiclePassModal title="Nuevo Vehiculo" vehicles={vehicles} setVehicles={setVehicles}>
+                                <VehiclePassModal title="Nuevo Vehiculo" vehicles={vehicles} setVehiculos={setVehicles} isAccesos={false}>
                                     <button
                                     type="button"
                                     onClick={() => handleCheckboxChange("agregar-vehiculos")}
@@ -296,7 +296,7 @@ export const UpdatePassModal: React.FC<Props> = ({ title, children, id , dataCat
                             <div>
                                 <div className="flex items-center gap-x-10">
                                 <span className="font-bold text-xl">Lista de Equipos</span>
-                                <EqipmentLocalPassModal title="Nuevo Equipo" equipos={equipos} setEquipos={setEquipos}>
+                                <EqipmentLocalPassModal title="Nuevo Equipo" equipos={equipos} setEquipos={setEquipos} isAccesos={false}>
                                     <button
                                     type="button"
                                     onClick={() => handleCheckboxChange("agregar-equipos")}
