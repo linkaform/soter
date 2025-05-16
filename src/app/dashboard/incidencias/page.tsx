@@ -16,6 +16,7 @@ import { dateToString } from "@/lib/utils";
 import { toast } from "sonner";
 import ChangeLocation from "@/components/changeLocation";
 import { useShiftStore } from "@/store/useShiftStore";
+import { useGetStats } from "@/hooks/useGetStats";
 
 const IncidenciasPage = () => {
 
@@ -39,7 +40,8 @@ const IncidenciasPage = () => {
 
   const [fallasStatus, setFallasStatus] = useState<string>("")
   const { data:dataFallas,isLoading:isLoadingFallas, refetch:refetchFallas} = useGetFallas(ubicacionSeleccionada, areaSeleccionada == "todas" ? "" : areaSeleccionada ,fallasStatus,  dates[0], dates[1], dateFilter);
-  const { listIncidencias, refetchTableIncidencias, isLoadingListIncidencias , stats} = useInciencias(ubicacionSeleccionada, areaSeleccionada == "todas" ? "" : areaSeleccionada, [],  true, false, dates[0], dates[1], dateFilter);
+  const { listIncidencias, refetchTableIncidencias, isLoadingListIncidencias} = useInciencias(ubicacionSeleccionada, areaSeleccionada == "todas" ? "" : areaSeleccionada, [],  true, false, dates[0], dates[1], dateFilter);
+	const { data: stats } = useGetStats(true, location, area, 'Incidencias')
   const [selectedTab, setSelectedTab] = useState<string>('Incidencias'); 
 
   	useEffect(()=>{
@@ -118,7 +120,7 @@ const IncidenciasPage = () => {
 				<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
 						dateFilter== "this_week" && selectedTab!=="Fallas"? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => handleTabChange("Incidencias","this_week")}>
 					<div className="flex gap-6"><TriangleAlert className="text-primary w-8 h-10" />
-						<span className="flex items-center font-bold text-4xl"> {stats?.incidentes_x_dia}</span>
+						<span className="flex items-center font-bold text-4xl"> {stats?.incidentes_x_semana}</span>
 					</div>
 					<div className="flex items-center space-x-0">
 						<div className="h-1 w-1/2 bg-cyan-100"></div>
@@ -129,7 +131,7 @@ const IncidenciasPage = () => {
 				<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
 						dateFilter== "this_month" && selectedTab!=="Fallas"? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => handleTabChange("Incidencias","this_month")}>
 					<div className="flex gap-6"><TriangleAlert className="text-primary w-10 h-10" />
-						<span className="flex items-center font-bold text-4xl"> {stats?.incidentes_x_dia}</span>
+						<span className="flex items-center font-bold text-4xl"> {stats?.incidentes_x_mes}</span>
 					</div>
 					<div className="flex items-center space-x-0">
 						<div className="h-1 w-1/2 bg-cyan-100"></div>
