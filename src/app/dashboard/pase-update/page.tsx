@@ -10,7 +10,6 @@ import {
 	FormControl,
 	FormField,
 	FormItem,
-	FormLabel,
 	FormMessage,
 } from "@/components/ui/form";
 import { toast } from "sonner";
@@ -106,7 +105,6 @@ const PaseUpdate = () =>{
 	const [agregarVehiculosActive, setAgregarVehiculosActive] = useState(false);
 	const [isSuccess, setIsSuccess] = useState(false);
 	const [modalData, setModalData] = useState<any>(null);
-	const [aceptado, setAceptado] = useState(false);
 	const [identificacion, setIdentificacion] = useState<Imagen[]>([])
 
 	const downloadUrl=responsePdf?.response?.data?.data?.download_url
@@ -116,7 +114,7 @@ const PaseUpdate = () =>{
 
 	const [isActualizarOpen, setIsActualizarOpen] = useState<string|boolean>(false);
 	const [equipos, setEquipos] = useState<Equipo[]>([]);
-	const [vehicles, setVehicles] = useState<Vehiculo[]>([]);
+	const [vehicles, setVehiculos] = useState<Vehiculo[]>([]);
 	const [fotografia, setFotografia] = useState<Imagen[]>([])
 
 	const [mostrarAviso, setMostrarAviso] = useState(false);
@@ -272,7 +270,7 @@ const PaseUpdate = () =>{
 			 setEquipos( formatEquipos(dataCatalogos?.pass_selected?.grupo_equipos))
 		}
 		if(isActualizarOpen && dataCatalogos?.pass_selected?.grupo_vehiculos){
-			setVehicles(formatVehiculos(dataCatalogos?.pass_selected?.grupo_vehiculos))
+			setVehiculos(formatVehiculos(dataCatalogos?.pass_selected?.grupo_vehiculos))
 		}
 	},[isActualizarOpen, dataCatalogos?.pass_selected ])
 
@@ -336,7 +334,7 @@ const PaseUpdate = () =>{
 	};
 
   const handleRemove = (index: number) => {
-	setVehicles((prev) => prev.filter((_, i) => i !== index))
+	setVehiculos((prev) => prev.filter((_, i) => i !== index))
   }
 
   const handleRemoveEq = (index: number) => {
@@ -526,7 +524,7 @@ return (
 						<div>
 							<div className="flex items-center gap-x-10">
 							<span className="font-bold text-xl">Lista de Vehículos</span>
-							<VehiclePassModal title="Nuevo Vehiculo" vehicles={vehicles} setVehicles={setVehicles}>
+							<VehiclePassModal title="Nuevo Vehiculo" vehicles={vehicles} setVehiculos={setVehiculos} isAccesos={false}>
 								<button
 								type="button"
 								onClick={() => handleCheckboxChange("agregar-vehiculos")}
@@ -781,7 +779,7 @@ return (
 									<div>
 										<div className="flex items-center gap-x-10">
 										<span className="font-bold text-xl">Lista de Vehículos</span>
-										<VehiclePassModal title="Nuevo Vehiculo" vehicles={vehicles} setVehicles={setVehicles}>
+										<VehiclePassModal title="Nuevo Vehiculo" vehicles={vehicles} setVehiculos={setVehiculos} isAccesos={false}>
 											<button
 											type="button"
 											onClick={() => handleCheckboxChange("agregar-vehiculos")}

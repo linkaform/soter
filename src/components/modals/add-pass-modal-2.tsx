@@ -35,10 +35,9 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 	passData,
 	setIsSuccess,onClose
 }) => {
-	const [response, setResponse] = useState<any>(null);
-	const [error, setError] = useState<unknown>();
+	const [response] = useState<any>(null);
 	const [openGeneratedPass, setOpenGeneratedPass] = useState<boolean>(false);
-	const [responseformated, setResponseFormated] = useState<data_correo|null>(null);
+	const [responseformated] = useState<data_correo|null>(null);
 	const [radioSelected, setRadioSelected] = useState("");				
 	const [showRadioGroup, setShowRadioGroup] = useState(false);							
 	const{ updatePassMutation , isLoadingUpdate} = useUpdateAccessPass();
@@ -268,6 +267,7 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 					<div className="flex items-center gap-2 mt-4">
 						<Checkbox
 							checked={radioSelected!==""}
+							// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 							onCheckedChange={()=>{radioSelected!==""? actualizarEstados("", false) :  actualizarEstados("default", true)}}
 							id="avisoPriv"
 						/>

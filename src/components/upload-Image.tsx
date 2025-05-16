@@ -10,7 +10,6 @@ import Webcam from "react-webcam";
 import { base64ToFile, quitarAcentosYMinusculasYEspacios } from "@/lib/utils";
 import Image from "next/image";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "./ui/carousel";
-import { Card, CardContent } from "./ui/card";
 
 interface CalendarDaysProps {
   id: string;
