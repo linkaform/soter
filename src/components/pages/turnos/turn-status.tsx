@@ -64,7 +64,7 @@ const TurnStatus = () => {
 	<div>
       <StartShiftModal title="Confirmación">
         {shift?.guard?.status_turn === "Turno Cerrado" && (
-          <Button className="w-[520px] md:w-[300px] bg-blue-500 hover:bg-blue-600" disabled ={area==""?true:false ||  shift.booth_status.status=="No Disponible"}>
+          <Button className="w-[520px] md:w-[300px] bg-blue-500 hover:bg-blue-600" disabled ={area==""?true:false ||  shift?.booth_status?.status=="No Disponible"}>
           Iniciar turno
           </Button>
         
