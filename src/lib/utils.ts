@@ -93,16 +93,6 @@ export function capitalizeOnlyFirstLetterDelete_(text: string) {
   return textWithSpaces.charAt(0).toUpperCase() + textWithSpaces.slice(1).toLowerCase();
 }
 
-// export function sweetAlert(icon="success", title:string, text:string ,color=blue500){
-//   Swal.fire({
-//     icon: icon,
-//     title:title,
-//     text: text,
-//     confirmButtonColor:color,
-//   });
-// }
-
-
 export function replaceNullsInArrayDynamic(arr: any[]): any[] {
   return arr.map(obj => {
     const newObj: any = {};
@@ -116,7 +106,6 @@ export function replaceNullsInArrayDynamic(arr: any[]): any[] {
     return newObj;
   });
 }
-
 
 export function formatVehiculosToSimpleForm(arr: any[]) {
   return arr.map((item) => ({
@@ -210,7 +199,7 @@ export function errorMsj(data:any, title = "Error", type="warning"){
       }
       return {title: title, text:errores.join(", "), type}
   	}
-	  if (data.response.data.hasOwnProperty("json")){
+	  if (data.response.data.hasOwnProperty("json") && data.response?.status_code!== 202 && data.response?.status_code!== 201){
         const dataInner=data.response.data
         const errores=[]
         for(const err in dataInner.json){

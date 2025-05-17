@@ -33,7 +33,7 @@ const TurnStatus = () => {
   return (
     <div className="flex items-center flex-col md:flex-row justify-between mb-10 md:mb-5">
       <div className="flex mb-5 lg:mb-0">
-        <div className="flex space-x-10">
+        <div className="flex flex-col sm:flex-row justify-between sm:gap-10 sm:gap-y-10">
           <div>
             <p>Fecha:</p>
             <p className="mt-1">{formattedDate}</p>
@@ -45,16 +45,7 @@ const TurnStatus = () => {
          </div>
 
           <div>
-            {/* <p>Estatus del Turno:</p>
-            <p
-              className={
-                shift?.guard?.status_turn === "Turno Cerrado"
-                  ? "text-red-600"
-                  : "text-green-600"
-              }
-            >
-              {shift?.guard?.status_turn}
-            </p> */}
+       
             <p>Estatus del Turno:</p>
              <Badge
               className={`text-white text-md  ${
@@ -71,15 +62,21 @@ const TurnStatus = () => {
         </div>
       </div>
 	<div>
-	<StartShiftModal title="Confirmación">
-			{shift?.guard?.status_turn === "Turno Cerrado" && (
-				<Button className="w-[520px] md:w-[300px] bg-blue-500 hover:bg-blue-600" disabled ={area==""?true:false}>
-				Iniciar turno
-				</Button>
-				
-			)}
-		</StartShiftModal>
-
+      <StartShiftModal title="Confirmación">
+        {shift?.guard?.status_turn === "Turno Cerrado" && (
+          <Button className="w-[520px] md:w-[300px] bg-blue-500 hover:bg-blue-600" disabled ={area==""?true:false ||  shift.booth_status.status=="No Disponible"}>
+          Iniciar turno
+          </Button>
+        
+        )}
+      </StartShiftModal>
+        <>
+          {shift.booth_status.status=="No Disponible" ?
+            <div className="text-red-500 break-all ml-2">
+              * Puedes forzar el cierre de la caseta para poder iniciar turno.
+            </div>
+          :null}
+          </>
      	 <CloseShiftModal title="Confirmación">
 			{shift?.guard?.status_turn !== "Turno Cerrado" && (
 				<Button className="w-[520px] md:w-[300px] bg-red-600 hover:bg-red-700" disabled ={area==""?true:false}>

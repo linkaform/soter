@@ -82,7 +82,6 @@ export const useGetShift = (enableShift:boolean) => {
         setCheckin_id(checkin_id);
       }
       queryClient.invalidateQueries({ queryKey: ["getShift"] });
-
       queryClient.invalidateQueries({ queryKey: ["getGuardSupport"] });
       setArea(area)
       setLocation(location)
@@ -127,6 +126,35 @@ export const useGetShift = (enableShift:boolean) => {
     },
   });
 
+
+  const forceCloseShift = useMutation({
+    mutationFn: async ({ area, location , checkin_id}: { area: string; location: string, checkin_id:string }) => {
+      const response = await closeShift({ area, location, checkin_id });
+  
+      if (!response.success) {
+        throw new Error(
+          response.error?.msg?.msg || "Hubo un error al cerrar el turno"
+        );
+      }
+  
+      return response;
+    },
+    onMutate: () => {
+      setLoading(true);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["getShift"] });
+      setTurno(false)
+      toast.success("Turno cerrado correctamente.");
+    },
+    onError: (err) => {
+      toast.error(err.message || "Hubo un error al cerrar el turno.");
+    },
+    onSettled: () => {
+      setLoading(false);
+    },
+  });
+
   return {
     // Turno
     shift,
@@ -137,5 +165,6 @@ export const useGetShift = (enableShift:boolean) => {
     startShiftMutation,
     closeShiftMutation,
     refetch,
+    forceCloseShift
   };
 };

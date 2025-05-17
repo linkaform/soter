@@ -18,6 +18,7 @@ import { Checkbox } from "../ui/checkbox";
 import { Label } from "../ui/label";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { useUpdateAccessPass } from "@/hooks/useUpdatePass";
+import { toast } from "sonner";
 
 interface EntryPassModal2Props {
 	title: string;
@@ -41,19 +42,26 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 	const [radioSelected, setRadioSelected] = useState("");				
 	const [showRadioGroup, setShowRadioGroup] = useState(false);							
 	const{ updatePassMutation , isLoadingUpdate} = useUpdateAccessPass();
-
+	const [isSubmitted, setIsSubmitted] = useState(false);
 
 	const onSubmit = async () => {
-		updatePassMutation.mutate({access_pass:{
-			grupo_vehiculos: data?.grupo_vehiculos,
-			grupo_equipos: data.grupo_equipos,
-			status_pase: data.status_pase,
-			walkin_fotografia: data?.walkin_fotografia,
-			walkin_identificacion: data?.walkin_identificacion,
-			acepto_aviso_privacidad: data?.acepto_aviso_privacidad ? "Sí":"No",
-			acepto_aviso_datos_personales: radioSelected=="default" ? "": radioSelected,
-			conservar_datos_por: radioSelected
-		},id: data.folio, account_id: data.account_id})
+		setIsSubmitted(true);
+
+		if(radioSelected !=="default" && radioSelected!=="" ){
+			updatePassMutation.mutate({access_pass:{
+				grupo_vehiculos: data?.grupo_vehiculos,
+				grupo_equipos: data.grupo_equipos,
+				status_pase: data.status_pase,
+				walkin_fotografia: data?.walkin_fotografia,
+				walkin_identificacion: data?.walkin_identificacion,
+				acepto_aviso_privacidad: data?.acepto_aviso_privacidad ? "sí":"no",
+				acepto_aviso_datos_personales: radioSelected ? "sí":"no",
+				conservar_datos_por: radioSelected.toLocaleLowerCase()
+			},id: data.folio, account_id: data.account_id})
+		}else{
+			toast.error("Acepta el aviso de privacidad y selecciona una opcion para conservar tus datos personales")
+		}
+		
 		// try {
 		// 	setIsLoading(true);
 		// 	const apiResponse = await UpdatePase({ access_pass: {
@@ -284,7 +292,7 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 						</Label>
 					</div>
 					{showRadioGroup?
-						<div className="mt-3">
+						<div className="mt-3 mb-3">
 							<label className="block text-sm font-medium text-gray-700 mb-2">
 								Eliminar tus datos personales no eliminará los registros históricos donde tu nombre haya sido utilizado, 
 								como visitas realizadas a alguna planta o accesos autorizados previamente. Esta información se mantiene 
@@ -345,36 +353,42 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 						</RadioGroup>
 					</div>
 					:null}
-						
+					
 				
 				</div>
-				<div className="flex gap-2">
-					<DialogClose asChild >
-						<Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700" onClick={handleClose}>
-							Cancelar
-						</Button>
-					</DialogClose>
-					{ response?.success  ? ( 
-						<UpdatedPassModal
-							title="Pase de Entrada Completado "
-							description={"El pase ha sido completado con éxito, selecciona una de las siguientes opciones."}
-							openGeneratedPass={openGeneratedPass}
-							hasEmail={data?.email ? true: false}
-							hasTelefono={data?.telefono ? true: false}
-							setOpenGeneratedPass={setOpenGeneratedPass} 
-							qr={response?.response?.data?.json?.qr_pase[0].file_url}
-							dataPass={responseformated}
-							account_id={data?.account_id}
-							folio={response?.response?.data?.json?.id}
-							closePadre={handleClose}
-							passData={passData}
-							updateResponse={response}
-							/>
-					):null}
-					
-						<Button className="w-full bg-blue-500 hover:bg-blue-600 text-white" type="submit" onClick={onSubmit} disabled={isLoadingUpdate}>
-							{!isLoadingUpdate ? ("Actualizar pase"):(<><Loader2 className="animate-spin"/>Actualizando pase...</>)}
-						</Button>
+				<div className="flex flex-col gap-2">
+					<div>
+						{isSubmitted && (radioSelected=="default" || radioSelected == "" ) &&
+							<small className="text-red-500 ">* Acepta el aviso de privacidad y selecciona una opcion para la conservacion de tus datos personales</small>}
+					</div>
+					<div className="flex">
+						<DialogClose asChild >
+							<Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700" onClick={handleClose}>
+								Cancelar
+							</Button>
+						</DialogClose>
+						{ response?.success  ? ( 
+							<UpdatedPassModal
+								title="Pase de Entrada Completado "
+								description={"El pase ha sido completado con éxito, selecciona una de las siguientes opciones."}
+								openGeneratedPass={openGeneratedPass}
+								hasEmail={data?.email ? true: false}
+								hasTelefono={data?.telefono ? true: false}
+								setOpenGeneratedPass={setOpenGeneratedPass} 
+								qr={response?.response?.data?.json?.qr_pase[0].file_url}
+								dataPass={responseformated}
+								account_id={data?.account_id}
+								folio={response?.response?.data?.json?.id}
+								closePadre={handleClose}
+								passData={passData}
+								updateResponse={response}
+								/>
+						):null}
+						
+							<Button className="w-full bg-blue-500 hover:bg-blue-600 text-white" type="submit" onClick={onSubmit} disabled={isLoadingUpdate}>
+								{!isLoadingUpdate ? ("Actualizar pase"):(<><Loader2 className="animate-spin"/>Actualizando pase...</>)}
+							</Button>
+					</div>
 				</div>
 			</DialogContent>
 		</Dialog>

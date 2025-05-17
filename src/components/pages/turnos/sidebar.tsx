@@ -1,4 +1,5 @@
 import { ChangeBoothModal } from "@/components/modals/change-booth-modal";
+import { ForceCloseShift } from "@/components/modals/force-close-shift";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -118,6 +119,7 @@ const Sidebar = () => {
         </ChangeBoothModal>
       </div>
       <div className="flex  flex-col space-y-5 mb-10">
+     
         <div className="">
           <p>Estatus de la caseta:</p>
           <Badge
@@ -130,7 +132,7 @@ const Sidebar = () => {
             {shift?.booth_status?.status || "---"}
           </Badge>
         </div>
-
+       
         {shift?.booth_status?.status === "No Disponible" && (
           <>
             <div className="">
@@ -144,6 +146,14 @@ const Sidebar = () => {
               </div>
             </div>
           </>
+        )}
+         {shift?.booth_status?.status === "No Disponible" && (
+          <ForceCloseShift title="Confirmación" boothInfo={shift?.booth_status}>
+            <Button className="w-1/2 bg-red-500 hover:bg-red-600" >
+            Forzar cierre
+            </Button>
+            
+          </ForceCloseShift>
         )}
         {/* 
          <ForceExitModal title="Confirmación">
