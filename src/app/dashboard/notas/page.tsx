@@ -3,26 +3,26 @@
 import { ListaNotasTable } from '@/components/table/notas/lista-notas/table'
 import PageTitle from '@/components/page-title'
 import Stats from '@/components/pages/notas/StatsNotas'
-import { useEffect, useState } from 'react'
+import {  useState } from 'react'
 import { useShiftStore } from '@/store/useShiftStore'
 
 const NotasPage = () => {
   const { location, area } = useShiftStore()
-  const hasHydrated = useShiftStore.persist.hasHydrated()
-  const [isReady, setIsReady] = useState(false)
+  // const hasHydrated = useShiftStore.persist.hasHydrated()
+  // const [isReady, setIsReady] = useState(false)
   const [statusFilter, setStatusFilter] = useState<string>('')
   const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location)
   const [areaSeleccionada, setAreaSeleccionada] = useState(area)
 
-  useEffect(() => {
-    if (hasHydrated) {
-      setUbicacionSeleccionada(location)
-      setAreaSeleccionada(area)
-      setIsReady(true)
-    }
-  }, [hasHydrated, location, area])
+  // useEffect(() => {
+  //   if (hasHydrated) {
+  //     setUbicacionSeleccionada(location)
+  //     setAreaSeleccionada(area)
+  //     setIsReady(true)
+  //   }
+  // }, [hasHydrated, location, area])
 
-  if (!isReady) return null
+  // if (!isReady) return null
 
   return (
     <main className='mt-4 mx-4'>
