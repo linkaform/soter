@@ -17,7 +17,7 @@ import { Access_pass, enviar_pre_sms } from "@/hooks/useCreateAccessPass";
         location,
         enviar_pre_sms,
         option: "create_access_pass",
-        script_name: "pase_de_acceso_use_api.py",
+        script_name: "pase_de_acceso.py",
       };
     
       if(access_pass.telefono=="") payload.access_pass.telefono= access_pass.telefono
