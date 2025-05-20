@@ -477,7 +477,7 @@ const AccesosPage = () => {
 
 					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100 `} >
 						<div className="flex gap-6"><PackageOpen className="text-primary w-14 h-14"/>
-							<span className="flex items-center font-bold text-5xl"> {stats?.personas_dentro}</span>
+							<span className="flex items-center font-bold text-5xl"> {stats?.paquetes_recibidos}</span>
 						</div>
 						<div className="flex items-center space-x-0">
 							<div className="h-1 w-1/2 bg-cyan-100"></div>

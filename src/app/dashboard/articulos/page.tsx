@@ -17,11 +17,12 @@ import { AddPaqueteriaModal } from "@/components/modals/add-paqueteria";
 import { dateToString } from "@/lib/utils";
 import { toast } from "sonner";
 import ChangeLocation from "@/components/changeLocation";
+import { useGetStats } from "@/hooks/useGetStats";
 
 const ArticulosPage = () => {
 	// const [stateArticle, setStateArticle] = useState("pendiente");
 	
-	const {location} = useShiftStore()
+	const {location, area} = useShiftStore()
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
 	const [areaSeleccionada, setAreaSeleccionada] = useState("todas")
 
@@ -31,7 +32,8 @@ const ArticulosPage = () => {
 	const [dates, setDates] = useState<string[]>([])
 	const [dateFilter, setDateFilter] = useState<string>("this_month")
 
-	const { listArticulosPerdidos, isLoadingListArticulosPerdidos , stats} = useArticulosPerdidos(ubicacionSeleccionada,  areaSeleccionada == "todas" ? "": areaSeleccionada, "", true, dates[0], dates[1], dateFilter);
+	const { data: stats } = useGetStats(true,location, area, 'Articulos')
+	const { listArticulosPerdidos, isLoadingListArticulosPerdidos} = useArticulosPerdidos(ubicacionSeleccionada,  areaSeleccionada == "todas" ? "": areaSeleccionada, "", true, dates[0], dates[1], dateFilter);
 	const { listArticulosCon, isLoadingListArticulosCon} = useArticulosConcesionados( true, dates[0], dates[1], dateFilter);
 	const { listPaqueteria, isLoadingListPaqueteria} = usePaqueteria("", "", "guardado", true, dates[0], dates[1], dateFilter);
 	const { tab, setTab } = useShiftStore()
@@ -146,7 +148,7 @@ const ArticulosPage = () => {
 						<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
 						selectedTab== "Paqueteria" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => handleTabChange("Paqueteria","")}>
 							<div className="flex gap-6"><Package className="text-primary w-10 h-10"/>
-								<span className="flex items-center font-bold text-4xl"> {stats?.articulos_perdidos}</span>
+								<span className="flex items-center font-bold text-4xl"> {stats?.paquetes_recibidos}</span>
 							</div>
 							<div className="flex items-center space-x-0">
 								<div className="h-1 w-1/2 bg-cyan-100"></div>
