@@ -5,7 +5,7 @@ import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { LockerTable } from "@/components/table/bitacoras/locker/table";
 import PageTitle from "@/components/page-title";
 import BitacorasTable from "@/components/table/bitacoras/table";
-import { Home, Users, Car, DoorClosed, Computer } from "lucide-react";
+import { Wrench, CarFront, UsersRound, Sun, DoorOpen } from "lucide-react";
 import { useShiftStore } from "@/store/useShiftStore";
 import VehiculosTable from "@/components/table/bitacoras/vehiculos/table";
 import EquiposTable from "@/components/table/bitacoras/equipos/table";
@@ -171,7 +171,7 @@ return (
 						dateFilter== "today" && selectedTab === 'Personal' &&  selectedOption.length==0 ? 'bg-blue-100' : 'hover:bg-gray-100'}`} 
 						onClick={() => {handleTabChange("Personal",[], "today");}}>
 						<div className="flex gap-6">
-							<Home className="text-primary w-10 h-10" />
+							<Sun className="text-primary w-10 h-10" />
 							<span className="flex items-center font-bold text-4xl">
 							{stats?.visitas_en_dia}
 							</span>
@@ -186,7 +186,7 @@ return (
 					<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
 						selectedOption[0] === 'entrada'&& dateFilter !== "today" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => {handleTabChange("Personal",["entrada"], "this_month");}}>
 						<div className="flex gap-6">
-							<Users className="text-primary w-10 h-10" />
+							<UsersRound className="text-primary w-10 h-10" />
 							<span className="flex items-center font-bold text-4xl">
 							{stats?.personas_dentro}
 							</span>
@@ -203,7 +203,7 @@ return (
 						}`} 
 						onClick={() => handleTabChange("Vehiculos", [])}>
 						<div className="flex gap-6">
-							<Car className="text-primary w-10 h-10" />
+							<CarFront className="text-primary w-10 h-10" />
 							<span className="flex items-center font-bold text-4xl">
 							{stats?.total_vehiculos_dentro}
 							</span>
@@ -220,7 +220,7 @@ return (
 						}`} 
 						onClick={() => handleTabChange("Equipos",[])} >
 						<div className="flex gap-6">
-							<Computer className="text-primary w-10 h-10" />
+							<Wrench className="text-primary w-10 h-10" />
 							<span className="flex items-center font-bold text-4xl">
 							{stats?.total_equipos_dentro}
 							</span>
@@ -235,7 +235,7 @@ return (
 					<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
 						selectedOption[0] === 'salida' ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => handleTabChange("Personal", ["salida"])}>
 						<div className="flex gap-6">
-							<DoorClosed className="text-primary w-10 h-10" />
+							<DoorOpen className="text-primary w-10 h-10" />
 							<span className="flex items-center font-bold text-4xl">
 							{stats?.salidas_registradas}
 							</span>

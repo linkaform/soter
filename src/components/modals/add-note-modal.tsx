@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import LoadImage from '../upload-Image'
 import LoadFile from '../upload-file'
 import { Input } from '../ui/input'
@@ -62,6 +62,11 @@ export const AddNoteModal: React.FC<AddNoteModalProps> = ({
       description: '',
     },
   })
+
+  useEffect(()=>{
+    setEvidencia([])
+    setDocumento([])
+  }, [])
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     const formatData = {

@@ -7,21 +7,20 @@ import { Button } from "@/components/ui/button";
 import { ActivePassesModal } from "@/components/modals/active-passes-modal";
 import {
 	ArrowRight,
-	Car,
+  CarFront,
   DoorOpen,
-  DoorOpenIcon,
   Eraser,
   FileSymlink,
-  HomeIcon,
-  Laptop,
   List,
   LogIn,
   Menu,
+  PackageOpen,
   Plus,
   Scan,
   Search,
-  User,
-  Users2Icon,
+  Sun,
+  UsersRound,
+  Wrench,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { ComentariosAccesosTable } from "@/components/table/accesos/comentarios/table";
@@ -53,8 +52,8 @@ import { UpdatePassModal } from "@/components/modals/complete-pass-accesos";
 
 const AccesosPage = () => {
   const { isAuth } = useAuthStore()
-  const { area, location, setLoading , turno, setArea, setLocation} = useShiftStore();
   const { shift, isLoading:loadingShift } = useGetShift(true);
+  const { area, location, setLoading , turno, setArea, setLocation} = useShiftStore();
   const { passCode, setPassCode, clearPassCode, selectedEquipos, setSelectedEquipos, setSelectedVehiculos, selectedVehiculos, setTipoMovimiento, tipoMovimiento} = useAccessStore();
   const { isLoading, loading, searchPass } = useSearchPass(false);
   const [inputValue, setInputValue] = useState("");
@@ -69,9 +68,10 @@ const AccesosPage = () => {
   useEffect(() => {
 	fetchLocations();
 	if (location) {
+		console.log("ubcaicion",location)
 	  fetchAreas(location);
 	}
-  }, []);
+  }, [shift]);
 
   useEffect(() => {
 	if(searchPass){
@@ -443,7 +443,7 @@ const AccesosPage = () => {
 				</div>
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-5">
 					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100`}>
-						<div className="flex gap-6"><HomeIcon className="text-primary w-14 h-14" />
+						<div className="flex gap-6"><Sun className="text-primary w-14 h-14" />
 							<span className="flex items-center font-bold text-5xl"> {stats?.visitas_en_dia}</span>
 						</div>
 						<div className="flex items-center space-x-0">
@@ -454,7 +454,7 @@ const AccesosPage = () => {
 					</div>
 
 					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100 `}>
-						<div className="flex gap-6"><Users2Icon className="text-primary w-14 h-14"/>
+						<div className="flex gap-6"><UsersRound className="text-primary w-14 h-14"/>
 							<span className="flex items-center font-bold text-5xl"> {stats?.personas_dentro}</span>
 						</div>
 						<div className="flex items-center space-x-0">
@@ -465,7 +465,7 @@ const AccesosPage = () => {
 					</div>
 
 					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100 `} >
-						<div className="flex gap-6"><DoorOpenIcon className="text-primary w-14 h-14"/>
+						<div className="flex gap-6"><DoorOpen className="text-primary w-14 h-14"/>
 							<span className="flex items-center font-bold text-5xl"> {stats?.salidas_registradas}</span>
 						</div>
 						<div className="flex items-center space-x-0">
@@ -476,18 +476,18 @@ const AccesosPage = () => {
 					</div>
 
 					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100 `} >
-						<div className="flex gap-6"><User className="text-primary w-14 h-14"/>
-							<span className="flex items-center font-bold text-5xl"> {stats?.personal_dentro}</span>
+						<div className="flex gap-6"><PackageOpen className="text-primary w-14 h-14"/>
+							<span className="flex items-center font-bold text-5xl"> {stats?.personas_dentro}</span>
 						</div>
 						<div className="flex items-center space-x-0">
 							<div className="h-1 w-1/2 bg-cyan-100"></div>
 							<div className="h-1 w-1/2 bg-blue-500"></div>
 						</div>
-						<span className="text-lg">Personal Dentro</span>
+						<span className="text-lg">Paquetes Recibidos</span>
 					</div>
 
 					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100 `} >
-						<div className="flex gap-6"><Car className="text-primary w-14 h-14"/>
+						<div className="flex gap-6"><CarFront className="text-primary w-14 h-14"/>
 							<span className="flex items-center font-bold text-5xl"> {stats?.total_vehiculos_dentro}</span>
 						</div>
 						<div className="flex items-center space-x-0">
@@ -498,7 +498,7 @@ const AccesosPage = () => {
 					</div>
 
 					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100 `} >
-						<div className="flex gap-6"><Laptop className="text-primary w-14 h-14"/>
+						<div className="flex gap-6"><Wrench className="text-primary w-14 h-14"/>
 							<span className="flex items-center font-bold text-5xl"> {stats?.total_equipos_dentro}</span>
 						</div>
 						<div className="flex items-center space-x-0">

@@ -30,7 +30,7 @@ interface getCatalogoPasesArea {
   export const getCatalogoPasesLocation = async () => {
     const payload = {
         option: "catalogos_pase_location",
-        script_name: "pase_de_acceso_use_api.py",
+        script_name: "pase_de_acceso.py",
     };
   
     const userJwt = localStorage.getItem("access_token"); 

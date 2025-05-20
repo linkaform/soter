@@ -441,3 +441,12 @@ export function getCatalogVehiculos({ tipo = "", marca = "" } = {}) {
 
   return [];
 }
+
+export function isTokenExpired(token:string) {
+  if (!token) return true;
+
+  const payload = JSON.parse(atob(token.split('.')[1]));
+  const currentTime = Math.floor(Date.now() / 1000); // tiempo actual en segundos
+
+  return payload.exp < currentTime;
+}

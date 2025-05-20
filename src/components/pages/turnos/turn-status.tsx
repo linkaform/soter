@@ -70,13 +70,7 @@ const TurnStatus = () => {
         
         )}
       </StartShiftModal>
-        <>
-          {shift.booth_status.status=="No Disponible" ?
-            <div className="text-red-500 break-all ml-2">
-              * Puedes forzar el cierre de la caseta para poder iniciar turno.
-            </div>
-          :null}
-          </>
+       
      	 <CloseShiftModal title="Confirmación">
 			{shift?.guard?.status_turn !== "Turno Cerrado" && (
 				<Button className="w-[520px] md:w-[300px] bg-red-600 hover:bg-red-700" disabled ={area==""?true:false}>
@@ -85,6 +79,14 @@ const TurnStatus = () => {
 				
 			)}
       	</CloseShiftModal>
+
+        <>
+          {shift.booth_status.status=="No Disponible" && shift?.guard?.status_turn === "Turno Cerrado" ?
+            <div className="text-red-500 break-all ml-2">
+              * Puedes forzar el cierre de la caseta para poder iniciar turno.
+            </div>
+          :null}
+          </>
 		{area==""?
 			<div className="text-red-500">
 				Selecciona una caseta para iniciar turno

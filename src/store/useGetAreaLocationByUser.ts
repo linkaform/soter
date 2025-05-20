@@ -1,5 +1,6 @@
 import { getCatalogoPasesArea, getCatalogoPasesLocation } from "@/lib/get-catalogos-pase-area-location";
 import { errorMsj } from "@/lib/utils";
+import { toast } from "sonner";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
@@ -34,9 +35,10 @@ export const useAreasLocationStore = create(
             const fetched = await getCatalogoPasesArea({ location });
             const error = errorMsj(fetched);
             if (error) throw new Error(error.text);
-            set({ areas: fetched.response?.data.areas_by_location || [] });
+            set({ areas:fetched? fetched?.response?.data.areas_by_location : [] });
           } catch (err) {
-            console.error("Error cargando áreas:", err);
+            toast.error("Ocurrio un error al cargar las areas: " + err)
+            // console.error("Error cargando áreas:", err);
           } finally {
             set({ loading: false });
           }
@@ -49,9 +51,10 @@ export const useAreasLocationStore = create(
           set({ loading: true });
           try {
             const fetched = await getCatalogoPasesLocation();
-            set({ locations: fetched.response?.data.ubicaciones_user || [] });
+            set({ locations: fetched? fetched?.response?.data.ubicaciones_user : [] });
           } catch (err) {
-            console.error("Error cargando ubicaciones:", err);
+            toast.error("Ocurrio un error al cargar las ubicaciones: " + err)
+            // console.error("Error cargando ubicaciones:", err);
           } finally {
             set({ loading: false });
           }

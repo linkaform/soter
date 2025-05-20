@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getMyPases } from "@/lib/get-my-pases";
 import { useQuery } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 export const useGetMyPases = () => {
   
@@ -10,7 +11,11 @@ export const useGetMyPases = () => {
     queryKey: ["getMyPases"], 
     queryFn: async () => {
         const data = await getMyPases({ tab }); 
-        return data.response?.data; 
+        if(data?.error){
+          console.log("Error: ", data.error)
+          toast.error("Error al obtener pases")
+        }
+        return data.response?.data || [];  
     },
   });
 

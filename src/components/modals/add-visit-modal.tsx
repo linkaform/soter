@@ -78,7 +78,8 @@ export const AddVisitModal: React.FC<Props> = ({ title, children }) => {
   const [openModal, setOpenModal] = useState(false);
   const [fotografia, setFotografia] = useState<Imagen[]>([]);
   const [identificacion, setIdentificacion] = useState<Imagen[]>([]);
-
+  const [fotoError, setFotoError] = useState(false);
+  const [idError, setIdError] = useState(false);
   const { assets, registerNewVisit } = useSearchPass(openModal);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -96,6 +97,24 @@ export const AddVisitModal: React.FC<Props> = ({ title, children }) => {
   });
 
   function onSubmit(data: z.infer<typeof formSchema>) {
+      let valid = true;
+
+      if (fotografia.length === 0) {
+        setFotoError(true);
+        valid = false;
+      } else {
+        setFotoError(false);
+      }
+    
+      if (identificacion.length === 0) {
+        setIdError(true);
+        valid = false;
+      } else {
+        setIdError(false);
+      }
+    
+      if (!valid) return;
+
       const access_pass = {
         nombre: data.nombre,
         empresa: data.empresa,
@@ -151,7 +170,8 @@ export const AddVisitModal: React.FC<Props> = ({ title, children }) => {
 								imgArray={fotografia}
 								showArray={false}
 								limit={10}/>
-
+                {fotografia.length<0 && (
+                <div className="text-red-500 text-sm">Faltan campos por llenar</div>)}
                 <LoadImage
 								id="identificacion" 
 								titulo={"Identificación"} 
@@ -161,7 +181,8 @@ export const AddVisitModal: React.FC<Props> = ({ title, children }) => {
 								imgArray={identificacion}
 								showArray={false}
 								limit={10}/>
-
+                {identificacion.length<0 && (
+                <div className="text-red-500 text-sm">Faltan campos por llenar</div>)}
             <FormField
               control={form.control}
               name="empresa"
