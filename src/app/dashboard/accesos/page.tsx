@@ -64,7 +64,7 @@ const AccesosPage = () => {
   const { fetchAreas, fetchLocations, loading:loadingLocationArea} = useAreasLocationStore();
   const [equipos, setEquipos]= useState<Equipo[]>([])
   const [vehiculos, setVehiculos]= useState<Vehiculo[]>([])
-
+console.log("mary")
   useEffect(() => {
 	fetchLocations();
 	if (location) {
