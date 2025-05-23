@@ -29,15 +29,18 @@ const BitacorasPage = () => {
 	const [date2, setDate2] = useState<Date|"">("")
 
 	const [dates, setDates] = useState<string[]>([])
-	const [dateFilter, setDateFilter] = useState<string>("")
+	const { tab, setTab, filter, setFilter} = useShiftStore()
+	const [dateFilter, setDateFilter] = useState<string>(filter)
 	const { listBitacoras,isLoadingListBitacoras} = useBitacoras(ubicacionSeleccionada, areaSeleccionada == "todas" ? "": areaSeleccionada, selectedOption, ubicacionSeleccionada&&areaSeleccionada?true:false, dates[0], dates[1], dateFilter)
 	const { data: stats } = useGetStats(ubicacionSeleccionada&& areaSeleccionada?true:false,ubicacionSeleccionada, areaSeleccionada, 'Bitacoras')
-	const { tab, setTab } = useShiftStore()
 	const [selectedTab, setSelectedTab] = useState<string>(tab ? tab: "Personal"); 
 
 	useEffect(()=>{
 		if(tab){
 			setTab("")
+		}
+		if(filter){
+			setFilter("")
 		}
 		console.log("ubciaciones",location, area)
 		setUbicacionSeleccionada(location)
@@ -201,7 +204,7 @@ return (
 					<div  className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
 						selectedTab === 'Vehiculos' ? 'bg-blue-100' : 'hover:bg-gray-100'
 						}`} 
-						onClick={() => handleTabChange("Vehiculos", [])}>
+						onClick={() => handleTabChange("Vehiculos", [], "today")}>
 						<div className="flex gap-6">
 							<CarFront className="text-primary w-10 h-10" />
 							<span className="flex items-center font-bold text-4xl">

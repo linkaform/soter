@@ -137,8 +137,8 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
                             ref={webcamRef}
                             audio={false} 
                             height={10} 
-                            width={220} 
-                            className="rounded" 
+                            width={200} 
+                            className="rounded-lg" 
                             screenshotFormat="image/jpeg" 
                             mirrored={true} 
                             videoConstraints={videoConstraints}
@@ -149,18 +149,18 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
                     ):null}
                         {imgArray?.length>0 ? (
                             <>
-                                <div className="w-full flex justify-center ">
+                                <div className="w-full flex justify-center">
                                     <Carousel className="w-52">
                                     <CarouselContent>
                                         {imgArray.map((a:Imagen, index:number) => (
                                         <CarouselItem key={index}>
                                             <div className="p-1">
                                                 <Image
-                                                    height={20} 
-                                                    width={200} 
+                                                    height={160} 
+                                                    width={160} 
                                                     src= {a.file_url || "/nouser.svg"}
                                                     alt="Imagen"
-                                                    className="w-52 h-44 object-contain rounded-lg" 
+                                                    className="w-full h-40 object-cover rounded-lg" 
                                                 />
                                             </div>
                                     </CarouselItem>
@@ -176,6 +176,7 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
                     {showArray && imgArray.length<limit ?(
                         <>
                         <Input 
+                        className="mt-2"
                         type="file" 
                         accept="image/*"
                         onChange={handleFileChange}

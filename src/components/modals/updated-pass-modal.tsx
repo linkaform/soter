@@ -62,7 +62,8 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 	const [enablePdf, setEnablePdf] = useState(false)
 	const { data: responsePdf, isLoading: loadingPdf} = useGetPdf(account_id, folio, enablePdf);
 	const downloadUrl=responsePdf?.response?.data?.data?.download_url
-	const downloadImgUrl = updateResponse?.response?.data?.json?.pdf_to_img?.[0].file_url
+	console.log("updateresponse",updateResponse)
+	const downloadImgUrl = updateResponse?.json?.pdf_to_img?.[0].file_url
 	
 	const handleClickGoogleButton = () => {
 		const url = passData?.pass_selected?.google_wallet_pass_url;

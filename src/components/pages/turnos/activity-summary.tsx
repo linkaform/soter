@@ -11,7 +11,7 @@ import { TriangleAlert } from "lucide-react";
 
 const ActivitySummary = (booth_stats:any) => {
   const stats= booth_stats.booth_stats
-  const { setTab } = useShiftStore();
+  const { setTab, setFilter } = useShiftStore();
   const items = [
     {
       icon: <Guest />,
@@ -57,6 +57,12 @@ const ActivitySummary = (booth_stats:any) => {
     },
   ];
 
+
+  function setTabAndFilter(tab:string, filter:string){
+    setTab(tab)
+    setFilter(filter)
+  }
+
   return (
   <div className="w-full">
     <p className="font-bold text-2xl mb-5">Resumen de actividad</p>
@@ -65,7 +71,7 @@ const ActivitySummary = (booth_stats:any) => {
       {items.map((item, index) => (
         <Link key={index} href={item.link}>
           <div
-            onClick={() => setTab(item.tab)}
+            onClick={() => setTabAndFilter(item.tab, "today")}
             className="flex items-center space-x-4 rounded-md p-4 border cursor-pointer transition duration-100 hover:bg-gray-100 overflow-hidden"
           >
             <div className="bg-gray-100 p-3 rounded-lg ">{item.icon}</div>

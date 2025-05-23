@@ -6,7 +6,6 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ActivePassesModal } from "@/components/modals/active-passes-modal";
 import {
-	ArrowRight,
   CarFront,
   DoorOpen,
   Eraser,
@@ -49,6 +48,7 @@ import Swal from "sweetalert2";
 import { useAreasLocationStore } from "@/store/useGetAreaLocationByUser";
 import { Equipo, Vehiculo } from "@/lib/update-pass-full";
 import { UpdatePassModal } from "@/components/modals/complete-pass-accesos";
+import Image from "next/image";
 
 const AccesosPage = () => {
   const { isAuth } = useAuthStore()
@@ -64,12 +64,11 @@ const AccesosPage = () => {
   const { fetchAreas, fetchLocations, loading:loadingLocationArea} = useAreasLocationStore();
   const [equipos, setEquipos]= useState<Equipo[]>([])
   const [vehiculos, setVehiculos]= useState<Vehiculo[]>([])
-console.log("mary")
+
   useEffect(() => {
 	fetchLocations();
 	if (location) {
-		console.log("ubcaicion",location)
-	  fetchAreas(location);
+	  	fetchAreas(location);
 	}
   }, [shift]);
 
@@ -248,24 +247,29 @@ console.log("mary")
   }
   if (!turno && isAuth) {
 	return (
-		<>
-		<div className="flex justify-center items-center h-screen">
+		<div className="flex justify-center items-center h-screen overflow-hidden">
 		  <div className="flex items-center flex-col gap-2">
-			<div className="text-2xl font-bold">Inicia turno para habilitar accesos...</div>
+			  <Image
+                src="/guardia1.png"
+                alt="Next.js img"
+                width={300}
+                height={300}
+                priority
+              />
+
+			<div className="text-2xl font-bold">Inicia turno para comenzar...</div>
+			<p className="text-gray-500">Activa tus funciones registrando el inicio de turno.</p>
 			<Link href="/dashboard/turnos">
 			<Button
-			  className="px-3 py-1 border border-blue-500 text-blue-500 bg-transparent hover:bg-blue-100 rounded-md text-sm font-medium hover:text-blue-500"
-			  variant="ghost"
-			  
+			  className="w-40 h-9 mt-5 px-3 border border-blue-500 bg-blue-500 rounded-md text-sm text-white font-medium hover:bg-blue-600"
+			  variant="default"
 			>
-			  Ir a turnos
-			<ArrowRight className="w-4 h-4" />
+			  Turnos
+			{/* <ArrowRight className="w-4 h-4" /> */}
 			</Button>
 			</Link>
 		  </div>
 		</div>
-	  </>
-	  
 		)
   }
 
