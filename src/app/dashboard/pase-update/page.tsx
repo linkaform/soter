@@ -137,6 +137,66 @@ const PaseUpdate = () =>{
 		}
 	}
 
+	const handleClickAppleButton = async () => {
+		const record_id = dataCatalogos?.pass_selected?._id;
+		const userJwt = localStorage.getItem("access_token");
+
+		toast.loading("Obteniendo tu pase...", {
+			style: {
+				background: "#000",
+				color: "#fff",
+				border: 'none'
+			},
+		});
+
+		try {
+			const response = await fetch(`https://app.linkaform.com/api/infosync/scripts/run/`, {
+				method: 'POST',
+				body: JSON.stringify({
+					script_name: 'create_pass_apple_wallet.py',
+					record_id
+				}),
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': 'Bearer ' + userJwt
+				},
+			});
+			const data = await response.json();
+			const file_url = data?.response?.file_url;
+
+			toast.dismiss();
+			toast.success("Pase obtenido correctamente.", {
+				style: {
+					background: "#000",
+					color: "#fff",
+					border: 'none'
+				},
+			});
+
+			const fileResponse = await fetch(file_url);
+			const blob = await fileResponse.blob();
+			const pkpassBlob = new Blob([blob], { type: 'application/vnd.apple.pkpass' });
+			const url = window.URL.createObjectURL(pkpassBlob);
+
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = 'pass.pkpass';
+			document.body.appendChild(a);
+			a.click();
+			a.remove();
+			window.URL.revokeObjectURL(url);
+		} catch (error) {
+			toast.dismiss();
+			toast.error(`${error}` || "Hubo un error al obtener su pase.", {
+				style: {
+					background: "#000",
+					color: "#fff",
+					border: 'none'
+				},
+			});
+		}
+	}
+
 	useEffect(()=>{
 		if(dataCatalogos){
 			setEquipos(dataCatalogos.pass_selected?.grupo_equipos ??[])
@@ -768,11 +828,15 @@ return (
 						</>}
 					</div>
 
+					<div className="flex flex-col lg:flex-row gap-6">
+						<button type="button" onClick={handleClickGoogleButton}>
+							<Image src="/esES_add_to_google_wallet_add-wallet-badge.png" alt="Add to Google Wallet" width={150} height={150} className="mt-2" />
+						</button>
 
-					<button type="button" onClick={handleClickGoogleButton}>
-						<Image src="/esES_add_to_google_wallet_wallet-button.svg" alt="Add to Google Wallet" width={200} height={200} className="mt-2" />
-					</button>
-
+						<button type="button" onClick={handleClickAppleButton}>
+							<Image src="/ESMX_Add_to_Apple_Wallet_RGB_101821.svg" alt="Add to Apple Wallet" width={150} height={150} className="mt-2" />
+						</button>
+					</div>
 				
 					<div className="flex flex-col gap-2">
 						<Button className="w-40 m-0 bg-yellow-500 hover:bg-yellow-600" type="submit" onClick={()=>{setEnablePdf(true)}} disabled={loadingPdf}>
