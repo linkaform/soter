@@ -233,7 +233,7 @@ return (
 				<p className="text-center w-1/2 md:w-full">{ !hasEmail && !hasTelefono ? "El pase ha sido completado con éxito.":description}</p>
 			</div>
 			<Form {...form}>
-			<form className="space-y-8"> 
+			<form className="space-y-4"> 
 					<div className="flex flex-col justify-start items-center gap-3">
 						<div className="flex gap-2 flex-col">
 							<div className="flex flex-col gap-2 flex-wrap items-center justify-center">
@@ -287,14 +287,6 @@ return (
 										</div>
 										</Button>
 								):null}
-
-								<button type="button" onClick={handleClickGoogleButton}>
-									<Image src="/esES_add_to_google_wallet_add-wallet-badge.png" alt="Add to Google Wallet" width={150} height={150} className="mt-2" />
-								</button>
-
-								<button type="button" onClick={handleClickAppleButton}>
-									<Image src="/ESMX_Add_to_Apple_Wallet_RGB_101821.svg" alt="Add to Apple Wallet" width={150} height={150} className="mt-2" />
-								</button>
 							</div>
 						</div>
 					</div>
@@ -310,6 +302,14 @@ return (
 								height={150}
 								className="w-64 h-64 object-contain bg-gray-200 rounded-lg" 
 								/>
+							</div>
+							<div className="flex flex-col gap-2 lg:flex-row lg:gap-6 justify-center items-center">
+								<button type="button" onClick={handleClickGoogleButton}>
+									<Image src="/esES_add_to_google_wallet_add-wallet-badge.png" alt="Add to Google Wallet" width={150} height={150} className="mt-2" />
+								</button>
+								<button type="button" onClick={handleClickAppleButton}>
+									<Image src="/ESMX_Add_to_Apple_Wallet_RGB_101821.svg" alt="Add to Apple Wallet" width={150} height={150} className="mt-2" />
+								</button>
 							</div>
 						</div>
 						</>
