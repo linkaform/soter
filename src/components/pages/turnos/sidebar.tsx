@@ -60,7 +60,7 @@ const Sidebar = () => {
 
 
           <p className="font-bold text-2xl">{userNameSoter}</p>
-          <p className="">{shift?.guard?.position}</p>
+          <p className="font-bold">{shift?.guard?.position}</p>
           <p className="">{userEmailSoter}</p>
         </div>
  
@@ -81,31 +81,31 @@ const Sidebar = () => {
         <div className="flex">
           <div className="w-full">
             <p>Ubicación:</p>
-            <p className="">{shift?.location?.name || "---"}</p>{" "}
+            <p className="font-bold">{shift?.location?.name || "---"}</p>{" "}
           </div>
 
           <div className="w-full">
             <p>Ciudad:</p>
-            <p className="">{shift?.location?.city || "---"}</p>
+            <p className="font-bold">{shift?.location?.city || "---"}</p>
           </div>
         </div>
 
         <div className="flex">
           <div className="w-full">
             <p>Estado:</p>
-            <p className="">{shift?.location?.state || "---"}</p>
+            <p className="font-bold">{shift?.location?.state || "---"}</p>
           </div>
 
           <div className="w-full">
             <p>Dirección:</p>
-            <p className="">{shift?.location?.address || "---"}</p>
+            <p className="font-bold">{shift?.location?.address || "---"}</p>
           </div>
         </div>
 
         <div className="flex flex-col">
           <div className="w-full">
             <p>Caseta:</p>
-            <p className="">{shift?.location?.area || "---"}</p>
+            <p className="font-bold">{shift?.location?.area || "---"}</p>
           </div>
         </div>
 

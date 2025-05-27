@@ -1,14 +1,16 @@
 import { AddBadgeModal } from "@/components/modals/add-badge-modal";
-import { AddEquipmentModal } from "@/components/modals/add-equipment-modal";
-import { AddVehicleModal } from "@/components/modals/add-vehicle-modal";
+import { EqipmentLocalPassModal } from "@/components/modals/add-local-equipo";
+import { VehiclePassModal } from "@/components/modals/add-local-vehicule";
 import { DoOutModal } from "@/components/modals/do-out-modal";
 import { ReturnGafeteModal } from "@/components/modals/return-gafete-modal";
 import { ViewListBitacoraModal } from "@/components/modals/view-bitacora";
 import { useGetListBitacora } from "@/hooks/useGetListBitacora";
+import { Equipo, Vehiculo } from "@/lib/update-pass";
 import {
 		ColumnDef,  
 	} from "@tanstack/react-table";
-import { Eye, Forward, IdCard} from "lucide-react";
+import { Car, Eye, Forward, Hammer, IdCard} from "lucide-react";
+import { useState } from "react";
 
 export interface Bitacora_record {
 	equipos: Equipo_bitacora[] 
@@ -80,6 +82,8 @@ export interface Areas_bitacora {
 
 const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
 	const {refetch} = useGetListBitacora("", "",[], false, "", "","this_month");
+	const [vehiculos, setVehiculos] = useState<Vehiculo[]>([]);
+	const [equipos, setEquipos] = useState<Equipo[]>([]);
 	const bitacora = row.original;
 	bitacora.formated_visita = bitacora.visita_a.map((item: VisitaA) => item.nombre).join(', ');
 	bitacora.formated_comentarios = bitacora.comentarios.map((item: Comentarios_bitacoras) => item.comentario).join(', ');
@@ -94,9 +98,15 @@ const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
 					</div>
 			</ViewListBitacoraModal>
 			
-			<AddVehicleModal title="Agregar vehiculo" id={bitacora._id} refetchTable={refetch} />
-					
-			<AddEquipmentModal title="Agregar equipo" id={bitacora._id} refetchTable={refetch}/>
+			{ bitacora.status_visita.toLowerCase() !="salida" &&
+			<VehiclePassModal title={"Agregar Vehiculo"} vehicles={vehiculos} setVehiculos={setVehiculos} isAccesos={false} id={bitacora._id}>
+				<Car></Car>
+			</VehiclePassModal>}
+
+			{ bitacora.status_visita.toLowerCase() !="salida" &&	
+			<EqipmentLocalPassModal title="Agregar equipo" id={bitacora._id} equipos={equipos} setEquipos={setEquipos} isAccesos={false}> 
+				<Hammer></Hammer>
+			</EqipmentLocalPassModal>} 
 					
 
 		{ bitacora.status_visita.toLowerCase() =="salida" && bitacora.status_gafete.toLowerCase()=="asignado" ? (

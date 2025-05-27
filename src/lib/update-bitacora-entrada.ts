@@ -10,8 +10,8 @@ export type Access_pass_update_full = {
 
 }
   interface updatePase {
-    equipo? : Equipo_bitacora[]| Equipo[]| null,
-    vehiculo? : Vehiculo_bitacora[]| Vehiculo[]| null,
+    equipo? : Equipo| null,
+    vehiculo? :  Vehiculo| null,
     id: string,
   }
   
@@ -19,8 +19,8 @@ export type Access_pass_update_full = {
     option: string;
     script_name: string;
     record_id: string;
-    equipo?: Equipo_bitacora[]| Equipo[]| null;  
-    vehiculo?: Vehiculo_bitacora[]| Vehiculo[]| null; 
+    equipo?: Equipo| null;  
+    vehiculo?: Vehiculo| null; 
   }
 
   export const UpdateBitacora = async ({
@@ -30,7 +30,7 @@ export type Access_pass_update_full = {
   }: updatePase) => {
     if(equipo || vehiculo){
     const payload : Payload = {
-        option: "update_bitacora_entrada_many",
+        option: "update_bitacora_entrada",
         script_name:"script_turnos.py",
         record_id: id,
     };

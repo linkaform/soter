@@ -38,7 +38,6 @@ export const useAreasLocationStore = create(
             set({ areas:fetched? fetched?.response?.data.areas_by_location : [] });
           } catch (err) {
             toast.error("Ocurrio un error al cargar las areas: " + err)
-            // console.error("Error cargando áreas:", err);
           } finally {
             set({ loading: false });
           }
@@ -54,7 +53,6 @@ export const useAreasLocationStore = create(
             set({ locations: fetched? fetched?.response?.data.ubicaciones_user : [] });
           } catch (err) {
             toast.error("Ocurrio un error al cargar las ubicaciones: " + err)
-            // console.error("Error cargando ubicaciones:", err);
           } finally {
             set({ loading: false });
           }

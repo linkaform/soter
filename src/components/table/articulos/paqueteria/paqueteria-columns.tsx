@@ -89,7 +89,7 @@ export const paqueteriaColumns: ColumnDef<Paquete_record>[] = [
       header:"Fotografía",
       cell: ({ row }) => {
         const foto = row.original.fotografia_paqueteria;
-          return <ViewImage imageUrl={foto} />;
+          return <ViewImage imageUrl={foto?? []} />;
       }
     },
     // {

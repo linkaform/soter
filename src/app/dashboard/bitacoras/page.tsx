@@ -16,12 +16,15 @@ import { dateToString } from "@/lib/utils";
 import { useBitacoras } from "@/hooks/useBitacoras";
 import { toast } from "sonner";
 import { useGetStats } from "@/hooks/useGetStats";
+import useAuthStore from "@/store/useAuthStore";
 
 const BitacorasPage = () => {
-  	const [selectedOption, setSelectedOption] = useState<string[]>([]);
+  	const [selectedOption, setSelectedOption] = useState<string[]>(["entrada"]);
+	const { tab, setTab, filter, setFilter, fetchShift} = useShiftStore()
   	const {location, area} = useShiftStore()
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
-	const [areaSeleccionada, setAreaSeleccionada] = useState("todas");
+	const [areaSeleccionada, setAreaSeleccionada] = useState(area);
+	console.log("ubicacion area",ubicacionSeleccionada, areaSeleccionada)
 	const [equiposData, setEquiposData] = useState<Bitacora_record[]>([]);
 	const [vehiculosData, setVehiculosData] = useState<Bitacora_record[]>([]);
 
@@ -29,24 +32,29 @@ const BitacorasPage = () => {
 	const [date2, setDate2] = useState<Date|"">("")
 
 	const [dates, setDates] = useState<string[]>([])
-	const { tab, setTab, filter, setFilter} = useShiftStore()
 	const [dateFilter, setDateFilter] = useState<string>(filter)
 	const { listBitacoras,isLoadingListBitacoras} = useBitacoras(ubicacionSeleccionada, areaSeleccionada == "todas" ? "": areaSeleccionada, selectedOption, ubicacionSeleccionada&&areaSeleccionada?true:false, dates[0], dates[1], dateFilter)
 	const { data: stats } = useGetStats(ubicacionSeleccionada&& areaSeleccionada?true:false,ubicacionSeleccionada, areaSeleccionada, 'Bitacoras')
 	const [selectedTab, setSelectedTab] = useState<string>(tab ? tab: "Personal"); 
 
-	useEffect(()=>{
+	const userNameSoter = useAuthStore((state) => state.userNameSoter);
+
+	useEffect(() => {
 		if(tab){
 			setTab("")
 		}
 		if(filter){
 			setFilter("")
 		}
-		console.log("ubciaciones",location, area)
+
+		if (!area && !location) {
+			fetchShift();
+		}
+	 	console.log("ubciaciones",location, area)
 		setUbicacionSeleccionada(location)
 		setAreaSeleccionada(area)
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	},[])
+	}, [area, location, fetchShift, userNameSoter, tab, filter, setTab, setFilter]); 
+
 
 	const processBitacorasE = (bitacoras: Bitacora_record[]) => {
 		return bitacoras.flatMap(bitacora => {
@@ -187,7 +195,7 @@ return (
 					</div>
 
 					<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
-						selectedOption[0] === 'entrada'&& dateFilter !== "today" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => {handleTabChange("Personal",["entrada"], "this_month");}}>
+						selectedOption[0] === 'entrada'&& dateFilter !== "today" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => {handleTabChange("Personal",["entrada"], "today");}}>
 						<div className="flex gap-6">
 							<UsersRound className="text-primary w-10 h-10" />
 							<span className="flex items-center font-bold text-4xl">

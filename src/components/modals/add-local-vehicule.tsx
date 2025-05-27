@@ -38,6 +38,7 @@ import { toast } from "sonner";
 import { useGetLocalVehiculos } from "@/hooks/useLocalCatVehiculos";
 import { Vehiculo } from "@/lib/update-pass";
 import { useAccessStore } from "@/store/useAccessStore";
+import { useUpdateBitacora } from "@/hooks/useUpdateBitacora";
 
 
 interface Props {
@@ -46,6 +47,7 @@ interface Props {
   vehicles: Vehiculo[];
   setVehiculos: Dispatch<SetStateAction<Vehiculo[]>>;
   isAccesos:boolean;
+  id?:string;
 }
 
 
@@ -61,7 +63,7 @@ const formSchema = z.object({
   color: z.array(z.string()).optional(),
 })
 
-export const VehiclePassModal: React.FC<Props> = ({ title, children, vehicles, setVehiculos, isAccesos }) => {
+export const VehiclePassModal: React.FC<Props> = ({ title, children, vehicles, setVehiculos, isAccesos , id=""}) => {
   const [open, setOpen] = useState(false);
   const [tipoVehiculoState, setTipoVehiculoState] = useState("");
   const [catalogSearch, setCatalogSearch] = useState("");
@@ -71,6 +73,7 @@ export const VehiclePassModal: React.FC<Props> = ({ title, children, vehicles, s
   const [modelosCat, setModelosCat] = useState<string[]>([]);
   const {data:dataVehiculos,isLoading: loadingCat } = useGetLocalVehiculos({ tipo:tipoVehiculoState, marca:marcaState, isModalOpen:true})
   const setSelectedVehiculos = useAccessStore((state) => state.setSelectedVehiculos);
+  const { updateBitacoraMutation,isLoading }= useUpdateBitacora()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -134,18 +137,33 @@ export const VehiclePassModal: React.FC<Props> = ({ title, children, vehicles, s
 		},
 		...vehicles,
 		]);
+	}else{
+		updateBitacoraMutation.mutate({
+			vehiculo: {
+				color: data.color?.length ? data.color[0] : "",
+				marca: data.marca?.length ? data.marca[0] : "",
+				modelo: data.modelo?.length ? data.modelo[0] : "",
+				estado: data.estado?.length ? data.estado[0] : "",
+				placas: data.placas || "",
+				tipo: data?.tipo ? data.tipo[0] : "",
+			},
+			id: id,
+		}, )
+
+
+		// setVehiculos([
+		// {
+		// 	color: data.color?.length ? data.color[0] :"",
+		// 	marca: data.marca?.length ? data.marca[0] :"",
+		// 	modelo:data.modelo?.length ?  data.modelo[0] : "",
+		// 	estado: data.estado?.length ? data.estado[0] :"",
+		// 	placas: data.placas||"",
+		// 	tipo:  data?.tipo? data.tipo[0]: "",
+		// },
+		// ...vehicles,
+		// ]);
 	}
-    setVehiculos([
-      {
-        color: data.color?.length ? data.color[0] :"",
-        marca: data.marca?.length ? data.marca[0] :"",
-        modelo:data.modelo?.length ?  data.modelo[0] : "",
-        estado: data.estado?.length ? data.estado[0] :"",
-        placas: data.placas||"",
-        tipo:  data?.tipo? data.tipo[0]: "",
-      },
-      ...vehicles,
-    ]);
+   
   };
 
   useEffect(() => {
@@ -359,9 +377,10 @@ export const VehiclePassModal: React.FC<Props> = ({ title, children, vehicles, s
 			<Button
 			onClick={form.handleSubmit(onSubmit)}
 			type="submit"
+			disabled={isLoading}
 			className="w-full  bg-blue-500 hover:bg-blue-600 text-white "
 			>
-			Agregar
+			{ isLoading? "Cargando..." : "Agregar"} 
 			</Button>
 		</div>
 

@@ -15,9 +15,7 @@ export const MainLayout = ({ children }: { children: React.ReactNode }) => {
   
   useEffect(() => {
     const userJwt = localStorage.getItem("access_token") || "";
-    console.log("userjwt", userJwt)
     if (isTokenExpired(userJwt) || userJwt=="") {
-      console.log("salida", userJwt)
       logout()
     }
   }, []);

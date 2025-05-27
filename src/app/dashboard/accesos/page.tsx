@@ -37,7 +37,6 @@ import { AddVisitModal } from "@/components/modals/add-visit-modal";
 import { toast } from "sonner";
 import { useGetShift } from "@/hooks/useGetShift";
 import { exitRegister, registerIncoming } from "@/lib/access";
-import ChangeLocation from "@/components/changeLocation";
 import { PermisosTable } from "@/components/table/accesos/permisos-certificaciones/table";
 import useAuthStore from "@/store/useAuthStore";
 import { esHexadecimal } from "@/lib/utils";
@@ -53,7 +52,7 @@ import Image from "next/image";
 const AccesosPage = () => {
   const { isAuth } = useAuthStore()
   const { shift, isLoading:loadingShift } = useGetShift(true);
-  const { area, location, setLoading , turno, setArea, setLocation} = useShiftStore();
+  const { area, location, setLoading , turno} = useShiftStore();
   const { passCode, setPassCode, clearPassCode, selectedEquipos, setSelectedEquipos, setSelectedVehiculos, selectedVehiculos, setTipoMovimiento, tipoMovimiento} = useAccessStore();
   const { isLoading, loading, searchPass } = useSearchPass(false);
   const [inputValue, setInputValue] = useState("");
@@ -61,16 +60,9 @@ const AccesosPage = () => {
   const queryClient = useQueryClient();
   const [debouncedValue,setDebouncedValue]=useState("")
   const { data: stats } = useGetStats(true,location, area, 'Accesos')
-  const { fetchAreas, fetchLocations, loading:loadingLocationArea} = useAreasLocationStore();
+  const { loading:loadingLocationArea} = useAreasLocationStore();
   const [equipos, setEquipos]= useState<Equipo[]>([])
   const [vehiculos, setVehiculos]= useState<Vehiculo[]>([])
-
-  useEffect(() => {
-	fetchLocations();
-	if (location) {
-	  	fetchAreas(location);
-	}
-  }, [shift]);
 
   useEffect(() => {
 	if(searchPass){
@@ -436,14 +428,9 @@ const AccesosPage = () => {
 		</div>
 		{!searchPass ?
 	  	<div className="flex flex-col justify-center items-center gap-10 mt-32">
-				<div className="flex justify-center w-1/6">
-					<ChangeLocation
-						ubicacionSeleccionada={location}
-						areaSeleccionada={area}
-						setUbicacionSeleccionada={setLocation}
-						setAreaSeleccionada={setArea}
-						ubicacion={"accesos"}
-					/>
+				<div className="flex flex-col justify-center w-1/6 gap-2">
+					<Input placeholder="Ubicacion" value={location} disabled/>
+					<Input placeholder="Area" value={area} disabled/>
 				</div>
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-5">
 					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100`}>

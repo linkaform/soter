@@ -30,6 +30,7 @@ export type Access_pass={
     email:string,
     telefono:string,
     ubicacion:string,
+    ubicaciones?:string[],
     tema_cita:string,
     descripcion:string,
     perfil_pase: string,

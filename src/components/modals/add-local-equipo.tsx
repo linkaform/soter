@@ -35,6 +35,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Equipo } from "@/lib/update-pass-full";
 import { useAccessStore } from "@/store/useAccessStore";
+import { useUpdateBitacora } from "@/hooks/useUpdateBitacora";
 
 interface Props {
   title: string;
@@ -42,6 +43,7 @@ interface Props {
   equipos: Equipo[]
   setEquipos: Dispatch<SetStateAction<Equipo[]>>;
   isAccesos: boolean
+  id?:string
 }
 
 const formSchema = z.object({
@@ -56,10 +58,11 @@ const formSchema = z.object({
   color: z.string().optional()
 });
 
-export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equipos, setEquipos, isAccesos}) => {
+export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equipos, setEquipos, isAccesos, id=""}) => {
   const [open, setOpen] = useState(false); 
   const setSelectedEquipos = useAccessStore((state) => state.setSelectedEquipos);
   const selectedEquipos = useAccessStore((state) => state.selectedEquipos);
+  const { updateBitacoraMutation, isLoading }= useUpdateBitacora()
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -104,17 +107,29 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
         ...equipos,
       ])
     }else{
-      setEquipos([
-        {
-          color: data.color||"",
-          marca: data.marca ||"",
-          modelo: data.modelo||"",
-          nombre: data.nombre||"",
-          serie: data.serie||"",
-          tipo: data.tipo||"",
+      updateBitacoraMutation.mutate({
+        equipo: {
+          nombre: data.color ||"",
+          modelo:  data.modelo || "",
+          marca: data.marca || "",
+          color: data.color || "",
+          tipo: data.tipo || "",
+          serie: data?.serie|| "",
         },
-        ...equipos,
-      ])
+        id: id,
+      }, )
+
+      // setEquipos([
+      //   {
+      //     color: data.color||"",
+      //     marca: data.marca ||"",
+      //     modelo: data.modelo||"",
+      //     nombre: data.nombre||"",
+      //     serie: data.serie||"",
+      //     tipo: data.tipo||"",
+      //   },
+      //   ...equipos,
+      // ])
     }
     
   }
@@ -283,8 +298,9 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
                 type="submit"
                 onClick={form.handleSubmit(onSubmit)}
                 className="w-full  bg-blue-500 hover:bg-blue-600 text-white "
+                disabled={isLoading}
               >
-                Agregar
+               {isLoading? "Cargando...": "Agregar"} 
               </Button>
             </div>
 

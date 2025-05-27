@@ -2,13 +2,24 @@
 
 import { MainLayout } from "@/components/Layout/MainLayout";
 import { useGetMenu }  from "@/hooks/useGetMenu";
+import { useShiftStore } from "@/store/useShiftStore";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function Home() {
     const router = useRouter(); 
     const { menuItems, isLoadingMenu } = useGetMenu();
+    const {location, area, fetchShift} = useShiftStore()
     
+    useEffect(()=>{
+        if (!area && !location) {
+            console.log("area, location", area, location, !area && !location)
+			fetchShift();
+		}
+    },[area, location, fetchShift])
+
+
     const handleClick = (menuName: string) => {
         router.push(`/dashboard/${menuName}`); 
     };

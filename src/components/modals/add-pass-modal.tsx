@@ -32,6 +32,7 @@ interface EntryPassUpdateModalProps {
     email: string;
     telefono: string;
     ubicacion: string;
+	ubicaciones:string[];
     tema_cita: string;
     descripcion: string;
     perfil_pase: string,
@@ -102,6 +103,7 @@ export const EntryPassModal: React.FC<EntryPassUpdateModalProps> = ({
       email: dataPass.email,
       telefono: dataPass.telefono,
       ubicacion: dataPass.ubicacion,
+	  ubicaciones: dataPass.ubicaciones,
       tema_cita: dataPass.tema_cita,
       descripcion: dataPass.descripcion,
       perfil_pase: dataPass.perfil_pase,

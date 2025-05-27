@@ -7,6 +7,7 @@ export interface Contacto {
   nombre: string | null
   telefono: string| null
   email: string| null
+  etsatus?:string
 }
 
 export const getUserContacts = async () => {

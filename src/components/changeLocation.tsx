@@ -20,6 +20,7 @@ interface InputChangeLocation {
 const ChangeLocation:React.FC<InputChangeLocation> = ({ ubicacionSeleccionada, setUbicacionSeleccionada, areaSeleccionada, setAreaSeleccionada, ubicacion })=> {
 
 	const {areas, locations, fetchAreas, fetchLocations} = useAreasLocationStore();
+	console.log("Ubicacion,area ==", ubicacionSeleccionada, areaSeleccionada)
 	// const {location, area} = useShiftStore();
 	//   console.log("objects",ubicacionSeleccionada, areaSeleccionada, locations, areas)
 
@@ -40,7 +41,7 @@ const ChangeLocation:React.FC<InputChangeLocation> = ({ ubicacionSeleccionada, s
 
 	return (
     <div className="flex flex-col w-full gap-2">
-		<Select defaultValue={ubicacionSeleccionada}  disabled={ubicacion=="accesos"}
+		<Select defaultValue={ubicacionSeleccionada}  disabled={ubicacion=="accesos"} value={ubicacionSeleccionada}
 		onValueChange={(value:string) => {
 			setUbicacionSeleccionada(value); 
 		}}
@@ -56,7 +57,7 @@ const ChangeLocation:React.FC<InputChangeLocation> = ({ ubicacionSeleccionada, s
 			))}
 			</SelectContent>
 		</Select>
-		<Select defaultValue={areaSeleccionada}  disabled={ubicacion=="accesos"}
+		<Select defaultValue={areaSeleccionada}  disabled={ubicacion=="accesos"} value={areaSeleccionada}
 		onValueChange={(value:string) => {
 			setAreaSeleccionada(value); 
 		}}>

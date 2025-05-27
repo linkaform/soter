@@ -38,6 +38,7 @@ import { useShiftStore } from "@/store/useShiftStore";
 import { useInciencias } from "@/hooks/useIncidencias";
 import DepositosList from "../depositos-list";
 import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
+import { Input } from "../ui/input";
 
 interface AddIncidenciaModalProps {
   	title: string;
@@ -87,6 +88,7 @@ const formSchema = z.object({
 	tipo_dano_incidencia: z.string().optional(),
 	comentario_incidencia: z.string().min(1, { message: "Este campo es requerido" }),
 	incidencia: z.string().min(1, { message: "La ubicación es obligatoria" }),
+	tags: z.array(z.string()).optional()
 });
 
 export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
@@ -109,6 +111,23 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado, error:errorAreEmpleado } = useCatalogoAreaEmpleado(isSuccess, location, "Incidencias");
 	const { createIncidenciaMutation, catIncidencias, isLoadingCatIncidencias , loading} = useInciencias("","",[], false, isSuccess, "", "", "");
 
+
+	const [inputTag, setInputTag] = useState('');
+	const [tagsSeleccionados, setTagsSeleccionados] = useState<string[]>([]);
+
+	const agregarTag = () => {
+		const nuevoTag = inputTag.trim();
+		if (nuevoTag && !tagsSeleccionados.includes(nuevoTag)) {
+		setTagsSeleccionados([...tagsSeleccionados, nuevoTag]);
+		setInputTag('');
+		}
+	};
+  
+	const quitarTag = (tag: string) => {
+		setTagsSeleccionados(tagsSeleccionados.filter((t) => t !== tag));
+	};
+	
+
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -127,6 +146,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 			prioridad_incidencia:"",
 			notificacion_incidencia:"",
 			datos_deposito_incidencia: depositos,
+			tags:[]
 		},
 	});
 
@@ -175,6 +195,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 					prioridad_incidencia:values.prioridad_incidencia||"",
 					notificacion_incidencia:values.notificacion_incidencia||"",
 					datos_deposito_incidencia: depositos||[],
+					tags:tagsSeleccionados
 				}
 				createIncidenciaMutation.mutate({ data_incidencia: formatData });
 		}else{
@@ -326,11 +347,13 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 						<FormField
 							control={form.control}
 							name="prioridad_incidencia"
+							defaultValue="media"
 							render={({ field }:any) => (
 								<FormItem className="w-full">
 									<FormLabel>Importancia: *</FormLabel>
 									<FormControl>
 									<Select {...field} className="input"
+									
 										onValueChange={(value:string) => {
 										field.onChange(value); 
 									}}
@@ -339,7 +362,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 									<SelectTrigger className="w-full">
 									<SelectValue placeholder="Selecciona una opcion" />
 									</SelectTrigger>
-									<SelectContent>
+									<SelectContent >
 									<SelectItem key={"baja"} value={"baja"}>Baja</SelectItem>
 									<SelectItem key={"media"} value={"media"}>Media</SelectItem>
 									<SelectItem key={"alta"} value={"alta"}>Alta</SelectItem>
@@ -394,7 +417,46 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 						<div className="col-span-1 md:col-span-2">
 							<DepositosList depositos={depositos} setDepositos={setDepositos} ></DepositosList>
 						</div>
-					}
+						}
+
+						<div className="space-y-4">
+						{/* Input para escribir tag */}
+						<div className="flex items-center gap-2">
+							<Input
+							placeholder="Escribe un tag... (ej: #Urgente)"
+							value={inputTag}
+							onChange={(e) => setInputTag(e.target.value)}
+							onKeyDown={(e) => {
+								if (e.key === 'Enter') {
+								e.preventDefault();
+								agregarTag();
+								}
+							}}
+							/>
+							<Button type="button" onClick={agregarTag}>Agregar</Button>
+						</div>
+
+						{/* Tags seleccionados */}
+						<div className="flex flex-wrap gap-2">
+							{tagsSeleccionados.map((tag, index) => (
+							<div
+								key={index}
+								className="flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
+							>
+								{tag}
+								<button
+								onClick={() => quitarTag(tag)}
+								className="ml-2 text-blue-500 hover:text-blue-700 font-bold"
+								>
+								&times;
+								</button>
+							</div>
+							))}
+						</div>
+						</div>
+
+						
+
 						<FormField
 						control={form.control}
 						name="comentario_incidencia"

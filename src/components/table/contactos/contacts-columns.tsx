@@ -1,5 +1,7 @@
+import { capitalizeFirstLetter } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
 import Image from "next/image";
+import { Badge } from "@/components/ui/badge";
 
 type Imagen = {
   file_name: string;
@@ -54,6 +56,8 @@ export const pasesEntradaColumns: ColumnDef<PaseEntrada>[] = [
     header: "Pase",
     cell: ({ row }) => {
       const foto = row.original.fotografia;
+      console.log("fila",row.original)
+      const estatus = row.original.estatus ?? "Activo";
       const nombre = row.original.nombre;
       const primeraImagen = foto && foto.length > 0 ? foto[0].file_url : '/nouser.svg';
 
@@ -67,6 +71,21 @@ export const pasesEntradaColumns: ColumnDef<PaseEntrada>[] = [
 
           <div className="flex flex-col">
             <span className="font-bold">{nombre}</span>
+            <div>
+					<Badge
+					className={`text-white text-md ${
+						estatus.toLowerCase() == "vencido"
+						? "bg-red-600 hover:bg-red-600"
+						: estatus.toLowerCase() == "activo"
+						? "bg-green-600 hover:bg-green-600"
+						: estatus.toLowerCase() == "proceso"
+						? "bg-blue-600 hover:bg-blue-600"
+						: "bg-gray-400"
+					}`}
+					>
+					{capitalizeFirstLetter(estatus)}
+					</Badge>
+				</div>
           </div>
         </div>
       );

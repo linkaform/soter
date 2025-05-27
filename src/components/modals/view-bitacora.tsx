@@ -10,8 +10,8 @@ import {
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import { Bitacora_record } from "../table/bitacoras/bitacoras-columns";
 import Image from "next/image";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
-import { Card, CardContent } from "../ui/card";
+import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
+import { CardContent } from "../ui/card";
 
 interface ViewListBitacoraModalProps {
 	title: string;
@@ -72,7 +72,6 @@ return (
 											<Carousel className="w-36 ">
 												<CarouselContent>
 													<CarouselItem key={0}>
-														<Card>
 															<CardContent className="flex aspect-square items-center justify-center p-1">
 																<Image
 																	width={100}
@@ -82,11 +81,8 @@ return (
 																	className="w-42 h-42 object-cover bg-gray-200 rounded-lg" 
 																/>
 															</CardContent>
-														</Card>
 													</CarouselItem>
 												</CarouselContent>
-												<CarouselPrevious />
-												<CarouselNext />
 											</Carousel>
 										</div>
 								</div>
@@ -100,7 +96,6 @@ return (
 									<Carousel className="w-36 ">
 										<CarouselContent>
 											<CarouselItem key={0}>
-												<Card>
 													<CardContent className="flex aspect-square items-center justify-center p-0">
 														<Image
 															width={100}
@@ -110,11 +105,8 @@ return (
 															className="w-42 h-42 object-cover bg-gray-200 rounded-lg" 
 														/>
 													</CardContent>
-												</Card>
 											</CarouselItem>
 										</CarouselContent>
-										<CarouselPrevious />
-										<CarouselNext />
 									</Carousel>
 								</div>
 						</div>

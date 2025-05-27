@@ -1,3 +1,6 @@
+import { getShift } from "@/lib/get-shift";
+import { errorMsj } from "@/lib/utils";
+import { toast } from "sonner";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
@@ -9,7 +12,9 @@ interface ShiftStore {
   turno: boolean;
   tab:string;
   filter:string;
+  isFetching:boolean;
 
+  setIsFetching: (isFetching: boolean) => void;
   setTab: (tab: string) => void;
   setFilter:(filter:string)=>void
   setArea: (area: string) => void;
@@ -18,13 +23,12 @@ interface ShiftStore {
   setLoading: (loading: boolean) => void;
   setTurno:(turno:boolean)=>void;
   clearShift: () => void;
-//   fetchShift: () => Promise<void>;
+  fetchShift: () => Promise<any>;
 }
 
 export const useShiftStore = create(
   persist<ShiftStore>(
-		(set) => ({
-		// Propiedades iniciales
+		(set, get) => ({
 		area: "",
 		location: "",
 		checkin_id: undefined,
@@ -32,8 +36,9 @@ export const useShiftStore = create(
 		turno:false,
 		tab:"",
 		filter:"",
+		isFetching:false,
+		setIsFetching:(isFetching) => set({isFetching}),
 
-		// Funciones
 		setTab:(tab) => set({tab}),
 		setFilter:(filter) => set({filter}),
 		setArea: (area) => set({ area }),
@@ -49,30 +54,33 @@ export const useShiftStore = create(
 			turno:false,
 			tab:""
 		}),
-		// fetchShift: async (location: string) => {
-		// 	const { area, location } = get();
-		// 		if(!area || !location){
-		// 			const data = await getShift({ area, location });
-		// 			const textMsj = errorMsj(data) 
-		// 			if (textMsj){
-		// 			toast.error(`Error al obtener informacion, Error: ${textMsj.text}`);
-		// 			return []
-		// 			}else {
-		// 				const filteredGuards = data.response?.data?.support_guards?.filter((guard: any) => {
-		// 				return guard.name !== userNameSoter; 
-		// 			});
-		// 			setArea(data.response?.data?.location?.area ?? "")
-		// 			setLocation(data.response?.data?.location?.name ?? "")
-		// 			setTurno(data?.response.data?.guard?.status_turn=="Turno Abierto" ? true:false)
-		// 			return {...data.response?.data,
-		// 				support_guards: filteredGuards,}
-		// 			}
-		// 		}
-		// 	},
+		
+		fetchShift: async () => {
+			const { area, location, setArea, setLocation, setTurno, isFetching,setIsFetching } = get();
+			if (isFetching || (area && location)) return;
+			setIsFetching(true);
+		  
+			try {
+			  const data = await getShift({ area, location });
+			  const textMsj = errorMsj(data) 
+				if (textMsj){
+					toast.error(`Error al obtener informacion, Error: ${textMsj.text}`);
+					return []
+				}
+			  setArea(data.response?.data?.location?.area ?? "");
+			  setLocation(data.response?.data?.location?.name ?? "");
+			  setTurno(data?.response.data?.guard?.status_turn === "Turno Abierto");
+		  
+			} catch (error) {
+			  toast.error("Error al obtener información: " + error);
+			} finally {
+			  setIsFetching(false);
+			}
+		  },
 	  }),
     {
-      name: "shift-store", // Nombre para el almacenamiento persistente
-      storage: createJSONStorage(() => localStorage), // Uso explícito de localStorage
+      name: "shift-store",
+      storage: createJSONStorage(() => localStorage),
     }
   )
 );

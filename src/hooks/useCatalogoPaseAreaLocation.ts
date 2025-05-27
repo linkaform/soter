@@ -36,7 +36,7 @@ export const useCatalogoPaseAreaLocation = (location:string, enableLocation:bool
     enabled:enableLocation,
     queryFn: async () => {
         const data = await getCatalogoPasesLocationNoApi(); 
-
+        console.log("locations", data)
         const textMsj = errorMsj(data) 
         if (textMsj){
           throw new Error (`Error al obtener catalogo de locations, Error: ${data.error}`);

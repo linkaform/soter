@@ -127,7 +127,7 @@ export const usePaseEntrada = (locationConfSeguridad:string) => {
 
             if(hasError == 400 || hasError == 401){
                 const textMsj = errorMsj(data.response.data) 
-                throw new Error(`Error al editar pase, Error: ${textMsj?.text}`);
+                throw new Error(`Error al crear pase, Error: ${textMsj?.text}`);
             }else{
                 setResponseCreatePase(data.response?.data)
                 return data.response?.data
