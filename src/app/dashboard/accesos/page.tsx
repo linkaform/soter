@@ -405,7 +405,6 @@ const AccesosPage = () => {
 
 					<div className="flex flex-col h-fit p-4 gap-3 ">
 						<UltimosAccesosTable ultimosAccesos={ultimosAccesos} /> 
-						
 							<AccesosPermitidosTable accesosPermitidos={accesosPermitidos} />
 						</div>
 

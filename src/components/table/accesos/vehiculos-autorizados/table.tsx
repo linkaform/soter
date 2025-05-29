@@ -29,7 +29,7 @@ import {
 import { VehiculoAutorizadoColumns } from "./vehiculos-autorizados-columns";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Vehiculo } from "@/lib/update-pass-full";
-import { VehiclePassModal } from "@/components/modals/add-local-vehicule";
+import { VehicleLocalPassModal } from "@/components/modals/add-local-vehicule";
 import { SelectedVehiculosModal } from "@/components/modals/modal-selected-vehiculos";
 
 interface TableProps {
@@ -86,14 +86,14 @@ interface TableProps {
           <h1 className="text-2xl font-bold">Vehículos Autorizados</h1>
         </div>
        <div className="flex justify-end gap-2">
-       <VehiclePassModal title="Nuevo Vehiculo" vehicles={vehiculos}  setVehiculos={setVehiculos} isAccesos={true}>
-          <Button className="bg-green-600 hover:bg-green-700 text-white" disabled={tipoMovimiento=="Salida"}>
-            <Plus />
-            Agregar Vehiculo
-          </Button>
-        </VehiclePassModal>
+        <VehicleLocalPassModal title="Nuevo Vehiculo" vehicles={vehiculos}  setVehiculos={setVehiculos} isAccesos={true} fetch={false}>
+            <Button className="bg-green-600 hover:bg-green-700 text-white" disabled={tipoMovimiento=="Salida"}>
+              <Plus />
+              Agregar Vehiculo
+            </Button>
+          </VehicleLocalPassModal>
 
-          <SelectedVehiculosModal title={"Vehiculos seleccionados"} description={""} selectedVehiculos={selectedVehiculos}>
+          <SelectedVehiculosModal title={"Vehiculos seleccionados"} description={""} selectedVehiculos={selectedVehiculos} >
             <Button
               disabled={tipoMovimiento=="Salida"}
               className="bg-blue-500 text-white hover:text-white hover:bg-blue-600"

@@ -4,12 +4,14 @@ import { getCatalogoPasesLocationNoApi } from "@/lib/get-catalogos-pase-location
 import { errorMsj } from "@/lib/utils";
 import { useAreasLocationStore } from "@/store/useGetAreaLocationByUser";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 export const useCatalogoPaseAreaLocation = (location:string, enableLocation:boolean, enableArea:boolean) => {
   const {
     setAreas,
     setLocations
   } = useAreasLocationStore();
+  const [ubicacionesDefault, setUbicacionesDefault] = useState()
   const { data: dataAreas, isLoading:isLoadingAreas, error:errorAreas, isFetching:isFetchingAreas, refetch:refetchAreas } = useQuery<any>({
     queryKey: ["getCatalogoPasesAreaNoApi", location], 
     enabled:enableArea,
@@ -42,6 +44,8 @@ export const useCatalogoPaseAreaLocation = (location:string, enableLocation:bool
           throw new Error (`Error al obtener catalogo de locations, Error: ${data.error}`);
         }else {
           setLocations(data.response?.data.ubicaciones_user)
+          const ubicacionesDefaultFormatted= data.response?.data.ubicaciones_default.map((u: any) => ({ id: u, name: u }));
+          setUbicacionesDefault(ubicacionesDefaultFormatted)
           return data.response?.data.ubicaciones_user
         }
     },
@@ -61,6 +65,7 @@ export const useCatalogoPaseAreaLocation = (location:string, enableLocation:bool
     refetchAreas,
     //Locations
     dataLocations,
+    ubicacionesDefault,
     isLoadingLocations,
     errorLocations,
     isFetchingLocations,

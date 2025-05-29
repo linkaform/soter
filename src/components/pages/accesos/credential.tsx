@@ -93,9 +93,29 @@ const Credentials: React.FC<Props> = ({ searchPass }) => {
 						
 
 				<div className="flex flex-col gap-3">
-					<div>
+					{/* <div>
 						<span className="text-gray-500">Ubicación:  <span className="text-black">{searchPass?.ubicacion}</span></span>
-					</div>
+					</div> */}
+					<div className="w-full flex gap-2">
+						<p className="text-slate-500 whitespace-nowrap">Ubicación:</p>
+						<div className="relative group w-full break-words">
+							{searchPass?.ubicacion[0]}
+							{searchPass?.ubicacion && searchPass?.ubicacion.length > 1 && (
+							<span className="text-blue-600 cursor-pointer ml-1 underline relative">
+								+{searchPass?.ubicacion.length - 1}
+								{/* Tooltip container */}
+								<div className="absolute left-0 top-full z-10 mt-1 hidden w-max max-w-xs rounded bg-gray-800 px-2 py-1 text-sm text-white shadow-lg group-hover:block">
+								{Array.isArray(searchPass?.ubicacion) && searchPass?.ubicacion.length > 1 && (
+									searchPass?.ubicacion.map((ubic:string, idx:number) => (
+										<div key={idx}>{ubic}</div>
+									))
+									)}
+								</div>
+							</span>
+							)}
+						</div>
+						</div>
+
 
 					<div>
 						<span className="text-gray-500">Empresa:  <span className="text-black">{searchPass?.empresa}</span></span>

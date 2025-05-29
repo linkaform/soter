@@ -33,7 +33,7 @@ import { EqipmentLocalPassModal } from "./add-local-equipo";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import useAuthStore from "@/store/useAuthStore";
 import { Car, Laptop } from "lucide-react";
-import { VehiclePassModal } from "./add-local-vehicule";
+import { VehicleLocalPassModal } from "./add-local-vehicule";
 import { toast } from "sonner";
 
 interface Props {
@@ -247,7 +247,7 @@ export const UpdatePassModal: React.FC<Props> = ({ title, children, id , dataCat
                             <div>
                                 <div className="flex items-center gap-x-10">
                                 <span className="font-bold text-xl">Lista de Vehículos</span>
-                                <VehiclePassModal title="Nuevo Vehiculo" vehicles={vehicles} setVehiculos={setVehicles} isAccesos={false}>
+                                <VehicleLocalPassModal title="Nuevo Vehiculo" vehicles={vehicles} setVehiculos={setVehicles} isAccesos={false} fetch={false}>
                                     <button
                                     type="button"
                                     onClick={() => handleCheckboxChange("agregar-vehiculos")}
@@ -259,7 +259,7 @@ export const UpdatePassModal: React.FC<Props> = ({ title, children, id , dataCat
                                         <div className="text-blue-600 hidden sm:block">Agregar Vehículos</div>
                                     </div>
                                     </button>
-                                </VehiclePassModal>
+                                </VehicleLocalPassModal>
                                 </div>
                                 <div className="mt-2 text-gray-600">
                                     

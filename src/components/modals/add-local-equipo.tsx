@@ -44,6 +44,7 @@ interface Props {
   setEquipos: Dispatch<SetStateAction<Equipo[]>>;
   isAccesos: boolean
   id?:string
+  fetch?:boolean;
 }
 
 const formSchema = z.object({
@@ -58,7 +59,7 @@ const formSchema = z.object({
   color: z.string().optional()
 });
 
-export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equipos, setEquipos, isAccesos, id=""}) => {
+export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equipos, setEquipos, isAccesos, id="", fetch=false}) => {
   const [open, setOpen] = useState(false); 
   const setSelectedEquipos = useAccessStore((state) => state.setSelectedEquipos);
   const selectedEquipos = useAccessStore((state) => state.selectedEquipos);
@@ -87,49 +88,51 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
 
   const addNewEquipment = (data: z.infer<typeof formSchema>) => {
     if( isAccesos ){
-      setSelectedEquipos([...selectedEquipos,  {
-        color: data.color||"",
-        marca: data.marca ||"",
-        modelo: data.modelo||"",
-        nombre: data.nombre||"",
-        serie: data.serie||"",
-        tipo: data.tipo||"",
-      },]);
-      setEquipos([
-        {
-          color: data.color||"",
-          marca: data.marca ||"",
-          modelo: data.modelo||"",
-          nombre: data.nombre||"",
-          serie: data.serie||"",
-          tipo: data.tipo||"",
-        },
-        ...equipos,
-      ])
+		setSelectedEquipos([...selectedEquipos,  {
+			color: data.color||"",
+			marca: data.marca ||"",
+			modelo: data.modelo||"",
+			nombre: data.nombre||"",
+			serie: data.serie||"",
+			tipo: data.tipo||"",
+		},]);
+		setEquipos([
+			{
+			color: data.color||"",
+			marca: data.marca ||"",
+			modelo: data.modelo||"",
+			nombre: data.nombre||"",
+			serie: data.serie||"",
+			tipo: data.tipo||"",
+			},
+			...equipos,
+		])
     }else{
-      updateBitacoraMutation.mutate({
-        equipo: {
-          nombre: data.color ||"",
-          modelo:  data.modelo || "",
-          marca: data.marca || "",
-          color: data.color || "",
-          tipo: data.tipo || "",
-          serie: data?.serie|| "",
-        },
-        id: id,
-      }, )
-
-      // setEquipos([
-      //   {
-      //     color: data.color||"",
-      //     marca: data.marca ||"",
-      //     modelo: data.modelo||"",
-      //     nombre: data.nombre||"",
-      //     serie: data.serie||"",
-      //     tipo: data.tipo||"",
-      //   },
-      //   ...equipos,
-      // ])
+      if(fetch){
+        updateBitacoraMutation.mutate({
+			equipo: {
+				nombre: data.color ||"",
+				modelo:  data.modelo || "",
+				marca: data.marca || "",
+				color: data.color || "",
+				tipo: data.tipo || "",
+				serie: data?.serie|| "",
+			},
+			id: id,
+			}, )
+      }else{
+        setEquipos([
+			{
+				color: data.color||"",
+				marca: data.marca ||"",
+				modelo: data.modelo||"",
+				nombre: data.nombre||"",
+				serie: data.serie||"",
+				tipo: data.tipo||"",
+			},
+			...equipos,
+			])
+      }
     }
     
   }

@@ -21,7 +21,7 @@ import { ArrowLeft, Car, Laptop, Loader2 } from "lucide-react";
 import { useGetPdf } from "@/hooks/usetGetPdf";
 import { descargarPdfPase } from "@/lib/download-pdf";
 import Image from "next/image";
-import { VehiclePassModal } from "@/components/modals/add-local-vehicule";
+import { VehicleLocalPassModal } from "@/components/modals/add-local-vehicule";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { EqipmentLocalPassModal } from "@/components/modals/add-local-equipo";
 import { formatEquipos, formatVehiculos } from "@/lib/utils";
@@ -107,7 +107,7 @@ const PaseUpdate = () =>{
 	const [isSuccess, setIsSuccess] = useState(false);
 	const [modalData, setModalData] = useState<any>(null);
 	const [identificacion, setIdentificacion] = useState<Imagen[]>([])
-
+    const ubis=["Planta Monterrey", "Planta Durango", "Planta Guadalajara"]
 	const downloadUrl=responsePdf?.response?.data?.data?.download_url
 	
 	const [errorFotografia, setErrorFotografia] = useState("")
@@ -119,7 +119,7 @@ const PaseUpdate = () =>{
 	const [fotografia, setFotografia] = useState<Imagen[]>([])
 
 	const [mostrarAviso, setMostrarAviso] = useState(false);
-	const [radioSelected, setRadioSelected] = useState("1 semana");		
+	const [radioSelected, setRadioSelected] = useState("3 meses");		
 	// const [showRadioGroup, setShowRadioGroup] = useState(false);
 
 	const handleClickGoogleButton = () => {
@@ -573,11 +573,12 @@ return (
 						<p className="font-bold whitespace-nowrap">Email:</p>
 						<p className="w-full break-words">{dataCatalogos?.pass_selected?.email}</p>
 						</div>
-
+					{dataCatalogos?.pass_selected?.telefono &&
 						<div className="w-full flex gap-2">
 						<p className="font-bold whitespace-nowrap">Teléfono:</p>
 						<p className="text-sm">{dataCatalogos?.pass_selected?.telefono}</p>
 						</div>
+					}
 					</div>
 
 					{/* Visita y Ubicación */}
@@ -589,12 +590,33 @@ return (
 						</p>
 						</div>
 
-						<div className="w-full flex gap-2">
+						{/* <div className="w-full flex gap-2">
 						<p className="font-bold whitespace-nowrap">Ubicación:</p>
 						<p className="w-full break-words">
 							{dataCatalogos?.pass_selected?.ubicacion}
 						</p>
+						</div> */}
+
+						<div className="w-full flex gap-2">
+						<p className="font-bold whitespace-nowrap">Ubicación:</p>
+						<div className="relative group w-full break-words">
+							{dataCatalogos?.pass_selected?.ubicacion[0]}
+							{dataCatalogos?.pass_selected?.ubicacion.length > 1 && (
+							<span className="text-blue-600 cursor-pointer ml-1 underline relative">
+								+{dataCatalogos?.pass_selected?.ubicacion.length - 1}
+								{/* Tooltip container */}
+								<div className="absolute left-0 top-full z-10 mt-1 hidden w-max max-w-xs rounded bg-gray-800 px-2 py-1 text-sm text-white shadow-lg group-hover:block">
+								{Array.isArray(dataCatalogos?.pass_selected?.ubicacion) && dataCatalogos?.pass_selected?.ubicacion.length > 1 && (
+									dataCatalogos?.pass_selected?.ubicacion.map((ubic:string, idx:number) => (
+										<div key={idx}>{ubic}</div>
+									))
+									)}
+								</div>
+							</span>
+							)}
 						</div>
+						</div>
+
 					</div>
 					
 
@@ -630,7 +652,7 @@ return (
 						<div>
 							<div className="flex items-center gap-x-10">
 							<span className="font-bold text-xl">Lista de Vehículos</span>
-							<VehiclePassModal title="Nuevo Vehiculo" vehicles={vehicles} setVehiculos={setVehiculos} isAccesos={false}>
+							<VehicleLocalPassModal title="Nuevo Vehiculo" vehicles={vehicles} setVehiculos={setVehiculos} isAccesos={false} fetch={false}>
 								<button
 								type="button"
 								onClick={() => handleCheckboxChange("agregar-vehiculos")}
@@ -642,7 +664,7 @@ return (
 									<div className="text-blue-600 hidden sm:block">Agregar Vehículos</div>
 								</div>
 								</button>
-							</VehiclePassModal>
+							</VehicleLocalPassModal>
 							</div>
 							<div className="mt-2 text-gray-600">
 								
@@ -792,9 +814,22 @@ return (
 							<p className="w-full break-words">{dataCatalogos?.pass_selected?.visita_a[0] ? dataCatalogos?.pass_selected?.visita_a[0]?.nombre:""}</p>
 						</div>
 
-						<div className="w-full flex  gap-2">
-							<p className="font-bold whitespace-nowrap">Ubicación : </p>
-							<p className="w-full break-words">{dataCatalogos?.pass_selected?.ubicacion} </p>
+						<div className="w-full flex gap-2">
+						<p className="font-bold whitespace-nowrap">Ubicación:</p>
+						<div className="relative group w-full break-words">
+							{ubis[0]}
+							{ubis.length > 1 && (
+							<span className="text-blue-600 cursor-pointer ml-1 underline relative">
+								+{ubis.length - 1}
+								{/* Tooltip container */}
+								<div className="absolute left-0 top-full z-10 mt-1 hidden w-max max-w-xs rounded bg-gray-800 px-2 py-1 text-sm text-white shadow-lg group-hover:block">
+								{ubis.slice(1).map((ubic, idx) => (
+									<div key={idx}>{ubic}</div>
+								))}
+								</div>
+							</span>
+							)}
+						</div>
 						</div>
 
 						<div className="w-full flex  gap-2">
@@ -890,7 +925,7 @@ return (
 									<div>
 										<div className="flex items-center gap-x-10">
 										<span className="font-bold text-xl">Lista de Vehículos</span>
-										<VehiclePassModal title="Nuevo Vehiculo" vehicles={vehicles} setVehiculos={setVehiculos} isAccesos={false}>
+										<VehicleLocalPassModal title="Nuevo Vehiculo" vehicles={vehicles} setVehiculos={setVehiculos} isAccesos={false} fetch={false}>
 											<button
 											type="button"
 											onClick={() => handleCheckboxChange("agregar-vehiculos")}
@@ -902,7 +937,7 @@ return (
 												<div className="text-blue-600 hidden sm:block">Agregar Vehículos</div>
 											</div>
 											</button>
-										</VehiclePassModal>
+										</VehicleLocalPassModal>
 										</div>
 										<div className="mt-2 text-gray-600">
 											
@@ -939,7 +974,7 @@ return (
 									<div>
 										<div className="flex items-center gap-x-10">
 										<span className="font-bold text-xl">Lista de Equipos</span>
-										<EqipmentLocalPassModal title="Nuevo Equipo" equipos={equipos} setEquipos={setEquipos} isAccesos={false}>
+										<EqipmentLocalPassModal title="Nuevo Equipo" equipos={equipos} setEquipos={setEquipos} isAccesos={false} fetch={false}>
 											<button
 											type="button"
 											onClick={() => handleCheckboxChange("agregar-equipos")}
