@@ -223,6 +223,7 @@ const PaseUpdate = () =>{
 	});
 
 	const onSubmit = (data: z.infer<typeof formSchema>) => {
+		console.log("data acepto_aviso_privacidad", data.acepto_aviso_privacidad)
 			const formattedData = {
 				grupo_vehiculos: vehicles,
 				grupo_equipos: equipos,

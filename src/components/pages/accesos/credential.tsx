@@ -206,19 +206,27 @@ const Credentials: React.FC<Props> = ({ searchPass }) => {
 			</div>
 
 			<div className="space-y-6">
-				<div className="space-y-4">
 				
-
-				
-				</div>
+					{searchPass?.limite_de_acceso != null &&(
+						<div className="space-y-2 text-slate-500">
+								<span>Limite de entradas:  </span>
+								<span className="text-black">
+									{searchPass?.total_entradas ?? 0}/{searchPass?.limite_de_acceso}
+								</span>
+						</div>
+					)}
 
 				<div className="grid grid-cols-2 gap-4">
-				<div>
-					<span className="text-gray-500">Gafete:  <span className="text-black">{searchPass?.gafete_id}</span></span>
-				</div>
-				<div>
-					<span className="text-gray-500">Locker:  <span className="text-black">{searchPass?.locker_id}</span></span>
-				</div>
+				{searchPass?.gafete_id &&
+					<div>
+						<span className="text-gray-500">Gafete:  <span className="text-black">{searchPass?.gafete_id}</span></span>
+					</div>
+				}
+				{searchPass?.locker_id &&
+					<div>
+						<span className="text-gray-500">Locker:  <span className="text-black">{searchPass?.locker_id}</span></span>
+					</div>
+				}
 				</div>
 			</div>
 

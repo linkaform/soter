@@ -44,10 +44,9 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 					
 	const{ updatePassMutation , isLoadingUpdate} = useUpdateAccessPass();
 	// const [isSubmitted, setIsSubmitted] = useState(false);
-
 	const onSubmit = async () => {
 		// setIsSubmitted(true);
-
+	
 		// if(radioSelected !=="default" && radioSelected!=="" ){
 			updatePassMutation.mutate({access_pass:{
 				grupo_vehiculos: data?.grupo_vehiculos,
@@ -59,6 +58,8 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 				conservar_datos_por: data?.conservar_datos_por
 			},id: data.folio, account_id: data.account_id},{
 				onSuccess: (response) => {
+					console.log("acepto aviso privacidad 2", data.acepto_aviso_privacidad)
+
 					console.log("Response",response)
 					setResponseFormated({
 						email_to: data.email,

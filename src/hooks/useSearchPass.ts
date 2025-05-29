@@ -43,7 +43,9 @@ export interface SearchAccessPass {
   _id: string
   qr_pase: QrPase[]
   link:string
-  limite_de_acceso?: number;}
+  limite_de_acceso?: number;
+  total_entradas?:string;
+}
 
 export interface Foto {
   file_name: string

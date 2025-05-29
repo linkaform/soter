@@ -52,7 +52,6 @@ export const AddNoteModal: React.FC<AddNoteModalProps> = ({
   const [documento, setDocumento] = useState<Imagen[]>([])
   const [open, setOpen] = useState(false)
   const { area, location } = useShiftStore()
-
   const { createNoteMutation, isLoadingNotes } = useNotes(false,area, location)
 
   const form = useForm<z.infer<typeof formSchema>>({

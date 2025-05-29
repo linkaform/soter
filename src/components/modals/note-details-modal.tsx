@@ -92,12 +92,7 @@ export const NoteDetailsModal: React.FC<NoteDetailsModalProps> = ({
           </Carousel>
         )}
 
-        <CloseNoteModal title='Cerrar nota' note={note} setIsOpen={setIsOpen} isOpen={open}>
-          <Button className='w-80 mx-auto bg-gray-100 hover:bg-gray-200 text-gray-700 mb-5'>
-            Cerrar Nota
-          </Button>
-        </CloseNoteModal>
-
+   
         <div className='mb-5'>
           <p className='font-semibold mb-2'>Comentarios</p>
 
@@ -159,6 +154,14 @@ export const NoteDetailsModal: React.FC<NoteDetailsModalProps> = ({
 
           <p className='text-sm'>{note?.created_by_name ?? ''}.</p>
         </div>
+
+        <CloseNoteModal title='Cerrar nota' note={note} setIsOpen={setIsOpen} isOpen={open}>
+          <Button className='w-80 mx-auto bg-red-500 hover:bg-red-600 text-white mb-5'>
+            Cerrar Nota
+          </Button>
+        </CloseNoteModal>
+
+
       </DialogContent>
     </Dialog>
   )
