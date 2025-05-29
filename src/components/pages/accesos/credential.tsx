@@ -96,6 +96,7 @@ const Credentials: React.FC<Props> = ({ searchPass }) => {
 					{/* <div>
 						<span className="text-gray-500">Ubicación:  <span className="text-black">{searchPass?.ubicacion}</span></span>
 					</div> */}
+				
 					<div className="w-full flex gap-2">
 						<p className="text-slate-500 whitespace-nowrap">Ubicación:</p>
 						<div className="relative group w-full break-words">
@@ -105,8 +106,8 @@ const Credentials: React.FC<Props> = ({ searchPass }) => {
 								+{searchPass?.ubicacion.length - 1}
 								{/* Tooltip container */}
 								<div className="absolute left-0 top-full z-10 mt-1 hidden w-max max-w-xs rounded bg-gray-800 px-2 py-1 text-sm text-white shadow-lg group-hover:block">
-								{Array.isArray(searchPass?.ubicacion) && searchPass?.ubicacion.length > 1 && (
-									searchPass?.ubicacion.map((ubic:string, idx:number) => (
+								{Array.isArray(searchPass?.ubicacion) && searchPass.ubicacion.length > 1 && (
+									searchPass.ubicacion.slice(1).map((ubic:string, idx:number) => (
 										<div key={idx}>{ubic}</div>
 									))
 									)}

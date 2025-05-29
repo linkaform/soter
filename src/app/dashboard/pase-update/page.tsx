@@ -107,7 +107,6 @@ const PaseUpdate = () =>{
 	const [isSuccess, setIsSuccess] = useState(false);
 	const [modalData, setModalData] = useState<any>(null);
 	const [identificacion, setIdentificacion] = useState<Imagen[]>([])
-    const ubis=["Planta Monterrey", "Planta Durango", "Planta Guadalajara"]
 	const downloadUrl=responsePdf?.response?.data?.data?.download_url
 	
 	const [errorFotografia, setErrorFotografia] = useState("")
@@ -233,7 +232,7 @@ const PaseUpdate = () =>{
 				folio: id,
 				account_id: account_id,
 				nombre: dataCatalogos?.pass_selected?.nombre||"",
-				ubicacion: dataCatalogos?.pass_selected?.ubicacion||"",
+				ubicacion: dataCatalogos?.pass_selected?.ubicacion||[],
 				email: dataCatalogos?.pass_selected?.email||"",
 				telefono:dataCatalogos?.pass_selected?.telefono||"",
 				acepto_aviso_privacidad:data.acepto_aviso_privacidad,
@@ -607,7 +606,7 @@ return (
 								{/* Tooltip container */}
 								<div className="absolute left-0 top-full z-10 mt-1 hidden w-max max-w-xs rounded bg-gray-800 px-2 py-1 text-sm text-white shadow-lg group-hover:block">
 								{Array.isArray(dataCatalogos?.pass_selected?.ubicacion) && dataCatalogos?.pass_selected?.ubicacion.length > 1 && (
-									dataCatalogos?.pass_selected?.ubicacion.map((ubic:string, idx:number) => (
+									dataCatalogos?.pass_selected?.ubicacion.slice(1).map((ubic:string, idx:number) => (
 										<div key={idx}>{ubic}</div>
 									))
 									)}
@@ -813,19 +812,21 @@ return (
 							<p className="font-bold whitespace-nowrap">Visita a: </p>
 							<p className="w-full break-words">{dataCatalogos?.pass_selected?.visita_a[0] ? dataCatalogos?.pass_selected?.visita_a[0]?.nombre:""}</p>
 						</div>
-
+					
 						<div className="w-full flex gap-2">
 						<p className="font-bold whitespace-nowrap">Ubicación:</p>
 						<div className="relative group w-full break-words">
-							{ubis[0]}
-							{ubis.length > 1 && (
+							{dataCatalogos?.pass_selected?.ubicacion[0]}
+							{dataCatalogos?.pass_selected?.ubicacion.length > 1 && (
 							<span className="text-blue-600 cursor-pointer ml-1 underline relative">
-								+{ubis.length - 1}
+								+{dataCatalogos?.pass_selected?.ubicacion.length - 1}
 								{/* Tooltip container */}
 								<div className="absolute left-0 top-full z-10 mt-1 hidden w-max max-w-xs rounded bg-gray-800 px-2 py-1 text-sm text-white shadow-lg group-hover:block">
-								{ubis.slice(1).map((ubic, idx) => (
-									<div key={idx}>{ubic}</div>
-								))}
+								{Array.isArray(dataCatalogos?.pass_selected?.ubicacion) && dataCatalogos?.pass_selected?.ubicacion.length > 1 && (
+									dataCatalogos?.pass_selected?.ubicacion.slice(1).map((ubic:string, idx:number) => (
+										<div key={idx}>{ubic}</div>
+									))
+									)}
 								</div>
 							</span>
 							)}

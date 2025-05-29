@@ -40,6 +40,7 @@ import { useShiftStore } from "@/store/useShiftStore";
 	nombre: z.string().min(2, {
 	  	message: "Por favor, ingresa un tu nombre completo",
 	}),
+	empresa: z.string().optional(),
 	email: z.string().optional().refine((val) => {
 		if (val && !/^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/.test(val)) {
 			return false;
@@ -201,6 +202,7 @@ import { useShiftStore } from "@/store/useShiftStore";
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			nombre: "",
+			empresa:"",
 			email: "",
 			telefono: "",
 			ubicacion:"",
@@ -282,6 +284,7 @@ import { useShiftStore } from "@/store/useShiftStore";
 	const onSubmit = (data: z.infer<typeof formSchema>) => {
 		const formattedData = {
 			nombre: data.nombre,
+			empresa:data.empresa,
 			email: data.email,
 			telefono: data.telefono,
 			ubicacion: ubicacionesSeleccionadas[0].id ,
@@ -443,6 +446,22 @@ return (
 								</FormItem>
 							)}
 						/>
+						<FormField
+							control={form.control}
+							name="empresa"
+							render={({ field}:any)=> (
+								<FormItem>
+									<FormLabel className="">
+										<span className="text-red-500">*</span> Empresa:
+									</FormLabel>{" "}
+									<FormControl>
+										<Input placeholder="Empresa" {...field} 
+										/>
+									</FormControl>
+								<FormMessage />
+								</FormItem>
+							)}
+						/>
 					</div>
 
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -548,11 +567,9 @@ return (
 							options={ubicacionesFormatted} 
 							selectedValues={ubicacionesDefaultFormatted}
 							onSelect={(selectedList) => {
-								console.log("selected Ubicaciones", selectedList)
 								setUbicacionesSeleccionadas(selectedList);
 							}}
 							onRemove={(selectedList) => {
-								console.log("selected Ubicaciones", selectedList)
 								setUbicacionesSeleccionadas(selectedList);
 							}}
 							displayValue="name"

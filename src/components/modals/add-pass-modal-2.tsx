@@ -260,7 +260,7 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 							{data?.grupo_vehiculos.length > 0 ? (
 								<Accordion type="single" collapsible className="w-full">
 								<AccordionItem key={"1"} value={"1"}>
-								<AccordionTrigger>{"Equipos agregados"}</AccordionTrigger>
+								<AccordionTrigger>{"Vehiculos agregados"}</AccordionTrigger>
 								<AccordionContent className="mb-0 pb-0">
 								{data?.grupo_vehiculos.length > 0 ? (
 									<table className="min-w-full table-auto border-separate border-spacing-2">

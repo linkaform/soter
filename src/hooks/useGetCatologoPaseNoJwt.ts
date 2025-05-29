@@ -26,7 +26,7 @@ export interface PassSelected {
   grupo_vehiculos: any[]
   fecha_de_caducidad: string
   fecha_de_expedicion: string
-  ubicacion: string
+  ubicacion: string[]
   nombre: string
   visita_a: VisitaA[]
   _id: string

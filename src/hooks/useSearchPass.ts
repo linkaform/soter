@@ -22,7 +22,7 @@ export interface SearchAccessPass {
   status_pase: string
   visita_a_puesto: any[][]
   tipo_movimiento: string
-  ubicacion: string
+  ubicacion: string[]
   nombre: string
   telefono: string
   email: string

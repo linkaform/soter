@@ -34,6 +34,7 @@ export type Comentarios={
 
 export type Access_pass={
     nombre:string,
+    empresa:string,
     email:string,
     telefono:string,
     ubicacion:string,

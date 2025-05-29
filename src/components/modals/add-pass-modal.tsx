@@ -29,6 +29,7 @@ interface EntryPassUpdateModalProps {
   title: string;
   dataPass: {
     nombre: string;
+	empresa:string;
     email: string;
     telefono: string;
     ubicacion: string;
@@ -100,6 +101,7 @@ export const EntryPassModal: React.FC<EntryPassUpdateModalProps> = ({
   const onSubmit = async () => {
     const accessPassData: Access_pass = {
       nombre: dataPass.nombre,
+	  empresa: dataPass.empresa,
       email: dataPass.email,
       telefono: dataPass.telefono,
       ubicacion: dataPass.ubicacion,
