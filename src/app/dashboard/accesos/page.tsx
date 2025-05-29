@@ -213,6 +213,7 @@ const AccesosPage = () => {
   useEffect(() => {
     if (debouncedValue) {
 		if(esHexadecimal(inputValue)){
+			console.log("input value", inputValue)
 			setInputValue("")
 			setPassCode(inputValue)
 		}else{
