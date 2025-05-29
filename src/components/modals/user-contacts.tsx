@@ -16,17 +16,19 @@ interface ContactsModalProps {
 	closeModal: () => void;
 	setSelected: Dispatch<SetStateAction<Contacto |null >>;
 	isOpenModal:boolean
+	setOpenModal:Dispatch<SetStateAction<boolean>>
 }
 
 export const MisContactosModal: React.FC<ContactsModalProps> = ({
 	title,
 	setSelected, 
 	closeModal,
-	isOpenModal
+	isOpenModal,
+	setOpenModal
 }) => {
 	
 return (
-	<Dialog open={isOpenModal} >
+	<Dialog open={isOpenModal} onOpenChange={setOpenModal} >
 		<DialogTrigger ></DialogTrigger>
 		<DialogContent className="max-w-xl flex flex-col">
 			<DialogHeader>

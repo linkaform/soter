@@ -160,7 +160,7 @@ const AccesosPage = () => {
       });
 
       if (!data.success) {
-        throw new Error(data.error?.msg?.msg || "Hubo un error en el Ingreso");
+        throw new Error(data.error?.exception?.msg[0] || "Hubo un error en el Ingreso");
       }
 
       return data.response?.data || [];

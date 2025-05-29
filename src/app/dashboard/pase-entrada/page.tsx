@@ -139,9 +139,11 @@ import { useShiftStore } from "@/store/useShiftStore";
 	const [isSuccess, setIsSuccess] = useState(false);
 	const [modalData, setModalData] = useState<any>(null);
 	// const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState('');
-	const { dataAreas:catAreas, dataLocations:ubicaciones, ubicacionesDefault , isLoadingAreas:loadingCatAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(location, true, location?true:false);
-	const [ubicacionesSeleccionadas, setUbicacionesSeleccionadas] = useState<string[]>(ubicacionesDefault??[]);
+	const { dataAreas:catAreas, dataLocations:ubicaciones, ubicacionesDefaultFormatted, isLoadingAreas:loadingCatAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(location, true, location?true:false);
+	console.log("ubciaciones default formateadas", ubicacionesDefaultFormatted)
+	const [ubicacionesSeleccionadas, setUbicacionesSeleccionadas] = useState<any[]>(ubicacionesDefaultFormatted??[]);
 
+	// const ubicacionesDefaultFormatted= ubicacionesDefault?.map((u: any) => ({ id: u, name: u }));
 	const ubicacionesFormatted = ubicaciones?.map((u: any) => ({ id: u, name: u }));
 
 	const [userIdSoter] = useState<number|null>(()=>{
@@ -157,9 +159,9 @@ import { useShiftStore } from "@/store/useShiftStore";
 
 
 	const [host, setHost] = useState<string>();
-	//()=>{return typeof window !== "undefined"? window.location.host:""}
 	const [protocol,setProtocol] = useState<string>();
-	//()=>{	return typeof window !== "undefined"? window.location.protocol:""	}
+
+
 	useEffect(() => {
 		if (typeof window !== "undefined" && typeof window.location !== "undefined") {
 			setHost(window.location.host);
@@ -167,7 +169,16 @@ import { useShiftStore } from "@/store/useShiftStore";
 		}
 	}, []); 
 
-	const { dataConfigLocation, isLoadingConfigLocation } = usePaseEntrada(ubicacionesSeleccionadas[0]?? '')
+
+	useEffect(() => {
+		if (ubicacionesDefaultFormatted) {
+			setUbicacionesSeleccionadas(ubicacionesDefaultFormatted)
+		}
+	}, [ubicacionesDefaultFormatted]); 
+
+
+
+	const { dataConfigLocation, isLoadingConfigLocation } = usePaseEntrada(ubicacionesSeleccionadas[0]?.id?? '')
 	const [enviar_correo_pre_registro] = useState<string[]>([]);
 	const [formatedDocs, setFormatedDocs] = useState<string[]>([])
 	const [formatedEnvio, setFormatedEnvio] = useState<string[]>([])
@@ -273,8 +284,8 @@ import { useShiftStore } from "@/store/useShiftStore";
 			nombre: data.nombre,
 			email: data.email,
 			telefono: data.telefono,
-			ubicacion: data.ubicacion,
-			ubicaciones:ubicacionesSeleccionadas,
+			ubicacion: ubicacionesSeleccionadas[0].id ,
+			ubicaciones:ubicacionesSeleccionadas.map(u => u.id),
 			tema_cita: data.tema_cita,
 			descripcion: data.descripcion,
 			perfil_pase: "Visita General",
@@ -305,6 +316,7 @@ import { useShiftStore } from "@/store/useShiftStore";
 				numero: data.telefono,
 		},
 		};
+		console.log("ubicaciones ")
 		if(tipoVisita == "fecha_fija" && date == ""){
 			form.setError("fechaFija", { type: "manual", message: "Fecha Fija es requerida cuando el tipo de pase es 'fecha fija'." });
 		}else if(tipoVisita == "rango_de_fechas" && (formattedData.fecha_desde_visita == "" || formattedData.fecha_desde_hasta == "" ) ){
@@ -392,7 +404,7 @@ return (
 					<List size={36} />
 					Mis contactos
 				</Button>
-				<MisContactosModal title="Mis Contactos" setSelected={setSelected} isOpenModal={isOpenModal} closeModal={closeModalContactos}>
+				<MisContactosModal title="Mis Contactos" setSelected={setSelected} isOpenModal={isOpenModal} closeModal={closeModalContactos} setOpenModal={setOpenModal}>
 				</MisContactosModal> 
 
 			</div>
@@ -534,11 +546,13 @@ return (
 							<div className="text-sm mb-2">Ubicaciones del pase: </div>
 							<Multiselect
 							options={ubicacionesFormatted} 
-							selectedValues={ubicacionesDefault}
+							selectedValues={ubicacionesDefaultFormatted}
 							onSelect={(selectedList) => {
+								console.log("selected Ubicaciones", selectedList)
 								setUbicacionesSeleccionadas(selectedList);
 							}}
 							onRemove={(selectedList) => {
+								console.log("selected Ubicaciones", selectedList)
 								setUbicacionesSeleccionadas(selectedList);
 							}}
 							displayValue="name"

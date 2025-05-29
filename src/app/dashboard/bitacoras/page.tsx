@@ -113,7 +113,7 @@ const BitacorasPage = () => {
 
 	useEffect(()=>{
 		if(ubicacionSeleccionada=="todas"){
-			setSelectedOption([])
+			setSelectedOption(["entrada"])
 		}
 	},[ubicacionSeleccionada])
 	
@@ -130,7 +130,7 @@ const BitacorasPage = () => {
 	const handleTabChange = (tab:string, option:string[], filter="") => {
 		if(tab == selectedTab && filter == dateFilter){
 			if(option[0] == selectedOption[0]){
-				setSelectedOption([]);
+				setSelectedOption(["entrada"]);
 				setSelectedTab("Personal")  
 				setDateFilter("")
 			}else{
@@ -180,7 +180,7 @@ return (
 
 					<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
 						dateFilter== "today" && selectedTab === 'Personal' &&  selectedOption.length==0 ? 'bg-blue-100' : 'hover:bg-gray-100'}`} 
-						onClick={() => {handleTabChange("Personal",[], "today");}}>
+						onClick={() => {handleTabChange("Personal",["entrada"], "today");}}>
 						<div className="flex gap-6">
 							<Sun className="text-primary w-10 h-10" />
 							<span className="flex items-center font-bold text-4xl">
@@ -195,7 +195,7 @@ return (
 					</div>
 
 					<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
-						selectedOption[0] === 'entrada'&& dateFilter !== "today" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => {handleTabChange("Personal",["entrada"], "today");}}>
+						selectedOption[0] === 'entrada'&& dateFilter !== "today" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => {handleTabChange("Personal",["entrada"], "");}}>
 						<div className="flex gap-6">
 							<UsersRound className="text-primary w-10 h-10" />
 							<span className="flex items-center font-bold text-4xl">
@@ -212,7 +212,7 @@ return (
 					<div  className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
 						selectedTab === 'Vehiculos' ? 'bg-blue-100' : 'hover:bg-gray-100'
 						}`} 
-						onClick={() => handleTabChange("Vehiculos", [], "today")}>
+						onClick={() => handleTabChange("Vehiculos", ["entrada"], "")}>
 						<div className="flex gap-6">
 							<CarFront className="text-primary w-10 h-10" />
 							<span className="flex items-center font-bold text-4xl">
@@ -229,7 +229,7 @@ return (
 					<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
 						selectedTab === 'Equipos' ? 'bg-blue-100' : 'hover:bg-gray-100'
 						}`} 
-						onClick={() => handleTabChange("Equipos",[])} >
+						onClick={() => handleTabChange("Equipos",["entrada"])} >
 						<div className="flex gap-6">
 							<Wrench className="text-primary w-10 h-10" />
 							<span className="flex items-center font-bold text-4xl">

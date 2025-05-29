@@ -65,7 +65,7 @@ export const EntryPassModal: React.FC<EntryPassUpdateModalProps> = ({
   setIsSuccess,
   onClose,
 }) => {
-
+	console.log("Informacion del pase", dataPass)
   const items =
   dataPass?.tipo_visita_pase === "fecha_fija"
       ? [
