@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Button } from "../ui/button";
 import {
 	Dialog,
@@ -13,7 +14,7 @@ import { useUpdateBitacora } from "@/hooks/useUpdateBitacora";
 import { Vehiculo_bitacora } from "../table/bitacoras/bitacoras-columns";
 import { formatVehiculosToBitacora } from "@/lib/utils";
 import { Car, Loader2 } from "lucide-react";
-import { toast } from "sonner";
+// import { toast } from "sonner";
 
 interface AddVehicleModalProps {
 	title: string;
@@ -30,12 +31,12 @@ type params= {
 export const AddVehicleModal: React.FC<AddVehicleModalProps> = ({
 	title,
 	id,
-	refetchTable
+	// refetchTable
 }) => {
 	const [vehiculos, setVehiculos] = useState<Vehiculo[]>([]);
 	const [dataFetch, setDataFetch] = useState<params| null>(null);
 	const [showError, setShowError] = useState(false);
-	const { data:responseUpdateBitacora, isLoading:loadingUpdateBitacora, refetch: refetch } = useUpdateBitacora(dataFetch?.vehiculo ?? null, dataFetch?.equipo ?? null, id);
+	const { updateBitacoraMutation, isLoading:loadingUpdateBitacora } = useUpdateBitacora();
 	const [isOpen, setIsOpen] = useState(false);
 	const account_id = parseInt(localStorage.getItem("userId_soter") || "0", 10);
 		 
@@ -51,17 +52,17 @@ export const AddVehicleModal: React.FC<AddVehicleModalProps> = ({
  
 	useEffect(()=>{
 		if(dataFetch){
-			refetch()
+			updateBitacoraMutation.mutate({id})
 		}
-	},[dataFetch,refetch])
+	},[dataFetch])
 
-	useEffect(()=>{
-		if(responseUpdateBitacora?.status_code==202){
-			setIsOpen(false)
-			refetchTable()
-			toast.success("¡Vehiculos actualizados correctamente!");
-		}
-	},[responseUpdateBitacora, refetchTable])
+	// useEffect(()=>{
+	// 	if(responseUpdateBitacora?.status_code==202){
+	// 		setIsOpen(false)
+	// 		refetchTable()
+	// 		toast.success("¡Vehiculos actualizados correctamente!");
+	// 	}
+	// },[responseUpdateBitacora, refetchTable])
 
 	const handleClose = () => {
 		setIsOpen(false); 

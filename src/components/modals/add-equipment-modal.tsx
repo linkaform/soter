@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Button } from "../ui/button";
 import {
 	Dialog,
@@ -14,12 +15,12 @@ import { Hammer, Loader2 } from "lucide-react";
 import { useUpdateBitacora } from "@/hooks/useUpdateBitacora";
 import { formatEquiposToBitacora } from "@/lib/utils";
 import { Equipo_bitacora } from "../table/bitacoras/bitacoras-columns";
-import { toast } from "sonner";
+// import { toast } from "sonner";
 
 interface AddEquipmentModalProps {
 	title: string;
 	id:string;
-	refetchTable:()=>void;
+	refetchTable?:()=>void;
 
 }
 type params= {
@@ -31,12 +32,12 @@ type params= {
 export const AddEquipmentModal: React.FC<AddEquipmentModalProps> = ({
 	title,
 	id,
-	refetchTable
+	// refetchTable
 }) => {
 	const [equipos, setEquipos] = useState<Equipo[]>([]);
 	const [dataFetch, setDataFetch] = useState<params| null>(null);
 	const [showError, setShowError] = useState(false);
-	const { data:responseUpdateBitacora, isLoading:loadingUpdateBitacora, refetch } = useUpdateBitacora(dataFetch?.vehiculo ?? null, dataFetch?.equipo ?? null, id);
+	const { isLoading:loadingUpdateBitacora, updateBitacoraMutation } = useUpdateBitacora();
 	const [isOpen, setIsOpen] = useState(false);
 
 	function onSubmit() {
@@ -52,17 +53,17 @@ export const AddEquipmentModal: React.FC<AddEquipmentModalProps> = ({
 	 
 	useEffect(()=>{
 		if(dataFetch){
-			refetch()
+			updateBitacoraMutation.mutate({ id})
 		}
-	},[dataFetch,refetch])
+	},[dataFetch])
 
-	useEffect(()=>{
-		if(responseUpdateBitacora?.status_code==202){
-			setIsOpen(false)
-			refetchTable()
-			toast.success("¡Equipos actualizados correctamente!");
-		}
-	},[responseUpdateBitacora, refetchTable])
+	// useEffect(()=>{
+	// 	if(responseUpdateBitacora?.status_code==202){
+	// 		setIsOpen(false)
+	// 		refetchTable()
+	// 		toast.success("¡Equipos actualizados correctamente!");
+	// 	}
+	// },[responseUpdateBitacora, refetchTable])
 
 	const handleClose = () => {
 		setIsOpen(false); 
