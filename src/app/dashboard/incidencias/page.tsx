@@ -16,7 +16,6 @@ import { dateToString } from "@/lib/utils";
 import { toast } from "sonner";
 import ChangeLocation from "@/components/changeLocation";
 import { useShiftStore } from "@/store/useShiftStore";
-import { useGetStats } from "@/hooks/useGetStats";
 
 const IncidenciasPage = () => {
 
