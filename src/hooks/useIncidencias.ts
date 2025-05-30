@@ -135,7 +135,7 @@ export const useInciencias = (location:string, area:string, prioridades:string[]
 	queryKey: ["getStatsIncidencias", area, location],
 	enabled:enabled,
 	queryFn: async () => {
-		const data = await getStats( area, location, "Incidencias" );
+		const data = await getStats( location, area, "Incidencias" );
 		const responseData = data.response?.data || {};
 		return responseData;
 	},
