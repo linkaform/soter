@@ -1,5 +1,6 @@
 import { EliminarIncidenciaModal } from "@/components/modals/delete-incidencia-modal";
 import { EditarIncidenciaModal } from "@/components/modals/editar-incidencia";
+import { SeguimientoIncidenciaModal } from "@/components/modals/seguimiento-incidencia";
 import { LoadingModal } from "@/components/modals/loading-modal";
 import ViewImage from "@/components/modals/view-image";
 import { ViewIncidencia } from "@/components/modals/view-incidencia";
@@ -7,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import {
     ColumnDef,  
   } from "@tanstack/react-table";
-import { Eye, Trash2 } from "lucide-react";
+import { Check, Eye, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 export type Incidencia = {
@@ -43,6 +44,7 @@ export type Incidencia = {
     documento_incidencia?: DocumentoIncidencum[]
     dano_incidencia?: string
     tipo_dano_incidencia?: string[]
+    grupo_seguimiento_incidencia: []
   }
   
 
@@ -90,6 +92,14 @@ export type Incidencia = {
         <EditarIncidenciaModal
           title="Editar Incidencia"
           data={incidencia} setShowLoadingModal={setShowLoadingModal} />
+
+        <SeguimientoIncidenciaModal
+            title="Seguimiento Incidencia"
+            folio={incidencia?.folio} >
+          <div className="cursor-pointer">
+              <Check />   
+          </div>
+        </SeguimientoIncidenciaModal>
 
         <EliminarIncidenciaModal
           title="Eliminar Incidencia" arrayFolios={[incidencia.folio]}>
