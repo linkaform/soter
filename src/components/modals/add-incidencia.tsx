@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Button } from "../ui/button";
-
 import {
   Dialog,
   DialogClose,
@@ -40,6 +39,7 @@ import { useInciencias } from "@/hooks/useIncidencias";
 import DepositosList from "../depositos-list";
 import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
 import { Input } from "../ui/input";
+import { Slider } from "../slider";
 
 interface AddIncidenciaModalProps {
   	title: string;
@@ -84,7 +84,7 @@ const formSchema = z.object({
 		})
 	  ).optional(),
 	notificacion_incidencia: z.string().min(1, { message: "Este campo es requerido" }),
-	prioridad_incidencia: z.string().min(1, { message: "Este campo es requerido" }),
+	prioridad_incidencia: z.string().optional(),
 	dano_incidencia: z.string().optional(),
 	tipo_dano_incidencia: z.string().optional(),
 	comentario_incidencia: z.string().min(1, { message: "Este campo es requerido" }),
@@ -112,7 +112,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado, error:errorAreEmpleado } = useCatalogoAreaEmpleado(isSuccess, location, "Incidencias");
 	const { createIncidenciaMutation, catIncidencias, isLoadingCatIncidencias , loading} = useInciencias("","",[], false, isSuccess, "", "", "");
 
-
+	const [value, setValue] = useState([50])
 	const [inputTag, setInputTag] = useState('');
 	const [tagsSeleccionados, setTagsSeleccionados] = useState<string[]>([]);
 
@@ -193,7 +193,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 					acciones_tomadas_incidencia: accionesTomadas||[],
 					evidencia_incidencia:evidencia||[],
 					documento_incidencia:documento||[],
-					prioridad_incidencia:values.prioridad_incidencia||"",
+					prioridad_incidencia:getNivel(value[0])||"",
 					notificacion_incidencia:values.notificacion_incidencia||"",
 					datos_deposito_incidencia: depositos||[],
 					tags:tagsSeleccionados
@@ -207,7 +207,11 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const handleClose = () => {
 		setIsSuccess(false); 
 	};
-
+	const getNivel = (val: number) => {
+		if (val < 35) return "Baja"
+		if (val < 70) return "Media"
+		return "Alta"
+	}
   return (
     <Dialog open={isSuccess} modal>
       <DialogTrigger></DialogTrigger>
@@ -345,36 +349,33 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 								</FormItem>
 							)}
 						/>	
+
+						
+
 						<FormField
 							control={form.control}
 							name="prioridad_incidencia"
 							defaultValue="media"
-							render={({ field }:any) => (
+							render={() => (
 								<FormItem className="w-full">
-									<FormLabel>Importancia: *</FormLabel>
+									<div className="text-sm font-medium">
+											Nivel seleccionado: <span className="font-bold">{getNivel(value[0])}</span>
+										</div> 
 									<FormControl>
-									<Select {...field} className="input"
 									
-										onValueChange={(value:string) => {
-										field.onChange(value); 
-									}}
-									value={field.value} 
-								>
-									<SelectTrigger className="w-full">
-									<SelectValue placeholder="Selecciona una opcion" />
-									</SelectTrigger>
-									<SelectContent >
-									<SelectItem key={"baja"} value={"baja"}>Baja</SelectItem>
-									<SelectItem key={"media"} value={"media"}>Media</SelectItem>
-									<SelectItem key={"alta"} value={"alta"}>Alta</SelectItem>
-									<SelectItem key={"crítica"} value={"crítica"}>Crítica</SelectItem>
-									</SelectContent>
-								</Select>
+										<Slider
+											defaultValue={[50]}
+											value={value}
+											onValueChange={setValue}
+											max={100}
+											step={1}
+										/>
 									</FormControl>
 									<FormMessage />
 								</FormItem>
 							)}
 						/>	
+						
 						<FormField
 							control={form.control}
 							name="incidencia"

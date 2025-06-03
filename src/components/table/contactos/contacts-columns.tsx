@@ -91,6 +91,22 @@ export const pasesEntradaColumns: ColumnDef<PaseEntrada>[] = [
       );
     },
     enableSorting: false,  // Deshabilitar el orden para esta columna combinada
+    enableGlobalFilter: false,
+  },
+  {
+    accessorKey: "nombre",
+    header: "",
+    cell: () => null, // No renderiza nada
+    enableHiding: true,
+    enableSorting: false,
+  },
+  
+  {
+    accessorKey: "estatus",
+    header: "",
+    enableHiding: true,
+    cell: () => null, // No renderiza nada
+    enableSorting: false,
   },
 
 ];

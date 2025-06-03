@@ -245,7 +245,7 @@ export const AddPaqueteriaModal: React.FC<AddFallaModalProps> = ({
 					name="quien_recibe_paqueteria"
 					render={({ field }:any) => (
 						<FormItem>
-							<FormLabel>Quien recibe:</FormLabel>
+							<FormLabel>Destinatario:</FormLabel>
 							<FormControl>
 							<Select {...field} className="input"
 								onValueChange={(value:string) => {

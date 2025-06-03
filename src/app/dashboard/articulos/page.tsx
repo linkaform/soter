@@ -31,7 +31,7 @@ const ArticulosPage = () => {
 
 	const [dates, setDates] = useState<string[]>([])
 	const [dateFilter, setDateFilter] = useState<string>("this_month")
-
+	console.log("ubicacion area",ubicacionSeleccionada, areaSeleccionada)
 	const { data: stats } = useGetStats(true,location, area, 'Articulos')
 	const { listArticulosPerdidos, isLoadingListArticulosPerdidos} = useArticulosPerdidos(ubicacionSeleccionada,  areaSeleccionada == "todas" ? "": areaSeleccionada, "", true, dates[0], dates[1], dateFilter);
 	const { listArticulosCon, isLoadingListArticulosCon} = useArticulosConcesionados( true, dates[0], dates[1], dateFilter);
@@ -45,6 +45,11 @@ const ArticulosPage = () => {
 	console.log(selectedArticulos)
 	const [isSuccessCon, setIsSuccessCon] = useState(false);
 	const [isSuccessPaq, setIsSuccessPaq] = useState(false);
+
+	useEffect(() => {
+		if(location)
+			setUbicacionSeleccionada(location)
+	}, [location]); 
 
 	useEffect(()=>{
 		if(tab){

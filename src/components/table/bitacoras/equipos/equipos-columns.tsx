@@ -115,6 +115,20 @@ export const equiposColumns: ColumnDef<Bitacora_record>[] = [
 		enableSorting: true,
 	},
 	{
+		accessorKey: "status_visita",
+		header: "Visitante",
+		cell: ({ row }) => {
+			const isAbierto = row.getValue("status_visita") === "Entrada";
+	
+			return (
+			  <div className={`capitalize font-semibold ${isAbierto ? 'text-green-600' : 'text-red-600'}`}>
+				{row.getValue("status_visita")}
+			  </div>
+			);
+		  },
+		enableSorting: true,
+	},
+	{
 		accessorKey: "equipos",
 		header: "Entrada",
 		cell: ({ row }) =>  {

@@ -22,9 +22,9 @@ const IncidenciasPage = () => {
   const [prioridades, setPrioridades] = useState<string[]>([]);
   const [isSuccess, setIsSuccess] = useState(false);
   
-  const {location, area} = useShiftStore()
+  const {location} = useShiftStore()
   const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
-  const [areaSeleccionada, setAreaSeleccionada] = useState(area);
+  const [areaSeleccionada, setAreaSeleccionada] = useState("todas");
 
   const [isSuccessIncidencia, setIsSuccessIncidencia] = useState(false);
   const [modalData] = useState<any>(null);

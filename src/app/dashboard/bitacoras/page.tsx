@@ -20,10 +20,10 @@ import useAuthStore from "@/store/useAuthStore";
 
 const BitacorasPage = () => {
   	const [selectedOption, setSelectedOption] = useState<string[]>(["entrada"]);
-	const { tab, setTab, filter, setFilter, fetchShift} = useShiftStore()
+	const { tab, setTab, filter, setFilter} = useShiftStore()
   	const {location, area} = useShiftStore()
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
-	const [areaSeleccionada, setAreaSeleccionada] = useState(area);
+	const [areaSeleccionada, setAreaSeleccionada] = useState("todas");
 	console.log("ubicacion area",ubicacionSeleccionada, areaSeleccionada)
 	const [equiposData, setEquiposData] = useState<Bitacora_record[]>([]);
 	const [vehiculosData, setVehiculosData] = useState<Bitacora_record[]>([]);
@@ -32,12 +32,13 @@ const BitacorasPage = () => {
 	const [date2, setDate2] = useState<Date|"">("")
 
 	const [dates, setDates] = useState<string[]>([])
-	const [dateFilter, setDateFilter] = useState<string>(filter)
+	const [dateFilter, setDateFilter] = useState<string>(filter )
 	const { listBitacoras,isLoadingListBitacoras} = useBitacoras(ubicacionSeleccionada, areaSeleccionada == "todas" ? "": areaSeleccionada, selectedOption, ubicacionSeleccionada&&areaSeleccionada?true:false, dates[0], dates[1], dateFilter)
 	const { data: stats } = useGetStats(ubicacionSeleccionada&& areaSeleccionada?true:false,ubicacionSeleccionada, areaSeleccionada, 'Bitacoras')
 	const [selectedTab, setSelectedTab] = useState<string>(tab ? tab: "Personal"); 
 
 	const userNameSoter = useAuthStore((state) => state.userNameSoter);
+	console.log("AREAA",location, ubicacionSeleccionada, areaSeleccionada)
 
 	useEffect(() => {
 		if(tab){
@@ -46,14 +47,10 @@ const BitacorasPage = () => {
 		if(filter){
 			setFilter("")
 		}
-
-		if (!area && !location) {
-			fetchShift();
-		}
-	 	console.log("ubciaciones",location, area)
-		setUbicacionSeleccionada(location)
-		setAreaSeleccionada(area)
-	}, [area, location, fetchShift, userNameSoter, tab, filter, setTab, setFilter]); 
+		if(location)
+			setUbicacionSeleccionada(location)
+			// setUbicacionSeleccionada("todas")
+	}, [area, location, userNameSoter, tab, filter, setTab, setFilter]); 
 
 
 	const processBitacorasE = (bitacoras: Bitacora_record[]) => {
@@ -179,7 +176,7 @@ return (
 					</div>
 
 					<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
-						dateFilter== "today" && selectedTab === 'Personal' &&  selectedOption.length==0 ? 'bg-blue-100' : 'hover:bg-gray-100'}`} 
+						dateFilter== "today" && selectedTab === 'Personal' &&  selectedOption[0]=="entrada" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} 
 						onClick={() => {handleTabChange("Personal",["entrada"], "today");}}>
 						<div className="flex gap-6">
 							<Sun className="text-primary w-10 h-10" />
@@ -195,7 +192,7 @@ return (
 					</div>
 
 					<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
-						selectedOption[0] === 'entrada'&& dateFilter !== "today" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => {handleTabChange("Personal",["entrada"], "");}}>
+						selectedOption[0] === 'entrada' && selectedTab === 'Personal' && dateFilter == "" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => {handleTabChange("Personal",["entrada"], "");}}>
 						<div className="flex gap-6">
 							<UsersRound className="text-primary w-10 h-10" />
 							<span className="flex items-center font-bold text-4xl">
@@ -210,7 +207,7 @@ return (
 					</div>
 
 					<div  className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
-						selectedTab === 'Vehiculos' ? 'bg-blue-100' : 'hover:bg-gray-100'
+						selectedTab === 'Vehiculos' && dateFilter == "" ? 'bg-blue-100' : 'hover:bg-gray-100'
 						}`} 
 						onClick={() => handleTabChange("Vehiculos", ["entrada"], "")}>
 						<div className="flex gap-6">
@@ -227,7 +224,7 @@ return (
 					</div>
 
 					<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
-						selectedTab === 'Equipos' ? 'bg-blue-100' : 'hover:bg-gray-100'
+						selectedTab === 'Equipos' && dateFilter == "" ? 'bg-blue-100' : 'hover:bg-gray-100'
 						}`} 
 						onClick={() => handleTabChange("Equipos",["entrada"])} >
 						<div className="flex gap-6">
@@ -244,7 +241,7 @@ return (
 					</div>
 
 					<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
-						selectedOption[0] === 'salida' ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => handleTabChange("Personal", ["salida"])}>
+						selectedOption[0] === 'salida' && dateFilter== "today"? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => handleTabChange("Personal", ["salida"], "today")}>
 						<div className="flex gap-6">
 							<DoorOpen className="text-primary w-10 h-10" />
 							<span className="flex items-center font-bold text-4xl">
@@ -255,7 +252,7 @@ return (
 							<div className="h-1 w-1/2 bg-cyan-100"></div>
 							<div className="h-1 w-1/2 bg-blue-500"></div>
 						</div>
-						<span className="text-md">Salidas registradas</span>
+						<span className="text-md">Salidas del día</span>
 					</div>
 				</div>
 			</div> 

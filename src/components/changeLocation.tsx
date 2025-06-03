@@ -16,28 +16,51 @@ interface InputChangeLocation {
 	setAreaSeleccionada:(area: string) => void;
 	ubicacion?:string
 }
-
+ 
 const ChangeLocation:React.FC<InputChangeLocation> = ({ ubicacionSeleccionada, setUbicacionSeleccionada, areaSeleccionada, setAreaSeleccionada, ubicacion })=> {
 
 	const {areas, locations, fetchAreas, fetchLocations} = useAreasLocationStore();
-	console.log("Ubicacion,area ==", ubicacionSeleccionada, areaSeleccionada)
-	// const {location, area} = useShiftStore();
-	//   console.log("objects",ubicacionSeleccionada, areaSeleccionada, locations, areas)
+	console.log("Ubicacion,area ==", ubicacionSeleccionada, areaSeleccionada, areas,)
+
+	useEffect(()=>{
+		if(locations.length==0 || areas.length==0){
+			fetchLocations();
+		}
+		if (ubicacionSeleccionada) {
+			fetchAreas(ubicacionSeleccionada);
+		}
+		// if( areas.length==0){
+		// 	fetchAreas(ubicacionSeleccionada);
+		// }
+	},[])
 
 	// useEffect(()=>{
-	// 	if(!location || !area){
-	// 		fetchLocations();
-	// 	}
-	// },[])
+	// 	if(ubicacionSeleccionada)
+	// 		console.log( "Locations fetched", ubicacionSeleccionada)
+	// 		fetchAreas(ubicacionSeleccionada);
+	// },[ubicacionSeleccionada])
 
-	  useEffect(() => {
-		if(!locations){
-			fetchLocations();
-			if (ubicacionSeleccionada) {
-				fetchAreas(ubicacionSeleccionada);
-			  }
+	useEffect(()=>{
+		if(areas)
+			console.log( "areas fetched", areas)
+			// fetchAreas(ubicacionSeleccionada);
+	},[areas])
+
+	useEffect(() => {
+		if (ubicacionSeleccionada) {
+			fetchAreas(ubicacionSeleccionada);
 		}
 	  }, [ubicacionSeleccionada]);
+	//   useEffect(() => {
+	// 	if(!locations){
+	// 		console.log("locations", locations)
+	// 		fetchLocations();
+	// 		if (ubicacionSeleccionada) {
+	// 			console.log("ubicacionSeleccionada", ubicacionSeleccionada)
+	// 			fetchAreas(ubicacionSeleccionada);
+	// 		  }
+	// 	}
+	//   }, [ubicacionSeleccionada]);
 
 	return (
     <div className="flex flex-col w-full gap-2">

@@ -76,6 +76,14 @@ export const paqueteriaColumns: ColumnDef<Paquete_record>[] = [
 		enableSorting: false,
 		enableHiding: false,
 	},
+  {
+    accessorKey: "quien_recibe_paqueteria",
+    header: "Destinatario",
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue("quien_recibe_paqueteria")}</div>
+    ),
+    enableSorting: true,
+  },
     {
       accessorKey: "descripcion_paqueteria",
       header: "Descripcion",
@@ -107,14 +115,7 @@ export const paqueteriaColumns: ColumnDef<Paquete_record>[] = [
     //     )},
     //     enableSorting: false,
     // },
-    {
-      accessorKey: "quien_recibe_paqueteria",
-      header: "Quién recibe",
-      cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("quien_recibe_paqueteria")}</div>
-      ),
-      enableSorting: true,
-    },
+
     {
       accessorKey: "guardado_en_paqueteria",
       header: "Locker",

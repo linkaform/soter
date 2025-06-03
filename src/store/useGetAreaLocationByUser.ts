@@ -35,6 +35,7 @@ export const useAreasLocationStore = create(
             const fetched = await getCatalogoPasesArea({ location });
             const error = errorMsj(fetched);
             if (error) throw new Error(error.text);
+            console.log("areas",fetched?.response?.data.areas_by_location  )
             set({ areas:fetched? fetched?.response?.data.areas_by_location : [] });
           } catch (err) {
             toast.error("Ocurrio un error al cargar las areas: " + err)
@@ -51,6 +52,7 @@ export const useAreasLocationStore = create(
           try {
             const fetched = await getCatalogoPasesLocation();
             set({ locations: fetched? fetched?.response?.data.ubicaciones_user : [] });
+            console.log("locations dentro de fetch", locations)
           } catch (err) {
             toast.error("Ocurrio un error al cargar las ubicaciones: " + err)
           } finally {
