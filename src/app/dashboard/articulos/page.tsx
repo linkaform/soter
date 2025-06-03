@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -31,7 +32,7 @@ const ArticulosPage = () => {
 
 	const [dates, setDates] = useState<string[]>([])
 	const [dateFilter, setDateFilter] = useState<string>("this_month")
-	console.log("ubicacion area",ubicacionSeleccionada, areaSeleccionada)
+	console.log("ubicacion area",location, area,ubicacionSeleccionada, areaSeleccionada)
 	const { data: stats } = useGetStats(true,location, area, 'Articulos')
 	const { listArticulosPerdidos, isLoadingListArticulosPerdidos} = useArticulosPerdidos(ubicacionSeleccionada,  areaSeleccionada == "todas" ? "": areaSeleccionada, "", true, dates[0], dates[1], dateFilter);
 	const { listArticulosCon, isLoadingListArticulosCon} = useArticulosConcesionados( true, dates[0], dates[1], dateFilter);
@@ -48,8 +49,9 @@ const ArticulosPage = () => {
 
 	useEffect(() => {
 		if(location)
+			console.log("ubicaciones")
 			setUbicacionSeleccionada(location)
-	}, [location]); 
+	}, []); 
 
 	useEffect(()=>{
 		if(tab){

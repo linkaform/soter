@@ -34,7 +34,10 @@ export const DoOutModal: React.FC<AddBadgeModalProps> = ({
   function onSubmit() {
     doOutMutation.mutate({
       qr_code:id_bitacora,location:ubicacion, area
-    })
+    }, {
+      onSuccess: () => {
+        setIsOpen(false)
+      }})
   }
 
   return (

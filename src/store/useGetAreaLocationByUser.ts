@@ -28,8 +28,7 @@ export const useAreasLocationStore = create(
       clearAreasLocation: () => set({ areas: [], locations: [] }),
 
       fetchAreas: async (location: string) => {
-        const { areas } = get();
-        if (!areas.length) {
+        // const { areas } = get();
           set({ loading: true });
           try {
             const fetched = await getCatalogoPasesArea({ location });
@@ -42,7 +41,6 @@ export const useAreasLocationStore = create(
           } finally {
             set({ loading: false });
           }
-        }
       },
 
       fetchLocations: async () => {
