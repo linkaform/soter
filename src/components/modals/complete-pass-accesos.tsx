@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
 
@@ -12,14 +11,7 @@ import {
 } from "../ui/dialog";
 import {
   Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
 } from "../ui/form";
-
-import { Input } from "../ui/input";
 
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -70,7 +62,6 @@ export const UpdatePassModal: React.FC<Props> = ({ title, children, id , dataCat
 	const [agregarEquiposActive, setAgregarEquiposActive] = useState(false);
 	const [agregarVehiculosActive, setAgregarVehiculosActive] = useState(false);
 
-    const [fechaDesde, setFechaDesde] = useState("")
     const [showIneIden] = useState("iden-foto")
     const [equipos, setEquipos] = useState<Equipo[]>([])
     const [vehicles, setVehicles] = useState<Vehiculo[]>([])
@@ -154,11 +145,6 @@ export const UpdatePassModal: React.FC<Props> = ({ title, children, id , dataCat
 	}
 	},[errorFotografia,errorIdentificacion ])
 
-    function getNextDay(date: string | number | Date) {
-		const currentDate = new Date(date);
-		currentDate.setDate(currentDate.getDate() + 1); 
-		return currentDate.toISOString().split('T')[0]; 
-	}
 
     return (
         <Dialog open={openModal} onOpenChange={setOpenModal} modal>

@@ -37,6 +37,7 @@ export const useDoOut = ( qr_code:string, location:string, area:string) => {
       },
       onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["getListBitacoras"] });
+          queryClient.invalidateQueries({ queryKey: ["getStats"] });
           toast.success("Salida registrada correctamente.");
       },
       onError: (err) => {
