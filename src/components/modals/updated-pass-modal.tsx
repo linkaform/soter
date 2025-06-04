@@ -236,7 +236,7 @@ return (
 			<form className="space-y-4"> 
 					<div className="flex flex-col justify-start items-center gap-3">
 						<div className="flex gap-2 flex-col">
-							<div className="flex flex-col gap-2 flex-wrap items-center justify-center">
+							<div className="flex flex-col gap-2 lg:flex-row lg:gap-6 justify-center items-center">
 								{hasEmail==true ? (
 									
 									<Button
@@ -246,7 +246,7 @@ return (
 											isActive ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent "
 										} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
 										>
-										<div className="flex flex-wrap items-center">
+										<div className="flex items-center">
 											{isActive ? (
 											<>
 												<Mail className="mr-3" />
