@@ -55,7 +55,7 @@ export const useInciencias = (location:string, area:string, prioridades:string[]
         },
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["getListIncidencias"] });
-          queryClient.invalidateQueries({ queryKey: ["getStatsIncidencias"] });
+          queryClient.invalidateQueries({ queryKey: ["getStats"] });
           toast.success("Incidencia creada correctamente.");
         },
         onError: (err) => {
@@ -86,7 +86,7 @@ export const useInciencias = (location:string, area:string, prioridades:string[]
         },
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["getListIncidencias"] });
-          queryClient.invalidateQueries({ queryKey: ["getStatsIncidencias"] });
+          queryClient.invalidateQueries({ queryKey: ["getStats"] });
           toast.success("Incidencia editada correctamente.");
         },
         onError: (err) => {
@@ -117,7 +117,7 @@ export const useInciencias = (location:string, area:string, prioridades:string[]
       },
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["getListIncidencias"] });
-        queryClient.invalidateQueries({ queryKey: ["getStatsIncidencias"] });
+        queryClient.invalidateQueries({ queryKey: ["getStats"] });
         toast.success("Incidencia eliminada correctamente.");
       },
       onError: (err) => {

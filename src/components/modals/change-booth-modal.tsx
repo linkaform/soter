@@ -21,7 +21,7 @@ export const ChangeBoothModal: React.FC<ChangeBoothProps> = ({
 }) => {
   const[open, setIsOpen]= useState(false)
   const { booths, changeBoothMutation, isLoading } = useHandleBooth(open);
-  console.log("casetas", open)
+
   return (
     <Dialog open={open} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -44,6 +44,7 @@ export const ChangeBoothModal: React.FC<ChangeBoothProps> = ({
                   key={index}
                   className="flex items-center justify-between p-2  hover:bg-gray-100 cursor-pointer transition-colors"
                   onClick={() =>
+                  
                     changeBoothMutation.mutate({
                       area: item?.area,
                       location: item?.location,
@@ -58,13 +59,7 @@ export const ChangeBoothModal: React.FC<ChangeBoothProps> = ({
                     <p className="text-base">{item?.area}</p>
                     <p className="text-sm">{item?.location}</p>
                   </div>
-
-
                 </div>
-
-                
-
-                
               ))}
             </div>
         )}

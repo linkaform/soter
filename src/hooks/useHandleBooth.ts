@@ -11,10 +11,6 @@ export const useHandleBooth = (enableGetBooths:boolean) => {
   
     const { setArea, setLocation, setLoading } = useShiftStore();
 
-
-
-
-
     const { data: booths, isLoading, error, isFetching } = useQuery<any[]>({
       queryKey: ["getBooths"], 
       enabled:enableGetBooths,
@@ -39,18 +35,17 @@ export const useHandleBooth = (enableGetBooths:boolean) => {
             response.error?.msg?.msg || "Hubo un error al cambiar la caseta"
           );
         }
-    
         return response;
       },
       onMutate: () => {
         setLoading(true); // Activar loading global
       },
-      onSuccess: (response, variables) => {
+      onSuccess: (response, variables) => {       
+        // queryClient.invalidateQueries({ queryKey: ["getShift"] });
         if (response.success) {
           setArea(variables.area);
           setLocation(variables.location);
-    
-          // ✅ Notificación de éxito
+          console.log("location area",variables.area, variables.location)
           toast.success("Caseta cambiada correctamente.");
         }
       },
@@ -64,9 +59,6 @@ export const useHandleBooth = (enableGetBooths:boolean) => {
         setLoading(false);
       },
     });
-  
- 
-  
   
   return {
     /* Obtener Caseta */

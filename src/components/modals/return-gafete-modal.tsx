@@ -8,17 +8,13 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { useAsignarGafete } from "@/hooks/useAsignarGafete";
-
-import { toast } from "sonner";
-import { dataGafetParamas } from "@/lib/bitacoras";
 
 interface AddBadgeModalProps {
   title: string;
   children: React.ReactNode;
-  refetchTable:()=>void;
   id_bitacora:string;
   ubicacion:string;
   area:string;
@@ -32,50 +28,18 @@ export const ReturnGafeteModal: React.FC<AddBadgeModalProps> = ({
   title,
   children,
   area,
-  refetchTable, 
   id_bitacora,
   ubicacion,
   gafete,
   locker,
   tipo_movimiento
 }) => {
-    const [dataGafete, setDataGafete]= useState<dataGafetParamas | null>(null)
-    const { data:responseAsignarGafete, isLoading:loadingAsginarGafete, refetch: refetchAsignarGafete, error:errorAsignarGafete } = useAsignarGafete(dataGafete ?? null, 
-        id_bitacora ?? null, tipo_movimiento ?? null );
+    const { asignarGafeteMutation, isLoading } = useAsignarGafete( );
      const [isOpen, setIsOpen] = useState(false);
 
-  useEffect(()=>{
-    if(errorAsignarGafete){
-      setIsOpen(false)
-      toast.error( "Error al devolver gafete.")
+    function onSubmit() {
+		asignarGafeteMutation.mutate({data_gafete: {locker_id:locker, gafete_id:gafete, documento:"", status_gafete:"entregado" , ubicacion:ubicacion, area:area}, id_bitacora, tipo_movimiento})
     }
-    },[errorAsignarGafete])
-
-  function onSubmit() {
-    setDataGafete({locker_id:locker, gafete_id:gafete, documento:"", status_gafete:"entregado" , ubicacion:ubicacion, area:area})
-  }
-
-
-  useEffect(()=>{
-    if(dataGafete){
-      refetchAsignarGafete()
-    }
-  },[dataGafete,refetchAsignarGafete])
-
-  useEffect(()=>{
-    if(responseAsignarGafete){
-        if(responseAsignarGafete.success==false){
-            setIsOpen(false)
-            toast.error("Gafete liberado correctamente.")
-            // errorAlert(responseAsignarGafete)
-        }else{
-            setIsOpen(false)
-            toast.error("Gafete liberado correctamente.")
-            // sweetAlert("success", "Confirmación", "Gafete liberado correctamente.")
-            refetchTable()
-        }
-    }
-  }, [responseAsignarGafete,refetchTable])
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -100,8 +64,8 @@ export const ReturnGafeteModal: React.FC<AddBadgeModalProps> = ({
                 </Button>
               </DialogClose>
 
-              <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white" onClick={onSubmit}>
-              { !loadingAsginarGafete ? (<>
+              <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white" onClick={onSubmit} disabled={isLoading}>
+              { !isLoading ? (<>
               {("Confirmar")}
             </>) :(<> <Loader2 className="animate-spin"/> {"Cargando..."} </>)}
               </Button>

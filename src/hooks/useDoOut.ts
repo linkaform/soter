@@ -25,10 +25,9 @@ export const useDoOut = ( qr_code:string, location:string, area:string) => {
     const doOutMutation = useMutation({
       mutationFn: async ({qr_code, location, area} : {qr_code: string, location:string, area:string}) => {
           const response = await doOut(qr_code, location , area);
-          const hasError= response.error? response.error.status : undefined
-          if(hasError == 400 || hasError == 401){
-              const textMsj =response.error.msg.msg //errorMsj(response.response.data) 
-              throw new Error(`Error al realizar la salida, Error: ${textMsj}`);
+          if(!response.success){
+              throw new Error(`Error al realizar la salida, Error:${response.error.exception.msg[0]} `);
+
           }else{
               return response.response?.data
           }
@@ -37,14 +36,16 @@ export const useDoOut = ( qr_code:string, location:string, area:string) => {
         setLoading(true);
       },
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["getListBitacora"] });
-        queryClient.invalidateQueries({ queryKey: ["getStatsArticulos"] });
-        toast.success("Salida registrada correctamente.");
+          queryClient.invalidateQueries({ queryKey: ["getListBitacoras"] });
+          toast.success("Salida registrada correctamente.");
       },
       onError: (err) => {
-        // console.error("Error al realizar la salida:", err);
-        toast.error(err.message || "Hubo un error al realizar la salida.");
-  
+        toast.error(err.message || "Hubo un error al realizar la salida.", {
+          style: {
+            backgroundColor: "#f44336", 
+            color: "#fff",
+          },
+        });
       },
       onSettled: () => {
         setLoading(false);

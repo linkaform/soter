@@ -491,7 +491,7 @@ return (
 							render={({ field }: any) => (
 							<FormItem>
 								<FormLabel>
-								<span className="text-red-500">*</span> Teléfono
+								Teléfono
 								</FormLabel>
 								<FormControl>
 								<PhoneInput

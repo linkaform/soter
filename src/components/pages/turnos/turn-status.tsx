@@ -81,7 +81,7 @@ const TurnStatus = () => {
       	</CloseShiftModal>
 
         <>
-          {shift.booth_status.status=="No Disponible" && shift?.guard?.status_turn === "Turno Cerrado" ?
+          {shift?.booth_status.status=="No Disponible" && shift?.guard?.status_turn === "Turno Cerrado" ?
             <div className="text-red-500 break-all ml-2">
               * Puedes forzar el cierre de la caseta para poder iniciar turno.
             </div>

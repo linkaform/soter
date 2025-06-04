@@ -4,7 +4,6 @@ import { VehicleLocalPassModal } from "@/components/modals/add-local-vehicule";
 import { DoOutModal } from "@/components/modals/do-out-modal";
 import { ReturnGafeteModal } from "@/components/modals/return-gafete-modal";
 import { ViewListBitacoraModal } from "@/components/modals/view-bitacora";
-import { useGetListBitacora } from "@/hooks/useGetListBitacora";
 import { Equipo, Vehiculo } from "@/lib/update-pass";
 import {
 		ColumnDef,  
@@ -81,7 +80,6 @@ export interface Areas_bitacora {
 }
 
 const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
-	const {refetch} = useGetListBitacora("", "",[], false, "", "","this_month");
 	const [vehiculos, setVehiculos] = useState<Vehiculo[]>([]);
 	const [equipos, setEquipos] = useState<Equipo[]>([]);
 	const bitacora = row.original;
@@ -109,16 +107,16 @@ const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
 			</EqipmentLocalPassModal>} 
 					
 
-		{ bitacora.status_visita.toLowerCase() =="salida" && bitacora.status_gafete.toLowerCase()=="asignado" ? (
-			<ReturnGafeteModal title={"Recibir Gafete"} refetchTable={refetch} id_bitacora={bitacora._id}
+		{ bitacora.status_visita.toLowerCase() =="entrada" && bitacora.status_gafete.toLowerCase()=="asignado" ? (
+			<ReturnGafeteModal title={"Recibir Gafete"} id_bitacora={bitacora._id}
 				ubicacion={bitacora.ubicacion} area={bitacora.status_visita.toLowerCase() == "entrada" ? bitacora.caseta_entrada : bitacora.caseta_salida || ""} 
 				fecha_salida={bitacora.fecha_salida} gafete={bitacora.id_gafet} locker={bitacora.id_locker||""} tipo_movimiento={bitacora.status_visita.toLowerCase()}> 
-				<IdCard />
+				<IdCard className="text-red-700"/>
 			</ReturnGafeteModal>
 		 ):(
 		 <>
 		 	{ bitacora.status_visita.toLowerCase() =="entrada"? (
-				<AddBadgeModal title={"Gafete"} status={"Disponible"} refetchTable={refetch} id_bitacora= {bitacora._id}
+				<AddBadgeModal title={"Gafete"} status={"Disponible"} id_bitacora= {bitacora._id}
 					tipo_movimiento={bitacora.status_visita} ubicacion={bitacora.ubicacion} area={bitacora.status_visita.toLowerCase()=="entrada" ? bitacora.caseta_entrada: bitacora.caseta_salida||""}/>
 			):null}
 		 </>
@@ -146,6 +144,14 @@ export const bitacorasColumns: ColumnDef<Bitacora_record>[] = [
 		enableHiding: false,
 	},
 	{
+		accessorKey: "folio",
+		header: "Folio",
+		cell: ({ row }) => (
+			<div className="capitalize">{row.getValue("folio")}</div>
+		),
+		enableSorting: true,
+	},
+	{
 		accessorKey: "nombre_visitante",
 		header: "Visitante",
 		cell: ({ row }) => (
@@ -155,7 +161,7 @@ export const bitacorasColumns: ColumnDef<Bitacora_record>[] = [
 	},
 	{
 		accessorKey: "status_visita",
-		header: "Visitante",
+		header: "Estatus",
 		cell: ({ row }) => {
 			const isAbierto = row.getValue("status_visita") === "Entrada";
 	
@@ -193,7 +199,7 @@ export const bitacorasColumns: ColumnDef<Bitacora_record>[] = [
 	},
 	{
 		accessorKey: "contratista",
-		header: "Contratista",
+		header: "Empresa",
 		cell: ({ row }) => (
 			<div className="capitalize">{row.getValue("contratista")}</div>
 		),

@@ -37,7 +37,10 @@ export const DoOutModal: React.FC<AddBadgeModalProps> = ({
     }, {
       onSuccess: () => {
         setIsOpen(false)
-      }})
+      },
+      onError: () => {
+        setIsOpen(false)
+      }},)
   }
 
   return (
@@ -63,7 +66,7 @@ export const DoOutModal: React.FC<AddBadgeModalProps> = ({
                 </Button>
               </DialogClose>
 
-              <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white" onClick={onSubmit}>
+              <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white" onClick={onSubmit} disabled={loadingDoOut}>
               { !loadingDoOut ? (<>
               {("Confirmar")}
             </>) :(<> <Loader2 className="animate-spin"/> {"Cargando..."} </>)}

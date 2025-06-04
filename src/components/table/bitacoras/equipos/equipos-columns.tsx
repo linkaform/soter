@@ -1,4 +1,3 @@
-import { AddEquipmentModal } from "@/components/modals/add-equipment-modal";
 import { ViewListBitacoraModal } from "@/components/modals/view-bitacora";
 import {
 		ColumnDef,  
@@ -88,11 +87,7 @@ const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
 						<Eye /> 
 					</div>
 			</ViewListBitacoraModal>
-
-      <AddEquipmentModal title="Agregar equipo" id={bitacora._id} refetchTable={()=>{}}/>
 		</div>
-
-    
 	);
 };
 
@@ -107,6 +102,14 @@ export const equiposColumns: ColumnDef<Bitacora_record>[] = [
 		enableHiding: false,
 	},
 	{
+		accessorKey: "folio",
+		header: "Folio",
+		cell: ({ row }) => (
+			<div className="capitalize">{row.getValue("folio")}</div>
+		),
+		enableSorting: true,
+	},
+	{
 		accessorKey: "nombre_visitante",
 		header: "Visitante",
 		cell: ({ row }) => (
@@ -116,7 +119,7 @@ export const equiposColumns: ColumnDef<Bitacora_record>[] = [
 	},
 	{
 		accessorKey: "status_visita",
-		header: "Visitante",
+		header: "Estatus",
 		cell: ({ row }) => {
 			const isAbierto = row.getValue("status_visita") === "Entrada";
 	
@@ -129,12 +132,31 @@ export const equiposColumns: ColumnDef<Bitacora_record>[] = [
 		enableSorting: true,
 	},
 	{
+		accessorKey: "fecha_entrada",
+		header: "Fecha de Entrada",
+		cell: ({ row }) => (
+			<div className="capitalize">{row.getValue("fecha_entrada")}</div>
+		),
+		enableSorting: true,
+	},
+	{
 		accessorKey: "equipos",
-		header: "Entrada",
+		header: "Equipo",
 		cell: ({ row }) =>  {
       const eq = row.original.equipos[0]
       return (
           <div className="capitalize">{eq?.tipo_equipo}</div>
+      )
+    },
+		enableSorting: true,
+	},
+	{
+		accessorKey: "nombre_articulo",
+		header: "Nombre",
+		cell: ({ row }) => {
+      const eq = row.original.equipos[0]
+      return(
+        <div className="capitalize">{eq?.nombre_articulo}</div>
       )
     },
 		enableSorting: true,
@@ -162,17 +184,7 @@ export const equiposColumns: ColumnDef<Bitacora_record>[] = [
     },
 		enableSorting: true,
 	},
-	{
-		accessorKey: "nombre_articulo",
-		header: "Nombre",
-		cell: ({ row }) => {
-      const eq = row.original.equipos[0]
-      return(
-        <div className="capitalize">{eq?.nombre_articulo}</div>
-      )
-    },
-		enableSorting: true,
-	},
+
 	{
 		accessorKey: "numero_serie",
 		header: "Numero de serie",
@@ -185,7 +197,7 @@ export const equiposColumns: ColumnDef<Bitacora_record>[] = [
 	},
 	{
 		accessorKey: "color",
-		header: "Caseta Entrada",
+		header: "Color",
 		cell: ({ row }) => {
       const eq = row.original.equipos[0]
       return (

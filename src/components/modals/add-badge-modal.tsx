@@ -30,16 +30,15 @@ import { useForm } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { useGetLockers } from "@/hooks/useGetLockers";
 import { useGetGafetes } from "@/hooks/useGetGafetes";
-import { useAsignarGafete } from "@/hooks/useAsignarGafete";
+
 import { IdCard, Loader2 } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
-import { toast } from "sonner";
-import { dataGafetParamas } from "@/lib/bitacoras";
+import { useAsignarGafete } from "@/hooks/useAsignarGafete";
+import { useShiftStore } from "@/store/useShiftStore";
 
 interface AddBadgeModalProps {
 	title: string;
 	status:string;
-	refetchTable:()=>void;
 	id_bitacora:string;
 	tipo_movimiento:string;
 	ubicacion:string;
@@ -78,20 +77,16 @@ const FormSchema = z.object({
 
 export const AddBadgeModal: React.FC<AddBadgeModalProps> = ({
 	title,
-	area,
 	status,
-	refetchTable, 
 	id_bitacora,
 	tipo_movimiento,
 	ubicacion
 }) => {
-	const [dataGafete, setDataGafete]= useState< dataGafetParamas | null>(null)
+	const {area, location} = useShiftStore()
 	const [isOpen, setIsOpen] = useState(false);
-
-	const { data:responseGetLockers, isLoading:loadingGetLockers, refetch: refetchLockers } = useGetLockers(ubicacion ?? null,"", status, isOpen);
-	const { data:responseGetGafetes, isLoading:loadingGetGafetes, refetch: refetchGafetes } = useGetGafetes(ubicacion ?? null,"", status, isOpen);
-	const { data:responseAsignarGafete, isLoading:loadingAsginarGafete, refetch: refetchAsignarGafete, error:errorAsignarGafete } = useAsignarGafete(dataGafete ?? null, 
-		id_bitacora ?? null, tipo_movimiento?? null );
+	const { data:responseGetLockers, isLoading:loadingGetLockers, refetch: refetchLockers } = useGetLockers(location, area, status, isOpen);
+	const { data:responseGetGafetes, isLoading:loadingGetGafetes, refetch: refetchGafetes } = useGetGafetes(location, area, status, isOpen);
+	const { asignarGafeteMutation,isLoading} = useAsignarGafete();
 
 	const form = useForm<z.infer<typeof FormSchema>>({
 		resolver: zodResolver(FormSchema),
@@ -109,33 +104,12 @@ export const AddBadgeModal: React.FC<AddBadgeModalProps> = ({
 		}
 	},[isOpen, refetchGafetes, refetchLockers])
 
-	useEffect(()=>{
-		if(errorAsignarGafete){
-			toast.error("Error al asignar gafete.")
-			// errorAlert(errorAsignarGafete, "Error al asignar gafete.", "warning")
-		}
-	},[errorAsignarGafete])
-
 
 	function onSubmit(data: z.infer<typeof FormSchema>) {
-		setDataGafete({locker_id:data.locker, gafete_id:data.gafete, documento:data.documentos, status_gafete:"asignado" , ubicacion:ubicacion, area:area})
+		asignarGafeteMutation.mutate({ data_gafete:{locker_id:data.locker, gafete_id:data.gafete, documento:data.documentos, status_gafete:"asignado" , ubicacion:ubicacion, area:area} 
+			,id_bitacora, tipo_movimiento })
 	}
-
-	useEffect(()=>{
-		if(dataGafete){
-			refetchAsignarGafete()
-		}
-	},[dataGafete,refetchAsignarGafete])
 	
-
-	useEffect(()=>{
-		if(responseAsignarGafete){
-			setIsOpen(false)
-			toast.success("Gafete asignado exitosamente.")
-			// sweetAlert("success", "Confirmación", "Gafete asignado exitosamente.")
-			refetchTable()
-		}
-	}, [responseAsignarGafete,refetchTable])
 
 	const handleOpenModal = async () => {
 		setIsOpen(true); 
@@ -184,8 +158,8 @@ return (
 											</FormControl>
 											<SelectContent >
 											{responseGetGafetes?.map((gafete:gafete, index:string) => (
-														<SelectItem key={index} value={gafete.gafete_id}>
-															{gafete.gafete_id}
+														<SelectItem key={`${index}-${gafete.area}`} value={gafete.gafete_id}>
+															{gafete.gafete_id} - {gafete.area}
 														</SelectItem>
 													))}
 											</SelectContent>
@@ -299,8 +273,8 @@ return (
 					</Button>
 				</DialogClose>
 
-				<Button className="w-full  bg-blue-500 hover:bg-blue-600 text-white" type="submit" onClick={form.handleSubmit(onSubmit)}>
-					{ !loadingAsginarGafete ? (<>
+				<Button className="w-full  bg-blue-500 hover:bg-blue-600 text-white" type="submit" onClick={form.handleSubmit(onSubmit)} disabled={isLoading}>
+					{ !isLoading ? (<>
 					{("Asignar gafete")}
 					</>) :(<> <Loader2 className="animate-spin"/> {"Cargando..."} </>)}
 				</Button>

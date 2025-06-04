@@ -1,4 +1,3 @@
-import { AddVehicleModal } from "@/components/modals/add-vehicle-modal";
 import { ViewListBitacoraModal } from "@/components/modals/view-bitacora";
 import {
 		ColumnDef,  
@@ -87,8 +86,6 @@ const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
 						<Eye /> 
 					</div>
 			</ViewListBitacoraModal>
-
-            <AddVehicleModal title="Agregar vehiculo" id={bitacora._id} refetchTable={()=>{}} />
         </div>
 	);
 };
@@ -114,15 +111,16 @@ export const vehiculosColumns: ColumnDef<Bitacora_record>[] = [
 	},
     {
 		accessorKey: "nombre_visitante",
-		header: "Nombre",
+		header: "Visitante",
 		cell: ({ row }) => (
 			<div className="capitalize">{row.getValue("nombre_visitante")}</div>
 		),
 		enableSorting: true,
 	},
+	
 	{
 		accessorKey: "status_visita",
-		header: "Visitante",
+		header: "Estatus",
 		cell: ({ row }) => {
 			const isAbierto = row.getValue("status_visita") === "Entrada";
 	
@@ -135,12 +133,20 @@ export const vehiculosColumns: ColumnDef<Bitacora_record>[] = [
 		enableSorting: true,
 	},
 	{
-		accessorKey: "tipo",
-		header: "Tipo",
+		accessorKey: "fecha_entrada",
+		header: "Fecha de Entrada",
+		cell: ({ row }) => (
+			<div className="capitalize">{row.getValue("fecha_entrada")}</div>
+		),
+		enableSorting: true,
+	},
+	{
+		accessorKey: "marca_vehiculo",
+		header: "Marca",
 		cell: ({ row }) => {
             const veh = row.original.vehiculos[0]
             return (
-                <div className="capitalize">{veh?.tipo}</div>
+                <div className="capitalize">{veh?.marca_vehiculo}</div>
             )
         },
 		enableSorting: true,
@@ -167,29 +173,6 @@ export const vehiculosColumns: ColumnDef<Bitacora_record>[] = [
         },
 		enableSorting: true,
 	},
-
-	{
-		accessorKey: "placas",
-		header: "Tipo",
-		cell: ({ row }) => {
-            const veh = row.original.vehiculos[0]
-            return (
-                <div className="capitalize">{veh?.placas}</div>
-            ) 
-        },
-		enableSorting: true,
-	},
-	{
-		accessorKey: "marca_vehiculo",
-		header: "Marca",
-		cell: ({ row }) => {
-            const veh = row.original.vehiculos[0]
-            return (
-                <div className="capitalize">{veh?.marca_vehiculo}</div>
-            )
-        },
-		enableSorting: true,
-	},
 	{
 		accessorKey: "nombre_estado",
 		header: "Estado",
@@ -197,6 +180,18 @@ export const vehiculosColumns: ColumnDef<Bitacora_record>[] = [
             const veh = row.original.vehiculos[0]
             return(
                 <div className="capitalize">{veh?.nombre_estado}</div>
+            )
+        },
+		enableSorting: true,
+	},
+
+	{
+		accessorKey: "placas",
+		header: "Placas",
+		cell: ({ row }) => {
+            const veh = row.original.vehiculos[0]
+            return(
+                <div className="capitalize">{veh?.placas}</div>
             )
         },
 		enableSorting: true,
