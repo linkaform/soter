@@ -5,12 +5,14 @@ import { toast } from "sonner";
 
 export const useGetMyPases = () => {
   
-  const tab = "Todos"; 
+  const tab = "Todos";
+  const limit = 10;
+  const skip = 0;
 
   const { data: data, isLoading, error, isFetching } = useQuery<any>({
     queryKey: ["getMyPases"], 
     queryFn: async () => {
-        const data = await getMyPases({ tab }); 
+        const data = await getMyPases({ tab, limit, skip }); 
         if(data?.error){
           console.log("Error: ", data.error)
           toast.error("Error al obtener pases")

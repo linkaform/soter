@@ -1,13 +1,19 @@
 
 interface GetMyPasesParams {
     tab?: string;
+    limit?: number;
+    skip?: number;
   }
   
   export const getMyPases = async ({
     tab = "Todos",
+    limit = 10,
+    skip = 0
   }: GetMyPasesParams = {}) => {
     const payload = {
         tab_status: tab,
+        limit,
+        skip,
         option: "get_my_pases",
         script_name: "pase_de_acceso.py",
     };
