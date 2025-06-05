@@ -53,7 +53,6 @@ const formSchema = z.object({
 });
 
 export const UpdatePassModal: React.FC<Props> = ({ title, children, id , dataCatalogos}) => {
-    console.log("Infomracion",dataCatalogos)
     const { userIdSoter} = useAuthStore()
     const [openModal, setOpenModal] = useState(false);
     const [fotografia, setFotografia] = useState<Imagen[]>([]);
