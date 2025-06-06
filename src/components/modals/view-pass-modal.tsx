@@ -99,7 +99,7 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
 				fecha: {desde: data.fecha_desde_visita, hasta: data.fecha_desde_hasta},
 				descripcion: data.descripcion,
 				}
-				createSendCorreoSms.mutate({account_id, envio: ["enviar_correo"], data_for_msj , folio:data._id} )
+				createSendCorreoSms.mutate({account_id, envio: ["enviar_correo_pre_registro"], data_for_msj , folio:data._id} )
 			}else{  
           setOpenAddMail(true)
           // toast.error("Ingresa un correo valido.")
