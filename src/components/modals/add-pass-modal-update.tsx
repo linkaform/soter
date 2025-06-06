@@ -46,7 +46,8 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
   const [docs, setDocs] = useState("");
   const [link, setLink] = useState("");
   const account_id = userIdSoter;
-  const { updatePaseEntradaFullMutation, responseCreatePase, isLoading} = usePaseEntrada("")
+  console.log("pass update", dataPass.ubicacion)
+  const { updatePaseEntradaFullMutation, responseCreatePase, isLoading} = usePaseEntrada(dataPass.ubicacion)
   const [hostPro, setHostPro] = useState({ protocol: '', host: '' });
 
 	useEffect(() => {
@@ -192,6 +193,7 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
           </div>
 
         <div className="flex flex-col space-y-5">
+          
           <div className="flex justify-between flex-col sm:flex-row sm:space-x-5 space-y-5 sm:space-y-0 ">
             <div className="w-full flex gap-2 ">
               <p className="font-bold flex-shrink-0">Tipo de pase : </p>

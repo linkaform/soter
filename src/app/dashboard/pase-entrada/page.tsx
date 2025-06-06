@@ -141,7 +141,6 @@ import { useShiftStore } from "@/store/useShiftStore";
 	const [modalData, setModalData] = useState<any>(null);
 	// const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState('');
 	const { dataAreas:catAreas, dataLocations:ubicaciones, ubicacionesDefaultFormatted, isLoadingAreas:loadingCatAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(location, true, location?true:false);
-	console.log("ubciaciones default formateadas", ubicacionesDefaultFormatted)
 	const [ubicacionesSeleccionadas, setUbicacionesSeleccionadas] = useState<any[]>(ubicacionesDefaultFormatted??[]);
 
 	// const ubicacionesDefaultFormatted= ubicacionesDefault?.map((u: any) => ({ id: u, name: u }));
