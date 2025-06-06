@@ -127,7 +127,7 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
           fecha: {desde: data.fecha_desde_visita, hasta: data.fecha_desde_hasta},
           descripcion: data.descripcion,
           }
-				createSendSms.mutate({account_id, envio: ["enviar_sms"], data_for_msj: data_for_msj , folio:data._id} )
+				createSendSms.mutate({account_id, envio: ["enviar_sms_pre_registro"], data_for_msj: data_for_msj , folio:data._id} )
 			}else{
         setOpenAddPhone(true)
 				// toast.error("Ingresa un teléfono valido.")
