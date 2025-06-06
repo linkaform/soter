@@ -1,7 +1,7 @@
 import { getConfSeguridad } from "@/lib/get-configuracion-seguridad";
 import { useQuery } from "@tanstack/react-query";
 
-export const useGetConfSeguridad = (location:string) => {
+export const useGetConfSeguridad = (location:string[]) => {
   const { data: data, isLoading, error, isFetching, refetch } = useQuery<any>({
     queryKey: ["getConfSeguridad", location], 
     enabled: location?true:false, 
