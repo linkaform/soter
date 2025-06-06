@@ -96,11 +96,11 @@ export type Update_full_pass = {
       enviar_correo: string[]
 }
 
-export const usePaseEntrada = (locationConfSeguridad:string) => {
+export const usePaseEntrada = (locationConfSeguridad:string[]) => {
   const router = useRouter(); 
     const { data: dataConfigLocation, isLoading:isLoadingConfigLocation, error: errorConfigLocation} = useQuery<any>({
         queryKey: ["getConfSeguridad", locationConfSeguridad], 
-        enabled: locationConfSeguridad!=="" ? true:false, 
+        enabled: locationConfSeguridad.length > 0 ? true : false, 
         queryFn: async () => {
             const data = await getConfSeguridad(locationConfSeguridad); 
             return data.response?.data || []; 

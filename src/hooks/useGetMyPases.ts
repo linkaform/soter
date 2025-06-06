@@ -3,14 +3,20 @@ import { getMyPases } from "@/lib/get-my-pases";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-export const useGetMyPases = () => {
+interface UseGetMyPasesProps {
+  limit?: number;
+  skip?: number;
+  searchName?: string;
+}
+
+export const useGetMyPases = ({limit, skip, searchName}: UseGetMyPasesProps) => {
   
-  const tab = "Todos"; 
+  const tab = "Todos";
 
   const { data: data, isLoading, error, isFetching } = useQuery<any>({
-    queryKey: ["getMyPases"], 
+    queryKey: ["getMyPases", tab, limit, skip, searchName], 
     queryFn: async () => {
-        const data = await getMyPases({ tab }); 
+        const data = await getMyPases({ tab, limit, skip, searchName }); 
         if(data?.error){
           console.log("Error: ", data.error)
           toast.error("Error al obtener pases")

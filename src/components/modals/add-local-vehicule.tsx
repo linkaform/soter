@@ -2,6 +2,7 @@
 // /* eslint-disable @typescript-eslint/no-unused-vars */
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "../ui/button";
+import Select from 'react-select';
 import {
   Dialog,
   DialogClose,
@@ -19,19 +20,19 @@ import {
   FormMessage,
 } from "../ui/form";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from "../ui/select";
 
 import { Input } from "../ui/input";
 
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { catalogoColores, catalogoEstados } from "@/lib/utils";
+// import { catalogoColores, catalogoEstados } from "@/lib/utils";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import React from "react";
 import { toast } from "sonner";
@@ -39,6 +40,7 @@ import { useGetLocalVehiculos } from "@/hooks/useLocalCatVehiculos";
 import { Vehiculo } from "@/lib/update-pass";
 import { useAccessStore } from "@/store/useAccessStore";
 import { useUpdateBitacora } from "@/hooks/useUpdateBitacora";
+import { catalogoColores, catalogoEstados } from "@/lib/utils";
 
 
 interface Props {
@@ -72,9 +74,17 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
   const [tiposCat, setTiposCat] = useState<string[]>([]);
   const [marcasCat, setMarcasCat] = useState<string[]>([]);
   const [modelosCat, setModelosCat] = useState<string[]>([]);
-  const {data:dataVehiculos,isLoading: loadingCat } = useGetLocalVehiculos({ tipo:tipoVehiculoState, marca:marcaState, isModalOpen:true})
+  const {data:dataVehiculos } = useGetLocalVehiculos({ tipo:tipoVehiculoState, marca:marcaState, isModalOpen:true})
   const setSelectedVehiculos = useAccessStore((state) => state.setSelectedVehiculos);
   const { updateBitacoraMutation,isLoading }= useUpdateBitacora()
+  const catEstados = catalogoEstados().map((tipo: any) => ({
+	value: tipo,
+	label: tipo
+  }));
+  const catColores = catalogoColores().map((tipo: any) => ({
+	value: tipo,
+	label: tipo
+  }));
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -95,13 +105,25 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 
   useEffect(() => {
     if(!tiposCat && dataVehiculos){
-      setTiposCat(dataVehiculos)
+		const opcionesTipos = dataVehiculos.map((tipo: any) => ({
+			value: tipo,
+			label: tipo
+		  }));
+      setTiposCat(opcionesTipos)
     }
     if(dataVehiculos && tipoVehiculoState && catalogSearch=="marcas"){
-      setMarcasCat(dataVehiculos)
+		const opcionesMarcas = dataVehiculos.map((marca: any) => ({
+			value: marca,
+			label: marca
+		  }));
+      setMarcasCat(opcionesMarcas)
     }
     if(dataVehiculos && tipoVehiculoState && marcaState && catalogSearch=="modelos"){
-      setModelosCat(dataVehiculos)
+		const opcionesModelos = dataVehiculos.map((modelo: any) => ({
+			value: modelo,
+			label: modelo
+		  }));
+      setModelosCat(opcionesModelos)
     }
   }, [dataVehiculos]);
 
@@ -196,7 +218,27 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 					render={({ field }) => (
 						<FormItem>
 						<FormLabel>* Tipo de vehículo</FormLabel>
+
 						<Select
+							aria-labelledby="aria-label"
+							// ariaLiveMessages={{
+							// onFocus,
+							// }}
+							inputId="aria-example-input"
+							name="aria-live-color"
+							// onMenuOpen={onMenuOpen}
+							// onMenuClose={onMenuClose}
+							options={tiposCat}
+							onChange={(value:any) =>{
+								field.onChange([value.value]);
+								setCatalogSearch("marcas")
+								setTipoVehiculoState(value.value);
+								setMarcaState("")
+								setMarcasCat([])
+							}}
+						/>
+
+						{/* <Select
 							onValueChange={(value) => {
 							field.onChange([value]);
 							setCatalogSearch("marcas")
@@ -225,7 +267,7 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 								</SelectItem>
 							))}
 							</SelectContent>
-						</Select>
+						</Select> */}
 						<FormMessage />
 						</FormItem>
 					)}
@@ -238,11 +280,29 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 						<FormItem>
 						<FormLabel>* Marca</FormLabel>
 						<Select
+							aria-labelledby="aria-label"
+							// ariaLiveMessages={{
+							// onFocus,
+							// }}
+							inputId="aria-example-input"
+							name="aria-live-color"
+							// onMenuOpen={onMenuOpen}
+							// onMenuClose={onMenuClose}
+							options={marcasCat}
+							onChange={(value:any) =>{
+								field.onChange([value.value]);
+								setMarcaState(value.value);
+								setModelosCat([])
+								setCatalogSearch("modelos")
+							}}
+						/>
+
+						{/* <Select
 							onValueChange={(value) => {
-							field.onChange([value]);
-							setMarcaState(value);
-							setModelosCat([])
-							setCatalogSearch("modelos")
+								field.onChange([value]);
+								setMarcaState(value);
+								setModelosCat([])
+								setCatalogSearch("modelos")
 							}}
 						>
 							<FormControl>
@@ -264,7 +324,7 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 								)}
 							
 							</SelectContent>
-						</Select>
+						</Select> */}
 						<FormMessage />
 						</FormItem>
 					)}
@@ -276,7 +336,19 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 					render={({ field }) => (
 						<FormItem>
 						<FormLabel>* Modelo</FormLabel>
-						<Select onValueChange={(value) => field.onChange([value])}>
+						<Select
+							aria-labelledby="aria-label"
+							// ariaLiveMessages={{
+							// onFocus,
+							// }}
+							inputId="aria-example-input"
+							name="aria-live-color"
+							// onMenuOpen={onMenuOpen}
+							// onMenuClose={onMenuClose}
+							options={modelosCat}
+							onChange={(value:any) => field.onChange([value.value])}
+						/>
+						{/* <Select onValueChange={(value) => field.onChange([value])}>
 							<FormControl>
 							<SelectTrigger>
 								<SelectValue placeholder="Selecciona una opción" />
@@ -289,7 +361,7 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 								</SelectItem>
 							))}
 							</SelectContent>
-						</Select>
+						</Select> */}
 						<FormMessage />
 						</FormItem>
 					)}
@@ -301,7 +373,21 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 					render={({ field }) => (
 						<FormItem>
 						<FormLabel>* Estado</FormLabel>
-						<Select onValueChange={(value) => field.onChange([value])}>
+
+						<Select
+							aria-labelledby="aria-label"
+							// ariaLiveMessages={{
+							// onFocus,
+							// }}
+							inputId="aria-example-input"
+							name="aria-live-color"
+							// onMenuOpen={onMenuOpen}
+							// onMenuClose={onMenuClose}
+							options={catEstados}
+							onChange={(value:any) => field.onChange([value.value])}
+						/>
+
+						{/* <Select onValueChange={(value) => field.onChange([value])}>
 							<FormControl>
 							<SelectTrigger>
 								<SelectValue placeholder="Seleccione una opción" />
@@ -314,7 +400,7 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 								</SelectItem>
 							))}
 							</SelectContent>
-						</Select>
+						</Select> */}
 						<FormMessage />
 						</FormItem>
 					)}
@@ -345,7 +431,20 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 					render={({ field }) => (
 						<FormItem>
 						<FormLabel>* Color</FormLabel>
-						<Select onValueChange={(value) => field.onChange([value])}>
+						<Select
+							aria-labelledby="aria-label"
+							// ariaLiveMessages={{
+							// onFocus,
+							// }}
+							inputId="aria-example-input"
+							name="aria-live-color"
+							// onMenuOpen={onMenuOpen}
+							// onMenuClose={onMenuClose}
+							options={catColores}
+							onChange={(value:any) => field.onChange([value.value])}
+						/>
+
+						{/* <Select onValueChange={(value) => field.onChange([value])}>
 							<FormControl>
 							<SelectTrigger>
 								<SelectValue placeholder="Seleccione una opción" />
@@ -358,7 +457,7 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 								</SelectItem>
 							))}
 							</SelectContent>
-						</Select>
+						</Select> */}
 						<FormMessage />
 						</FormItem>
 					)}

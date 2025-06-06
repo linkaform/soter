@@ -18,11 +18,12 @@ import { toast } from "sonner";
 import { descargarPdfPase } from "@/lib/download-pdf";
 import { useGetPdf } from "@/hooks/usetGetPdf";
 import { useSendCorreoSms } from "@/hooks/useSendCorreo";
-import { Equipo_bitacora } from "../table/bitacoras/bitacoras-columns";
 import Image from "next/image";
 import useAuthStore from "@/store/useAuthStore";
 import { AddEmailModal } from "./add-mail";
 import { AddSmsModal } from "./add-sms";
+import { capitalizeFirstLetter } from "@/lib/utils";
+import { Equipo } from "@/lib/update-pass-full";
 
 type Vehiculo_custom={
     tipo_vehiculo:string,
@@ -64,7 +65,7 @@ interface ViewPassModalProps {
     comentarios: Comentarios[];
     enviar_pre_sms: enviar_pre_sms
     grupo_vehiculos:Vehiculo_custom[];
-    grupo_equipos:Equipo_bitacora[];
+    grupo_equipos:Equipo[];
   };
   isSuccess: boolean;
   children: React.ReactNode;
@@ -99,7 +100,7 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
 				fecha: {desde: data.fecha_desde_visita, hasta: data.fecha_desde_hasta},
 				descripcion: data.descripcion,
 				}
-				createSendCorreoSms.mutate({account_id, envio: ["enviar_correo"], data_for_msj , folio:data._id} )
+				createSendCorreoSms.mutate({account_id, envio: ["enviar_correo_pre_registro"], data_for_msj , folio:data._id} )
 			}else{  
           setOpenAddMail(true)
           // toast.error("Ingresa un correo valido.")
@@ -127,7 +128,7 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
           fecha: {desde: data.fecha_desde_visita, hasta: data.fecha_desde_hasta},
           descripcion: data.descripcion,
           }
-				createSendSms.mutate({account_id, envio: ["enviar_sms"], data_for_msj: data_for_msj , folio:data._id} )
+				createSendSms.mutate({account_id, envio: ["enviar_sms_pre_registro"], data_for_msj: data_for_msj , folio:data._id} )
 			}else{
         setOpenAddPhone(true)
 				// toast.error("Ingresa un teléfono valido.")
@@ -174,48 +175,68 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
 
 
         {/* Sobre la visita */}
-        <div className="w-full ">
+          <div className="w-full flex mb-3 gap-1">
             <p className="font-bold ">Nombre Completo : </p>
-            <p className="">{data?.nombre} </p>
+            <p> {data?.nombre} </p>
           </div>
 
         <div className="flex flex-col space-y-5">
-          <div className=" flex justify-between">
-            <div className="w-full ">
-              <p className="font-bold">Tipo de pase : </p>
-              <p >Visita General</p>
+
+
+					<div className="flex flex-col space-y-5">
+						<div className="flex justify-between flex-col sm:flex-row  sm:space-x-5 space-y-5 sm:space-y-0 ">
+							<div className="w-full flex gap-2 ">
+							<p className="font-bold flex-shrink-0">Tipo de pase : </p>
+							<p >Visita General</p>
+							</div>
+
+              <div className="w-full flex gap-2">
+                <p className="font-bold flex-shrink-0">Estatus:</p>
+                <p
+                  className={`font-bold capitalize ${
+                    data.status_pase === 'activo'
+                      ? 'text-green-600'
+                      : data.status_pase === 'proceso'
+                      ? 'text-blue-600'
+                      : data.status_pase === 'vencido'
+                      ? 'text-red-600'
+                      : 'text-gray-600'
+                  }`}
+                >
+                  {data.status_pase}
+                </p>
+              </div>
+						</div>
+
+						<div className="flex justify-between flex-col sm:flex-row  sm:space-x-5 space-y-5 sm:space-y-0">
+							<div className="w-full flex gap-2 ">
+							<p className="font-bold flex-shrink-0">Email : </p>
+							<p className="w-full break-words">{data?.email}</p>
+							</div>
+
+							<div className="w-full flex gap-2">
+							<p className="font-bold flex-shrink-0">Teléfono : </p>
+							<p className="text-sm">{data?.telefono}</p>
+							</div>
+						</div>
+
+            <div className="flex justify-between flex-col sm:flex-row  sm:space-x-5 space-y-5 sm:space-y-0">
+              <div className="w-full flex gap-2  ">
+                <p className="font-bold flex-shrink-0">Tema cita : </p>
+                <p className="w-full break-words">{data?.tema_cita}</p>
+              </div>
+
+              <div className="w-full flex gap-2 ">
+                <p className="font-bold flex-shrink-0">Descripción : </p>
+                <p className="w-full break-words">{data?.descripcion} </p>
+              </div>
             </div>
 
-            <div className="w-full ">
-              <p className="font-bold">Estatus : </p>
-              <p className=" text-red-500"> Proceso</p>
-            </div>
-          </div>
+					</div>
 
-          <div className="flex justify-between">
-            <div className="w-full  ">
-              <p className="font-bold">Email : </p>
-              <p className="w-full break-words">{data?.email}</p>
-            </div>
 
-            <div className="w-full ">
-              <p className="font-bold">Teléfono : </p>
-              <p className="text-sm">{data?.telefono}</p>
-            </div>
-          </div>
-
-          <div className="flex justify-between">
-            <div className="w-full  ">
-              <p className="font-bold">Tema cita : </p>
-              <p className="w-full break-words">{data?.tema_cita}</p>
-            </div>
-
-            <div className="w-full ">
-              <p className="font-bold">Descripción : </p>
-              <p className="w-full break-words">{data?.descripcion} </p>
-            </div>
-          </div>
-          <Separator className="my-4" />
+          {data?.foto.length > 0  ||  data?.identificacion.length > 0 &&
+          <Separator className="my-4" />}
 
           <div className="flex flex-col  justify-between  md:flex-row">
             {data?.foto!== undefined && data?.foto.length > 0 ?(
@@ -227,7 +248,7 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
                         alt="Imagen"
                         width={150}
                         height={150}
-                        className=" h-32 object-contain bg-gray-200 rounded-lg" 
+                        className=" h-32 object-contain rounded-lg" 
                         />
                     </div>
                 </div>
@@ -243,16 +264,17 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
                             alt="Imagen"
                             width={150}
                             height={150}
-                            className=" h-32 object-contain bg-gray-200 rounded-lg" 
+                            className=" h-32 object-contain  rounded-lg" 
                             />
                         </div>
                     </div>
             ):null}
           </div>
 
-          <Separator className="my-4" />
+          {data?.grupo_equipos.length>0 || data?.grupo_vehiculos.length>0&&
+          <Separator className="my-4" />}
 
-          {data?.grupo_equipos.length>0 && (
+          {/* {data?.grupo_equipos.length>0 && (
           <div className="">
             <p className="text-lg font-bold mb-2">Equipos</p>
             <Accordion type="single" collapsible>
@@ -284,7 +306,48 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
               ))}
             </Accordion>
           </div>
-          )}
+          )} */}
+
+
+            <div className="flex justify-between w-full h-full mb-2">
+							{data?.grupo_equipos.length > 0 ? (
+								<Accordion type="single" collapsible className="w-full">
+								<AccordionItem key={"1"} value={"1"}>
+								<AccordionTrigger>{"Equipos agregados"}</AccordionTrigger>
+								<AccordionContent className="mb-0 pb-0">
+								{data?.grupo_equipos.length > 0 ? (
+									<table className="min-w-full table-auto border-separate border-spacing-2">
+									<thead>
+										<tr>
+										<th className="px-4 py-2 text-left border-b">Tipo</th>
+										<th className="px-4 py-2 text-left border-b">Nombre</th>
+										<th className="px-4 py-2 text-left border-b">Marca</th>
+										<th className="px-4 py-2 text-left border-b">Modelo</th>
+										<th className="px-4 py-2 text-left border-b">No. Serie</th>
+										<th className="px-4 py-2 text-left border-b">Color</th>
+										</tr>
+									</thead>
+									<tbody>
+										{data?.grupo_equipos.map((item: Equipo, index: number) => (
+										<tr key={index}>
+											<td className="px-4 py-2"><small>{capitalizeFirstLetter(item?.tipo ?? "")}</small></td>
+											<td className="px-4 py-2"><small>{capitalizeFirstLetter(item?.nombre?? "") }</small></td>
+											<td className="px-4 py-2"><small>{capitalizeFirstLetter(item?.marca?? "") }</small></td>
+											<td className="px-4 py-2"><small>{capitalizeFirstLetter(item?.modelo?? "") }</small></td>
+											<td className="px-4 py-2"><small>{capitalizeFirstLetter(item?.serie?? "") }</small></td>
+											<td className="px-4 py-2"><small>{capitalizeFirstLetter(item?.color?? "") }</small></td>
+										</tr>
+										))}
+									</tbody>
+									</table>
+								) : (
+										<div>No se agregaron equipos.</div>
+								)}
+								</AccordionContent>
+								</AccordionItem>
+								</Accordion>
+							):(<div>No se agregaron equipos.</div>)}
+						</div>
 
           {data?.grupo_vehiculos.length>0 && (
           <div className="">

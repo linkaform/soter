@@ -18,13 +18,7 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
+
 import { Textarea } from "@/components/ui/textarea";
 
 import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
@@ -36,6 +30,8 @@ import ComentariosList from "@/components/comentarios-list";
 import DateTime from "@/components/dateTime";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import { EntryPassModalUpdate } from "./add-pass-modal-update";
+import Multiselect from "multiselect-react-dropdown";
+import { useShiftStore } from "@/store/useShiftStore";
 
  const linkSchema = z.object({
 	link: z.string().url({ message: "Por favor, ingresa una URL válida." }), 
@@ -160,19 +156,19 @@ import { EntryPassModalUpdate } from "./add-pass-modal-update";
 	}
 const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, children }) => {
 	const [open, setOpen] = useState(false)
+	const { location } = useShiftStore()
 	const [tipoVisita, setTipoVisita] = useState(dataPass.tipo_visita_pase || "fecha_fija");
 	const [config_dias_acceso, set_config_dias_acceso] = useState<string[]>(dataPass.config_dias_acceso||[]);
 	const [config_dia_de_acceso, set_config_dia_de_acceso] = useState(dataPass.config_dia_de_acceso);
 	const [isSuccess, setIsSuccess] = useState(false);
 	const [modalData, setModalData] = useState<any>(null);
-	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState("");
-	
-	const { dataLocations , dataAreas, isLoadingAreas:loadingCatAreas } = useCatalogoPaseAreaLocation(ubicacionSeleccionada, open, ubicacionSeleccionada  ? true : false)
-
+	const { ubicacionesDefaultFormatted ,dataLocations:ubicaciones, dataAreas, isLoadingAreas:loadingCatAreas } = useCatalogoPaseAreaLocation(location, true, location?true:false)
+	const [ubicacionesSeleccionadas, setUbicacionesSeleccionadas] = useState<any[]>(ubicacionesDefaultFormatted??[]);
 	const userEmailSoter = localStorage.getItem("userEmail_soter")||"";
 	const userIdSoter = parseInt(localStorage.getItem("userId_soter") || "0", 10);
 
-	const { data: dataConfigLocation, isLoading: loadingConfigLocation } = useGetConfSeguridad(ubicacionSeleccionada);
+	const { data: dataConfigLocation, isLoading: loadingConfigLocation } = useGetConfSeguridad(ubicacionesSeleccionadas[0]?.id?? '')
+	const ubicacionesFormatted = ubicaciones?.map((u: any) => ({ id: u, name: u }));
 
 	const [formatedDocs, setFormatedDocs] = useState<string[]>([])
 	const [isActiveRangoFecha, setIsActiveRangoFecha] = useState(dataPass.tipo_visita_pase||"rango_de_fechas");
@@ -239,13 +235,18 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
 		});
 	};
 
-
+	useEffect(() => {
+		if (ubicacionesDefaultFormatted) {
+			setUbicacionesSeleccionadas(ubicacionesDefaultFormatted)
+		}
+	}, [ubicacionesDefaultFormatted]); 
+	
 	useEffect(()=>{
 		if(open){
 			form.setValue("fecha_desde_visita", dataPass.fecha_desde_visita.split(" ")[0])
 			form.setValue("fecha_desde_hasta", dataPass.fecha_desde_hasta.split(" ")[0])
 			console.log("data para editar==", dataPass)
-			setUbicacionSeleccionada(dataPass.ubicacion)
+			setUbicacionesSeleccionadas(dataPass.ubicacion)
 		}
 	},[open])
 
@@ -283,7 +284,7 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
 			nombre: data.nombre,
 			email: data.email ||"",
 			telefono: data.telefono||"",
-			ubicacion: data.ubicacion||"",
+			ubicacion: setUbicacionesSeleccionadas,
 			tema_cita:data.tema_cita||"",
 			descripcion:data.descripcion||"",
 			perfil_pase: dataPass.perfil_pase||"",
@@ -484,7 +485,24 @@ return (
 									</FormItem>
 								)}
 							/>
-							<FormField
+
+						<div className="mt-0">
+							<div className="text-sm mb-2">Ubicaciones del pase: </div>
+							<Multiselect
+							options={ubicacionesFormatted} 
+							selectedValues={ubicacionesDefaultFormatted}
+							onSelect={(selectedList) => {
+								setUbicacionesSeleccionadas(selectedList);
+							}}
+							onRemove={(selectedList) => {
+								setUbicacionesSeleccionadas(selectedList);
+							}}
+							displayValue="name"
+							/>
+						</div>
+						
+
+							{/* <FormField
 								control={form.control}
 								name="ubicacion"
 								render={({ field }:any) => (
@@ -495,7 +513,7 @@ return (
 												<Select
 													onValueChange={(value:string) => {
 														field.onChange(value); 
-														setUbicacionSeleccionada(value);  
+														setsetUbicacionesSeleccionadas(value);  
 													}}
 													value={field.value} 
 												>
@@ -538,7 +556,7 @@ return (
 										<FormMessage />
 									</FormItem>
 								)}
-							/>
+							/> */}
 						
 							<FormField
 								control={form.control}

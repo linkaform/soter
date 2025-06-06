@@ -141,7 +141,6 @@ import { useShiftStore } from "@/store/useShiftStore";
 	const [modalData, setModalData] = useState<any>(null);
 	// const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState('');
 	const { dataAreas:catAreas, dataLocations:ubicaciones, ubicacionesDefaultFormatted, isLoadingAreas:loadingCatAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(location, true, location?true:false);
-	console.log("ubciaciones default formateadas", ubicacionesDefaultFormatted)
 	const [ubicacionesSeleccionadas, setUbicacionesSeleccionadas] = useState<any[]>(ubicacionesDefaultFormatted??[]);
 
 	// const ubicacionesDefaultFormatted= ubicacionesDefault?.map((u: any) => ({ id: u, name: u }));
@@ -178,8 +177,8 @@ import { useShiftStore } from "@/store/useShiftStore";
 	}, [ubicacionesDefaultFormatted]); 
 
 
-
-	const { dataConfigLocation, isLoadingConfigLocation } = usePaseEntrada(ubicacionesSeleccionadas[0]?.id?? '')
+	const ubicacionesSeleccionadasLista = ubicacionesSeleccionadas?.map((u: any) => (u.name));
+	const { dataConfigLocation, isLoadingConfigLocation } = usePaseEntrada(ubicacionesSeleccionadasLista ?? [])
 	const [enviar_correo_pre_registro] = useState<string[]>([]);
 	const [formatedDocs, setFormatedDocs] = useState<string[]>([])
 	const [formatedEnvio, setFormatedEnvio] = useState<string[]>([])

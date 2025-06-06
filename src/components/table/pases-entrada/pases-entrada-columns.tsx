@@ -19,7 +19,7 @@ export interface PaseEntrada {
   nombre: string;
   email:string;
   telefono: string;
-  ubicacion:string;
+  ubicacion:string[];
   tema_cita:string;
   descripcion:string;
   perfil_pase:string;
@@ -52,7 +52,7 @@ export interface PaseEntrada {
 
 const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
   const rowData = row.original;
-
+  console.log("Option cell", rowData.ubicacion)
   const dataFull= {
     _id:rowData._id,
     folio:rowData.folio,
@@ -166,12 +166,33 @@ export const pasesEntradaColumns: ColumnDef<PaseEntrada>[] = [
         </div>
       );
     },
-    enableSorting: false,  // Deshabilitar el orden para esta columna combinada
+    enableSorting: false, 
   },
   {
     accessorKey: "ubicacion",
     header: "Ubicación",
-    cell: ({ row }) => <div>{row.getValue("ubicacion")}</div>,
+    cell: ({ row }) => {
+    	return (
+        <div className="w-full flex gap-2">
+          <div className="relative group w-full break-words">
+            {row.original?.ubicacion[0]}
+            {row.original?.ubicacion && row.original?.ubicacion.length > 1 && (
+            <span className="text-blue-600 cursor-pointer ml-1 underline relative">
+              +{row.original?.ubicacion.length - 1}
+              {/* Tooltip container */}
+              <div className="absolute left-0 top-full z-10 mt-1 hidden w-max max-w-xs rounded bg-gray-800 px-2 py-1 text-sm text-white shadow-lg group-hover:block">
+              {Array.isArray(row.original?.ubicacion) && row.original.ubicacion.length > 1 && (
+                row.original.ubicacion.slice(1).map((ubic:string, idx:number) => (
+                  <div key={idx}>{ubic}</div>
+                ))
+                )}
+              </div>
+            </span>
+            )}
+          </div>
+      </div>
+      )
+    },
     enableSorting: true,
   },
   {
