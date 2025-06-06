@@ -1,9 +1,9 @@
 
-export const getConfSeguridad = async (location:string) => {
+export const getConfSeguridad = async (locations:string[]) => {
     const payload = {
       script_name: "pase_de_acceso_use_api.py",
       option: "get_config_modulo_seguridad",
-      location   
+      locations
      };
   
     const userJwt = localStorage.getItem("access_token");
