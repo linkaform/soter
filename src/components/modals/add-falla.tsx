@@ -7,7 +7,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "../ui/dialog";
 
 import {
@@ -165,8 +164,8 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 	};
 
   return (
-    <Dialog open={isSuccess} modal>
-      <DialogTrigger></DialogTrigger>
+    <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
+      {/* <DialogTrigger></DialogTrigger> */}
 
       <DialogContent className="max-w-3xl  overflow-y-auto max-h-[80vh] flex flex-col" aria-describedby="">
         <DialogHeader className="flex-shrink-0">

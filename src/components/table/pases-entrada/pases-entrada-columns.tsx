@@ -175,8 +175,8 @@ export const pasesEntradaColumns: ColumnDef<PaseEntrada>[] = [
     	return (
         <div className="w-full flex gap-2">
           <div className="relative group w-full break-words">
-            {row.original?.ubicacion[0]}
-            {row.original?.ubicacion && row.original?.ubicacion.length > 1 && (
+            {Array.isArray(row.original?.ubicacion) && row.original.ubicacion.length > 0 ? row.original.ubicacion[0] : ""}
+            {Array.isArray(row.original?.ubicacion) && row.original.ubicacion.length > 1 && (
             <span className="text-blue-600 cursor-pointer ml-1 underline relative">
               +{row.original?.ubicacion.length - 1}
               {/* Tooltip container */}

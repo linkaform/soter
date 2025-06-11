@@ -65,7 +65,6 @@ export const SeguimientoIncidenciaModal: React.FC<IncidenciaModalProps> = ({
 	folio,
 	children
 }) => {
-	console.log("DATA MODAL", folio);
 	const [isSuccess, setIsSuccess] = useState(false)
 	const [evidencia, setEvidencia] = useState<Imagen[]>([]);
 	const [documento, setDocumento] = useState<Imagen[]>([]);

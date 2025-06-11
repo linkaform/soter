@@ -39,7 +39,7 @@ const IncidenciasPage = () => {
 
   const [fallasStatus, setFallasStatus] = useState<string>("")
   const { data:dataFallas,isLoading:isLoadingFallas, refetch:refetchFallas} = useGetFallas(ubicacionSeleccionada, areaSeleccionada == "todas" ? "" : areaSeleccionada ,fallasStatus,  dates[0], dates[1], dateFilter);
-  const { stats, listIncidencias, refetchTableIncidencias, isLoadingListIncidencias} = useInciencias(ubicacionSeleccionada, areaSeleccionada == "todas" ? "" : areaSeleccionada, [],  true, false, dates[0], dates[1], dateFilter);
+  const { stats, listIncidencias, refetchTableIncidencias, isLoadingListIncidencias} = useInciencias(ubicacionSeleccionada, areaSeleccionada == "todas" ? "" : areaSeleccionada, [], false, dates[0], dates[1], dateFilter);
   const [selectedTab, setSelectedTab] = useState<string>('Incidencias'); 
 
   	useEffect(()=>{

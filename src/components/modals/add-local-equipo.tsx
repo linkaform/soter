@@ -18,13 +18,13 @@ import {
   FormMessage,
 } from "../ui/form";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+// import {
+//   Select,
+//   SelectContent,
+//   SelectItem,
+//   SelectTrigger,
+//   SelectValue,
+// } from "../ui/select";
 
 import { Input } from "../ui/input";
 
@@ -36,6 +36,7 @@ import { toast } from "sonner";
 import { Equipo } from "@/lib/update-pass-full";
 import { useAccessStore } from "@/store/useAccessStore";
 import { useUpdateBitacora } from "@/hooks/useUpdateBitacora";
+import Select from 'react-select';
 
 interface Props {
   title: string;
@@ -64,7 +65,15 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
   const setSelectedEquipos = useAccessStore((state) => state.setSelectedEquipos);
   const selectedEquipos = useAccessStore((state) => state.selectedEquipos);
   const { updateBitacoraMutation, isLoading }= useUpdateBitacora()
-
+  const catTiposEquipos = catalogoTipoEquipos().map((tipo: any) => ({
+    value: tipo,
+    label: tipo
+    }));
+  const catColores = catalogoColores().map((tipo: any) => ({
+    value: tipo,
+    label: tipo
+    }));
+    
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -78,6 +87,7 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
   });
 
   function onSubmit(data: z.infer<typeof formSchema>) {
+    console.log("dataa", data)
     addNewEquipment(data)
     form.reset();
     toast.success(
@@ -87,6 +97,7 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
   }
 
   const addNewEquipment = (data: z.infer<typeof formSchema>) => {
+    console.log("tipo", data)
     if( isAccesos ){
 		setSelectedEquipos([...selectedEquipos,  {
 			color: data.color||"",
@@ -151,13 +162,24 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
 
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen} >
     <DialogTrigger asChild onClick={() => setOpen(true)}>
         {children}
         
       </DialogTrigger>
 
-      <DialogContent className="max-w-xl  overflow-y-auto max-h-[90vh] flex flex-col" aria-describedby="">
+      <DialogContent className="max-w-xl  overflow-y-auto max-h-[90vh] flex flex-col" aria-describedby=""
+        onInteractOutside={(e) => {
+          if ((e.target as HTMLElement).closest('.react-select__menu')) {
+            e.preventDefault();
+          }
+        }}
+        onPointerDownOutside={(e) => {
+          if ((e.target as HTMLElement).closest('.react-select__menu')) {
+            e.preventDefault();
+          }
+        }}
+      > 
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center font-bold">
             {title}
@@ -173,7 +195,17 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>* Tipo</FormLabel>
-                  <Select onValueChange={(value) => field.onChange(value)}>
+                  <Select
+                    aria-labelledby="aria-label"
+                    inputId="aria-example-input"
+                    name="aria-live-color"
+                    options={catTiposEquipos}
+                    onChange={(value:any) =>{
+                      console.log(value.value)
+                      field.onChange(value.value);
+                    }}
+                  />
+                  {/* <Select onValueChange={(value) => field.onChange(value)}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Selecciona una opción" />
@@ -186,7 +218,7 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
                         </SelectItem>
                       ))}
                     </SelectContent>
-                  </Select> 
+                  </Select>  */}
                
                   <FormMessage /> 
                 </FormItem>
@@ -266,20 +298,13 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>* Color</FormLabel>
-                    <Select onValueChange={(value) => field.onChange(value)}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecciona un color" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {catalogoColores().map((color) => (
-                          <SelectItem key={color} value={color}>
-                            {color}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <Select
+                      aria-labelledby="aria-label"
+                      inputId="aria-example-input"
+                      name="aria-live-color"
+                      options={catColores}
+                      onChange={(value:any) => field.onChange(value.value)}
+                    />
                     <FormMessage />
                   </FormItem>
                 )}

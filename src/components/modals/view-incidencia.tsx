@@ -31,8 +31,6 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
   children,
 }) => {
 
-	console.log("CON",data )
-
   function sumDepositos(item:Depositos[]){
     const sumaTotal = item.reduce((total: any, item: { cantidad: number; }) => total + item.cantidad, 0);
     return formatCurrency(sumaTotal)

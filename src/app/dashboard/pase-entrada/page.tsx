@@ -1,7 +1,7 @@
 //eslint-disable react-hooks/exhaustive-deps
 'use client'; 
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -27,13 +27,19 @@ import { formatDateToString, formatFecha } from "@/lib/utils";
 import AreasList from "@/components/areas-list";
 import { Areas, Comentarios } from "@/hooks/useCreateAccessPass";
 import ComentariosList from "@/components/comentarios-list";
-import DateTime from "@/components/dateTime";
+// import DateTime from "@/components/dateTime";
 import { MisContactosModal } from "@/components/modals/user-contacts";
 import Image from "next/image";
 import { Contacto } from "@/lib/get-user-contacts";
 import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
 import { usePaseEntrada } from "@/hooks/usePaseEntrada";
 import { useShiftStore } from "@/store/useShiftStore";
+// import {DateTimePicker} from "@vaadin/date-time-picker"
+// import '@vaadin/date-time-picker';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import DateTime from "@/components/dateTime";
+// import { DateTimePicker } from "@vaadin/date-time-picker";
+
 
  const formSchema = z
 	.object({
@@ -142,19 +148,33 @@ import { useShiftStore } from "@/store/useShiftStore";
 	// const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState('');
 	const { dataAreas:catAreas, dataLocations:ubicaciones, ubicacionesDefaultFormatted, isLoadingAreas:loadingCatAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(location, true, location?true:false);
 	const [ubicacionesSeleccionadas, setUbicacionesSeleccionadas] = useState<any[]>(ubicacionesDefaultFormatted??[]);
+	const pickerRef = useRef<any>(null);
+
+	useEffect(() => {
+	  const picker = pickerRef.current;
+	  if (picker) {
+		const handleChange = (e: any) => {
+		//   console.log('Valor seleccionadoO:',new Date( formatFecha(e.target.value+":00") ));
+		  setDate(new Date( formatFecha(e.target.value+":00")))
+		};
+  
+		picker.addEventListener('value-changed', handleChange);
+		return () => picker.removeEventListener('value-changed', handleChange);
+	  }
+	}, []);
 
 	// const ubicacionesDefaultFormatted= ubicacionesDefault?.map((u: any) => ({ id: u, name: u }));
 	const ubicacionesFormatted = ubicaciones?.map((u: any) => ({ id: u, name: u }));
 
 	const [userIdSoter] = useState<number|null>(()=>{
-			return Number(typeof window !== "undefined"? window.localStorage.getItem("userId_soter"):0) 
+		return Number(typeof window !== "undefined"? window?.localStorage.getItem("userId_soter"):0) 
 	});
 
 	const[userNameSoter] = useState<string|null>(()=>{
-		return typeof window !== "undefined"? window.localStorage.getItem("userName_soter"):""
+		return typeof window !== "undefined"? window?.localStorage.getItem("userName_soter"):""
 	})
 	const [userEmailSoter] = useState<string|null>(()=>{
-		return typeof window !== "undefined"? window.localStorage.getItem("userEmail_soter"):""
+		return typeof window !== "undefined"? window?.localStorage.getItem("userEmail_soter"):""
 	})
 
 
@@ -163,11 +183,34 @@ import { useShiftStore } from "@/store/useShiftStore";
 
 
 	useEffect(() => {
-		if (typeof window !== "undefined" && typeof window.location !== "undefined") {
-			setHost(window.location.host);
-			setProtocol(window.location.protocol);
+		if (typeof window !== "undefined" && typeof window?.location !== "undefined") {
+			setHost(window?.location.host);
+			setProtocol(window?.location.protocol);
 		}
 	}, []); 
+
+
+	// const [userIdSoter, setUserIdSoter] = useState<number | null>(null);
+	// const [userNameSoter, setUserNameSoter] = useState<string | null>(null);
+	// const [userEmailSoter, setUserEmailSoter] = useState<string | null>(null);
+
+	// useEffect(() => {
+	// if (typeof window !== "undefined") {
+	// 	const id = window.localStorage.getItem("userId_soter");
+	// 	const name = window.localStorage.getItem("userName_soter");
+	// 	const email = window.localStorage.getItem("userEmail_soter");
+
+	// 	setUserIdSoter(id ? Number(id) : null);
+	// 	setUserNameSoter(name ?? null);
+	// 	setUserEmailSoter(email ?? null);
+	// }
+	// if (typeof window !== "undefined" && typeof window?.location !== "undefined") {
+	// 	setHost(window?.location.host);
+	// 	setProtocol(window?.location.protocol);
+	// }
+	// }, []);
+
+
 
 
 	useEffect(() => {
@@ -290,7 +333,7 @@ import { useShiftStore } from "@/store/useShiftStore";
 			ubicaciones:ubicacionesSeleccionadas.map(u => u.id),
 			tema_cita: data.tema_cita,
 			descripcion: data.descripcion,
-			perfil_pase: "Visita General",
+			perfil_pase: data.perfil_pase,
 			status_pase:"Proceso",
 			visita_a: userNameSoter?? "",//userNameSoter,
 			custom:true,
@@ -411,13 +454,44 @@ return (
 
 			</div>
 
-			<div className="">
+			{/* <div className="">
 				<p className="font-bold">Tipo de pase : <span className="font-normal" > Visita General</span></p>
-			</div>
+			</div> */}
 
 			<Form {...form}>
 				<form className="space-y-8">
 					<div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+						<FormField
+							control={form.control}
+							name="perfil_pase"
+							render={({ field }:any) => (
+								<FormItem className="w-full">
+									<FormLabel>Tipo de pase:</FormLabel>
+									<FormControl>
+									<Select {...field} className="input"
+										onValueChange={(value:string) => {
+										field.onChange(value); 
+									}}
+									value={field.value} 
+								>
+									<SelectTrigger className="w-full">
+									<SelectValue placeholder="Selecciona una opcion" />
+									</SelectTrigger>
+									<SelectContent>
+										<SelectItem key={"Visita General"} value={"Visita General"}>
+											Visita General
+										</SelectItem>
+										<SelectItem key={"Candidatos"} value={"Candidatos"}>
+											Candidatos
+										</SelectItem>
+									</SelectContent>
+								</Select>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>	
+
 						{selected && (
 							<><Image
 								className="dark:invert h-32 w-32 object-cover rounded-full bg-gray-300"
@@ -673,66 +747,66 @@ return (
 
 					<h1 className="font-bold text-xl">Sobre vigencia y acceso</h1>
 					<div className="flex items-center flex-wrap gap-5">
-					<FormLabel>Visita de: </FormLabel>
-					<Controller
-						control={form.control}
-						name="tipo_visita_pase"
-						render={() => (
-							<FormItem>
-							<Button
-								type="button"
-								onClick={()=>{handleToggleTipoVisitaPase("fecha_fija")}}
-								className={`px-4 py-2 rounded-md transition-all duration-300 ${
-								isActiveFechaFija ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
-								} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)] mr-2`}
-							>
-								<div className="flex flex-wrap items-center">
-								{isActiveFechaFija ? (
-									<><div className="">Fecha Fija</div></>
-								):(
-									<><div className="text-blue-600">Fecha Fija</div></>
-								)}
-									
-								</div>
-							</Button>
-							<Button
-								type="button"
-								onClick={()=>{handleToggleTipoVisitaPase("rango_de_fechas")}}
-								className={`px-4 py-2 rounded-md transition-all duration-300 ${
-								isActiveRangoFecha ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
-								} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]  mr-2`}
-							>
-								<div className="flex flex-wrap items-center">
-								{isActiveRangoFecha ? (
-									<><div className="">Rango de Fechas</div></>
-								):(
-									<><div className="text-blue-600">Rango de Fechas</div></>
-								)}
-									
-								</div>
-							</Button>
-							{tipoVisita === "rango_de_fechas" && (
+						<FormLabel>Visita de: </FormLabel>
+						<Controller
+							control={form.control}
+							name="tipo_visita_pase"
+							render={() => (
+								<FormItem>
 								<Button
-								type="button"
-								onClick={()=>{handleToggleLimitarDias()}}
-								className={`px-4 py-2 rounded-md transition-all duration-300 ${
-									isActivelimitarDias ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
-								} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
+									type="button"
+									onClick={()=>{handleToggleTipoVisitaPase("fecha_fija")}}
+									className={`px-4 py-2 rounded-md transition-all duration-300 ${
+									isActiveFechaFija ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
+									} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)] mr-2`}
 								>
-								<div className="flex flex-wrap items-center">
-									{isActivelimitarDias ? (
-									<><div className="">Limitar Días</div></>
+									<div className="flex flex-wrap items-center">
+									{isActiveFechaFija ? (
+										<><div className="">Fecha Fija</div></>
 									):(
-									<><div className="text-blue-600">Limitar Días</div></>
+										<><div className="text-blue-600">Fecha Fija</div></>
 									)}
-									
-								</div>
+										
+									</div>
 								</Button>
+								<Button
+									type="button"
+									onClick={()=>{handleToggleTipoVisitaPase("rango_de_fechas")}}
+									className={`px-4 py-2 rounded-md transition-all duration-300 ${
+									isActiveRangoFecha ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
+									} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]  mr-2`}
+								>
+									<div className="flex flex-wrap items-center">
+									{isActiveRangoFecha ? (
+										<><div className="">Rango de Fechas</div></>
+									):(
+										<><div className="text-blue-600">Rango de Fechas</div></>
+									)}
+										
+									</div>
+								</Button>
+								{tipoVisita === "rango_de_fechas" && (
+									<Button
+									type="button"
+									onClick={()=>{handleToggleLimitarDias()}}
+									className={`px-4 py-2 rounded-md transition-all duration-300 ${
+										isActivelimitarDias ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
+									} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
+									>
+									<div className="flex flex-wrap items-center">
+										{isActivelimitarDias ? (
+										<><div className="">Limitar Días</div></>
+										):(
+										<><div className="text-blue-600">Limitar Días</div></>
+										)}
+										
+									</div>
+									</Button>
+								)}
+								<FormMessage />
+								</FormItem>
 							)}
-							<FormMessage />
-							</FormItem>
-						)}
-						/>
+							/>
 					</div>
 
 					<div>
@@ -748,6 +822,11 @@ return (
 											Visita:
 										</FormLabel>
 										<FormControl>
+											{/* <vaadin-date-time-picker
+												ref={pickerRef}
+												value="2020-06-12T12:30"
+												// step="1800" 
+											/> */}
 											<DateTime date={date} setDate={setDate} />
 										</FormControl>
 									<FormMessage />

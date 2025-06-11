@@ -7,7 +7,7 @@ import PasesEntradaTable from "@/components/table/pases-entrada/table";
 import PaginationPases from "@/components/pages/pases/PaginationPases";
 
 const ListaPasesPage = () => {
-  const [limit, setLimit] = useState(10);
+  const [limit, setLimit] = useState(25);
   const [skip, setSkip] = useState(0);
   const [searchName, setSearchName] = useState("");
 

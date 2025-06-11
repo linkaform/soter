@@ -17,7 +17,7 @@ interface PaginationPasesProps {
     onPageChange: (skip: number, limit: number) => void;
 }
 
-const LIMIT_OPTIONS = [10, 50, 100];
+const LIMIT_OPTIONS = [25, 50, 100];
 
 const PaginationPases: React.FC<PaginationPasesProps> = ({
     actual_page,

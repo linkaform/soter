@@ -7,7 +7,6 @@ import { Card, CardContent } from '../ui/card';
 import { Imagen } from '@/lib/update-pass-full';
 
 const ViewImage = ({ imageUrl }: { imageUrl: Imagen[] }) => {
-    console.log("que soy ", imageUrl)
   const [open, setOpen] = useState(false);
 
   return (
