@@ -102,7 +102,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 	const [accionesTomadas, setAccionesTomadas] = useState<AccionesTomadas[]>(data.acciones_tomadas_incidencia)
 	const [depositos] = useState<Depositos[]>(data.depositos)
 	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado } = useCatalogoAreaEmpleado(isSuccess, location, "Incidencias" );
-	const { editarIncidenciaMutation, catIncidencias, isLoadingCatIncidencias , loading} = useInciencias("", "",[],  false, true, "", "", "");
+	const { editarIncidenciaMutation, catIncidencias, isLoadingCatIncidencias , loading} = useInciencias("", "",[], true, "", "", "");
 	// const [ setCatAreas] = useState<any| string[]>(areas);
 
 	const form = useForm<z.infer<typeof formSchema>>({
