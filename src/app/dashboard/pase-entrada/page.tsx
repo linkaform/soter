@@ -166,49 +166,49 @@ import DateTime from "@/components/dateTime";
 	// const ubicacionesDefaultFormatted= ubicacionesDefault?.map((u: any) => ({ id: u, name: u }));
 	const ubicacionesFormatted = ubicaciones?.map((u: any) => ({ id: u, name: u }));
 
-	// const [userIdSoter] = useState<number|null>(()=>{
-	// 	return Number(typeof window !== "undefined"? window?.localStorage.getItem("userId_soter"):0) 
-	// });
+	const [userIdSoter] = useState<number|null>(()=>{
+		return Number(typeof window !== "undefined"? window?.localStorage.getItem("userId_soter"):0) 
+	});
 
-	// const[userNameSoter] = useState<string|null>(()=>{
-	// 	return typeof window !== "undefined"? window?.localStorage.getItem("userName_soter"):""
-	// })
-	// const [userEmailSoter] = useState<string|null>(()=>{
-	// 	return typeof window !== "undefined"? window?.localStorage.getItem("userEmail_soter"):""
-	// })
+	const[userNameSoter] = useState<string|null>(()=>{
+		return typeof window !== "undefined"? window?.localStorage.getItem("userName_soter"):""
+	})
+	const [userEmailSoter] = useState<string|null>(()=>{
+		return typeof window !== "undefined"? window?.localStorage.getItem("userEmail_soter"):""
+	})
 
 
 	const [host, setHost] = useState<string>();
 	const [protocol,setProtocol] = useState<string>();
 
 
-	// useEffect(() => {
-	// 	if (typeof window !== "undefined" && typeof window?.location !== "undefined") {
-	// 		setHost(window?.location.host);
-	// 		setProtocol(window?.location.protocol);
-	// 	}
-	// }, []); 
-
-
-	const [userIdSoter, setUserIdSoter] = useState<number | null>(null);
-	const [userNameSoter, setUserNameSoter] = useState<string | null>(null);
-	const [userEmailSoter, setUserEmailSoter] = useState<string | null>(null);
-
 	useEffect(() => {
-	if (typeof window !== "undefined") {
-		const id = window.localStorage.getItem("userId_soter");
-		const name = window.localStorage.getItem("userName_soter");
-		const email = window.localStorage.getItem("userEmail_soter");
+		if (typeof window !== "undefined" && typeof window?.location !== "undefined") {
+			setHost(window?.location.host);
+			setProtocol(window?.location.protocol);
+		}
+	}, []); 
 
-		setUserIdSoter(id ? Number(id) : null);
-		setUserNameSoter(name ?? null);
-		setUserEmailSoter(email ?? null);
-	}
-	if (typeof window !== "undefined" && typeof window?.location !== "undefined") {
-		setHost(window?.location.host);
-		setProtocol(window?.location.protocol);
-	}
-	}, []);
+
+	// const [userIdSoter, setUserIdSoter] = useState<number | null>(null);
+	// const [userNameSoter, setUserNameSoter] = useState<string | null>(null);
+	// const [userEmailSoter, setUserEmailSoter] = useState<string | null>(null);
+
+	// useEffect(() => {
+	// if (typeof window !== "undefined") {
+	// 	const id = window.localStorage.getItem("userId_soter");
+	// 	const name = window.localStorage.getItem("userName_soter");
+	// 	const email = window.localStorage.getItem("userEmail_soter");
+
+	// 	setUserIdSoter(id ? Number(id) : null);
+	// 	setUserNameSoter(name ?? null);
+	// 	setUserEmailSoter(email ?? null);
+	// }
+	// if (typeof window !== "undefined" && typeof window?.location !== "undefined") {
+	// 	setHost(window?.location.host);
+	// 	setProtocol(window?.location.protocol);
+	// }
+	// }, []);
 
 
 
@@ -347,7 +347,7 @@ import DateTime from "@/components/dateTime";
 			tipo_visita_pase: tipoVisita,
 			fechaFija: date !=="" ? formatDateToString(date):"",
 			fecha_desde_visita: tipoVisita === "fecha_fija"? 
-				(date !=="" ? formatDateToString(date)+":00": "") : 
+				(date !=="" ? formatDateToString(date): "") : 
 				(data.fecha_desde_visita !== "" ? formatFecha(data.fecha_desde_visita)+` 00:00:00`: ""),
 			fecha_desde_hasta: data.fecha_desde_hasta !=="" ? formatFecha(data.fecha_desde_hasta)+` 00:00:00` : "",
 			config_dia_de_acceso: config_dia_de_acceso === "limitar_días_de_acceso" ? config_dia_de_acceso : "cualquier_día",
