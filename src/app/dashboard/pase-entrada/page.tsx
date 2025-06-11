@@ -166,14 +166,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 	const ubicacionesFormatted = ubicaciones?.map((u: any) => ({ id: u, name: u }));
 
 	const [userIdSoter] = useState<number|null>(()=>{
-			return Number(typeof window !== "undefined"? window.localStorage.getItem("userId_soter"):0) 
+			return Number(typeof window !== "undefined"? window?.localStorage.getItem("userId_soter"):0) 
 	});
 
 	const[userNameSoter] = useState<string|null>(()=>{
-		return typeof window !== "undefined"? window.localStorage.getItem("userName_soter"):""
+		return typeof window !== "undefined"? window?.localStorage.getItem("userName_soter"):""
 	})
 	const [userEmailSoter] = useState<string|null>(()=>{
-		return typeof window !== "undefined"? window.localStorage.getItem("userEmail_soter"):""
+		return typeof window !== "undefined"? window?.localStorage.getItem("userEmail_soter"):""
 	})
 
 
@@ -182,9 +182,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 
 	useEffect(() => {
-		if (typeof window !== "undefined" && typeof window.location !== "undefined") {
-			setHost(window.location.host);
-			setProtocol(window.location.protocol);
+		if (typeof window !== "undefined" && typeof window?.location !== "undefined") {
+			setHost(window?.location.host);
+			setProtocol(window?.location.protocol);
 		}
 	}, []); 
 
