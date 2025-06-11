@@ -24,12 +24,11 @@ interface ActivePassesModalProps {
   setOpen:Dispatch<SetStateAction<boolean>>;
   open:boolean;
   input: string;
-  setInput:Dispatch<SetStateAction<string>>;
 }
 
 export const ActivePassesModal: React.FC<ActivePassesModalProps> = ({
   title,
-  children, open, setOpen, input, setInput 
+  children, open, setOpen, input 
 }) => {
   const { location } = useShiftStore();
   const { setPassCode , passCode} = useAccessStore();
@@ -38,11 +37,13 @@ export const ActivePassesModal: React.FC<ActivePassesModalProps> = ({
 
   useEffect(() => {
     if (open) {
+      console.log("open", open)
       setSearchText(input);
     } else {
+      console.log("pass code", passCode)
       const timeout = setTimeout(() => {
         setSearchText("");
-        setInput("");
+        // setInput("");
       }, 300); 
       return () => clearTimeout(timeout);
     }
@@ -54,10 +55,11 @@ export const ActivePassesModal: React.FC<ActivePassesModalProps> = ({
   }
 
   const handleSelectPass = (item: any) => {
+    console.log("item selected", item)
     if (esHexadecimal(item._id) && item._id !== passCode) {
       	setPassCode(item._id); 
         setSearchText("")
-        setInput("")
+        // setInput("")
         setOpen(false); 
     }else{
 		toast.error("Escoge un pase diferente...")

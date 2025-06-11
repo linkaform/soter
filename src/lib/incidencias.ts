@@ -28,8 +28,10 @@ export const getListIncidencias = async (
     return data;
   };
 
-  export const getCatIncidencias = async () => {
+  export const getCatIncidencias = async (categoria:string, subCategoria:string) => {
     const payload = {
+        cat:categoria,
+        sub_cat: subCategoria,
         option: "catalogo_incidencias",
         script_name: "incidencias.py",
     };

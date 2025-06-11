@@ -213,11 +213,9 @@ const AccesosPage = () => {
   useEffect(() => {
     if (debouncedValue) {
 		if(esHexadecimal(inputValue)){
-			console.log("input value", inputValue)
 			setInputValue("")
 			setPassCode(inputValue)
 		}else{
-			// setInput(inputValue)
 			setOpenActivePases(true)
 			setPassCode("")
 			setInputValue("")
@@ -282,7 +280,7 @@ const AccesosPage = () => {
 						/>
 						 <Search className="absolute right-12 h-4 w-4 text-gray-500 pointer-events-none" />
 
-						<ActivePassesModal title="Pases Activos"  input={debouncedValue} setInput={setDebouncedValue} setOpen={setOpenActivePases} open={openActivePases}>
+						<ActivePassesModal title="Pases Activos"  input={debouncedValue} setOpen={setOpenActivePases} open={openActivePases}>
 						<Button
 							variant="ghost"
 							size="icon"

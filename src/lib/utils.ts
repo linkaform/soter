@@ -128,6 +128,7 @@ export function formatVehiculos(arr: any[]): Vehiculo[] {
     color: item.color_vehiculo || item.color || "",
   }));
 }
+
 export function formatEquipos(arr: Equipo_bitacora[]): Equipo[] {
   return arr.map(item => ({
     color: item.color_articulo, 
@@ -450,3 +451,4 @@ export function isTokenExpired(token:string) {
 
   return payload.exp < currentTime;
 }
+

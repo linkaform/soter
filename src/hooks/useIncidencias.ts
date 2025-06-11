@@ -1,11 +1,11 @@
 import { getStats } from "@/lib/get-stats";
-import { crearIncidencia, deleteIncidencias, editarIncidencia, getCatIncidencias, getListIncidencias, InputIncidencia } from "@/lib/incidencias";
+import { crearIncidencia, deleteIncidencias, editarIncidencia, getListIncidencias, InputIncidencia } from "@/lib/incidencias";
 import { errorMsj } from "@/lib/utils";
 import { useShiftStore } from "@/store/useShiftStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-export const useInciencias = (location:string, area:string, prioridades:string[], enabled:boolean, enabledIncidencias:boolean, dateFrom:string, dateTo:string, filterDate:string) => {
+export const useInciencias = (location:string, area:string, prioridades:string[], enabled:boolean, dateFrom:string, dateTo:string, filterDate:string) => {
     const queryClient = useQueryClient();
     
     const { isLoading: loading, setLoading} = useShiftStore();
@@ -17,24 +17,6 @@ export const useInciencias = (location:string, area:string, prioridades:string[]
             const data = await getListIncidencias(location, area, prioridades, dateFrom, dateTo, filterDate);
             return Array.isArray( data.response?.data) ?  data.response?.data: []; 
         },
-        refetchOnWindowFocus: true,
-        refetchInterval: 15000,
-        refetchOnReconnect: true,
-        staleTime: 1000 * 60 * 5,
-    });
-
-    //Obtener Catalogo de Incidencias
-    const {data: catIncidencias, isLoading:isLoadingCatIncidencias, error:errorCatIncidencias} = useQuery<any>({
-      queryKey: ["getCatIncidencias"],
-      enabled:enabledIncidencias,
-      queryFn: async () => {
-          const data = await getCatIncidencias();
-          return Array.isArray(data.response?.data) ? data.response?.data: []; 
-      },
-      refetchOnWindowFocus: true,
-      refetchInterval: 15000,
-      refetchOnReconnect: true,
-      staleTime: 1000 * 60 * 5,
     });
 
     //Crear Incidencia
@@ -153,9 +135,6 @@ export const useInciencias = (location:string, area:string, prioridades:string[]
     setLoading,
     errorListIncidencias,
     refetchTableIncidencias,
-    catIncidencias,
-    isLoadingCatIncidencias,
-    errorCatIncidencias,
     //Crear Incidencia
     createIncidenciaMutation,
     //EditarIncidencia
