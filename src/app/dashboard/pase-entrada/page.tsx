@@ -35,8 +35,9 @@ import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation
 import { usePaseEntrada } from "@/hooks/usePaseEntrada";
 import { useShiftStore } from "@/store/useShiftStore";
 // import {DateTimePicker} from "@vaadin/date-time-picker"
-import '@vaadin/date-time-picker';
+// import '@vaadin/date-time-picker';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import DateTime from "@/components/dateTime";
 // import { DateTimePicker } from "@vaadin/date-time-picker";
 
 
@@ -346,7 +347,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 			tipo_visita_pase: tipoVisita,
 			fechaFija: date !=="" ? formatDateToString(date):"",
 			fecha_desde_visita: tipoVisita === "fecha_fija"? 
-				(date !=="" ? formatDateToString(date): "") : 
+				(date !=="" ? formatDateToString(date)+":00": "") : 
 				(data.fecha_desde_visita !== "" ? formatFecha(data.fecha_desde_visita)+` 00:00:00`: ""),
 			fecha_desde_hasta: data.fecha_desde_hasta !=="" ? formatFecha(data.fecha_desde_hasta)+` 00:00:00` : "",
 			config_dia_de_acceso: config_dia_de_acceso === "limitar_días_de_acceso" ? config_dia_de_acceso : "cualquier_día",
@@ -821,12 +822,12 @@ return (
 											Visita:
 										</FormLabel>
 										<FormControl>
-											<vaadin-date-time-picker
+											{/* <vaadin-date-time-picker
 												ref={pickerRef}
 												value="2020-06-12T12:30"
 												// step="1800" 
-											/>
-
+											/> */}
+											<DateTime date={date} setDate={setDate} />
 										</FormControl>
 									<FormMessage />
 									</FormItem>
