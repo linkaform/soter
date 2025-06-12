@@ -24,8 +24,8 @@ export const useNotes = (enableGetNotes:boolean, area:string, location:string, p
 
   //Crear Nota
   const createNoteMutation = useMutation({
-    mutationFn: async ({ data_notes} : { data_notes: InputNote }) => {
-        const response = await crearNota(data_notes);
+    mutationFn: async ({ location, area, data_notes} : { location: string, area: string, data_notes: InputNote }) => {
+        const response = await crearNota(location, area, data_notes);
         const hasError= response.response.data.status_code
 
         if(hasError == 400|| hasError == 401){

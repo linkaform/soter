@@ -78,7 +78,7 @@ export const AddNoteModal: React.FC<AddNoteModalProps> = ({
       note_guard_close: '',
     }
     createNoteMutation.mutate(
-      { data_notes: formatData },
+      { location, area, data_notes: formatData },
       {
         onSuccess: () => {
           if (open) {
