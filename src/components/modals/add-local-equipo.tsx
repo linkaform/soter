@@ -38,7 +38,7 @@ import { useAccessStore } from "@/store/useAccessStore";
 import { useUpdateBitacora } from "@/hooks/useUpdateBitacora";
 import Select from 'react-select';
 import { ScanBarcodeModal } from "@/components/modals/scan-barcode-modal";
-import { Camera, ScanBarcode } from "lucide-react";
+import { ScanBarcode } from "lucide-react";
 
 interface Props {
   title: string;
