@@ -108,6 +108,7 @@ const PaseUpdate = () =>{
 	const [modalData, setModalData] = useState<any>(null);
 	const [identificacion, setIdentificacion] = useState<Imagen[]>([])
 	const downloadUrl=responsePdf?.response?.data?.data?.download_url
+	const downloadImgUrl = dataCatalogos?.pass_selected?.qr_pase[0]?.file_url;
 	
 	const [errorFotografia, setErrorFotografia] = useState("")
 	const [errorIdentificacion, setErrorIdentificacion] = useState("")
@@ -120,6 +121,30 @@ const PaseUpdate = () =>{
 	const [mostrarAviso, setMostrarAviso] = useState(false);
 	const [radioSelected, setRadioSelected] = useState("3 meses");		
 	// const [showRadioGroup, setShowRadioGroup] = useState(false);
+
+	const onDescargarPNG = async (imgUrl: string) => {
+		try {
+			const response = await fetch(imgUrl);
+			if (!response.ok) throw new Error("No se pudo obtener la imagen");
+		
+			const blob = await response.blob();
+			const url = URL.createObjectURL(blob);
+		
+			const a = document.createElement("a");
+			a.href = url;
+			a.download = "pase.png";
+			document.body.appendChild(a);
+			a.click();
+			a.remove();
+			URL.revokeObjectURL(url);
+			toast.success("¡Pase descargado correctamente!");
+			setTimeout(() => {
+			window.location.href = "https://www.soter.mx/";
+			}, 1000);
+		} catch (error) {
+			toast.error("Error al descargar la imagen: " + error);
+		}
+	};
 
 	const handleClickGoogleButton = () => {
 		const url = dataCatalogos?.pass_selected?.google_wallet_pass_url;
@@ -876,8 +901,19 @@ return (
 					</div>
 				
 					<div className="flex flex-col gap-2">
-						<Button className="w-40 m-0 bg-yellow-500 hover:bg-yellow-600" type="submit" onClick={()=>{setEnablePdf(true)}} disabled={loadingPdf}>
-						{!loadingPdf ? ("Descargar PDF"):(<><Loader2 className="animate-spin"/>Descargando PDF...</>)}
+						<Button
+							className="w-40 m-0 bg-yellow-500 hover:bg-yellow-600"
+							type="button"
+							onClick={() => {
+								if (downloadImgUrl) {
+									onDescargarPNG(downloadImgUrl);
+								} else {
+									toast.error("No hay imagen disponible para descargar.");
+								}
+							}}
+							disabled={loadingPdf}
+							>
+							{!loadingPdf ? ("Descargar Pase") : (<><Loader2 className="animate-spin" />Descargando...</>)}
 						</Button>
 
 						<Button
