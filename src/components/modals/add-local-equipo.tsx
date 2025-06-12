@@ -37,6 +37,8 @@ import { Equipo } from "@/lib/update-pass-full";
 import { useAccessStore } from "@/store/useAccessStore";
 import { useUpdateBitacora } from "@/hooks/useUpdateBitacora";
 import Select from 'react-select';
+import { ScanBarcodeModal } from "@/components/modals/scan-barcode-modal";
+import { Camera, ScanBarcode } from "lucide-react";
 
 interface Props {
   title: string;
@@ -62,6 +64,7 @@ const formSchema = z.object({
 
 export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equipos, setEquipos, isAccesos, id="", fetch=false}) => {
   const [open, setOpen] = useState(false); 
+  const [openScan, setOpenScan] = useState(false);
   const setSelectedEquipos = useAccessStore((state) => state.setSelectedEquipos);
   const selectedEquipos = useAccessStore((state) => state.selectedEquipos);
   const { updateBitacoraMutation, isLoading }= useUpdateBitacora()
@@ -279,15 +282,31 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
                   <FormItem>
                     <FormLabel>* Número de Serie</FormLabel>
                     <FormControl>
-                    <Input
-                      placeholder="No. de serie"
-                      {...field}
-                      maxLength={20}
-                      onChange={(e) => field.onChange(e.target.value.toUpperCase())}
-                    />
+                      <div className="relative">
+                        <Input
+                          placeholder="No. de serie"
+                          {...field}
+                          maxLength={20}
+                          onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+                          className="pr-10"
+                        />
+                        <button
+                          type="button"
+                          className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-blue-600"
+                          onClick={() => setOpenScan(true)}
+                          tabIndex={-1}
+                        >
+                          <ScanBarcode size={20} />
+                        </button>
+                      </div>
                     </FormControl>
 
                     <FormMessage />
+                    <ScanBarcodeModal
+                      open={openScan}
+                      setOpen={setOpenScan}
+                      onScan={(code: any) => field.onChange(code.toUpperCase())}
+                    />
                   </FormItem>
                 )}
               />
