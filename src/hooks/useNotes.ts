@@ -42,7 +42,7 @@ export const useNotes = (enableGetNotes:boolean, area:string, location:string, p
       queryClient.invalidateQueries({
         predicate: (query) => query.queryKey[0] === 'getShift'
       });
-      queryClient.invalidateQueries({ queryKey: ['stats'] });
+      queryClient.invalidateQueries({ queryKey: ['getStats'] });
       queryClient.invalidateQueries({ queryKey: ['getNotes'] });
       toast.success("Nota creada correctamente.");
     },
