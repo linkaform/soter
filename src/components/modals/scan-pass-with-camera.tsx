@@ -32,20 +32,21 @@ export const ScanPassWithCameraModal: React.FC<
   )
 
   useEffect(() => {
+    let timeout: NodeJS.Timeout | null = null
+    let html5QrCode: Html5Qrcode | null = null
+
     if (open) {
-      const interval = setInterval(() => {
+      timeout = setTimeout(() => {
         const element = document.getElementById(cameraContainerId)
         if (element) {
-          clearInterval(interval)
-
-          const html5QrCode = new Html5Qrcode(cameraContainerId)
+          html5QrCode = new Html5Qrcode(cameraContainerId)
           scannerRef.current = html5QrCode
 
           Html5Qrcode.getCameras()
             .then((devices) => {
               if (devices && devices.length > 0) {
                 const cameraId = devices[0].id
-                html5QrCode.start(
+                html5QrCode!.start(
                   cameraId,
                   {
                     fps: 10,
@@ -66,15 +67,20 @@ export const ScanPassWithCameraModal: React.FC<
               console.error('Error getting cameras:', err)
             })
         }
-      }, 100)
+      }, 300) // 300ms suele ser suficiente
 
       return () => {
-        clearInterval(interval)
+        if (timeout) clearTimeout(timeout)
         if (scannerRef.current) {
           scannerRef.current
             .stop()
             .then(() => scannerRef.current?.clear())
-            .catch((err) => console.error('Error stopping scanner:', err))
+            .catch((err) => {
+              // Solo loguea si el error no es "scanner is not running"
+              if (!String(err).includes('scanner is not running')) {
+                console.error('Error stopping scanner:', err)
+              }
+            })
         }
       }
     }
