@@ -16,7 +16,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm} from "react-hook-form";
 import { data_correo } from "@/lib/send_correo";
-import { useGetPdf } from "@/hooks/usetGetPdf";
+// import { useGetPdf } from "@/hooks/usetGetPdf";
 // import { descargarPdfPase } from "@/lib/download-pdf";
 import Image from "next/image";
 import { useSendCorreoSms } from "@/hooks/useSendCorreo";
@@ -60,8 +60,8 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 	const [isActiveSMS, setIsActiveSMS] = useState(false);
 	const { createSendCorreoSms, isLoadingCorreo} = useSendCorreoSms();
 	const [enablePdf, setEnablePdf] = useState(false)
-	const { data: responsePdf, isLoading: loadingPdf} = useGetPdf(account_id, folio, enablePdf);
-	const downloadUrl=responsePdf?.response?.data?.data?.download_url
+	// const { data: responsePdf, isLoading: loadingPdf} = useGetPdf(account_id, folio, enablePdf);
+	// const downloadUrl=responsePdf?.response?.data?.data?.download_url
 	console.log("updateresponse",updateResponse)
 	const downloadImgUrl = updateResponse?.json?.pdf_to_img?.[0].file_url
 	
@@ -177,20 +177,19 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 		}, 100);
 	}
 
-	useEffect(()=>{
-		if(downloadUrl){
-			// onDescargarPDF(downloadUrl)
-			onDescargarPDF()
-			setEnablePdf(false)
-			if(enviarCorreo.includes("enviar_correo") || enviarCorreo.includes("enviar_sms")){
-				createSendCorreoSms.mutate({account_id, envio:enviarCorreo, data_for_msj:dataPass, folio})
+	useEffect(() => {
+		if (enablePdf && downloadImgUrl) {
+			onDescargarPDF();
+			setEnablePdf(false);
+			if (enviarCorreo.includes("enviar_correo") || enviarCorreo.includes("enviar_sms")) {
+				createSendCorreoSms.mutate({ account_id, envio: enviarCorreo, data_for_msj: dataPass, folio });
 			}
-			toast.success("¡PDF descargado correctamente!");
+			toast.success("Pase descargado correctamente!");
 			setTimeout(() => {
 				window.location.href = "https://www.soter.mx/";
 			}, 1800);
 		}
-	},[downloadUrl])
+	}, [enablePdf]); // Solo depende de enablePdf
 
 	// async function onDescargarPDF(download_url: string) {
 	async function onDescargarPDF() {
@@ -211,7 +210,7 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 
 			URL.revokeObjectURL(url);
 		} catch (error) {
-		  toast.error("Error al descargar el PDF: " + error);
+		  toast.error("Error al descargar el pase: " + error);
 		}
 	}
 
@@ -325,8 +324,8 @@ return (
 						</Button>
 					</DialogClose>
 					<Button
-						className="w-full bg-blue-500 hover:bg-blue-600 text-white" onClick={()=>{setEnablePdf(true)}} disabled={loadingPdf}>
-						{isLoadingCorreo || loadingPdf ? ("Cargando..."): ("Descargar Pase")}
+						className="w-full bg-blue-500 hover:bg-blue-600 text-white" onClick={()=>{setEnablePdf(true)}}>
+						{isLoadingCorreo ? ("Cargando..."): ("Descargar Pase")}
 					</Button>
 					</div> 
 		</DialogContent>

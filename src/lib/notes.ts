@@ -69,11 +69,13 @@ export const getNotes = async (area: string, location: string, limit: number = 1
   return data
 };
 
-export const crearNota = async (data_notes: InputNote | null)=> {
+export const crearNota = async (location: string, area: string, data_notes: InputNote | null)=> {
   const payload = {
       data_notes: data_notes,
       option: "new_notes",
       script_name: "notes.py",
+      location,
+      area
   };
 
   const userJwt = localStorage.getItem("access_token"); 

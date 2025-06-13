@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 import { Button } from "@/components/ui/button";
 import { ActivePassesModal } from "@/components/modals/active-passes-modal";
@@ -42,7 +42,7 @@ import useAuthStore from "@/store/useAuthStore";
 import { esHexadecimal } from "@/lib/utils";
 import Link from "next/link";
 import { useGetStats } from "@/hooks/useGetStats";
-import { ScanPassWithCameraModal } from "@/components/modals/scan-pass-with-camera";
+import { ScanPassOptionsModal } from "@/components/modals/scan-pass-options";
 import Swal from "sweetalert2";
 import { useAreasLocationStore } from "@/store/useGetAreaLocationByUser";
 import { Equipo, Vehiculo } from "@/lib/update-pass-full";
@@ -63,6 +63,7 @@ const AccesosPage = () => {
   const { loading:loadingLocationArea} = useAreasLocationStore();
   const [equipos, setEquipos]= useState<Equipo[]>([])
   const [vehiculos, setVehiculos]= useState<Vehiculo[]>([])
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
 	if(searchPass){
@@ -272,6 +273,7 @@ const AccesosPage = () => {
 					<div className="flex justify-center mb-5 mr-5 w-full md:max-w-lg ">
 					<div className="relative w-full flex items-center ">
 						<Input
+						ref={inputRef}
 						type="text"
 						placeholder="Escanear Pase"
 						className="pl-5 pr-10 w-full"
@@ -329,12 +331,15 @@ const AccesosPage = () => {
 						Registrar Salida
 						</Button>
 					)}
-					<ScanPassWithCameraModal title="Escanea un pase con la camara" >
-								<Button className="bg-yellow-400 hover:bg-yellow-500 text-black">
+					<ScanPassOptionsModal
+						title="Escanea un pase"
+						inputRef={inputRef}
+					>
+						<Button className="bg-yellow-400 hover:bg-yellow-500 text-black">
 					<Scan />
 									Escanear un pase
 								</Button>
-					</ScanPassWithCameraModal>
+					</ScanPassOptionsModal>
 					{!passCode && (
 						<AddVisitModal title="Nueva Visita">
 						<Button className="bg-green-600 hover:bg-green-700 text-white">
