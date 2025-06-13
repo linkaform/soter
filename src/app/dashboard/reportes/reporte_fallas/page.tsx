@@ -76,24 +76,24 @@ const ReportsPage = () => {
 	const { reportFallas, isLoadingReportFallas, errorReportFallas, refetchReportFallas } = useReportFallas(filters);
 	const { hotelesFallas, isLoadingHotelesFallas, errorHotelesFallas } = useGetHoteles(true);
 	const hoteles = hotelesFallas?.hoteles;
-	const cantidadSi = reportFallas?.cantidad_si_y_no[0].total
-	const cantidadNo = reportFallas?.cantidad_si_y_no[1].total
-	const inspecciones = reportFallas?.total_inspecciones_y_remodeladas?.total_inspecciones_completadas
-	const remodeladas = reportFallas?.total_inspecciones_y_remodeladas?.total_habitaciones_remodeladas
-	const cal_maxima = reportFallas?.calificaciones?.resumen?.max_global
-	const cal_min = reportFallas?.calificaciones?.resumen?.min_global
-	const cal_promedio = reportFallas?.calificaciones?.resumen?.promedio_global
-	const porcentaje = reportFallas?.porcentaje_propiedades_inspeccionadas
-	const calificacionXHotelGraph = reportFallas?.calificacion_x_hotel_grafica
-	const tagsFallas = reportFallas?.fallas?.totales
-	const fallasXHotelGraph = reportFallas?.fallas?.por_hotel
-	const tableHabitacionesInspeccionadas = reportFallas?.table_habitaciones_inspeccionadas;
-	const bubbleChart = reportFallas?.table_habitaciones_inspeccionadas;
-	const mejorHabitacion = reportFallas?.mejor_y_peor_habitacion?.mejor_habitacion;
-	const peorHabitacion = reportFallas?.mejor_y_peor_habitacion?.habitacion_mas_fallas;
-	const radarData = reportFallas?.graph_radar?.radar_data;
-	const hotelesFotografias = reportFallas?.hoteles_fotografias?.hoteles_fotografias
-	const hotelesComentarios = reportFallas?.hoteles_comentarios?.hoteles_comentarios
+	const cantidadSi = reportFallas?.cantidad_si_y_no?.[0]?.total ?? 0;
+	const cantidadNo = reportFallas?.cantidad_si_y_no?.[1]?.total ?? 0;
+	const inspecciones = reportFallas?.total_inspecciones_y_remodeladas?.total_inspecciones_completadas ?? 0;
+	const remodeladas = reportFallas?.total_inspecciones_y_remodeladas?.total_habitaciones_remodeladas ?? 0;
+	const cal_maxima = reportFallas?.calificaciones?.resumen?.max_global ?? 0;
+	const cal_min = reportFallas?.calificaciones?.resumen?.min_global ?? 0;
+	const cal_promedio = reportFallas?.calificaciones?.resumen?.promedio_global ?? 0;
+	const porcentaje = reportFallas?.porcentaje_propiedades_inspeccionadas ?? 0;
+	const calificacionXHotelGraph = reportFallas?.calificacion_x_hotel_grafica ?? [];
+	const tagsFallas = reportFallas?.fallas?.totales ?? [];
+	const fallasXHotelGraph = reportFallas?.fallas?.por_hotel ?? [];
+	const tableHabitacionesInspeccionadas = reportFallas?.table_habitaciones_inspeccionadas ?? [];
+	const bubbleChart = reportFallas?.table_habitaciones_inspeccionadas ?? [];
+	const mejorHabitacion = reportFallas?.mejor_y_peor_habitacion?.mejor_habitacion ?? {};
+	const peorHabitacion = reportFallas?.mejor_y_peor_habitacion?.habitacion_mas_fallas ?? {};
+	const radarData = reportFallas?.graph_radar?.radar_data ?? [];
+	const hotelesFotografias = reportFallas?.hoteles_fotografias?.hoteles_fotografias ?? [];
+	const hotelesComentarios = reportFallas?.hoteles_comentarios?.hoteles_comentarios ?? [];
 	const [hotelHabitaciones, setHotelHabitaciones] = useState<any[]>([]);
 	const [hotelHabitacion, setHotelHabitacion] = useState<any>();
 	const stats = [
@@ -135,7 +135,7 @@ const ReportsPage = () => {
 		},
 		{
 			icon: <Star className="text-yellow-500" />,
-			value: '0.0',
+			value: cal_promedio ?? '0.0',
 			label: 'Calificacion de hotel'
 		}
 	]
