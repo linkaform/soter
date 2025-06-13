@@ -81,7 +81,7 @@ export default function LoginPage() {
               <CardContent className="flex w-[500px] h-[600px] flex-col justify-center items-center">
                 <Image
                   className="mb-10 flex mx-auto"
-                  src="/logo.svg"
+                  src="/company_pic_7742.jpg"
                   alt="soter logo"
                   width={174}
                   height={58}
