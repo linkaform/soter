@@ -8,21 +8,9 @@ import { useShiftStore } from '@/store/useShiftStore'
 
 const NotasPage = () => {
   const { location, area } = useShiftStore()
-  // const hasHydrated = useShiftStore.persist.hasHydrated()
-  // const [isReady, setIsReady] = useState(false)
   const [statusFilter, setStatusFilter] = useState<string>('')
   const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location)
   const [areaSeleccionada, setAreaSeleccionada] = useState(area)
-
-  // useEffect(() => {
-  //   if (hasHydrated) {
-  //     setUbicacionSeleccionada(location)
-  //     setAreaSeleccionada(area)
-  //     setIsReady(true)
-  //   }
-  // }, [hasHydrated, location, area])
-
-  // if (!isReady) return null
 
   return (
     <main className='mt-4 mx-4'>

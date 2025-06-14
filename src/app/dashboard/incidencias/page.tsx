@@ -113,7 +113,7 @@ const IncidenciasPage = () => {
 						<div className="h-1 w-1/2 bg-cyan-100"></div>
 						<div className="h-1 w-1/2 bg-blue-500"></div>
 					</div>
-					<span className="text-md">Incidencias del Día</span>
+					<span className="text-md">Incidencias Del Día</span>
 				</div>
 				<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
 						dateFilter== "this_week" && selectedTab!=="Fallas"? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => handleTabChange("Incidencias","this_week")}>
@@ -124,7 +124,7 @@ const IncidenciasPage = () => {
 						<div className="h-1 w-1/2 bg-cyan-100"></div>
 						<div className="h-1 w-1/2 bg-blue-500"></div>
 					</div>
-					<span className="text-md">Incidencias de la Semana</span>
+					<span className="text-md">Incidencias De La Semana</span>
 				</div>
 				<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
 						dateFilter== "this_month" && selectedTab!=="Fallas"? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => handleTabChange("Incidencias","this_month")}>
@@ -135,7 +135,7 @@ const IncidenciasPage = () => {
 						<div className="h-1 w-1/2 bg-cyan-100"></div>
 						<div className="h-1 w-1/2 bg-blue-500"></div>
 					</div>
-					<span className="text-md">Incidentes del Mes</span>
+					<span className="text-md">Incidentes Del Mes</span>
 				</div>
 
 				<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
@@ -147,7 +147,7 @@ const IncidenciasPage = () => {
 						<div className="h-1 w-1/2 bg-cyan-100"></div>
 						<div className="h-1 w-1/2 bg-blue-500"></div>
 					</div>
-					<span className="text-md">Fallas pendientes</span>
+					<span className="text-md">Fallas Pendientes</span>
 				</div>
 			</div>
 		</div>

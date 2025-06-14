@@ -188,7 +188,7 @@ return (
 							<div className="h-1 w-1/2 bg-cyan-100"></div>
 							<div className="h-1 w-1/2 bg-blue-500"></div>
 						</div>
-						<span className="text-md">Visitas en el día</span>
+						<span className="text-md">Visitas En El Día</span>
 					</div>
 
 					<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
@@ -203,7 +203,7 @@ return (
 							<div className="h-1 w-1/2 bg-cyan-100"></div>
 							<div className="h-1 w-1/2 bg-blue-500"></div>
 						</div>
-						<span className="text-md">Personas dentro</span>
+						<span className="text-md">Personas Dentro</span>
 					</div>
 
 					<div  className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
@@ -252,7 +252,7 @@ return (
 							<div className="h-1 w-1/2 bg-cyan-100"></div>
 							<div className="h-1 w-1/2 bg-blue-500"></div>
 						</div>
-						<span className="text-md">Salidas del día</span>
+						<span className="text-md">Salidas Del Día</span>
 					</div>
 				</div>
 			</div> 

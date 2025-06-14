@@ -287,7 +287,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const { createIncidenciaMutation , loading} = useInciencias("","",[], isSuccess, "", "", "");
 	
 	const [search, setSearch]= useState("")
-	const [catCategorias, setCatCategorias] = useState<any>([])
+	const [catCategorias, setCatCategorias] = useState<any[]>([])
 	const [catSubCategorias, setSubCatCategorias] = useState<any>([])
 	const [catSubIncidences, setCatSubIncidences] = useState<any>([])
 
@@ -295,13 +295,27 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const [categoria, setCategoria]= useState("")
 	const [selectedIncidencia, setSelectedIncidencia]= useState("")
 
-	const { catIncidencias, isLoadingCatIncidencias } = useCatalogoInciencias(true, categoria, subCategoria);
+	const { catIncidencias, isLoadingCatIncidencias } = useCatalogoInciencias(isSuccess, categoria, subCategoria);
 
 	const [selectedNotificacion, setSelectedNotification] = useState("no")
 	const [value, setValue] = useState([50])
 	const [inputTag, setInputTag] = useState('');
 	const [tagsSeleccionados, setTagsSeleccionados] = useState<string[]>([]);
 
+	useEffect(()=>{
+		if(!isSuccess)
+			resetStates()
+	},[isSuccess]);	
+
+	const resetStates = ()=>{
+		setSearch("")
+		setSubCategoria("")
+		setCategoria("")
+		setSelectedIncidencia("")
+		setCatCategorias([])
+		setCatSubIncidences([])
+		setSubCatCategorias([])
+	}
 	const agregarTag = () => {
 		const nuevoTag = inputTag.trim();
 		if (nuevoTag && !tagsSeleccionados.includes(nuevoTag)) {
@@ -311,31 +325,38 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	};
   
 	useEffect(()=>{
-		if(catIncidencias && search==""){
-			const catIncidenciasIcons = categoriasConIconos.filter((cat) =>
-				catIncidencias.data.includes(cat.nombre)
-			  );
-			setCatCategorias(catIncidenciasIcons)
-		}
-		if(catIncidencias && search=="cat"){
-			console.log("tipo Incidencas",catIncidencias.tipo)
-			if (catIncidencias.tipo=="incidence"){
-				console.log("tipo Incidencas",catIncidencias.data)
-				setCatSubIncidences(catIncidencias.data)
-			}
-			if(catIncidencias.tipo="sub_category"){
-				const subCatIncidenciasIcons = subCategoriasConIconos.filter((cat) =>
-					catIncidencias.data.includes(cat.nombre)
-				  );
-				setSubCatCategorias(subCatIncidenciasIcons)
-			}
-			console.log("tipo Incidencas2",catIncidencias.tipo)
-			
-		}
-		if(catIncidencias && search=="subCat"){
-			setCatSubIncidences(catIncidencias.data)
-		}
+		if(catIncidencias){
+			if(search==""){
+				const catIncidenciasIcons = categoriasConIconos.filter((cat) =>
+					catIncidencias.includes(cat.nombre)
+					);
+				if(catIncidenciasIcons.length>0){
+					setCatCategorias(catIncidenciasIcons)
+				}else{
 
+				}
+			}else if(search=="cat" || search=="subCat"){
+				console.log("entrada", search)
+				const catIncidenciasIcons = categoriasConIconos.filter((cat) =>
+					catIncidencias.includes(cat.nombre)
+					);
+		
+				if (catIncidenciasIcons.length>0) {
+					//Si me regresa el mismo catalogo de categorias, entonces nos pasamos directo al modal
+					setSelectedIncidencia(categoria)
+				} else {
+					//Si en caso de ser diferentes, reviso en las sub categorias, si existen las muestro y si no, muestro las lista de incidencias de esa sub categoria
+					const subCatIncidenciasIcons = subCategoriasConIconos.filter((cat) =>
+						catIncidencias.includes(cat.nombre)
+					);
+					if(subCatIncidenciasIcons.length == 0){
+						setCatSubIncidences(catIncidencias)
+					}else{
+						setSubCatCategorias(subCatIncidenciasIcons)
+					}
+				}
+			}
+		}
 	},[catIncidencias] )
 
 	const quitarTag = (tag: string) => {
@@ -431,7 +452,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	}
   return (
     <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
-      <DialogContent className="max-w-2xl overflow-y-auto max-h-[80vh] flex flex-col " aria-describedby="">
+      <DialogContent className="max-w-3xl overflow-y-auto max-h-[80vh] min-h-[80vh]  flex flex-col " aria-describedby="">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center font-bold">
             {title}
@@ -444,10 +465,10 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 		   		</div>
 			): (
 				<div className="flex-grow overflow-y-auto">
-					{search =="" &&
+					{!selectedIncidencia && search =="" &&
 						<>
 							
-							<div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+							<div className="grid grid-cols-2 md:grid-cols-3 gap-4 ">
 								{catCategorias.map((cat:any) => (
 									<div
 									key={cat.id}
@@ -467,12 +488,11 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 						</>
 					}
 
-					{ search == "cat" &&
+					{ !selectedIncidencia && search == "cat" &&
 						<>
 							<button
 							onClick={() => {
 								setSearch("");  
-								setCategoria("");
 								setSelectedIncidencia("")
 								}
 							}
@@ -501,9 +521,9 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 						</>
 					}
 
-					{ search == "subCat" &&
+					{!selectedIncidencia &&  search == "subCat" &&
 						<>
-						<button
+							<button
 							onClick={() => {
 								setSearch("cat");  
 								setSubCategoria("")
@@ -515,22 +535,22 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 								<ChevronLeft className="w-5 h-5" />
 								<span>Atrás</span>
 							</button>
-						<div className="flex flex-col w-full">
-							{catSubIncidences?.map((cat:any) => (
-								<div
-								key={cat}
-								onClick={() => { 
-									setSearch("incidencia")
-									setSelectedIncidencia(cat)
-								}}
-								className="p-1 bg-white rounded hover:bg-gray-100 cursor-pointer flex justify-between"
-								>
-									<div className="text-sm font-medium">{cat}</div>
-									<ChevronRight className="w-4 h-4 text-gray-500" />
+							<div className="flex flex-col w-full">
+								{catSubIncidences?.map((cat:any) => (
+									<div
+									key={cat}
+									onClick={() => { 
+										setSearch("incidencia")
+										setSelectedIncidencia(cat)
+									}}
+									className="p-1 bg-white rounded hover:bg-gray-100 cursor-pointer flex justify-between"
+									>
+										<div className="text-sm font-medium">{cat}</div>
+										<ChevronRight className="w-4 h-4 text-gray-500" />
 
-								</div>
-							))}
-						</div>
+									</div>
+								))}
+							</div>
 						</>
 					}
 				</div>
