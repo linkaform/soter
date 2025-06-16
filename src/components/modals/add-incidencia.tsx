@@ -60,7 +60,6 @@ import { Loader2 } from "lucide-react";
 import { AccionesTomadas, PersonasInvolucradas } from "@/lib/incidencias";
 import PersonasInvolucradasList from "../personas-involucradas-list";
 import AccionesTomadasList from "../acciones-tomadas-list";
-import { toast } from "sonner";
 import { useShiftStore } from "@/store/useShiftStore";
 import { useInciencias } from "@/hooks/useIncidencias";
 // import DepositosList from "../depositos-list";
@@ -68,6 +67,9 @@ import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation
 import { Input } from "../ui/input";
 import { Slider } from "../slider";
 import { useCatalogoInciencias } from "@/hooks/useCatalogoIncidencias";
+import { PersonaExtraviadaFields } from "./persona-extraviada";
+import { RoboDeCableado } from "./robo-de-cableado";
+import { RoboDeVehiculo } from "./robo-de-vehiculo";
 
 interface AddIncidenciaModalProps {
   	title: string;
@@ -199,7 +201,7 @@ interface AddIncidenciaModalProps {
 export const formSchema = z.object({
 	reporta_incidencia: z.string().optional(),
 	fecha_hora_incidencia: z.string().optional(),
-	ubicacion_incidencia: z.string().min(1, { message: "Comentario es obligatorio" }),
+	ubicacion_incidencia: z.string().optional(),
 	area_incidencia: z.string().min(1, { message: "Comentario es obligatorio" }), 
 	evidencia_incidencia: z.array(
 	  z.object({
@@ -231,15 +233,18 @@ export const formSchema = z.object({
 		  tipo_deposito: z.string().optional(),
 		})
 	  ).optional(),
-	notificacion_incidencia: z.string().min(1, { message: "Este campo es requerido" }),
+	notificacion_incidencia: z.string().optional(),
 	prioridad_incidencia: z.string().optional(),
 	dano_incidencia: z.string().optional(),
 	tipo_dano_incidencia: z.string().optional(),
 	comentario_incidencia: z.string().min(1, { message: "Este campo es requerido" }),
-	incidencia: z.string().min(1, { message: "La ubicación es obligatoria" }),
+	incidencia: z.string().optional(),
 	tags: z.array(z.string()).optional(),
 
-	//PersonaExtraviada
+	categoria:z.string().optional(),
+	sub_categoria:z.string().optional(),
+	incidente:z.string().optional(),
+	//PersonaExtraviado
 	nombre_completo: z.string().optional(),
 	edad: z.number().optional(),
 	color_piel: z.string().optional(),
@@ -277,13 +282,12 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const [date, setDate] = useState<Date|"">("");
 
 	// const [incidencia, setIncidencia] = useState("")
-	// const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState("");
 	const { dataAreas:areas, isLoadingAreas:loadingAreas} = useCatalogoPaseAreaLocation(location, true,  location?true:false);
 	// const [catAreas, setCatAreas] = useState<any| string[]>(areas);
 	const [personasInvolucradas, setPersonasInvolucradas] = useState<PersonasInvolucradas[]>([])
 	const [accionesTomadas, setAccionesTomadas] = useState<AccionesTomadas[]>([])
 	// const [depositos, setDepositos] = useState<Depositos[]>([])
-	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado, error:errorAreEmpleado } = useCatalogoAreaEmpleado(isSuccess, location, "Incidencias");
+	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado } = useCatalogoAreaEmpleado(isSuccess, location, "Incidencias");
 	const { createIncidenciaMutation , loading} = useInciencias("","",[], isSuccess, "", "", "");
 	
 	const [search, setSearch]= useState("")
@@ -382,7 +386,10 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 			prioridad_incidencia:"",
 			notificacion_incidencia:"",
 			datos_deposito_incidencia: [],
-			tags:[]
+			tags:[],
+			categoria:"",
+			sub_categoria:"",
+			incidente:"",
 		},
 	});
 
@@ -399,11 +406,10 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	},[isSuccess])
 
 	useEffect(()=>{
-		if(errorAreEmpleado){
-			toast.error("Error al cargar catalogo de area empleado")
-			handleClose()
+		if(form.formState.errors){
+			console.log("console log", form.formState.errors)
 		}
-	},[errorAreEmpleado])
+	},[form.formState.errors])
 
 	useEffect(()=>{
 		if(!loading){
@@ -421,9 +427,9 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 			const formatData ={
 					reporta_incidencia: values.reporta_incidencia||"",
 					fecha_hora_incidencia:formattedDate||"",
-					ubicacion_incidencia:values.ubicacion_incidencia||"",
+					ubicacion_incidencia:location||"",
 					area_incidencia: values.area_incidencia||"",
-					incidencia:values.incidencia||"",
+					incidencia:selectedIncidencia||"",
 					comentario_incidencia: values.comentario_incidencia||"",
 					tipo_dano_incidencia: values.tipo_dano_incidencia||"",
 					dano_incidencia:values.dano_incidencia||"",
@@ -432,9 +438,12 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 					evidencia_incidencia:evidencia||[],
 					documento_incidencia:documento||[],
 					prioridad_incidencia:getNivel(value[0])||"",
-					notificacion_incidencia:values.notificacion_incidencia||"",
+					notificacion_incidencia:selectedNotificacion||"",
 					datos_deposito_incidencia: [],
-					tags:tagsSeleccionados
+					tags:tagsSeleccionados,
+					categoria:categoria,
+					sub_categoria:subCategoria,
+					incidente:selectedIncidencia,
 				}
 				createIncidenciaMutation.mutate({ data_incidencia: formatData });
 		}else{
@@ -452,7 +461,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	}
   return (
     <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
-      <DialogContent className="max-w-3xl overflow-y-auto max-h-[80vh] min-h-[80vh]  flex flex-col " aria-describedby="">
+      <DialogContent className="max-w-4xl overflow-y-auto max-h-[80vh] min-h-[80vh]  flex flex-col " aria-describedby="">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center font-bold">
             {title}
@@ -557,7 +566,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 			)}
 			{selectedIncidencia && (
 				<>
-					<div className="flex-grow overflow-y-auto">
+					<div className="flex-grow overflow-y-auto p-1">
 						<div className="flex gap-2 mb-4">
 							<CircleAlert />
 							Incidente: <span className="font-bold"> {selectedIncidencia}</span>
@@ -701,7 +710,6 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 								)}
 								/>
 
-			
 								<LoadImage
 									id="evidencia" 
 									titulo={"Evidencia"} 
@@ -765,6 +773,8 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 									<DepositosList depositos={depositos} setDepositos={setDepositos} ></DepositosList>
 								</div>
 								} */}
+
+
 
 								<div className="space-y-3">
 								{/* Input para escribir tag */}
@@ -875,6 +885,25 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 										</FormItem> */}
 									{/* )}
 								/>	 */}
+
+
+      
+								{selectedIncidencia =="Persona extraviada" && (
+									<div className="col-span-2 w-full">
+										<PersonaExtraviadaFields control={form.control}></PersonaExtraviadaFields>
+									</div>
+								)}
+								{selectedIncidencia =="Robo de cableado" && (
+									<div className="col-span-2 w-full">
+										<RoboDeCableado control={form.control}></RoboDeCableado>
+									</div>
+								)}
+								{selectedIncidencia =="Robo de vehículo" && (
+									<div className="col-span-2 w-full">
+										<RoboDeVehiculo control={form.control}></RoboDeVehiculo>
+									</div>
+								)}
+
 							</form>
 						</Form>
 				
