@@ -26,8 +26,8 @@ import HabitacionesInspeccionadasTable from "../tables/HabitacionesInspeccionada
 import StatCard from "../components/StatCard";
 import RoomCard from "../components/RoomCard";
 import ImageCarrousel from "../components/ImageCarrousel";
-import HotelComments from "../components/HotelComments";
 import { YearSelect } from "../components/YearSelect"
+import ComentariosFiltrados from "../components/ComentariosFiltrados";
 
 // import { misTickets } from '../data/tickets'
 import { optionsCuatri, optionsCuatriDefecto } from '../data/consts'
@@ -377,11 +377,6 @@ const ReportsPage = () => {
 		});
 	});
 
-	// Convierte el mapa a un arreglo para renderizar
-	const hotelesComentariosArr = Object.entries(hotelesComentariosMap).map(([hotel, comments]) => ({
-		hotel,
-		comments,
-	}));
 
 	// Agrupa las imágenes por hotel, pero solo si hotel no es null
 	const hotelesImagenesPorHotel: Record<string, any[]> = {};
@@ -741,16 +736,8 @@ const ReportsPage = () => {
 						</TabsContent>
 						<TabsContent value="comentarios">
 							<div className="">
-								<div>
-									<div className="font-semibold text-3xl my-8">Comentarios</div>
-									<div className="h-[56rem]">
-										<ScrollArea className="w-full h-full">
-											{hotelesComentariosArr.map(({ hotel, comments }, idx) => (
-												<HotelComments key={hotel + idx} hotel={hotel} comments={comments} />
-											))}
-										</ScrollArea>
-									</div>
-								</div>
+								<div className="font-semibold text-3xl my-8">Comentarios</div>
+								<ComentariosFiltrados hotelesComentarios={hotelesComentarios} />
 							</div>
 						</TabsContent>
 						<TabsContent value="acciones">
