@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
+import { BrowserMultiFormatReader, IScannerControls } from "@zxing/browser";
 
-const CAMERA_CONTAINER_ID = "barcode-scanner-container";
+const CAMERA_CONTAINER_ID = "barcode-scanner-video";
 
 export function ScanBarcodeModal({
     open,
@@ -13,83 +13,59 @@ export function ScanBarcodeModal({
     setOpen: (v: boolean) => void;
     onScan: (value: string) => void;
 }) {
-    const scannerRef = useRef<any>(null);
-    const [cameras, setCameras] = useState<{ id: string; label: string }[]>([]);
+    const videoRef = useRef<HTMLVideoElement | null>(null);
+    const controlsRef = useRef<IScannerControls | null>(null);
+    const [cameras, setCameras] = useState<MediaDeviceInfo[]>([]);
     const [selectedCamera, setSelectedCamera] = useState<string | null>(null);
 
+    // Obtener cámaras cuando se abre el modal
     useEffect(() => {
-        let html5QrCode: any = null;
-        let timeout: NodeJS.Timeout | null = null;
-
         if (open) {
-            Html5Qrcode.getCameras().then((devices) => {
+            BrowserMultiFormatReader.listVideoInputDevices().then((devices) => {
                 setCameras(devices);
                 const backCam = devices.find(
                     (d) =>
                         d.label.toLowerCase().includes("back") ||
                         d.label.toLowerCase().includes("rear")
                 );
-                setSelectedCamera(backCam ? backCam.id : devices[0]?.id || null);
+                setSelectedCamera(backCam ? backCam.deviceId : devices[0]?.deviceId || null);
             });
-
-            timeout = setTimeout(() => {
-                const element = document.getElementById(CAMERA_CONTAINER_ID);
-                if (element && selectedCamera) {
-                    html5QrCode = new Html5Qrcode(CAMERA_CONTAINER_ID, {
-                        formatsToSupport: [
-                            Html5QrcodeSupportedFormats.CODE_128,
-                            Html5QrcodeSupportedFormats.CODE_39,
-                            Html5QrcodeSupportedFormats.EAN_13,
-                            Html5QrcodeSupportedFormats.EAN_8,
-                            Html5QrcodeSupportedFormats.UPC_A,
-                            Html5QrcodeSupportedFormats.UPC_E,
-                            Html5QrcodeSupportedFormats.ITF,
-                            Html5QrcodeSupportedFormats.CODABAR,
-                        ],
-                    } as any);
-
-                    scannerRef.current = html5QrCode;
-
-                    html5QrCode.start(
-                        selectedCamera,
-                        {
-                            fps: 10,
-                            // No uses qrbox para usar toda la superficie
-                            videoConstraints: { width: { ideal: 1280 }, height: { ideal: 720 } },
-                        },
-                        (decodedText: string) => {
-                            onScan(decodedText);
-                            setOpen(false);
-                        },
-                        (errorMessage: string) => {
-                            if (
-                                errorMessage &&
-                                !errorMessage.includes("NotFoundException") &&
-                                !errorMessage.includes("No MultiFormat Readers were able to detect the code")
-                            ) {
-                                console.error("QR scanner error:", errorMessage);
-                            }
-                        }
-                    );
-                }
-            }, 300);
-
-            return () => {
-                if (timeout) clearTimeout(timeout);
-                if (scannerRef.current) {
-                    scannerRef.current
-                        .stop()
-                        .then(() => scannerRef.current?.clear())
-                        .catch((err: any) => {
-                            if (!String(err).includes("scanner is not running")) {
-                                console.error("Error stopping scanner:", err);
-                            }
-                        });
-                }
-            };
+        } else {
+            setCameras([]);
+            setSelectedCamera(null);
         }
-    }, [open, onScan, setOpen, selectedCamera]);
+    }, [open]);
 
+    // Inicializar el scanner cuando la cámara y el video están listos
+    useEffect(() => {
+        if (!open || !selectedCamera) return;
+
+        const codeReader = new BrowserMultiFormatReader();
+        let stopped = false;
+
+        codeReader.decodeFromVideoDevice(
+            selectedCamera,
+            videoRef.current!,
+            (result, err, controls) => {
+                controlsRef.current = controls;
+                if (result) {
+                    if (!stopped) {
+                        stopped = true;
+                        controls.stop();
+                        onScan(result.getText());
+                        setOpen(false);
+                    }
+                }
+            }
+        );
+
+        return () => {
+            stopped = true;
+            controlsRef.current?.stop();
+        };
+    }, [open, selectedCamera, onScan, setOpen]);
+
+    // Proporción del área de escaneo (ejemplo: 2.5:1)
     const aspectRatio = 2.5;
 
     return (
@@ -104,11 +80,11 @@ export function ScanBarcodeModal({
                         <select
                             className="w-full border rounded p-2 mb-2"
                             value={selectedCamera ?? ""}
-                            onChange={e => setSelectedCamera(e.target.value)}
+                            onChange={(e) => setSelectedCamera(e.target.value)}
                         >
-                            {cameras.map(cam => (
-                                <option key={cam.id} value={cam.id}>
-                                    {cam.label || `Cámara ${cam.id}`}
+                            {cameras.map((cam) => (
+                                <option key={cam.deviceId} value={cam.deviceId}>
+                                    {cam.label || `Cámara ${cam.deviceId}`}
                                 </option>
                             ))}
                         </select>
@@ -124,10 +100,14 @@ export function ScanBarcodeModal({
                     }}
                 >
                     {/* Scanner video */}
-                    <div
+                    <video
+                        ref={videoRef}
                         id={CAMERA_CONTAINER_ID}
-                        className="absolute inset-0 w-full h-full"
+                        className="absolute inset-0 w-full h-full object-cover"
                         style={{ zIndex: 1 }}
+                        autoPlay
+                        muted
+                        playsInline
                     />
                     {/* Overlay de guías */}
                     <div
