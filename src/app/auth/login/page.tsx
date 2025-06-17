@@ -51,16 +51,13 @@ export default function LoginPage() {
       const response = await getLogin(values.username, values.password);
 
       if (response.success) {
-
-
-        
         setAuth(response.jwt, response.session_id, response.user.name, response.user.email, response.user.id, response.user.thumb);
 
         router.push("/");
       } else {
         form.setError("password", {
           type: "manual",
-          message: "Usuario o contraseña inválida",
+          message: response.error || "Usuario o contraseña inválida",
         });
       }
     } catch (error) {

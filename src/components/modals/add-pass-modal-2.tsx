@@ -317,7 +317,7 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 						</DialogClose>
 							<UpdatedPassModal
 								title="Pase de Entrada Completado "
-								description={"El pase ha sido completado con éxito, selecciona una de las siguientes opciones."}
+								description={""}
 								openGeneratedPass={openGeneratedPass}
 								hasEmail={data?.email ? true: false}
 								hasTelefono={data?.telefono ? true: false}

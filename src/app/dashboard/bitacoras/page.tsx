@@ -22,9 +22,8 @@ const BitacorasPage = () => {
   	const [selectedOption, setSelectedOption] = useState<string[]>(["entrada"]);
 	const { tab, setTab, filter, setFilter} = useShiftStore()
   	const {location, area} = useShiftStore()
-	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
+	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location );
 	const [areaSeleccionada, setAreaSeleccionada] = useState("todas");
-	console.log("ubicacion area",ubicacionSeleccionada, areaSeleccionada)
 	const [equiposData, setEquiposData] = useState<Bitacora_record[]>([]);
 	const [vehiculosData, setVehiculosData] = useState<Bitacora_record[]>([]);
 
@@ -32,13 +31,12 @@ const BitacorasPage = () => {
 	const [date2, setDate2] = useState<Date|"">("")
 
 	const [dates, setDates] = useState<string[]>([])
-	const [dateFilter, setDateFilter] = useState<string>(filter )
+	const [dateFilter, setDateFilter] = useState<string>(filter)
 	const { listBitacoras,isLoadingListBitacoras} = useBitacoras(ubicacionSeleccionada, areaSeleccionada == "todas" ? "": areaSeleccionada, selectedOption, ubicacionSeleccionada&&areaSeleccionada?true:false, dates[0], dates[1], dateFilter)
 	const { data: stats } = useGetStats(ubicacionSeleccionada&& areaSeleccionada?true:false,ubicacionSeleccionada, areaSeleccionada=="todas"?"":areaSeleccionada, 'Bitacoras')
 	const [selectedTab, setSelectedTab] = useState<string>(tab ? tab: "Personal"); 
 
 	const userNameSoter = useAuthStore((state) => state.userNameSoter);
-	console.log("AREAA",location, ubicacionSeleccionada, areaSeleccionada)
 
 	useEffect(() => {
 		if(tab){
@@ -47,8 +45,12 @@ const BitacorasPage = () => {
 		if(filter){
 			setFilter("")
 		}
-		if(location)
-			setUbicacionSeleccionada(location)
+		if(location){
+			setUbicacionSeleccionada(location )
+		}else{
+			setUbicacionSeleccionada(location|| "Planta Monterrey" )
+		}
+			
 			// setUbicacionSeleccionada("todas")
 	}, [area, location, userNameSoter, tab, filter, setTab, setFilter]); 
 
@@ -108,11 +110,11 @@ const BitacorasPage = () => {
 		});
     };
 
-	useEffect(()=>{
-		if(ubicacionSeleccionada=="todas"){
-			setSelectedOption(["entrada"])
-		}
-	},[ubicacionSeleccionada])
+	// useEffect(()=>{
+	// 	if(ubicacionSeleccionada=="todas"){
+	// 		setSelectedOption(["entrada"])
+	// 	}
+	// },[ubicacionSeleccionada])
 	
 	useEffect(()=>{
 		if(Array.isArray(listBitacoras)){
@@ -188,7 +190,7 @@ return (
 							<div className="h-1 w-1/2 bg-cyan-100"></div>
 							<div className="h-1 w-1/2 bg-blue-500"></div>
 						</div>
-						<span className="text-md">Visitas en el día</span>
+						<span className="text-md">Visitas En El Día</span>
 					</div>
 
 					<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
@@ -203,7 +205,7 @@ return (
 							<div className="h-1 w-1/2 bg-cyan-100"></div>
 							<div className="h-1 w-1/2 bg-blue-500"></div>
 						</div>
-						<span className="text-md">Personas dentro</span>
+						<span className="text-md">Personas Dentro</span>
 					</div>
 
 					<div  className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
@@ -252,7 +254,7 @@ return (
 							<div className="h-1 w-1/2 bg-cyan-100"></div>
 							<div className="h-1 w-1/2 bg-blue-500"></div>
 						</div>
-						<span className="text-md">Salidas del día</span>
+						<span className="text-md">Salidas Del Día</span>
 					</div>
 				</div>
 			</div> 

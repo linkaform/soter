@@ -33,7 +33,7 @@ import {
 //   DropdownMenuTrigger,
 // } from "@/components/ui/dropdown-menu";
 import { Incidencia_record, incidenciasColumns } from "./incidencias-columns";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { EliminarIncidenciaModal } from "@/components/modals/delete-incidencia-modal";
 import { catalogoFechas, downloadCSV } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -42,9 +42,7 @@ import DateTime from "@/components/dateTime";
 // import ChangeLocation from "@/components/changeLocation";
 
 interface ListProps {
-	refetch:() => void;
 	data: Incidencia_record[];
-	setPrioridades: React.Dispatch<React.SetStateAction<string[]>>;
 	isLoading:boolean;
 	openModal: () => void;
 	setSelectedIncidencias:React.Dispatch<React.SetStateAction<string[]>>;
@@ -73,7 +71,7 @@ const fallasColumnsCSV = [
   { label: 'Reporta', key: 'reporta_incidencia' },
 ];
 
-const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, isLoading, openModal,setSelectedIncidencias,selectedIncidencias,
+const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSelectedIncidencias,selectedIncidencias,
 	setDate1, setDate2, date1, date2, dateFilter, setDateFilter,Filter
 	// setUbicacionSeleccionada, setAreaSeleccionada, areaSeleccionada, ubicacionSeleccionada
  })=> {
@@ -117,10 +115,6 @@ const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, isLoading, openMo
       globalFilter,
     },
   });
-
-  useEffect(()=>{
-    refetch()
-  },[])
 
 
   React.useEffect(()=>{

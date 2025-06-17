@@ -41,7 +41,7 @@ const Stats = ({ setStatusFilter, ubicacionSeleccionada, areaSeleccionada, setUb
 
       <div className='grid gap-4 grid-cols-[repeat(auto-fit,minmax(250px,1fr))]'>
         <StatCard
-          label='Notas del día'
+          label='Notas Del Día'
           value={stats?.notas_del_dia ?? 0}
           icon={<Sun className='text-primary w-10 h-10' />}
           onClick={() => handleCardClick('dia')}
@@ -49,7 +49,7 @@ const Stats = ({ setStatusFilter, ubicacionSeleccionada, areaSeleccionada, setUb
           selectable
         />
         <StatCard
-          label='Notas abiertas'
+          label='Notas Abiertas'
           value={stats?.notas_abiertas ?? 0}
           icon={<FolderOpen className='text-primary w-10 h-10' />}
           onClick={() => handleCardClick('abierto')}
@@ -57,7 +57,7 @@ const Stats = ({ setStatusFilter, ubicacionSeleccionada, areaSeleccionada, setUb
           selectable
         />
         <StatCard
-          label='Notas cerradas'
+          label='Notas Cerradas'
           value={stats?.notas_cerradas ?? 0}
           icon={<Package2 className='text-primary w-10 h-10' />}
           onClick={() => handleCardClick('cerrado')}

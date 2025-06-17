@@ -48,7 +48,7 @@ import ViewImage from "@/components/modals/view-image";
   const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
     const incidencia = row.original;
 	const [showLoadingModal, setShowLoadingModal] = useState(false);
-
+	const [isSuccess, setIsSuccess] = useState(false);
     return (
       <div className="flex space-x-2">
         <ViewFalla 
@@ -67,7 +67,7 @@ import ViewImage from "@/components/modals/view-image";
          
         <SeguimientoFallaModal
                 title="Seguimiento Falla"
-                data={incidencia} >
+                data={incidencia} isSuccess={isSuccess} setIsSuccess={setIsSuccess}>
             <div className="cursor-pointer">
                 <Check />   
             </div>
@@ -114,6 +114,14 @@ import ViewImage from "@/components/modals/view-image";
       ),
       enableSorting: false,
       enableHiding: false,
+    },
+    {
+      accessorKey: "folio",
+      header: "Folio",
+      cell: ({ row }) => (
+      <div className="capitalize">{row.getValue("folio")}</div>
+      ),
+      enableSorting: true,
     },
     {
       accessorKey: "falla_fecha_hora",

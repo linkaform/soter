@@ -444,7 +444,7 @@ const AccesosPage = () => {
 							<div className="h-1 w-1/2 bg-cyan-100"></div>
 							<div className="h-1 w-1/2 bg-blue-500"></div>
 						</div>
-						<span className="text-lg">Visitas en el dia</span>
+						<span className="text-lg">Visitas En El Día</span>
 					</div>
 
 					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100 `}>
@@ -455,7 +455,7 @@ const AccesosPage = () => {
 							<div className="h-1 w-1/2 bg-cyan-100"></div>
 							<div className="h-1 w-1/2 bg-blue-500"></div>
 						</div>
-						<span className="text-lg">Personas dentro</span>
+						<span className="text-lg">Personas Dentro</span>
 					</div>
 
 					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100 `} >
@@ -466,7 +466,7 @@ const AccesosPage = () => {
 							<div className="h-1 w-1/2 bg-cyan-100"></div>
 							<div className="h-1 w-1/2 bg-blue-500"></div>
 						</div>
-						<span className="text-lg">Salidas registradas</span>
+						<span className="text-lg">Salidas Registradas</span>
 					</div>
 
 					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100 `} >

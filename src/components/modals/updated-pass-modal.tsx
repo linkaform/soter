@@ -62,7 +62,7 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 	const [enablePdf, setEnablePdf] = useState(false)
 	// const { data: responsePdf, isLoading: loadingPdf} = useGetPdf(account_id, folio, enablePdf);
 	// const downloadUrl=responsePdf?.response?.data?.data?.download_url
-	console.log("updateresponse",updateResponse)
+	console.log("updateresponse",updateResponse,description)
 	const downloadImgUrl = updateResponse?.json?.pdf_to_img?.[0].file_url
 	
 	const handleClickGoogleButton = () => {
@@ -229,7 +229,7 @@ return (
         <div className="flex-grow overflow-y-auto p-4">
 			
 			<div className="flex justify-center mb-3">
-				<p className="text-center w-1/2 md:w-full">{ !hasEmail && !hasTelefono ? "El pase ha sido completado con éxito.":description}</p>
+				<p className="text-center w-1/2 md:w-full"></p>
 			</div>
 			<Form {...form}>
 			<form className="space-y-4"> 

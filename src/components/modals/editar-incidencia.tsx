@@ -28,18 +28,22 @@ import { useCatalogoAreaEmpleado } from "@/hooks/useCatalogoAreaEmpleado";
 import { format } from 'date-fns';
 import DateTime from "../dateTime";
 import LoadFile from "../upload-file";
-import { Edit, Loader2 } from "lucide-react";
+import { CircleAlert, Edit, Loader2 } from "lucide-react";
 import { AccionesTomadas, Depositos, PersonasInvolucradas } from "@/lib/incidencias";
 import PersonasInvolucradasList from "../personas-involucradas-list";
 import AccionesTomadasList from "../acciones-tomadas-list";
 import { useShiftStore } from "@/store/useShiftStore";
 import { useInciencias } from "@/hooks/useIncidencias";
 import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
+import { PersonaExtraviadaFields } from "./persona-extraviada";
+import { RoboDeCableado } from "./robo-de-cableado";
+import { RoboDeVehiculo } from "./robo-de-vehiculo";
 
 interface EditarIncidenciaModalProps {
   	title: string;
 	setShowLoadingModal:Dispatch<SetStateAction<boolean>>;
 	data: any;
+	selectedIncidencia:string;
 }
 
 const formSchema = z.object({
@@ -83,28 +87,58 @@ const formSchema = z.object({
 	tipo_dano_incidencia: z.string().optional(),
 	comentario_incidencia: z.string().min(1, { message: "Este campo es requerido" }),
 	incidencia: z.string().min(1, { message: "La ubicación es obligatoria" }),
+
+	categoria:z.string().optional(),
+	sub_categoria:z.string().optional(),
+	incidente:z.string().optional(),
+	//PersonaExtraviado
+	nombre_completo_persona_extraviada: z.string().optional(),
+	edad: z.string().optional(),
+	color_piel: z.string().optional(),
+	color_cabello: z.string().optional(),
+	estatura_aproximada: z.string().optional(),
+	descripcion_fisica_vestimenta: z.string().optional(),
+	nombre_completo_responsable: z.string().optional(),
+	prentesco: z.string().optional(),
+	num_doc_identidad: z.string().optional(),
+	telefono: z.string().optional(),
+	info_coincide_con_videos: z.string().optional(),
+	responsable_que_entrega: z.string().optional(),
+	responsable_que_recibe: z.string().optional(),
+
+	//Robo de cableado
+	valor_estimado: z.string().optional(),
+	pertenencias_sustraidas: z.string().optional(),
+	//robo de vehiculo
+	placas: z.string().optional(),
+	tipo: z.string().optional(),
+	marca: z.string().optional(),
+	modelo: z.string().optional(),
+	color: z.string().optional(),
+
 });
 
 export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
   	title,
 	setShowLoadingModal,
-	data
+	data,
+	selectedIncidencia
 }) => {
 	const { location, isLoading } = useShiftStore();
 	const [isSuccess, setIsSuccess] = useState(false)
 	const [evidencia , setEvidencia] = useState<Imagen[]>([]);
 	const [documento , setDocumento] = useState<Imagen[]>([]);
 	const [date, setDate] = useState<Date|"">("");
-	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(data.ubicacion_incidencia);
-	const { dataAreas:areas, dataLocations:ubicaciones} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true,  ubicacionSeleccionada?true:false);
+	const [ubicacionSeleccionada] = useState(data.ubicacion_incidencia);
+	const { dataAreas:areas} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true,  ubicacionSeleccionada?true:false);
 
 	const [personasInvolucradas, setPersonasInvolucradas] = useState<PersonasInvolucradas[]>(data.personas_involucradas_incidencia)
 	const [accionesTomadas, setAccionesTomadas] = useState<AccionesTomadas[]>(data.acciones_tomadas_incidencia)
 	const [depositos] = useState<Depositos[]>(data.depositos)
 	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado } = useCatalogoAreaEmpleado(isSuccess, location, "Incidencias" );
-	const { editarIncidenciaMutation , loading} = useInciencias("", "",[], true, "", "", "");
+	const { editarIncidenciaMutation , loading} = useInciencias("", "",[], "", "", "");
 	// const [ setCatAreas] = useState<any| string[]>(areas);
-
+	console.log("editar incidencia",data)
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -123,6 +157,34 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 			prioridad_incidencia: data.prioridad_incidencia.toLowerCase(),
 			notificacion_incidencia: data.notificacion_incidencia,
 			datos_deposito_incidencia: depositos,
+
+			categoria:data.categoria,
+			sub_categoria:data.sub_categoria,
+			incidente:data.incidencia,
+
+			nombre_completo_persona_extraviada:data.nombre_completo,
+			edad:data.edad,
+			color_piel:data.color_piel,
+			color_cabello:data.color_cabello,
+			estatura_aproximada:data.estatura_aproximada,
+			descripcion_fisica_vestimenta:data.descripcion_fisica_vestimenta,
+			nombre_completo_responsable:data.nombre_completo_responsable,
+			prentesco:data.parentesco,
+			num_doc_identidad:data.num_doc_identidad,
+			telefono:data.telefono,
+			info_coincide_con_videos:data.info_coincide_con_videos,
+			responsable_que_entrega:data.responsable_que_entrega,
+			responsable_que_recibe:data.responsable_que_recibe,
+		
+			//Robo de cableado
+			valor_estimado:data.valor_estimado,
+			pertenencias_sustraidas:data.pertenencias_sustraidas,
+			//robo de vehiculo
+			placas:data.placas,
+			tipo:data.tipo,
+			marca:data.marca,
+			modelo:data.modelo,
+			color:data.color,
 		},
 	});
 
@@ -151,7 +213,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 			const formatData ={
 					reporta_incidencia: values.reporta_incidencia||"",
 					fecha_hora_incidencia:formattedDate||"",
-					ubicacion_incidencia:values.ubicacion_incidencia||"",
+					ubicacion_incidencia:ubicacionSeleccionada||"",
 					area_incidencia: values.area_incidencia||"",
 					incidencia:values.incidencia||"",
 					comentario_incidencia: values.comentario_incidencia||"",
@@ -164,6 +226,34 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 					prioridad_incidencia:values.prioridad_incidencia||"",
 					notificacion_incidencia:values.notificacion_incidencia||"",
 					datos_deposito_incidencia: depositos||[],
+
+					categoria:data.categoria,
+					sub_categoria:data.subCategoria,
+					incidente:data.incidencia,
+
+					nombre_completo_persona_extraviada: values.nombre_completo_persona_extraviada,
+					edad: values.edad,
+					color_piel: values.color_piel,
+					color_cabello: values.color_cabello,
+					estatura_aproximada: values.estatura_aproximada,
+					descripcion_fisica_vestimenta: values.descripcion_fisica_vestimenta,
+					nombre_completo_responsable: values.nombre_completo_responsable,
+					prentesco: values.prentesco,
+					num_doc_identidad: values.num_doc_identidad,
+					telefono: values.telefono,
+					info_coincide_con_videos: values.info_coincide_con_videos,
+					responsable_que_entrega: values.responsable_que_entrega,
+					responsable_que_recibe: values.responsable_que_recibe,
+				
+					//Robo de cableado
+					valor_estimado: values.valor_estimado,
+					pertenencias_sustraidas: values.pertenencias_sustraidas,
+					//robo de vehiculo
+					placas: values.placas,
+					tipo: values.tipo,
+					marca: values.marca,
+					modelo: values.modelo,
+					color: values.color,
 				}
 				editarIncidenciaMutation.mutate({ data_incidencia: formatData, folio: data.folio });
 		}else{
@@ -193,9 +283,14 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
         </DialogHeader>
 
 			<div className="flex-grow overflow-y-auto p-4">
+				<div className="flex gap-2 mb-4">
+					<CircleAlert />
+					Incidente: <span className="font-bold"> {data.incidencia}</span>
+				</div>
 				<Form {...form} >
 					<form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-5">
-							<FormField 
+					
+							{/* <FormField 
 								control={form.control}
 								name="ubicacion_incidencia"
 								render={({ field }:any) => (
@@ -226,7 +321,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 										<FormMessage />
 									</FormItem>
 								)}
-							/>
+							/> */}
 							<FormField
 								control={form.control}
 								name="area_incidencia"
@@ -435,6 +530,29 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 									</FormItem>
 								)}
 							/>	
+
+
+
+								{selectedIncidencia =="Persona extraviada" && (
+									<div className="col-span-2 w-full">
+										<PersonaExtraviadaFields control={form.control} data={{}}></PersonaExtraviadaFields>
+									</div>
+								)}
+								{selectedIncidencia =="Robo de cableado" && (
+									<div className="col-span-2 w-full flex flex-col ">
+										<Button className="w-full bg-blue-500 hover:bg-blue-600 text-white sm:w-2/3 md:w-1/2 lg:w-1/3 mb-2" >
+											Dar seguimiento
+										</Button>
+										<RoboDeCableado control={form.control} ></RoboDeCableado>
+									</div>
+								)}
+								{selectedIncidencia =="Robo de vehículo" && (
+									<div className="col-span-2 w-full">
+										<RoboDeVehiculo control={form.control} ></RoboDeVehiculo>
+									</div>
+								)}
+
+
 						</form>
 				</Form>
 			

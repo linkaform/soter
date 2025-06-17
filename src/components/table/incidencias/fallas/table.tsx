@@ -39,9 +39,7 @@ import { useMemo } from "react";
 // import ChangeLocation from "@/components/changeLocation";
 
   interface ListProps {
-    refetch:() => void;
     data: Fallas_record[];
-    setPrioridades: React.Dispatch<React.SetStateAction<string[]>>;
     isLoading:boolean;
     openModal: () => void;
     setSelectedFallas:React.Dispatch<React.SetStateAction<string[]>>;
@@ -72,7 +70,7 @@ import { useMemo } from "react";
     { label: 'Responsable', key: 'falla_responsable_solucionar_nombre' },
   ];
   
-  const FallasTable:React.FC<ListProps> = ({ isLoading, refetch, data, openModal, setSelectedFallas, selectedFallas,
+  const FallasTable:React.FC<ListProps> = ({ isLoading, data, openModal, setSelectedFallas, selectedFallas,
 	setDate1, setDate2, date1, date2, dateFilter, setDateFilter,Filter
 	// setUbicacionSeleccionada, setAreaSeleccionada, areaSeleccionada, ubicacionSeleccionada
   })=> {
@@ -116,10 +114,6 @@ import { useMemo } from "react";
       globalFilter,
     },
   });
-  
-  React.useEffect(()=>{
-    refetch()
-  },[])
 
   React.useEffect(()=>{
     if(table.getFilteredSelectedRowModel().rows.length>0){

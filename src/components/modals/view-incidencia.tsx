@@ -15,8 +15,8 @@ import { Incidencia_record } from "../table/incidencias/incidencias-columns";
 import { capitalizeFirstLetter, formatCurrency, formatDateToText } from "@/lib/utils";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import { AccionesTomadas, Depositos, PersonasInvolucradas } from "@/lib/incidencias";
-import { Check } from "lucide-react";
-import { SeguimientoIncidenciaModal } from "./seguimiento-incidencia";
+// import { Check } from "lucide-react";
+// import { SeguimientoIncidenciaModal } from "./seguimiento-incidencia";
 
 interface ViewFallaModalProps {
   title: string;
@@ -261,11 +261,11 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 				):(<div>No hay acciones disponibles.</div>)}
 			</div>
 			<div className="w-full flex justify-end items-center my-2">
-				<SeguimientoIncidenciaModal title="Seguimiento Incidencia" folio={data?.folio}>
+				{/* <SeguimientoIncidenciaModal title="Seguimiento Incidencia" folio={data?.folio}>
 					<Button className="bg-blue-500 hover:bg-blue-600 text-white">
 						<Check /> Agregar seguimiento
 					</Button>
-				</SeguimientoIncidenciaModal>
+				</SeguimientoIncidenciaModal> */}
 			</div>
 			{data?.grupo_seguimiento_incidencia?.length > 0 ? (
 				<div>
