@@ -23,7 +23,6 @@ export function ScanBarcodeModal({
             timeout = setTimeout(() => {
                 const element = document.getElementById(CAMERA_CONTAINER_ID);
                 if (element) {
-                    // 👇 Aquí forzamos que solo escanee códigos de barras
                     html5QrCode = new Html5Qrcode(CAMERA_CONTAINER_ID, {
                         formatsToSupport: [
                             Html5QrcodeSupportedFormats.CODE_128,
@@ -35,14 +34,22 @@ export function ScanBarcodeModal({
                             Html5QrcodeSupportedFormats.ITF,
                             Html5QrcodeSupportedFormats.CODABAR,
                         ],
-                    } as any); // 👈 TypeScript se quejará, lo forzamos con `as any`
+                    } as any);
 
                     scannerRef.current = html5QrCode;
 
                     Html5Qrcode.getCameras()
                         .then((devices) => {
                             if (devices && devices.length > 0) {
-                                const cameraId = devices[0].id;
+                                let camera = devices.find(
+                                    (d) =>
+                                        d.label.toLowerCase().includes("back") ||
+                                        d.label.toLowerCase().includes("rear")
+                                );
+                                if (!camera) {
+                                    camera = devices[0];
+                                }
+                                const cameraId = camera.id;
                                 html5QrCode!.start(
                                     cameraId,
                                     {
@@ -89,12 +96,21 @@ export function ScanBarcodeModal({
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogContent>
-                <DialogTitle>Escanear número de serie</DialogTitle>
+            <DialogContent
+                className="max-w-full w-[95vw] sm:max-w-md p-0"
+                style={{ maxHeight: "95vh", overflow: "auto" }}
+            >
+                <DialogTitle className="px-6 pt-6">Escanear número de serie</DialogTitle>
                 <div
                     id={CAMERA_CONTAINER_ID}
-                    className="flex items-center justify-center w-full h-80 bg-black rounded mt-2"
+                    className="flex items-center justify-center w-full bg-black rounded mt-2 mx-auto"
+                    style={{
+                        height: "min(60vw, 320px)",
+                        maxHeight: "320px",
+                        minHeight: "180px",
+                    }}
                 />
+                <div className="h-4" />
             </DialogContent>
         </Dialog>
     );
