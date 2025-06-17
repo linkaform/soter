@@ -116,6 +116,14 @@ import ViewImage from "@/components/modals/view-image";
       enableHiding: false,
     },
     {
+      accessorKey: "folio",
+      header: "Folio",
+      cell: ({ row }) => (
+      <div className="capitalize">{row.getValue("folio")}</div>
+      ),
+      enableSorting: true,
+    },
+    {
       accessorKey: "falla_fecha_hora",
       header: "Fecha y hora",
       cell: ({ row }) => (

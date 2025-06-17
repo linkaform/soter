@@ -90,7 +90,7 @@ export type Incidencia = {
         <LoadingModal isOpen={showLoadingModal} text="Cargando..."/>
         
         <EditarIncidenciaModal
-          title="Editar Incidencia"
+          title="Editar Incidencia" selectedIncidencia={incidencia.incidencia}
           data={incidencia} setShowLoadingModal={setShowLoadingModal} />
 
         <SeguimientoIncidenciaModal
@@ -140,56 +140,72 @@ export type Incidencia = {
       enableSorting: false,
       enableHiding: false,
     },
-		{
-			accessorKey: "ubicacion_incidencia",
-			header: "Ubicación",
-			cell: ({ row }) => (
-			<div className="capitalize">{row.getValue("ubicacion_incidencia")}</div>
-			),
-			enableSorting: true,
-		},
-		{
-			accessorKey: "area_incidencia",
-			header: "Lugar del Incidente",
-			cell: ({ row }) => (
-			<div className="capitalize">{row.getValue("area_incidencia")}</div>
-			),
-			enableSorting: true,
-      	},
-     	{
-			accessorKey: "fecha_hora_incidencia",
-			header: "Fecha",
-			cell: ({ row }) => (
-			<div className="capitalize">{row.getValue("fecha_hora_incidencia")}</div>
-			),
-			enableSorting: true,
-      	},
-      	{
-			accessorKey: "evidencia_incidencia",
-			header: "Evidencia",
-			cell: ({ row }) => {
-			const foto = row.original.evidencia_incidencia;
-			// const primeraImagen = foto && foto.length > 0 ? foto[0].file_url : '/nouser.svg';
-			return(<ViewImage imageUrl={foto ?? []} /> )},
-			enableSorting: false,
-     	},
-      	{
-			accessorKey: "comentario_incidencia",
-			header: "Comentarios",
-			cell: ({ row }) => {
-			return (
-				<span>{row.getValue("comentario_incidencia")}</span>
-			);
-			},
-			enableSorting: true,
-      	},
-      	{
-			accessorKey: "reporta_incidencia",
-			header: "Reporta",
-			cell: ({ row }) => (
-			<div>{row.getValue("reporta_incidencia")}</div>
-			),
-			enableSorting: true,
-      	},
-      
+      {
+        accessorKey: "folio",
+        header: "Folio",
+        cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("folio")}</div>
+        ),
+        enableSorting: true,
+      },
+      {
+        accessorKey: "ubicacion_incidencia",
+        header: "Ubicación",
+        cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("ubicacion_incidencia")}</div>
+        ),
+        enableSorting: true,
+      },
+      {
+        accessorKey: "area_incidencia",
+        header: "Lugar del Incidente",
+        cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("area_incidencia")}</div>
+        ),
+        enableSorting: true,
+      },
+      {
+        accessorKey: "incidencia",
+        header: "Incidencia",
+        cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("incidencia")}</div>
+        ),
+        enableSorting: true,
+      },
+     {
+        accessorKey: "fecha_hora_incidencia",
+        header: "Fecha",
+        cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("fecha_hora_incidencia")}</div>
+        ),
+        enableSorting: true,
+      },
+      {
+        accessorKey: "evidencia_incidencia",
+        header: "Evidencia",
+        cell: ({ row }) => {
+        const foto = row.original.evidencia_incidencia;
+        // const primeraImagen = foto && foto.length > 0 ? foto[0].file_url : '/nouser.svg';
+        return(<ViewImage imageUrl={foto ?? []} /> )},
+        enableSorting: false,
+    },
+      {
+        accessorKey: "comentario_incidencia",
+        header: "Comentarios",
+        cell: ({ row }) => {
+        return (
+          <span>{row.getValue("comentario_incidencia")}</span>
+        );
+        },
+        enableSorting: true,
+      },
+      {
+        accessorKey: "reporta_incidencia",
+        header: "Reporta",
+        cell: ({ row }) => (
+        <div>{row.getValue("reporta_incidencia")}</div>
+        ),
+        enableSorting: true,
+      },
+    
     ];

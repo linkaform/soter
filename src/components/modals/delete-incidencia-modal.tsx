@@ -24,7 +24,7 @@ export const EliminarIncidenciaModal: React.FC<AddFallaModalProps> = ({
 	arrayFolios,
 	children
 }) => {
-    const { eliminarIncidenciaMutation, loading } = useInciencias("","",[], true, "", "", "");
+    const { eliminarIncidenciaMutation, loading } = useInciencias("","",[], "", "", "");
 	const [isSuccess, setIsSuccess] =useState(false)
 	const handleClose = () => {
 		setIsSuccess(false); 

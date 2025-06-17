@@ -16,7 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
+import { Switch } from "@/components/ui/switch"
 import {
 	CircleDollarSign,
 	VenetianMask,
@@ -46,7 +46,7 @@ import {
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Textarea } from "../ui/textarea";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
@@ -245,8 +245,8 @@ export const formSchema = z.object({
 	sub_categoria:z.string().optional(),
 	incidente:z.string().optional(),
 	//PersonaExtraviado
-	nombre_completo: z.string().optional(),
-	edad: z.number().optional(),
+	nombre_completo_persona_extraviada: z.string().optional(),
+	edad: z.string().optional(),
 	color_piel: z.string().optional(),
 	color_cabello: z.string().optional(),
 	estatura_aproximada: z.string().optional(),
@@ -288,10 +288,9 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const [accionesTomadas, setAccionesTomadas] = useState<AccionesTomadas[]>([])
 	// const [depositos, setDepositos] = useState<Depositos[]>([])
 	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado } = useCatalogoAreaEmpleado(isSuccess, location, "Incidencias");
-	const { createIncidenciaMutation , loading} = useInciencias("","",[], isSuccess, "", "", "");
+	const { createIncidenciaMutation , loading} = useInciencias("","",[], "", "", "");
 	
 	const [search, setSearch]= useState("")
-	const [catCategorias, setCatCategorias] = useState<any[]>([])
 	const [catSubCategorias, setSubCatCategorias] = useState<any>([])
 	const [catSubIncidences, setCatSubIncidences] = useState<any>([])
 
@@ -300,7 +299,10 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const [selectedIncidencia, setSelectedIncidencia]= useState("")
 
 	const { catIncidencias, isLoadingCatIncidencias } = useCatalogoInciencias(isSuccess, categoria, subCategoria);
+	console.log(" cat INcidencias", catIncidencias)
 
+	const [catCategorias, setCatCategorias] = useState<any[]>([])
+	
 	const [selectedNotificacion, setSelectedNotification] = useState("no")
 	const [value, setValue] = useState([50])
 	const [inputTag, setInputTag] = useState('');
@@ -316,7 +318,10 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 		setSubCategoria("")
 		setCategoria("")
 		setSelectedIncidencia("")
-		setCatCategorias([])
+		const catIncidenciasIcons = categoriasConIconos?.filter((cat) =>
+			catIncidencias?.includes(cat.nombre)
+			);
+		setCatCategorias(catIncidenciasIcons)
 		setCatSubIncidences([])
 		setSubCatCategorias([])
 	}
@@ -390,6 +395,31 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 			categoria:"",
 			sub_categoria:"",
 			incidente:"",
+
+			nombre_completo_persona_extraviada:"",
+			edad:"",
+			color_piel:"",
+			color_cabello:"",
+			estatura_aproximada:"",
+			descripcion_fisica_vestimenta:"",
+			nombre_completo_responsable:"",
+			prentesco:"",
+			num_doc_identidad:"",
+			telefono:"",
+			info_coincide_con_videos:"",
+			responsable_que_entrega:"",
+			responsable_que_recibe:"",
+		
+			//Robo de cableado
+			valor_estimado:"",
+			pertenencias_sustraidas:"",
+			//robo de vehiculo
+			placas:"",
+			tipo:"",
+			marca:"",
+			modelo:"",
+			color:"",
+
 		},
 	});
 
@@ -444,6 +474,30 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 					categoria:categoria,
 					sub_categoria:subCategoria,
 					incidente:selectedIncidencia,
+
+					nombre_completo_persona_extraviada: values.nombre_completo_persona_extraviada,
+					edad: values.edad,
+					color_piel: values.color_piel,
+					color_cabello: values.color_cabello,
+					estatura_aproximada: values.estatura_aproximada,
+					descripcion_fisica_vestimenta: values.descripcion_fisica_vestimenta,
+					nombre_completo_responsable: values.nombre_completo_responsable,
+					prentesco: values.prentesco,
+					num_doc_identidad: values.num_doc_identidad,
+					telefono: values.telefono,
+					info_coincide_con_videos: values.info_coincide_con_videos,
+					responsable_que_entrega: values.responsable_que_entrega,
+					responsable_que_recibe: values.responsable_que_recibe,
+				
+					//Robo de cableado
+					valor_estimado: values.valor_estimado,
+					pertenencias_sustraidas: values.pertenencias_sustraidas,
+					//robo de vehiculo
+					placas: values.placas,
+					tipo: values.tipo,
+					marca: values.marca,
+					modelo: values.modelo,
+					color: values.color,
 				}
 				createIncidenciaMutation.mutate({ data_incidencia: formatData });
 		}else{
@@ -554,8 +608,8 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 									}}
 									className="p-1 bg-white rounded hover:bg-gray-100 cursor-pointer flex justify-between"
 									>
-										<div className="text-sm font-medium">{cat}</div>
-										<ChevronRight className="w-4 h-4 text-gray-500" />
+									<div className="text-sm font-medium">{cat}</div>
+									<ChevronRight className="w-4 h-4 text-gray-500" />
 
 									</div>
 								))}
@@ -820,8 +874,14 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 
 							
 								<div className="flex items-center flex-wrap gap-5">
-										<FormLabel>Visita de: </FormLabel>
-										<Controller
+										<FormLabel>Notificacones: {`(No/Correo)`}:  </FormLabel>
+											<Switch
+												defaultChecked={false}
+												// value={false}
+												onCheckedChange={()=>{handleToggleNotifications("no")}}
+												aria-readonly
+											/>
+										{/* <Controller
 											control={form.control}
 											name="notificacion_incidencia"
 											render={() => (
@@ -860,7 +920,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 													</Button>
 												</FormItem>
 											)}
-										/>
+										/> */}
 									</div>
 											{/* <Select {...field} className="input"
 												onValueChange={(value:string) => {
@@ -890,17 +950,20 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
       
 								{selectedIncidencia =="Persona extraviada" && (
 									<div className="col-span-2 w-full">
-										<PersonaExtraviadaFields control={form.control}></PersonaExtraviadaFields>
+										<PersonaExtraviadaFields control={form.control} data={{}}></PersonaExtraviadaFields>
 									</div>
 								)}
 								{selectedIncidencia =="Robo de cableado" && (
-									<div className="col-span-2 w-full">
-										<RoboDeCableado control={form.control}></RoboDeCableado>
+									<div className="col-span-2 w-full flex flex-col ">
+										<Button className="w-full bg-blue-500 hover:bg-blue-600 text-white sm:w-2/3 md:w-1/2 lg:w-1/3 mb-2" >
+											Dar seguimiento
+										</Button>
+										<RoboDeCableado control={form.control} ></RoboDeCableado>
 									</div>
 								)}
 								{selectedIncidencia =="Robo de vehículo" && (
 									<div className="col-span-2 w-full">
-										<RoboDeVehiculo control={form.control}></RoboDeVehiculo>
+										<RoboDeVehiculo control={form.control} ></RoboDeVehiculo>
 									</div>
 								)}
 

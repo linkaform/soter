@@ -5,15 +5,16 @@ import { useShiftStore } from "@/store/useShiftStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-export const useInciencias = (location:string, area:string, prioridades:string[], enabled:boolean, dateFrom:string, dateTo:string, filterDate:string) => {
+export const useInciencias = (location:string, area:string, prioridades:string[], dateFrom:string, dateTo:string, filterDate:string) => {
     const queryClient = useQueryClient();
     
     const { isLoading: loading, setLoading} = useShiftStore();
     //Obtener lista de Incidencias
     const {data: listIncidencias, isLoading:isLoadingListIncidencias, error:errorListIncidencias, refetch:refetchTableIncidencias } = useQuery<any>({
         queryKey: ["getListIncidencias",location, area, prioridades, dateFrom, dateTo, filterDate],
-        enabled: enabled,
+        enabled: location!=="",
         queryFn: async () => {
+          console.log("hellowww")
             const data = await getListIncidencias(location, area, prioridades, dateFrom, dateTo, filterDate);
             return Array.isArray( data.response?.data) ?  data.response?.data: []; 
         },
@@ -37,7 +38,7 @@ export const useInciencias = (location:string, area:string, prioridades:string[]
         },
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["getListIncidencias"] });
-          queryClient.invalidateQueries({ queryKey: ["getStats"] });
+          queryClient.invalidateQueries({ queryKey: ["getStatsIncidencias"] });
           toast.success("Incidencia creada correctamente.");
         },
         onError: (err) => {
@@ -113,18 +114,14 @@ export const useInciencias = (location:string, area:string, prioridades:string[]
     });
 
     const { data: stats, isLoading: isStatsLoading, error: statsError,
-	} = useQuery<any>({
-	queryKey: ["getStatsIncidencias", area, location],
-	enabled:enabled,
-	queryFn: async () => {
-		const data = await getStats( location, area, "Incidencias" );
-		const responseData = data.response?.data || {};
-		return responseData;
-	},
-	refetchOnWindowFocus: true,
-	refetchInterval: 60000,
-	refetchOnReconnect: true,
-	staleTime: 1000 * 60 * 5,
+    } = useQuery<any>({
+    queryKey: ["getStatsIncidencias", area, location],
+    enabled:location!=="",
+    queryFn: async () => {
+      const data = await getStats( location, area, "Incidencias" );
+      const responseData = data.response?.data || {};
+      return responseData;
+    },
 	});
 
   return {

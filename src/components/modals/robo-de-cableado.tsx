@@ -1,14 +1,8 @@
-import { Control } from "react-hook-form";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
-import { formSchema } from "./add-incidencia";
-import { z } from "zod";
-import { Button } from "../ui/button";
-
-type FormData = z.infer<typeof formSchema>;
 
 type Props = {
-    control: Control<FormData>;
+    control: any;
 };
   
 export function RoboDeCableado({ control }: Props) {
@@ -21,9 +15,7 @@ export function RoboDeCableado({ control }: Props) {
 
                 </div>
                 <div className="flex justify-between">
-                    <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white sm:w-2/3 md:w-1/2 lg:w-full mb-2" >
-                        Dar seguimiento
-                    </Button>
+                    
                 </div>
             </div>
             

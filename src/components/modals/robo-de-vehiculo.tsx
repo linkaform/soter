@@ -1,13 +1,9 @@
-import { Control } from "react-hook-form";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
-import { formSchema } from "./add-incidencia";
-import { z } from "zod";
 
-type FormData = z.infer<typeof formSchema>;
 
 type Props = {
-    control: Control<FormData>;
+    control: any;
 };
   
 export function RoboDeVehiculo({ control }: Props) {

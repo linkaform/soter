@@ -24,7 +24,6 @@ const BitacorasPage = () => {
   	const {location, area} = useShiftStore()
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
 	const [areaSeleccionada, setAreaSeleccionada] = useState("todas");
-	console.log("ubicacion area",ubicacionSeleccionada, areaSeleccionada)
 	const [equiposData, setEquiposData] = useState<Bitacora_record[]>([]);
 	const [vehiculosData, setVehiculosData] = useState<Bitacora_record[]>([]);
 
@@ -32,13 +31,12 @@ const BitacorasPage = () => {
 	const [date2, setDate2] = useState<Date|"">("")
 
 	const [dates, setDates] = useState<string[]>([])
-	const [dateFilter, setDateFilter] = useState<string>(filter )
+	const [dateFilter, setDateFilter] = useState<string>(filter)
 	const { listBitacoras,isLoadingListBitacoras} = useBitacoras(ubicacionSeleccionada, areaSeleccionada == "todas" ? "": areaSeleccionada, selectedOption, ubicacionSeleccionada&&areaSeleccionada?true:false, dates[0], dates[1], dateFilter)
 	const { data: stats } = useGetStats(ubicacionSeleccionada&& areaSeleccionada?true:false,ubicacionSeleccionada, areaSeleccionada=="todas"?"":areaSeleccionada, 'Bitacoras')
 	const [selectedTab, setSelectedTab] = useState<string>(tab ? tab: "Personal"); 
 
 	const userNameSoter = useAuthStore((state) => state.userNameSoter);
-	console.log("AREAA",location, ubicacionSeleccionada, areaSeleccionada)
 
 	useEffect(() => {
 		if(tab){
@@ -108,11 +106,11 @@ const BitacorasPage = () => {
 		});
     };
 
-	useEffect(()=>{
-		if(ubicacionSeleccionada=="todas"){
-			setSelectedOption(["entrada"])
-		}
-	},[ubicacionSeleccionada])
+	// useEffect(()=>{
+	// 	if(ubicacionSeleccionada=="todas"){
+	// 		setSelectedOption(["entrada"])
+	// 	}
+	// },[ubicacionSeleccionada])
 	
 	useEffect(()=>{
 		if(Array.isArray(listBitacoras)){

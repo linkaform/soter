@@ -21,7 +21,7 @@ import {
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import LoadImage from "../upload-Image";
 import { Imagen } from "@/lib/update-pass";
 import { Loader2 } from "lucide-react";
@@ -37,6 +37,8 @@ interface AddFallaModalProps {
   	title: string;
 	data: any;
 	children: React.ReactNode;
+	isSuccess: boolean;
+	setIsSuccess: Dispatch<SetStateAction<boolean>>;
 }
 
 const formSchema = z.object({
@@ -61,10 +63,12 @@ const formSchema = z.object({
 export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
   	title,
 	data,
-	children
+	children,
+	isSuccess,
+	setIsSuccess
 }) => {
 	const { area, location } = useShiftStore();
-	const [isSuccess, setIsSuccess] =useState(false)
+
 	const [evidencia , setEvidencia] = useState<Imagen[]>([]);
 	const [documento , setDocumento] = useState<Imagen[]>([]);
 	const [date, setDate] = useState<Date|"">("");
@@ -96,27 +100,6 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 		}
 	},[isSuccess, reset])
 
-	// useEffect(()=>{
-	// 	if(responseSeguimientoFalla?.status_code == 202){
-	// 		handleClose()
-	// 		refetchTableFallas()
-	// 		toast.success("Seguimiento actualizado correctamente!")
-	// 	}
-	// },[responseSeguimientoFalla])
-
-
-	useEffect(()=>{
-		if(!isLoading){
-			handleClose()			
-		}
-	},[isLoading])
-
-	// useEffect(()=>{
-	// 	if(modalData){
-			
-	// 	}
-	// },[modalData])
-
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		if(date){
 			const formattedDate = format( new Date(date), 'yyyy-MM-dd HH:mm:ss');
@@ -131,7 +114,11 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 				falla_documento_solucion:documento,
 				falla_evidencia_solucion:evidencia,
 			}
-			seguimientoFallaMutation.mutate({falla_grupo_seguimiento:formatData, folio:data.folio, location,area , status:"abierto"})
+			seguimientoFallaMutation.mutate({falla_grupo_seguimiento:formatData, folio:data.folio, location,area , status:"abierto"},  {
+				onSuccess: () => {
+				  setIsSuccess(false); 
+				}
+			  })
 		}else{
 			form.setError("fechaInicioFallaCompleta", { type: "manual", message: "Fecha es un campo requerido." });
 		}
@@ -140,12 +127,6 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 	const handleClose = () => {
 		setIsSuccess(false); 
 	};
-
-	useEffect(()=>{
-		if(!isLoading){
-			handleClose()			
-		}
-	},[isLoading])
 
   return (
     <Dialog onOpenChange={setIsSuccess} open={isSuccess}>

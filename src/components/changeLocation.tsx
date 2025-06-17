@@ -18,20 +18,23 @@ interface InputChangeLocation {
 }
  
 const ChangeLocation:React.FC<InputChangeLocation> = ({ ubicacionSeleccionada, setUbicacionSeleccionada, areaSeleccionada, setAreaSeleccionada, ubicacion })=> {
-
 	const {areas, locations, fetchAreas, fetchLocations} = useAreasLocationStore();
 
+
 	useEffect(()=>{
-		if(locations.length==0 || areas.length==0){
+		if(locations.length==0 ){
+			console.log("quee")
 			fetchLocations();
 		}
-		if (ubicacionSeleccionada) {
-			fetchAreas(ubicacionSeleccionada);
-		}
+
+		// if (ubicacionSeleccionada) {
+		// 	fetchAreas(ubicacionSeleccionada);
+		// }
 	},[])
 
 	useEffect(() => {
 		if (ubicacionSeleccionada) {
+			console.log("ubicacionSeleccionada",ubicacionSeleccionada)
 			fetchAreas(ubicacionSeleccionada);
 		}
 	  }, [ubicacionSeleccionada]);

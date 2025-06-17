@@ -8,11 +8,6 @@ export const useGetFallas= (location:string, area:string, status:string, dateFro
         const data = await getListFallas(location, area , status,  dateFrom, dateTo, filterDate); 
         return Array.isArray(data.response?.data) ? data?.response?.data : []; 
     },
-   
-    refetchOnWindowFocus: true, 
-    refetchInterval: 60000,
-    refetchOnReconnect: true, 
-    staleTime: 1000 * 60 * 5, 
   });
 
   return {
