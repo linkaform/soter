@@ -35,8 +35,8 @@ const BubbleChart = ({ data }) => {
           : Number(numeroHabitacion.slice(0, numeroHabitacion.length - 2));
       }
 
-      // Desplazamiento aleatorio pequeño para dispersar burbujas en el eje X
-      const offset = (Math.random() - 0.5) * 0.8; // Puedes ajustar 0.6 para más/menos dispersión
+      // Desplazamiento aleatorio pequeño para dispersar burbujas en el eje Y
+      const offset = (Math.random() - 0.5) * 0.8;
 
       if (!hotelColorMap[hotel]) {
         hotelColorMap[hotel] = getRandomColor();
@@ -44,8 +44,8 @@ const BubbleChart = ({ data }) => {
       }
 
       datasetsByHotel[hotel].push({
-        x: piso + offset, // Piso + desplazamiento
-        y: total_fallas,
+        x: total_fallas,      // Ahora las fallas están en el eje X
+        y: piso + offset,     // Piso en el eje Y
         r: Math.sqrt(total_fallas),
         label: habitacion,
         total_fallas,
@@ -75,7 +75,6 @@ const BubbleChart = ({ data }) => {
               return [
                 `Habitación: ${point.label}`,
                 `Hotel: ${dataset.label}`,
-                `Piso: ${point.x}`,
                 `Fallas: ${point.total_fallas}`,
               ];
             },
@@ -85,21 +84,21 @@ const BubbleChart = ({ data }) => {
           xAxes: [{
             scaleLabel: {
               display: true,
-              labelString: 'Piso',
-            },
-            ticks: {
-              beginAtZero: true,
-              stepSize: 1,
-            },
-          }],
-          yAxes: [{
-            scaleLabel: {
-              display: true,
               labelString: 'Total de fallas',
             },
             ticks: {
               beginAtZero: true,
               max: 200,
+            },
+          }],
+          yAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'Piso',
+            },
+            ticks: {
+              beginAtZero: true,
+              stepSize: 1,
             },
           }],
         },

@@ -16,6 +16,12 @@ const optionsCuatri = [
     { name: 'C3', id: 3 },
 ]
 
+const optionsCuatriDefecto = [
+    { name: 'C1', id: 1 },
+    { name: 'C2', id: 2 },
+    { name: 'C3', id: 3 },
+]
+
 const optionsHotel = [
     { name: 'Todos', id: 0 },
     { name: 'Hotel 1', id: 1 },
@@ -34,4 +40,4 @@ const optionsHotelDefecto = [
     { nombre_hotel: 'Todos' },
 ];
 
-export { rooms, tags, options, optionsCuatri, optionsHotel, optionsHotelDefecto }
+export { rooms, tags, options, optionsCuatri, optionsHotel, optionsHotelDefecto, optionsCuatriDefecto }

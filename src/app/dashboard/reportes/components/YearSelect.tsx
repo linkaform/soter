@@ -3,22 +3,18 @@
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-export function YearSelect({ onChange }: { onChange?: (year: string) => void }) {
+export function YearSelect({ value, onChange }: { value: string | null, onChange: (v: string) => void }) {
     const currentYear = new Date().getFullYear()
-    const years = Array.from({ length: 20 }, (_, i) => currentYear - i)
-
-    const handleChange = (value: string) => {
-        onChange?.(value)
-    }
+    const years = Array.from({ length: 5 }, (_, i) => (currentYear - i).toString())
 
     return (
-        <Select onValueChange={handleChange}>
+        <Select value={value ?? undefined} onValueChange={onChange}>
             <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Selecciona un año" />
+                <SelectValue placeholder="Selecciona año" />
             </SelectTrigger>
             <SelectContent>
-                {years.map((year) => (
-                    <SelectItem key={year} value={year.toString()}>
+                {years.map(year => (
+                    <SelectItem key={year} value={year}>
                         {year}
                     </SelectItem>
                 ))}

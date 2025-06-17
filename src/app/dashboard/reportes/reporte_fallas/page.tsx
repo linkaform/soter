@@ -30,11 +30,12 @@ import HotelComments from "../components/HotelComments";
 import { YearSelect } from "../components/YearSelect"
 
 // import { misTickets } from '../data/tickets'
-import { optionsCuatri } from '../data/consts'
+import { optionsCuatri, optionsCuatriDefecto } from '../data/consts'
 import ProgressBar from "../components/ProgressBar";
 import FallaBadge from "../components/FallaBadge";
 import Multiselect from "multiselect-react-dropdown";
 import { useGetHoteles, useReportFallas } from "../hooks/useReportFallas";
+import { formatNumber } from "../utils/formatNumber";
 
 import {
 	Bed,
@@ -48,12 +49,14 @@ import {
 } from "lucide-react";
 import { getHabitacion, getHotelHabitaciones } from "../requests/peticiones";
 
+const currentYear = new Date().getFullYear().toString();
+
 const ReportsPage = () => {
 
 	const [imagesGrid, setImageGrid] = useState('6')
 	const [appliedCuatri, setAppliedCuatri] = useState<any>([]);
-	const [selectedYear, setSelectedYear] = useState<string | null>(null);
-	const [selectedCuatri, setSelectedCuatri] = useState<any[]>([]);
+	const [selectedYear, setSelectedYear] = useState<string | null>(currentYear);
+	const [selectedCuatri, setSelectedCuatri] = useState<any[]>([...optionsCuatriDefecto]);
 	const [selectedHoteles, setSelectedHoteles] = useState<any[]>([]);
 	const [selectedFallas, setSelectedFallas] = useState<string[]>([]);
 	const [activeTab, setActiveTab] = useState("grafica");
@@ -99,22 +102,22 @@ const ReportsPage = () => {
 	const stats = [
 		{
 			icon: <Search />,
-			value: inspecciones ?? '0.0',
+			value: formatNumber(inspecciones) ?? '0.0',
 			label: 'Habitaciones inspeccionadas'
 		},
 		{
 			icon: <Bed className="text-green-500" />,
-			value: remodeladas ?? '0.0',
+			value: formatNumber(remodeladas) ?? '0.0',
 			label: 'Habitaciones remodeladas'
 		},
 		{
 			icon: <Check className="text-green-700" />,
-			value: cantidadSi ?? '0.0',
+			value: formatNumber(cantidadSi) ?? '0.0',
 			label: 'Aciertos (Si)'
 		},
 		{
 			icon: <X className="text-red-800" />,
-			value: cantidadNo ?? '0.0',
+			value: formatNumber(cantidadNo) ?? '0.0',
 			label: 'Fallas (No)'
 		},
 
@@ -222,6 +225,14 @@ const ReportsPage = () => {
 		};
 		fetchHabitacion();
 	};
+
+	useEffect(() => {
+		if (hoteles && hoteles.length > 0) {
+			setSelectedHoteles(hoteles);
+		} else {
+			setSelectedHoteles([]);
+		}
+	}, [hoteles]);
 
 	useEffect(() => {
 		if (filters.enabled) {
@@ -383,10 +394,11 @@ const ReportsPage = () => {
 			<div className="flex justify-between w-11/12 m-auto mt-6 gap-4">
 				<div className="flex gap-4">
 					<div>
-						<YearSelect onChange={setSelectedYear} />
+						<YearSelect value={selectedYear} onChange={setSelectedYear} />
 					</div>
 					<div>
 						<Multiselect
+							key={selectedCuatri.length}
 							options={optionsCuatri}
 							displayValue="name"
 							placeholder="Cuatrimestre"
@@ -397,6 +409,7 @@ const ReportsPage = () => {
 					</div>
 					<div>
 						<Multiselect
+							key={selectedHoteles.length}
 							options={hoteles}
 							displayValue="nombre_hotel"
 							placeholder="Hoteles"
@@ -453,7 +466,7 @@ const ReportsPage = () => {
 					<div className="border rounded-lg p-4 w-2/5 flex flex-col gap-4 h-full">
 						<div>
 							<div className="font-bold">
-								Fallas: {tagsFallas?.reduce((sum: number, tag: any) => sum + (tag.total ?? 0), 0) ?? 0}
+								Fallas: {formatNumber(tagsFallas?.reduce((sum: number, tag: any) => sum + (tag.total ?? 0), 0) ?? 0)}
 							</div>
 							<div className="text-gray-400 flex items-center justify-between">
 								<div>
@@ -706,7 +719,7 @@ const ReportsPage = () => {
 								<TicketsTable isLoading={false} tickets={misTickets} />
 							</div> */}
 							<div className="flex items-center justify-center h-96">
-								<span className="text-3xl text-gray-400 font-semibold">Coming soon...</span>
+								<span className="text-3xl text-gray-400 font-semibold">Módulo no habilitado</span>
 							</div>
 						</TabsContent>
 					</Tabs>
