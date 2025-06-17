@@ -91,10 +91,25 @@ const HabitacionesInspeccionadasTable: React.FC<ListProps> = ({
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => (
-                                    <TableHead key={header.id} className="px-1">
+                                    <TableHead
+                                        key={header.id}
+                                        className="px-1 cursor-pointer select-none"
+                                        onClick={header.column.getCanSort() ? header.column.getToggleSortingHandler() : undefined}
+                                    >
                                         {header.isPlaceholder
                                             ? null
-                                            : flexRender(header.column.columnDef.header, header.getContext())}
+                                            : (
+                                                <div className="flex items-center gap-1">
+                                                    {flexRender(header.column.columnDef.header, header.getContext())}
+                                                    {header.column.getCanSort() && (
+                                                        <>
+                                                            {header.column.getIsSorted() === "asc" && <span>▲</span>}
+                                                            {header.column.getIsSorted() === "desc" && <span>▼</span>}
+                                                        </>
+                                                    )}
+                                                </div>
+                                            )
+                                        }
                                     </TableHead>
                                 ))}
                             </TableRow>
