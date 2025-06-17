@@ -139,7 +139,10 @@ const ReportsPage = () => {
 		{
 			icon: <Star className="text-yellow-500" />,
 			value: cal_promedio ?? '0.0',
-			label: 'Calificacion de hotel'
+			label:
+				selectedHoteles && selectedHoteles.length > 1
+					? 'Calificacion de los hoteles'
+					: 'Calificacion de hotel'
 		}
 	]
 
@@ -313,10 +316,33 @@ const ReportsPage = () => {
 	});
 
 	// Convierte el mapa a un arreglo para renderizar
-	const hotelesImagenes = Object.entries(hotelImagesMap).map(([hotel, images]) => ({
-		hotel,
-		images,
-	}));
+	const hotelesImagenes: any = [];
+
+	(hotelesFotografias ?? []).forEach((item: any) => {
+		const hotel = item.hotel;
+		const habitacion = item.habitacion;
+		const fieldLabel = item.field_label || {};
+		const media = item.media || {};
+
+		Object.entries(media).forEach(([fallaId, imagesArr]) => {
+			const fallaNombre = fieldLabel[fallaId] || "";
+			if (Array.isArray(imagesArr)) {
+				imagesArr.forEach((img: any) => {
+					if (img.file_url) {
+						hotelesImagenes.push({
+							hotel,
+							habitacion,
+							falla: fallaNombre,
+							image: {
+								name: img.file_name || img.name || "",
+								url: img.file_url,
+							},
+						});
+					}
+				});
+			}
+		});
+	});
 
 	const hotelesComentariosMap: Record<string, { falla: string; comment: string; room: string; images: { name: string; url: string }[] }[]> = {};
 
@@ -356,6 +382,17 @@ const ReportsPage = () => {
 		hotel,
 		comments,
 	}));
+
+	// Agrupa las imágenes por hotel, pero solo si hotel no es null
+	const hotelesImagenesPorHotel: Record<string, any[]> = {};
+	hotelesImagenes.forEach((imgObj: any) => {
+		if (imgObj.hotel) { // Solo agrega si hotel no es null
+			if (!hotelesImagenesPorHotel[imgObj.hotel]) {
+				hotelesImagenesPorHotel[imgObj.hotel] = [];
+			}
+			hotelesImagenesPorHotel[imgObj.hotel].push(imgObj);
+		}
+	});
 
 	if (isLoadingReportFallas || isLoadingHotelesFallas) {
 		return (
@@ -688,13 +725,16 @@ const ReportsPage = () => {
 							</div>
 							<div className="h-[56rem]">
 								<ScrollArea className="w-full h-full">
-									{hotelesImagenes.map(({ hotel, images }, idx) => (
-										<ImageCarrousel
-											key={hotel + idx}
-											hotelName={hotel}
-											images={images}
-											cols={imagesGrid}
-										/>
+									{Object.entries(hotelesImagenesPorHotel).map(([hotel, images]) => (
+										hotel && (
+											<div key={hotel} className="mb-10">
+												<div className="text-2xl font-bold mb-4">{hotel}</div>
+												<ImageCarrousel
+													images={images}
+													cols={imagesGrid}
+												/>
+											</div>
+										)
 									))}
 								</ScrollArea>
 							</div>
