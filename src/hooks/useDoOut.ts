@@ -25,12 +25,16 @@ export const useDoOut = ( qr_code:string, location:string, area:string) => {
     const doOutMutation = useMutation({
       mutationFn: async ({qr_code, location, area} : {qr_code: string, location:string, area:string}) => {
           const response = await doOut(qr_code, location , area);
-          if(!response.success){
+          if(!response?.response.data?.json?.success){
+            throw new Error(`Error al realizar la salida, Error:${response?.response.data?.json?.error} `);
+          }
+          else if(!response.success){
               throw new Error(`Error al realizar la salida, Error:${response.error.exception.msg[0]} `);
 
           }else{
               return response.response?.data
           }
+          
       },
       onMutate: () => {
         setLoading(true);

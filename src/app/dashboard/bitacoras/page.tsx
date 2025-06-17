@@ -22,7 +22,7 @@ const BitacorasPage = () => {
   	const [selectedOption, setSelectedOption] = useState<string[]>(["entrada"]);
 	const { tab, setTab, filter, setFilter} = useShiftStore()
   	const {location, area} = useShiftStore()
-	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
+	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location );
 	const [areaSeleccionada, setAreaSeleccionada] = useState("todas");
 	const [equiposData, setEquiposData] = useState<Bitacora_record[]>([]);
 	const [vehiculosData, setVehiculosData] = useState<Bitacora_record[]>([]);
@@ -45,8 +45,12 @@ const BitacorasPage = () => {
 		if(filter){
 			setFilter("")
 		}
-		if(location)
-			setUbicacionSeleccionada(location)
+		if(location){
+			setUbicacionSeleccionada(location )
+		}else{
+			setUbicacionSeleccionada(location|| "Planta Monterrey" )
+		}
+			
 			// setUbicacionSeleccionada("todas")
 	}, [area, location, userNameSoter, tab, filter, setTab, setFilter]); 
 
