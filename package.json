@@ -37,8 +37,6 @@
     "@tanstack/react-query": "^5.63.0",
     "@tanstack/react-table": "^8.20.5",
     "@vaadin/date-time-picker": "^24.7.8",
-    "@zxing/browser": "^0.1.5",
-    "@zxing/library": "^0.21.3",
     "chart.js": "2.9.4",
     "chartjs-gauge": "0.3.0",
     "class-variance-authority": "^0.7.0",
