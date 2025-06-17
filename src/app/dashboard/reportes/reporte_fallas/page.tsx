@@ -636,33 +636,33 @@ const ReportsPage = () => {
 											<div className="font-semibold">Mejor habitacion</div>
 											<div className="flex justify-between items-center">
 												<div>
-													<div className="font-semibold">{mejorHabitacion?.habitacion}</div>
-													<div className="text-gray-500 text-sm">{mejorHabitacion?.hotel}</div>
-													<div className="text-gray-500 text-sm">{mejorHabitacion?.total_inspecciones} inspecciones, {mejorHabitacion?.total_fallas} fallas</div>
+													<div className="font-semibold">{mejorHabitacion?._id?.habitacion}</div>
+													<div className="text-gray-500 text-sm">{mejorHabitacion?._id?.hotel}</div>
+													<div className="text-gray-500 text-sm">{mejorHabitacion?.total_inspecciones} inspecciones, {mejorHabitacion?.fallas} fallas y {mejorHabitacion?.aciertos} aciertos</div>
 												</div>
 												<div>
 													<div className="bg-gray-200 p-4 rounded-full">
-														{mejorHabitacion?.grade}%
+														{mejorHabitacion?.grades * 100}%
 													</div>
 												</div>
 											</div>
-											<div><ProgressBar value={mejorHabitacion?.grade} color="bg-green-500" /></div>
+											<div><ProgressBar value={mejorHabitacion?.grades * 100} color="bg-green-500" /></div>
 										</div>
 										<div className="border p-4 rounded-lg w-full flex flex-col gap-4">
 											<div className="font-semibold">Habitacion con mayor indice de fallas</div>
 											<div className="flex justify-between items-center">
 												<div>
-													<div className="font-semibold">{peorHabitacion?.habitacion}</div>
-													<div className="text-gray-500 text-sm">{peorHabitacion?.hotel}</div>
-													<div className="text-gray-500 text-sm">{peorHabitacion?.total_inspecciones} inspecciones, {peorHabitacion?.total_fallas} fallas</div>
+													<div className="font-semibold">{peorHabitacion?._id?.habitacion}</div>
+													<div className="text-gray-500 text-sm">{peorHabitacion?._id?.hotel}</div>
+													<div className="text-gray-500 text-sm">{peorHabitacion?.total_inspecciones} inspecciones, {peorHabitacion?.fallas} fallas y {peorHabitacion?.aciertos} aciertos</div>
 												</div>
 												<div>
 													<div className="bg-gray-200 p-4 rounded-full">
-														{peorHabitacion?.grade}%
+														{peorHabitacion?.grades * 100}%
 													</div>
 												</div>
 											</div>
-											<div><ProgressBar value={peorHabitacion?.grade} color="bg-red-500" /></div>
+											<div><ProgressBar value={peorHabitacion?.grades * 100} color="bg-red-500" /></div>
 										</div>
 									</div>
 								</div>
