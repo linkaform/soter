@@ -378,7 +378,6 @@ const ReportsPage = () => {
 	});
 
 
-	// Agrupa las imágenes por hotel, pero solo si hotel no es null
 	const hotelesImagenesPorHotel: Record<string, any[]> = {};
 	hotelesImagenes.forEach((imgObj: any) => {
 		if (imgObj.hotel) { // Solo agrega si hotel no es null
