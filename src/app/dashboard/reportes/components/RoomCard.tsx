@@ -8,6 +8,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { getHabitacionPDF } from "../requests/peticiones";
+import { HabitacionImagesModal } from "../modals/habitacion-images-modal"
 
 interface RoomCardProps {
     roomData: any;
@@ -15,6 +16,8 @@ interface RoomCardProps {
 
 const RoomCard = ({ roomData }: RoomCardProps) => {
     const [downloading, setDownloading] = useState(false);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [clickedImageUrl, setClickedImageUrl] = useState<string | null>(null);
     const recordId = roomData?._id || '';
 
     // Extrae todas las urls de media
@@ -101,24 +104,37 @@ const RoomCard = ({ roomData }: RoomCardProps) => {
         fetchHabitacionPDF();
     };
 
+    const handleImageClick = (url: string) => {
+        setClickedImageUrl(url);
+        setModalOpen(true);
+    };
+
     return (
         <div className="flex w-full h-80 gap-4">
             <div className="w-2/5 flex items-center justify-center">
                 <div className="grid grid-cols-2 grid-rows-2 gap-2 w-full h-full">
-                    {[0, 1, 2, 3].map(idx => (
-                        <Image
-                            key={idx}
-                            width={100}
-                            height={100}
-                            src={
-                                allMediaUrls.length === 0
-                                    ? "/nouser.svg"
-                                    : allMediaUrls[imgIndexes[idx]] || "/nouser.svg"
-                            }
-                            alt="Imagen"
-                            className="w-full h-full bg-gray-200 rounded-lg object-cover"
-                        />
-                    ))}
+                    {[0, 1, 2, 3].map(idx => {
+                        const imgUrl = allMediaUrls[imgIndexes[idx]];
+                        return (
+                            <Image
+                                key={imgUrl || idx}
+                                width={100}
+                                height={100}
+                                src={imgUrl || "/nouser.svg"}
+                                alt="Imagen"
+                                className="w-full h-full bg-gray-200 rounded-lg object-cover cursor-pointer"
+                                onClick={() => handleImageClick(imgUrl)}
+                            />
+                        );
+                    })}
+
+                    <HabitacionImagesModal
+                        title={`Imágenes de ${nombreHabitacion}`}
+                        roomData={roomData}
+                        initialImageUrl={clickedImageUrl}
+                        open={modalOpen}
+                        setOpen={setModalOpen}
+                    />
                 </div>
             </div>
             <div className="w-3/5">
