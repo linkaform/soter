@@ -138,7 +138,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado } = useCatalogoAreaEmpleado(isSuccess, location, "Incidencias" );
 	const { editarIncidenciaMutation , loading} = useInciencias("", "",[], "", "", "");
 	// const [ setCatAreas] = useState<any| string[]>(areas);
-
+	console.log("editar incidencia",data)
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -158,7 +158,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 			notificacion_incidencia: data.notificacion_incidencia,
 			datos_deposito_incidencia: depositos,
 
-			categoria:data.vategoria,
+			categoria:data.categoria,
 			sub_categoria:data.sub_categoria,
 			incidente:data.incidencia,
 
