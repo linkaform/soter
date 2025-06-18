@@ -12,6 +12,7 @@ interface HabitacionImageCarouselProps {
     images: {
         url: string;
         name?: string;
+        falla?: string; // <-- Añade esto
     }[];
     initialImageUrl?: string;
 }
@@ -36,7 +37,7 @@ const HabitacionImageCarousel: React.FC<HabitacionImageCarouselProps> = ({ image
                 <CarouselContent>
                     {orderedImages.map((img, idx) => (
                         <CarouselItem key={idx}>
-                            <div className="flex items-center justify-center w-full h-full min-h-[200px] max-h-[80vh]">
+                            <div className="flex flex-col items-center justify-center w-full h-full min-h-[200px] max-h-[80vh]">
                                 <Image
                                     src={img.url}
                                     alt={img.name || "Imagen"}
@@ -45,6 +46,11 @@ const HabitacionImageCarousel: React.FC<HabitacionImageCarouselProps> = ({ image
                                     className="object-contain rounded-lg w-full h-auto max-h-[70vh] bg-gray-100"
                                     style={{ maxWidth: "100%", maxHeight: "70vh" }}
                                 />
+                                {img.falla && (
+                                    <div className="mt-2 text-center text-sm text-red-600 font-semibold">
+                                        <span className="text-black">Falla: </span>{img.falla}
+                                    </div>
+                                )}
                             </div>
                         </CarouselItem>
                     ))}

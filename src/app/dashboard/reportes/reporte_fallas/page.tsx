@@ -594,31 +594,43 @@ const ReportsPage = () => {
 																Obteniendo habitaciones...
 															</div>
 														) : (
-															hotelHabitaciones.map((hab, idx) => {
-																const numero = hab.numero_habitacion;
-																let boxClass = 'border border-red-500 text-red-700';
-																if (hab.inspeccion_habitacion) {
-																	if (hab.inspeccion_habitacion.fallas > 0) {
-																		boxClass = 'bg-red-600 text-white';
-																	} else {
-																		boxClass = 'bg-green-500 text-white';
-																	}
-																}
-																// Si está seleccionada, agrega una clase extra
-																const isSelected = habitacionSeleccionada === hab.nombre_area_habitacion;
-																const selectedClass = isSelected ? 'ring-4 ring-blue-500 ring-offset-2' : '';
+															[...hotelHabitaciones]
+																.sort((a, b) => Number(a.numero_habitacion) - Number(b.numero_habitacion))
+																.map((hab, idx) => {
+																	const numero = hab.numero_habitacion;
 
-																return (
-																	<div
-																		key={`${hab.numero_habitacion}-${idx}`}
-																		className={`w-10 h-10 flex items-center justify-center text-sm font-medium rounded cursor-pointer ${boxClass} ${selectedClass}`}
-																		onClick={() => handleHabitacionClick(hotelSeleccionado, hab.nombre_area_habitacion)}
-																		title={hab.nombre_area_habitacion || hab.numero_habitacion}
-																	>
-																		{numero}
-																	</div>
-																);
-															})
+																	// Lógica corregida para colorear de rojo
+																	const tieneFallas =
+																		(hab.inspeccion_habitacion?.fallas > 0) ||
+																		(
+																			(!hab.inspeccion_habitacion || !hab.inspeccion_habitacion.fallas)
+																			&& !!hab.inspeccion_id
+																		);
+
+																	let boxClass = 'border border-red-500 text-red-700';
+																	if (hab.inspeccion_habitacion || hab.inspeccion_id) {
+																		if (tieneFallas) {
+																			boxClass = 'bg-red-600 text-white';
+																		} else {
+																			boxClass = 'bg-green-500 text-white';
+																		}
+																	}
+
+																	// Si está seleccionada, agrega una clase extra
+																	const isSelected = habitacionSeleccionada === hab.nombre_area_habitacion;
+																	const selectedClass = isSelected ? 'ring-4 ring-blue-500 ring-offset-2' : '';
+
+																	return (
+																		<div
+																			key={`${hab.numero_habitacion}-${idx}`}
+																			className={`w-10 h-10 flex items-center justify-center text-sm font-medium rounded cursor-pointer ${boxClass} ${selectedClass}`}
+																			onClick={() => handleHabitacionClick(hotelSeleccionado, hab.nombre_area_habitacion)}
+																			title={hab.nombre_area_habitacion || hab.numero_habitacion}
+																		>
+																			{numero}
+																		</div>
+																	);
+																})
 														)}
 													</div>
 												</div>

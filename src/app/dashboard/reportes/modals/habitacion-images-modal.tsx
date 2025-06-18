@@ -16,6 +16,12 @@ interface HabitacionImagesModalProps {
     setOpen: (open: boolean) => void;
 }
 
+type ImageWithFalla = {
+    url: string;
+    name: string;
+    falla?: string;
+};
+
 export const HabitacionImagesModal: React.FC<HabitacionImagesModalProps> = ({
     title,
     roomData,
@@ -23,19 +29,28 @@ export const HabitacionImagesModal: React.FC<HabitacionImagesModalProps> = ({
     open,
     setOpen,
 }) => {
-    const [frozenImages, setFrozenImages] = useState<{ url: string; name: string }[]>([]);
+    const [frozenImages, setFrozenImages] = useState<ImageWithFalla[]>([]);
     const [frozenInitialUrl, setFrozenInitialUrl] = useState<string | undefined>(undefined);
 
     useEffect(() => {
         if (open && roomData?.inspeccion?.media) {
-            const imgs = Object.values(roomData.inspeccion.media)
-                .filter((v: any) => Array.isArray(v))
-                .flat()
-                .filter((img: any) => img?.file_url)
-                .map((img: any) => ({
-                    url: img.file_url,
-                    name: img.file_name || img.name || "",
-                }));
+            const fieldLabel = roomData.inspeccion.field_label || {};
+            // media: { key: [ { file_url, ... }, ... ] }
+            // fieldLabel: { key: "Nombre de la falla" }
+            const imgs: ImageWithFalla[] = [];
+            Object.entries(roomData.inspeccion.media).forEach(([key, arr]) => {
+                if (Array.isArray(arr)) {
+                    arr.forEach(img => {
+                        if (img?.file_url) {
+                            imgs.push({
+                                url: img.file_url,
+                                name: img.file_name || img.name || "",
+                                falla: fieldLabel[key] || undefined,
+                            });
+                        }
+                    });
+                }
+            });
             setFrozenImages(imgs);
             setFrozenInitialUrl(initialImageUrl || undefined);
         }
