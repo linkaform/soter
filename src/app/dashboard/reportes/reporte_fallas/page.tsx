@@ -79,8 +79,8 @@ const ReportsPage = () => {
 	const { reportFallas, isLoadingReportFallas, errorReportFallas, refetchReportFallas } = useReportFallas(filters);
 	const { hotelesFallas, isLoadingHotelesFallas, errorHotelesFallas } = useGetHoteles(true);
 	const hoteles = hotelesFallas?.hoteles;
-	const cantidadSi = reportFallas?.cantidad_si_y_no?.[0]?.total ?? 0;
-	const cantidadNo = reportFallas?.cantidad_si_y_no?.[1]?.total ?? 0;
+	const cantidadSi = reportFallas?.cantidad_si_y_no?.find((item: any) => item.respuesta?.toLowerCase() === "sí")?.total ?? 0;
+	const cantidadNo = reportFallas?.cantidad_si_y_no?.find((item: any) => item.respuesta?.toLowerCase() === "no")?.total ?? 0;
 	const inspecciones = reportFallas?.total_inspecciones_y_remodeladas?.total_inspecciones_completadas ?? 0;
 	const remodeladas = reportFallas?.total_inspecciones_y_remodeladas?.total_habitaciones_remodeladas ?? 0;
 	const cal_maxima = reportFallas?.calificaciones?.resumen?.max_global ?? 0;
