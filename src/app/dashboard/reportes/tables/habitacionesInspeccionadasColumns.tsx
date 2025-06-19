@@ -41,6 +41,10 @@ export const habitacionesInspeccionadasColumns: ColumnDef<HabitacionInspeccionad
         header: "Habitación",
     },
     {
+        accessorKey: "total_aciertos",
+        header: "Total de aciertos",
+    },
+    {
         accessorKey: "total_fallas",
         header: "Total de fallas",
     },
