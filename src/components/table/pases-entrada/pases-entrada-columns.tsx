@@ -52,7 +52,6 @@ export interface PaseEntrada {
 
 const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
   const rowData = row.original;
-  console.log("Option cell", rowData.ubicacion)
   const dataFull= {
     _id:rowData._id,
     folio:rowData.folio,

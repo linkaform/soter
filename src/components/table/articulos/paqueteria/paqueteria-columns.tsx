@@ -31,7 +31,6 @@ export interface Paquete_record {
 const OptionsCell: React.FC<{ row: any }> = ({ row}) => {
   	const paquete = row.original;
 	  const [showLoadingModal, setShowLoadingModal] = useState(false);
-	  console.log(paquete)
   return (
     <div className="flex space-x-2">
 

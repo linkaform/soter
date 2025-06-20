@@ -95,7 +95,6 @@ const PersonasInvolucradasList:React.FC<PersonasInvolucradasListProps> = ({ pers
     <div >
       {personasInvolucradas.map((area, index) => 
       { 
-        console.log("personasInvolucradas", area)
 
         return(
         <div key={index} className="border rounded mt-2">

@@ -14,6 +14,5 @@
     });
   
     const data = await response.json();
-    console.log("que pasa", data)
     return data;
   };

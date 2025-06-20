@@ -90,7 +90,6 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
   });
 
   function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log("dataa", data)
     addNewEquipment(data)
     form.reset();
     toast.success(
@@ -100,7 +99,6 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
   }
 
   const addNewEquipment = (data: z.infer<typeof formSchema>) => {
-    console.log("tipo", data)
     if( isAccesos ){
 		setSelectedEquipos([...selectedEquipos,  {
 			color: data.color||"",
@@ -204,7 +202,6 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
                     name="aria-live-color"
                     options={catTiposEquipos}
                     onChange={(value:any) =>{
-                      console.log(value.value)
                       field.onChange(value.value);
                     }}
                   />

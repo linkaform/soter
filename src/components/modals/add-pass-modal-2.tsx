@@ -58,9 +58,6 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 				conservar_datos_por: data?.conservar_datos_por
 			},id: data.folio, account_id: data.account_id},{
 				onSuccess: (response) => {
-					console.log("acepto aviso privacidad 2", data.acepto_aviso_privacidad)
-
-					console.log("Response",response)
 					setResponseFormated({
 						email_to: data.email,
 						asunto: response?.response?.data?.json?.asunto,

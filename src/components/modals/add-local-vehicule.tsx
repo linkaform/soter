@@ -140,7 +140,6 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
   }
 
   const addNewVehicle = (data: z.infer<typeof formSchema>) => {
-	console.log("placas", data)
 	if(isAccesos){
 		setSelectedVehiculos([{
 			color: data.color?.length ? data.color[0] :"",

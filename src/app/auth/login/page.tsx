@@ -34,7 +34,7 @@ export default function LoginPage() {
 
   const [showPassword, setShowPassword] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const { setAuth, isAuth } = useAuthStore();
+  const { setAuth } = useAuthStore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -66,8 +66,6 @@ export default function LoginPage() {
       setIsLoading(false);
     }
   };
-
-  console.log(isAuth)
 
   return (
     <Suspense>

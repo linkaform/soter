@@ -78,7 +78,7 @@ interface AddIncidenciaModalProps {
 	onClose: ()=> void;
 }
 
- const categoriasConIconos = [
+export const categoriasConIconos = [
 	{
 	  nombre: "Fraude y extorsión",
 	  icon: <CircleDollarSign />,
@@ -140,7 +140,7 @@ interface AddIncidenciaModalProps {
 	  id: 12
 	}
   ];
-  const subCategoriasConIconos = [
+export const subCategoriasConIconos = [
 	{
 	  nombre: "Vandalismo",
 	  icon: <SprayCan />,
@@ -252,7 +252,7 @@ export const formSchema = z.object({
 	estatura_aproximada: z.string().optional(),
 	descripcion_fisica_vestimenta: z.string().optional(),
 	nombre_completo_responsable: z.string().optional(),
-	prentesco: z.string().optional(),
+	parentesco: z.string().optional(),
 	num_doc_identidad: z.string().optional(),
 	telefono: z.string().optional(),
 	info_coincide_con_videos: z.string().optional(),
@@ -297,10 +297,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const [subCategoria, setSubCategoria]= useState("")
 	const [categoria, setCategoria]= useState("")
 	const [selectedIncidencia, setSelectedIncidencia]= useState("")
-
 	const { catIncidencias, isLoadingCatIncidencias } = useCatalogoInciencias(isSuccess, categoria, subCategoria);
-	console.log(" cat INcidencias", catIncidencias)
-
 	const [catCategorias, setCatCategorias] = useState<any[]>([])
 	
 	const [selectedNotificacion, setSelectedNotification] = useState("no")
@@ -308,10 +305,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const [inputTag, setInputTag] = useState('');
 	const [tagsSeleccionados, setTagsSeleccionados] = useState<string[]>([]);
 
-	useEffect(()=>{
-		if(!isSuccess)
-			resetStates()
-	},[isSuccess]);	
+
 
 	const resetStates = ()=>{
 		setSearch("")
@@ -338,14 +332,11 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 			if(search==""){
 				const catIncidenciasIcons = categoriasConIconos.filter((cat) =>
 					catIncidencias.includes(cat.nombre)
-					);
+				);
 				if(catIncidenciasIcons.length>0){
 					setCatCategorias(catIncidenciasIcons)
-				}else{
-
 				}
 			}else if(search=="cat" || search=="subCat"){
-				console.log("entrada", search)
 				const catIncidenciasIcons = categoriasConIconos.filter((cat) =>
 					catIncidencias.includes(cat.nombre)
 					);
@@ -403,7 +394,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 			estatura_aproximada:"",
 			descripcion_fisica_vestimenta:"",
 			nombre_completo_responsable:"",
-			prentesco:"",
+			parentesco:"",
 			num_doc_identidad:"",
 			telefono:"",
 			info_coincide_con_videos:"",
@@ -426,14 +417,13 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const { reset } = form;
 
 	useEffect(()=>{
-		if(isSuccess){
+		if(!isSuccess)
+			resetStates()
 			reset()
 			setDate(new Date())
 			setEvidencia([])
 			setDocumento([])
-		}
-		
-	},[isSuccess])
+	},[isSuccess]);	
 
 	useEffect(()=>{
 		if(form.formState.errors){
@@ -450,6 +440,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const handleToggleNotifications = (value:string)=>{
 		setSelectedNotification(value);
 	}
+
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		let formattedDate=""
 		if(date){
@@ -482,7 +473,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 					estatura_aproximada: values.estatura_aproximada,
 					descripcion_fisica_vestimenta: values.descripcion_fisica_vestimenta,
 					nombre_completo_responsable: values.nombre_completo_responsable,
-					prentesco: values.prentesco,
+					parentesco: values.parentesco,
 					num_doc_identidad: values.num_doc_identidad,
 					telefono: values.telefono,
 					info_coincide_con_videos: values.info_coincide_con_videos,
@@ -508,11 +499,13 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const handleClose = () => {
 		setIsSuccess(false); 
 	};
+
 	const getNivel = (val: number) => {
 		if (val < 35) return "Baja"
 		if (val < 70) return "Media"
 		return "Alta"
 	}
+
   return (
     <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
       <DialogContent className="max-w-4xl overflow-y-auto max-h-[80vh] min-h-[80vh]  flex flex-col " aria-describedby="">
@@ -729,7 +722,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 									defaultValue="media"
 									render={() => (
 										<FormItem className="w-full">
-											<div className="text-sm font-medium mb-7">
+												<div className="text-sm font-medium mb-7">
 													Importancia: <span className="font-bold">{getNivel(value[0])}</span>
 												</div> 
 											<FormControl>
@@ -874,7 +867,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 
 							
 								<div className="flex items-center flex-wrap gap-5">
-										<FormLabel>Notificacones: {`(No/Correo)`}:  </FormLabel>
+										<FormLabel>Notificaciones: {`(No/Correo)`}:  </FormLabel>
 											<Switch
 												defaultChecked={false}
 												// value={false}
@@ -950,7 +943,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
       
 								{selectedIncidencia =="Persona extraviada" && (
 									<div className="col-span-2 w-full">
-										<PersonaExtraviadaFields control={form.control} data={{}}></PersonaExtraviadaFields>
+										<PersonaExtraviadaFields control={form.control}></PersonaExtraviadaFields>
 									</div>
 								)}
 								{selectedIncidencia =="Robo de cableado" && (

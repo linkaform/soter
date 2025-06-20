@@ -120,7 +120,6 @@ const PaseUpdate = () =>{
 
 	const [mostrarAviso, setMostrarAviso] = useState(false);
 	const [radioSelected, setRadioSelected] = useState("3 meses");		
-	// const [showRadioGroup, setShowRadioGroup] = useState(false);
 
 	const onDescargarPNG = async (imgUrl: string) => {
 		try {
@@ -248,7 +247,6 @@ const PaseUpdate = () =>{
 	});
 
 	const onSubmit = (data: z.infer<typeof formSchema>) => {
-		console.log("data acepto_aviso_privacidad", data.acepto_aviso_privacidad)
 			const formattedData = {
 				grupo_vehiculos: vehicles,
 				grupo_equipos: equipos,
@@ -280,7 +278,6 @@ const PaseUpdate = () =>{
 	};
 
 	const updateInfoActivePass= () => {
-		console.log("actualizar info de pase activo")
 		const formattedData = {
 			grupo_vehiculos: vehicles,
 			grupo_equipos: equipos,
@@ -298,7 +295,6 @@ const PaseUpdate = () =>{
 
 
 	useEffect(()=>{
-		console.log("errors",form.formState.errors)
 	}, [form.formState.errors])
 
 

@@ -120,7 +120,6 @@ export const AddGuardModal: React.FC<AddGuardModalProps> = ({
             className="w-full bg-blue-500 hover:bg-blue-600 text-white"
             onClick={() => {
               if (!selectedGuard) {
-                console.log("No hay guardias seleccionados.");
                 return;
               }
 
