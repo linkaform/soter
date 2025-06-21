@@ -312,9 +312,11 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 		setSubCategoria("")
 		setCategoria("")
 		setSelectedIncidencia("")
+		console.log("cxatIncidencias", catIncidencias)
 		const catIncidenciasIcons = categoriasConIconos?.filter((cat) =>
-			catIncidencias?.includes(cat.nombre)
+			catIncidencias?.data.includes(cat.nombre)
 			);
+		
 		setCatCategorias(catIncidenciasIcons)
 		setCatSubIncidences([])
 		setSubCatCategorias([])
@@ -331,30 +333,46 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 		if(catIncidencias){
 			if(search==""){
 				const catIncidenciasIcons = categoriasConIconos.filter((cat) =>
-					catIncidencias.includes(cat.nombre)
+					catIncidencias.data.includes(cat.nombre)
 				);
 				if(catIncidenciasIcons.length>0){
 					setCatCategorias(catIncidenciasIcons)
 				}
 			}else if(search=="cat" || search=="subCat"){
-				const catIncidenciasIcons = categoriasConIconos.filter((cat) =>
-					catIncidencias.includes(cat.nombre)
-					);
-		
-				if (catIncidenciasIcons.length>0) {
-					//Si me regresa el mismo catalogo de categorias, entonces nos pasamos directo al modal
-					setSelectedIncidencia(categoria)
-				} else {
-					//Si en caso de ser diferentes, reviso en las sub categorias, si existen las muestro y si no, muestro las lista de incidencias de esa sub categoria
+				if(catIncidencias.type=="incidence"){
+					const formattedSubIncidentes = catIncidencias.data.map((nombre:string) => ({
+						id: nombre,
+						nombre,
+						icono: ""
+					  }));
+					setSearch("subCat")
+					setSubCatCategorias([])
+					setCatSubIncidences(formattedSubIncidentes)
+				}else if (catIncidencias.type == "sub_catalog"){
 					const subCatIncidenciasIcons = subCategoriasConIconos.filter((cat) =>
-						catIncidencias.includes(cat.nombre)
+						catIncidencias.data.includes(cat.nombre)
 					);
-					if(subCatIncidenciasIcons.length == 0){
-						setCatSubIncidences(catIncidencias)
-					}else{
-						setSubCatCategorias(subCatIncidenciasIcons)
-					}
+					setSearch("cat")
+					setSubCatCategorias(subCatIncidenciasIcons)
 				}
+				// const catIncidenciasIcons = categoriasConIconos.filter((cat) =>
+				// 	catIncidencias.data.includes(cat.nombre)
+				// 	);
+		
+				// if (catIncidenciasIcons.length>0) {
+				// 	//Si me regresa el mismo catalogo de categorias, entonces nos pasamos directo al modal
+				// 	setSelectedIncidencia(categoria)
+				// } else {
+				// 	//Si en caso de ser diferentes, reviso en las sub categorias, si existen las muestro y si no, muestro las lista de incidencias de esa sub categoria
+				// 	const subCatIncidenciasIcons = subCategoriasConIconos.filter((cat) =>
+				// 		catIncidencias.data.includes(cat.nombre)
+				// 	);
+				// 	if(subCatIncidenciasIcons.length == 0){
+				// 		setCatSubIncidences(catIncidencias.data)
+				// 	}else{
+				// 		setSubCatCategorias(subCatIncidenciasIcons)
+				// 	}
+				// }
 			}
 		}
 	},[catIncidencias] )
@@ -581,8 +599,13 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 						<>
 							<button
 							onClick={() => {
-								setSearch("cat");  
+								if(catSubCategorias.length==0){
+									setSearch("");
+								}else{
+									setSearch("cat");
+								}
 								setSubCategoria("")
+
 								setSelectedIncidencia("")
 								}
 							}
@@ -594,14 +617,14 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 							<div className="flex flex-col w-full">
 								{catSubIncidences?.map((cat:any) => (
 									<div
-									key={cat}
+									key={cat.id}
 									onClick={() => { 
 										setSearch("incidencia")
-										setSelectedIncidencia(cat)
+										setSelectedIncidencia(cat.nombre)
 									}}
 									className="p-1 bg-white rounded hover:bg-gray-100 cursor-pointer flex justify-between"
 									>
-									<div className="text-sm font-medium">{cat}</div>
+									<div className="text-sm font-medium">{cat.nombre}</div>
 									<ChevronRight className="w-4 h-4 text-gray-500" />
 
 									</div>

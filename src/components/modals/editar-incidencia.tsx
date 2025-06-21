@@ -153,7 +153,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 
 	const [subCategoria, setSubCategoria]= useState("")
 	const [categoria, setCategoria]= useState(data.categoria)
-	const [selectedIncidencia, setSelectedIncidencia]= useState(data.incidente)
+	const [selectedIncidencia, setSelectedIncidencia]= useState("")
 	const [catCategorias, setCatCategorias] = useState<any[]>([])
 	const [loadingCatalogos, setLoadingCatalogos]= useState(false)
 
@@ -247,30 +247,30 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 		if(catIncidencias){
 			if(search==""){
 				const catIncidenciasIcons = categoriasConIconos.filter((cat) =>
-					catIncidencias.includes(cat.nombre)
+					catIncidencias.data.includes(cat.nombre)
 					);
 				if(catIncidenciasIcons.length>0){
 					setCatCategorias(catIncidenciasIcons)
 				}
 			}else if(search=="cat" || search=="subCat"){
-				const catIncidenciasIcons = categoriasConIconos.filter((cat) =>
-					catIncidencias.includes(cat.nombre)
-					);
-		
-				if (catIncidenciasIcons.length>0) {
-					//Si me regresa el mismo catalogo de categorias, entonces nos pasamos directo al modal
-					setSelectedIncidencia(categoria)
-				} else {
-					//Si en caso de ser diferentes, reviso en las sub categorias, si existen las muestro y si no, muestro las lista de incidencias de esa sub categoria
-					const subCatIncidenciasIcons = subCategoriasConIconos.filter((cat) =>
-						catIncidencias.includes(cat.nombre)
-					);
-					if(subCatIncidenciasIcons.length == 0){
-						setCatSubIncidences(catIncidencias)
-					}else{
+					if(catIncidencias.type=="incidence"){
+						const formattedSubIncidentes = catIncidencias.data.map((nombre:string) => ({
+							id: nombre,
+							nombre,
+							icono: ""
+						}));
+						setSearch("subCat")
+						if(categoria && !subCategoria){
+							setSubCatCategorias([])
+						}
+						setCatSubIncidences(formattedSubIncidentes)
+					} else if (catIncidencias.type=="sub_catalog"){
+						const subCatIncidenciasIcons = subCategoriasConIconos.filter((cat) =>
+							catIncidencias.data.includes(cat.nombre)
+						);
+						// setSearch("cat")
 						setSubCatCategorias(subCatIncidenciasIcons)
 					}
-				}
 			}
 		}
 	},[catIncidencias] )
@@ -281,6 +281,10 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 			setEvidencia(data.evidencia_incidencia)
 			setDocumento(data.evidencia_incidencia)
 			setDate(new Date(data.fecha_hora_incidencia))
+			setCategoria(data.categoria)
+			setSubCategoria(data.sub_categoria)
+			setSelectedIncidencia(data.incidente)
+
 			handleOpenModal()
 			
 		}
@@ -290,16 +294,17 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 	const handleOpenModal = async () =>{
 		setLoadingCatalogos(true)
 		const {catSubIncidenciasIcons, subCategories}= await LoadCategories()
+		console.log("catInci", catIncidencias)
 		if (catSubIncidenciasIcons.length>0) {
 			//Si me regresa el mismo catalogo de categorias, entonces rellenamos directo el cat Incidencias
 			const subCatSubIncidenciasIcons = subCategoriasConIconos.filter((cat) =>
-				subCategories.response.data.includes(cat.nombre)
+				subCategories.response.data.data.includes(cat.nombre)
 			);
 			setCatSubIncidences(subCatSubIncidenciasIcons)
 		} else {
 			//Si en caso de ser diferentes, reviso en las sub categorias, si existen las muestro y si no, muestro las lista de incidencias de esa sub categoria
 			const subCatIcons = subCategoriasConIconos.filter((cat) =>
-				subCategories.response.data.includes(cat.nombre)
+				subCategories.response.data.data.includes(cat.nombre)
 			);
 			if(subCatIcons.length > 0){
 				setSubCatCategorias(subCatIcons)
@@ -312,13 +317,14 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 	const LoadCategories = async ()=>{
 		try{
 			const incidenciasRes = await getCatIncidencias("", "");
+			console.log("incidencias", incidenciasRes)
 			const catIncidenciasIcons = categoriasConIconos.filter((cat) =>
-				incidenciasRes.response.data.includes(cat.nombre)
+				incidenciasRes.response.data.data.includes(cat.nombre)
 			);
 			setCatCategorias(catIncidenciasIcons);
 			const subCategories = await getCatIncidencias(data.categoria,"");
 			const catSubIncidenciasIcons = categoriasConIconos.filter((cat) =>
-				subCategories.response.data.includes(cat.nombre)
+				subCategories.response.data.data.includes(cat.nombre)
 			);
 			return { catSubIncidenciasIcons, subCategories }
 		}  catch {
@@ -330,8 +336,8 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 	const LoadIncidences = async ()=>{
 		try{
 			const subIncidentes = await getCatIncidencias(data.categoria,data.sub_categoria);
-			const formattedSubIncidentes = subIncidentes.response.data.map((nombre:string, index:number) => ({
-				id: index + 1,
+			const formattedSubIncidentes = subIncidentes.response.data.data.map((nombre:string) => ({
+				id: nombre,
 				nombre,
 				icono: ""
 			  }));
@@ -434,15 +440,17 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 										name="categoria"
 										render={({ field }:any) => (
 											<FormItem className="w-full">
-												<FormLabel>Categoria: *</FormLabel>
+												<FormLabel>Categoria: * </FormLabel>
 												<FormControl>
 												<Select {...field} className="input"
 													onValueChange={(value:string) => {
 													field.onChange(value); 
 													setSearch("cat")
 													setCategoria(value)
+													setSubCategoria("")
 												}}
 												value={categoria} 
+												disabled={catCategorias.length==0}
 											>
 												<SelectTrigger className="w-full">
 												<SelectValue placeholder="Selecciona una opcion" />
@@ -460,65 +468,75 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 											</FormItem>
 										)}
 									/>	
-										<FormField
-										control={form.control}
-										name="sub_categoria"
-										render={({ field }:any) => (
-											<FormItem className="w-full">
-												<FormLabel>Sub categoria: *</FormLabel>
-												<FormControl>
-												<Select {...field} className="input"
-													onValueChange={(value:string) => {
-													field.onChange(value); 
-												}}
-												value={field.value} 
-											>
-												<SelectTrigger className="w-full">
-												<SelectValue placeholder="Selecciona una opcion" />
-												</SelectTrigger>
-												<SelectContent>
-												{catSubCategorias?.map((cat:any) => (
-													<SelectItem key={cat.id} value={cat.nombre}>
-														{cat.nombre}
-													</SelectItem>
-												))}
-												</SelectContent>
-											</Select>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>	
-										<FormField
-										control={form.control}
-										name="incidente"
-										render={({ field }:any) => (
-											<FormItem className="w-full">
-												<FormLabel>Incidente: *</FormLabel>
-												<FormControl>
-												<Select {...field} className="input"
-													onValueChange={(value:string) => {
-													setSearch("subCat")
-													setSubCategoria(value)
-												}}
-												value={field.value} 
-											>
-												<SelectTrigger className="w-full">
-												<SelectValue placeholder="Selecciona una opcion" />
-												</SelectTrigger>
-												<SelectContent>
-												{catSubIncidences?.map((cat:any) => (
-													<SelectItem key={cat.id} value={cat.nombre}>
-													{cat.nombre}
-												</SelectItem>
-												))}
-												</SelectContent>
-											</Select>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>	
+										<>
+											<FormField
+												control={form.control}
+												name="sub_categoria"
+												render={({ field }:any) => (
+													<FormItem className="w-full">
+														<FormLabel>Sub categoria: *</FormLabel>
+														<FormControl>
+														<Select {...field} className="input"
+															onValueChange={(value:string) => {
+															field.onChange(value); 
+															setSubCategoria(value)
+														}}
+														value={subCategoria} 
+														disabled={catSubCategorias.length==0}
+													>
+														<SelectTrigger className="w-full">
+															<SelectValue placeholder="Selecciona una opcion" />
+														</SelectTrigger>
+														<SelectContent>
+														{catSubCategorias?.map((cat:any) => (
+															<SelectItem key={cat.id} value={cat.nombre}>
+																{cat.nombre}
+															</SelectItem>
+														))}
+														</SelectContent>
+													</Select>
+														</FormControl>
+														<FormMessage />
+													</FormItem>
+												)}
+											/>	
+										</>
+									{catSubIncidences.length > 0 ? (
+										<>
+											<FormField
+											control={form.control}
+											name="incidente"
+											render={({ field }:any) => (
+												<FormItem className="w-full">
+													<FormLabel>Incidente: *</FormLabel>
+													<FormControl>
+													<Select {...field} className="input"
+														onValueChange={(value:string) => {
+														field.onChange(value);
+														setSearch("subCat")
+														setSelectedIncidencia(value)
+													}}
+													value={selectedIncidencia} 
+													disabled={catSubIncidences.length==0}
+												>
+													<SelectTrigger className="w-full">
+														<SelectValue placeholder="Selecciona una opcion" />
+													</SelectTrigger>
+													<SelectContent>
+													{catSubIncidences?.map((cat:any) => (
+														<SelectItem key={cat.id} value={cat.nombre}>
+															{cat.nombre}
+														</SelectItem>
+													))}
+													</SelectContent>
+												</Select>
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
+											/>	
+										</>
+									):null}
 									<FormField
 										control={form.control}
 										name="area_incidencia"
@@ -529,7 +547,6 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 												<Select {...field} className="input"
 													onValueChange={(value:string) => {
 													field.onChange(value); 
-													selectedIncidencia(value)
 												}}
 												value={field.value} 
 											>

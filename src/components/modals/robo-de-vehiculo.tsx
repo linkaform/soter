@@ -23,7 +23,7 @@ export function RoboDeVehiculo({ control }: Props) {
 					render={({ field }) => (
 						<FormItem>
 						<FormLabel>Placas:</FormLabel>
-						<FormControl><Input defaultValue="" {...field} /></FormControl>
+						<FormControl><Input {...field} /></FormControl>
 						<FormMessage />
 						</FormItem>
 					)}
@@ -34,7 +34,7 @@ export function RoboDeVehiculo({ control }: Props) {
 					render={({ field }) => (
 						<FormItem>
 						<FormLabel>Tipo de vehiculo:</FormLabel>
-						<FormControl><Input defaultValue="" {...field} /></FormControl>
+						<FormControl><Input {...field} /></FormControl>
 						<FormMessage />
 						</FormItem>
 					)}
@@ -45,7 +45,7 @@ export function RoboDeVehiculo({ control }: Props) {
 					render={({ field }) => (
 						<FormItem>
 						<FormLabel> Marca:</FormLabel>
-						<FormControl><Input defaultValue="" {...field} /></FormControl>
+						<FormControl><Input {...field} /></FormControl>
 						<FormMessage />
 						</FormItem>
 					)}
@@ -56,7 +56,7 @@ export function RoboDeVehiculo({ control }: Props) {
 					render={({ field }) => (
 						<FormItem>
 						<FormLabel> Modelo:</FormLabel>
-						<FormControl><Input defaultValue="" {...field} /></FormControl>
+						<FormControl><Input {...field} /></FormControl>
 						<FormMessage />
 						</FormItem>
 					)}
@@ -67,7 +67,7 @@ export function RoboDeVehiculo({ control }: Props) {
 					render={({ field }) => (
 						<FormItem>
 						<FormLabel> Color:</FormLabel>
-						<FormControl><Input defaultValue="" {...field} /></FormControl>
+						<FormControl><Input {...field} /></FormControl>
 						<FormMessage />
 						</FormItem>
 					)}
