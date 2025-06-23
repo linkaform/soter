@@ -32,8 +32,8 @@ interface DepositosListProps {
 
 const formSchema = 
     z.object({
-        cantidad: z.number().min(1,{message:"Área es un campo obligatorio"}),
-        tipo_deposito: z.string().optional(),
+        cantidad: z.number().min(1,{message:"Cantidad es un campo obligatorio"}),
+        tipo_deposito: z.string().min(1,{message:"Cantidad es un campo obligatorio"}),
 });
 
 const DepositosList:React.FC<DepositosListProps> = ({ depositos, setDepositos})=> {
@@ -155,7 +155,6 @@ const DepositosList:React.FC<DepositosListProps> = ({ depositos, setDepositos})=
                             field.onChange(value === "" ? "" : Number(value)); // Si es vacío, lo mantiene vacío
                         }
                       }}
-                      value={field.value || ""}
                     />
                   </FormControl>
                   <FormMessage />

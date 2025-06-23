@@ -39,34 +39,34 @@ export function RoboDeVehiculo({ control }: Props) {
 						</FormItem>
 					)}
 					/>
-                    <FormField
+					<FormField
 					control={control}
 					name="marca"
 					render={({ field }) => (
 						<FormItem>
-						<FormLabel> Marca:</FormLabel>
+						<FormLabel>Marca:</FormLabel>
 						<FormControl><Input {...field} /></FormControl>
 						<FormMessage />
 						</FormItem>
 					)}
 					/>
-                    <FormField
+					<FormField
 					control={control}
 					name="modelo"
 					render={({ field }) => (
 						<FormItem>
-						<FormLabel> Modelo:</FormLabel>
+						<FormLabel>Modelo:</FormLabel>
 						<FormControl><Input {...field} /></FormControl>
 						<FormMessage />
 						</FormItem>
 					)}
 					/>
-                    <FormField
+					<FormField
 					control={control}
 					name="color"
 					render={({ field }) => (
 						<FormItem>
-						<FormLabel> Color:</FormLabel>
+						<FormLabel>Color:</FormLabel>
 						<FormControl><Input {...field} /></FormControl>
 						<FormMessage />
 						</FormItem>

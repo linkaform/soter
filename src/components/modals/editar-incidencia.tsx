@@ -357,7 +357,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 					fecha_hora_incidencia:formattedDate||"",
 					ubicacion_incidencia:ubicacionSeleccionada||"",
 					area_incidencia: values.area_incidencia||"",
-					incidencia:values.incidencia||"",
+					incidencia: selectedIncidencia ||"",
 					comentario_incidencia: values.comentario_incidencia||"",
 					tipo_dano_incidencia: values.tipo_dano_incidencia||"",
 					dano_incidencia:values.dano_incidencia||"",
@@ -369,9 +369,9 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 					notificacion_incidencia:selectedNotificacion||"",
 					datos_deposito_incidencia: depositos||[],
 
-					categoria:data.categoria,
-					sub_categoria:data.subCategoria,
-					incidente:data.incidencia,
+					categoria: categoria,
+					sub_categoria: subCategoria,
+					incidente: selectedIncidencia,
 
 					nombre_completo_persona_extraviada: values.nombre_completo_persona_extraviada,
 					edad: values.edad,
@@ -397,7 +397,14 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 					modelo: values.modelo,
 					color: values.color,
 				}
-				editarIncidenciaMutation.mutate({ data_incidencia: formatData, folio: data.folio });
+				editarIncidenciaMutation.mutate({ data_incidencia: formatData, folio: data.folio }, {
+					onSuccess: () => {
+						setModalEditarAbierto(false)
+					},
+					onError: () => {
+						setModalEditarAbierto(false)
+					},
+				  });
 		}else{
 			form.setError("fecha_hora_incidencia", { type: "manual", message: "Fecha es un campo requerido." });
 		}

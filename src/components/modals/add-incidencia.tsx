@@ -57,7 +57,7 @@ import { format } from 'date-fns';
 import DateTime from "../dateTime";
 import LoadFile from "../upload-file";
 import { Loader2 } from "lucide-react";
-import { AccionesTomadas, PersonasInvolucradas } from "@/lib/incidencias";
+import { AccionesTomadas, Depositos, PersonasInvolucradas } from "@/lib/incidencias";
 import PersonasInvolucradasList from "../personas-involucradas-list";
 import AccionesTomadasList from "../acciones-tomadas-list";
 import { useShiftStore } from "@/store/useShiftStore";
@@ -70,6 +70,7 @@ import { useCatalogoInciencias } from "@/hooks/useCatalogoIncidencias";
 import { PersonaExtraviadaFields } from "./persona-extraviada";
 import { RoboDeCableado } from "./robo-de-cableado";
 import { RoboDeVehiculo } from "./robo-de-vehiculo";
+import DepositosList from "../depositos-list";
 
 interface AddIncidenciaModalProps {
   	title: string;
@@ -286,7 +287,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	// const [catAreas, setCatAreas] = useState<any| string[]>(areas);
 	const [personasInvolucradas, setPersonasInvolucradas] = useState<PersonasInvolucradas[]>([])
 	const [accionesTomadas, setAccionesTomadas] = useState<AccionesTomadas[]>([])
-	// const [depositos, setDepositos] = useState<Depositos[]>([])
+	const [depositos, setDepositos] = useState<Depositos[]>([])
 	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado } = useCatalogoAreaEmpleado(isSuccess, location, "Incidencias");
 	const { createIncidenciaMutation , loading} = useInciencias("","",[], "", "", "");
 	
@@ -320,6 +321,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 		setCatCategorias(catIncidenciasIcons)
 		setCatSubIncidences([])
 		setSubCatCategorias([])
+		setDepositos([])
 	}
 	const agregarTag = () => {
 		const nuevoTag = inputTag.trim();
@@ -399,7 +401,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 			documento_incidencia:documento,
 			prioridad_incidencia:"",
 			notificacion_incidencia:"",
-			datos_deposito_incidencia: [],
+			datos_deposito_incidencia: depositos,
 			tags:[],
 			categoria:"",
 			sub_categoria:"",
@@ -478,7 +480,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 					documento_incidencia:documento||[],
 					prioridad_incidencia:getNivel(value[0])||"",
 					notificacion_incidencia:selectedNotificacion||"",
-					datos_deposito_incidencia: [],
+					datos_deposito_incidencia: depositos,
 					tags:tagsSeleccionados,
 					categoria:categoria,
 					sub_categoria:subCategoria,
@@ -797,57 +799,8 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 									docArray={documento}
 									limit={10}/>
 
-								{/* <FormField
-									control={form.control}
-									name="incidencia"
-									render={({ field }:any) => (
-										<FormItem className="w-full">
-											<FormLabel>Incidencia: *</FormLabel>
-											<FormControl>
-											<Select {...field} className="input"
-												onValueChange={(value:string) => {
-												field.onChange(value);
-												if(value=="Depósitos") {
-													setIncidencia(value)
-												}
-											}}
-											value={field.value} 
-										>
-											<SelectTrigger className="w-full">
-												{isLoadingCatIncidencias ? (
-													<SelectValue placeholder="Cargando incidencias..." />
-												):
-												(
-													<SelectValue placeholder="Selecciona una incidencia" />
-												)}
-											</SelectTrigger>
-											<SelectContent>
-											{catIncidencias?.map((vehiculo:string, index:number) => {
-												return (
-													<SelectItem key={index} value={vehiculo}>
-														{vehiculo}
-													</SelectItem>
-												)
-											})}
-											</SelectContent>
-										</Select>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>	 */}
-
-								
-								{/* {incidencia=="Depósitos" && 
-								<div className="col-span-1 md:col-span-2">
-									<DepositosList depositos={depositos} setDepositos={setDepositos} ></DepositosList>
-								</div>
-								} */}
-
-
 
 								<div className="space-y-3">
-								{/* Input para escribir tag */}
 									<div className="text-sm font-medium ">
 										Tags: 
 									</div> 
@@ -865,104 +818,33 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 									/>
 									<Button type="button" onClick={agregarTag}>Agregar</Button>
 								</div>
-
-								{/* Tags seleccionados */}
-								<div className="flex flex-wrap gap-2">
-									
-									{tagsSeleccionados.map((tag, index) => (
-									<div
-										key={index}
-										className="flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
-									>
-										{tag}
-										<button
-										onClick={() => quitarTag(tag)}
-										className="ml-2 text-blue-500 hover:text-blue-700 font-bold"
+									<div className="flex flex-wrap gap-2">
+										{tagsSeleccionados.map((tag, index) => (
+										<div
+											key={index}
+											className="flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
 										>
-										&times;
-										</button>
+											{tag}
+											<button
+											onClick={() => quitarTag(tag)}
+											className="ml-2 text-blue-500 hover:text-blue-700 font-bold"
+											>
+											&times;
+											</button>
+										</div>
+										))}
 									</div>
-									))}
 								</div>
-								</div>
-
-								
 
 							
 								<div className="flex items-center flex-wrap gap-5">
-										<FormLabel>Notificaciones: {`(No/Correo)`}:  </FormLabel>
-											<Switch
-												defaultChecked={false}
-												// value={false}
-												onCheckedChange={()=>{handleToggleNotifications("no")}}
-												aria-readonly
-											/>
-										{/* <Controller
-											control={form.control}
-											name="notificacion_incidencia"
-											render={() => (
-												<FormItem>
-													<Button
-														type="button"
-														onClick={()=>{handleToggleNotifications("no")}}
-														className={`px-4 py-2 rounded-md transition-all duration-300 ${
-														selectedNotificacion=="no" ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
-														} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)] mr-2`}
-													>
-														<div className="flex flex-wrap items-center">
-														{selectedNotificacion =="no" ? (
-															<><div className="">No</div></>
-														):(
-															<><div className="text-blue-600">No</div></>
-														)}
-															
-														</div>
-													</Button>
-													<Button
-														type="button"
-														onClick={()=>{handleToggleNotifications("correo")}}
-														className={`px-4 py-2 rounded-md transition-all duration-300 ${
-															selectedNotificacion=="correo" ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
-														} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]  mr-2`}
-													>
-														<div className="flex flex-wrap items-center">
-														{selectedNotificacion =="correo"? (
-															<><div >Correo</div></>
-														):(
-															<><div className="text-blue-600">Correo</div></>
-														)}
-															
-														</div>
-													</Button>
-												</FormItem>
-											)}
-										/> */}
-									</div>
-											{/* <Select {...field} className="input"
-												onValueChange={(value:string) => {
-												field.onChange(value); 
-											}}
-											value={field.value} 
-										>
-											<SelectTrigger className="w-full">
-											<SelectValue placeholder="Selecciona una opcion" />
-											</SelectTrigger>
-											<SelectContent>
-												<SelectItem key={"no"} value={"no"}>
-													No
-												</SelectItem>
-												<SelectItem key={"correo"} value={"correo"}>
-												Correo
-											</SelectItem>
-											</SelectContent>
-										</Select> */}
-											{/* </FormControl>
-											<FormMessage />
-										</FormItem> */}
-									{/* )}
-								/>	 */}
-
-
+									<FormLabel>Notificaciones: {`(No/Correo)`}:  </FormLabel>
+										<Switch
+											defaultChecked={false}
+											onCheckedChange={()=>{handleToggleNotifications("no")}}
+											aria-readonly
+										/>
+								</div>
       
 								{selectedIncidencia =="Persona extraviada" && (
 									<div className="col-span-2 w-full">
@@ -982,7 +864,11 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 										<RoboDeVehiculo control={form.control} ></RoboDeVehiculo>
 									</div>
 								)}
-
+								{selectedIncidencia=="Depósitos y retiros de valores" && 
+								<div className="col-span-1 md:col-span-2">
+									<DepositosList depositos={depositos} setDepositos={setDepositos} ></DepositosList>
+								</div>
+								}
 							</form>
 						</Form>
 				
