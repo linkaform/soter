@@ -43,6 +43,7 @@ import { useCatalogoInciencias } from "@/hooks/useCatalogoIncidencias";
 import { Slider } from "../slider";
 import { Switch } from "@/components/ui/switch"
 import { toast } from "sonner";
+import DepositosList from "../depositos-list";
 
 interface EditarIncidenciaModalProps {
   	title: string;
@@ -143,14 +144,13 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 
 	const [personasInvolucradas, setPersonasInvolucradas] = useState<PersonasInvolucradas[]>(data.personas_involucradas_incidencia)
 	const [accionesTomadas, setAccionesTomadas] = useState<AccionesTomadas[]>(data.acciones_tomadas_incidencia)
-	const [depositos] = useState<Depositos[]>(data.depositos)
+	const [depositos, setDepositos] = useState<Depositos[]>([])
 	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado } = useCatalogoAreaEmpleado(modalEditarAbierto, location, "Incidencias" );
 	const { editarIncidenciaMutation} = useInciencias("", "",[], "", "", "");
 
 	const [search, setSearch]= useState("")
 	const [catSubCategorias, setSubCatCategorias] = useState<any>([])
 	const [catSubIncidences, setCatSubIncidences] = useState<any>([])
-
 	const [subCategoria, setSubCategoria]= useState("")
 	const [categoria, setCategoria]= useState(data.categoria)
 	const [selectedIncidencia, setSelectedIncidencia]= useState("")
@@ -241,6 +241,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 		setCatCategorias(catIncidenciasIcons)
 		setCatSubIncidences([])
 		setSubCatCategorias([])
+		setDepositos([])
 	}
 
 	useEffect(()=>{
@@ -284,7 +285,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 			setCategoria(data.categoria)
 			setSubCategoria(data.sub_categoria)
 			setSelectedIncidencia(data.incidente)
-
+			setDepositos(data.datos_deposito_incidencia	)
 			handleOpenModal()
 			
 		}
@@ -747,7 +748,11 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 											<RoboDeVehiculo control={form.control} ></RoboDeVehiculo>
 										</div>
 									)}
-
+									{selectedIncidencia=="Depósitos y retiros de valores" && 
+										<div className="col-span-1 md:col-span-2">
+											<DepositosList depositos={depositos} setDepositos={setDepositos} ></DepositosList>
+										</div>
+									}
 								</form>
 						</Form>
 					<div className="col-span-1 md:col-span-2 mt-2">

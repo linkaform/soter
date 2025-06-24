@@ -93,7 +93,7 @@ const DepositosList:React.FC<DepositosListProps> = ({ depositos, setDepositos})=
 
   return (
     <div >
-      {depositos.map((at, index) => 
+      {depositos?.map((at, index) => 
       { 
         return(
         <div key={index} className="border rounded mt-2">

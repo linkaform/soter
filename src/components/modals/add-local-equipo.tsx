@@ -187,7 +187,7 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex-grow overflow-y-auto p-4">
+        <div className="">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField

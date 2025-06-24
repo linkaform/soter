@@ -40,6 +40,36 @@ export type Incidencia = {
     dano_incidencia?: string
     tipo_dano_incidencia?: string[]
     grupo_seguimiento_incidencia: []
+
+    //Categoria
+    categoria:string
+    sub_categoria:string
+    incidente:string
+
+    //Persona extraviada
+    nombre_completo_persona_extraviada:string,
+    edad:string ,
+    color_piel:string
+    color_cabello:string
+    estatura_aproximada:string
+    descripcion_fisica_vestimenta:string
+    nombre_completo_responsable:string
+    parentesco:string
+    num_doc_identidad:string
+    telefono:string
+    info_coincide_con_videos:string
+    responsable_que_entrega:string
+    responsable_que_recibe:string
+  
+    //Robo de cableado
+    valor_estimado:string
+    pertenencias_sustraidas:string
+    //robo de vehiculo
+    placas:string
+    tipo:string
+    marca:string
+    modelo:string
+    color:string
   }
   
 
@@ -71,12 +101,13 @@ export type Incidencia = {
   export const OptionsCell: React.FC<{ row: any , onEditarClick: (incidencia: Incidencia_record) => void }> = ({ row, onEditarClick }) => {
     const incidencia = row.original;
     const [showLoadingModal] = useState(false);
+    const [openModal, setOpenModal]= useState(false)
 
     return (
       <div className="flex space-x-2">
         <ViewIncidencia 
           title="Información de la Incidencia"
-          data={incidencia} isSuccess={false}>
+          data={incidencia} >
             <div className="cursor-pointer">
               <Eye /> 
             </div>
@@ -93,8 +124,8 @@ export type Incidencia = {
     
 
         <SeguimientoIncidenciaModal
-            title="Seguimiento Incidencia"
-            folio={incidencia?.folio} >
+          title="Seguimiento Incidencia"
+          folio={incidencia?.folio} isSuccess={openModal} setIsSuccess={setOpenModal}>
           <div className="cursor-pointer">
               <Check />   
           </div>

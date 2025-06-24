@@ -73,7 +73,7 @@ export default function LoginPage() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <Card className="">
-              <CardContent className="flex w-[500px] h-[600px] flex-col justify-center items-center">
+              <CardContent className="flex  w-full md:w-[400px] h-[600px]  flex-col justify-center items-center ">
                 <Image
                   className="mb-10 flex mx-auto"
                   src="/logo.svg"
