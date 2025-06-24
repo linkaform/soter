@@ -608,7 +608,7 @@ const ReportsPage = () => {
 																		);
 
 																	let boxClass = 'border border-red-500 text-red-700';
-																	if (hab.inspeccion_habitacion || hab.inspeccion_id) {
+																	if (hab.inspeccion_habitacion) {
 																		if (tieneFallas) {
 																			boxClass = 'bg-red-600 text-white';
 																		} else {
