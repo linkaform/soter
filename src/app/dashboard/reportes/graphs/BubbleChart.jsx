@@ -11,6 +11,8 @@ const getRandomColor = () => {
 const BubbleChart = ({ data }) => {
   const chartRef = useRef(null);
   const chartInstanceRef = useRef(null);
+  const minFallas = data && data.length > 0 ? Math.min(...data.map(item => item.total_fallas)) : 0;
+  const maxFallas = data && data.length > 0 ? Math.max(...data.map(item => item.total_fallas)) : 0;
 
   useEffect(() => {
     const ctx = chartRef.current.getContext('2d');
@@ -87,8 +89,9 @@ const BubbleChart = ({ data }) => {
               labelString: 'Total de fallas',
             },
             ticks: {
-              beginAtZero: true,
-              max: 200,
+              max: maxFallas + 20,
+              min: minFallas,
+              stepSize: 20,
             },
           }],
           yAxes: [{
@@ -104,7 +107,7 @@ const BubbleChart = ({ data }) => {
         },
       },
     });
-  }, [data]);
+  }, [data, minFallas, maxFallas]);
 
   return (
     <div style={{ position: 'relative', height: '500px', width: '100%' }}>

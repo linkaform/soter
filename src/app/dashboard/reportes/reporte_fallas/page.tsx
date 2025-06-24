@@ -79,13 +79,7 @@ const ReportsPage = () => {
 	const { reportFallas, isLoadingReportFallas, errorReportFallas, refetchReportFallas } = useReportFallas(filters);
 	const { hotelesFallas, isLoadingHotelesFallas, errorHotelesFallas } = useGetHoteles(true);
 	const hoteles = hotelesFallas?.hoteles;
-	const cantidadSi = reportFallas?.cantidad_si_y_no?.find((item: any) => item.respuesta?.toLowerCase() === "sí")?.total ?? 0;
-	const cantidadNo = reportFallas?.cantidad_si_y_no?.find((item: any) => item.respuesta?.toLowerCase() === "no")?.total ?? 0;
-	const inspecciones = reportFallas?.total_inspecciones_y_remodeladas?.total_inspecciones_completadas ?? 0;
-	const remodeladas = reportFallas?.total_inspecciones_y_remodeladas?.total_habitaciones_remodeladas ?? 0;
-	const cal_maxima = reportFallas?.calificaciones?.resumen?.max_global ?? 0;
-	const cal_min = reportFallas?.calificaciones?.resumen?.min_global ?? 0;
-	const cal_promedio = reportFallas?.calificaciones?.resumen?.promedio_global ?? 0;
+	const cards = reportFallas?.cards ?? {};
 	const porcentaje = reportFallas?.porcentaje_propiedades_inspeccionadas ?? 0;
 	const calificacionXHotelGraph = reportFallas?.calificacion_x_hotel_grafica ?? [];
 	const tagsFallas = reportFallas?.fallas?.totales ?? [];
@@ -102,43 +96,43 @@ const ReportsPage = () => {
 	const stats = [
 		{
 			icon: <Search />,
-			value: formatNumber(inspecciones) ?? '0.0',
+			value: formatNumber(cards?.inspecciones_realizadas) ?? '0.0',
 			label: 'Habitaciones inspeccionadas'
 		},
 		{
 			icon: <Bed className="text-green-500" />,
-			value: formatNumber(remodeladas) ?? '0.0',
+			value: formatNumber(cards?.habitaciones_remodeladas) ?? '0.0',
 			label: 'Habitaciones remodeladas'
 		},
 		{
 			icon: <Check className="text-green-700" />,
-			value: formatNumber(cantidadSi) ?? '0.0',
+			value: formatNumber(cards?.total_aciertos) ?? '0.0',
 			label: 'Aciertos (Si)'
 		},
 		{
 			icon: <X className="text-red-800" />,
-			value: formatNumber(cantidadNo) ?? '0.0',
+			value: formatNumber(cards?.total_fallas) ?? '0.0',
 			label: 'Fallas (No)'
 		},
 
 		{
 			icon: <Trophy className="text-sky-600" />,
-			value: cal_maxima ?? '0.0',
+			value: (cards?.grade_max * 100).toString(),
 			label: 'Calificacion maxima'
 		},
 		{
 			icon: <Flag className="text-orange-600" />,
-			value: cal_min ?? '0.0',
+			value: (cards?.grade_min * 100).toString(),
 			label: 'Calificacion minima'
 		},
 		{
 			icon: <ChartLine className="text-black" />,
-			value: cal_promedio ?? '0.0',
+			value: (cards?.grade_avg * 100).toString(),
 			label: 'Calificacion promedio'
 		},
 		{
 			icon: <Star className="text-yellow-500" />,
-			value: cal_promedio ?? '0.0',
+			value: (cards?.grade_avg * 100).toString(),
 			label:
 				selectedHoteles && selectedHoteles.length > 1
 					? 'Calificacion de los hoteles'
@@ -599,21 +593,16 @@ const ReportsPage = () => {
 																.map((hab, idx) => {
 																	const numero = hab.numero_habitacion;
 
-																	// Lógica corregida para colorear de rojo
-																	const tieneFallas =
-																		(hab.inspeccion_habitacion?.fallas > 0) ||
-																		(
-																			(!hab.inspeccion_habitacion || !hab.inspeccion_habitacion.fallas)
-																			&& !!hab.inspeccion_id
-																		);
+																	let boxClass = 'border text-black bg-white'; // Por defecto blanca
 
-																	let boxClass = 'border border-red-500 text-red-700';
 																	if (hab.inspeccion_habitacion) {
-																		if (tieneFallas) {
+																		if (hab.inspeccion_habitacion.fallas > 0) {
 																			boxClass = 'bg-red-600 text-white';
 																		} else {
 																			boxClass = 'bg-green-500 text-white';
 																		}
+																	} else if (hab.inspeccion_id) {
+																		boxClass = 'bg-gray-400 text-white';
 																	}
 
 																	// Si está seleccionada, agrega una clase extra
