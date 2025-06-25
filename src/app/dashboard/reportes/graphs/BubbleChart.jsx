@@ -25,7 +25,7 @@ const BubbleChart = ({ data }) => {
     const datasetsByHotel = {};
 
     data?.forEach((item) => {
-      const { hotel, habitacion, total_fallas } = item;
+      const { hotel, habitacion, total_fallas, grade } = item;
 
       // Extraer número de habitación (ej: "Habitacion 206" => 206)
       const match = habitacion.match(/(\d{2,4})/);
@@ -48,9 +48,10 @@ const BubbleChart = ({ data }) => {
       datasetsByHotel[hotel].push({
         x: total_fallas,      // Ahora las fallas están en el eje X
         y: piso + offset,     // Piso en el eje Y
-        r: Math.sqrt(total_fallas),
+        r: Math.max(5, (grade ?? 0) * 20), // <-- Aquí el cambio
         label: habitacion,
         total_fallas,
+        grade,
       });
     });
 
@@ -77,6 +78,7 @@ const BubbleChart = ({ data }) => {
               return [
                 `Habitación: ${point.label}`,
                 `Hotel: ${dataset.label}`,
+                `Calificación: ${typeof point.grade === "number" ? (point.grade * 100).toFixed(1) : "N/A"}`,
                 `Fallas: ${point.total_fallas}`,
               ];
             },

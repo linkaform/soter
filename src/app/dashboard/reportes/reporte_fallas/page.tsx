@@ -93,6 +93,39 @@ const ReportsPage = () => {
 	const hotelesComentarios = reportFallas?.hoteles_comentarios?.hoteles_comentarios ?? [];
 	const [hotelHabitaciones, setHotelHabitaciones] = useState<any[]>([]);
 	const [hotelHabitacion, setHotelHabitacion] = useState<any>();
+	// Extrae los máximos de los arreglos para mejorHabitacion
+	const maxGrade = Array.isArray(mejorHabitacion?.grades)
+		? Math.max(...mejorHabitacion.grades)
+		: mejorHabitacion?.grades ?? 0;
+
+	const maxAciertos = Array.isArray(mejorHabitacion?.aciertos)
+		? Math.max(...mejorHabitacion.aciertos)
+		: mejorHabitacion?.aciertos ?? 0;
+
+	const maxFallas = Array.isArray(mejorHabitacion?.fallas)
+		? Math.max(...mejorHabitacion.fallas)
+		: mejorHabitacion?.fallas ?? 0;
+
+	const maxInspecciones = Array.isArray(mejorHabitacion?.total_inspecciones)
+		? Math.max(...mejorHabitacion.total_inspecciones)
+		: mejorHabitacion?.total_inspecciones ?? 0;
+	// Extrae los máximos de los arreglos para peorHabitacion
+	const peorGrade = Array.isArray(peorHabitacion?.grades)
+		? Math.max(...peorHabitacion.grades)
+		: peorHabitacion?.grades ?? 0;
+
+	const peorAciertos = Array.isArray(peorHabitacion?.aciertos)
+		? Math.max(...peorHabitacion.aciertos)
+		: peorHabitacion?.aciertos ?? 0;
+
+	const peorFallas = Array.isArray(peorHabitacion?.fallas)
+		? Math.max(...peorHabitacion.fallas)
+		: peorHabitacion?.fallas ?? 0;
+
+	const peorInspecciones = Array.isArray(peorHabitacion?.total_inspecciones)
+		? Math.max(...peorHabitacion.total_inspecciones)
+		: peorHabitacion?.total_inspecciones ?? 0;
+
 	const stats = [
 		{
 			icon: <Search />,
@@ -239,7 +272,7 @@ const ReportsPage = () => {
 
 	useEffect(() => {
 		if (tagsFallas && tagsFallas.length > 0) {
-			setSelectedFallas(tagsFallas.map((tag: any) => tag.falla));
+			setSelectedFallas([]);
 		}
 	}, [tagsFallas]);
 
@@ -592,17 +625,20 @@ const ReportsPage = () => {
 																.sort((a, b) => Number(a.numero_habitacion) - Number(b.numero_habitacion))
 																.map((hab, idx) => {
 																	const numero = hab.numero_habitacion;
+																	console.log("Habitación:", hab);
 
-																	let boxClass = 'border text-black bg-white'; // Por defecto blanca
+																	let boxClass = 'border text-white bg-gray-400'; // Por defecto blanca
 
-																	if (hab.inspeccion_habitacion) {
+																	if (hab.sin_fallas === true) {
+																		boxClass = 'bg-green-600 text-white';
+																	} else if (hab.inspeccion_habitacion) {
 																		if (hab.inspeccion_habitacion.fallas > 0) {
 																			boxClass = 'bg-red-600 text-white';
 																		} else {
 																			boxClass = 'bg-green-500 text-white';
 																		}
 																	} else if (hab.inspeccion_id) {
-																		boxClass = 'bg-gray-400 text-white';
+																		boxClass = 'bg-blue-500 text-white';
 																	}
 
 																	// Si está seleccionada, agrega una clase extra
@@ -670,15 +706,19 @@ const ReportsPage = () => {
 												<div>
 													<div className="font-semibold">{mejorHabitacion?._id?.habitacion}</div>
 													<div className="text-gray-500 text-sm">{mejorHabitacion?._id?.hotel}</div>
-													<div className="text-gray-500 text-sm">{mejorHabitacion?.total_inspecciones} inspecciones, {mejorHabitacion?.fallas} fallas y {mejorHabitacion?.aciertos} aciertos</div>
+													<div className="text-gray-500 text-sm">
+														{maxInspecciones} inspecciones, {maxFallas} fallas y {maxAciertos} aciertos
+													</div>
 												</div>
 												<div>
 													<div className="bg-gray-200 p-4 rounded-full">
-														{mejorHabitacion?.grades * 100}%
+														{maxGrade * 100}%
 													</div>
 												</div>
 											</div>
-											<div><ProgressBar value={mejorHabitacion?.grades * 100} color="bg-green-500" /></div>
+											<div>
+												<ProgressBar value={maxGrade * 100} color="bg-green-500" />
+											</div>
 										</div>
 										<div className="border p-4 rounded-lg w-full flex flex-col gap-4">
 											<div className="font-semibold">Habitacion con mayor indice de fallas</div>
@@ -686,15 +726,19 @@ const ReportsPage = () => {
 												<div>
 													<div className="font-semibold">{peorHabitacion?._id?.habitacion}</div>
 													<div className="text-gray-500 text-sm">{peorHabitacion?._id?.hotel}</div>
-													<div className="text-gray-500 text-sm">{peorHabitacion?.total_inspecciones} inspecciones, {peorHabitacion?.fallas} fallas y {peorHabitacion?.aciertos} aciertos</div>
+													<div className="text-gray-500 text-sm">
+														{peorInspecciones} inspecciones, {peorFallas} fallas y {peorAciertos} aciertos
+													</div>
 												</div>
 												<div>
 													<div className="bg-gray-200 p-4 rounded-full">
-														{peorHabitacion?.grades * 100}%
+														{peorGrade * 100}%
 													</div>
 												</div>
 											</div>
-											<div><ProgressBar value={peorHabitacion?.grades * 100} color="bg-red-500" /></div>
+											<div>
+												<ProgressBar value={peorGrade * 100} color="bg-red-500" />
+											</div>
 										</div>
 									</div>
 								</div>
