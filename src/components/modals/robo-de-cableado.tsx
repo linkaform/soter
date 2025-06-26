@@ -26,7 +26,7 @@ export function RoboDeCableado({ control }: Props) {
 					render={({ field }) => (
 						<FormItem>
 						<FormLabel>Valor estimado de lo sustraído:</FormLabel>
-						<FormControl><Input defaultValue="" {...field} /></FormControl>
+						<FormControl><Input {...field} /></FormControl>
 						<FormMessage />
 						</FormItem>
 					)}
@@ -37,7 +37,7 @@ export function RoboDeCableado({ control }: Props) {
 					render={({ field }) => (
 						<FormItem>
 						<FormLabel>Pertenencias sustraídas:</FormLabel>
-						<FormControl><Input defaultValue="" {...field} /></FormControl>
+						<FormControl><Input {...field} /></FormControl>
 						<FormMessage />
 						</FormItem>
 					)}

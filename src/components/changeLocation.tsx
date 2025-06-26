@@ -23,18 +23,12 @@ const ChangeLocation:React.FC<InputChangeLocation> = ({ ubicacionSeleccionada, s
 
 	useEffect(()=>{
 		if(locations.length==0 ){
-			console.log("quee")
 			fetchLocations();
 		}
-
-		// if (ubicacionSeleccionada) {
-		// 	fetchAreas(ubicacionSeleccionada);
-		// }
 	},[])
 
 	useEffect(() => {
 		if (ubicacionSeleccionada) {
-			console.log("ubicacionSeleccionada",ubicacionSeleccionada)
 			fetchAreas(ubicacionSeleccionada);
 		}
 	  }, [ubicacionSeleccionada]);

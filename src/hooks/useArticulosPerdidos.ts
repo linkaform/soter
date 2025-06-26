@@ -23,10 +23,7 @@ export const useArticulosPerdidos = (location:string, area:string, status:string
               return Array.isArray(data?.response?.data) ? data?.response?.data : [];
             }
         },
-        refetchOnWindowFocus: true,
-        refetchInterval: 600000,
-        refetchOnReconnect: true,
-        staleTime: 1000 * 60 * 5,
+       
     });
 
      //Crear ArtículoPerdido
@@ -132,10 +129,6 @@ export const useArticulosPerdidos = (location:string, area:string, status:string
             const responseData = data.response?.data || {};
             return responseData;
         },
-        refetchOnWindowFocus: true,
-        refetchInterval: 60000,
-        refetchOnReconnect: true,
-        staleTime: 1000 * 60 * 5,
       });
 
     return{

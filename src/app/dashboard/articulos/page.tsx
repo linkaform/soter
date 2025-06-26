@@ -21,37 +21,25 @@ import ChangeLocation from "@/components/changeLocation";
 import { useGetStats } from "@/hooks/useGetStats";
 
 const ArticulosPage = () => {
-	// const [stateArticle, setStateArticle] = useState("pendiente");
-	
 	const {location, area} = useShiftStore()
-	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
+	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location  || "Planta Monterrey");
 	const [areaSeleccionada, setAreaSeleccionada] = useState("todas")
-
 	const [date1, setDate1] = useState<Date|"">("")
 	const [date2, setDate2] = useState<Date|"">("")
-
 	const [dates, setDates] = useState<string[]>([])
 	const [dateFilter, setDateFilter] = useState<string>("this_month")
-	console.log("ubicacion area",location, area,ubicacionSeleccionada, areaSeleccionada)
 	const { data: stats } = useGetStats(true,location, area, 'Articulos')
 	const { listArticulosPerdidos, isLoadingListArticulosPerdidos} = useArticulosPerdidos(ubicacionSeleccionada,  areaSeleccionada == "todas" ? "": areaSeleccionada, "", true, dates[0], dates[1], dateFilter);
 	const { listArticulosCon, isLoadingListArticulosCon} = useArticulosConcesionados( true, dates[0], dates[1], dateFilter);
 	const { listPaqueteria, isLoadingListPaqueteria} = usePaqueteria("", "", "guardado", true, dates[0], dates[1], dateFilter);
 	const { tab, setTab } = useShiftStore()
 	const [selectedTab, setSelectedTab] = useState<string>(tab ? tab:'Perdidos'); 
-
 	const [isSuccess, setIsSuccess] = useState(false);
 	const [modalData] = useState<any>(null);
 	const [selectedArticulos, setSelectedArticulos]= useState<string[]>([]);
 	console.log(selectedArticulos)
 	const [isSuccessCon, setIsSuccessCon] = useState(false);
 	const [isSuccessPaq, setIsSuccessPaq] = useState(false);
-
-	useEffect(() => {
-		if(location)
-			console.log("ubicaciones")
-			setUbicacionSeleccionada(location)
-	}, []); 
 
 	useEffect(()=>{
 		if(tab){
@@ -82,8 +70,8 @@ const ArticulosPage = () => {
 	};
 	
 	useEffect(()=>{
-		setUbicacionSeleccionada("")
-		setAreaSeleccionada("")
+		setUbicacionSeleccionada(location || "Planta Monterrey")
+		setAreaSeleccionada("todas")
 	},[])
 
 	const Filter = () => {

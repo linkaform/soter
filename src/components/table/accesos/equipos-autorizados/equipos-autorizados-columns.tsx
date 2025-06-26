@@ -25,7 +25,6 @@ export const EquipoAutorizadoColumns: ColumnDef<Equipo>[] = [
   
         setSelectedEquipos(nuevos);
       };
-      console.log("row selected", row.getIsSelected())
       return (
         <Checkbox
           className="p-0 m-0 flex"

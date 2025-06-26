@@ -23,46 +23,65 @@ export const ScanPassOptionsModal: React.FC<ScanPassOptionsModalProps> = ({
     inputRef
 }) => {
     const [open, setOpen] = useState(false);
+    const [openCamera, setOpenCamera] = useState(false);
 
     const handleScannerClick = () => {
         setOpen(false);
         setTimeout(() => {
             inputRef.current?.focus();
-        }, 200); // Espera a que el modal termine de cerrarse
+        }, 200);
+    };
+
+    const handleOpenCamera = () => {
+        setOpenCamera(true);
+    };
+
+    // Cuando se cierra el modal de cámara, también cierra el de opciones
+    const handleCloseCamera = (value: boolean) => {
+        setOpenCamera(value);
+        if (!value) setOpen(false);
     };
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>{children}</DialogTrigger>
-            <DialogContent className='max-w-xl' aria-describedby='add-note-description'>
-                <DialogHeader>
-                    <DialogTitle className='text-2xl text-center font-bold my-5'>
-                        {title}
-                    </DialogTitle>
-                    <DialogDescription id='add-note-description' className='text-center'>
-                        Escoge el dispositivo para empezar escanear tu pase.
-                    </DialogDescription>
-                </DialogHeader>
-                <div className='flex items-center justify-center gap-4 mb-8 mt-2'>
-                    <div>
-                        <ScanPassWithCameraModal title="Escanea un pase con la camara" >
-                            <Button className="bg-green-600 hover:bg-green-700 text-white">
+        <>
+            <Dialog open={open} onOpenChange={setOpen}>
+                <DialogTrigger asChild>{children}</DialogTrigger>
+                <DialogContent className='max-w-xl' aria-describedby='add-note-description'>
+                    <DialogHeader>
+                        <DialogTitle className='text-2xl text-center font-bold my-5'>
+                            {title}
+                        </DialogTitle>
+                        <DialogDescription id='add-note-description' className='text-center'>
+                            Escoge el dispositivo para empezar escanear tu pase.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className='flex items-center justify-center gap-4 mb-8 mt-2'>
+                        <div>
+                            <Button
+                                className="bg-green-600 hover:bg-green-700 text-white"
+                                onClick={handleOpenCamera}
+                            >
                                 <Webcam />
                                 Utilizar cámara
                             </Button>
-                        </ScanPassWithCameraModal>
+                        </div>
+                        <div>
+                            <Button
+                                className="bg-purple-500 hover:bg-purple-600 text-white"
+                                onClick={handleScannerClick}
+                            >
+                                <ScanLine />
+                                Utilizar scanner
+                            </Button>
+                        </div>
                     </div>
-                    <div>
-                        <Button
-                            className="bg-purple-500 hover:bg-purple-600 text-white"
-                            onClick={handleScannerClick}
-                        >
-                            <ScanLine />
-                            Utilizar scanner
-                        </Button>
-                    </div>
-                </div>
-            </DialogContent>
-        </Dialog>
+                </DialogContent>
+            </Dialog>
+            <ScanPassWithCameraModal
+                title="Escanea un pase con la camara"
+                open={openCamera}
+                setOpen={handleCloseCamera}
+            />
+        </>
     )
 }

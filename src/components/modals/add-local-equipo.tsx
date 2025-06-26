@@ -18,13 +18,6 @@ import {
   FormMessage,
 } from "../ui/form";
 
-// import {
-//   Select,
-//   SelectContent,
-//   SelectItem,
-//   SelectTrigger,
-//   SelectValue,
-// } from "../ui/select";
 
 import { Input } from "../ui/input";
 
@@ -90,7 +83,6 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
   });
 
   function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log("dataa", data)
     addNewEquipment(data)
     form.reset();
     toast.success(
@@ -100,7 +92,6 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
   }
 
   const addNewEquipment = (data: z.infer<typeof formSchema>) => {
-    console.log("tipo", data)
     if( isAccesos ){
 		setSelectedEquipos([...selectedEquipos,  {
 			color: data.color||"",
@@ -171,7 +162,7 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
         
       </DialogTrigger>
 
-      <DialogContent className="max-w-xl  overflow-y-auto max-h-[90vh] flex flex-col" aria-describedby=""
+      <DialogContent className="max-w-xl max-h-[90vh] flex flex-col" aria-describedby=""
         onInteractOutside={(e) => {
           if ((e.target as HTMLElement).closest('.react-select__menu')) {
             e.preventDefault();
@@ -189,7 +180,7 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex-grow overflow-y-auto p-4">
+        <div className="">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
@@ -204,7 +195,6 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
                     name="aria-live-color"
                     options={catTiposEquipos}
                     onChange={(value:any) =>{
-                      console.log(value.value)
                       field.onChange(value.value);
                     }}
                   />

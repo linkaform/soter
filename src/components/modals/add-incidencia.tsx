@@ -57,7 +57,7 @@ import { format } from 'date-fns';
 import DateTime from "../dateTime";
 import LoadFile from "../upload-file";
 import { Loader2 } from "lucide-react";
-import { AccionesTomadas, PersonasInvolucradas } from "@/lib/incidencias";
+import { AccionesTomadas, Depositos, PersonasInvolucradas } from "@/lib/incidencias";
 import PersonasInvolucradasList from "../personas-involucradas-list";
 import AccionesTomadasList from "../acciones-tomadas-list";
 import { useShiftStore } from "@/store/useShiftStore";
@@ -70,6 +70,7 @@ import { useCatalogoInciencias } from "@/hooks/useCatalogoIncidencias";
 import { PersonaExtraviadaFields } from "./persona-extraviada";
 import { RoboDeCableado } from "./robo-de-cableado";
 import { RoboDeVehiculo } from "./robo-de-vehiculo";
+import DepositosList from "../depositos-list";
 
 interface AddIncidenciaModalProps {
   	title: string;
@@ -78,7 +79,7 @@ interface AddIncidenciaModalProps {
 	onClose: ()=> void;
 }
 
- const categoriasConIconos = [
+export const categoriasConIconos = [
 	{
 	  nombre: "Fraude y extorsión",
 	  icon: <CircleDollarSign />,
@@ -140,7 +141,7 @@ interface AddIncidenciaModalProps {
 	  id: 12
 	}
   ];
-  const subCategoriasConIconos = [
+export const subCategoriasConIconos = [
 	{
 	  nombre: "Vandalismo",
 	  icon: <SprayCan />,
@@ -252,7 +253,7 @@ export const formSchema = z.object({
 	estatura_aproximada: z.string().optional(),
 	descripcion_fisica_vestimenta: z.string().optional(),
 	nombre_completo_responsable: z.string().optional(),
-	prentesco: z.string().optional(),
+	parentesco: z.string().optional(),
 	num_doc_identidad: z.string().optional(),
 	telefono: z.string().optional(),
 	info_coincide_con_videos: z.string().optional(),
@@ -282,11 +283,12 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const [date, setDate] = useState<Date|"">("");
 
 	// const [incidencia, setIncidencia] = useState("")
-	const { dataAreas:areas, isLoadingAreas:loadingAreas} = useCatalogoPaseAreaLocation(location, true,  location?true:false);
+	const[ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location)
+	const { dataAreas:areas, dataLocations:ubicaciones,isLoadingAreas:loadingAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, isSuccess,  location?true:false);
 	// const [catAreas, setCatAreas] = useState<any| string[]>(areas);
 	const [personasInvolucradas, setPersonasInvolucradas] = useState<PersonasInvolucradas[]>([])
 	const [accionesTomadas, setAccionesTomadas] = useState<AccionesTomadas[]>([])
-	// const [depositos, setDepositos] = useState<Depositos[]>([])
+	const [depositos, setDepositos] = useState<Depositos[]>([])
 	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado } = useCatalogoAreaEmpleado(isSuccess, location, "Incidencias");
 	const { createIncidenciaMutation , loading} = useInciencias("","",[], "", "", "");
 	
@@ -297,10 +299,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const [subCategoria, setSubCategoria]= useState("")
 	const [categoria, setCategoria]= useState("")
 	const [selectedIncidencia, setSelectedIncidencia]= useState("")
-
 	const { catIncidencias, isLoadingCatIncidencias } = useCatalogoInciencias(isSuccess, categoria, subCategoria);
-	console.log(" cat INcidencias", catIncidencias)
-
 	const [catCategorias, setCatCategorias] = useState<any[]>([])
 	
 	const [selectedNotificacion, setSelectedNotification] = useState("no")
@@ -308,22 +307,22 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const [inputTag, setInputTag] = useState('');
 	const [tagsSeleccionados, setTagsSeleccionados] = useState<string[]>([]);
 
-	useEffect(()=>{
-		if(!isSuccess)
-			resetStates()
-	},[isSuccess]);	
+
 
 	const resetStates = ()=>{
 		setSearch("")
 		setSubCategoria("")
 		setCategoria("")
 		setSelectedIncidencia("")
+		console.log("cxatIncidencias", catIncidencias)
 		const catIncidenciasIcons = categoriasConIconos?.filter((cat) =>
-			catIncidencias?.includes(cat.nombre)
+			catIncidencias?.data.includes(cat.nombre)
 			);
+		
 		setCatCategorias(catIncidenciasIcons)
 		setCatSubIncidences([])
 		setSubCatCategorias([])
+		setDepositos([])
 	}
 	const agregarTag = () => {
 		const nuevoTag = inputTag.trim();
@@ -337,32 +336,27 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 		if(catIncidencias){
 			if(search==""){
 				const catIncidenciasIcons = categoriasConIconos.filter((cat) =>
-					catIncidencias.includes(cat.nombre)
-					);
+					catIncidencias.data.includes(cat.nombre)
+				);
 				if(catIncidenciasIcons.length>0){
 					setCatCategorias(catIncidenciasIcons)
-				}else{
-
 				}
 			}else if(search=="cat" || search=="subCat"){
-				console.log("entrada", search)
-				const catIncidenciasIcons = categoriasConIconos.filter((cat) =>
-					catIncidencias.includes(cat.nombre)
-					);
-		
-				if (catIncidenciasIcons.length>0) {
-					//Si me regresa el mismo catalogo de categorias, entonces nos pasamos directo al modal
-					setSelectedIncidencia(categoria)
-				} else {
-					//Si en caso de ser diferentes, reviso en las sub categorias, si existen las muestro y si no, muestro las lista de incidencias de esa sub categoria
+				if(catIncidencias.type=="incidence"){
+					const formattedSubIncidentes = catIncidencias.data.map((nombre:string) => ({
+						id: nombre,
+						nombre,
+						icono: ""
+					  }));
+					setSearch("subCat")
+					setSubCatCategorias([])
+					setCatSubIncidences(formattedSubIncidentes)
+				}else if (catIncidencias.type == "sub_catalog"){
 					const subCatIncidenciasIcons = subCategoriasConIconos.filter((cat) =>
-						catIncidencias.includes(cat.nombre)
+						catIncidencias.data.includes(cat.nombre)
 					);
-					if(subCatIncidenciasIcons.length == 0){
-						setCatSubIncidences(catIncidencias)
-					}else{
-						setSubCatCategorias(subCatIncidenciasIcons)
-					}
+					setSearch("cat")
+					setSubCatCategorias(subCatIncidenciasIcons)
 				}
 			}
 		}
@@ -390,7 +384,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 			documento_incidencia:documento,
 			prioridad_incidencia:"",
 			notificacion_incidencia:"",
-			datos_deposito_incidencia: [],
+			datos_deposito_incidencia: depositos,
 			tags:[],
 			categoria:"",
 			sub_categoria:"",
@@ -403,7 +397,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 			estatura_aproximada:"",
 			descripcion_fisica_vestimenta:"",
 			nombre_completo_responsable:"",
-			prentesco:"",
+			parentesco:"",
 			num_doc_identidad:"",
 			telefono:"",
 			info_coincide_con_videos:"",
@@ -426,14 +420,15 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const { reset } = form;
 
 	useEffect(()=>{
-		if(isSuccess){
+		if(!isSuccess)
+			resetStates()
 			reset()
 			setDate(new Date())
 			setEvidencia([])
 			setDocumento([])
-		}
-		
-	},[isSuccess])
+			console.log("ubicacion seleccionada", location)
+			setUbicacionSeleccionada(location)
+	},[isSuccess]);	
 
 	useEffect(()=>{
 		if(form.formState.errors){
@@ -450,6 +445,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const handleToggleNotifications = (value:string)=>{
 		setSelectedNotification(value);
 	}
+
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		let formattedDate=""
 		if(date){
@@ -457,7 +453,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 			const formatData ={
 					reporta_incidencia: values.reporta_incidencia||"",
 					fecha_hora_incidencia:formattedDate||"",
-					ubicacion_incidencia:location||"",
+					ubicacion_incidencia:ubicacionSeleccionada||"",
 					area_incidencia: values.area_incidencia||"",
 					incidencia:selectedIncidencia||"",
 					comentario_incidencia: values.comentario_incidencia||"",
@@ -469,7 +465,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 					documento_incidencia:documento||[],
 					prioridad_incidencia:getNivel(value[0])||"",
 					notificacion_incidencia:selectedNotificacion||"",
-					datos_deposito_incidencia: [],
+					datos_deposito_incidencia: depositos,
 					tags:tagsSeleccionados,
 					categoria:categoria,
 					sub_categoria:subCategoria,
@@ -482,7 +478,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 					estatura_aproximada: values.estatura_aproximada,
 					descripcion_fisica_vestimenta: values.descripcion_fisica_vestimenta,
 					nombre_completo_responsable: values.nombre_completo_responsable,
-					prentesco: values.prentesco,
+					parentesco: values.parentesco,
 					num_doc_identidad: values.num_doc_identidad,
 					telefono: values.telefono,
 					info_coincide_con_videos: values.info_coincide_con_videos,
@@ -508,11 +504,13 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const handleClose = () => {
 		setIsSuccess(false); 
 	};
+
 	const getNivel = (val: number) => {
 		if (val < 35) return "Baja"
 		if (val < 70) return "Media"
 		return "Alta"
 	}
+
   return (
     <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
       <DialogContent className="max-w-4xl overflow-y-auto max-h-[80vh] min-h-[80vh]  flex flex-col " aria-describedby="">
@@ -588,8 +586,13 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 						<>
 							<button
 							onClick={() => {
-								setSearch("cat");  
+								if(catSubCategorias.length==0){
+									setSearch("");
+								}else{
+									setSearch("cat");
+								}
 								setSubCategoria("")
+
 								setSelectedIncidencia("")
 								}
 							}
@@ -601,14 +604,14 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 							<div className="flex flex-col w-full">
 								{catSubIncidences?.map((cat:any) => (
 									<div
-									key={cat}
+									key={cat.id}
 									onClick={() => { 
 										setSearch("incidencia")
-										setSelectedIncidencia(cat)
+										setSelectedIncidencia(cat.nombre)
 									}}
 									className="p-1 bg-white rounded hover:bg-gray-100 cursor-pointer flex justify-between"
 									>
-									<div className="text-sm font-medium">{cat}</div>
+									<div className="text-sm font-medium">{cat.nombre}</div>
 									<ChevronRight className="w-4 h-4 text-gray-500" />
 
 									</div>
@@ -677,7 +680,37 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 										</FormItem>
 									)}
 								/>	
-
+								<FormField
+									control={form.control}
+									name="ubicacion_incidencia"
+									render={({ field }:any) => (
+										<FormItem>
+											<FormLabel>Ubicacion:</FormLabel>
+											<FormControl>
+											<Select {...field} className="input"
+												onValueChange={(value:string) => {
+												field.onChange(value); 
+												setUbicacionSeleccionada(value); 
+											}}
+											value={ubicacionSeleccionada} 
+										>
+											<SelectTrigger className="w-full">
+												{loadingUbicaciones?
+												<SelectValue placeholder="Cargando ubicaciones..." />:<SelectValue placeholder="Selecciona una ubicación" />}
+											</SelectTrigger>
+											<SelectContent>
+											{ubicaciones?.map((vehiculo:string, index:number) => (
+												<SelectItem key={index} value={vehiculo}>
+													{vehiculo}
+												</SelectItem>
+											))}
+											</SelectContent>
+										</Select>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
 								<FormField
 									control={form.control}
 									name="area_incidencia"
@@ -729,7 +762,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 									defaultValue="media"
 									render={() => (
 										<FormItem className="w-full">
-											<div className="text-sm font-medium mb-7">
+												<div className="text-sm font-medium mb-7">
 													Importancia: <span className="font-bold">{getNivel(value[0])}</span>
 												</div> 
 											<FormControl>
@@ -781,57 +814,8 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 									docArray={documento}
 									limit={10}/>
 
-								{/* <FormField
-									control={form.control}
-									name="incidencia"
-									render={({ field }:any) => (
-										<FormItem className="w-full">
-											<FormLabel>Incidencia: *</FormLabel>
-											<FormControl>
-											<Select {...field} className="input"
-												onValueChange={(value:string) => {
-												field.onChange(value);
-												if(value=="Depósitos") {
-													setIncidencia(value)
-												}
-											}}
-											value={field.value} 
-										>
-											<SelectTrigger className="w-full">
-												{isLoadingCatIncidencias ? (
-													<SelectValue placeholder="Cargando incidencias..." />
-												):
-												(
-													<SelectValue placeholder="Selecciona una incidencia" />
-												)}
-											</SelectTrigger>
-											<SelectContent>
-											{catIncidencias?.map((vehiculo:string, index:number) => {
-												return (
-													<SelectItem key={index} value={vehiculo}>
-														{vehiculo}
-													</SelectItem>
-												)
-											})}
-											</SelectContent>
-										</Select>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>	 */}
-
-								
-								{/* {incidencia=="Depósitos" && 
-								<div className="col-span-1 md:col-span-2">
-									<DepositosList depositos={depositos} setDepositos={setDepositos} ></DepositosList>
-								</div>
-								} */}
-
-
 
 								<div className="space-y-3">
-								{/* Input para escribir tag */}
 									<div className="text-sm font-medium ">
 										Tags: 
 									</div> 
@@ -849,108 +833,37 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 									/>
 									<Button type="button" onClick={agregarTag}>Agregar</Button>
 								</div>
-
-								{/* Tags seleccionados */}
-								<div className="flex flex-wrap gap-2">
-									
-									{tagsSeleccionados.map((tag, index) => (
-									<div
-										key={index}
-										className="flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
-									>
-										{tag}
-										<button
-										onClick={() => quitarTag(tag)}
-										className="ml-2 text-blue-500 hover:text-blue-700 font-bold"
+									<div className="flex flex-wrap gap-2">
+										{tagsSeleccionados.map((tag, index) => (
+										<div
+											key={index}
+											className="flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
 										>
-										&times;
-										</button>
+											{tag}
+											<button
+											onClick={() => quitarTag(tag)}
+											className="ml-2 text-blue-500 hover:text-blue-700 font-bold"
+											>
+											&times;
+											</button>
+										</div>
+										))}
 									</div>
-									))}
 								</div>
-								</div>
-
-								
 
 							
 								<div className="flex items-center flex-wrap gap-5">
-										<FormLabel>Notificacones: {`(No/Correo)`}:  </FormLabel>
-											<Switch
-												defaultChecked={false}
-												// value={false}
-												onCheckedChange={()=>{handleToggleNotifications("no")}}
-												aria-readonly
-											/>
-										{/* <Controller
-											control={form.control}
-											name="notificacion_incidencia"
-											render={() => (
-												<FormItem>
-													<Button
-														type="button"
-														onClick={()=>{handleToggleNotifications("no")}}
-														className={`px-4 py-2 rounded-md transition-all duration-300 ${
-														selectedNotificacion=="no" ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
-														} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)] mr-2`}
-													>
-														<div className="flex flex-wrap items-center">
-														{selectedNotificacion =="no" ? (
-															<><div className="">No</div></>
-														):(
-															<><div className="text-blue-600">No</div></>
-														)}
-															
-														</div>
-													</Button>
-													<Button
-														type="button"
-														onClick={()=>{handleToggleNotifications("correo")}}
-														className={`px-4 py-2 rounded-md transition-all duration-300 ${
-															selectedNotificacion=="correo" ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
-														} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]  mr-2`}
-													>
-														<div className="flex flex-wrap items-center">
-														{selectedNotificacion =="correo"? (
-															<><div >Correo</div></>
-														):(
-															<><div className="text-blue-600">Correo</div></>
-														)}
-															
-														</div>
-													</Button>
-												</FormItem>
-											)}
-										/> */}
-									</div>
-											{/* <Select {...field} className="input"
-												onValueChange={(value:string) => {
-												field.onChange(value); 
-											}}
-											value={field.value} 
-										>
-											<SelectTrigger className="w-full">
-											<SelectValue placeholder="Selecciona una opcion" />
-											</SelectTrigger>
-											<SelectContent>
-												<SelectItem key={"no"} value={"no"}>
-													No
-												</SelectItem>
-												<SelectItem key={"correo"} value={"correo"}>
-												Correo
-											</SelectItem>
-											</SelectContent>
-										</Select> */}
-											{/* </FormControl>
-											<FormMessage />
-										</FormItem> */}
-									{/* )}
-								/>	 */}
-
-
+									<FormLabel>Notificaciones: {`(No/Correo)`}:  </FormLabel>
+										<Switch
+											defaultChecked={false}
+											onCheckedChange={()=>{handleToggleNotifications("no")}}
+											aria-readonly
+										/>
+								</div>
       
 								{selectedIncidencia =="Persona extraviada" && (
 									<div className="col-span-2 w-full">
-										<PersonaExtraviadaFields control={form.control} data={{}}></PersonaExtraviadaFields>
+										<PersonaExtraviadaFields control={form.control}></PersonaExtraviadaFields>
 									</div>
 								)}
 								{selectedIncidencia =="Robo de cableado" && (
@@ -966,7 +879,11 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 										<RoboDeVehiculo control={form.control} ></RoboDeVehiculo>
 									</div>
 								)}
-
+								{selectedIncidencia=="Depósitos y retiros de valores" && 
+								<div className="col-span-1 md:col-span-2">
+									<DepositosList depositos={depositos} setDepositos={setDepositos} ></DepositosList>
+								</div>
+								}
 							</form>
 						</Form>
 				

@@ -36,7 +36,6 @@ export const useGetShift = (enableShift:boolean) => {
     queryFn: async () => {
       	const data = await getShift({ area, location });
 		if(!data.success){
-			console.log("Error al obtener shift")
 			throw new Error(data.error?.exception?.msg[0] || "Hubo un error al obtener load shift");
 		}else{
 			const filteredGuards = data.response?.data?.support_guards?.filter((guard: any) => {

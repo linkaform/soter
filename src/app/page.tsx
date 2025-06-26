@@ -14,7 +14,6 @@ export default function Home() {
     
     useEffect(()=>{
         if (!area && !location) {
-            console.log("area, location", area, location, !area && !location)
 			fetchShift();
 		}
     },[area, location, fetchShift])

@@ -54,7 +54,6 @@ export const AddSmsModal: React.FC<Props> = ({ title, open, setOpen, id, setOpen
     });
 
   function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log("info para enviar",data);
     updateDataMutation.mutate({access_pass: data, id:id , account_id:userIdSoter },  
         {
             onSuccess: () => {

@@ -191,7 +191,7 @@ export const EditarFallaModal: React.FC<EditarFallaModalProps> = ({
 		<div className="cursor-pointer" onClick={handleOpenModal}>
 			<Edit />
 		</div>
-	<DialogContent className="max-w-3xl overflow-y-auto max-h-[80vh] flex flex-col" aria-describedby="">
+	<DialogContent className="max-w-3xl overflow-y-auto max-h-[80vh] min-h-[80vh] flex flex-col" aria-describedby="">
 		<DialogHeader className="flex-shrink-0">
 		<DialogTitle className="text-2xl text-center font-bold">
 			{title}

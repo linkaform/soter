@@ -112,11 +112,6 @@ export const formSchema =
 		}
 	}, [marcaState]);
 
-	// useEffect(()=>{
-	// 	if(loadingCat){
-	// 		console.log("loadingCat",loadingCat)
-	// 	}
-	// },[loadingCat])
 	const handleInputChange = (value:string, fieldName: string) => {
 		if (value === "") {
 			if (fieldName === "tipo") {
@@ -128,7 +123,6 @@ export const formSchema =
 
 return (
 <div className="p-2">
-	{/* Confirmar Pase de entrada modal */}
 	<div className="flex justify-between">
 		{isCollapsed ? (<>
 		<h3 className="font-bold text-lg ml-3">{vehicle?.tipo}</h3>

@@ -18,27 +18,21 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-
 import { Textarea } from "@/components/ui/textarea";
-
 import { EntryPassModal } from "@/components/modals/add-pass-modal";
 import { List } from "lucide-react";
 import { formatDateToString, formatFecha } from "@/lib/utils";
 import AreasList from "@/components/areas-list";
 import { Areas, Comentarios } from "@/hooks/useCreateAccessPass";
 import ComentariosList from "@/components/comentarios-list";
-// import DateTime from "@/components/dateTime";
 import { MisContactosModal } from "@/components/modals/user-contacts";
 import Image from "next/image";
 import { Contacto } from "@/lib/get-user-contacts";
 import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
 import { usePaseEntrada } from "@/hooks/usePaseEntrada";
 import { useShiftStore } from "@/store/useShiftStore";
-// import {DateTimePicker} from "@vaadin/date-time-picker"
-// import '@vaadin/date-time-picker';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import DateTime from "@/components/dateTime";
-// import { DateTimePicker } from "@vaadin/date-time-picker";
 
 
  const formSchema = z
@@ -145,7 +139,6 @@ import DateTime from "@/components/dateTime";
 	const [config_dia_de_acceso, set_config_dia_de_acceso] = useState("cualquier_día");
 	const [isSuccess, setIsSuccess] = useState(false);
 	const [modalData, setModalData] = useState<any>(null);
-	// const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState('');
 	const { dataAreas:catAreas, dataLocations:ubicaciones, ubicacionesDefaultFormatted, isLoadingAreas:loadingCatAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(location, true, location?true:false);
 	const [ubicacionesSeleccionadas, setUbicacionesSeleccionadas] = useState<any[]>(ubicacionesDefaultFormatted??[]);
 	const pickerRef = useRef<any>(null);
@@ -154,7 +147,6 @@ import DateTime from "@/components/dateTime";
 	  const picker = pickerRef.current;
 	  if (picker) {
 		const handleChange = (e: any) => {
-		//   console.log('Valor seleccionadoO:',new Date( formatFecha(e.target.value+":00") ));
 		  setDate(new Date( formatFecha(e.target.value+":00")))
 		};
   
@@ -163,7 +155,6 @@ import DateTime from "@/components/dateTime";
 	  }
 	}, []);
 
-	// const ubicacionesDefaultFormatted= ubicacionesDefault?.map((u: any) => ({ id: u, name: u }));
 	const ubicacionesFormatted = ubicaciones?.map((u: any) => ({ id: u, name: u }));
 
 	const [userIdSoter] = useState<number|null>(()=>{
@@ -361,7 +352,6 @@ import DateTime from "@/components/dateTime";
 				numero: data.telefono,
 		},
 		};
-		console.log("ubicaciones ")
 		if(tipoVisita == "fecha_fija" && date == ""){
 			form.setError("fechaFija", { type: "manual", message: "Fecha Fija es requerida cuando el tipo de pase es 'fecha fija'." });
 		}else if(tipoVisita == "rango_de_fechas" && (formattedData.fecha_desde_visita == "" || formattedData.fecha_desde_hasta == "" ) ){

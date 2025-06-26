@@ -14,7 +14,6 @@ export const useInciencias = (location:string, area:string, prioridades:string[]
         queryKey: ["getListIncidencias",location, area, prioridades, dateFrom, dateTo, filterDate],
         enabled: location!=="",
         queryFn: async () => {
-          console.log("hellowww")
             const data = await getListIncidencias(location, area, prioridades, dateFrom, dateTo, filterDate);
             return Array.isArray( data.response?.data) ?  data.response?.data: []; 
         },
