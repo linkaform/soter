@@ -4,6 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Eye } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { HabitacionInspeccionadaModal } from "../modals/hab-inspeccionada-modal";
 
 export type HabitacionInspeccionada = {
     id?: string; // Puede que no venga, así que opcional
@@ -20,16 +21,15 @@ export const habitacionesInspeccionadasColumns: ColumnDef<HabitacionInspeccionad
         id: "acciones",
         header: "Acciones",
         cell: ({ row }) => (
-            <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                    // Aquí abrirías tu modal
-                    console.log("Abrir modal para:", row.original);
-                }}
+            <HabitacionInspeccionadaModal
+                title="Detalle de habitación inspeccionada"
+                hotel={row.original.hotel}
+                habitacion={row.original.habitacion}
             >
-                <Eye />
-            </Button>
+                <Button variant="outline" size="sm">
+                    <Eye />
+                </Button>
+            </HabitacionInspeccionadaModal>
         ),
     },
     {

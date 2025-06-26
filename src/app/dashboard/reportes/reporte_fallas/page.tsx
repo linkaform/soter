@@ -291,7 +291,8 @@ const ReportsPage = () => {
 	}, [fallasXHotelGraph]);
 
 	useEffect(() => {
-		if (!selectedFallas || selectedFallas.length === 0) return;
+		// Cambio de prueba para hacer la peticion si no hay fallas seleccionadas
+		// if (!selectedFallas || selectedFallas.length === 0) return;
 
 		const handler = setTimeout(() => {
 			// Si hay un solo hotel en la gráfica
@@ -625,7 +626,6 @@ const ReportsPage = () => {
 																.sort((a, b) => Number(a.numero_habitacion) - Number(b.numero_habitacion))
 																.map((hab, idx) => {
 																	const numero = hab.numero_habitacion;
-																	console.log("Habitación:", hab);
 
 																	let boxClass = 'border text-white bg-gray-400'; // Por defecto blanca
 
