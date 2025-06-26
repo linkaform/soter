@@ -49,7 +49,7 @@ const ImageCarrousel = ({ images, cols = '6' }: ImageCarrouselProps) => {
 
     return (
         <div className="mx-6">
-            <div className="flex justify-between mt-4 items-center flex-wrap gap-2">
+            <div className="flex mt-4 items-center flex-wrap gap-10">
                 <div className="text-2xl">
                     Fotografías <span className="text-gray-500 ms-4">{filteredImages.length ?? 0} imágenes</span>
                 </div>
