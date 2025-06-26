@@ -283,7 +283,8 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const [date, setDate] = useState<Date|"">("");
 
 	// const [incidencia, setIncidencia] = useState("")
-	const { dataAreas:areas, isLoadingAreas:loadingAreas} = useCatalogoPaseAreaLocation(location, true,  location?true:false);
+	const[ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location)
+	const { dataAreas:areas, dataLocations:ubicaciones,isLoadingAreas:loadingAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, isSuccess,  location?true:false);
 	// const [catAreas, setCatAreas] = useState<any| string[]>(areas);
 	const [personasInvolucradas, setPersonasInvolucradas] = useState<PersonasInvolucradas[]>([])
 	const [accionesTomadas, setAccionesTomadas] = useState<AccionesTomadas[]>([])
@@ -357,24 +358,6 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 					setSearch("cat")
 					setSubCatCategorias(subCatIncidenciasIcons)
 				}
-				// const catIncidenciasIcons = categoriasConIconos.filter((cat) =>
-				// 	catIncidencias.data.includes(cat.nombre)
-				// 	);
-		
-				// if (catIncidenciasIcons.length>0) {
-				// 	//Si me regresa el mismo catalogo de categorias, entonces nos pasamos directo al modal
-				// 	setSelectedIncidencia(categoria)
-				// } else {
-				// 	//Si en caso de ser diferentes, reviso en las sub categorias, si existen las muestro y si no, muestro las lista de incidencias de esa sub categoria
-				// 	const subCatIncidenciasIcons = subCategoriasConIconos.filter((cat) =>
-				// 		catIncidencias.data.includes(cat.nombre)
-				// 	);
-				// 	if(subCatIncidenciasIcons.length == 0){
-				// 		setCatSubIncidences(catIncidencias.data)
-				// 	}else{
-				// 		setSubCatCategorias(subCatIncidenciasIcons)
-				// 	}
-				// }
 			}
 		}
 	},[catIncidencias] )
@@ -443,6 +426,8 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 			setDate(new Date())
 			setEvidencia([])
 			setDocumento([])
+			console.log("ubicacion seleccionada", location)
+			setUbicacionSeleccionada(location)
 	},[isSuccess]);	
 
 	useEffect(()=>{
@@ -468,7 +453,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 			const formatData ={
 					reporta_incidencia: values.reporta_incidencia||"",
 					fecha_hora_incidencia:formattedDate||"",
-					ubicacion_incidencia:location||"",
+					ubicacion_incidencia:ubicacionSeleccionada||"",
 					area_incidencia: values.area_incidencia||"",
 					incidencia:selectedIncidencia||"",
 					comentario_incidencia: values.comentario_incidencia||"",
@@ -695,7 +680,37 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 										</FormItem>
 									)}
 								/>	
-
+								<FormField
+									control={form.control}
+									name="ubicacion_incidencia"
+									render={({ field }:any) => (
+										<FormItem>
+											<FormLabel>Ubicacion:</FormLabel>
+											<FormControl>
+											<Select {...field} className="input"
+												onValueChange={(value:string) => {
+												field.onChange(value); 
+												setUbicacionSeleccionada(value); 
+											}}
+											value={ubicacionSeleccionada} 
+										>
+											<SelectTrigger className="w-full">
+												{loadingUbicaciones?
+												<SelectValue placeholder="Cargando ubicaciones..." />:<SelectValue placeholder="Selecciona una ubicación" />}
+											</SelectTrigger>
+											<SelectContent>
+											{ubicaciones?.map((vehiculo:string, index:number) => (
+												<SelectItem key={index} value={vehiculo}>
+													{vehiculo}
+												</SelectItem>
+											))}
+											</SelectContent>
+										</Select>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
 								<FormField
 									control={form.control}
 									name="area_incidencia"

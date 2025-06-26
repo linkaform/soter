@@ -22,7 +22,7 @@ import { useGetStats } from "@/hooks/useGetStats";
 
 const ArticulosPage = () => {
 	const {location, area} = useShiftStore()
-	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
+	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location  || "Planta Monterrey");
 	const [areaSeleccionada, setAreaSeleccionada] = useState("todas")
 	const [date1, setDate1] = useState<Date|"">("")
 	const [date2, setDate2] = useState<Date|"">("")
@@ -40,11 +40,6 @@ const ArticulosPage = () => {
 	console.log(selectedArticulos)
 	const [isSuccessCon, setIsSuccessCon] = useState(false);
 	const [isSuccessPaq, setIsSuccessPaq] = useState(false);
-
-	useEffect(() => {
-		if(location)
-			setUbicacionSeleccionada(location)
-	}, []); 
 
 	useEffect(()=>{
 		if(tab){
@@ -75,8 +70,8 @@ const ArticulosPage = () => {
 	};
 	
 	useEffect(()=>{
-		setUbicacionSeleccionada("")
-		setAreaSeleccionada("")
+		setUbicacionSeleccionada(location || "Planta Monterrey")
+		setAreaSeleccionada("todas")
 	},[])
 
 	const Filter = () => {

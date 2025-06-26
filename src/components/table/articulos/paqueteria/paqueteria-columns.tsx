@@ -52,12 +52,6 @@ const OptionsCell: React.FC<{ row: any }> = ({ row}) => {
       <DevolucionPaqModal 
               title="Devolver paquete"
               data={paquete} />
-		{/* 
-
-		
-		
-
-		 */}
 
     </div>
   );
@@ -95,7 +89,7 @@ export const paqueteriaColumns: ColumnDef<Paquete_record>[] = [
       accessorKey:"foto_perdido",
       header:"Fotografía",
       cell: ({ row }) => {
-        const foto = row.original.fotografia_paqueteria;
+        const foto = row.original.fotografia_paqueteria.length==0 ? [{file_url:"/package.svg", file_name:""}]:row.original.fotografia_paqueteria;
           return <ViewImage imageUrl={foto?? []} />;
       }
     },

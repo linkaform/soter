@@ -21,7 +21,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Textarea } from "../ui/textarea";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { Select ,SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import LoadImage from "../upload-Image";
 import { Imagen } from "@/lib/update-pass";
 import { useCatalogoAreaEmpleado } from "@/hooks/useCatalogoAreaEmpleado";
@@ -44,6 +44,7 @@ import { Slider } from "../slider";
 import { Switch } from "@/components/ui/switch"
 import { toast } from "sonner";
 import DepositosList from "../depositos-list";
+import SelectReact from 'react-select'
 
 interface EditarIncidenciaModalProps {
   	title: string;
@@ -160,6 +161,18 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 	const { catIncidencias } = useCatalogoInciencias(modalEditarAbierto, categoria, subCategoria);
 
 	const [selectedNotificacion, setSelectedNotification] = useState(data.notificacion_incidencia)
+	// const catCategoriasFormatted = catCategorias.map((val: string) => ({
+	// 	value: val.toLowerCase(), 
+	// 	label: val
+	//   }));
+
+
+	const formatValueLabel = (array:any[])=>{
+		return array.map((val: any) => ({
+			value: val.nombre, 
+			label: val.nombre
+		}));
+	}
 	// const [inputTag, setInputTag] = useState('');
 	// const [tagsSeleccionados, setTagsSeleccionados] = useState<string[]>([]);
 
@@ -443,6 +456,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 						</div>
 						<Form {...form} >
 							<form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-5">
+				
 									<FormField
 										control={form.control}
 										name="categoria"
@@ -450,28 +464,48 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 											<FormItem className="w-full">
 												<FormLabel>Categoria: * </FormLabel>
 												<FormControl>
+												<SelectReact
+													inputId="select-categorias"
+  													name="categoria"
+													aria-labelledby="aria-label"
+													// inputId="aria-example-input"
+													// name="aria-live-color"
+													options={formatValueLabel(catCategorias)}
+													onChange={(value:any) =>{
+														field.onChange(value.value); 
+														setSearch("cat")
+														setCategoria(value.value)
+														setSubCategoria("")
+													}}
+													value={formatValueLabel(catCategorias).find(opt => opt.value === categoria) || null} 
+													isDisabled={catCategorias.length==0}
+												/>
+												</FormControl>
+												
+												
+												{/* <FormControl>
 												<Select {...field} className="input"
 													onValueChange={(value:string) => {
-													field.onChange(value); 
-													setSearch("cat")
-													setCategoria(value)
-													setSubCategoria("")
-												}}
-												value={categoria} 
-												disabled={catCategorias.length==0}
-											>
-												<SelectTrigger className="w-full">
-												<SelectValue placeholder="Selecciona una opcion" />
-												</SelectTrigger>
-												<SelectContent>
-												{catCategorias?.map((cat:any) => (
-													<SelectItem key={cat.id} value={cat.nombre}>
-														{cat.nombre}
-													</SelectItem>
-												))}
-												</SelectContent>
-											</Select>
-												</FormControl>
+														field.onChange(value); 
+														setSearch("cat")
+														setCategoria(value)
+														setSubCategoria("")
+													}}
+													value={categoria} 
+													disabled={catCategorias.length==0}
+												>
+													<SelectTrigger className="w-full">
+													<SelectValue placeholder="Selecciona una opcion" />
+													</SelectTrigger>
+													<SelectContent>
+													{catCategorias?.map((cat:any) => (
+														<SelectItem key={cat.id} value={cat.nombre}>
+															{cat.nombre}
+														</SelectItem>
+													))}
+													</SelectContent>
+												</Select>
+													</FormControl> */}
 												<FormMessage />
 											</FormItem>
 										)}
@@ -484,6 +518,21 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 													<FormItem className="w-full">
 														<FormLabel>Sub categoria: *</FormLabel>
 														<FormControl>
+														<SelectReact
+															aria-labelledby="aria-label"
+															inputId="select-categorias"
+  															name="categoria"
+															options={formatValueLabel(catSubCategorias)}
+															onChange={(value:any) =>{
+																field.onChange(value.value); 
+																setSubCategoria(value.value)
+															}}
+															value={formatValueLabel(catSubCategorias).find(opt => opt.value === subCategoria) || null} 
+															isDisabled={catSubCategorias.length==0}
+														/>
+														</FormControl>
+														
+														{/* <FormControl>
 														<Select {...field} className="input"
 															onValueChange={(value:string) => {
 															field.onChange(value); 
@@ -503,7 +552,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 														))}
 														</SelectContent>
 													</Select>
-														</FormControl>
+														</FormControl> */}
 														<FormMessage />
 													</FormItem>
 												)}
@@ -518,6 +567,22 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 												<FormItem className="w-full">
 													<FormLabel>Incidente: *</FormLabel>
 													<FormControl>
+													<SelectReact
+															aria-labelledby="aria-label"
+															inputId="select-categorias"
+  															name="categoria"
+															options={formatValueLabel(catSubIncidences)}
+															onChange={(value:any) =>{
+																field.onChange(value.value);
+																setSearch("subCat")
+																setSelectedIncidencia(value.value)
+															}}
+															value={formatValueLabel(catSubIncidences).find(opt => opt.value === selectedIncidencia) || null} 
+															isDisabled={catSubIncidences.length==0}
+														/>
+													</FormControl>
+												
+													{/* <FormControl>
 													<Select {...field} className="input"
 														onValueChange={(value:string) => {
 														field.onChange(value);
@@ -538,7 +603,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 													))}
 													</SelectContent>
 												</Select>
-													</FormControl>
+													</FormControl> */}
 													<FormMessage />
 												</FormItem>
 											)}

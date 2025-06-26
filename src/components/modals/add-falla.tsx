@@ -120,6 +120,13 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 		}
 	},[isSuccess])
 
+	const formatValueLabel = (array:any[])=>{
+		return array.map((val: any) => ({
+			value: val.nombre, 
+			label: val.nombre
+		}));
+	}
+	
 	useEffect(()=>{
 		if(!isLoading){
 			handleClose()			
@@ -177,7 +184,7 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 		<div className="flex-grow overflow-y-auto p-4">
 			<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-5">
-			<FormField
+				<FormField
 					control={form.control}
 					name="falla_ubicacion"
 					render={({ field }:any) => (

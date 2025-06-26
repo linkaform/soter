@@ -18,13 +18,6 @@ import {
   FormMessage,
 } from "../ui/form";
 
-// import {
-//   Select,
-//   SelectContent,
-//   SelectItem,
-//   SelectTrigger,
-//   SelectValue,
-// } from "../ui/select";
 
 import { Input } from "../ui/input";
 
@@ -169,7 +162,7 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
         
       </DialogTrigger>
 
-      <DialogContent className="max-w-xl  overflow-y-auto max-h-[90vh] flex flex-col" aria-describedby=""
+      <DialogContent className="max-w-xl max-h-[90vh] flex flex-col" aria-describedby=""
         onInteractOutside={(e) => {
           if ((e.target as HTMLElement).closest('.react-select__menu')) {
             e.preventDefault();
