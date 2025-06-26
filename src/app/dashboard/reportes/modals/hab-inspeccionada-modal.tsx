@@ -16,6 +16,10 @@ interface HabitacionInspeccionadaModalProps {
     habitacion: string
 }
 
+const HOTEL_ABBREVIATIONS: Record<string, string> = {
+    "MCALLEN": "WYNDHAM GARDEN MCALLEN",
+};
+
 export const HabitacionInspeccionadaModal: React.FC<HabitacionInspeccionadaModalProps> = ({
     title,
     children,
@@ -30,7 +34,10 @@ export const HabitacionInspeccionadaModal: React.FC<HabitacionInspeccionadaModal
         if (open) {
             setLoading(true);
             setData(null);
-            getHabitacion({ hotel, roomId: habitacion })
+
+            const hotelToSend = HOTEL_ABBREVIATIONS[hotel] || hotel;
+
+            getHabitacion({ hotel: hotelToSend, roomId: habitacion })
                 .then((res) => {
                     setData(res?.response?.data ?? []);
                 })
