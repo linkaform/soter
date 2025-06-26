@@ -292,7 +292,7 @@ const ReportsPage = () => {
 
 	useEffect(() => {
 		// Cambio de prueba para hacer la peticion si no hay fallas seleccionadas
-		// if (!selectedFallas || selectedFallas.length === 0) return;
+		if (!selectedFallas || selectedFallas.length === 0) return;
 
 		const handler = setTimeout(() => {
 			// Si hay un solo hotel en la gráfica

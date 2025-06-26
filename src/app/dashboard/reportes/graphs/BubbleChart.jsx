@@ -48,7 +48,7 @@ const BubbleChart = ({ data }) => {
       datasetsByHotel[hotel].push({
         x: total_fallas,      // Ahora las fallas están en el eje X
         y: piso + offset,     // Piso en el eje Y
-        r: Math.max(5, (grade ?? 0) * 20), // <-- Aquí el cambio
+        r: Math.max(5, (grade ?? 0) * 15), // <-- Aquí el cambio
         label: habitacion,
         total_fallas,
         grade,
