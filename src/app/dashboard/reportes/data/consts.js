@@ -2,7 +2,7 @@ const totalRooms = 130;
 const rooms = Array.from({ length: totalRooms }, (_, i) => i + 1); // [1, 2, ..., 130]
 const tags = Array.from({ length: 50 }).map(
     (_, i, a) => `Toallas extras: ${a.length - i}`
-)
+);
 
 const options = [
     { name: 'Manzana', id: 1 },
@@ -14,13 +14,18 @@ const optionsCuatri = [
     { name: 'C1', id: 1 },
     { name: 'C2', id: 2 },
     { name: 'C3', id: 3 },
-]
+];
 
-const optionsCuatriDefecto = [
-    { name: 'C1', id: 1 },
-    { name: 'C2', id: 2 },
-    { name: 'C3', id: 3 },
-]
+// Calcular cuatrimestre actual según el mes
+function getCurrentCuatri() {
+    const month = new Date().getMonth() + 1; // 1-12
+    if (month >= 1 && month <= 4) return 1;    // C1
+    if (month >= 5 && month <= 8) return 2;    // C2
+    return 3;                                  // C3
+}
+
+const currentCuatriId = getCurrentCuatri();
+const optionsCuatriDefecto = optionsCuatri.filter(opt => opt.id === currentCuatriId);
 
 const optionsHotel = [
     { name: 'Todos', id: 0 },
