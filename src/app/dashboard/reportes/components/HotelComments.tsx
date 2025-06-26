@@ -35,6 +35,7 @@ const HotelComments: React.FC<HotelCommentsProps> = ({ hotel, comments }) => {
                     {commentsToShow.map((comment, cidx) => (
                         <div key={cidx}>
                             <RoomComment
+                                hotel={hotel}
                                 falla={comment.falla}
                                 comment={comment.comment}
                                 room={comment.room}
