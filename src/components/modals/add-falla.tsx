@@ -120,13 +120,13 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 		}
 	},[isSuccess])
 
-	const formatValueLabel = (array:any[])=>{
-		return array.map((val: any) => ({
-			value: val.nombre, 
-			label: val.nombre
-		}));
-	}
-	
+	// const formatValueLabel = (array:any[])=>{
+	// 	return array.map((val: any) => ({
+	// 		value: val.nombre, 
+	// 		label: val.nombre
+	// 	}));
+	// }
+
 	useEffect(()=>{
 		if(!isLoading){
 			handleClose()			
