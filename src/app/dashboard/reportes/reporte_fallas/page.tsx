@@ -487,7 +487,15 @@ const ReportsPage = () => {
 					</div>
 				</div>
 			</div>
-			<div className="flex justify-between w-11/12 m-auto mt-6 gap-4">
+			{!cards || Object.keys(cards).length === 0 ? (
+				<div className="flex justify-center items-center w-11/12 m-auto mt-6">
+					<div className="text-lg text-gray-500 p-8">
+						<h1>No hay inspecciones registradas para este hotel.</h1>
+					</div>
+				</div>
+			) : (
+				<>
+				<div className="flex justify-between w-11/12 m-auto mt-6 gap-4">
 				<div className="grid grid-cols-4 gap-4">
 					{stats.map((stat, idx) => (
 						<StatCard key={idx} icon={stat.icon} value={stat.value} label={stat.label} />
@@ -796,6 +804,8 @@ const ReportsPage = () => {
 					</Tabs>
 				</div>
 			</div>
+			</>
+			)}
 		</div >
 	);
 };

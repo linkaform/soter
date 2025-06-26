@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Image from "next/image";
-import { ImageModal } from '../modals/image-modal'
+import { ImageModal } from '../modals/image-modal';
+import Multiselect from "multiselect-react-dropdown";
 
 interface ImageCarrouselProps {
     images: {
@@ -16,6 +17,25 @@ const PAGE_SIZE = 20;
 
 const ImageCarrousel = ({ images, cols = '6' }: ImageCarrouselProps) => {
     const [page, setPage] = useState(1);
+    const [selectedFallas, setSelectedFallas] = useState<string[]>([]);
+
+    // 1. Obtener fallas únicas
+    const fallas = useMemo(
+        () =>
+            Array.from(
+                new Set(
+                    images.map(img => img.falla).filter(Boolean)
+                )
+            ),
+        [images]
+    );
+
+    // 2. Filtrar imágenes por falla seleccionada
+    const filteredImages = useMemo(() => {
+        if (selectedFallas.length === 0) return images;
+        return images.filter(img => selectedFallas.includes(img.falla));
+    }, [images, selectedFallas]);
+
     const gridCols = {
         '1': 'grid-cols-1',
         '2': 'grid-cols-2',
@@ -25,13 +45,29 @@ const ImageCarrousel = ({ images, cols = '6' }: ImageCarrouselProps) => {
         '6': 'grid-cols-[repeat(auto-fill,minmax(120px,1fr))]',
     }[cols] || 'grid-cols-[repeat(auto-fill,minmax(120px,1fr))]';
 
-    const imagesToShow = images.slice(0, page * PAGE_SIZE);
+    const imagesToShow = filteredImages.slice(0, page * PAGE_SIZE);
 
     return (
         <div className="mx-6">
-            <div className="flex justify-between mt-4">
+            <div className="flex justify-between mt-4 items-center flex-wrap gap-2">
                 <div className="text-2xl">
-                    Fotografías <span className="text-gray-500 ms-4">{images.length ?? 0} imágenes</span>
+                    Fotografías <span className="text-gray-500 ms-4">{filteredImages.length ?? 0} imágenes</span>
+                </div>
+                {/* 3. Multiselect de fallas */}
+                <div className="min-w-[220px]">
+                    <Multiselect
+                        options={fallas}
+                        isObject={false}
+                        placeholder="Fallas"
+                        selectedValues={selectedFallas}
+                        onSelect={setSelectedFallas}
+                        onRemove={setSelectedFallas}
+                        showCheckbox
+                        style={{
+                            chips: { background: "#2563eb" },
+                            multiselectContainer: { color: "#000" },
+                        }}
+                    />
                 </div>
             </div>
             {imagesToShow.length === 0 ? (
@@ -56,7 +92,7 @@ const ImageCarrousel = ({ images, cols = '6' }: ImageCarrouselProps) => {
                     ))}
                 </div>
             )}
-            {imagesToShow.length < images.length && (
+            {imagesToShow.length < filteredImages.length && (
                 <div className="flex justify-center my-4">
                     <button
                         className="px-4 py-2 bg-blue-600 text-white rounded"

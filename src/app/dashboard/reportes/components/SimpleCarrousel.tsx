@@ -41,7 +41,9 @@ const SimpleCarrousel: React.FC<SimpleCarrouselProps> = ({ data }) => {
                                 />
                                 <div className="mt-4 text-center">
                                     <div className="font-semibold">Habitacion: {item.habitacion}</div>
-                                    <div className="text-gray-600">Falla: {item.falla}</div>
+                                    <div className="text-gray-600">
+                                        Falla: {item.falla && item.falla.trim() !== "" ? item.falla : 'No registrada correctamente en forma.'}
+                                    </div>
                                 </div>
                             </div>
                         </CarouselItem>
