@@ -66,7 +66,7 @@ const formSchema = z.object({
     quien_entrega_externo: z.string().optional(),
 	quien_entrega_interno: z.string().optional(), 
 	tipo_articulo_perdido: z.string().optional(),
-	ubicacion_perdido: z.string().min(1, { message: "Este campo es obligatorio" }),
+	ubicacion_perdido: z.string().optional()
 });
 
 export const AddArticuloModal: React.FC<AddFallaModalProps> = ({
