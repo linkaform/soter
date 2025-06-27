@@ -48,6 +48,7 @@ export interface PaseEntrada {
   grupo_equipos: string[]; 
   total_entradas?: number;
   limite_de_acceso?: number;
+   pdf_to_img: Imagen[];
 }
 
 const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
@@ -92,6 +93,7 @@ const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
     },
     grupo_equipos: rowData.grupo_equipos||[],
     grupo_vehiculos: rowData.grupo_vehiculos||[],
+    pdf_to_img: rowData.pdf_to_img || [],
   }
   return (
     <div className="flex space-x-2">

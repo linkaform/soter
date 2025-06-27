@@ -66,6 +66,7 @@ interface ViewPassModalProps {
     enviar_pre_sms: enviar_pre_sms
     grupo_vehiculos:Vehiculo_custom[];
     grupo_equipos:Equipo[];
+    pdf_to_img: Imagen[];
   };
   isSuccess: boolean;
   children: React.ReactNode;
@@ -80,9 +81,10 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
   const {userIdSoter}= useAuthStore()
   const account_id = userIdSoter;
   const [ enablePdf, setEnablePdf] = useState(false)
-  const { data: responsePdf, isLoading: loadingPdf} = useGetPdf(account_id, data._id, enablePdf);
+  const { data: responsePdf } = useGetPdf(account_id, data._id, enablePdf);
   const { createSendCorreoSms, createSendSms,  isLoadingCorreo, isLoadingSms} = useSendCorreoSms();
   const downloadUrl=responsePdf?.response?.data?.data?.download_url
+  const [loadingPassUrl, setLoadingPassUrl] = useState(false);
 
   const [openAddMail, setOpenAddMail]= useState(false)
   const [openAddPhone, setOpenAddPhone]= useState(false)
@@ -154,6 +156,30 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
 			toast.error("Error al descargar el PDF: " + error);
 		}
 	}
+
+  async function downloadPassPng(downloadURL: string){
+    setLoadingPassUrl(true);
+    try {
+			const response = await fetch(downloadURL);
+			if (!response.ok) throw new Error("No se pudo obtener el archivo");
+
+			const blob = await response.blob();
+			const url = URL.createObjectURL(blob);
+
+			const a = document.createElement("a");
+			a.href = url;
+			a.download = "pase_de_entrada.png";
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+
+			URL.revokeObjectURL(url);
+		} catch (error) {
+		  toast.error("Error al descargar el pase: " + error);
+		} finally {
+      setLoadingPassUrl(false);
+    }
+  }
 
 
   return (
@@ -430,8 +456,8 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
                 )
               }
               </Button>
-              <Button className="w-full  bg-yellow-500 hover:bg-yellow-600 text-white"  onClick={()=>{setEnablePdf(true)}} disabled={loadingPdf}>
-              {!loadingPdf ? ("Descargar PDF"):(<><Loader2 className="animate-spin"/>Descargando PDF...</>)}
+              <Button className="w-full  bg-yellow-500 hover:bg-yellow-600 text-white"  onClick={()=>{downloadPassPng(data?.pdf_to_img?.[0].file_url)}} disabled={loadingPassUrl}>
+              {!loadingPassUrl ? ("Descargar Pase"):(<><Loader2 className="animate-spin"/>Descargando Pase...</>)}
               </Button>
         </div>
       </DialogContent>
