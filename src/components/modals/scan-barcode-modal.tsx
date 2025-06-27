@@ -17,32 +17,25 @@ export function ScanBarcodeModal({
     const [cameras, setCameras] = useState<{ id: string; label: string }[]>([]);
     const [selectedCamera, setSelectedCamera] = useState<string | null>(null);
 
-    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-
     // Obtener cámaras al abrir el modal
     useEffect(() => {
         if (!open) return;
 
         Html5Qrcode.getCameras().then((devices) => {
             setCameras(devices);
-            if (isMobile) {
-                const backCam = devices.find(
-                    (d) =>
-                        d.label.toLowerCase().includes("back") ||
-                        d.label.toLowerCase().includes("rear") ||
-                        d.label.toLowerCase().includes("environment")
-                );
-                setSelectedCamera(backCam ? backCam.id : devices[0]?.id || null);
-            } else {
-                setSelectedCamera(devices[0]?.id || null);
-            }
+            const backCam = devices.find(
+                (d) =>
+                    d.label.toLowerCase().includes("back") ||
+                    d.label.toLowerCase().includes("rear")
+            );
+            setSelectedCamera(backCam ? backCam.id : devices[0]?.id || null);
         });
 
         return () => {
             setCameras([]);
             setSelectedCamera(null);
         };
-    }, [open, isMobile]);
+    }, [open]);
 
     // Iniciar scanner cuando cambia la cámara seleccionada
     useEffect(() => {
@@ -63,24 +56,17 @@ export function ScanBarcodeModal({
 
         scannerRef.current = html5QrCode;
 
+        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
         const cameraConfig: any = {
             fps: 10,
-            qrbox: { width: 320, height: 320 },
             videoConstraints: {},
         };
 
         if (selectedCamera) {
-            cameraConfig.videoConstraints = {
-                deviceId: { exact: selectedCamera },
-                width: { ideal: 1280 },
-                height: { ideal: 720 },
-            };
+            cameraConfig.videoConstraints = { deviceId: { exact: selectedCamera } };
         } else if (isMobile) {
-            cameraConfig.videoConstraints = {
-                facingMode: { exact: "environment" },
-                width: { ideal: 1280 },
-                height: { ideal: 720 },
-            };
+            cameraConfig.videoConstraints = { facingMode: { exact: "environment" } };
         }
 
         html5QrCode
@@ -115,7 +101,7 @@ export function ScanBarcodeModal({
                     }
                 });
         };
-    }, [selectedCamera, open, onScan, setOpen, isMobile]);
+    }, [selectedCamera, open, onScan, setOpen]);
 
     const aspectRatio = 2.5;
 
@@ -128,7 +114,7 @@ export function ScanBarcodeModal({
                 <DialogTitle className="px-6 pt-6">Escanear número de serie</DialogTitle>
 
                 <div className="px-6 pb-2">
-                    {!isMobile && cameras.length > 1 && (
+                    {cameras.length > 1 && (
                         <select
                             className="w-full border rounded p-2 mb-2"
                             value={selectedCamera ?? ""}
