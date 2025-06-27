@@ -147,11 +147,6 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 				<div className="flex-grow overflow-y-auto p-4 ">
 
 					<div className="w-full flex gap-2 mb-3">
-						<p className="font-bold flex-shrink-0">Nombre Completo : </p>
-						<p className="">{data?.nombre} </p>
-					</div>
-
-					<div className="w-full flex gap-2 mb-3">
 							<p className="font-bold ">Nombre Completo : </p>
 							<p className="">{data?.nombre} </p>
 					</div>
