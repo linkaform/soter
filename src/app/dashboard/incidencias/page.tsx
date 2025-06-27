@@ -36,7 +36,7 @@ const IncidenciasPage = () => {
 
   const [fallasStatus, setFallasStatus] = useState<string>("")
   const { data:dataFallas,isLoading:isLoadingFallas} = useGetFallas(ubicacionSeleccionada, areaSeleccionada == "todas" ? "" : areaSeleccionada ,fallasStatus,  dates[0], dates[1], dateFilter);
-  const { stats, listIncidencias, isLoadingListIncidencias} = useInciencias(location, areaSeleccionada == "todas" ? "" : areaSeleccionada, [], dates[0]?dates[0]:"", dates[1]?dates[1]:"", dateFilter);
+  const { stats, listIncidencias, isLoadingListIncidencias} = useInciencias(ubicacionSeleccionada, areaSeleccionada == "todas" ? "" : areaSeleccionada, [], dates[0]?dates[0]:"", dates[1]?dates[1]:"", dateFilter);
   const [selectedTab, setSelectedTab] = useState<string>('Incidencias'); 
 
 	useEffect(()=>{
