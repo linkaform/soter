@@ -4,11 +4,9 @@ import { Textarea } from "../ui/textarea";
 
 type Props = {
     control: any;
-	data:any
 };
   
-export function PersonaExtraviadaFields({ control,data }: Props) {
-	console.log("data", data)
+export function PersonaExtraviadaFields({ control }: Props) {
     return (
      	 <div>
           	<div className="mb-2 font-bold text-lg">Persona extraviada</div>
@@ -19,7 +17,7 @@ export function PersonaExtraviadaFields({ control,data }: Props) {
 					render={({ field }) => (
 						<FormItem>
 						<FormLabel>Nombre Completo</FormLabel>
-						<FormControl><Input defaultValue="" {...field}  /></FormControl>
+						<FormControl><Input {...field}  /></FormControl>
 						<FormMessage />
 						</FormItem>
 					)}
@@ -30,7 +28,7 @@ export function PersonaExtraviadaFields({ control,data }: Props) {
 					render={({ field }) => (
 						<FormItem>
 						<FormLabel>Edad</FormLabel>
-						<FormControl><Input defaultValue="" {...field}   /></FormControl>
+						<FormControl><Input {...field}   /></FormControl>
 						<FormMessage />
 						</FormItem>
 					)}
@@ -41,7 +39,7 @@ export function PersonaExtraviadaFields({ control,data }: Props) {
 					render={({ field }) => (
 						<FormItem>
 						<FormLabel>Color piel</FormLabel>
-						<FormControl><Input defaultValue="" {...field}   /></FormControl>
+						<FormControl><Input {...field}   /></FormControl>
 						<FormMessage />
 						</FormItem>
 					)}
@@ -52,7 +50,7 @@ export function PersonaExtraviadaFields({ control,data }: Props) {
 					render={({ field }) => (
 						<FormItem>
 						<FormLabel>Color cabello</FormLabel>
-						<FormControl><Input defaultValue="" {...field}  /></FormControl>
+						<FormControl><Input {...field}  /></FormControl>
 						<FormMessage />
 						</FormItem>
 					)}
@@ -63,7 +61,7 @@ export function PersonaExtraviadaFields({ control,data }: Props) {
 					render={({ field }) => (
 						<FormItem>
 						<FormLabel>Estatura aproximada</FormLabel>
-						<FormControl><Input defaultValue="" {...field}  /></FormControl>
+						<FormControl><Input {...field}  /></FormControl>
 						<FormMessage />
 						</FormItem>
 					)}
@@ -74,7 +72,7 @@ export function PersonaExtraviadaFields({ control,data }: Props) {
 					render={({ field }) => (
 						<FormItem>
 						<FormLabel>Descripción fisica de la vestimenta</FormLabel>
-						<FormControl><Textarea defaultValue=""  {...field}  /></FormControl>
+						<FormControl><Textarea  {...field}  /></FormControl>
 						<FormMessage />
 						</FormItem>
 					)}
@@ -85,18 +83,18 @@ export function PersonaExtraviadaFields({ control,data }: Props) {
 					render={({ field }) => (
 						<FormItem>
 						<FormLabel>Nombre completo:</FormLabel>
-						<FormControl><Input defaultValue="" {...field}  /></FormControl>
+						<FormControl><Input {...field}  /></FormControl>
 						<FormMessage />
 						</FormItem>
 					)}
 					/>
 					<FormField
 					control={control}
-					name="prentesco"
+					name="parentesco"
 					render={({ field }) => (
 						<FormItem>
 						<FormLabel>Parentesco</FormLabel>
-						<FormControl><Input defaultValue="" {...field}  /></FormControl>
+						<FormControl><Input {...field}  /></FormControl>
 						<FormMessage />
 						</FormItem>
 					)}
@@ -107,7 +105,7 @@ export function PersonaExtraviadaFields({ control,data }: Props) {
 					render={({ field }) => (
 						<FormItem>
 						<FormLabel>Numero documento de identidad:</FormLabel>
-						<FormControl><Input defaultValue="" {...field}  /></FormControl>
+						<FormControl><Input {...field}  /></FormControl>
 						<FormMessage />
 						</FormItem>
 					)}
@@ -118,7 +116,7 @@ export function PersonaExtraviadaFields({ control,data }: Props) {
 					render={({ field }) => (
 						<FormItem>
 						<FormLabel>Telefono: </FormLabel>
-						<FormControl><Input defaultValue="" {...field}  /></FormControl>
+						<FormControl><Input {...field}  /></FormControl>
 						<FormMessage />
 						</FormItem>
 					)}
@@ -129,7 +127,7 @@ export function PersonaExtraviadaFields({ control,data }: Props) {
 					render={({ field }) => (
 						<FormItem>
 						<FormLabel>La informacion coincide con los videos?</FormLabel>
-						<FormControl><Input defaultValue="" {...field}  /></FormControl>
+						<FormControl><Input {...field}  /></FormControl>
 						<FormMessage />
 						</FormItem>
 					)}
@@ -140,7 +138,7 @@ export function PersonaExtraviadaFields({ control,data }: Props) {
 					render={({ field }) => (
 						<FormItem>
 						<FormLabel>Responsable que entrega</FormLabel>
-						<FormControl><Input defaultValue="" {...field}  /></FormControl>
+						<FormControl><Input {...field}  /></FormControl>
 						<FormMessage />
 						</FormItem>
 					)}
@@ -151,7 +149,7 @@ export function PersonaExtraviadaFields({ control,data }: Props) {
 					render={({ field }) => (
 						<FormItem>
 						<FormLabel>Responsable que recibe</FormLabel>
-						<FormControl><Input defaultValue="" {...field}  /></FormControl>
+						<FormControl><Input {...field}  /></FormControl>
 						<FormMessage />
 						</FormItem>
 					)}

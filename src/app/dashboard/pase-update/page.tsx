@@ -120,7 +120,6 @@ const PaseUpdate = () =>{
 
 	const [mostrarAviso, setMostrarAviso] = useState(false);
 	const [radioSelected, setRadioSelected] = useState("3 meses");		
-	// const [showRadioGroup, setShowRadioGroup] = useState(false);
 
 	const onDescargarPNG = async (imgUrl: string) => {
 		try {
@@ -138,9 +137,6 @@ const PaseUpdate = () =>{
 			a.remove();
 			URL.revokeObjectURL(url);
 			toast.success("¡Pase descargado correctamente!");
-			setTimeout(() => {
-			window.location.href = "https://www.soter.mx/";
-			}, 1000);
 		} catch (error) {
 			toast.error("Error al descargar la imagen: " + error);
 		}
@@ -248,7 +244,6 @@ const PaseUpdate = () =>{
 	});
 
 	const onSubmit = (data: z.infer<typeof formSchema>) => {
-		console.log("data acepto_aviso_privacidad", data.acepto_aviso_privacidad)
 			const formattedData = {
 				grupo_vehiculos: vehicles,
 				grupo_equipos: equipos,
@@ -280,7 +275,6 @@ const PaseUpdate = () =>{
 	};
 
 	const updateInfoActivePass= () => {
-		console.log("actualizar info de pase activo")
 		const formattedData = {
 			grupo_vehiculos: vehicles,
 			grupo_equipos: equipos,
@@ -298,7 +292,6 @@ const PaseUpdate = () =>{
 
 
 	useEffect(()=>{
-		console.log("errors",form.formState.errors)
 	}, [form.formState.errors])
 
 
@@ -356,9 +349,6 @@ const PaseUpdate = () =>{
 			onDescargarPDF(downloadUrl)
 			setEnablePdf(false)
 			toast.success("¡PDF descargado correctamente!");
-			setTimeout(() => {
-				window.location.href = "https://www.soter.mx/";
-			}, 1000);
 		}
 	},[downloadUrl])
 
@@ -917,7 +907,7 @@ return (
 						</Button>
 
 						<Button
-						className={`w-40 m-0 ${
+						className={`hidden w-40 m-0 ${
 							isActualizarOpen ? "bg-red-500 hover:bg-red-600" : "bg-blue-500 hover:bg-blue-600"
 						}`}
 						type="button"

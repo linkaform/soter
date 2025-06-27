@@ -140,7 +140,6 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
   }
 
   const addNewVehicle = (data: z.infer<typeof formSchema>) => {
-	console.log("placas", data)
 	if(isAccesos){
 		setSelectedVehiculos([{
 			color: data.color?.length ? data.color[0] :"",
@@ -202,14 +201,14 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
         {children}
       </DialogTrigger>
 
-      <DialogContent className="max-w-xl  overflow-y-auto max-h-[90vh] flex flex-col" aria-describedby="">
+      <DialogContent className="max-w-xl   max-h-[90vh] flex flex-col" aria-describedby="" >
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center font-bold">
             {title}
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex-grow overflow-y-auto p-4">
+        <div className=""> 
 			<Form {...form}>
 				<form  className="space-y-8 ">
 					<FormField
@@ -442,6 +441,7 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 							// onMenuClose={onMenuClose}
 							options={catColores}
 							onChange={(value:any) => field.onChange([value.value])}
+						
 						/>
 
 						{/* <Select onValueChange={(value) => field.onChange([value])}>

@@ -114,15 +114,6 @@ export const registerIncoming = async (props: RegisterIncomingProps) => {
     script_name: "script_turnos.py",
   };
 
-
-
-        // Agregar el console.log antes de enviar la petición
-        console.log("Payload enviado a registerIncoming:", payload)
-
-
-
-
-
   const userJwt = localStorage.getItem("access_token");
   const response = await fetch(
     `https://app.linkaform.com/api/infosync/scripts/run/`,    {
@@ -179,8 +170,6 @@ export const getAccessAssets = async (location: string) => {
     option: "assets_access_pass",
     script_name: "script_turnos.py",
   };
-
-  console.log("Payload enviado:", payload);
 
   const userJwt = localStorage.getItem("access_token");
 

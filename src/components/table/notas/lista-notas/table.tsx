@@ -38,7 +38,6 @@ export const ListaNotasTable = ({ statusFilter, ubicacionSeleccionada, areaSelec
   const [registersPage, setRegistersPage] = useState(10)
   const [dateFromValue, setDateFromValue] = useState('')
   const [dateToValue, setDateToValue] = useState('')
-  console.log("abrir notas")
   if (statusFilter === '') {
     statusFilter = 'abierto'
   }

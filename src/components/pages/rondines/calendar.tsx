@@ -123,7 +123,6 @@ export default function RondinesCalendar() {
     eventContent={renderEventContent}
     eventClick={(info) => {
       const { area, ubi, observations, status } = info.event.extendedProps;
-
       console.log( area, ubi, observations, status)
     
     }}

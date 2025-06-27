@@ -226,7 +226,7 @@ export const NotasTable = ({ data }: ListaNotasTableProps) => {
           </Button>
         </div>
       </div>
-      <div className='text-slate-500' >Total de notas: {data.length}</div>
+      <div className='text-slate-500' >Total de notas: {data?.length}</div>
     </div>
   )
 }

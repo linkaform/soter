@@ -18,7 +18,6 @@ export const useGetMyPases = ({limit, skip, searchName}: UseGetMyPasesProps) => 
     queryFn: async () => {
         const data = await getMyPases({ tab, limit, skip, searchName }); 
         if(data?.error){
-          console.log("Error: ", data.error)
           toast.error("Error al obtener pases")
         }
         return data.response?.data || [];  

@@ -36,6 +36,7 @@ import { catalogoColores } from "@/lib/utils";
 import { Input } from "../ui/input";
 import { useCatalogoArticulos } from "@/hooks/useCatalogoArticulos";
 import { useGetLockers } from "@/hooks/useGetLockers";
+import { useShiftStore } from "@/store/useShiftStore";
 
 interface AddFallaModalProps {
   	title: string;
@@ -65,7 +66,7 @@ const formSchema = z.object({
     quien_entrega_externo: z.string().optional(),
 	quien_entrega_interno: z.string().optional(), 
 	tipo_articulo_perdido: z.string().optional(),
-	ubicacion_perdido: z.string().min(1, { message: "Este campo es obligatorio" }),
+	ubicacion_perdido: z.string().optional()
 });
 
 export const AddArticuloModal: React.FC<AddFallaModalProps> = ({
@@ -74,8 +75,9 @@ export const AddArticuloModal: React.FC<AddFallaModalProps> = ({
 	setIsSuccess,
 }) => {
 	const [tipoArt, setTipoArt] = useState<string>("");
+	const { location, fetchShift } = useShiftStore();
 	// const [catalagoSub, setCatalogoSub] = useState<string[]>([]);
-	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState('');
+	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState("Planta Monterrey");
 	const { dataAreas:areas, dataLocations:ubicaciones, isLoadingAreas:loadingAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true,  ubicacionSeleccionada?true:false);
 
 	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado, refetch: refetchAreaEmpleado, } = useCatalogoAreaEmpleado(isSuccess, ubicacionSeleccionada,"Objetos Perdidos" );
@@ -111,11 +113,21 @@ export const AddArticuloModal: React.FC<AddFallaModalProps> = ({
 	const { reset } = form;
 
 	useEffect(()=>{
+		console.log("location",location)
+		if(location){
+			setUbicacionSeleccionada(location || "Planta Monterrey")
+		}else{
+			fetchShift()
+		}
+	},[])
+
+	useEffect(()=>{
 		if(isSuccess){
 			reset()
 			setDate(new Date())
 			setEvidencia([])
 			refetchAreaEmpleado()
+			setUbicacionSeleccionada(location || "Planta Monterrey")
 		}
 	},[isSuccess])
 
@@ -143,7 +155,7 @@ export const AddArticuloModal: React.FC<AddFallaModalProps> = ({
                     quien_entrega_externo:  values.quien_entrega_externo|| "",
                     quien_entrega_interno:  values.quien_entrega_interno|| "", 
                     tipo_articulo_perdido:  values.tipo_articulo_perdido|| "",
-                    ubicacion_perdido:  values.ubicacion_perdido|| "",
+                    ubicacion_perdido:  ubicacionSeleccionada|| "",
 				}
 				createArticulosPerdidosMutation.mutate({data_article: formatData})
 		}else{
@@ -215,7 +227,7 @@ export const AddArticuloModal: React.FC<AddFallaModalProps> = ({
 								field.onChange(value); 
 								setUbicacionSeleccionada(value); 
 							}}
-							value={field.value} 
+							value={ubicacionSeleccionada} 
 						>
 							<SelectTrigger className="w-full">
 								{loadingUbicaciones?

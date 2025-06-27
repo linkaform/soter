@@ -127,7 +127,6 @@ export const EditarArticuloModal: React.FC<EditarFallaModalProps> = ({
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		let formattedDate=""
 		if(date){
-            console.log("tipoArt", tipoArt )
 			formattedDate = format( new Date(date), 'yyyy-MM-dd HH:mm:ss');
 			const formatData ={
                 area_perdido: values.area_perdido || "",
@@ -146,7 +145,6 @@ export const EditarArticuloModal: React.FC<EditarFallaModalProps> = ({
                 tipo_articulo_perdido: tipoArt|| "",
                 ubicacion_perdido:  values.ubicacion_perdido|| "",
 				}
-                console.log("EDICION INFO",formatData )
 				editarArticulosPerdidosMutation.mutate({data_article_update: formatData, folio: data.folio})
 		}else{
 			form.setError("date_hallazgo_perdido", { type: "manual", message: "Fecha es un campo requerido." });

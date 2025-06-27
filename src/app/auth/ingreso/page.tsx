@@ -215,7 +215,6 @@ const PaseEntradaPage = () => {
   };
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
-    console.log(data);
 
     const formattedData = {
       nombreCompleto: data.nombreCompleto,

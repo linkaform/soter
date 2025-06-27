@@ -69,7 +69,6 @@ export const useShiftStore = create(
 					setTurno(data?.response.data?.guard?.status_turn === "Turno Abierto");
 				}
 			} catch (error) {
-				console.log("Error al obtener shift",error)
 			  toast.error("Error al obtener información: " + error);
 			} finally {
 			  setIsFetching(false);

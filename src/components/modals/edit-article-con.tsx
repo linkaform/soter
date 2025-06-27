@@ -60,7 +60,6 @@ export const EditArticuloConModal: React.FC<AddFallaModalProps> = ({
     setShowLoadingModal,
     showLoadingModal
 }) => {
-    console.log("CONCCCCC", data.solicita_concesion)
     const [isSuccess, setIsSuccess] =useState(false)
 	const [conSelected, setConSelected] = useState<string>(data.solicita_concesion);
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(data.ubicacion_concesion);

@@ -20,11 +20,9 @@ import { useShiftStore } from "@/store/useShiftStore";
 const IncidenciasPage = () => {
 
   const [isSuccess, setIsSuccess] = useState(false);
-  
   const {location} = useShiftStore()
   const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
   const [areaSeleccionada, setAreaSeleccionada] = useState("todas");
-
   const [isSuccessIncidencia, setIsSuccessIncidencia] = useState(false);
   const [modalData] = useState<any>(null);
   const [selectedFallas, setSelectedFallas]= useState<string[]>([]);
@@ -38,10 +36,7 @@ const IncidenciasPage = () => {
 
   const [fallasStatus, setFallasStatus] = useState<string>("")
   const { data:dataFallas,isLoading:isLoadingFallas} = useGetFallas(ubicacionSeleccionada, areaSeleccionada == "todas" ? "" : areaSeleccionada ,fallasStatus,  dates[0], dates[1], dateFilter);
-
-  const { stats, listIncidencias, isLoadingListIncidencias} = useInciencias(location, areaSeleccionada == "todas" ? "" : areaSeleccionada, [], dates[0]?dates[0]:"", dates[1]?dates[1]:"", dateFilter);
-  console.log("location", ubicacionSeleccionada, areaSeleccionada == "todas" ? "" : areaSeleccionada, [], ubicacionSeleccionada && areaSeleccionada ? true:false, dates[0]?dates[0]:"", dates[1]?dates[1]:"", dateFilter)
-
+  const { stats, listIncidencias, isLoadingListIncidencias} = useInciencias(ubicacionSeleccionada, areaSeleccionada == "todas" ? "" : areaSeleccionada, [], dates[0]?dates[0]:"", dates[1]?dates[1]:"", dateFilter);
   const [selectedTab, setSelectedTab] = useState<string>('Incidencias'); 
 
 	useEffect(()=>{
@@ -164,8 +159,6 @@ const IncidenciasPage = () => {
                 <IncidenciasTable data={listIncidencias} 
                 isLoading={isLoadingListIncidencias} openModal={openModalIncidencia} setSelectedIncidencias={setSelectedIncidencias} selectedIncidencias={selectedIncidencias} 
 				date1={date1} date2={date2} setDate1={setDate1} setDate2={setDate2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter}
-				// ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} setUbicacionSeleccionada={setUbicacionSeleccionada} 
-				// setAreaSeleccionada={setAreaSeleccionada} 
 				/>
               </div>
             </TabsContent>
@@ -174,8 +167,6 @@ const IncidenciasPage = () => {
                 <FallasTable  data={dataFallas} isLoading={isLoadingFallas} 
                 openModal={openModal} setSelectedFallas={setSelectedFallas} selectedFallas={selectedFallas} 
 				date1={date1} date2={date2} setDate1={setDate1} setDate2={setDate2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter}
-				// ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} setUbicacionSeleccionada={setUbicacionSeleccionada} 
-				// 	setAreaSeleccionada={setAreaSeleccionada}
 					/>
               </div>
             </TabsContent>

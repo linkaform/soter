@@ -82,7 +82,6 @@ export const AddPaqueteriaModal: React.FC<AddFallaModalProps> = ({
 	const { createPaqueteriaMutation, isLoading} = usePaqueteria(ubicacionSeleccionada, area, "", false, "", "", "")
 	const { data:responseGetLockers, isLoading:loadingGetLockers } = useGetLockers(ubicacionSeleccionada ?? false,"", "Disponible", isSuccess);
 	const [date, setDate] = useState<Date|"">("");
-	console.log("PORVEEDORES, " , dataProveedores)
 	const [evidencia, setEvidencia] = useState<Imagen[]>([])
 
 	const form = useForm<z.infer<typeof formSchema>>({

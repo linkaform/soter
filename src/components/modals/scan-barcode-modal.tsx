@@ -56,13 +56,23 @@ export function ScanBarcodeModal({
 
         scannerRef.current = html5QrCode;
 
+        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+        const cameraConfig: any = {
+            fps: 10,
+            videoConstraints: {},
+        };
+
+        if (selectedCamera) {
+            cameraConfig.videoConstraints = { deviceId: { exact: selectedCamera } };
+        } else if (isMobile) {
+            cameraConfig.videoConstraints = { facingMode: { exact: "environment" } };
+        }
+
         html5QrCode
             .start(
-                selectedCamera,
-                {
-                    fps: 10,
-                    videoConstraints: { width: { ideal: 1280 }, height: { ideal: 720 } },
-                },
+                selectedCamera || { facingMode: "environment" },
+                cameraConfig,
                 (decodedText: string) => {
                     onScan(decodedText);
                     setOpen(false);

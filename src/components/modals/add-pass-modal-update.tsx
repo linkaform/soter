@@ -46,7 +46,6 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
   const [docs, setDocs] = useState("");
   const [link, setLink] = useState("");
   const account_id = userIdSoter;
-  console.log("pass update", dataPass.ubicacion)
   const { updatePaseEntradaFullMutation, responseCreatePase, isLoading} = usePaseEntrada(dataPass.ubicacion)
   const [hostPro, setHostPro] = useState({ protocol: '', host: '' });
 
@@ -57,10 +56,8 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
 		setHostPro({ protocol, host });
 	  }
    
-    console.log("pase",dataPass ,dataPass?.link.link.split('?')[0])
     const params = new URLSearchParams(dataPass?.link.link.split('?')[0]);
     const docss = params.get('docs')??""; 
-    console.log("split",params,  dataPass?.link, docss)
     setDocs(docss)
 	}, []);
 
@@ -146,7 +143,6 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
 	// },[responseUpdatePase])
 
   useEffect(()=>{
-    console.log("response update pase", dataPass)
     if(responseCreatePase?.status_code == 201|| responseCreatePase?.status_code == 202){
       let docs=""
       dataPass?.link.docs.map((d:string, index:number)=>{

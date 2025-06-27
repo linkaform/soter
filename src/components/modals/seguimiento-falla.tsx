@@ -102,10 +102,8 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		if(date){
-			const formattedDate = format( new Date(date), 'yyyy-MM-dd HH:mm:ss');
-			const formattedDateFin = format( new Date(dateFin), 'yyyy-MM-dd HH:mm:ss');
-			console.log("FORMATED", formattedDate, formattedDateFin)
-		console.log("QUE PASA",values.fechaInicioFallaCompleta)
+			// const formattedDate = format( new Date(date), 'yyyy-MM-dd HH:mm:ss');
+			// const formattedDateFin = format( new Date(dateFin), 'yyyy-MM-dd HH:mm:ss');
 			const formatData ={
 				falla_folio_accion_correctiva:values.falla_folio_accion_correctiva||"",
 				falla_comentario_solucion: values.falla_comentario_solucion||"",

@@ -26,7 +26,6 @@ export const VehiculoAutorizadoColumns: ColumnDef<Vehiculo>[] = [
       const handleCheckedChange = () => {
         setSelectedVehiculos([vehiculo]);
       };
-    console.log("esta seleccionado",selectedVehiculos, vehiculo, isSelected)
       return (
         <Checkbox
           className="p-0 m-0 flex"

@@ -125,7 +125,6 @@ export const AddVisitModal: React.FC<Props> = ({ title, children }) => {
         identificacion: identificacion,
         status_pase:"activo"
       };
-      console.log("entrada", access_pass)
       registerNewVisit.mutate({ location, access_pass });
   }
 

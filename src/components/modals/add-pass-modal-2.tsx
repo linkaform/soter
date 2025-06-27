@@ -58,9 +58,6 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 				conservar_datos_por: data?.conservar_datos_por
 			},id: data.folio, account_id: data.account_id},{
 				onSuccess: (response) => {
-					console.log("acepto aviso privacidad 2", data.acepto_aviso_privacidad)
-
-					console.log("Response",response)
 					setResponseFormated({
 						email_to: data.email,
 						asunto: response?.response?.data?.json?.asunto,
@@ -148,11 +145,6 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 					</DialogTitle>
 				</DialogHeader>
 				<div className="flex-grow overflow-y-auto p-4 ">
-
-					<div className="w-full flex gap-2 mb-3">
-						<p className="font-bold flex-shrink-0">Nombre Completo : </p>
-						<p className="">{data?.nombre} </p>
-					</div>
 
 					<div className="w-full flex gap-2 mb-3">
 							<p className="font-bold ">Nombre Completo : </p>
