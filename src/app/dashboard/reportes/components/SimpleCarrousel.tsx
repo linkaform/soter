@@ -12,6 +12,7 @@ interface CarrouselItem {
     falla: string;
     habitacion: string;
     hotel: string;
+    comentario: string;
     image: { name: string; url: string };
 }
 
@@ -41,9 +42,16 @@ const SimpleCarrousel: React.FC<SimpleCarrouselProps> = ({ data }) => {
                                 />
                                 <div className="mt-4 text-center">
                                     <div className="font-semibold">Habitacion: {item.habitacion}</div>
-                                    <div className="text-gray-600">
-                                        Falla: {item.falla && item.falla.trim() !== "" ? item.falla : 'No registrada correctamente en forma.'}
-                                    </div>
+                                    {item.falla && item.falla.trim() !== "" && (
+                                        <div className="text-gray-600">
+                                            Falla: {item.falla}
+                                        </div>
+                                    )}
+                                    {item.comentario && item.comentario.trim() !== "" && (
+                                        <div className="text-gray-600">
+                                            Comentario: {item.comentario}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </CarouselItem>

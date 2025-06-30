@@ -60,7 +60,7 @@ const RadarChart = ({ data }) => {
         scale: {
           ticks: {
             beginAtZero: true,
-            stepSize: 5,
+            stepSize: 30,
           },
         },
         tooltips: {

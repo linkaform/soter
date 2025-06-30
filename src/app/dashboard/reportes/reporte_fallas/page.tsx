@@ -72,8 +72,8 @@ const ReportsPage = () => {
 		hoteles: any[];
 	}>({
 		enabled: true,
-		anio: null,
-		cuatrimestres: [],
+		anio: currentYear,
+		cuatrimestres: selectedCuatri,
 		hoteles: []
 	});
 	const { reportFallas, isLoadingReportFallas, errorReportFallas, refetchReportFallas } = useReportFallas(filters);
@@ -89,8 +89,8 @@ const ReportsPage = () => {
 	const mejorHabitacion = reportFallas?.mejor_y_peor_habitacion?.mejor_habitacion ?? {};
 	const peorHabitacion = reportFallas?.mejor_y_peor_habitacion?.habitacion_mas_fallas ?? {};
 	const radarData = reportFallas?.graph_radar?.radar_data ?? [];
-	const hotelesFotografias = reportFallas?.hoteles_fotografias?.hoteles_fotografias ?? [];
-	const hotelesComentarios = reportFallas?.hoteles_comentarios?.hoteles_comentarios ?? [];
+	const hotelesFotografias = reportFallas?.rooms_details ?? [];
+	const hotelesComentarios = reportFallas?.rooms_details ?? [];
 	const [hotelHabitaciones, setHotelHabitaciones] = useState<any[]>([]);
 	const [hotelHabitacion, setHotelHabitacion] = useState<any>();
 	// Extrae los máximos de los arreglos para mejorHabitacion
@@ -193,6 +193,7 @@ const ReportsPage = () => {
 			hoteles: selectedHoteles
 		});
 		setAppliedCuatri(selectedCuatri);
+		setAppliedCuatri(appliedCuatri);
 	}
 
 	const handleToggleFalla = (falla: string) => {
@@ -344,16 +345,18 @@ const ReportsPage = () => {
 	});
 
 	// Convierte el mapa a un arreglo para renderizar
-	const hotelesImagenes: any = [];
+	const hotelesImagenes: any[] = [];
 
 	(hotelesFotografias ?? []).forEach((item: any) => {
 		const hotel = item.hotel;
 		const habitacion = item.habitacion;
 		const fieldLabel = item.field_label || {};
 		const media = item.media || {};
+		const comments = item.comments || {};
 
 		Object.entries(media).forEach(([fallaId, imagesArr]) => {
 			const fallaNombre = fieldLabel[fallaId] || "";
+			const comentario = comments[fallaId] || "";
 			if (Array.isArray(imagesArr)) {
 				imagesArr.forEach((img: any) => {
 					if (img.file_url) {
@@ -361,6 +364,7 @@ const ReportsPage = () => {
 							hotel,
 							habitacion,
 							falla: fallaNombre,
+							comentario,
 							image: {
 								name: img.file_name || img.name || "",
 								url: img.file_url,
@@ -520,7 +524,7 @@ const ReportsPage = () => {
 					</TabsContent>
 					<TabsContent value="secundaria">
 						<div className="text-2xl underline my-4">Calificacion por Hotel</div>
-						<MultiLineChart data={calificacionXHotelGraph} cuatris={appliedCuatri ? appliedCuatri : []} />
+						<MultiLineChart data={calificacionXHotelGraph} />
 					</TabsContent>
 					<TabsContent value="tercera">
 						<div className="text-2xl underline my-4">Calificacion por Seccion</div>

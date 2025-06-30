@@ -13,7 +13,7 @@ export const getHoteles = async () => {
     try {
         const payload = {
             option: "get_hoteles",
-            script_name: "reporte_fallas.py",
+            script_name: "reporte_fallas_hoteleria.py",
         };
 
         const userJwt = localStorage.getItem("access_token");
@@ -63,7 +63,7 @@ export const getReportFallas = async ({ anio, cuatrimestres, hoteles }: reportFa
     try {
         const payload = {
             option: "get_report",
-            script_name: "reporte_fallas.py",
+            script_name: "reporte_fallas_hoteleria.py",
             anio,
             cuatrimestres,
             hoteles
@@ -116,7 +116,7 @@ export const getHotelHabitaciones = async ({ hotel, fallas }: useHotelHabitacion
     try {
         const payload = {
             option: "get_habitaciones_by_hotel",
-            script_name: "reporte_fallas.py",
+            script_name: "reporte_fallas_hoteleria.py",
             hotel_name: hotel,
             fallas,
         };
@@ -168,7 +168,7 @@ export const getHabitacion = async ({ hotel, roomId }: { hotel: string, roomId: 
     try {
         const payload = {
             option: "get_room_data",
-            script_name: "reporte_fallas.py",
+            script_name: "reporte_fallas_hoteleria.py",
             hotel_name: hotel,
             room_id: roomId,
         };
@@ -220,7 +220,7 @@ export const getHabitacionPDF = async ({ recordId }: { recordId: string }) => {
     try {
         const payload = {
             option: "get_room_pdf",
-            script_name: "reporte_fallas.py",
+            script_name: "reporte_fallas_hoteleria.py",
             record_id: recordId,
         };
 
