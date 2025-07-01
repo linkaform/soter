@@ -78,7 +78,7 @@ const ReportsPage = () => {
 	});
 	const { reportFallas, isLoadingReportFallas, errorReportFallas, refetchReportFallas } = useReportFallas(filters);
 	const { hotelesFallas, isLoadingHotelesFallas, errorHotelesFallas } = useGetHoteles(true);
-	const hoteles = hotelesFallas?.hoteles;
+	const hoteles = hotelesFallas?.hoteles ?? [];
 	const cards = reportFallas?.cards ?? {};
 	const porcentaje = reportFallas?.porcentaje_propiedades_inspeccionadas ?? 0;
 	const calificacionXHotelGraph = reportFallas?.calificacion_x_hotel_grafica ?? [];
