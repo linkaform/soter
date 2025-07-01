@@ -258,10 +258,13 @@ const ReportsPage = () => {
 	};
 
 	useEffect(() => {
-		if (hoteles && hoteles.length > 0) {
+		if (!hoteles) return;
+		// Solo actualiza si es diferente
+		const isDifferent =
+			hoteles.length !== selectedHoteles.length ||
+			hoteles.some((h: any, i: any) => h.nombre_hotel !== selectedHoteles[i]?.nombre_hotel);
+		if (isDifferent) {
 			setSelectedHoteles(hoteles);
-		} else {
-			setSelectedHoteles([]);
 		}
 	}, [hoteles]);
 
@@ -473,7 +476,7 @@ const ReportsPage = () => {
 					<div>
 						<Multiselect
 							key={selectedHoteles.length}
-							options={hoteles}
+							options={Array.isArray(hoteles) ? hoteles : []}
 							displayValue="nombre_hotel"
 							placeholder="Hoteles"
 							selectedValues={selectedHoteles}
