@@ -28,21 +28,22 @@ import { useCatalogoAreaEmpleado } from "@/hooks/useCatalogoAreaEmpleado";
 import { format,  } from 'date-fns';
 
 import { useCatalogoAreaEmpleadoApoyo } from "@/hooks/useCatalogoAreaEmpleadoApoyo";
-import { toast } from "sonner";
-import { useCatalogoFallas } from "@/hooks/useCatalogoFallas";
+import { useCatalogoFallas } from "@/hooks/Fallas/useCatalogoFallas";
 import DateTime from "../dateTime";
 import LoadFile from "../upload-file";
-import { Edit, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { getCatalogoFallas } from "@/lib/fallas";
-import { useFallas } from "@/hooks/useFallas";
+import { useFallas } from "@/hooks/Fallas/useFallas";
 import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
 import { useShiftStore } from "@/store/useShiftStore";
+import { toast } from "sonner";
 
 interface EditarFallaModalProps {
   	title: string;
 	data: any;
-	setShowLoadingModal:Dispatch<SetStateAction<boolean>>;
-	showLoadingModal:boolean;
+	setModalEditarAbierto:Dispatch<SetStateAction<boolean>>; 
+	modalEditarAbierto:boolean;
+	onClose: () => void; 
 }
 
 const formSchema = z.object({
@@ -72,22 +73,27 @@ const formSchema = z.object({
 export const EditarFallaModal: React.FC<EditarFallaModalProps> = ({
   	title,
 	data,
-	setShowLoadingModal,
-}) => {
-	const [subconcepto, setSubConcepto] = useState<string>(data.falla);
+	modalEditarAbierto,
+	setModalEditarAbierto,
+	onClose
+}) => { 
+	const [subconcepto, setSubConcepto] = useState<string>("");
+	const [useSelects, setUseSelects] = useState(false);
 	const [catalagoSub, setCatalogoSub] = useState<string[]>([]);
 	const [catalagoFallas, setFallas] = useState<string[]>([]);
-	const [isSuccess, setIsSuccess] =useState(false)
+	// const [isSuccess, setIsSuccess] =useState(false)
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(data.falla_ubicacion);
 	const { location } = useShiftStore();
 	const { dataAreas:areas, dataLocations:ubicaciones, isLoadingAreas:loadingAreas} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true,  ubicacionSeleccionada?true:false);
-	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado, error:errorAreEmpleado } = useCatalogoAreaEmpleado(isSuccess, location, "Incidencias");
-	const { data:dataAreaEmpleadoApoyo, isLoading:loadingAreaEmpleadoApoyo,error:errorAEA} = useCatalogoAreaEmpleadoApoyo(isSuccess);
-	const { data:dataFallas, isLoading:isLoadingFallas, error:errorFallas } = useCatalogoFallas(subconcepto, isSuccess);
+	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado} = useCatalogoAreaEmpleado(modalEditarAbierto, location, "Incidencias");
+	const { data:dataAreaEmpleadoApoyo, isLoading:loadingAreaEmpleadoApoyo} = useCatalogoAreaEmpleadoApoyo(modalEditarAbierto);
+	const { data:dataFallas, isLoading:isLoadingFallas } = useCatalogoFallas(subconcepto, modalEditarAbierto);
 	const { editarFallaMutation, isLoading} = useFallas("","", "abierto", false, "", "", "")
 	const [evidencia , setEvidencia] = useState<Imagen[]>([]);
 	const [documento , setDocumento] = useState<Imagen[]>([]);
 	const [date, setDate] = useState<Date|"">("");
+	const [loadingCatalogos, setLoadingCatalogos]= useState(false)
+
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -107,46 +113,29 @@ export const EditarFallaModal: React.FC<EditarFallaModalProps> = ({
 
 	const { reset } = form;
 	
-
 	useEffect(()=>{
-		if(isSuccess){
+		if(modalEditarAbierto){
 			reset()
 			setEvidencia(data.falla_evidencia)
 			setDocumento(data.falla_documento)
 			setDate(new Date(data.falla_fecha_hora))
-			setShowLoadingModal(false)
+			handleOpenModal()
 		}
+	},[modalEditarAbierto])
 
-		if(dataFallas && subconcepto){
+	useEffect(()=>{
+		console.log("que pasa", dataFallas, subconcepto)
+		if(dataFallas && subconcepto && useSelects){
 			if (dataFallas.length == 1 && dataFallas[0] === null) {
 				setCatalogoSub([])
 			  }else{
 				setCatalogoSub(dataFallas)
 			  }
 		}
-		if(dataFallas && !subconcepto){
+		if(dataFallas && !subconcepto && useSelects){
 			setFallas(dataFallas)
-			// setSubConcepto(data.falla)
 		}
-	},[isSuccess, dataFallas, ubicaciones])
-
-	useEffect(()=>{
-		if(errorAEA){
-			toast.error(errorAEA.message)
-		}
-		if(errorAreEmpleado){
-			toast.error(errorAreEmpleado.message)
-		}
-		if(errorFallas){
-			toast.error(errorFallas.message)
-		}
-	},[errorAEA, errorAreEmpleado, errorFallas])
-
-	useEffect(()=>{
-		if(!isLoading){
-			handleClose()			
-		}
-	},[isLoading])
+	},[dataFallas, ubicaciones])
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		let formattedDate=""
@@ -165,7 +154,14 @@ export const EditarFallaModal: React.FC<EditarFallaModalProps> = ({
 				falla_responsable_solucionar_nombre: values.falla_responsable_solucionar_nombre||"",
 				falla_ubicacion:values.falla_ubicacion||"",
 				}
-				 editarFallaMutation.mutate({data_failure_update: formatData, folio: data.folio})
+				 editarFallaMutation.mutate({data_failure_update: formatData, folio: data.folio}, {
+					onSuccess: () => {
+					  handleClose();
+					},
+					onError: () => {
+						handleClose()
+					},
+				  })
 		}else{
 			form.setError("falla_fecha_hora", { type: "manual", message: "Fecha es un campo requerido." });
 		}
@@ -173,30 +169,56 @@ export const EditarFallaModal: React.FC<EditarFallaModalProps> = ({
 
 	const handleClose = () => {
 		reset()
-		setShowLoadingModal(false); 
-		setIsSuccess(false); 
+		setModalEditarAbierto(false); 
+		onClose()
 	};
 
 	const handleOpenModal = async () => {
-		setShowLoadingModal(true);
-		const fallasCat = await getCatalogoFallas("");
+		setLoadingCatalogos(true)
+		const fallasCat= await loadCatalogoFallas()
 		setFallas(fallasCat.response.data);
-		const fallasObjetoAfectado = await getCatalogoFallas(data.falla_objeto_afectado);
+
+		const fallasObjetoAfectado = await loadCatalogoSubFallas()
 		setCatalogoSub(fallasObjetoAfectado.response.data);
-		setIsSuccess(true);
+
+		setSubConcepto(data.falla)
+		setLoadingCatalogos(false)
 	};
 
+	const loadCatalogoFallas = async () => {
+		try{
+			const fallasCat = await getCatalogoFallas("");
+			return fallasCat
+		}  catch {
+			toast.error("Error al cargar catálogo de fallas, intenta de nuevo.");
+			return []
+		}
+	}
+
+	const loadCatalogoSubFallas = async () => {
+		try{
+			const fallasObjetoAfectado = await getCatalogoFallas(data.falla);
+			return fallasObjetoAfectado
+		}  catch {
+			toast.error("Error al cargar catálogo de sub concepto, intenta de nuevo.");
+			return []
+		}
+	}
+
   return (
-	<Dialog open={isSuccess} modal>
-		<div className="cursor-pointer" onClick={handleOpenModal}>
-			<Edit />
-		</div>
+	<Dialog open={modalEditarAbierto} onOpenChange={setModalEditarAbierto} modal>
 	<DialogContent className="max-w-3xl overflow-y-auto max-h-[80vh] min-h-[80vh] flex flex-col" aria-describedby="">
 		<DialogHeader className="flex-shrink-0">
 		<DialogTitle className="text-2xl text-center font-bold">
 			{title}
 		</DialogTitle>
 		</DialogHeader>
+		{loadingCatalogos? (
+			<div className="flex justify-center items-center h-screen">
+				<div className="w-24 h-24 border-8 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+			</div>
+		): (
+			<>
 				<div className="flex-grow overflow-y-auto p-4">
 					<Form {...form}>
 						<form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -293,6 +315,8 @@ export const EditarFallaModal: React.FC<EditarFallaModalProps> = ({
 												onValueChange={(value: string) => {
 													field.onChange(value);
 													setSubConcepto(value);
+													setCatalogoSub([])
+													setUseSelects(true)
 												} }
 												value={subconcepto}
 											>
@@ -459,25 +483,27 @@ export const EditarFallaModal: React.FC<EditarFallaModalProps> = ({
 						</form>
 					</Form>
 				</div>
-			<div className="flex gap-2">
-				<DialogClose asChild>
-						<Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700" onClick={handleClose}>
-							Cancelar
-						</Button>
-					</DialogClose>
+				<div className="flex gap-2">
+					<DialogClose asChild>
+							<Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700" onClick={handleClose}>
+								Cancelar
+							</Button>
+						</DialogClose>
 
-					<Button
-						type="submit"
-						onClick={form.handleSubmit(onSubmit)}
-						className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={isLoading}
-					>
-						{isLoading ? (
-							<>
-								<Loader2 className="animate-spin" /> {"Editando falla..."}
-							</>
-						) : ("Editar falla")}
-					</Button>
-			</div>
+						<Button
+							type="submit"
+							onClick={form.handleSubmit(onSubmit)}
+							className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={isLoading}
+						>
+							{isLoading ? (
+								<>
+									<Loader2 className="animate-spin" /> {"Editando falla..."}
+								</>
+							) : ("Editar falla")}
+						</Button>
+				</div>
+			</>
+		)}
 		</DialogContent>
 	</Dialog>
   );

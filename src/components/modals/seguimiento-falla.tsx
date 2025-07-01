@@ -7,7 +7,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "../ui/dialog";
 
 import {
@@ -30,13 +29,12 @@ import LoadFile from "../upload-file";
 import { format } from "date-fns";
 import DateTime from "../dateTime";
 import { formatFecha } from "@/lib/utils";
-import { useFallas } from "@/hooks/useFallas";
+import { useFallas } from "@/hooks/Fallas/useFallas";
 import { useShiftStore } from "@/store/useShiftStore";
 
 interface AddFallaModalProps {
   	title: string;
 	data: any;
-	children: React.ReactNode;
 	isSuccess: boolean;
 	setIsSuccess: Dispatch<SetStateAction<boolean>>;
 }
@@ -63,7 +61,6 @@ const formSchema = z.object({
 export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
   	title,
 	data,
-	children,
 	isSuccess,
 	setIsSuccess
 }) => {
@@ -128,8 +125,6 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 
   return (
     <Dialog onOpenChange={setIsSuccess} open={isSuccess}>
-      <DialogTrigger>{children}</DialogTrigger> 
-
       <DialogContent className="max-w-3xl" aria-describedby="">
         <DialogHeader>
           <DialogTitle className="text-2xl text-center font-bold">
@@ -183,7 +178,7 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 				name="fechaInicioFallaCompleta"
 				render={() => (
 					<FormItem>
-					<FormLabel>* Fecha</FormLabel>
+					<FormLabel>* Fecha desde:</FormLabel>
 					<FormControl>
 						{/* <Input type="datetime-local" placeholder="Fecha"  /> */}
 						<DateTime date={date} setDate={setDate} />
@@ -198,7 +193,7 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 				name="fechaFinFallaCompleta"
 				render={() => (
 					<FormItem>
-					<FormLabel>* Fecha</FormLabel>
+					<FormLabel>* Fecha hasta:</FormLabel>
 					<FormControl>
 						{/* <Input type="datetime-local" placeholder="Fecha" /> */}
 						<DateTime date={dateFin} setDate={setDateFin}/>

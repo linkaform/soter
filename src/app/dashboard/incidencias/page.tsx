@@ -11,7 +11,7 @@ import FallasTable from "@/components/table/incidencias/fallas/table";
 import { useGetFallas } from "@/hooks/useGetFallas";
 import { AddFallaModal } from "@/components/modals/add-falla";
 import { AddIncidenciaModal } from "@/components/modals/add-incidencia";
-import { useInciencias } from "@/hooks/useIncidencias";
+import { useInciencias } from "@/hooks/Incidencias/useIncidencias";
 import { dateToString } from "@/lib/utils";
 import { toast } from "sonner";
 import ChangeLocation from "@/components/changeLocation";

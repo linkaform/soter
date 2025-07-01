@@ -6,47 +6,57 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "../ui/dialog";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import { useInciencias } from "@/hooks/useIncidencias";
+import { useEliminarIncidencia } from "@/hooks/Incidencias/useEliminarIncidencias";
+import { useShiftStore } from "@/store/useShiftStore";
 
 interface AddFallaModalProps {
   	title: string;
-    arrayFolios:string[];
-	children: React.ReactNode;
+    arrayFolios:any[];
+	setModalEliminarAbierto:Dispatch<SetStateAction<boolean>>; 
+	modalEliminarAbierto:boolean;
 }
 
 export const EliminarIncidenciaModal: React.FC<AddFallaModalProps> = ({
   	title,
 	arrayFolios,
-	children
+	setModalEliminarAbierto,
+	modalEliminarAbierto
 }) => {
-    const { eliminarIncidenciaMutation, loading } = useInciencias("","",[], "", "", "");
-	const [isSuccess, setIsSuccess] =useState(false)
+	const { isLoading } = useShiftStore();
+	const eliminarIncidenciaMutation = useEliminarIncidencia();
+
 	const handleClose = () => {
-		setIsSuccess(false); 
+		setModalEliminarAbierto(false); 
 	};
-    useEffect(()=>{
-		if(!loading){
-			handleClose()			
-		}
-	},[loading])
 
     const deleteFallas = ()=>{
 		if(arrayFolios.length>0){
-			eliminarIncidenciaMutation.mutate({folio : arrayFolios})
+			let foliosArray=[]
+			if (Array.isArray(arrayFolios) && arrayFolios.every(item => typeof item === "string")) {
+				foliosArray = arrayFolios.map(item => item);
+			  } else {
+				foliosArray = arrayFolios.map(item => item.folio);
+			  }
+
+			eliminarIncidenciaMutation.mutate({folio : foliosArray},{
+				onSuccess: () => {
+					handleClose(); 
+				  },
+				onError: () => {
+					handleClose(); 
+				  },
+			})
 		}else{
 			toast.error("Selecciona una incidencia para poder eliminarla...")
 		}
     }
 
   return (
-    <Dialog onOpenChange={setIsSuccess} open={isSuccess}>
-      <DialogTrigger>{children}</DialogTrigger> 
-
+    <Dialog onOpenChange={setModalEliminarAbierto} open={modalEliminarAbierto} modal>
       <DialogContent className="max-w-3xl" aria-describedby="">
         <DialogHeader>
           <DialogTitle className="text-2xl text-center font-bold">
@@ -71,9 +81,9 @@ export const EliminarIncidenciaModal: React.FC<AddFallaModalProps> = ({
 				
 				<Button
                     onClick={deleteFallas}
-					className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={loading}
+					className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={isLoading}
 				>
-					{ !loading ? (<>
+					{ !isLoading ? (<>
 					{arrayFolios.length==1 ?("Eliminar incidencia seleccionada"):("Eliminar incidencias seleccionadas")}
 					</>) :(<> <Loader2 className="animate-spin"/> {arrayFolios.length==1 ?("Eliminando incidencia seleccionada"):("Eliminando incidencias seleccionadas")} </>)}
 				</Button>

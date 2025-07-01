@@ -14,7 +14,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { CalendarDays,  FileX2,  Plus,  Search,  Trash2 } from "lucide-react";
+import { CalendarDays,  FileX2,  Plus,  Search, Trash2 } from "lucide-react";
 
 
 
@@ -29,14 +29,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 // import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import {Fallas_record, fallasColumns } from "./fallas-columns";
+import {Fallas_record, getFallasColumns } from "./fallas-columns";
 import { EliminarFallaModal } from "@/components/modals/delete-falla-modal";
 import { catalogoFechas, downloadCSV } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DateTime from "@/components/dateTime";
-import { useMemo } from "react";
-// import ChangeLocation from "@/components/changeLocation";
+import { useMemo, useState } from "react";
+import { EditarFallaModal } from "@/components/modals/editar-falla";
+import { SeguimientoFallaModal } from "@/components/modals/seguimiento-falla";
 
   interface ListProps {
     data: Fallas_record[];
@@ -44,11 +45,6 @@ import { useMemo } from "react";
     openModal: () => void;
     setSelectedFallas:React.Dispatch<React.SetStateAction<string[]>>;
     selectedFallas:string[]
-
-	// setUbicacionSeleccionada: React.Dispatch<React.SetStateAction<string>>;
-	// setAreaSeleccionada:React.Dispatch<React.SetStateAction<string>>;
-	// areaSeleccionada:string;
-	// ubicacionSeleccionada:string;
 
 	setDate1 :React.Dispatch<React.SetStateAction<Date | "">>;
 	setDate2 :React.Dispatch<React.SetStateAction<Date | "">>;
@@ -58,76 +54,99 @@ import { useMemo } from "react";
 	setDateFilter :React.Dispatch<React.SetStateAction<string>>;
 	Filter:() => void;
   }
-  const fallasColumnsCSV = [
-    { label: 'Folio', key: 'folio' },
-    { label: 'Fecha y hora', key: 'falla_fecha_hora' },
-    { label: 'Estado', key: 'falla_estatus' },
-    { label: 'Ubicacion', key: 'falla_ubicacion' },
-    { label: 'Lugar del Fallo', key: 'falla_caseta' },
-    { label: 'Falla', key: 'falla' },
-    { label: 'Comentarios', key: 'falla_comentarios' },
-    { label: 'Reporta', key: 'falla_reporta_nombre' },
-    { label: 'Responsable', key: 'falla_responsable_solucionar_nombre' },
-  ];
+	const fallasColumnsCSV = [
+		{ label: 'Folio', key: 'folio' },
+		{ label: 'Fecha y hora', key: 'falla_fecha_hora' },
+		{ label: 'Estado', key: 'falla_estatus' },
+		{ label: 'Ubicacion', key: 'falla_ubicacion' },
+		{ label: 'Lugar del Fallo', key: 'falla_caseta' },
+		{ label: 'Falla', key: 'falla' },
+		{ label: 'Comentarios', key: 'falla_comentarios' },
+		{ label: 'Reporta', key: 'falla_reporta_nombre' },
+		{ label: 'Responsable', key: 'falla_responsable_solucionar_nombre' },
+	];
   
   const FallasTable:React.FC<ListProps> = ({ isLoading, data, openModal, setSelectedFallas, selectedFallas,
-	setDate1, setDate2, date1, date2, dateFilter, setDateFilter,Filter
-	// setUbicacionSeleccionada, setAreaSeleccionada, areaSeleccionada, ubicacionSeleccionada
-  })=> {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
-  
-  const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = React.useState({});
-  const [pagination, setPagination] = React.useState({
-    pageIndex: 0,
-    pageSize: 23,
-  });
+		setDate1, setDate2, date1, date2, dateFilter, setDateFilter,Filter
+	})=> {
+	const [sorting, setSorting] = React.useState<SortingState>([]);
+	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+		[]
+	);
+	const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
+	const [modalSeguimientoAbierto, setModalSeguimientoAbierto] = useState(false);
+	const [modalEliminarAbierto, setModalEliminarAbierto] = useState(false);
+	const [modalEliminarMultiAbierto, setModalEliminarMultiAbierto] = useState(false);
+	const [fallaSeleccionada, setFallaSeleccionada] = useState<Fallas_record | null>(null);
 
-  const [globalFilter, setGlobalFilter] = React.useState("");
-  const columns = useMemo(() => (isLoading ? [] : fallasColumns), [isLoading]);
-  const memoizedData = useMemo(() => data || [], [data]);
+	const [columnVisibility, setColumnVisibility] =
+		React.useState<VisibilityState>({});
+	const [rowSelection, setRowSelection] = React.useState({});
+	const [pagination, setPagination] = React.useState({
+		pageIndex: 0,
+		pageSize: 23,
+	});
 
-  const table = useReactTable({
-    data:memoizedData,
-    columns: columns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    onGlobalFilterChange: setGlobalFilter,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    onPaginationChange: setPagination,
+	const handleEditar = (falla: Fallas_record) => {
+		setFallaSeleccionada(falla);
+		setModalEditarAbierto(true);
+	};
+	
+	const handleSeguimiento= (falla: Fallas_record) => {
+		setFallaSeleccionada(falla);
+		setModalSeguimientoAbierto(true);
+	};
+	
+	const handleEliminar= (falla: Fallas_record) => {
+		setFallaSeleccionada(falla);
+		setModalEliminarAbierto(true);
+	};
+	
 
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-      pagination,
-      globalFilter,
-    },
-  });
+	const [globalFilter, setGlobalFilter] = React.useState("");
+	const columns = useMemo(() => {
+	if (isLoading) return [];
+	return getFallasColumns(handleEditar, handleSeguimiento, handleEliminar);
+	}, [isLoading]);
 
-  React.useEffect(()=>{
-    if(table.getFilteredSelectedRowModel().rows.length>0){
-      const folios: any[] = []
-      table.getFilteredSelectedRowModel().rows.map((row) => {
-        folios.push(row.original);
-      });
-      setSelectedFallas(folios)
-    }
-  },[table.getFilteredSelectedRowModel().rows])
-  
+	const memoizedData = useMemo(() => data || [], [data]);
+
+	const table = useReactTable({
+		data:memoizedData,
+		columns: columns,
+		onSortingChange: setSorting,
+		onColumnFiltersChange: setColumnFilters,
+		onGlobalFilterChange: setGlobalFilter,
+		getCoreRowModel: getCoreRowModel(),
+		getPaginationRowModel: getPaginationRowModel(),
+		getSortedRowModel: getSortedRowModel(),
+		getFilteredRowModel: getFilteredRowModel(),
+		onColumnVisibilityChange: setColumnVisibility,
+		onRowSelectionChange: setRowSelection,
+		onPaginationChange: setPagination,
+
+		state: {
+		sorting,
+		columnFilters,
+		columnVisibility,
+		rowSelection,
+		pagination,
+		globalFilter,
+		},
+	});
+
+	React.useEffect(()=>{
+		if(table.getFilteredSelectedRowModel().rows.length>0){
+		const folios: any[] = []
+		table.getFilteredSelectedRowModel().rows.map((row) => {
+			folios.push(row.original);
+		});
+		setSelectedFallas(folios)
+		}
+	},[table.getFilteredSelectedRowModel().rows])
+	
 return (
     <div className="w-full">
-		
 		<div className="flex justify-between items-center my-2 gap-3">
 			<div className="flex w-1/2 justify-start gap-4 ">
 				<div className="flex">
@@ -177,19 +196,6 @@ return (
 				<CalendarDays />
 				</div>
 
-				{/* <div className="flex items-center gap-2">
-					<span className="text-lg font-semibold whitespace-nowrap">Tipo de Movimiento:</span>
-					<Select onValueChange={handleSelectChange} defaultValue={""}>
-						<SelectTrigger>
-						<SelectValue placeholder="Selecciona una opción" />
-						</SelectTrigger>
-					<SelectContent>
-						<SelectItem value="entrada">Abierto</SelectItem>
-						<SelectItem value="salida">Cerrado</SelectItem>
-					</SelectContent>
-					</Select>
-				</div> */}
-
 				<div className="flex flex-wrap gap-2">
 				<div>
 					<Button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2" onClick={openModal}>
@@ -205,29 +211,47 @@ return (
 					</Button>
 				</div>
 				
+				<Button
+				variant="destructive"
+				onClick={() => setModalEliminarMultiAbierto(true)}
+				disabled={selectedFallas.length === 0} 
+				>
+						<Trash2 />  
+					Eliminar
+				</Button>
+
 				<div>
 					<EliminarFallaModal
 						title="Eliminar Falla"
-						arrayFolios={selectedFallas}>
-						<div className="flex flex-shrink p-2 rounded-sm px-3 w-full bg-red-500 text-white hover:bg-red-600" >
-							<Trash2 />        
-							Eliminar
-						</div>
-					</EliminarFallaModal>
+						arrayFolios={selectedFallas} setModalEliminarAbierto={setModalEliminarMultiAbierto} modalEliminarAbierto={modalEliminarMultiAbierto}/>
 				</div>
 				</div>
 			</div>
 			
-			{/* <div className="flex w-1/3 gap-2"> 
-				<ChangeLocation ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} 
-        		setUbicacionSeleccionada={setUbicacionSeleccionada} setAreaSeleccionada={setAreaSeleccionada}>
-				</ChangeLocation>
-			</div> */}
+			{modalEditarAbierto && fallaSeleccionada && (
+				<EditarFallaModal
+					title="Editar Falla"
+					data={fallaSeleccionada}
+					modalEditarAbierto={modalEditarAbierto}
+					setModalEditarAbierto={setModalEditarAbierto}
+					onClose={() => setModalEditarAbierto(false)}
+				/>
+			)}
 
-			
-
-
-
+			{modalSeguimientoAbierto && fallaSeleccionada && (
+				<SeguimientoFallaModal
+					title="Seguimiento Falla"
+					data={fallaSeleccionada} isSuccess={modalSeguimientoAbierto} setIsSuccess={setModalSeguimientoAbierto}
+				/>
+			)}
+			{modalEliminarAbierto && fallaSeleccionada && (
+				<EliminarFallaModal
+					title="Eliminar Falla"
+					arrayFolios={[fallaSeleccionada.folio]}
+					modalEliminarAbierto={modalEliminarAbierto}
+					setModalEliminarAbierto={setModalEliminarAbierto}
+					/>
+			)}
 		</div>
 		<div className="">
 			<Table>
@@ -269,7 +293,7 @@ return (
 				) : (
 				<TableRow>
 					<TableCell
-					colSpan={fallasColumns.length}
+					colSpan={table.getVisibleFlatColumns().length}
 					className="h-24 text-center"
 					>
 					{isLoading? (<div className='text-xl font-semibold'>Cargando registros... </div>): 

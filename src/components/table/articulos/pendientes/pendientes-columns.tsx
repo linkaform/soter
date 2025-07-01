@@ -110,7 +110,7 @@ export const pendientesColumns: ColumnDef<Articulo_perdido_record>[] = [
       accessorKey:"foto_perdido",
       header:"Fotografía",
       cell: ({ row }) => {
-        const foto = row.original.foto_perdido;
+        const foto = row.original.foto_perdido.length==0 ? [{file_url:"/package.svg", file_name:""}]:row.original.foto_perdido;
           return <ViewImage imageUrl={foto} />;
       }
     },

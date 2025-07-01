@@ -1,5 +1,5 @@
 import { getStats } from "@/lib/get-stats";
-import { crearIncidencia, deleteIncidencias, editarIncidencia, getListIncidencias, InputIncidencia } from "@/lib/incidencias";
+import { crearIncidencia, editarIncidencia, getListIncidencias, InputIncidencia } from "@/lib/incidencias";
 import { errorMsj } from "@/lib/utils";
 import { useShiftStore } from "@/store/useShiftStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -81,36 +81,7 @@ export const useInciencias = (location:string, area:string, prioridades:string[]
         },
       });
 
-      //Eliminar Incidencia
-    const eliminarIncidenciaMutation = useMutation({
-      mutationFn: async ({ folio }: { folio: string[] }) => {
-          const response = await deleteIncidencias(folio);
-          const hasError= response.response.data.status_code
 
-          if(hasError == 400 || hasError == 401){
-              const textMsj = errorMsj(response.response.data) 
-              throw new Error(`Error al eliminar incidencia, Error: ${textMsj?.text}`);
-          }else{
-              return response.response?.data
-          }
-      },
-      onMutate: () => {
-        setLoading(true);
-      },
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["getListIncidencias"] });
-        queryClient.invalidateQueries({ queryKey: ["getStats"] });
-        toast.success("Incidencia eliminada correctamente.");
-      },
-      onError: (err) => {
-        console.error("Error al eliminar incidencia:", err);
-        toast.error(err.message || "Hubo un error al eliminar la incidencia.");
-  
-      },
-      onSettled: () => {
-        setLoading(false);
-      },
-    });
 
     const { data: stats, isLoading: isStatsLoading, error: statsError,
     } = useQuery<any>({
@@ -135,8 +106,6 @@ export const useInciencias = (location:string, area:string, prioridades:string[]
     createIncidenciaMutation,
     //EditarIncidencia
     editarIncidenciaMutation,
-    //Eliminar Incidencia
-    eliminarIncidenciaMutation,
     //Stats Incidencias
     stats, 
     isStatsLoading,

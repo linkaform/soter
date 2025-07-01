@@ -44,7 +44,6 @@ import DateTime from "@/components/dateTime";
 import { EditarIncidenciaModal } from "@/components/modals/editar-incidencia";
 import ViewImage from "@/components/modals/view-image";
 import { Checkbox } from "@/components/ui/checkbox";
-// import ChangeLocation from "@/components/changeLocation";
 
 interface ListProps {
 	data: Incidencia_record[];
@@ -52,11 +51,6 @@ interface ListProps {
 	openModal: () => void;
 	setSelectedIncidencias:React.Dispatch<React.SetStateAction<string[]>>;
 	selectedIncidencias:string[];
-
-  	// setUbicacionSeleccionada: React.Dispatch<React.SetStateAction<string>>;
-	// setAreaSeleccionada:React.Dispatch<React.SetStateAction<string>>;
-	// areaSeleccionada:string;
-	// ubicacionSeleccionada:string;
 
 	setDate1 :React.Dispatch<React.SetStateAction<Date | "">>;
 	setDate2 :React.Dispatch<React.SetStateAction<Date | "">>;
@@ -78,7 +72,6 @@ const fallasColumnsCSV = [
 
 const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSelectedIncidencias,selectedIncidencias,
 	setDate1, setDate2, date1, date2, dateFilter, setDateFilter,Filter
-	// setUbicacionSeleccionada, setAreaSeleccionada, areaSeleccionada, ubicacionSeleccionada
  })=> {
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
@@ -87,6 +80,8 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
   );
 
 	const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
+	const [modalEliminarAbierto, setModalEliminarAbierto] = useState(false);
+	const [modalEliminarMultiAbierto, setModalEliminarMultiAbierto] = useState(false);
 	const [incidenciaSeleccionada, setIncidenciaSeleccionada] = useState<Incidencia_record | null>(null);
 
   const [columnVisibility, setColumnVisibility] =
@@ -105,6 +100,10 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 		setModalEditarAbierto(true);
 	};
 	
+	const handleEliminar = (incidencia: Incidencia_record) => {
+		setIncidenciaSeleccionada(incidencia);
+		setModalEliminarAbierto(true);
+	};
 
   const columns = useMemo(() => {
 	if (isLoading) return [];
@@ -118,7 +117,7 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 					onCheckedChange={(value) => row.toggleSelected(!!value)}
 					aria-label="Select row"
 				/>
-				<OptionsCell row={row} onEditarClick={handleEditar} />
+				<OptionsCell row={row} onEditarClick={handleEditar} onEliminarClick={handleEliminar}/>
 				</div>
 			),
 			header: ({ table } : { table: TanstackTable<Incidencia_record> }) => (
@@ -143,14 +142,6 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 			  enableSorting: true,
 			},
 			{
-			  accessorKey: "ubicacion_incidencia",
-			  header: "Ubicación",
-			  cell: ({ row }:{row: Row <Incidencia_record> }) => (
-			  <div className="capitalize">{row.getValue("ubicacion_incidencia")}</div>
-			  ),
-			  enableSorting: true,
-			},
-			{
 			  accessorKey: "area_incidencia",
 			  header: "Lugar del Incidente",
 			  cell: ({ row }:{row: Row <Incidencia_record> }) => (
@@ -166,14 +157,6 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 			  ),
 			  enableSorting: true,
 			},
-		   {
-			  accessorKey: "fecha_hora_incidencia",
-			  header: "Fecha",
-			  cell: ({ row }:{row: Row <Incidencia_record> }) => (
-			  <div className="capitalize">{row.getValue("fecha_hora_incidencia")}</div>
-			  ),
-			  enableSorting: true,
-			},
 			{
 			  accessorKey: "evidencia_incidencia",
 			  header: "Evidencia",
@@ -182,7 +165,44 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 			  // const primeraImagen = foto && foto.length > 0 ? foto[0].file_url : '/nouser.svg';
 			  return(<ViewImage imageUrl={foto ?? []} /> )},
 			  enableSorting: false,
-		  },
+		  	},
+			{
+			accessorKey: "fecha_hora_incidencia",
+			header: "Fecha",
+			cell: ({ row }:{row: Row <Incidencia_record> }) => (
+			<div className="capitalize">{row.getValue("fecha_hora_incidencia")}</div>
+			),
+			enableSorting: true,
+			},
+			{
+				id: "tags",
+				header: "Tags",
+				accessorFn: (row: { tags: any[]; }) => {
+				  console.log("row.tags raw:", row.tags);
+				  if (Array.isArray(row.tags)) {
+					return row.tags.join(", ");
+				  }
+				  return "";
+				},
+				cell: ({ getValue }: { getValue: () => string }) => {
+					const value = getValue(); // string "tag1, tag2, tag3"
+					// Separa el string en array
+					const tagsArray = value ? value.split(",").map(tag => tag.trim()) : [];
+					return (
+					  <div className="flex flex-wrap gap-1">
+						{tagsArray.map((tag, idx) => (
+						  <span
+							key={idx}
+							className="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded capitalize"
+						  >
+							{tag}
+						  </span>
+						))}
+					  </div>
+					);
+				},
+				enableSorting: true,
+			},			  
 			{
 			  accessorKey: "comentario_incidencia",
 			  header: "Comentarios",
@@ -273,8 +293,8 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 			<div className="flex w-full justify-end gap-3">
 				{dateFilter == "range" ?
 				<div className="flex items-center gap-2 mr-14">
-					<DateTime date={date1} setDate={setDate1} />
-					<DateTime date={date2} setDate={setDate2} />
+					<DateTime date={date1} setDate={setDate1} disablePastDates={false}/>
+					<DateTime date={date2} setDate={setDate2} disablePastDates={false}/>
 					<Button type="button"  className={"bg-blue-500 hover:bg-blue-600"} onClick={Filter}> Filtrar</Button>
 				</div>:null}
 				<div className="flex items-center w-48 gap-2"> 
@@ -312,13 +332,19 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 					</Button>
 				</div>
 
+				<Button
+				variant="destructive"
+				onClick={() => setModalEliminarMultiAbierto(true)}
+				disabled={selectedIncidencias.length === 0} 
+				>
+					<Trash2 />  
+					Eliminar
+				</Button>
+
 				<div>
-					<EliminarIncidenciaModal title="Eliminar Incidencias" arrayFolios={selectedIncidencias}>
-						<div className="flex flex-shrink p-2 rounded-sm px-3 w-full bg-red-500 text-white hover:bg-red-600 mb-0" >
-							<Trash2 />        
-							Eliminar
-						</div>
-					</EliminarIncidenciaModal>
+					<EliminarIncidenciaModal title="Eliminar Incidencias" arrayFolios={selectedIncidencias} 
+					modalEliminarAbierto={modalEliminarMultiAbierto}
+					setModalEliminarAbierto={setModalEliminarMultiAbierto}/>
 				</div>
 
 
@@ -331,6 +357,12 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 					setModalEditarAbierto={setModalEditarAbierto}
 					onClose={() => setModalEditarAbierto(false)}
 					/>
+				)}
+
+				{modalEliminarAbierto && incidenciaSeleccionada && (
+					<EliminarIncidenciaModal title="Eliminar Incidencias" arrayFolios={[incidenciaSeleccionada.folio]} 
+					modalEliminarAbierto={modalEliminarAbierto}
+					setModalEliminarAbierto={setModalEliminarAbierto}/>
 				)}
 
 			</div>

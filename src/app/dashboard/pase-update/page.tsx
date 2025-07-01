@@ -818,7 +818,7 @@ return (
 			</>
 		): (<>
 		{dataCatalogos?.pass_selected?.estatus =="activo" || dataCatalogos?.pass_selected?.estatus =="vencido" ?(<>
-			<div className="flex flex-col items-center justify-start  space-y-5 max-w-2xl mx-auto h-screen">
+			<div className="flex flex-col items-center justify-start  space-y-3 max-w-2xl mx-auto h-screen">
 					<span className="font-bold text-3xl text-slate-800">{dataCatalogos?.pass_selected?.nombre}</span>
 					<div>
 						<p className="font-bold whitespace-nowrap">Visita General </p>
@@ -880,7 +880,7 @@ return (
 						</>}
 					</div>
 
-					<div className="flex flex-col lg:flex-row gap-6">
+					<div className="flex flex-row gap-3">
 						<button type="button" onClick={handleClickGoogleButton}>
 							<Image src="/esES_add_to_google_wallet_add-wallet-badge.png" alt="Add to Google Wallet" width={150} height={150} className="mt-2" />
 						</button>

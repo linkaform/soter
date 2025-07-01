@@ -62,16 +62,19 @@ export const entregadosColumns: ColumnDef<ArticuloEntregado>[] = [
     {
         accessorKey: "fotografia",
         header: "Fotografía",
-        cell: ({ row }) => (
-          <div className="relative h-24 w-28">
-          <Image
-            src={row.getValue("fotografia")}
-            alt="Fotografía"
-            fill
-            className="object-cover"
-          />
-        </div>
-        ),
+        cell: ({ row }) => {
+          console.log(row.getValue("fotografia"))
+         return (
+            <div className="relative h-24 w-28">
+            <Image
+              src={row.getValue("fotografia")?? "/package.svg"}
+              alt="Fotografía"
+              fill
+              className="object-cover"
+            />
+          </div>
+          )
+        },
         enableSorting: false,
       },
     {

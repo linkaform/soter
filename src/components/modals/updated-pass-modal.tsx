@@ -10,6 +10,7 @@ import {
 	DialogTrigger,
 } from "../ui/dialog";
 import { toast } from "sonner";
+import { sendSmsOrEmail } from "@/lib/notes";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Form} from "../ui/form";
 import { z } from "zod";
@@ -56,14 +57,34 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 	updateResponse
 }) => {
 	const [enviarCorreo, setEnviarCorreo] = useState<string[]>([]);
-	const [isActive, setIsActive] = useState(false);
-	const [isActiveSMS, setIsActiveSMS] = useState(false);
 	const { createSendCorreoSms, isLoadingCorreo} = useSendCorreoSms();
 	const [enablePdf, setEnablePdf] = useState(false)
+	const [smsSent, setSmsSent] = useState(false);
+	const [emailSent, setEmailSent] = useState(false);
 	// const { data: responsePdf, isLoading: loadingPdf} = useGetPdf(account_id, folio, enablePdf);
 	// const downloadUrl=responsePdf?.response?.data?.data?.download_url
 	console.log("updateresponse",updateResponse,description)
 	const downloadImgUrl = updateResponse?.json?.pdf_to_img?.[0].file_url
+
+	const handleClickSendPass = async (folio: string, envio: string[]) => {
+		if (envio.includes("enviar_correo")) {
+			setEmailSent(true);
+		}
+		if (envio.includes("enviar_sms")) {
+			setSmsSent(true);
+		}
+		try {
+			await sendSmsOrEmail(folio, envio);
+		} catch (err) {
+			console.error("Error:", err);
+			if (envio.includes("enviar_correo")) {
+				setEmailSent(false);
+			}
+			if (envio.includes("enviar_sms")) {
+				setSmsSent(false);
+			}
+		}
+	}
 	
 	const handleClickGoogleButton = () => {
 		const url = passData?.pass_selected?.google_wallet_pass_url;
@@ -147,28 +168,6 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 		}
 	});
 
-	const handleToggleEmail = () => {
-		const email= "enviar_correo"
-		setEnviarCorreo((prev) => {
-			const pre = prev.includes(email)
-			? prev.filter((d) => d !== email) 
-			: [...prev, email];
-			return pre;
-		});
-		setIsActive(!isActive);
-	};
-
-	const handleToggleSMS = () => {
-		const sms= "enviar_sms"
-		setEnviarCorreo((prev) => {
-			const pre = prev.includes(sms)
-			? prev.filter((d) => d !== sms)
-			: [...prev, sms];
-			return pre;
-		});
-		setIsActiveSMS(!isActiveSMS);
-	};
-
 	const closeModal=()=>{
 		setOpenGeneratedPass(false)
 		closePadre()
@@ -181,6 +180,7 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 		if (enablePdf && downloadImgUrl) {
 			onDescargarPDF();
 			setEnablePdf(false);
+			setEnviarCorreo([]);
 			if (enviarCorreo.includes("enviar_correo") || enviarCorreo.includes("enviar_sms")) {
 				createSendCorreoSms.mutate({ account_id, envio: enviarCorreo, data_for_msj: dataPass, folio });
 			}
@@ -233,56 +233,37 @@ return (
 					<div className="flex flex-col justify-start items-center gap-3">
 						<div className="flex gap-2 flex-col">
 							<div className="flex flex-col gap-2 lg:flex-row lg:gap-6 justify-center items-center">
-								{hasEmail==true ? (
-									
+								{hasEmail === true && (
 									<Button
 										type="button"
-										onClick={handleToggleEmail}
+										onClick={() => handleClickSendPass(folio, ["enviar_correo"])}
+										disabled={emailSent}
 										className={`px-4 py-2 rounded-md transition-all duration-300 w-full ${
-											isActive ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent "
-										} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
-										>
+											emailSent ? "bg-gray-400 text-white" : "bg-blue-600 text-white"
+										} hover:bg-blue-700 hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
+									>
 										<div className="flex items-center">
-											{isActive ? (
-											<>
-												<Mail className="mr-3" />
-												<div>Enviar por correo</div>
-											</>
-											) : (
-											<>
-												<Mail className="mr-3 text-blue-600" />
-												<div className="text-blue-600">Enviar por correo</div>
-											</>
-											)}
+											<Mail className="mr-3" />
+											<div>{emailSent ? "Correo enviado" : "Enviar por correo"}</div>
 										</div>
-										</Button>
+									</Button>
+								)}
 
-								):null}
-
-								{hasTelefono==true ?(
-									
+								{hasTelefono === true && (
 									<Button
 										type="button"
-										onClick={handleToggleSMS}
+										onClick={() => handleClickSendPass(folio, ["enviar_sms"])}
+										disabled={smsSent}
 										className={`px-4 py-2 rounded-md transition-all duration-300 w-full ${
-											isActiveSMS ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
-										} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
-										>
-										<div className="flex flex-wrap items-center">
-											{isActiveSMS ? (
-											<>
-												<MessageCircleMore className="mr-3 text-white" />
-												<div>Enviar por sms</div>
-											</>
-											) : (
-											<>
-												<MessageCircleMore className="mr-3 text-blue-600" />
-												<div className="text-blue-600">Enviar por sms</div>
-											</>
-											)}
+											smsSent ? "bg-gray-400 text-white" : "bg-blue-600 text-white"
+										} hover:bg-blue-700 hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
+									>
+										<div className="flex items-center">
+											<MessageCircleMore className="mr-3" />
+											<div>{smsSent ? "SMS enviado" : "Enviar por sms"}</div>
 										</div>
-										</Button>
-								):null}
+									</Button>
+								)}
 							</div>
 						</div>
 					</div>

@@ -6,51 +6,57 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "../ui/dialog";
-import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import { useFallas } from "@/hooks/useFallas";
+import { useEliminarFalla } from "@/hooks/Fallas/useEliminarFallas";
+import { Dispatch, SetStateAction } from "react";
+import { useShiftStore } from "@/store/useShiftStore";
 
 interface AddFallaModalProps {
   	title: string;
     arrayFolios:any[];
-	children: React.ReactNode;
+	setModalEliminarAbierto:Dispatch<SetStateAction<boolean>>; 
+	modalEliminarAbierto:boolean;
 }
 
 export const EliminarFallaModal: React.FC<AddFallaModalProps> = ({
   	title,
 	arrayFolios,
-	children
+	setModalEliminarAbierto,
+	modalEliminarAbierto
 }) => {
-	const { eliminarFallaMutation, isLoading} = useFallas("","", "abierto", false, "", "", "")
+	const { isLoading } = useShiftStore();
+	const eliminarFallaMutation = useEliminarFalla();
 
-	const [isSuccess, setIsSuccess] =useState(false)
-
-	useEffect(()=>{
-		if(!isLoading){
-			handleClose()			
-		}
-	},[isLoading])
-	
 	const handleClose = () => {
-		setIsSuccess(false); 
+		setModalEliminarAbierto(false); 
 	};
 
-    const deleteFallas = ()=>{
+	const deleteFallas = ()=>{
 		if(arrayFolios.length>0){
-			const foliosArray = arrayFolios.map(item => item.folio);
-			eliminarFallaMutation.mutate({folio:foliosArray})
+			let foliosArray = []
+			if (Array.isArray(arrayFolios) && arrayFolios.every(item => typeof item === "string")) {
+				foliosArray = arrayFolios.map(item => item);
+			  } else {
+				foliosArray = arrayFolios.map(item => item.folio);
+			  }
+			  
+			eliminarFallaMutation.mutate({folio:foliosArray},{
+				onSuccess: () => {
+					handleClose(); 
+				  },
+				onError: () => {
+					handleClose(); 
+				  },
+			})
 		}else{
 			toast.error("Selecciona una falla para poder eliminarla...")
 		}
     }
 
   return (
-    <Dialog onOpenChange={setIsSuccess} open={isSuccess}>
-      <DialogTrigger>{children}</DialogTrigger> 
-
+    <Dialog onOpenChange={setModalEliminarAbierto} open={modalEliminarAbierto} modal>
       <DialogContent className="max-w-3xl" aria-describedby="">
         <DialogHeader>
           <DialogTitle className="text-2xl text-center font-bold">

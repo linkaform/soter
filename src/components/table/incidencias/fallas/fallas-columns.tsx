@@ -3,14 +3,9 @@ import {
     ColumnDef,   
   } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Check, Eye, Trash2 } from "lucide-react";
+import { Check, Edit, Eye, Trash2 } from "lucide-react";
 import { Imagen } from "@/lib/update-pass";
 import { ViewFalla } from "@/components/modals/view-falla";
-import { EditarFallaModal } from "@/components/modals/editar-falla";
-import { SeguimientoFallaModal } from "@/components/modals/seguimiento-falla";
-import { EliminarFallaModal } from "@/components/modals/delete-falla-modal";
-import { LoadingModal } from "@/components/modals/loading-modal";
-import { useState } from "react";
 import ViewImage from "@/components/modals/view-image";
 
   export interface Fallas_record{
@@ -45,46 +40,52 @@ import ViewImage from "@/components/modals/view-image";
     fecha_fin: string
   }
 
-  const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
-    const incidencia = row.original;
-	const [showLoadingModal, setShowLoadingModal] = useState(false);
-	const [isSuccess, setIsSuccess] = useState(false);
+  const OptionsCell: React.FC<{ row: any , onEditarClick: (incidencia: Fallas_record) => void , 
+  onSeguimientoClick: (falla: Fallas_record) => void , onEliminarClick: (falla: Fallas_record) => void }> = ({ row, onEditarClick, onSeguimientoClick ,onEliminarClick}) => {
+    const falla = row.original;
     return (
       <div className="flex space-x-2">
         <ViewFalla 
           title="Información de la Falla"
-          data={incidencia} isSuccess={false}>
+          data={falla} isSuccess={false}>
             <div className="cursor-pointer">
               <Eye /> 
             </div>
         </ViewFalla>
         
-        <LoadingModal isOpen={showLoadingModal} text="Cargando..."/>
+        {/* <LoadingModal isOpen={showLoadingModal} text="Cargando..."/> */}
 
-        <EditarFallaModal
-          title="Editar Falla"
-          data={incidencia} setShowLoadingModal={setShowLoadingModal} showLoadingModal={showLoadingModal}/>
-         
-        <SeguimientoFallaModal
-                title="Seguimiento Falla"
-                data={incidencia} isSuccess={isSuccess} setIsSuccess={setIsSuccess}>
-            <div className="cursor-pointer">
-                <Check />   
-            </div>
-        </SeguimientoFallaModal>
+        <div
+          className="cursor-pointer"
+          onClick={() => {
+            onEditarClick(falla)}}
+        >
+        	<Edit />
+        </div>
+    
+        <div
+          className="cursor-pointer"
+          onClick={() => {
+            onSeguimientoClick(falla)}}
+        >
+        	<Check />
+        </div>
 
-        <EliminarFallaModal
-          title="Eliminar Falla"
-          arrayFolios={[incidencia.folio]}>
-            <div className="cursor-pointer">
-                <Trash2 />   
-            </div>
-        </EliminarFallaModal>
+        <div
+          className="cursor-pointer"
+          onClick={() => {
+            onEliminarClick(falla)}}
+        >
+        	<Trash2 />
+        </div>
+
+       
       </div>
     );
   };
 
-  export const fallasColumns: ColumnDef<Fallas_record>[] = [
+  export const getFallasColumns = (onEdit: (falla: Fallas_record) => void, 
+  onSeguimientoClick: (falla: Fallas_record) => void, onEliminarClick: (falla: Fallas_record) => void): ColumnDef<Fallas_record>[] => [
     {
       id: "select",
       cell: ({ row }) => {
@@ -95,7 +96,8 @@ import ViewImage from "@/components/modals/view-image";
               checked={row.getIsSelected()}
               onCheckedChange={(value) => row.toggleSelected(!!value)}
               aria-label="Select row" />
-            <OptionsCell row={row} key={row.original._id}/>
+            <OptionsCell row={row} key={row.original._id} onEditarClick={() => onEdit(row.original)} 
+              onSeguimientoClick={()=>onSeguimientoClick(row.original)} onEliminarClick={()=>{onEliminarClick(row.original)}}/>
           </div>
           </>
         )
@@ -146,14 +148,6 @@ import ViewImage from "@/components/modals/view-image";
       enableSorting: true,
     },
     {
-      accessorKey: "falla_ubicacion",
-      header: "Ubicación",
-      cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("falla_ubicacion")}</div>
-      ),
-      enableSorting: true,
-    },
-    {
       accessorKey: "falla_caseta",
       header: "Lugar del fallo",
       cell: ({ row }) => (
@@ -174,7 +168,6 @@ import ViewImage from "@/components/modals/view-image";
       header: "Evidencia",
       cell: ({ row }) => {
         const foto = row.original?.falla_evidencia;
-        // const ultimaImagen = foto && foto.length > 0 ? foto[foto.length - 1].file_url : '/nouser.svg'; 
         return(<ViewImage imageUrl={foto ?? []} /> )},
       enableSorting: false,
     },
