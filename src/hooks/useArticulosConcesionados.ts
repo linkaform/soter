@@ -21,10 +21,7 @@ export const useArticulosConcesionados = (enableList:boolean, date1:string, date
               return Array.isArray(data.response?.data) ? data.response?.data : [];
             }
         },
-        refetchOnWindowFocus: true,
-        refetchInterval: 600000,
-        refetchOnReconnect: true,
-        staleTime: 1000 * 60 * 5,
+      
     });
 
      //Crear ArtículoConcesionado

@@ -1,4 +1,3 @@
-import { EliminarIncidenciaModal } from "@/components/modals/delete-incidencia-modal";
 import { SeguimientoIncidenciaModal } from "@/components/modals/seguimiento-incidencia";
 import { LoadingModal } from "@/components/modals/loading-modal";
 import { ViewIncidencia } from "@/components/modals/view-incidencia";
@@ -19,7 +18,7 @@ export type Incidencia = {
     fechaDevolucion: string;
     comentarios: string[]
   };
-  
+    
   export interface Incidencia_record {
     incidencia: string
     folio: string
@@ -98,7 +97,9 @@ export type Incidencia = {
     file_url: string
   }
   
-  export const OptionsCell: React.FC<{ row: any , onEditarClick: (incidencia: Incidencia_record) => void }> = ({ row, onEditarClick }) => {
+  export const OptionsCell: React.FC<{ row: any , onEditarClick: (incidencia: Incidencia_record) => void, 
+    onEliminarClick: (incidencia: Incidencia_record) => void
+   }> = ({ row, onEditarClick ,onEliminarClick}) => {
     const incidencia = row.original;
     const [showLoadingModal] = useState(false);
     const [openModal, setOpenModal]= useState(false)
@@ -131,111 +132,14 @@ export type Incidencia = {
           </div>
         </SeguimientoIncidenciaModal>
 
-        <EliminarIncidenciaModal
-          title="Eliminar Incidencia" arrayFolios={[incidencia.folio]}>
-            <div className="cursor-pointer">
-                <Trash2 />   
-            </div>
-        </EliminarIncidenciaModal>
+
+        <div
+          className="cursor-pointer"
+          onClick={() => onEliminarClick(incidencia)}
+        >
+        	<Trash2 />
+        </div>
+
       </div>
     );
   };
-
-//   export const incidenciasColumns: ColumnDef<Incidencia_record>[] = [
-//     {
-//       id: "select",
-//       cell: ({ row }) => {
-//         return (
-//           <>
-//           <div className="flex space-x-3 items-center">
-//             <Checkbox
-//               checked={row.getIsSelected()}
-//               onCheckedChange={(value) => row.toggleSelected(!!value)}
-//               aria-label="Select row" />
-//             <OptionsCell row={row} key={row.original._id} onEditarClick={handleEditar}/>
-//           </div>
-//           </>
-//         )
-//       },
-//       header: ({ table }) => (
-//         <Checkbox
-//           checked={
-//             table.getIsAllPageRowsSelected() ||
-//             (table.getIsSomePageRowsSelected() && "indeterminate")
-//           }
-//           onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-//           aria-label="Select all"
-//         />
-//       ),
-//       enableSorting: false,
-//       enableHiding: false,
-//     },
-//       {
-//         accessorKey: "folio",
-//         header: "Folio",
-//         cell: ({ row }) => (
-//         <div className="capitalize">{row.getValue("folio")}</div>
-//         ),
-//         enableSorting: true,
-//       },
-//       {
-//         accessorKey: "ubicacion_incidencia",
-//         header: "Ubicación",
-//         cell: ({ row }) => (
-//         <div className="capitalize">{row.getValue("ubicacion_incidencia")}</div>
-//         ),
-//         enableSorting: true,
-//       },
-//       {
-//         accessorKey: "area_incidencia",
-//         header: "Lugar del Incidente",
-//         cell: ({ row }) => (
-//         <div className="capitalize">{row.getValue("area_incidencia")}</div>
-//         ),
-//         enableSorting: true,
-//       },
-//       {
-//         accessorKey: "incidencia",
-//         header: "Incidencia",
-//         cell: ({ row }) => (
-//         <div className="capitalize">{row.getValue("incidencia")}</div>
-//         ),
-//         enableSorting: true,
-//       },
-//      {
-//         accessorKey: "fecha_hora_incidencia",
-//         header: "Fecha",
-//         cell: ({ row }) => (
-//         <div className="capitalize">{row.getValue("fecha_hora_incidencia")}</div>
-//         ),
-//         enableSorting: true,
-//       },
-//       {
-//         accessorKey: "evidencia_incidencia",
-//         header: "Evidencia",
-//         cell: ({ row }) => {
-//         const foto = row.original.evidencia_incidencia;
-//         // const primeraImagen = foto && foto.length > 0 ? foto[0].file_url : '/nouser.svg';
-//         return(<ViewImage imageUrl={foto ?? []} /> )},
-//         enableSorting: false,
-//     },
-//       {
-//         accessorKey: "comentario_incidencia",
-//         header: "Comentarios",
-//         cell: ({ row }) => {
-//         return (
-//           <span>{row.getValue("comentario_incidencia")}</span>
-//         );
-//         },
-//         enableSorting: true,
-//       },
-//       {
-//         accessorKey: "reporta_incidencia",
-//         header: "Reporta",
-//         cell: ({ row }) => (
-//         <div>{row.getValue("reporta_incidencia")}</div>
-//         ),
-//         enableSorting: true,
-//       },
-    
-//     ];

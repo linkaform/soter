@@ -61,7 +61,7 @@ import { AccionesTomadas, Depositos, PersonasInvolucradas } from "@/lib/incidenc
 import PersonasInvolucradasList from "../personas-involucradas-list";
 import AccionesTomadasList from "../acciones-tomadas-list";
 import { useShiftStore } from "@/store/useShiftStore";
-import { useInciencias } from "@/hooks/useIncidencias";
+import { useInciencias } from "@/hooks/Incidencias/useIncidencias";
 // import DepositosList from "../depositos-list";
 import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
 import { Input } from "../ui/input";
@@ -513,7 +513,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 
   return (
     <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
-      <DialogContent className="max-w-4xl overflow-y-auto max-h-[80vh] min-h-[80vh]  flex flex-col " aria-describedby="">
+      <DialogContent className="max-w-4xl overflow-y-auto max-h-[80vh] min-h-[80vh]  flex flex-col overflow-hidden" aria-describedby="">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center font-bold">
             {title}

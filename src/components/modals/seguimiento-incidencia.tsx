@@ -96,10 +96,12 @@ export const SeguimientoIncidenciaModal: React.FC<IncidenciaModalProps> = ({
 			queryClient.invalidateQueries({ queryKey: ["getListIncidencias"] });
 			queryClient.invalidateQueries({ queryKey: ["getStatsIncidencias"] });
 			toast.success("Seguimiento creado correctamente.");
+			setIsSuccess(false)
 		},
 		onError: (err) => {
 			console.error("Error al crear seguimiento:", err);
 			toast.error(err.message || "Hubo un error al crear el seguimiento.");
+			setIsSuccess(false)
 
 		},
 		onSettled: () => {
@@ -131,12 +133,6 @@ export const SeguimientoIncidenciaModal: React.FC<IncidenciaModalProps> = ({
 		}
 	}, [isSuccess, reset])
 
-	// useEffect(() => {
-	// 	if (!isLoading) {
-	// 		handleClose()
-	// 	}
-	// }, [isLoading])
-
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		if (date) {
 			const formatData = {
@@ -147,14 +143,7 @@ export const SeguimientoIncidenciaModal: React.FC<IncidenciaModalProps> = ({
 				incidencia_documento_solucion: documento,
 				incidencia_evidencia_solucion: evidencia
 			}
-			seguimientoIncidenciaMutation.mutate({ incidencia_grupo_seguimiento: formatData, folio: folio }, {
-				onSuccess: () => {
-					setIsSuccess(false)
-				},
-				onError: () => {
-					setIsSuccess(false)
-				},
-			  });
+			seguimientoIncidenciaMutation.mutate({ incidencia_grupo_seguimiento: formatData, folio: folio });
 		} else {
 			form.setError("fechaInicioIncidenciaCompleta", { type: "manual", message: "Fecha es un campo requerido." });
 		}
@@ -164,11 +153,6 @@ export const SeguimientoIncidenciaModal: React.FC<IncidenciaModalProps> = ({
 		setIsSuccess(false);
 	};
 
-	useEffect(() => {
-		if (!isLoading) {
-			handleClose()
-		}
-	}, [isLoading])
 
 	return (
 		<Dialog onOpenChange={setIsSuccess} open={isSuccess}>
@@ -227,7 +211,7 @@ export const SeguimientoIncidenciaModal: React.FC<IncidenciaModalProps> = ({
 								name="fechaInicioIncidenciaCompleta"
 								render={() => (
 									<FormItem>
-										<FormLabel>* Fecha</FormLabel>
+										<FormLabel>* Fecha desde:</FormLabel>
 										<FormControl>
 											{/* <Input type="datetime-local" placeholder="Fecha"  /> */}
 											<DateTime date={date} setDate={setDate} />
@@ -242,7 +226,7 @@ export const SeguimientoIncidenciaModal: React.FC<IncidenciaModalProps> = ({
 								name="fechaFinIncidenciaCompleta"
 								render={() => (
 									<FormItem>
-										<FormLabel>* Fecha</FormLabel>
+										<FormLabel>* Fecha hasta:</FormLabel>
 										<FormControl>
 											{/* <Input type="datetime-local" placeholder="Fecha" /> */}
 											<DateTime date={dateFin} setDate={setDateFin} />

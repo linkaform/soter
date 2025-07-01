@@ -33,7 +33,7 @@ import { AccionesTomadas, Depositos, getCatIncidencias, PersonasInvolucradas } f
 import PersonasInvolucradasList from "../personas-involucradas-list";
 import AccionesTomadasList from "../acciones-tomadas-list";
 import { useShiftStore } from "@/store/useShiftStore";
-import { useInciencias } from "@/hooks/useIncidencias";
+import { useInciencias } from "@/hooks/Incidencias/useIncidencias";
 import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
 import { PersonaExtraviadaFields } from "./persona-extraviada";
 import { RoboDeCableado } from "./robo-de-cableado";
@@ -424,11 +424,6 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 		}
 	}
 
-	// const handleOpenModal = async () => {
-	// 	setShowLoadingModal(false);
-	// 	setmodalEditarAbierto(true);
-	// };
-
 	const handleToggleNotifications = (value:boolean)=>{
 		const stringValue = !value? "no":"correo"
 		setSelectedNotification(stringValue);
@@ -437,7 +432,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 
 	return (
     <Dialog open={modalEditarAbierto} onOpenChange={setModalEditarAbierto} modal>
-      <DialogContent className="max-w-3xl overflow-y-auto max-h-[80vh] flex flex-col" aria-describedby="">
+      <DialogContent className="max-w-3xl overflow-y-auto max-h-[80vh] flex flex-col " aria-describedby="">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center font-bold">
             {title}

@@ -29,11 +29,11 @@ import { useCatalogoAreaEmpleado } from "@/hooks/useCatalogoAreaEmpleado";
 import { format } from 'date-fns';
 
 import { useCatalogoAreaEmpleadoApoyo } from "@/hooks/useCatalogoAreaEmpleadoApoyo";
-import { useCatalogoFallas } from "@/hooks/useCatalogoFallas";
+import { useCatalogoFallas } from "@/hooks/Fallas/useCatalogoFallas";
 import DateTime from "../dateTime";
 import LoadFile from "../upload-file";
 import { Loader2 } from "lucide-react";
-import { useFallas } from "@/hooks/useFallas";
+import { useFallas } from "@/hooks/Fallas/useFallas";
 import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
 import { useShiftStore } from "@/store/useShiftStore";
 
