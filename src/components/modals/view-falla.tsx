@@ -172,7 +172,6 @@ export const ViewFalla: React.FC<ViewFallaModalProps> = ({
 					isSuccess={openModal}
 					setIsSuccess={setOpenModal}
 					>
-					<div></div>
 			</SeguimientoFallaModal>
 			{seguimientos.length > 0 ? (
 			<div className="">
