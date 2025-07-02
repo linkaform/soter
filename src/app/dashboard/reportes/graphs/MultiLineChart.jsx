@@ -4,23 +4,16 @@ import Chart from 'chart.js';
 const COLORS = ['#8cd610', '#efc600', '#e71831', '#1e90ff'];
 
 const MultiLineChart = ({ data = [] }) => {
-  // Siempre mostrar C1, C2, C3
-  const cuatriLabels = useMemo(() => ['C1', 'C2', 'C3'], []);
+  const cuatriLabels = useMemo(() => ['C3', 'C1', 'C2'], []);
 
-  // Si quieres mostrar el año, puedes ajustar aquí
-  // const year = cuatris[0]?.anio || new Date().getFullYear();
-
-  // Construir datasets asegurando que cada cuatrimestre tenga un valor (0 si no hay dato)
   const datasets = useMemo(() => {
-    const cuatriIds = [1, 2, 3];
+    const cuatriIds = [3, 1, 2];
     return data.map((hotel, idx) => {
-      // Mapea cuatrimestres a un objeto para acceso rápido
       const cuatriMap = {};
       hotel.cuatrimestres.forEach(c => {
         cuatriMap[c.cuatrimestre] = c;
       });
 
-      // Para cada cuatrimestre esperado, toma el valor o 0
       const dataPoints = cuatriIds.map(id =>
         cuatriMap[id] ? parseFloat(cuatriMap[id].promedio) : 0
       );
