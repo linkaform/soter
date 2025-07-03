@@ -17,8 +17,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm} from "react-hook-form";
 import { data_correo } from "@/lib/send_correo";
-// import { useGetPdf } from "@/hooks/usetGetPdf";
-// import { descargarPdfPase } from "@/lib/download-pdf";
 import Image from "next/image";
 import { useSendCorreoSms } from "@/hooks/useSendCorreo";
 
@@ -43,7 +41,6 @@ interface updatedPassModalProps {
 	});
 export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 	title,
-	description,
 	openGeneratedPass,
 	setOpenGeneratedPass,
 	dataPass,
@@ -61,9 +58,6 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 	const [enablePdf, setEnablePdf] = useState(false)
 	const [smsSent, setSmsSent] = useState(false);
 	const [emailSent, setEmailSent] = useState(false);
-	// const { data: responsePdf, isLoading: loadingPdf} = useGetPdf(account_id, folio, enablePdf);
-	// const downloadUrl=responsePdf?.response?.data?.data?.download_url
-	console.log("updateresponse",updateResponse,description)
 	const downloadImgUrl = updateResponse?.json?.pdf_to_img?.[0].file_url
 
 	const handleClickSendPass = async (folio: string, envio: string[]) => {
@@ -185,6 +179,9 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 				createSendCorreoSms.mutate({ account_id, envio: enviarCorreo, data_for_msj: dataPass, folio });
 			}
 			toast.success("Pase descargado correctamente!");
+			setTimeout(() => {
+				window.location.reload();
+			}, 2000);
 		}
 	}, [enablePdf]); // Solo depende de enablePdf
 
@@ -213,8 +210,15 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 
 
 return (
-	<Dialog open={openGeneratedPass} modal>
-		<DialogTrigger ></DialogTrigger>
+	<Dialog open={openGeneratedPass} onOpenChange={(isOpen) => {
+		setOpenGeneratedPass(isOpen);
+		if (!isOpen) {
+			setTimeout(() => {
+				window.location.reload();
+			}, 1000);
+		}
+	  }} modal>
+		<DialogTrigger> </DialogTrigger>
 
 	    <DialogContent className="max-w-xl  overflow-y-auto max-h-[90vh] flex flex-col" aria-describedby="">
         <DialogHeader className="flex-shrink-0">

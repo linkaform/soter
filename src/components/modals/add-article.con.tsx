@@ -60,11 +60,11 @@ export const AddArticuloConModal: React.FC<AddFallaModalProps> = ({
 	setIsSuccess,
 }) => {
 	const [conSelected, setConSelected] = useState<string>("");
-	const {location} = useShiftStore()
+	const {location, area} = useShiftStore()
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
 	const { dataAreas:areas, dataLocations:ubicaciones, isLoadingAreas:loadingAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true,  ubicacionSeleccionada?true:false);
 	const { data:dataAreaEmpleadoApoyo, isLoading:loadingAreaEmpleadoApoyo,} = useCatalogoAreaEmpleadoApoyo(isSuccess);
-	const { createArticulosConMutation, isLoading} = useArticulosConcesionados(false, "", "", "")
+	const { createArticulosConMutation, isLoading} = useArticulosConcesionados(ubicacionSeleccionada, area, "",false, "", "", "")
     const { dataCon, dataConSub, isLoadingCon, isLoadingConSub  } = useCatalogoConcesion(ubicacionSeleccionada ,conSelected,  isSuccess);
 	const [date, setDate] = useState<Date|"">("");
 

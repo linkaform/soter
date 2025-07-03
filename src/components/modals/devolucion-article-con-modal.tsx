@@ -27,6 +27,7 @@ import { ArrowRightLeft, Loader2 } from "lucide-react";
 import { Input } from "../ui/input";
 import DateTime from "../dateTime";
 import { format } from "date-fns";
+import { useShiftStore } from "@/store/useShiftStore";
 
 interface AddACModalProps {
   	title: string;
@@ -42,9 +43,9 @@ export const DevolucionArticuloConModal: React.FC<AddACModalProps> = ({
   	title,
 	data
 }) => {
-	// const { area, location } = useShiftStore();
+	const { area, location } = useShiftStore();
 	const [isSuccess, setIsSuccess] =useState(false)
-	const { editarArticulosConMutation, isLoading} = useArticulosConcesionados(false, "", "", "")
+	const { editarArticulosConMutation, isLoading} = useArticulosConcesionados(location, area, "",false, "", "", "")
 	// const [isActiveDevolucion, setIsActiveDevolucion] = useState<string>("entregado");
 	const [date, setDate] = useState<Date|"">("");
 
@@ -82,7 +83,7 @@ export const DevolucionArticuloConModal: React.FC<AddACModalProps> = ({
 
   return (
     <Dialog onOpenChange={setIsSuccess} open={isSuccess}>
-      <div className="cursor-pointer" onClick={handleOpenModal}>
+      <div className="cursor-pointer" title="Devolver Artículo" onClick={handleOpenModal}>
         <ArrowRightLeft />
 	    </div>
 

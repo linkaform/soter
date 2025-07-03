@@ -109,7 +109,7 @@ export type Incidencia = {
         <ViewIncidencia 
           title="Información de la Incidencia"
           data={incidencia} >
-            <div className="cursor-pointer">
+            <div className="cursor-pointer" title="Ver Incidencia">
               <Eye /> 
             </div>
         </ViewIncidencia>
@@ -119,6 +119,7 @@ export type Incidencia = {
         <div
           className="cursor-pointer"
           onClick={() => onEditarClick(incidencia)}
+          title="Editar Incidencia"
         >
         	<Edit />
         </div>
@@ -127,7 +128,7 @@ export type Incidencia = {
         <SeguimientoIncidenciaModal
           title="Seguimiento Incidencia"
           folio={incidencia?.folio} isSuccess={openModal} setIsSuccess={setOpenModal}>
-          <div className="cursor-pointer">
+          <div className="cursor-pointer" title="Seguimiento Incidencia">
               <Check />   
           </div>
         </SeguimientoIncidenciaModal>
@@ -135,6 +136,7 @@ export type Incidencia = {
 
         <div
           className="cursor-pointer"
+          title="Eliminar Incidencia"
           onClick={() => onEliminarClick(incidencia)}
         >
         	<Trash2 />

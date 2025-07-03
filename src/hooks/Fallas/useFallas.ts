@@ -74,7 +74,7 @@ export const useFallas = (location:string, area:string,status:string, enableList
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["getListFallas"] });
           queryClient.invalidateQueries({ queryKey: ["getStatsFallas"] });
-          toast.success("Falla creada correctamente.");
+          toast.success("Falla editada correctamente.");
         },
         onError: (err) => {
           console.error("Error al editar falla:", err);

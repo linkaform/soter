@@ -23,10 +23,6 @@ export const usePaqueteria = (location:string, area:string, status:string, enabl
               return data ? data?.response?.data : [];
             }
         },
-        refetchOnWindowFocus: true,
-        refetchInterval: 15000,
-        refetchOnReconnect: true,
-        staleTime: 1000 * 60 * 5,
     });
 
      //Crear Paquetes

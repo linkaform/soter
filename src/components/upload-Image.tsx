@@ -140,7 +140,7 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
                             width={200} 
                             className="rounded-lg" 
                             screenshotFormat="image/jpeg" 
-                            mirrored={true} 
+                            mirrored={facingMode == "user" ? true : false} 
                             videoConstraints={videoConstraints}
                             onUserMediaError={handleUserMedia}
                             onUserMedia={handleUserMedia}/>

@@ -1,37 +1,34 @@
 import { doOut } from "@/lib/bitacoras";
 import { useShiftStore } from "@/store/useShiftStore";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-export const useDoOut = ( qr_code:string, location:string, area:string) => {
+export const useDoOut = () => {
   const queryClient = useQueryClient();
-  const {isLoading, setLoading} = useShiftStore();
+  const { setLoading} = useShiftStore();
   
-  const { data: data, error, isFetching, refetch} = useQuery<any>({
-    queryKey: ["doOut", location, area, qr_code], 
-    enabled:false,
-    queryFn: async () => {
-        const data = await doOut(qr_code, location, area); 
-        return data; 
-    },
+  // const { data: data, error, isFetching, refetch} = useQuery<any>({
+  //   queryKey: ["doOut", location, area, qr_code], 
+  //   enabled:false,
+  //   queryFn: async () => {
+  //       const data = await doOut(qr_code, location, area); 
+  //       return data; 
+  //   },
    
-    refetchOnWindowFocus: true, 
-    refetchInterval: 60000,
-    refetchOnReconnect: true, 
-    staleTime: 1000 * 60 * 5, 
-  });
+  //   refetchOnWindowFocus: true, 
+  //   refetchInterval: 60000,
+  //   refetchOnReconnect: true, 
+  //   staleTime: 1000 * 60 * 5, 
+  // });
 
-     //Crear Devolucion de Paquetes
-    const doOutMutation = useMutation({
+    return useMutation({
       mutationFn: async ({qr_code, location, area} : {qr_code: string, location:string, area:string}) => {
           const response = await doOut(qr_code, location , area);
-          console.log("reponse", response.success )
           if(response?.response.data?.json?.success==false){
             throw new Error(`Error al realizar la salida, Error:${response?.response.data?.json?.error} `);
           }
           else if(response.success==false){
               throw new Error(`Error al realizar la salida, Error:${response.error.exception.msg[0]} `);
-
           }else{
               return response.response?.data
           }
@@ -57,13 +54,4 @@ export const useDoOut = ( qr_code:string, location:string, area:string) => {
         setLoading(false);
       },
     });
-
-  return {
-    data,
-    isLoading,
-    error,
-    isFetching,
-    refetch,
-    doOutMutation
-  };
 };

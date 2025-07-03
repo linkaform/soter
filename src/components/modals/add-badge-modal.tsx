@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/select";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { useGetLockers } from "@/hooks/useGetLockers";
 import { useGetGafetes } from "@/hooks/useGetGafetes";
 
@@ -43,6 +43,9 @@ interface AddBadgeModalProps {
 	tipo_movimiento:string;
 	ubicacion:string;
 	area:string;
+	setModalAgregarBadgeAbierto:Dispatch<SetStateAction<boolean>>; 
+	modalAgregarBadgeAbierto:boolean;
+	
 }
 
 export interface locker {
@@ -80,12 +83,13 @@ export const AddBadgeModal: React.FC<AddBadgeModalProps> = ({
 	status,
 	id_bitacora,
 	tipo_movimiento,
-	ubicacion
+	ubicacion,
+	modalAgregarBadgeAbierto,
+	setModalAgregarBadgeAbierto
 }) => {
 	const {area, location} = useShiftStore()
-	const [isOpen, setIsOpen] = useState(false);
-	const { data:responseGetLockers, isLoading:loadingGetLockers, refetch: refetchLockers } = useGetLockers(location, area, status, isOpen);
-	const { data:responseGetGafetes, isLoading:loadingGetGafetes, refetch: refetchGafetes } = useGetGafetes(location, area, status, isOpen);
+	const { data:responseGetLockers, isLoading:loadingGetLockers, refetch: refetchLockers } = useGetLockers(location, area, status, modalAgregarBadgeAbierto);
+	const { data:responseGetGafetes, isLoading:loadingGetGafetes, refetch: refetchGafetes } = useGetGafetes(location, area, status, modalAgregarBadgeAbierto);
 	const { asignarGafeteMutation,isLoading} = useAsignarGafete();
 
 	const form = useForm<z.infer<typeof FormSchema>>({
@@ -98,11 +102,11 @@ export const AddBadgeModal: React.FC<AddBadgeModalProps> = ({
 	});
 
 	useEffect(()=>{
-		if(isOpen){
+		if(modalAgregarBadgeAbierto){
 			refetchLockers()
 			refetchGafetes()
 		}
-	},[isOpen, refetchGafetes, refetchLockers])
+	},[modalAgregarBadgeAbierto, refetchGafetes, refetchLockers])
 
 
 	function onSubmit(data: z.infer<typeof FormSchema>) {
@@ -112,11 +116,11 @@ export const AddBadgeModal: React.FC<AddBadgeModalProps> = ({
 	
 
 	const handleOpenModal = async () => {
-		setIsOpen(true); 
+		setModalAgregarBadgeAbierto(true); 
 	}
 
 return (
-	<Dialog open={isOpen} onOpenChange={setIsOpen}>
+	<Dialog open={modalAgregarBadgeAbierto} onOpenChange={setModalAgregarBadgeAbierto}>
 		<div className="cursor-pointer" onClick={handleOpenModal}>
 			<IdCard />
 		</div>

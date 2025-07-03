@@ -138,7 +138,7 @@ export const DevolucionArticuloModal: React.FC<AddFallaModalProps> = ({
 
   return (
     <Dialog onOpenChange={setIsSuccess} open={isSuccess}>
-      <div className="cursor-pointer" onClick={handleOpenModal}>
+      <div className="cursor-pointer" title="Devolver Artículo" onClick={handleOpenModal}>
         <ArrowRightLeft />
 	    </div>
 
@@ -188,7 +188,7 @@ export const DevolucionArticuloModal: React.FC<AddFallaModalProps> = ({
                             <FormItem>
                             <FormLabel>Recibe:</FormLabel>
                             <FormControl>
-                                <Input placeholder="Acción realizada..." {...field} 
+                                <Input placeholder="Quién recibe..." {...field} 
                                 onChange={(e) => {
                                     field.onChange(e); // Actualiza el valor en react-hook-form
                                 }}
@@ -205,9 +205,9 @@ export const DevolucionArticuloModal: React.FC<AddFallaModalProps> = ({
                         name="telefono_recibe_perdido"
                         render={({ field }:any) => (
                             <FormItem>
-                            <FormLabel>Telefono de quien recibe:</FormLabel>
+                            <FormLabel>Teléfono de quien recibe:</FormLabel>
                             <FormControl>
-                                <Input placeholder="Acción realizada..." {...field} 
+                                <Input placeholder="Teléfono..." {...field} 
                                 onChange={(e) => {
                                     field.onChange(e); // Actualiza el valor en react-hook-form
                                 }}

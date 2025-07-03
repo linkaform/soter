@@ -16,7 +16,7 @@ import {
   useReactTable,
   Table as TanstackTable
 } from "@tanstack/react-table";
-import { CalendarDays, FileX2, Plus, Search, Trash2 } from "lucide-react";
+import { CalendarDays, Eraser, FileX2, Plus, Search, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -49,6 +49,7 @@ interface ListProps {
 	data: Incidencia_record[];
 	isLoading:boolean;
 	openModal: () => void;
+	resetTableFilters: () => void;
 	setSelectedIncidencias:React.Dispatch<React.SetStateAction<string[]>>;
 	selectedIncidencias:string[];
 
@@ -71,7 +72,7 @@ const fallasColumnsCSV = [
 ];
 
 const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSelectedIncidencias,selectedIncidencias,
-	setDate1, setDate2, date1, date2, dateFilter, setDateFilter,Filter
+	setDate1, setDate2, date1, date2, dateFilter, setDateFilter,Filter, resetTableFilters
  })=> {
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
@@ -296,6 +297,9 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 					<DateTime date={date1} setDate={setDate1} disablePastDates={false}/>
 					<DateTime date={date2} setDate={setDate2} disablePastDates={false}/>
 					<Button type="button"  className={"bg-blue-500 hover:bg-blue-600"} onClick={Filter}> Filtrar</Button>
+					<Button type="button"  className={"bg-blue-500 hover:bg-blue-600"} onClick={()=>{resetTableFilters()}}> 
+						<Eraser/> 
+					</Button>
 				</div>:null}
 				<div className="flex items-center w-48 gap-2"> 
 				<Select value={dateFilter}  onValueChange={(value) => { 

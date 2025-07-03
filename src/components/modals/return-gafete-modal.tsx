@@ -5,16 +5,14 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "../ui/dialog";
 
-import { useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { Loader2 } from "lucide-react";
 import { useAsignarGafete } from "@/hooks/useAsignarGafete";
 
 interface AddBadgeModalProps {
   title: string;
-  children: React.ReactNode;
   id_bitacora:string;
   ubicacion:string;
   area:string;
@@ -22,28 +20,29 @@ interface AddBadgeModalProps {
   gafete:string;
   locker:string;
   tipo_movimiento:string;
+  setModalRegresarGafeteAbierto:Dispatch<SetStateAction<boolean>>; 
+	modalRegresarGafeteAbierto:boolean;
 }
 
 export const ReturnGafeteModal: React.FC<AddBadgeModalProps> = ({
   title,
-  children,
   area,
   id_bitacora,
   ubicacion,
   gafete,
   locker,
-  tipo_movimiento
+  tipo_movimiento,
+  setModalRegresarGafeteAbierto,
+  modalRegresarGafeteAbierto
 }) => {
     const { asignarGafeteMutation, isLoading } = useAsignarGafete( );
-     const [isOpen, setIsOpen] = useState(false);
-
     function onSubmit() {
 		asignarGafeteMutation.mutate({data_gafete: {locker_id:locker, gafete_id:gafete, documento:"", status_gafete:"entregado" , ubicacion:ubicacion, area:area}, id_bitacora, tipo_movimiento})
     }
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+    <Dialog open={modalRegresarGafeteAbierto} onOpenChange={setModalRegresarGafeteAbierto} modal>
+      {/* <DialogTrigger asChild>{children}</DialogTrigger> */}
 
       <DialogContent className="max-w-xl">
         <DialogHeader>

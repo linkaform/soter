@@ -515,7 +515,7 @@ return (
 							render={({ field}:any)=> (
 								<FormItem>
 									<FormLabel className="">
-										<span className="text-red-500">*</span> Empresa:
+										Empresa:
 									</FormLabel>{" "}
 									<FormControl>
 										<Input placeholder="Empresa" {...field} 

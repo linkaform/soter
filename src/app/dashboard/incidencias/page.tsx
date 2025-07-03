@@ -13,7 +13,6 @@ import { AddFallaModal } from "@/components/modals/add-falla";
 import { AddIncidenciaModal } from "@/components/modals/add-incidencia";
 import { useInciencias } from "@/hooks/Incidencias/useIncidencias";
 import { dateToString } from "@/lib/utils";
-import { toast } from "sonner";
 import ChangeLocation from "@/components/changeLocation";
 import { useShiftStore } from "@/store/useShiftStore";
 
@@ -31,12 +30,13 @@ const IncidenciasPage = () => {
   const [date1, setDate1] = useState<Date|"">("")
   const [date2, setDate2] = useState<Date|"">("")
 
-  const [dates, setDates] = useState<string[]>([])
+  const [datePrimera, setDatePrimera] = useState<string>("")
+  const [dateSegunda, setDateSegunda] = useState<string>("")
   const [dateFilter, setDateFilter] = useState<string>("")
 
   const [fallasStatus, setFallasStatus] = useState<string>("")
-  const { data:dataFallas,isLoading:isLoadingFallas} = useGetFallas(ubicacionSeleccionada, areaSeleccionada == "todas" ? "" : areaSeleccionada ,fallasStatus,  dates[0], dates[1], dateFilter);
-  const { stats, listIncidencias, isLoadingListIncidencias} = useInciencias(ubicacionSeleccionada, areaSeleccionada == "todas" ? "" : areaSeleccionada, [], dates[0]?dates[0]:"", dates[1]?dates[1]:"", dateFilter);
+  const { data:dataFallas,isLoading:isLoadingFallas} = useGetFallas(ubicacionSeleccionada, areaSeleccionada == "todas" ? "" : areaSeleccionada ,fallasStatus,  datePrimera, dateSegunda, dateFilter);
+  const { stats, listIncidencias, isLoadingListIncidencias} = useInciencias(ubicacionSeleccionada, areaSeleccionada == "todas" ? "" : areaSeleccionada, [], datePrimera, dateSegunda, dateFilter);
   const [selectedTab, setSelectedTab] = useState<string>('Incidencias'); 
 
 	useEffect(()=>{
@@ -59,13 +59,11 @@ const IncidenciasPage = () => {
 	};
 
 	const Filter = () => {
-		if(date1 && date2){
-			const f1= dateToString(new Date(date1)) 
-			const f2= dateToString(new Date(date2)) 
-			setDates([f1,f2])
-		}else{
-			toast.error("Escoge un rango de fechas.")
-		}
+		const f1= dateToString(new Date(date1)) 
+		const f2= dateToString(new Date(date2)) 
+		setDatePrimera(f1)
+		setDateSegunda(f2)
+		// setDates([f1,f2])
 	};
 
 	const handleTabChangeTab = (newTab: any) => {
@@ -73,12 +71,16 @@ const IncidenciasPage = () => {
 	};
 
 	const handleTabChange = (tab:string, option:string) => {
-		if(tab == "Fallas"){
-			if(tab == selectedTab && fallasStatus=="abierto"){
-				setFallasStatus(""); 
+		if(tab==selectedTab && dateFilter == option){
+			setDateFilter(""); 
+			setSelectedTab(tab);
+		}
+		else if(tab == "Fallas"){
+			if(tab == selectedTab && dateFilter=="abierto"){
+				setDateFilter(""); 
 				setSelectedTab(tab);
 			}else{
-				setFallasStatus(option); 
+				setDateFilter(option); 
 				setSelectedTab(tab)
 			}
 		}else if (tab == "Incidencias"){
@@ -86,6 +88,29 @@ const IncidenciasPage = () => {
 			setSelectedTab(tab)
 		}
 	};
+	const handleTabChangeFallas = (tab:string, option:string, filter="") => {
+		if(tab==selectedTab && fallasStatus == option && dateFilter==filter){
+			setDateFilter(""); 
+			setSelectedTab(tab);
+			setFallasStatus("")
+		}
+		else if(tab == "Fallas"){
+			console.log("entrada aqui")
+			setDateFilter(filter); 
+			setSelectedTab(tab);
+			setFallasStatus(option)
+		}
+	};
+
+	const resetTableFilters = ()=>{
+		setDatePrimera("");
+		setDateSegunda("");
+		setDate1("")
+		setDate2("")
+		setDateFilter(""); 
+		setSelectedTab(selectedTab);
+		setFallasStatus("")
+	}
 
   return (
     <div className="">
@@ -139,7 +164,7 @@ const IncidenciasPage = () => {
 				</div>
 
 				<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
-						fallasStatus== "abierto" && selectedTab!=="Incidencias" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => handleTabChange("Fallas","abierto")}>
+						fallasStatus== "abierto" && selectedTab!=="Incidencias" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => handleTabChangeFallas("Fallas","abierto","")}>
 					<div className="flex gap-6"><UndoDot className="text-primary w-10 h-10"/>
 						<span className="flex items-center font-bold text-4xl"> {stats?.fallas_pendientes}</span>
 					</div>
@@ -158,7 +183,7 @@ const IncidenciasPage = () => {
               <div className="">
                 <IncidenciasTable data={listIncidencias} 
                 isLoading={isLoadingListIncidencias} openModal={openModalIncidencia} setSelectedIncidencias={setSelectedIncidencias} selectedIncidencias={selectedIncidencias} 
-				date1={date1} date2={date2} setDate1={setDate1} setDate2={setDate2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter}
+				date1={date1} date2={date2} setDate1={setDate1} setDate2={setDate2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters}
 				/>
               </div>
             </TabsContent>
@@ -166,7 +191,7 @@ const IncidenciasPage = () => {
               <div className="">
                 <FallasTable  data={dataFallas} isLoading={isLoadingFallas} 
                 openModal={openModal} setSelectedFallas={setSelectedFallas} selectedFallas={selectedFallas} 
-				date1={date1} date2={date2} setDate1={setDate1} setDate2={setDate2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter}
+				date1={date1} date2={date2} setDate1={setDate1} setDate2={setDate2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters}
 					/>
               </div>
             </TabsContent>

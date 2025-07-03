@@ -14,7 +14,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { CalendarDays,  FileX2,  Plus,  Search, Trash2 } from "lucide-react";
+import { CalendarDays,  Eraser,  FileX2,  Plus,  Search, Trash2 } from "lucide-react";
 
 
 
@@ -38,11 +38,13 @@ import DateTime from "@/components/dateTime";
 import { useMemo, useState } from "react";
 import { EditarFallaModal } from "@/components/modals/editar-falla";
 import { SeguimientoFallaModal } from "@/components/modals/seguimiento-falla";
+import { CerrarFallaModal } from "@/components/modals/close-falla-modal";
 
   interface ListProps {
     data: Fallas_record[];
     isLoading:boolean;
     openModal: () => void;
+	resetTableFilters: () => void;
     setSelectedFallas:React.Dispatch<React.SetStateAction<string[]>>;
     selectedFallas:string[]
 
@@ -67,7 +69,7 @@ import { SeguimientoFallaModal } from "@/components/modals/seguimiento-falla";
 	];
   
   const FallasTable:React.FC<ListProps> = ({ isLoading, data, openModal, setSelectedFallas, selectedFallas,
-		setDate1, setDate2, date1, date2, dateFilter, setDateFilter,Filter
+		setDate1, setDate2, date1, date2, dateFilter, setDateFilter,Filter,resetTableFilters
 	})=> {
 	const [sorting, setSorting] = React.useState<SortingState>([]);
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -77,6 +79,7 @@ import { SeguimientoFallaModal } from "@/components/modals/seguimiento-falla";
 	const [modalSeguimientoAbierto, setModalSeguimientoAbierto] = useState(false);
 	const [modalEliminarAbierto, setModalEliminarAbierto] = useState(false);
 	const [modalEliminarMultiAbierto, setModalEliminarMultiAbierto] = useState(false);
+	const [modalCerrarAbierto, setModalCerrarAbierto] = useState(false);
 	const [fallaSeleccionada, setFallaSeleccionada] = useState<Fallas_record | null>(null);
 
 	const [columnVisibility, setColumnVisibility] =
@@ -101,12 +104,16 @@ import { SeguimientoFallaModal } from "@/components/modals/seguimiento-falla";
 		setFallaSeleccionada(falla);
 		setModalEliminarAbierto(true);
 	};
+	const handleCerrar= (falla: Fallas_record) => {
+		setFallaSeleccionada(falla);
+		setModalCerrarAbierto(true);
+	};
 	
 
 	const [globalFilter, setGlobalFilter] = React.useState("");
 	const columns = useMemo(() => {
 	if (isLoading) return [];
-	return getFallasColumns(handleEditar, handleSeguimiento, handleEliminar);
+	return getFallasColumns(handleEditar, handleSeguimiento, handleEliminar, handleCerrar);
 	}, [isLoading]);
 
 	const memoizedData = useMemo(() => data || [], [data]);
@@ -172,9 +179,12 @@ return (
 			<div className="flex w-full justify-end gap-3">
 				{dateFilter == "range" ?
 				<div className="flex items-center gap-2 mr-14">
-					<DateTime date={date1} setDate={setDate1} />
-					<DateTime date={date2} setDate={setDate2} />
+					<DateTime date={date1} setDate={setDate1} disablePastDates={false}/>
+					<DateTime date={date2} setDate={setDate2} disablePastDates={false}/>
 					<Button type="button"  className={"bg-blue-500 hover:bg-blue-600"} onClick={Filter}> Filtrar</Button>
+					<Button type="button"  className={"bg-blue-500 hover:bg-blue-600"} onClick={()=>{resetTableFilters()}}> 
+						<Eraser/> 
+					</Button>
 				</div>:null}
 				<div className="flex items-center w-48 gap-2"> 
 				<Select value={dateFilter}  onValueChange={(value) => { 
@@ -250,6 +260,15 @@ return (
 					arrayFolios={[fallaSeleccionada.folio]}
 					modalEliminarAbierto={modalEliminarAbierto}
 					setModalEliminarAbierto={setModalEliminarAbierto}
+					/>
+			)}
+
+			{modalCerrarAbierto && fallaSeleccionada && (
+				<CerrarFallaModal
+					title="Cerrar Falla"
+					folio={fallaSeleccionada.folio}
+					modalCerrarAbierto={modalCerrarAbierto}
+					setModalCerrarAbierto={setModalCerrarAbierto}
 					/>
 			)}
 		</div>

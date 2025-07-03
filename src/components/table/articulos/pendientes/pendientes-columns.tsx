@@ -46,7 +46,7 @@ const OptionsCell: React.FC<{ row: any }> = ({ row}) => {
 		<ViewArticulo 
           title="Información del Artículo"
           data={articulo} isSuccess={false}>
-            <div className="cursor-pointer">
+            <div className="cursor-pointer" title="Ver Artículo">
               <Eye /> 
             </div>
         </ViewArticulo>

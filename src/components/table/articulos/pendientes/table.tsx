@@ -31,7 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CalendarDays, Plus } from "lucide-react";
+import { CalendarDays, Eraser, Plus, Search } from "lucide-react";
 import { Articulo_perdido_record, pendientesColumns } from "./pendientes-columns";
 import { catalogoFechas } from "@/lib/utils";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -42,6 +42,7 @@ interface ListProps {
   data: Articulo_perdido_record[];
   isLoadingListArticulosPerdidos:boolean;
   openModal: () => void;
+  resetTableFilters: () => void;
 //   setStateArticle: React.Dispatch<React.SetStateAction<string>>;
   setSelectedArticulos:React.Dispatch<React.SetStateAction<string[]>>;
 //   selectedArticulos:string[];
@@ -76,7 +77,7 @@ interface ListProps {
 //   ];
 
 const ArticulosPerdidosTable:React.FC<ListProps> = ({ data, isLoadingListArticulosPerdidos, openModal,
-	setSelectedArticulos, setDate1, setDate2, date1, date2, dateFilter, setDateFilter,Filter
+	setSelectedArticulos, setDate1, setDate2, date1, date2, dateFilter, setDateFilter,Filter,resetTableFilters
 })=> {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -137,9 +138,9 @@ const ArticulosPerdidosTable:React.FC<ListProps> = ({ data, isLoadingListArticul
       <div className="flex justify-between items-center my-2 ">
 			<div className="flex">
 				<TabsList className="bg-blue-500 text-white mr-2">
+          <TabsTrigger value="Paqueteria">Paqueteria</TabsTrigger>
+          <TabsTrigger value="Concecionados">Artículos concecionados</TabsTrigger>
 					<TabsTrigger value="Perdidos">Artículos perdidos</TabsTrigger>
-					<TabsTrigger value="Concecionados">Artículos concecionados</TabsTrigger>
-          			<TabsTrigger value="Paqueteria">Paqueteria</TabsTrigger>
 				</TabsList>
 			</div>
 			
@@ -149,16 +150,20 @@ const ArticulosPerdidosTable:React.FC<ListProps> = ({ data, isLoadingListArticul
 				placeholder="Buscar en todos los campos..."
 				value={globalFilter}
 				onChange={(e) => setGlobalFilter(e.target.value)}
-				className="w-full border border-gray-300 rounded-md p-2"
+				className="w-full border border-gray-300 rounded-md p-2 mr-2"
 				/>
+        <Search/>
 			</div>
 
       		<div className="flex w-full justify-end gap-3">
 				{dateFilter == "range" ?
 				<div className="flex items-center gap-2 mr-14">
-					<DateTime date={date1} setDate={setDate1} />
-					<DateTime date={date2} setDate={setDate2} />
+					<DateTime date={date1} setDate={setDate1} disablePastDates={false}/>
+					<DateTime date={date2} setDate={setDate2} disablePastDates={false}/>
 					<Button type="button"  className={"bg-blue-500 hover:bg-blue-600"} onClick={Filter}> Filtrar</Button>
+          <Button type="button"  className={"bg-blue-500 hover:bg-blue-600"} onClick={()=>{resetTableFilters()}}> 
+						<Eraser/> 
+					</Button>
 				</div>:null}
 				<div className="flex items-center w-48 gap-2"> 
 				<Select value={dateFilter}  onValueChange={(value) => { 

@@ -1,17 +1,17 @@
 import { Imagen } from "./update-pass"
 
 export interface InputFalla {
-    falla:string,
-    falla_caseta: string,
-    falla_comentarios: string,
-    falla_documento: Imagen[],
-    falla_estatus: string,
-    falla_evidencia: Imagen[],
-    falla_fecha_hora: string,
-    falla_objeto_afectado: string,
-    falla_reporta_nombre: string,
-    falla_responsable_solucionar_nombre:string,
-    falla_ubicacion: string
+    falla?:string,
+    falla_caseta?: string,
+    falla_comentarios?: string,
+    falla_documento?: Imagen[],
+    falla_estatus?: string,
+    falla_evidencia?: Imagen[],
+    falla_fecha_hora?: string,
+    falla_objeto_afectado?: string,
+    falla_reporta_nombre?: string,
+    falla_responsable_solucionar_nombre?:string,
+    falla_ubicacion?: string
 }
 
   

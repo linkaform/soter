@@ -167,7 +167,12 @@ export const SeguimientoIncidenciaModal: React.FC<IncidenciaModalProps> = ({
 
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} >
+						<div className="w-full flex gap-2 mb-2">
+							<p className="font-bold ">Folio: </p>
+							<p  className="font-bold text-blue-500">{folio} </p>
+						</div>
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+						
 							<FormField
 								control={form.control}
 								name="incidencia_folio_accion_correctiva"

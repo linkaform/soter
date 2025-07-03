@@ -7,7 +7,7 @@ export const getListBitacora = async (
         area:area,
         location: location,
         prioridades:prioridades,
-        option: "list_bitacora2",
+        option: "list_bitacora",
         script_name: "script_turnos.py",
     };
   
