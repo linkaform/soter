@@ -3,7 +3,7 @@ import {
     ColumnDef,   
   } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Check, Edit, Eye, Trash2 } from "lucide-react";
+import { Check, ClipboardCheck, Edit, Eye, Trash2 } from "lucide-react";
 import { Imagen } from "@/lib/update-pass";
 import { ViewFalla } from "@/components/modals/view-falla";
 import ViewImage from "@/components/modals/view-image";
@@ -41,22 +41,23 @@ import ViewImage from "@/components/modals/view-image";
   }
 
   const OptionsCell: React.FC<{ row: any , onEditarClick: (incidencia: Fallas_record) => void , 
-  onSeguimientoClick: (falla: Fallas_record) => void , onEliminarClick: (falla: Fallas_record) => void }> = ({ row, onEditarClick, onSeguimientoClick ,onEliminarClick}) => {
+  onSeguimientoClick: (falla: Fallas_record) => void , onEliminarClick: (falla: Fallas_record) => void , onCerrarClick: (falla: Fallas_record) => void }> = 
+  ({ row, onEditarClick, onSeguimientoClick ,onEliminarClick, onCerrarClick}) => {
     const falla = row.original;
     return (
       <div className="flex space-x-2">
         <ViewFalla 
           title="Información de la Falla"
           data={falla} isSuccess={false}>
-            <div className="cursor-pointer">
+            <div className="cursor-pointer" title="Ver Falla">
               <Eye /> 
             </div>
         </ViewFalla>
         
-        {/* <LoadingModal isOpen={showLoadingModal} text="Cargando..."/> */}
 
         <div
           className="cursor-pointer"
+          title="Editar Falla"
           onClick={() => {
             onEditarClick(falla)}}
         >
@@ -65,6 +66,7 @@ import ViewImage from "@/components/modals/view-image";
     
         <div
           className="cursor-pointer"
+           title="Seguimiento Falla"
           onClick={() => {
             onSeguimientoClick(falla)}}
         >
@@ -73,6 +75,17 @@ import ViewImage from "@/components/modals/view-image";
 
         <div
           className="cursor-pointer"
+          title="Cerrar Falla"
+          onClick={() => {
+            onCerrarClick(falla)}}
+        >
+        	<ClipboardCheck />
+        </div>
+
+
+        <div
+          className="cursor-pointer"
+           title="Eliminar Falla"
           onClick={() => {
             onEliminarClick(falla)}}
         >
@@ -80,12 +93,14 @@ import ViewImage from "@/components/modals/view-image";
         </div>
 
        
+     
       </div>
     );
   };
 
   export const getFallasColumns = (onEdit: (falla: Fallas_record) => void, 
-  onSeguimientoClick: (falla: Fallas_record) => void, onEliminarClick: (falla: Fallas_record) => void): ColumnDef<Fallas_record>[] => [
+  onSeguimientoClick: (falla: Fallas_record) => void, onEliminarClick: (falla: Fallas_record) => void, 
+  onCerrarClick: (falla: Fallas_record) => void): ColumnDef<Fallas_record>[] => [
     {
       id: "select",
       cell: ({ row }) => {
@@ -97,7 +112,8 @@ import ViewImage from "@/components/modals/view-image";
               onCheckedChange={(value) => row.toggleSelected(!!value)}
               aria-label="Select row" />
             <OptionsCell row={row} key={row.original._id} onEditarClick={() => onEdit(row.original)} 
-              onSeguimientoClick={()=>onSeguimientoClick(row.original)} onEliminarClick={()=>{onEliminarClick(row.original)}}/>
+              onSeguimientoClick={()=>onSeguimientoClick(row.original)} onEliminarClick={()=>{onEliminarClick(row.original)}}
+              onCerrarClick={()=>{onCerrarClick(row.original)}}/>
           </div>
           </>
         )

@@ -40,6 +40,10 @@ export const ViewPaqueteria: React.FC<ViewFallaModalProps> = ({
 			<div className="flex justify-between">
 				<div className="w-full flex flex-col gap-3 mb-2">
 					<div className="w-full flex gap-2">
+                        <p className="font-bold ">Folio: </p>
+                        <p className="font-bold text-blue-500">{data?.folio} </p>
+                    </div>
+					<div className="w-full flex gap-2">
 						<p className="font-bold">Descripcion: <span className="font-normal">{data?.descripcion_paqueteria}</span> </p>
 						
 					</div>
@@ -82,7 +86,7 @@ export const ViewPaqueteria: React.FC<ViewFallaModalProps> = ({
 						</div>
 					</div>
 				</div>
-				<div className="w-full flex flex-col">
+				<div className="w-full">
 					<p className="font-bold mb-2">Evidencia: </p>
 					<div className="flex justify-center">
 						<Carousel className="w-36 ">

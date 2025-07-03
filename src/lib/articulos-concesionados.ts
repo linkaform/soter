@@ -15,16 +15,18 @@ export interface InputOutArticuloCon {
 }
 
 
-export const getListArticulosCon = async (date1:string, date2:string, filterDate:string) => {
+export const getListArticulosCon = async (location:string, area:string,status:string,date1:string, date2:string, filterDate:string) => {
     const payload = {
         dateFrom:date1,
         dateTo: date2, 
         filterDate,
-        tipo:"",
+        status:"",
+        location:"",
+        area:"",
         option: "get_articles",
         script_name: "articulos_consecionados.py",
     };
-  
+
     const userJwt = localStorage.getItem("access_token"); 
   
     const response = await fetch(`https://app.linkaform.com/api/infosync/scripts/run/`, {

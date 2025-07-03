@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { format } from "date-fns";
 import { usePaqueteria } from "@/hooks/usePaqueteria";
 import { ArrowRightLeft, Loader2 } from "lucide-react";
@@ -59,11 +59,11 @@ export const DevolucionPaqModal: React.FC<DevPaqModalProps> = ({
 	});
     
 
-	useEffect(()=>{
-		if(!isLoading){
-			handleClose()			
-		}
-	},[isLoading])
+	// useEffect(()=>{
+	// 	if(!isLoading){
+	// 		handleClose()			
+	// 	}
+	// },[isLoading])
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
         const formattedDate = format( new Date(date), 'yyyy-MM-dd HH:mm:ss');
@@ -72,7 +72,14 @@ export const DevolucionPaqModal: React.FC<DevPaqModalProps> = ({
             fecha_entregado_paqueteria: formattedDate ??"",
             entregado_a_paqueteria: values.entregado_a_paqueteria??""
         }
-        devolverPaqueteriaMutation.mutate({data_paquete_actualizar:formatData, folio:data.folio})
+        devolverPaqueteriaMutation.mutate({data_paquete_actualizar:formatData, folio:data.folio},  {
+            onSuccess: () => {
+                handleClose()	
+            },
+            onError: () => {
+              handleClose()	
+            }
+          })
 	}
 
 	const handleClose = () => {
@@ -86,7 +93,7 @@ export const DevolucionPaqModal: React.FC<DevPaqModalProps> = ({
  
     return (
         <Dialog onOpenChange={setIsSuccess} open={isSuccess}>
-          <div className="cursor-pointer" onClick={handleOpenModal}>
+          <div className="cursor-pointer" title="Devolver Paquete" onClick={handleOpenModal}>
             <ArrowRightLeft />
             </div>
     
@@ -99,9 +106,11 @@ export const DevolucionPaqModal: React.FC<DevPaqModalProps> = ({
                 <div className="overflow-y-auto p-2">
                     <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} >
+                    <div className="w-full flex gap-2 mb-2">
+                        <p className="font-bold ">Folio: </p>
+                        <p className="font-bold text-blue-500">{data?.folio} </p>
+                    </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6 ">
-    
-    
                             <FormField
                             control={form.control}
                             name="entregado_a_paqueteria"
@@ -109,7 +118,7 @@ export const DevolucionPaqModal: React.FC<DevPaqModalProps> = ({
                                 <FormItem>
                                 <FormLabel>Entregado a:</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Acción realizada..." {...field} 
+                                    <Input placeholder="Entregado a ..." {...field} 
                                     onChange={(e) => {
                                         field.onChange(e); // Actualiza el valor en react-hook-form
                                     }}

@@ -32,6 +32,7 @@ import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation
 import { useArticulosConcesionados } from "@/hooks/useArticulosConcesionados";
 import { useCatalogoConcesion } from "@/hooks/useCatalogoConcesion";
 import { Articulo_con_record } from "../table/articulos/concecionados/concecionados-columns";
+import { useShiftStore } from "@/store/useShiftStore";
 
 interface AddFallaModalProps {
   	title: string;
@@ -60,13 +61,14 @@ export const EditArticuloConModal: React.FC<AddFallaModalProps> = ({
     setShowLoadingModal,
     showLoadingModal
 }) => {
+	const { area } = useShiftStore()
     const [isSuccess, setIsSuccess] =useState(false)
 	const [conSelected, setConSelected] = useState<string>(data.solicita_concesion);
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(data.ubicacion_concesion);
 
 	const { dataAreas:areas, dataLocations:ubicaciones, isLoadingAreas:loadingAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true,  ubicacionSeleccionada?true:false);
 	const { data:dataAreaEmpleadoApoyo, isLoading:loadingAreaEmpleadoApoyo,} = useCatalogoAreaEmpleadoApoyo(showLoadingModal|| isSuccess);
-	const { editarArticulosConMutation, isLoading} = useArticulosConcesionados(false, "", "", "")
+	const { editarArticulosConMutation, isLoading} = useArticulosConcesionados(ubicacionSeleccionada, area, "",false, "", "", "")
     const { dataCon, dataConSub, isLoadingCon, isLoadingConSub  } = useCatalogoConcesion(ubicacionSeleccionada, conSelected, showLoadingModal|| isSuccess);
 	const [date, setDate] = useState<Date|"">("");
 
@@ -145,7 +147,7 @@ export const EditArticuloConModal: React.FC<AddFallaModalProps> = ({
 
   return (
     <Dialog open={isSuccess} modal>
-	<div className="cursor-pointer" onClick={handleOpenModal}>
+	<div className="cursor-pointer" title="Editar Artículo" onClick={handleOpenModal}>
 		<Edit />
 	</div>
 

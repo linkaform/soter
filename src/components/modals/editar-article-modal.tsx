@@ -172,7 +172,7 @@ export const EditarArticuloModal: React.FC<EditarFallaModalProps> = ({
 
   return (
 	<Dialog open={isSuccess} modal>
-	<div className="cursor-pointer" onClick={handleOpenModal}>
+	<div className="cursor-pointer" title="Editar Artículo" onClick={handleOpenModal}>
 		<Edit />
 	</div>
         <DialogContent className="max-w-3xl overflow-y-auto max-h-[80vh] flex flex-col" aria-describedby="">
@@ -184,18 +184,167 @@ export const EditarArticuloModal: React.FC<EditarFallaModalProps> = ({
             <div className="flex-grow overflow-y-auto p-4">
 			<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div className="flex justify-between">
+			<FormField
+                    control={form.control}
+                    name="articulo_perdido"
+                    render={({ field}:any)=> (
+                        <FormItem>
+                            <FormLabel className="">
+                                <span className="text-red-500">*</span> Nombre:
+                            </FormLabel>{" "}
+                            <FormControl>
+                                <Input placeholder="Nombre Completo" {...field} value={field.value}
+                                />
+                            </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+				<FormField
+					control={form.control}
+					name="tipo_articulo_perdido"
+					render={({ field }:any) => (
+						<FormItem>
+							<FormLabel>Tipo de artículo:</FormLabel>
+							<FormControl>
+							<Select {...field} className="input"
+								onValueChange={(value:string) => {
+								field.onChange(value); 
+                                setTipoArt(value)
+							}}
+							value={tipoArt} 
+						>
+							<SelectTrigger className="w-full">
+								{isLoadingArticles && tipoArt == "" ? <SelectValue placeholder="Cargando Articulos..." />:
+                                <SelectValue placeholder="Selecciona un articulo" />}
+							</SelectTrigger>
+							<SelectContent>
+							{dataArticulos?.map((vehiculo:string, index:number) => (
+								<SelectItem key={index} value={vehiculo}>
+									{vehiculo}
+								</SelectItem>
+							))}
+							</SelectContent>
+						</Select>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>	
+
+				<FormField
+					control={form.control}
+					name="articulo_seleccion"
+					render={({ field }:any) => (
+						<FormItem>
+							<FormLabel>Artículo:</FormLabel>
+							<FormControl>
+							<Select {...field} className="input"
+								onValueChange={(value:string) => {
+								field.onChange(value); 
+							}}
+							value={field.value} 
+						>
+							<SelectTrigger className="w-full">
+								{isLoadingArticuloSub && tipoArt ? (
+                                    <>
+                                    <div >Cargando articulos...</div>
+                                    </>
+								):(<>
+								{dataArticuloSub?.length > 0 ?( <>
+                                    <SelectValue placeholder="Selecciona una opcion..." />
+                                    </>)
+								:( <>
+                                    <div >Selecciona una categoria para ver las opciones...</div>
+                                    </>)
+								}
+								</>)}
+								
+							</SelectTrigger>
+							<SelectContent>
+							{dataArticuloSub?.length>0 ? (
+								dataArticuloSub?.map((item:string, index:number) => {
+									return (
+										<SelectItem key={index} value={item}>
+											{item}
+										</SelectItem>
+									)
+								})
+							):(
+								<><SelectItem disabled value={"no opciones"}>No hay opciones disponibles</SelectItem></>
+							)}
+							</SelectContent>
+						</Select>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>	
+	 			 <div className="flex justify-between">
                     <LoadImage
                         id="evidencia" 
-                        titulo={"Evidencia"} 
+                        titulo={"Fotografía"} 
                         setImg={setEvidencia}
                         showWebcamOption={true}
-                        facingMode="user"
+                        facingMode="environment"
                         imgArray={evidencia}
                         showArray={true}
                         limit={10}
                         />
 				</div>
+               
+                <FormField
+                    control={form.control}
+                    name="color_perdido"
+                    render={({ field }:any) => (
+                        <FormItem>
+                        <FormLabel>Color:</FormLabel>
+                        <FormControl>
+                        <Select {...field} className="input"
+                                onValueChange={(value:string) => {
+                                field.onChange(value); 
+                            }}
+                            value={field.value} 
+                            >
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Selecciona un color" />
+                            </SelectTrigger>
+                            <SelectContent>
+                            {catalogoColores().map((vehiculo:string) => (
+                                <SelectItem key={vehiculo} value={vehiculo}>
+                                {vehiculo}
+                                </SelectItem>
+                            ))}
+                            </SelectContent>
+                            </Select>
+                        </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                />	
+
+                <FormField
+                    control={form.control}
+                    name="descripcion"
+                    render={({ field }:any) => (
+                        <FormItem>
+                        <FormLabel>Descripción: </FormLabel>
+                        <FormControl>
+                            <Textarea
+                            placeholder="Texto"
+                            className="resize-none"
+                            {...field}
+                            value={field.value}
+                            />
+                        </FormControl>
+
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+              
 
                 <FormField
 				control={form.control}
@@ -309,154 +458,7 @@ export const EditarArticuloModal: React.FC<EditarFallaModalProps> = ({
 					</FormItem>
 				)}
 				/>
-
-				<FormField
-					control={form.control}
-					name="tipo_articulo_perdido"
-					render={({ field }:any) => (
-						<FormItem>
-							<FormLabel>Tipo de artículo:</FormLabel>
-							<FormControl>
-							<Select {...field} className="input"
-								onValueChange={(value:string) => {
-								field.onChange(value); 
-                                setTipoArt(value)
-							}}
-							value={tipoArt} 
-						>
-							<SelectTrigger className="w-full">
-								{isLoadingArticles && tipoArt == "" ? <SelectValue placeholder="Cargando Articulos..." />:
-                                <SelectValue placeholder="Selecciona un articulo" />}
-							</SelectTrigger>
-							<SelectContent>
-							{dataArticulos?.map((vehiculo:string, index:number) => (
-								<SelectItem key={index} value={vehiculo}>
-									{vehiculo}
-								</SelectItem>
-							))}
-							</SelectContent>
-						</Select>
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>	
-
-				<FormField
-					control={form.control}
-					name="articulo_seleccion"
-					render={({ field }:any) => (
-						<FormItem>
-							<FormLabel>Artículo:</FormLabel>
-							<FormControl>
-							<Select {...field} className="input"
-								onValueChange={(value:string) => {
-								field.onChange(value); 
-							}}
-							value={field.value} 
-						>
-							<SelectTrigger className="w-full">
-								{isLoadingArticuloSub && tipoArt ? (
-                                    <>
-                                    <div >Cargando articulos...</div>
-                                    </>
-								):(<>
-								{dataArticuloSub?.length > 0 ?( <>
-                                    <SelectValue placeholder="Selecciona una opcion..." />
-                                    </>)
-								:( <>
-                                    <div >Selecciona una categoria para ver las opciones...</div>
-                                    </>)
-								}
-								</>)}
-								
-							</SelectTrigger>
-							<SelectContent>
-							{dataArticuloSub?.length>0 ? (
-								dataArticuloSub?.map((item:string, index:number) => {
-									return (
-										<SelectItem key={index} value={item}>
-											{item}
-										</SelectItem>
-									)
-								})
-							):(
-								<><SelectItem disabled value={"no opciones"}>No hay opciones disponibles</SelectItem></>
-							)}
-							</SelectContent>
-						</Select>
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>	
-	
-                <FormField
-                    control={form.control}
-                    name="articulo_perdido"
-                    render={({ field}:any)=> (
-                        <FormItem>
-                            <FormLabel className="">
-                                <span className="text-red-500">*</span> Nombre:
-                            </FormLabel>{" "}
-                            <FormControl>
-                                <Input placeholder="Nombre Completo" {...field} value={field.value}
-                                />
-                            </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                />
-
-                <FormField
-                    control={form.control}
-                    name="color_perdido"
-                    render={({ field }:any) => (
-                        <FormItem>
-                        <FormLabel>Color:</FormLabel>
-                        <FormControl>
-                        <Select {...field} className="input"
-                                onValueChange={(value:string) => {
-                                field.onChange(value); 
-                            }}
-                            value={field.value} 
-                            >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Selecciona un color" />
-                            </SelectTrigger>
-                            <SelectContent>
-                            {catalogoColores().map((vehiculo:string) => (
-                                <SelectItem key={vehiculo} value={vehiculo}>
-                                {vehiculo}
-                                </SelectItem>
-                            ))}
-                            </SelectContent>
-                            </Select>
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                />	
-
-                <FormField
-                    control={form.control}
-                    name="descripcion"
-                    render={({ field }:any) => (
-                        <FormItem>
-                        <FormLabel>Descripción: </FormLabel>
-                        <FormControl>
-                            <Textarea
-                            placeholder="Texto"
-                            className="resize-none"
-                            {...field}
-                            value={field.value}
-                            />
-                        </FormControl>
-
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                />
+ 				
         
                 <div className="flex gap-2 flex-col ">
 						<FormLabel className="mb-2">

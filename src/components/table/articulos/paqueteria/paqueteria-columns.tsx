@@ -37,7 +37,7 @@ const OptionsCell: React.FC<{ row: any }> = ({ row}) => {
       <ViewPaqueteria 
           title="Información del Paquete"
           data={paquete} isSuccess={false}>
-            <div className="cursor-pointer">
+            <div className="cursor-pointer" title="Ver Paquete">
               <Eye /> 
             </div>
       </ViewPaqueteria>
@@ -89,8 +89,11 @@ export const paqueteriaColumns: ColumnDef<Paquete_record>[] = [
       accessorKey:"foto_perdido",
       header:"Fotografía",
       cell: ({ row }) => {
-        const foto = row.original.fotografia_paqueteria.length==0 ? [{file_url:"/package.svg", file_name:""}]:row.original.fotografia_paqueteria;
-          return <ViewImage imageUrl={foto?? []} />;
+        let foto = null
+        if(row.original.fotografia_paqueteria){
+          foto = row.original?.fotografia_paqueteria.length==0 ? [{file_url:"/package.svg", file_name:""}]: row.original.fotografia_paqueteria
+        }
+        return <ViewImage imageUrl={foto?? []} />;
       }
     },
     // {

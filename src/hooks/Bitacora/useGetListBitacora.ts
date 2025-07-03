@@ -9,11 +9,6 @@ export const useGetListBitacora = (location:string, area:string, prioridades:str
         const data = await getListBitacora(location, area, prioridades, date1, date2, dateFilter); 
         return data.response?.data; 
     },
-   
-    refetchOnWindowFocus: true, 
-    refetchInterval: 60000,
-    refetchOnReconnect: true, 
-    staleTime: 1000 * 60 * 5, 
   });
 
   return {

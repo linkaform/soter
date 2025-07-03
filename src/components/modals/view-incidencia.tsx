@@ -56,6 +56,10 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 						<p className="">{formatDateToText(data?.fecha_hora_incidencia.slice(0,-3))} </p>
 					</div>
 					<div className="w-full flex gap-2">
+						<p className="font-bold ">Folio: </p>
+						<p  className="font-bold text-blue-500">{data?.folio} </p>
+					</div>
+					<div className="w-full flex gap-2">
 						<p className="font-bold">Ubicación: </p>
 						<p >{data?.ubicacion_incidencia} </p>
 					</div>
@@ -393,7 +397,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 					</div>
 				</div>
 				<SeguimientoIncidenciaModal
-					title="Seguimiento Falla"
+					title="Seguimiento Incidencia"
 					folio={data?.folio}
 					isSuccess={openModal}
 					setIsSuccess={setOpenModal}

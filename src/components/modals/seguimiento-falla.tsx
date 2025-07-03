@@ -134,6 +134,10 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} >
+		  	<div className="w-full flex gap-2 mb-2">
+				<p className="font-bold ">Folio: </p>
+				<p className="font-bold text-blue-500">{data?.folio} </p>
+			</div>
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
 				<FormField
 				control={form.control}
@@ -178,7 +182,7 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 				name="fechaInicioFallaCompleta"
 				render={() => (
 					<FormItem>
-					<FormLabel>* Fecha desde:</FormLabel>
+					<FormLabel> Fecha desde:</FormLabel>
 					<FormControl>
 						{/* <Input type="datetime-local" placeholder="Fecha"  /> */}
 						<DateTime date={date} setDate={setDate} />
@@ -193,7 +197,7 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 				name="fechaFinFallaCompleta"
 				render={() => (
 					<FormItem>
-					<FormLabel>* Fecha hasta:</FormLabel>
+					<FormLabel>Fecha hasta:</FormLabel>
 					<FormControl>
 						{/* <Input type="datetime-local" placeholder="Fecha" /> */}
 						<DateTime date={dateFin} setDate={setDateFin}/>
