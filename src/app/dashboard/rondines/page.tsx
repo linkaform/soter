@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 
 import RondinesTable from "@/components/table/rondines/table";
 import RondinesCalendar from "@/components/pages/rondines/calendar";
