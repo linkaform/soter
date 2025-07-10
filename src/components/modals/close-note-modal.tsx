@@ -5,7 +5,6 @@ import {
   DialogClose,
   DialogContent,
   DialogHeader,
-  DialogOverlay,
   DialogTitle,
   DialogTrigger,
 } from '../ui/dialog'

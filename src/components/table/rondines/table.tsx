@@ -83,7 +83,7 @@ const dias = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom","Lun", "Mar", "M
 const RondinesTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSelectedRondin,selectedRondin,
 	setDate1, setDate2, date1, date2, dateFilter, setDateFilter,Filter, resetTableFilters
  })=> {
-
+	console.log(setSelectedRondin, selectedRondin)
 	const [selectedRow, setSelectedRow] = React.useState<any | null>(null);
 
   const [sorting, setSorting] = React.useState<SortingState>([]);

@@ -1,10 +1,5 @@
 import React from "react";
 
-import Guest from "@/components/icon/guests";
-import Fails from "@/components/icon/fails";
-import Concessioned from "@/components/icon/concessioned";
-import Vehicles from "@/components/icon/vehicles";
-import Badges from "@/components/icon/badges";
 import Link from "next/link";
 import { useShiftStore } from "@/store/useShiftStore";
 import { CarFront, FileBox, Flame, TriangleAlert, Users, Wrench } from "lucide-react";
