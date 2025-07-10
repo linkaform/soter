@@ -31,6 +31,7 @@ import { TabsContent, TabsList } from "@radix-ui/react-tabs";
 import { catalogoFechas } from "@/lib/utils";
 import DateTime from "@/components/dateTime";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import Image from "next/image";
 
 
 interface ListProps {
@@ -327,7 +328,9 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSelec
 						<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
 						{fotos.map((val, idx) => (
 							<div key={idx} className="rounded overflow-hidden shadow-md">
-							<img
+							<Image
+								width={30}
+								height={30}
 								src={val}
 								alt={`Demo ${idx + 1}`}
 								className="w-full h-48 object-cover"
@@ -383,7 +386,9 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSelec
 						'https://v.wpimg.pl/ZTZkNzI0dTU7CThJZkt4IHhRbBMgEnZ2L0l0WGYBaGxqE2EcIFw_Jj8bIVQuQi8kOxw-VDlcdTUqAmEMeB8-PSkbIhswHz85OA4qVSxSaGJjXyhPZAk4Mm9GekJ-U3c1Y1p2V34JOTFsD3lIfQY7Y3gW'
 						].map((val, idx) => (
 						<div key={idx} className="rounded overflow-hidden shadow-md min-w-max h-full">
-							<img
+							<Image
+							width={30}
+							height={30}
 							src={val}
 							alt={`Demo ${idx + 1}`}
 							className="w-full h-full object-cover"

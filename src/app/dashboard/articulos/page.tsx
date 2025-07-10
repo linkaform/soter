@@ -21,7 +21,7 @@ import ChangeLocation from "@/components/changeLocation";
 import { useGetStats } from "@/hooks/useGetStats";
 
 const ArticulosPage = () => {
-	const {location, area} = useShiftStore()
+	const {location} = useShiftStore()
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location  || "Planta Monterrey");
 	const [areaSeleccionada, setAreaSeleccionada] = useState("todas")
 	const [date1, setDate1] = useState<Date|"">("")
