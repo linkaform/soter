@@ -46,7 +46,7 @@ export const DoOutModal: React.FC<AddBadgeModalProps> = ({
   }
 
   return (
-    <Dialog open={modalSalidaAbierto} onOpenChange={setModalSalidaAbierto}>
+    <Dialog open={modalSalidaAbierto} onOpenChange={setModalSalidaAbierto} modal>
 
       <DialogContent className="max-w-xl">
         <DialogHeader>

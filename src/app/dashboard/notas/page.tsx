@@ -15,7 +15,7 @@ const NotasPage = () => {
   return (
     <main className='mt-4 mx-4'>
       <header className='flex flex-col md:flex-row md:justify-between'>
-        <PageTitle title='Listado de Notas' />
+        <PageTitle title='Listado De Notas' />
         <div className='w-full md:w-3/5'>
           <Stats setStatusFilter={setStatusFilter} ubicacionSeleccionada={ubicacionSeleccionada}
             areaSeleccionada={areaSeleccionada}

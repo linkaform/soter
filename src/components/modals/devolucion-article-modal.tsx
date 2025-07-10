@@ -151,6 +151,10 @@ export const DevolucionArticuloModal: React.FC<AddFallaModalProps> = ({
             <div className="overflow-y-auto p-2">
                 <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} >
+					<div className="w-full flex gap-2 mb-2">
+						<p className="font-bold ">Folio: </p>
+						<p  className="font-bold text-blue-500">{data?.folio} </p>
+					</div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6 ">
 
                     <div className="flex justify-between">

@@ -373,7 +373,7 @@ const RondinesPage = () => {
 					</div>
 
 					<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
-						dateFilter== "today" && selectedTab === 'Personal' &&  selectedOption[0]=="entrada" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} 
+						dateFilter== "today" && selectedTab === 'Ejecuciones' &&  selectedOption[0]=="entrada" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} 
 						onClick={() => {handleTabChange("Personal",["entrada"], "today");}}>
 						<div className="flex gap-6">
 							<CalendarClock className="text-primary w-10 h-10" />
@@ -385,8 +385,42 @@ const RondinesPage = () => {
 							<div className="h-1 w-1/2 bg-cyan-100"></div>
 							<div className="h-1 w-1/2 bg-blue-500"></div>
 						</div>
-						<span className="text-md">Rondines Programados</span>
+						<span className="text-md">Ejecuciones</span>
 					</div>
+
+                    <div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
+						dateFilter== "today" && selectedTab === 'Incidentes' &&  selectedOption[0]=="entrada" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} 
+						onClick={() => {handleTabChange("Personal",["entrada"], "today");}}>
+						<div className="flex gap-6">
+							<CalendarClock className="text-primary w-10 h-10" />
+							<span className="flex items-center font-bold text-4xl">
+							{stats?.visitas_en_dia} 0
+							</span>
+						</div>
+						<div className="flex items-center space-x-0">
+							<div className="h-1 w-1/2 bg-cyan-100"></div>
+							<div className="h-1 w-1/2 bg-blue-500"></div>
+						</div>
+						<span className="text-md">Incidentes</span>
+					</div>
+
+
+                    <div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
+						dateFilter== "today" && selectedTab === 'Tareas' &&  selectedOption[0]=="entrada" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} 
+						onClick={() => {handleTabChange("Personal",["entrada"], "today");}}>
+						<div className="flex gap-6">
+							<CalendarClock className="text-primary w-10 h-10" />
+							<span className="flex items-center font-bold text-4xl">
+							{stats?.visitas_en_dia} 0
+							</span>
+						</div>
+						<div className="flex items-center space-x-0">
+							<div className="h-1 w-1/2 bg-cyan-100"></div>
+							<div className="h-1 w-1/2 bg-blue-500"></div>
+						</div>
+						<span className="text-md">Tareas</span>
+					</div>
+
 
 				</div>
 			</div>

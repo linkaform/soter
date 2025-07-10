@@ -20,6 +20,7 @@ import { Separator } from '../ui/separator'
 import File from '../icon/file'
 import { CloseNoteModal } from './close-note-modal'
 import { Imagen } from '@/lib/update-pass-full'
+import { capitalizeOnlyFirstLetter } from '@/lib/utils'
 
 interface NoteDetailsModalProps {
   title: string
@@ -57,17 +58,21 @@ export const NoteDetailsModal: React.FC<NoteDetailsModalProps> = ({
       <DialogTrigger asChild>{children}</DialogTrigger>
 
       <DialogContent className='max-w-xl max-h-[90vh] overflow-scroll'>
-        <DialogHeader>
-          <DialogTitle className='text-2xl	 text-center  font-bold my-5'>
+        <DialogHeader >
+          <DialogTitle className='flex justify-center font-bold'>
             {title}
           </DialogTitle>
-
           <Separator />
-
-          <div className='flex justify-end '>
-            <Badge>{note?.note_status ?? ''}</Badge>
-          </div>
         </DialogHeader>
+
+        <div className='flex justify-end '>
+            <Badge
+            className={`text-white w-20 h-7 text-md ${note?.note_status === "abierto"?'bg-green-600':'bg-red-600'} hover:${note?.note_status === "abierto"?'bg-green-600':'bg-red-600'}`}
+            >
+              {capitalizeOnlyFirstLetter(note?.note_status??"") }
+            </Badge>
+
+          </div>
         {(note?.note_pic ?? []).length > 0 && (
           <Carousel className='flex justify-center'>
             <CarouselContent className='flex w-64'>
@@ -155,7 +160,7 @@ export const NoteDetailsModal: React.FC<NoteDetailsModalProps> = ({
           <p className='text-sm'>{note?.created_by_name ?? ''}.</p>
         </div>
 
-        <CloseNoteModal title='Cerrar nota' note={note} setIsOpen={setIsOpen} isOpen={open}>
+        <CloseNoteModal title='Cerrar nota' note={note} setIsOpen={setIsOpen} isOpen={open} isAnnided={true}>
           <Button className='w-80 mx-auto bg-red-500 hover:bg-red-600 text-white mb-5'>
             Cerrar Nota
           </Button>

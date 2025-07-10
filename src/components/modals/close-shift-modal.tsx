@@ -29,6 +29,7 @@ export const CloseShiftModal: React.FC<CloseShiftModalProps> = ({
     ?.map((guardia: { name: string }) => guardia.name)
     .join(", ");
 
+  console.log("lala",shift)
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -42,17 +43,17 @@ export const CloseShiftModal: React.FC<CloseShiftModalProps> = ({
 
         <div className="px-16 mb-5">
           <p className="text-center mb-5">
-            ¿Seguro que quieres cerrar el turno en la{" "}
-            <span className="font-semibold">{area}</span> en la{" "}
+            Estás a punto de cerrar el turno en la{" "}
+            <span className="font-semibold">{area}</span> de la {" "}
             <span className="font-semibold">{location}</span>
             {guardNames?.length > 0 && (
               <>
                 {" "}
-                con los siguientes{" "}
+                con los siguientes guardias de apoyo: {" "}
                 <span className="font-semibold">{guardNames}</span>
               </>
             )}
-            ?
+            {" "}¿Deseas continuar?
           </p>
         </div>
 

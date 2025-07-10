@@ -92,6 +92,14 @@ export const conColumns: ColumnDef<Articulo_con_record>[] = [
     //   enableHiding: false,
     // },
     {
+      accessorKey: "folio",
+      header: "Folio",
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("folio")}</div>
+      ),
+      enableSorting: true,
+    },
+    {
       accessorKey: "solicita_concesion",
       header: "Solicita",
       cell: ({ row }) => (

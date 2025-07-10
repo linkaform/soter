@@ -151,7 +151,7 @@ export const EditarPaqueteria: React.FC<EditarFallaModalProps> = ({
 	};
 
   return (
-	<Dialog open={isSuccess} modal>
+	<Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
 		<div className="cursor-pointer" title="Editar Paquete" onClick={handleOpenModal}>
 			<Edit />
 		</div>

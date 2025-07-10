@@ -144,7 +144,7 @@ const ArticulosPerdidosTable:React.FC<ListProps> = ({ data, isLoadingListArticul
 				</TabsList>
 			</div>
 			
-			<div className="flex items-center">
+			<div className="flex w-full max-w-sm items-center space-x-2">
 				<input
 				type="text"
 				placeholder="Buscar en todos los campos..."

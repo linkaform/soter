@@ -159,20 +159,9 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
     <Dialog open={open} onOpenChange={setOpen} >
     <DialogTrigger asChild onClick={() => setOpen(true)}>
         {children}
-        
       </DialogTrigger>
-
       <DialogContent className="max-w-xl max-h-[90vh] flex flex-col" aria-describedby=""
-        onInteractOutside={(e) => {
-          if ((e.target as HTMLElement).closest('.react-select__menu')) {
-            e.preventDefault();
-          }
-        }}
-        onPointerDownOutside={(e) => {
-          if ((e.target as HTMLElement).closest('.react-select__menu')) {
-            e.preventDefault();
-          }
-        }}
+      
       > 
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center font-bold">
@@ -183,53 +172,40 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
         <div className="">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-            <FormField
-              control={form.control}
-              name="tipo"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>* Tipo</FormLabel>
-                  <Select
-                    aria-labelledby="aria-label"
-                    inputId="aria-example-input"
-                    name="aria-live-color"
-                    options={catTiposEquipos}
-                    onChange={(value:any) =>{
-                      field.onChange(value.value);
-                    }}
-                  />
-                  {/* <Select onValueChange={(value) => field.onChange(value)}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecciona una opción" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {catalogoTipoEquipos().map((equipo) => (
-                        <SelectItem key={equipo} value={equipo}>
-                          {equipo}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>  */}
-               
-                  <FormMessage /> 
-                </FormItem>
-              )}
-            />
-
-
-            <FormField
+          <FormField
               control={form.control}
               name="nombre"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>* Nombre del Equipo</FormLabel>
                   <FormControl>
-                    <Input placeholder="Nombre del equipo"  maxLength={20} {...field} />
+                    <Input  placeholder="Nombre del equipo"  maxLength={20} {...field} />
                   </FormControl>
-
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="tipo"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>* Tipo</FormLabel>
+                    
+                  <FormControl  >
+                    <Select
+                    options={catTiposEquipos}
+                    onChange={(value:any) =>{
+                      field.onChange(value.value);
+                    }}
+                     // asegúrate de que esté en el orden correcto
+                    aria-labelledby="tipo-label"
+                    inputId="tipo-input"
+                    name="tipo"
+                  />
+                  </FormControl>
+                  <FormMessage /> 
                 </FormItem>
               )}
             />
@@ -254,12 +230,11 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
                 control={form.control}
                 name="modelo"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem >
                     <FormLabel>* Modelo</FormLabel>
-                    <FormControl>
+                    <FormControl >
                       <Input placeholder="Modelo" maxLength={20} {...field} />
                     </FormControl>
-
                     <FormMessage />
                   </FormItem>
                 )}
@@ -284,7 +259,6 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
                           type="button"
                           className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-blue-600"
                           onClick={() => setOpenScan(true)}
-                          tabIndex={-1}
                         >
                           <ScanBarcode size={20} />
                         </button>

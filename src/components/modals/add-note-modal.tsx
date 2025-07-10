@@ -92,101 +92,101 @@ export const AddNoteModal: React.FC<AddNoteModalProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen} modal>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent
-        className='max-w-xl'
-        aria-describedby='add-note-description'>
-        <DialogHeader>
-          <DialogTitle className='text-2xl text-center font-bold my-5'>
-            {title}
-          </DialogTitle>
-          <DialogDescription id='add-note-description'>
-            Completa los campos para agregar una nueva nota.
-          </DialogDescription>
-        </DialogHeader>
+        <DialogTrigger asChild>{children}</DialogTrigger>
+     	<DialogContent className="w-full max-w-md sm:max-w-lg md:max-w-2xl px-4 py-6 overflow-y-auto max-h-[90vh] flex flex-col" aria-describedby="">
+            <DialogHeader className="flex-shrink-0">
+				<DialogTitle className="text-2xl text-center font-bold">
+					{title}
+				</DialogTitle>
+				<DialogDescription id='add-note-description'>
+					Completa los campos para agregar una nueva nota.
+				</DialogDescription>
+            </DialogHeader>
+        <div className="flex-grow overflow-y-auto p-4">
+			<Form {...form}>
+				<form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+				<FormField
+					control={form.control}
+					name='title'
+					render={({ field }: any) => (
+					<FormItem>
+						<FormLabel>* Nota</FormLabel>
+						<FormControl>
+						<Input placeholder='Texto' {...field} />
+						</FormControl>
+						<FormMessage />
+					</FormItem>
+					)}
+				/>
 
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
-            <FormField
-              control={form.control}
-              name='title'
-              render={({ field }: any) => (
-                <FormItem>
-                  <FormLabel>* Nota</FormLabel>
-                  <FormControl>
-                    <Input placeholder='Texto' {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+				<div className='flex justify-between'>
+					<LoadImage
+					id='evidencia'
+					titulo={'Agregar foto'}
+					setImg={setEvidencia}
+					showWebcamOption={true}
+					facingMode='environment'
+					imgArray={evidencia}
+					showArray={true}
+					limit={10}
+					/>
+				</div>
 
-            <div className='flex justify-between'>
-              <LoadImage
-                id='evidencia'
-                titulo={'Agregar foto'}
-                setImg={setEvidencia}
-                showWebcamOption={true}
-                facingMode='environment'
-                imgArray={evidencia}
-                showArray={true}
-                limit={10}
-              />
-            </div>
+				<div className='flex justify-between'>
+					<LoadFile
+					id='documento'
+					titulo={'Subir un archivo'}
+					setDocs={setDocumento}
+					docArray={documento}
+					limit={10}
+					/>
+				</div>
 
-            <div className='flex justify-between'>
-              <LoadFile
-                id='documento'
-                titulo={'Subir un archivo'}
-                setDocs={setDocumento}
-                docArray={documento}
-                limit={10}
-              />
-            </div>
+				<FormField
+					control={form.control}
+					name='description'
+					render={({ field }: any) => (
+					<FormItem>
+						<FormLabel>* Comentarios</FormLabel>
+						<FormControl>
+						<Textarea
+							placeholder='Texto'
+							className='resize-none'
+							{...field}
+						/>
+						</FormControl>
+						<FormMessage />
+					</FormItem>
+					)}
+				/>
 
-            <FormField
-              control={form.control}
-              name='description'
-              render={({ field }: any) => (
-                <FormItem>
-                  <FormLabel>* Comentario</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder='Texto'
-                      className='resize-none'
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+				<p className='text-gray-400'>**Campos requeridos </p>
 
-            <p className='text-gray-400'>**Campos requeridos </p>
+			
+				</form>
+			</Form>
+        </div>
+        <div className='flex gap-2'>
+			<DialogClose asChild>
+			<Button className='w-full bg-gray-100 hover:bg-gray-200 text-gray-700'>
+				Cancelar
+			</Button>
+			</DialogClose>
 
-            <div className='flex gap-5'>
-              <DialogClose asChild>
-                <Button className='w-full bg-gray-100 hover:bg-gray-200 text-gray-700'>
-                  Cancelar
-                </Button>
-              </DialogClose>
-
-              <Button
-                type='submit'
-                disabled={isLoadingNotes}
-                className='w-full bg-blue-500 hover:bg-blue-600 text-white flex items-center justify-center gap-2'>
-                {isLoadingNotes ? (
-                  <>
-                    <div className='w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin' />
-                    Agregando...
-                  </>
-                ) : (
-                  'Agregar'
-                )}
-              </Button>
-            </div>
-          </form>
-        </Form>
+			<Button
+			type='submit'
+			disabled={isLoadingNotes}
+			className='w-full bg-blue-500 hover:bg-blue-600 text-white flex items-center justify-center gap-2'>
+			{isLoadingNotes ? (
+				<>
+				<div className='w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin' />
+				Agregando...
+				</>
+			) : (
+				'Agregar'
+			)}
+			</Button>
+        </div>
       </DialogContent>
     </Dialog>
   )

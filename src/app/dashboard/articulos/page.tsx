@@ -29,11 +29,11 @@ const ArticulosPage = () => {
 	const [dates, setDates] = useState<string[]>([])
 	const [dateFilter, setDateFilter] = useState<string>("")	
 	const [status, setStatus] = useState<string>("")
-	const { data: stats } = useGetStats(true,location, area, 'Articulos')
+	const { data: stats } = useGetStats(true,ubicacionSeleccionada,  areaSeleccionada == "todas" ? "": areaSeleccionada, 'Articulos')
 	const { listArticulosPerdidos, isLoadingListArticulosPerdidos} = useArticulosPerdidos(ubicacionSeleccionada,  areaSeleccionada == "todas" ? "": areaSeleccionada, "", true, dates[0], dates[1], dateFilter);
 	const { listArticulosCon, isLoadingListArticulosCon} = useArticulosConcesionados(
 		ubicacionSeleccionada, areaSeleccionada == "todas" ? "": areaSeleccionada, status, true, dates[0], dates[1], dateFilter);
-	const { listPaqueteria, isLoadingListPaqueteria} = usePaqueteria("", "", "", true, dates[0], dates[1], dateFilter);
+	const { listPaqueteria, isLoadingListPaqueteria} = usePaqueteria(ubicacionSeleccionada,  areaSeleccionada == "todas" ? "": areaSeleccionada, "", true, dates[0], dates[1], dateFilter);
 	const { tab, setTab } = useShiftStore()
 	const [selectedTab, setSelectedTab] = useState<string>(tab ? tab:'Paqueteria'); 
 	const [isSuccess, setIsSuccess] = useState(false);

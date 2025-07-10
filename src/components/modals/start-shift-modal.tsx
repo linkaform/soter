@@ -45,7 +45,7 @@ export const StartShiftModal: React.FC<StartShiftModalProps> = ({
 
         <div className="px-16 mb-5">
           <p className="text-center mb-5">
-            ¿Desea iniciar el turno en la{" "}
+            ¿Desea iniciar el turno en la ubicación{" "}
             <span className="font-semibold">{area}</span> en la
             <span className="font-semibold"> {location}</span>
             {guardNames?.length > 0 ? (

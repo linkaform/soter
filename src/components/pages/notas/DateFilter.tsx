@@ -53,6 +53,7 @@ const DateFilter = ({
           }}>
           <SelectTrigger className='w-full'>
             <SelectValue placeholder='Selecciona un filtro de fecha' />
+            <CalendarDays className='ml-auto h-4 w-4 opacity-70' />
           </SelectTrigger>
           <SelectContent>
             {catalogoFechas().map((option: any) => {
@@ -64,7 +65,7 @@ const DateFilter = ({
             })}
           </SelectContent>
         </Select>
-        <CalendarDays />
+        {/* <CalendarDays /> */}
       </div>
     </>
   )
