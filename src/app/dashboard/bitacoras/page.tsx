@@ -19,8 +19,7 @@ import { useGetStats } from "@/hooks/useGetStats";
 import useAuthStore from "@/store/useAuthStore";
 
 const BitacorasPage = () => {
-  	const [selectedOption, setSelectedOption] = useState<string[]>([]);
-	const { tab, setTab, filter, setFilter} = useShiftStore()
+	const { tab, setTab, filter, setFilter, option, setOption} = useShiftStore()
   	const {location, area} = useShiftStore()
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location );
 	const [areaSeleccionada, setAreaSeleccionada] = useState("todas");
@@ -29,10 +28,13 @@ const BitacorasPage = () => {
 
 	const [date1, setDate1] = useState<Date|"">("")
 	const [date2, setDate2] = useState<Date|"">("")
+	const [selectedOption, setSelectedOption] = useState<string[]>(option);
 
 	const [dates, setDates] = useState<string[]>([])
 	const [dateFilter, setDateFilter] = useState<string>(filter)
-	const { listBitacoras,isLoadingListBitacoras} = useBitacoras(ubicacionSeleccionada, areaSeleccionada == "todas" ? "": areaSeleccionada, selectedOption, ubicacionSeleccionada&&areaSeleccionada?true:false, dates[0], dates[1], dateFilter)
+	console.log("datefilter",dateFilter)
+	const { listBitacoras,isLoadingListBitacoras} = useBitacoras(
+		ubicacionSeleccionada, areaSeleccionada == "todas" ? "": areaSeleccionada, selectedOption, ubicacionSeleccionada&&areaSeleccionada?true:false, dates[0], dates[1], dateFilter)
 	const { data: stats } = useGetStats(ubicacionSeleccionada&& areaSeleccionada?true:false,ubicacionSeleccionada, areaSeleccionada=="todas"?"":areaSeleccionada, 'Bitacoras')
 	const [selectedTab, setSelectedTab] = useState<string>(tab ? tab: "Personal"); 
 
@@ -40,17 +42,23 @@ const BitacorasPage = () => {
 
 	useEffect(() => {
 		if(tab){
+			console.log("tab", tab)
 			setTab("")
 		}
 		if(filter){
+			console.log("filtro", filter)
 			setFilter("")
+		}
+		if(option){
+			console.log("filtro", filter)
+			setOption([])
 		}
 		if(location){
 			setUbicacionSeleccionada(location )
 		}else{
 			setUbicacionSeleccionada(location|| "Planta Monterrey" )
 		}
-	}, [area, location, userNameSoter, tab, filter, setTab, setFilter]); 
+	}, [area, location, userNameSoter, tab, filter, setTab, setFilter, option, setOption]); 
 
 
 	const processBitacorasE = (bitacoras: Bitacora_record[]) => {

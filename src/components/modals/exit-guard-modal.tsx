@@ -34,12 +34,12 @@ export const ExitGuardModal: React.FC<ExitGuardModalProps> = ({
 
         <div className="px-16 mb-5">
           <p className="text-center mb-3">
-            ¿Estas seguro que quieres registrar la salida del guardia{" "}
-            <span className="font-semibold">{empleado}?</span>
+            ¿Desea registrar la salida del guardia {" "}
+            <span className="font-semibold">{empleado}</span>?
           </p>
 
           <p className="text-center">
-            Una vez confirmada, la acción no se podrá deshacer.{" "}
+         Esta acción no se puede deshacer una vez confirmada.{" "}
           </p>
         </div>
 

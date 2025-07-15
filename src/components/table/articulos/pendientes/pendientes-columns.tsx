@@ -78,6 +78,14 @@ export const pendientesColumns: ColumnDef<Articulo_perdido_record>[] = [
       enableHiding: false,
     },
     {
+      accessorKey: "folio",
+      header: "Folio",
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("folio")}</div>
+      ),
+      enableSorting: true,
+    },
+    {
       accessorKey: "articulo_perdido",
       header: "Nombre",
       cell: ({ row }) => (
@@ -110,7 +118,7 @@ export const pendientesColumns: ColumnDef<Articulo_perdido_record>[] = [
       accessorKey:"foto_perdido",
       header:"Fotografía",
       cell: ({ row }) => {
-        const foto = row.original.foto_perdido.length==0 ? [{file_url:"/package.svg", file_name:""}]:row.original.foto_perdido;
+        const foto = row.original.foto_perdido.length==0 ? [{file_url:"/noarticle.svg", file_name:""}]:row.original.foto_perdido;
           return <ViewImage imageUrl={foto} />;
       }
     },

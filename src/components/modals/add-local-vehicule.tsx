@@ -129,9 +129,7 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 
   function onSubmit(data: z.infer<typeof formSchema>) {
     addNewVehicle(data);
-
     form.reset();
-  
     toast.success(
       "Vehiculo agregado correctamente."
     );
@@ -141,6 +139,8 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 
   const addNewVehicle = (data: z.infer<typeof formSchema>) => {
 	if(isAccesos){
+		if (data?.tipo[0]=="")
+
 		setSelectedVehiculos([{
 			color: data.color?.length ? data.color[0] :"",
 			marca: data.marca?.length ? data.marca[0] :"",
@@ -190,7 +190,12 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 
   useEffect(() => {
     if(!open)
-    form.setValue("placas", "")
+		form.setValue("tipo", [""])
+		form.setValue("marca", [""])
+		form.setValue("modelo", [""])
+		form.setValue("color", [""])
+		form.setValue("estado", [""])
+    	form.setValue("placas", "")
   }, [open]);
 
 
@@ -277,7 +282,7 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 					name="marca"
 					render={({ field }) => (
 						<FormItem>
-						<FormLabel>* Marca</FormLabel>
+						<FormLabel>Marca</FormLabel>
 						<Select
 							aria-labelledby="aria-label"
 							// ariaLiveMessages={{
@@ -334,7 +339,7 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 					name="modelo"
 					render={({ field }) => (
 						<FormItem>
-						<FormLabel>* Modelo</FormLabel>
+						<FormLabel>Modelo</FormLabel>
 						<Select
 							aria-labelledby="aria-label"
 							// ariaLiveMessages={{
@@ -371,7 +376,7 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 					name="estado"
 					render={({ field }) => (
 						<FormItem>
-						<FormLabel>* Estado</FormLabel>
+						<FormLabel> Estado</FormLabel>
 
 						<Select
 							aria-labelledby="aria-label"
@@ -410,7 +415,7 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 					name="placas"
 					render={({ field }) => (
 						<FormItem>
-						<FormLabel>* Placas</FormLabel>
+						<FormLabel> Placas</FormLabel>
 						<FormControl>
 							<Input
 							maxLength={20}
@@ -429,7 +434,7 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 					name="color"
 					render={({ field }) => (
 						<FormItem>
-						<FormLabel>* Color</FormLabel>
+						<FormLabel> Color</FormLabel>
 						<Select
 							aria-labelledby="aria-label"
 							// ariaLiveMessages={{

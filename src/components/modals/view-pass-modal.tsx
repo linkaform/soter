@@ -202,7 +202,7 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
 
         {/* Sobre la visita */}
           <div className="w-full flex mb-3 gap-1">
-            <p className="font-bold ">Nombre Completo : </p>
+            <p className="font-bold ">Nombre completo: </p>
             <p> {data?.nombre} </p>
           </div>
 
@@ -212,7 +212,7 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
 					<div className="flex flex-col space-y-5">
 						<div className="flex justify-between flex-col sm:flex-row  sm:space-x-5 space-y-5 sm:space-y-0 ">
 							<div className="w-full flex gap-2 ">
-							<p className="font-bold flex-shrink-0">Tipo de pase : </p>
+							<p className="font-bold flex-shrink-0">Tipo de pase: </p>
 							<p >Visita General</p>
 							</div>
 
@@ -236,24 +236,24 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
 
 						<div className="flex justify-between flex-col sm:flex-row  sm:space-x-5 space-y-5 sm:space-y-0">
 							<div className="w-full flex gap-2 ">
-							<p className="font-bold flex-shrink-0">Email : </p>
+							<p className="font-bold flex-shrink-0">Email: </p>
 							<p className="w-full break-words">{data?.email}</p>
 							</div>
 
 							<div className="w-full flex gap-2">
-							<p className="font-bold flex-shrink-0">Teléfono : </p>
+							<p className="font-bold flex-shrink-0">Teléfono: </p>
 							<p className="text-sm">{data?.telefono}</p>
 							</div>
 						</div>
 
             <div className="flex justify-between flex-col sm:flex-row  sm:space-x-5 space-y-5 sm:space-y-0">
               <div className="w-full flex gap-2  ">
-                <p className="font-bold flex-shrink-0">Tema cita : </p>
+                <p className="font-bold flex-shrink-0">Tema cita: </p>
                 <p className="w-full break-words">{data?.tema_cita}</p>
               </div>
 
               <div className="w-full flex gap-2 ">
-                <p className="font-bold flex-shrink-0">Descripción : </p>
+                <p className="font-bold flex-shrink-0">Descripción: </p>
                 <p className="w-full break-words">{data?.descripcion} </p>
               </div>
             </div>
@@ -267,7 +267,7 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
           <div className="flex flex-col  justify-between  md:flex-row">
             {data?.foto!== undefined && data?.foto.length > 0 ?(
                 <div className="w-full ">
-                    <p className="font-bold mb-3">Fotografia:</p>
+                    <p className="font-bold mb-3">Fotografía:</p>
                     <div className="w-full flex justify-center">
                         <Image
                         src={data?.foto[0].file_url  } 
@@ -283,7 +283,7 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
 
             {data?.identificacion!== undefined && data?.identificacion.length > 0 ?(
               <div className="w-full ">
-                        <p className="font-bold mb-3">Identificacion:</p>
+                        <p className="font-bold mb-3">Identificación:</p>
                         <div className="w-full flex justify-center">
                             <Image
                             src={data?.identificacion[0].file_url  } 
@@ -349,7 +349,7 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
 										<th className="px-4 py-2 text-left border-b">Nombre</th>
 										<th className="px-4 py-2 text-left border-b">Marca</th>
 										<th className="px-4 py-2 text-left border-b">Modelo</th>
-										<th className="px-4 py-2 text-left border-b">No. Serie</th>
+										<th className="px-4 py-2 text-left border-b">No. serie</th>
 										<th className="px-4 py-2 text-left border-b">Color</th>
 										</tr>
 									</thead>
@@ -367,15 +367,15 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
 									</tbody>
 									</table>
 								) : (
-										<div>No se agregaron equipos.</div>
+										<div className="text-slate-500">No se agregaron equipos.</div>
 								)}
 								</AccordionContent>
 								</AccordionItem>
 								</Accordion>
-							):(<div>No se agregaron equipos.</div>)}
+							):(<div className="text-slate-500">No se agregaron equipos.</div>)}
 						</div>
 
-          {data?.grupo_vehiculos.length>0 && (
+          {data?.grupo_vehiculos.length>0 ? (
           <div className="">
             <p className="text-lg font-bold mb-2">Vehículos</p>
             <Accordion type="single" collapsible>
@@ -384,7 +384,7 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
                   <AccordionTrigger>{`${vehiculo.tipo_vehiculo}`}</AccordionTrigger>
                   <AccordionContent>
                     <p className="font-medium mb-1">
-                      Tipo de Vehículo:{" "}
+                      Tipo de vehículo:{" "}
                       <span className="">{vehiculo.tipo_vehiculo || "N/A"}</span>
                     </p>
                     <p className="font-medium mb-1">
@@ -412,7 +412,9 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
               ))}
             </Accordion>
           </div>
-          )}
+          ): 
+          <div className="text-slate-500">No se agregaron vehículos.</div>
+          }
 
           {data?.limitado_a_dias!== undefined && data?.limitado_a_dias.length > 0 ? (
             <div className="flex flex-col space-y-5">
@@ -439,10 +441,10 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
                 });
               });
               }}>
-                Copiar link
+                Copiar Link
               </Button>
               <Button className="w-full  bg-blue-500 hover:bg-blue-600 text-white"  onClick={onEnviarCorreo} disabled={isLoadingCorreo}>
-                {!isLoadingCorreo ? ("Enviar correo"):(<><Loader2 className="animate-spin"/>Enviando correo...</>)}
+                {!isLoadingCorreo ? ("Enviar Correo"):(<><Loader2 className="animate-spin"/>Enviando Correo...</>)}
               </Button>
               <Button className="w-full  bg-green-600 hover:bg-green-700 text-white"  onClick={onEnviarSMS} disabled={ isLoadingSms}>
               {

@@ -54,7 +54,7 @@ export default function Home() {
                                                     src={`/${item.id}.svg`}
                                                     className="aspect-square rounded-md group-hover:opacity-75 h-12"
                                                 />
-                                                <p className="mt-2 text-lg">{item.label}</p>
+                                                <p className="mt-2 text-lg">{item.label == "Pases de entrada"? "Pases De Entrada": item.label }</p>
                                             </div>
                                         </div>
                                     );

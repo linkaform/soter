@@ -83,10 +83,10 @@ interface TableProps {
         <div className="mb-3">
           <h1 className="text-2xl font-bold">Comentarios/Instrucciones</h1>
         </div>
-        <CommentPassModal title="Comentario al Pase">
+        <CommentPassModal title="Comentario al pase">
             <Button className="bg-green-600 text-sm hover:bg-green-700 text-white px-2 py-1 h-9">
               <Plus />
-              Agregar Comentario
+              Comentario
             </Button>
         </CommentPassModal>
     

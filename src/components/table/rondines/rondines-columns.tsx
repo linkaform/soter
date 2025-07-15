@@ -1,7 +1,7 @@
 import {
     ColumnDef,   
   } from "@tanstack/react-table";
-import { Ban,  Eye, Flag, Pencil } from "lucide-react";
+import { Eye, Pencil, Trash } from "lucide-react";
 
 
 export type Recorrido = {
@@ -27,36 +27,19 @@ export type Recorrido = {
       cell: () => (
         <div className="flex space-x-2">
           <div className="cursor-pointer">
-            <Eye /> {/* Ícono de visualización */}
+            <Eye /> 
           </div>
           <div className="cursor-pointer">
-            <Flag /> {/* Ícono de finalizar */}
+            <Pencil /> 
           </div>
           <div className="cursor-pointer">
-            <Pencil /> {/* Ícono de edición */}
-          </div>
-          <div className="cursor-pointer">
-            <Ban /> {/* Ícono de cancelación */}
+            <Trash /> 
           </div>
         </div>
       ),
       enableSorting: false,
       enableHiding: false,
     }, 
-    {
-      accessorKey: "status",
-      header: "Abierto",
-      cell: ({ row }) => (
-        <div
-          className={
-            row.getValue("status") ? "text-green-500" : "text-red-500"
-          }
-        >
-          {row.getValue("status") ? "Activo" : "Inactivo"}
-        </div>
-      ),
-      enableSorting: true,
-    },
     {
       accessorKey: "ubi",
       header: "Ubicación",
@@ -66,36 +49,8 @@ export type Recorrido = {
       enableSorting: true,
     },
     {
-      accessorKey: "area",
-      header: "Caseta",
-      cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("area")}</div>
-      ),
-      enableSorting: true,
-    },
-    {
-      accessorKey: "nameGuard",
-      header: "Guardia Responsable",
-      cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("nameGuard")}</div>
-      ),
-      enableSorting: true,
-    },
-    {
-      accessorKey: "dateHourStart",
-      header: "Fecha de Inicio",
-      cell: ({ row }) => <div>{row.getValue("dateHourStart")}</div>,
-      enableSorting: true,
-    },
-    {
-      accessorKey: "dateHourFin",
-      header: "Fecha de Fin",
-      cell: ({ row }) => <div>{row.getValue("dateHourFin")}</div>,
-      enableSorting: true,
-    },
-    {
       accessorKey: "nameRoute",
-      header: "Nombre del recorrido",
+      header: "Nombre del rondin",
       cell: ({ row }) => (
         <div className="capitalize">{row.getValue("nameRoute")}</div>
       ),
@@ -103,33 +58,29 @@ export type Recorrido = {
     },
     {
       accessorKey: "pointsRoute",
-      header: "Puntos del recorrido",
+      header: "Checkpoints",
       cell: ({ row }) => (
         <div className="capitalize">{row.getValue("pointsRoute")}</div>
       ),
       enableSorting: true,
     },
     {
-      accessorKey: "observations",
-      header: "Observaciones",
-      cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("observations")}</div>
-      ),
-      enableSorting: true,
-    },
-    {
-      accessorKey: "evidence",
-      header: "Evidencias",
-      cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("evidence")}</div>
-      ),
+      accessorKey: "recurrence",
+      header: "Recurrencia",
+      cell: ({ row }) => <div>{row.getValue("recurrence")}</div>,
       enableSorting: true,
     },
     {
       accessorKey: "durationRoute",
-      header: "Duración del recorrido",
+      header: "Duración estimada",
+      cell: ({ row }) => <div>{row.getValue("durationRoute")}</div>,
+      enableSorting: true,
+    },
+    {
+      accessorKey: "nameGuard",
+      header: "Asingado a",
       cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("durationRoute")}</div>
+        <div className="capitalize">{row.getValue("nameGuard")}</div>
       ),
       enableSorting: true,
     },

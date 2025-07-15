@@ -130,12 +130,12 @@ const PaqueteriaTable:React.FC<ListProps> = ({ data, isLoadingListPaqueteria, op
 			<div className="flex">
 				<TabsList className="bg-blue-500 text-white mr-2">
         <TabsTrigger value="Paqueteria">Paqueteria</TabsTrigger>
-        <TabsTrigger value="Concecionados">Artículos concecionados</TabsTrigger>
+        <TabsTrigger value="Concecionados">Artículos concesionados</TabsTrigger>
 					<TabsTrigger value="Perdidos">Artículos perdidos</TabsTrigger>
 				</TabsList>
 			</div>
 			
-			<div className="flex items-center">
+			<div className="flex w-full max-w-sm items-center space-x-2">
 				<input
 				type="text"
 				placeholder="Buscar en todos los campos..."

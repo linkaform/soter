@@ -70,10 +70,10 @@ const ComentariosList:React.FC<ComentariosListProps> = ({comentarios, setComenta
 return (
 	<div>
 		{comentarios.map((comentario, index) => (
-			<div key={index} className="border rounded mt-2">
+			<div key={index} className="border rounded mt-1">
 				<ComentariosItem
 					comentario={comentario}
-					isCollapsed={collapsedIndex !== index}
+					isCollapsed={true}
 					onToggleCollapse={() => toggleCollapse(index)}
 					index={index}
 					onDelete={() => handleDeleteVehicle(index)}
@@ -83,7 +83,7 @@ return (
 		))}
 
 		<Form {...form} >
-		<div className="border p-8 rounded mt-5">
+		<div className="border p-8 rounded mt-2">
 			<div className="font-bold text-lg">Agregar comentario o instrucción</div>
 			<div className="grid  gap-5" >
 				{/* Comentario */}

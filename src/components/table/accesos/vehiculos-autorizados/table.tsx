@@ -89,7 +89,7 @@ interface TableProps {
         <VehicleLocalPassModal title="Nuevo Vehiculo" vehicles={vehiculos}  setVehiculos={setVehiculos} isAccesos={true} fetch={false}>
             <Button className="bg-green-600 hover:bg-green-700 text-white" disabled={tipoMovimiento=="Salida"}>
               <Plus />
-              Agregar Vehiculo
+              Vehiculo
             </Button>
           </VehicleLocalPassModal>
 

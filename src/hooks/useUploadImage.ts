@@ -26,7 +26,7 @@ export const useUploadImage = () => {
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["getListIncidencias"] });
         queryClient.invalidateQueries({ queryKey: ["getStatsIncidencias"] });
-        toast.success("Archivo subido correctamente.");
+        toast.success("Archivo cargado con éxito");
       },
       onError: (err) => {
         console.error("Error al subir archivo:", err);

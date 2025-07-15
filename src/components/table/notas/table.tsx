@@ -93,14 +93,14 @@ export const NotasTable = ({ data }: ListaNotasTableProps) => {
   return (
     <div className='w-full'>
       <div className='my-5'>
-        <h1 className='text-2xl font-bold'>Notas</h1>
+        <h1 className='text-2xl font-bold'>Notas : {data?.length}</h1> 
       </div>
 
       <div className='flex justify-between items-center my-5'>
         {/* Campo de búsqueda a la izquierda */}
         <input
           type='text'
-          placeholder='Buscar en todos los campos...'
+          placeholder='Buscar...'
           value={globalFilter}
           onChange={(e) => setGlobalFilter(e.target.value)}
           className='border border-gray-300 rounded-md p-2 h-12 w-full max-w-xs'
@@ -108,7 +108,7 @@ export const NotasTable = ({ data }: ListaNotasTableProps) => {
 
         {/* Botones a la derecha */}
         <div className='flex items-center space-x-2'>
-          <AddNoteModal title='Nueva nota'>
+          <AddNoteModal title='Nueva Nota'>
             <Button className='bg-green-600 text-white hover:bg-green-700 px-4 py-2 rounded-md flex items-center'>
               <Plus /> Nota
             </Button>
@@ -191,7 +191,6 @@ export const NotasTable = ({ data }: ListaNotasTableProps) => {
           </Button>
         </div>
       </div>
-      <div className='text-slate-500' >Total de notas: {data?.length}</div>
     </div>
   )
 }

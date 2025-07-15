@@ -21,6 +21,7 @@ interface CloseNoteModalProps {
   note: Note
   setIsOpen?:Dispatch<SetStateAction<boolean>>;
   isOpen?:boolean
+  isAnnided?: boolean
 }
 
 interface Note {
@@ -50,13 +51,15 @@ export const CloseNoteModal: React.FC<CloseNoteModalProps> = ({
   children,
   note,
   isOpen,
-  setIsOpen
+  setIsOpen,
+  isAnnided=false
 }: CloseNoteModalProps) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   })
   const [open, setOpen] = useState(false)
   const { closeNoteMutation, isLoadingNotes } = useNotes(false,'', '')
+  console.log("chilkdrenn", isAnnided)
 
   function onSubmit() {
     const currentDate = new Date()
@@ -99,25 +102,29 @@ export const CloseNoteModal: React.FC<CloseNoteModalProps> = ({
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen} >
       <DialogTrigger asChild>{children}</DialogTrigger>
-
-      <DialogContent className='max-w-xl' aria-describedby='static-description'>
+      <DialogContent className={`${isAnnided ? 'max-w-md' : 'max-w-xl'}`} aria-describedby='static-description' >
         <DialogHeader>
-          <DialogTitle className='text-2xl text-center font-bold my-5'>
+          <DialogTitle className='text-2xl text-center font-bold '>
             {title}
           </DialogTitle>
         </DialogHeader>
-        <p id='static-description' className='text-center text-gray-700'>
-          ¿Estás seguro que deseas cerrar la nota?
-        </p>
-
-        <div className='flex flex-col gap-2'>
-          <p className='font-semibold'>Reporta</p>
-          <p className='text-sm'>{note?.created_by_name ?? ''}</p>
-          <p className='font-semibold'>Nota:</p>
-          <p className='text-sm'>{note?.note ?? ''}</p>
-        </div>
+        { !isAnnided? (
+          <><p id='static-description' className='text-center text-gray-700'>
+            ¿Estás seguro que deseas cerrar la nota?
+          </p><div className='flex flex-col gap-2'>
+              <p className='font-semibold'>Reporta</p>
+              <p className='text-sm'>{note?.created_by_name ?? ''}</p>
+              <p className='font-semibold'>Nota:</p>
+              <p className='text-sm'>{note?.note ?? ''}</p>
+            </div></>
+        ):(
+          <><p id='static-description' className='text-lg text-center text-gray-700'>
+              ¿Estás seguro que deseas cerrar la nota?
+            </p><p className='text-sm text-center text-gray-700'>Esta acción es permanente y no se puede deshacer.</p></>
+        )}
+          
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
             <div className='flex gap-5'>

@@ -92,6 +92,7 @@ export const EditArticuloConModal: React.FC<AddFallaModalProps> = ({
 	useEffect(()=>{
 		if(isSuccess){
 			reset()
+			setShowLoadingModal(false); 
 			setDate(new Date(data.fecha_concesion))
 		}
 	},[isSuccess])
@@ -146,7 +147,7 @@ export const EditArticuloConModal: React.FC<AddFallaModalProps> = ({
 
 
   return (
-    <Dialog open={isSuccess} modal>
+    <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
 	<div className="cursor-pointer" title="Editar Artículo" onClick={handleOpenModal}>
 		<Edit />
 	</div>

@@ -118,7 +118,7 @@ const IncidenciasPage = () => {
       <div className="p-6 space-y-1 pt-3 mt-0 pb-0 mb-0 w-full mx-auto">
 		<div className="flex justify-between">
 			<div>
-				<PageTitle title="Registro de Incidencias y Fallas" />	
+				<PageTitle title="Registro De Incidencias Y Fallas" />	
 			</div>
 			<div className="flex gap-5">
 				<div>

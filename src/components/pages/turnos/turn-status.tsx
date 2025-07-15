@@ -3,6 +3,7 @@ import { StartShiftModal } from "@/components/modals/start-shift-modal";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useGetShift } from "@/hooks/useGetShift";
+import { capitalizeOnlyFirstLetter } from "@/lib/utils";
 import { useShiftStore } from "@/store/useShiftStore";
 import React, { useEffect, useState } from "react";
 
@@ -10,7 +11,7 @@ const TurnStatus = () => {
   const { shift } = useGetShift( false);
   const { area } = useShiftStore();
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
-
+  const turno =  capitalizeOnlyFirstLetter(shift?.guard.status_turn?? "")
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentDateTime(new Date());
@@ -54,48 +55,46 @@ const TurnStatus = () => {
                 : "bg-green-600 hover:bg-green-600"
               }`}
             >
-              {shift?.guard?.status_turn}
+              {turno}
             </Badge>
           </div>
 
          
         </div>
       </div>
-	<div>
+	  <div className="flex flex-col items-end">
       <StartShiftModal title="Confirmación">
         {shift?.guard?.status_turn === "Turno Cerrado" && (
           <Button className="w-[520px] md:w-[300px] bg-blue-500 hover:bg-blue-600" disabled ={area==""?true:false ||  shift?.booth_status?.status=="No Disponible"}>
-          Iniciar turno
+          Iniciar Turno
           </Button>
         
         )}
       </StartShiftModal>
        
-     	 <CloseShiftModal title="Confirmación">
-			{shift?.guard?.status_turn !== "Turno Cerrado" && (
-				<Button className="w-[520px] md:w-[300px] bg-red-600 hover:bg-red-700" disabled ={area==""?true:false}>
-				Cerrar turno
-				</Button>
-				
-			)}
+     	  <CloseShiftModal title="Confirmación">
+          {shift?.guard?.status_turn !== "Turno Cerrado" && (
+            <Button className="w-[520px] md:w-[300px] bg-red-600 hover:bg-red-700" disabled ={area==""?true:false}>
+            Cerrar Turno
+            </Button>
+          )}
       	</CloseShiftModal>
 
-        <>
+          <>
           {shift?.booth_status.status=="No Disponible" && shift?.guard?.status_turn === "Turno Cerrado" ?
             <div className="text-red-500 break-all ml-2">
-              * Puedes forzar el cierre de la caseta para poder iniciar turno.
+              * Fuerce el cierre de la caseta para iniciar turno
             </div>
           :null}
           </>
-		{area==""?
-			<div className="text-red-500">
-				Selecciona una caseta para iniciar turno
-			</div>
-		:null}
-	 	
-	</div>
-		
-     
+
+
+          {area==""?
+            <div className="text-red-500">
+              Selecciona una caseta para iniciar turno
+            </div>
+          :null}
+	  </div>
     </div>
   );
 };

@@ -62,7 +62,7 @@ interface ListProps {
 	Filter:() => void;
 }
 
-const fallasColumnsCSV = [
+const incidenciasColumnsCSV = [
   { label: 'Folio', key: 'folio' },
   { label: 'Ubicacion', key: 'ubicacion_incidencia' },
   { label: 'Lugar del Incidente', key: 'area_incidencia' },
@@ -283,14 +283,12 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 					placeholder="Buscar"
 					value={globalFilter || ''}
 					onChange={(e) => setGlobalFilter(e.target.value)}
-					className=" border border-gray-300 rounded-md p-2 placeholder-gray-600 w-full" 
+					className="border border-gray-300 rounded-md p-2 placeholder-gray-600 w-full" 
 				/>
 					<Search />
 				</div>
 			</div>
 			
-		
-
 			<div className="flex w-full justify-end gap-3">
 				{dateFilter == "range" ?
 				<div className="flex items-center gap-2 mr-14">
@@ -330,7 +328,7 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 				</div>
 
 				<div>
-					<Button className="w-full md:w-auto bg-blue-500 hover:bg-blue-600" onClick={()=>{downloadCSV(selectedIncidencias, fallasColumnsCSV, "incidencias.csv")}}>
+					<Button className="w-full md:w-auto bg-blue-500 hover:bg-blue-600" onClick={()=>{downloadCSV(selectedIncidencias, incidenciasColumnsCSV, "incidencias.csv")}}>
 						<FileX2 />
 						Descargar
 					</Button>
@@ -424,6 +422,7 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 			</TableBody>
 			</Table>
 		</div>
+		
 		<div className="flex items-center justify-end space-x-2 py-4">
 			{!isLoading? 
 				<div className="flex-1 text-sm text-muted-foreground">

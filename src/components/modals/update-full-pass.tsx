@@ -74,9 +74,7 @@ import { useShiftStore } from "@/store/useShiftStore";
 			message: "Por favor, ingresa un correo electrónico válido.",
 		}),
 		telefono: z.string().optional(),
-		ubicacion: z.string().min(1, {
-			message: "Por favor, ingresa una ubicación válida.",
-		}),
+		ubicacion:z.array(z.string()).optional(),
 		tema_cita: z.string().optional(),
 		descripcion: z.string().optional(),
 		perfil_pase: z.string().min(1),
@@ -249,6 +247,12 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
 			setUbicacionesSeleccionadas(dataPass.ubicacion)
 		}
 	},[open])
+
+	useEffect(()=>{
+		if(form.formState.errors){
+			console.log("llaa",form.formState.errors)
+		}
+	},[form.formState.errors])
 
 	useEffect(()=>{
 		if(dataConfigLocation){
@@ -837,47 +841,7 @@ return (
 										</FormItem>
 									)} />
 
-								{config_dia_de_acceso === "limitar_días_de_acceso" && (
-									<div>
-										<FormLabel>Seleccione los días de acceso:</FormLabel>
-										<div className="flex flex-wrap mt-2 mb-5">
-											{[
-												"Lunes",
-												"Martes",
-												"Miércoles",
-												"Jueves",
-												"Viernes",
-												"Sábado",
-												"Domingo"
-											].map((dia) => {
-												return (
-													<FormItem key={dia.toLowerCase()} className="flex items-center space-x-3">
-														<FormControl>
-															<Button
-																type="button"
-																onClick={() => toggleDia(dia.toLocaleLowerCase())}
-																className={`m-2 px-4 py-2 rounded-md transition-all duration-300 
-																${config_dias_acceso.includes(dia.toLowerCase()) ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-white"}
-																hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
-															>
-
-																<div className="flex flex-wrap">
-																	{config_dias_acceso.includes(dia.toLowerCase()) ? (
-																		<><div className="">{dia}</div></>
-																	) : (
-																		<><div className="text-blue-600">{dia}</div></>
-																	)}
-
-																</div>
-															</Button>
-														</FormControl>
-													</FormItem>
-												);
-											})}
-										</div>
-
-									</div>
-								)}
+								
 							</div>
 
 							{isActivelimitarDias && (
@@ -893,6 +857,7 @@ return (
 														placeholder="Ejemplo: 5"
 														type="number" 
 														min={0} 
+														max={20}
 														step={1} 
 														{...field} 
 														onChange={(e) => {
@@ -907,6 +872,48 @@ return (
 							)}
 							</>
 						)}
+
+						{config_dia_de_acceso === "limitar_días_de_acceso" && (
+							<div>
+								<FormLabel>Seleccione los días de acceso:</FormLabel>
+								<div className="flex flex-wrap mt-2 mb-5">
+									{[
+										"Lunes",
+										"Martes",
+										"Miércoles",
+										"Jueves",
+										"Viernes",
+										"Sábado",
+										"Domingo"
+									].map((dia) => {
+										return (
+											<FormItem key={dia.toLowerCase()} className="flex items-center space-x-3">
+												<FormControl>
+													<Button
+														type="button"
+														onClick={() => toggleDia(dia.toLocaleLowerCase())}
+														className={`m-2 px-4 py-2 rounded-md transition-all duration-300 
+														${config_dias_acceso.includes(dia.toLowerCase()) ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-white"}
+														hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
+													>
+
+														<div className="flex flex-wrap">
+															{config_dias_acceso.includes(dia.toLowerCase()) ? (
+																<><div className="">{dia}</div></>
+															) : (
+																<><div className="text-blue-600">{dia}</div></>
+															)}
+
+														</div>
+													</Button>
+												</FormControl>
+											</FormItem>
+										);
+									})}
+								</div>
+
+							</div>
+						)}	
 				</div>
 				<Button
 					type="button"
@@ -928,7 +935,7 @@ return (
 				</form>
 				</Form>
 					{isActiveAdvancedOptions&& (
-						<><div className="font-bold text-xl">Areas de acceso:</div>
+						<><div className="font-bold text-xl">Areas de acceso</div>
 							<AreasList
 								areas={areasList}
 								setAreas={setAreasList}
@@ -936,7 +943,7 @@ return (
 								loadingCatAreas={loadingCatAreas} 
 								existingAreas={true}/>
 						</> ) }
-							<div className="font-bold text-xl">Comentarios/ Instrucciones:</div>
+							<div className="font-bold text-xl">Comentarios / Instrucciones:</div>
 							<ComentariosList
 								comentarios={comentariosList}
 								setComentarios={setComentariosList}

@@ -171,7 +171,7 @@ export const EditarArticuloModal: React.FC<EditarFallaModalProps> = ({
 	};
 
   return (
-	<Dialog open={isSuccess} modal>
+	<Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
 	<div className="cursor-pointer" title="Editar Artículo" onClick={handleOpenModal}>
 		<Edit />
 	</div>

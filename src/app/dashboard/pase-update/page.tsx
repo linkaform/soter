@@ -271,7 +271,9 @@ const PaseUpdate = () =>{
 			}else{
 				setErrorIdentificacion("-")
 			}
+			
 			setModalData(formattedData);
+			setIsSuccess(true)
 	};
 
 	const updateInfoActivePass= () => {
@@ -292,6 +294,9 @@ const PaseUpdate = () =>{
 
 
 	useEffect(()=>{
+		if(form.formState.errors){
+			console.log("error",form.formState.errors)
+		}
 	}, [form.formState.errors])
 
 
@@ -571,7 +576,7 @@ return (
 			<>
 			<div className="flex flex-col flex-wrap space-y-5 max-w-5xl mx-auto">
 				<div className="text-center">
-						<h1 className="font-bold text-2xl">Pase de Entrada</h1>
+						<h1 className="font-bold text-2xl">Pase De Entrada</h1>
 				</div>
 				<div className="flex flex-col space-y-5">
 					{/* Nombre */}

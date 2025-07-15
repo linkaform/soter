@@ -128,7 +128,7 @@ export const useGetShift = (enableShift:boolean) => {
   
       if (!response.success) {
         throw new Error(
-          response.error?.msg?.msg || "Hubo un error al cerrar el turno"
+          response.error?.msg?.msg || "Hubo un error al forzar el cierre del turno."
         );
       }
   
@@ -140,7 +140,7 @@ export const useGetShift = (enableShift:boolean) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["getShift"] });
       setTurno(false)
-      toast.success("Turno cerrado correctamente.");
+      toast.success("El cierre forzado se ejecutó con éxito.");
     },
     onError: (err) => {
       toast.error(err.message || "Hubo un error al cerrar el turno.");

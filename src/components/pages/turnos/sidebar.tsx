@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useGetShift } from "@/hooks/useGetShift";
 import { changeUserPhoto, changeUserPhotoPatch } from "@/lib/change-user-photo";
+import { capitalizeOnlyFirstLetter } from "@/lib/utils";
 import useAuthStore from "@/store/useAuthStore";
 import React , { useRef } from "react";
 import { toast } from "sonner";
@@ -122,14 +123,15 @@ const Sidebar = () => {
      
         <div className="">
           <p>Estatus de la caseta:</p>
+
           <Badge
-            className={`text-white ${
+            className={`text-white  text-md hover:${shift?.booth_status?.status === "Disponible"? 'bg-green-600':'bg-red-600'} ${
               shift?.booth_status?.status === "Disponible"
                 ? "bg-green-600"
                 : "bg-red-600"
             }`}
           >
-            {shift?.booth_status?.status || "---"}
+            { capitalizeOnlyFirstLetter(shift?.booth_status?.status)}
           </Badge>
         </div>
        
@@ -137,12 +139,12 @@ const Sidebar = () => {
           <>
             <div className="">
               <p className="">Guardia en turno:</p>
-              <p className="">{shift?.booth_status?.guard_on_dutty || "---"}</p>
+              <p className="font-bold">{shift?.booth_status?.guard_on_dutty || "---"}</p>
             </div>
             <div className="">
               <p className="">Fecha de inicio de turno:</p>
               <div className="flex justify-between">
-                <p className="">{shift?.booth_status?.stated_at || "---"}</p>
+                <p className="font-bold">{shift?.booth_status?.stated_at || "---"}</p>
               </div>
             </div>
           </>
@@ -155,15 +157,6 @@ const Sidebar = () => {
             
           </ForceCloseShift>
         )}
-        {/* 
-         <ForceExitModal title="Confirmación">
-          <Button className="w-full bg-red-500 text-white hover:bg-red-600"
-            disabled={shift?.guard?.status_turn == "Turno Abierto"}
-
-          >
-            Forzar Salida
-          </Button>
-        </ForceExitModal>  */}
       </div>
     </div>
   );

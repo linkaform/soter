@@ -30,14 +30,14 @@ export const notasColumns: ColumnDef<Nota>[] = [
       return(
         <div className='flex space-x-4'>
         <CloseNoteModal
-          title='Cerrar nota'
+          title='Cerrar Nota'
           note={row.original}>
           <div className='cursor-pointer'>
             <Check />
           </div>
         </CloseNoteModal>
 
-        <NoteDetailsModal
+        <NoteDetailsModal 
           title={row.original.note??""}
           note={row.original}>
           <div className='cursor-pointer'>
@@ -56,6 +56,7 @@ export const notasColumns: ColumnDef<Nota>[] = [
     cell: ({ row }) => (
       <div className='capitalize'>{row.original.created_by_name??""}</div>
     ),
+    enableSorting: true,
   },
   {
     accessorKey: 'note_open_date',
@@ -63,10 +64,13 @@ export const notasColumns: ColumnDef<Nota>[] = [
     cell: ({ row }) => (
       <div className='capitalize'>{row.original.note_open_date}</div>
     ),
+    enableSorting: true,
   },
   {
     accessorKey: 'nota',
     header: 'Nota',
     cell: ({ row }) => <div className='capitalize'>{row.original.note}</div>,
+    enableSorting: true,
   },
+  
 ]

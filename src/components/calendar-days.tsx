@@ -8,7 +8,7 @@ const CalendarDays: React.FC<CalendarDaysProps> = ({ diasDisponibles })=> {
   const dias = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
   return (
     <>
-      <p className="font-bold">Días disponibles:</p>
+      <p className="text-slate-500">Días disponibles:</p>
 
       <div className="grid grid-cols-7 gap-x-2 text-center">
         {dias.map((day, i) => (

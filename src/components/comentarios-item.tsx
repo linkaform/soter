@@ -23,7 +23,7 @@ interface ComentariosItemProps {
 	updateComentario: (newComentario: string) => void;
 }
 
-  const ComentariosItem: React.FC<ComentariosItemProps> = ({isCollapsed, onToggleCollapse, onDelete, comentario, tipo, updateComentario})=>  {
+  const ComentariosItem: React.FC<ComentariosItemProps> = ({isCollapsed, onDelete, comentario, tipo, updateComentario})=>  {
 	  	const form = useForm<z.infer<typeof formSchema>>({
 			resolver: zodResolver(formSchema),
 			defaultValues: { tipo_comentario: "", comentario_pase: "" },
@@ -59,9 +59,9 @@ interface ComentariosItemProps {
 				  <h3 className="font-bold text-lg p-2 ml-3 w-96 truncate">Datos del comentario o instrucción: {comentario.comentario_pase}</h3>
 			  </>)}
 			  <div className="flex justify-between gap-5 ">
-				  <button onClick={onToggleCollapse} className="text-blue-500">
+				  {/* <button onClick={onToggleCollapse} className="text-blue-500">
 					  {isCollapsed ? 'Abrir' : 'Cerrar'}
-				  </button>
+				  </button> */}
 
 				  <button onClick={onDelete} className="text-blue-500">
 					  {isCollapsed ? 'Eliminar' : 'Eliminar'}

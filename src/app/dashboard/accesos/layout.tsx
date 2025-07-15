@@ -13,7 +13,7 @@ export default function AccesosLayout({ children }: { children: React.ReactNode 
       <link rel="icon" href="/accesos.svg" type="image/svg+xml" />
       
       {/* Layout principal */}
-      <MainLayout>{children}</MainLayout>
+      <MainLayout >{children}</MainLayout>
     </>
   );
 }

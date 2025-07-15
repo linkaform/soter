@@ -3,14 +3,14 @@ import { Metadata } from "next"
 import React from "react"
 
 export const metadata: Metadata = {
-  title: "Pases De Entrada",
+  title: "Rondines",
 }
 
-export default function PaseEntradaLayout({ children }: { children: React.ReactNode }) {
+export default function RondinesLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       {/* Favicon directamente */}
-      <link rel="icon" href="/pases.svg" type="image/svg+xml" />
+      <link rel="icon" href="/rondines.svg" type="image/svg+xml" />
       
       {/* Layout principal */}
       <MainLayout>{children}</MainLayout>
