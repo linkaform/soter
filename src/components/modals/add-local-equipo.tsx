@@ -177,7 +177,7 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
               name="nombre"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>* Nombre del Equipo</FormLabel>
+                  <FormLabel> Nombre del equipo</FormLabel>
                   <FormControl>
                     <Input  placeholder="Nombre del equipo"  maxLength={20} {...field} />
                   </FormControl>
@@ -216,7 +216,7 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
                 name="marca"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>* Marca</FormLabel>
+                    <FormLabel> Marca</FormLabel>
                     <FormControl>
                       <Input placeholder="Marca" maxLength={20} {...field} />
                     </FormControl>
@@ -231,7 +231,7 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
                 name="modelo"
                 render={({ field }) => (
                   <FormItem >
-                    <FormLabel>* Modelo</FormLabel>
+                    <FormLabel> Modelo</FormLabel>
                     <FormControl >
                       <Input placeholder="Modelo" maxLength={20} {...field} />
                     </FormControl>
@@ -245,7 +245,7 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
                 name="serie"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>* Número de Serie</FormLabel>
+                    <FormLabel> Número de serie</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Input
@@ -280,7 +280,7 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
                 name="color"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>* Color</FormLabel>
+                    <FormLabel> Color</FormLabel>
                     <Select
                       aria-labelledby="aria-label"
                       inputId="aria-example-input"

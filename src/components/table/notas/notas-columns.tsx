@@ -30,7 +30,7 @@ export const notasColumns: ColumnDef<Nota>[] = [
       return(
         <div className='flex space-x-4'>
         <CloseNoteModal
-          title='Cerrar nota'
+          title='Cerrar Nota'
           note={row.original}>
           <div className='cursor-pointer'>
             <Check />

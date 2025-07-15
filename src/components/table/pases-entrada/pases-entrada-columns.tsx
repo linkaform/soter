@@ -98,7 +98,7 @@ const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
   return (
     <div className="flex space-x-2">
       <ViewPassModal 
-        title="Pase de entrada"
+        title="Pase De Entrada"
         data={dataFull} 
         isSuccess={false} 
         >
@@ -125,7 +125,7 @@ export const pasesEntradaColumns: ColumnDef<PaseEntrada>[] = [
   },
   {
     accessorKey: "pase",
-    header: "Pase",
+    header: "Foto",
     cell: ({ row }) => {
       const foto = row.original.foto;
       const nombre = row.original.nombre;
@@ -150,7 +150,7 @@ export const pasesEntradaColumns: ColumnDef<PaseEntrada>[] = [
 			<span className="font-bold">{nombre}</span>
 				<div>
 					<Badge
-					className={`text-white text-md ${
+					className={`text-white text-sm ${
 						estatus.toLowerCase() == "vencido"
 						? "bg-red-600 hover:bg-red-600"
 						: estatus.toLowerCase() == "activo"
@@ -247,7 +247,7 @@ export const pasesEntradaColumns: ColumnDef<PaseEntrada>[] = [
           {dias.map((dia, index) => (
             <Badge
               key={index}
-              className="bg-blue-100 text-blue-800 hover:bg-blue-200 text-xs font-semibold px-2.5 py-0.5 rounded-full"
+              className="bg-blue-100 text-blue-800 hover:bg-blue-200 text-sm font-semibold px-2.5 py-0.5 rounded-full"
             >
               {dia}
             </Badge>

@@ -62,7 +62,7 @@ export const ScanPassOptionsModal: React.FC<ScanPassOptionsModalProps> = ({
                                 onClick={handleOpenCamera}
                             >
                                 <Webcam />
-                                Utilizar cámara
+                                Utilizar Cámara
                             </Button>
                         </div>
                         <div>
@@ -71,7 +71,7 @@ export const ScanPassOptionsModal: React.FC<ScanPassOptionsModalProps> = ({
                                 onClick={handleScannerClick}
                             >
                                 <ScanLine />
-                                Utilizar scanner
+                                Utilizar Scanner
                             </Button>
                         </div>
                     </div>

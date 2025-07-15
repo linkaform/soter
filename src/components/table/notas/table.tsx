@@ -108,7 +108,7 @@ export const NotasTable = ({ data }: ListaNotasTableProps) => {
 
         {/* Botones a la derecha */}
         <div className='flex items-center space-x-2'>
-          <AddNoteModal title='Nueva nota'>
+          <AddNoteModal title='Nueva Nota'>
             <Button className='bg-green-600 text-white hover:bg-green-700 px-4 py-2 rounded-md flex items-center'>
               <Plus /> Nota
             </Button>

@@ -2,8 +2,8 @@ import { ColumnDef } from '@tanstack/react-table'
 import { Check, Eye, Pencil } from 'lucide-react'
 import { NoteDetailsModal } from '@/components/modals/note-details-modal'
 import { CloseNoteModal } from '@/components/modals/close-note-modal'
-import Image from 'next/image'
 import { EditNoteModal } from '../../../modals/edit-note-modal'
+import ViewImage from '@/components/modals/view-image'
 
 interface NoteComments {
   note_comments: string
@@ -36,7 +36,7 @@ export const listaNotasColumns: ColumnDef<ListaNota>[] = [
       return (
         <div className='flex space-x-4'>
         {row.original.note_status !== "cerrado" ? (
-          <CloseNoteModal title='Cerrar nota' note={row.original}>
+          <CloseNoteModal title='Cerrar Nota' note={row.original}>
             <div className='cursor-pointer'>
               <Check />
             </div>
@@ -49,7 +49,7 @@ export const listaNotasColumns: ColumnDef<ListaNota>[] = [
             </div>
           </NoteDetailsModal>
         {row.original.note_status !== "cerrado" ? (
-            <EditNoteModal title='Editar nota' note={row.original}>
+            <EditNoteModal title='Editar Nota' note={row.original}>
               <div className='cursor-pointer'>
                 <Pencil />
               </div>
@@ -106,18 +106,27 @@ export const listaNotasColumns: ColumnDef<ListaNota>[] = [
     accessorKey: 'note_file',
     header: 'Archivo',
     cell: ({ row }: any) => {
-      const doc = row.getValue('note_file')
-      const docUrl = doc?.[0]?.file_url
-      const docName = doc?.[0]?.file_name
-
+      const doc = row.getValue('note_file');
+      const docUrl = doc?.[0]?.file_url;
+      const docName = doc?.[0]?.file_name;
+  
+      if (docUrl && docName) {
+        return (
+          <a
+            href={docUrl}
+            className='text-blue-500 underline hover:text-blue-700'
+            download
+          >
+            {docName}
+          </a>
+        );
+      }
+  
       return (
-        <a
-          href={docUrl}
-          className='text-blue-500 underline hover:text-blue-700'
-          download>
-          {docName || 'No disponible'}
-        </a>
-      )
+        <span className='text-gray-400 cursor-not-allowed'>
+          No disponible
+        </span>
+      );
     },
   },
   {
@@ -126,17 +135,8 @@ export const listaNotasColumns: ColumnDef<ListaNota>[] = [
     cell: ({ row }: any) => {
       const pic = row.getValue('note_pic')
       const imageUrl = pic?.[0]?.file_url
-
       return imageUrl ? (
-        <div className='relative h-24 w-28'>
-          <Image
-            src={imageUrl}
-            alt='Fotografía'
-            fill
-            className='object-cover'
-            sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
-          />
-        </div>
+        <ViewImage imageUrl={pic ?? []} /> 
       ) : (
         <div>No hay imagen disponible</div>
       )
@@ -155,13 +155,19 @@ export const listaNotasColumns: ColumnDef<ListaNota>[] = [
       if (!comments || comments.length === 0) {
         return <div>No hay comentarios</div>
       }
+
+      if (comments.length === 1) {
+        return <p>{comments[0].note_comments}</p>;
+      }
   
       return (
-        <ul className='list-disc pl-4'>
-          {comments.map((comment, index) => (
-            <li key={index}>{comment.note_comments}</li>
-          ))}
-        </ul>
+          <ul className='list-disc pl-4'>
+            {comments.map((comment, index) => {
+              return (
+                <li key={index}>{comment.note_comments}</li>
+              )
+            })}
+          </ul>
       )
     },
   },

@@ -7,7 +7,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog";
-import { Separator } from "../ui/separator";
 import CalendarDays from "../calendar-days";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { CalendarClock, Loader2 } from "lucide-react";
@@ -16,6 +15,8 @@ import { Access_pass, Areas, Comentarios, enviar_pre_sms, Link } from "@/hooks/u
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import { usePaseEntrada } from "@/hooks/usePaseEntrada";
 import useAuthStore from "@/store/useAuthStore";
+import { Badge } from "../ui/badge";
+import { capitalizeFirstLetter } from "@/lib/utils";
 
 
 export type Visita={
@@ -197,7 +198,7 @@ export const EntryPassModal: React.FC<EntryPassUpdateModalProps> = ({
 					<p className="">{dataPass?.nombre} </p>
 				</div>
 
-				<div className="flex flex-col space-y-5">
+				<div className="flex flex-col space-y-5 mb-3">
 				<div className="flex justify-between flex-col sm:flex-row  sm:space-x-5 space-y-5 sm:space-y-0 ">
 					<div className="w-full flex gap-2 ">
 					<p className="font-bold flex-shrink-0">Tipo de pase : </p>
@@ -206,7 +207,15 @@ export const EntryPassModal: React.FC<EntryPassUpdateModalProps> = ({
 
 					<div className="w-full flex gap-2">
 					<p className="font-bold flex-shrink-0">Estatus : </p>
-					<p className=" text-red-500"> Proceso</p>
+					<Badge
+					className={`text-white text-sm ${
+						 "Proceso".toLowerCase() == "proceso"
+						? "bg-blue-600 hover:bg-blue-600"
+						: "bg-gray-400"
+					}`}
+					>
+					{capitalizeFirstLetter(dataPass?.status_pase ??"")}
+					</Badge>
 					</div>
 				</div>
 
@@ -227,18 +236,16 @@ export const EntryPassModal: React.FC<EntryPassUpdateModalProps> = ({
 					<p className="font-bold flex-shrink-0">Tema cita : </p>
 					<p className="w-full break-words">{dataPass?.tema_cita}</p>
 					</div>
-
-					<div className="w-full flex gap-2">
-					<p className="font-bold flex-shrink-0">Descripción : </p>
-					<p className="w-full break-words ">{dataPass?.descripcion} </p>
-					</div>
 				</div>
-				<Separator className="my-4" />
+					<div className="w-full flex gap-2">
+						<p className="font-bold flex-shrink-0">Descripción : </p>
+						<p className="w-full break-words ">{dataPass?.descripcion} </p>
+					</div>
 				</div>
 
 				{dataPass?.areas.length>0 && (
 				<div className="">
-					<p className="text-2xl font-bold mb-2">Areas</p>
+					<p className="text-xl font-bold mb-2">Áreas</p>
 					<Accordion type="single" collapsible>
 					{dataPass?.areas.map((area, index) => (
 						<AccordionItem key={index} value={`area-${index}`}>
@@ -259,7 +266,7 @@ export const EntryPassModal: React.FC<EntryPassUpdateModalProps> = ({
 
 				{dataPass?.comentarios.length>0 && (
 				<div className="">
-				<p className="text-2xl font-bold mb-2">Comentarios / Instrucciones</p>
+				<p className="text-xl font-bold mb-2 mt-2">Comentarios / Instrucciones</p>
 				<Accordion type="single" collapsible>
 					{dataPass?.comentarios.map((com, index) => (
 					<AccordionItem key={index} value={`com-${index}`}>
@@ -278,32 +285,37 @@ export const EntryPassModal: React.FC<EntryPassUpdateModalProps> = ({
 				</div>
 				)}
 
-				{/* Vigencia y Acceso */}
-				<div className="flex flex-col space-y-5">
-				<p className="text-xl font-bold">Vigencia y Accesos</p>
-				<div className="max-w-[520px] space-y-4">
-					{items.map((item, index) => (
-					<div
-						key={index}
-						className="flex items-center space-x-4 rounded-md p-3 border border-gray-200"
-					>
-						<div className="flex-shrink-0 bg-gray-100 p-3 rounded-lg">
-						{item.icon}
-						</div>
-						<div className="flex-1">
-						<p className="font-medium text-gray-700">{item?.title}</p>
-						<div className="flex justify-between items-center">
-							<p className="text-sm text-gray-500">
-							{item?.date?.replace("T", " ").slice(0, 16)}
-							</p>
-						</div>
-						</div>
+			  {/* Vigencia y Acceso */}
+			 	<div className="flex flex-col space-y-5 mt-2">
+					<p className="text-xl font-bold">Vigencia y Accesos</p>
+					<div className="flex gap-2">
+						{items.map((item, index) => (
+							<div
+							key={index}
+							className="flex items-center space-x-4 rounded-md p-3 border ">
+								<div className=" rounded-lg">
+								{item.icon}
+								</div>
+
+								<div className="flex flex-col">
+									<p className="font-medium">{item?.title}</p>
+									<p className="text-sm">
+										{item?.date?.replace("T", " ").slice(0, 16)}
+									</p>
+								</div>
+							</div>
+						))}
 					</div>
-					))}
 				</div>
 
-				<Separator className="my-4" />
-				</div>
+				{dataPass?.config_limitar_acceso > 0 ? (
+					<>
+					<div className="w-full flex flex-wrap gap-2 mt-2 mb-2">
+						<p className="font-bold">Limite de accesos : </p>
+						<p className="">{dataPass?.config_limitar_acceso}</p>
+					</div>
+					</>
+				):null}
 
 				{/* Días Seleccionados */}
 				{dataPass?.config_dias_acceso.length > 0 ? (
@@ -312,14 +324,6 @@ export const EntryPassModal: React.FC<EntryPassUpdateModalProps> = ({
 				</div>
 				):null}
 
-				{dataPass?.config_limitar_acceso > 0 ? (
-					<>
-					<div className="w-full flex flex-wrap gap-2 mt-2">
-						<p className="font-bold">Limite de accesos : </p>
-						<p className="">{dataPass?.config_limitar_acceso}</p>
-					</div>
-					</>
-				):null}
 			</div>
 			<div className="flex gap-5 my-5">
 			<DialogClose asChild

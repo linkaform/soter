@@ -95,7 +95,7 @@ export const EquiposAutorizadosTable: React.FC<TableProps> = ({ equipos, setEqui
 			<EqipmentLocalPassModal title="Nuevo Equipo" equipos= {equipos} setEquipos={setEquipos} isAccesos={true}>
 			<Button className="bg-green-600 hover:bg-green-700 text-white" disabled={tipoMovimiento=="Salida"}>
 				<Plus />
-				Agregar Equipo
+				Equipo
 			</Button>
 			</EqipmentLocalPassModal>
 

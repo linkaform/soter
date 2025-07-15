@@ -63,9 +63,11 @@ export const AddNoteModal: React.FC<AddNoteModalProps> = ({
   })
 
   useEffect(()=>{
-    setEvidencia([])
-    setDocumento([])
-  }, [])
+	if(open){
+		setEvidencia([])
+		setDocumento([])
+	}
+  }, [open])
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     const formatData = {
@@ -175,6 +177,7 @@ export const AddNoteModal: React.FC<AddNoteModalProps> = ({
 
 			<Button
 			type='submit'
+			onClick={form.handleSubmit(onSubmit)}
 			disabled={isLoadingNotes}
 			className='w-full bg-blue-500 hover:bg-blue-600 text-white flex items-center justify-center gap-2'>
 			{isLoadingNotes ? (

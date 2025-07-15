@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { cloneElement, isValidElement } from 'react'
 import { CircleHelp } from 'lucide-react'
 
 interface StatCardProps {
@@ -35,7 +35,11 @@ const StatCard = ({
           <p className='text-sm font-medium'>{label}</p>
           <p className='text-2xl font-bold'>{value}</p>
         </div>
-        {icon}
+        <div > {isValidElement(icon)
+            ? cloneElement(icon, {
+                className: `w-10 h-10 ${selected ? 'text-white' : 'text-primary'}`,
+              })
+            : null}</div>
       </div>
     </div>
   )

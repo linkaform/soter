@@ -130,7 +130,7 @@ const PaqueteriaTable:React.FC<ListProps> = ({ data, isLoadingListPaqueteria, op
 			<div className="flex">
 				<TabsList className="bg-blue-500 text-white mr-2">
         <TabsTrigger value="Paqueteria">Paqueteria</TabsTrigger>
-        <TabsTrigger value="Concecionados">Artículos concecionados</TabsTrigger>
+        <TabsTrigger value="Concecionados">Artículos concesionados</TabsTrigger>
 					<TabsTrigger value="Perdidos">Artículos perdidos</TabsTrigger>
 				</TabsList>
 			</div>

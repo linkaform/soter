@@ -118,8 +118,8 @@ const AreasList:React.FC<AreasListProps> = ({ areas, setAreas, catAreas, loading
       )})}
 
       <Form {...form} >
-      <div className="border p-7 pb-4 pt-4 rounded mt-5">
-        <div className="font-bold text-lg mb-2">Agregar Area</div>
+      <div className="border p-7 pb-4 pt-2 rounded mt-2">
+        <div className="font-bold text-lg mb-2">Agregar área</div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5" >
             <FormField
               control={form.control}
@@ -196,7 +196,7 @@ const AreasList:React.FC<AreasListProps> = ({ areas, setAreas, catAreas, loading
                     form.handleSubmit(onSubmitArea)(); 
                   }}
               >
-                Agregar Area
+                Agregar Área
               </Button>
             </div>
       </div>

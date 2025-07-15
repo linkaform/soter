@@ -6,7 +6,6 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "../ui/dialog";
-import { Separator } from "../ui/separator";
 import { Dispatch, SetStateAction, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { UpdatedPassModal } from "./updated-pass-modal";
@@ -20,6 +19,7 @@ import Image from "next/image";
 import { useUpdateAccessPass } from "@/hooks/useUpdatePass";
 import { Equipo, Vehiculo } from "@/lib/update-pass-full";
 import { capitalizeFirstLetter } from "@/lib/utils";
+import { Badge } from "../ui/badge";
 // import { toast } from "sonner";
 
 interface EntryPassModal2Props {
@@ -41,13 +41,9 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 	const [response,setResponse] = useState<any>(null);
 	const [openGeneratedPass, setOpenGeneratedPass] = useState<boolean>(false);
 	const [responseformated, setResponseFormated] = useState<data_correo|null>(null);
-					
 	const{ updatePassMutation , isLoadingUpdate} = useUpdateAccessPass();
-	// const [isSubmitted, setIsSubmitted] = useState(false);
+
 	const onSubmit = async () => {
-		// setIsSubmitted(true);
-	
-		// if(radioSelected !=="default" && radioSelected!=="" ){
 			updatePassMutation.mutate({access_pass:{
 				grupo_vehiculos: data?.grupo_vehiculos,
 				grupo_equipos: data.grupo_equipos,
@@ -67,74 +63,17 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 						ubicacion: response?.response?.data?.json?.ubicacion,
 						fecha: {desde: response?.response?.data?.json?.fecha_desde, hasta:response?.response?.data?.json?.fecha_hasta },
 						descripcion: response?.response?.data?.json?.descripcion,
-						
 					})
-
 					setResponse(response); 
 					setIsSuccess(true); 
 					setOpenGeneratedPass(true)
-				//   toast.success("Mutación completada con éxito", response);
 				},
-			  })
-		// }else{
-		// 	toast.error("Acepta el aviso de privacidad y selecciona una opcion para conservar tus datos personales")
-		// }
-		
-		// try {
-		// 	setIsLoading(true);
-		// 	const apiResponse = await UpdatePase({ access_pass: {
-		// 			grupo_vehiculos: data?.grupo_vehiculos,
-		// 			grupo_equipos: data.grupo_equipos,
-		// 			status_pase: data.status_pase,
-		// 			walkin_fotografia: data?.walkin_fotografia,
-		// 			walkin_identificacion: data?.walkin_identificacion,
-		// 			acepto_aviso_privacidad: data?.acepto_aviso_privacidad ? "Sí":"No",
-		// 			acepto_aviso_datos_personales: radioSelected=="default" ? "": radioSelected,
-		// 			conservar_datos_por: radioSelected
-		// 	}, 
-		// 	id:data.folio, account_id: data.account_id });
-		// 	setResponseFormated({
-		// 		email_to: data.email,
-		// 		asunto: apiResponse?.response?.data?.json?.asunto,
-		// 		email_from: apiResponse?.response?.data?.enviar_de_correo,
-		// 		nombre: apiResponse?.response?.data?.json?.enviar_a,
-		// 		nombre_organizador: apiResponse?.response?.data?.json?.enviar_de,
-		// 		ubicacion: apiResponse?.response?.data?.json?.ubicacion,
-		// 		fecha: {desde: apiResponse?.response?.data?.json?.fecha_desde, hasta:apiResponse?.response?.data?.json?.fecha_hasta },
-		// 		descripcion: apiResponse?.response?.data?.json?.descripcion,
-		// 	})
-			
-		// 	setResponse(apiResponse); 
-		// 	setIsSuccess(true); 
-		// 	setOpenGeneratedPass(true)
-		// } catch (err) {
-		// 	setError(err);
-		// } finally {
-		// 	setIsLoading(false);
-		// }
+			})
 	};
 
 	const handleClose = () => {
-			// actualizarEstados("", false)
-			onClose(); 
+		onClose(); 
 	};
-
-	// useEffect(()=>{
-	// 	if(error){
-	// 		toast.error("Ocurrio un error al actualizar el pase")
-	// 	}
-	// },[error])
-
-	// useEffect(()=>{
-	// 	if(radioSelected){
-	// 		console.log("radiogroup", radioSelected)
-	// 	}
-	// },[radioSelected])
-
-	// function actualizarEstados(radioSelect:string, showRadio:boolean){
-	// 	//Actualizar estados de vista y seleccion
-	// 	setRadioSelected(radioSelect); setShowRadioGroup(showRadio)
-	// }
 
 	return (
 		<Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
@@ -159,7 +98,15 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 							</div>
 							<div className="w-full flex gap-2">
 								<p className="font-bold">Estatus : </p>
-								<p className=" text-red-500"> Proceso</p>
+								<Badge
+								className={`text-white text-sm ${
+									"Proceso".toLowerCase() == "proceso"
+									? "bg-blue-600 hover:bg-blue-600"
+									: "bg-gray-400"
+								}`}
+								>
+								{capitalizeFirstLetter("Proceso")}
+								</Badge>
 							</div>
 							<div className="w-full flex gap-2">
 								<p className="font-bold flex flex-shrink-0">Email : </p>
@@ -214,12 +161,11 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 							</div>
 						</div>
 						
-						<Separator className="my-4" />
-						<div className="flex justify-between w-full h-full mb-2">
+						<div className="flex justify-between w-full h-full mb-2 mt-2">
 							{data?.grupo_equipos.length > 0 ? (
 								<Accordion type="single" collapsible className="w-full">
 								<AccordionItem key={"1"} value={"1"}>
-								<AccordionTrigger>{"Equipos agregados"}</AccordionTrigger>
+								<AccordionTrigger>{"Lista de equipos"}</AccordionTrigger>
 								<AccordionContent className="mb-0 pb-0">
 								{data?.grupo_equipos.length > 0 ? (
 									<table className="min-w-full table-auto border-separate border-spacing-2">
@@ -255,11 +201,11 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 							):(<div>No se agregaron equipos.</div>)}
 						</div>
 
-						<div className="flex justify-between w-full h-full mb-2">
+						<div className="flex justify-between w-full h-full mb-2 mt-2">
 							{data?.grupo_vehiculos.length > 0 ? (
 								<Accordion type="single" collapsible className="w-full">
 								<AccordionItem key={"1"} value={"1"}>
-								<AccordionTrigger>{"Vehiculos agregados"}</AccordionTrigger>
+								<AccordionTrigger>{"Lista de vehículos"}</AccordionTrigger>
 								<AccordionContent className="mb-0 pb-0">
 								{data?.grupo_vehiculos.length > 0 ? (
 									<table className="min-w-full table-auto border-separate border-spacing-2">
@@ -324,7 +270,7 @@ export const EntryPassModal2: React.FC<EntryPassModal2Props> = ({
 								/>
 						
 							<Button className="w-full bg-blue-500 hover:bg-blue-600 text-white" type="submit" onClick={onSubmit} disabled={isLoadingUpdate}>
-								{!isLoadingUpdate ? ("Actualizar pase"):(<><Loader2 className="animate-spin"/>Actualizando pase...</>)}
+								{!isLoadingUpdate ? ("Confirmar pase"):(<><Loader2 className="animate-spin"/>Actualizando pase...</>)}
 							</Button>
 					</div>
 				</div>

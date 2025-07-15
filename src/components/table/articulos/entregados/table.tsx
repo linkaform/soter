@@ -143,17 +143,8 @@ export function ArticulosEntregadosTable() {
 
         {/* Botones a la derecha */}
         <div className="flex items-center justify-end space-x-6">
-
-
-
           <div className="flex items-center space-x-5">
-
-
           <Label className=""  htmlFor="terms">Estado:</Label>
-
-            
-
-
         <Select defaultValue="Pendiente">
         <SelectTrigger className="w-[180px]">
         <SelectValue placeholder="Seleccione un estado" />

@@ -16,7 +16,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '../ui/dialog'
-import { Separator } from '../ui/separator'
 import File from '../icon/file'
 import { CloseNoteModal } from './close-note-modal'
 import { Imagen } from '@/lib/update-pass-full'
@@ -57,12 +56,11 @@ export const NoteDetailsModal: React.FC<NoteDetailsModalProps> = ({
     <Dialog open={open} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
 
-      <DialogContent className='max-w-xl max-h-[90vh] overflow-scroll'>
+      <DialogContent className='max-w-xl max-h-[90vh]'>
         <DialogHeader >
           <DialogTitle className='flex justify-center font-bold'>
             {title}
           </DialogTitle>
-          <Separator />
         </DialogHeader>
 
         <div className='flex justify-end '>
@@ -81,8 +79,8 @@ export const NoteDetailsModal: React.FC<NoteDetailsModalProps> = ({
                   <Image
                     src={pic.file_url}
                     alt={`Imagen ${index + 1}`}
-                    width={300}
-                    height={300}
+                    width={200}
+                    height={200}
                     className='object-cover'
                   />
                 </CarouselItem>
@@ -98,7 +96,7 @@ export const NoteDetailsModal: React.FC<NoteDetailsModalProps> = ({
         )}
 
    
-        <div className='mb-5'>
+        <div className='mb-1'>
           <p className='font-semibold mb-2'>Comentarios</p>
 
           <ul className='list-disc list-inside space-y-1 text-gray-700'>
@@ -113,7 +111,7 @@ export const NoteDetailsModal: React.FC<NoteDetailsModalProps> = ({
         <p className='font-semibold'>Documentos</p>
 
         {(note?.note_file ?? []).length > 0 ? (
-          <div className='flex flex-col items-center mb-5'>
+          <div className='flex flex-col items-center mb-1'>
             {note?.note_file?.map((file, index) => (
               <div
                 key={index}
@@ -135,7 +133,7 @@ export const NoteDetailsModal: React.FC<NoteDetailsModalProps> = ({
                   target='_blank'
                   rel='noopener noreferrer'>
                   <Button className='bg-gray-100 hover:bg-gray-200 text-gray-700'>
-                    Descargar
+                    Ver
                   </Button>
                 </a>
               </div>
@@ -147,17 +145,16 @@ export const NoteDetailsModal: React.FC<NoteDetailsModalProps> = ({
           </p>
         )}
 
-        <div className='flex justify-between mb-5'>
-          <div className=''>
-            <p className='font-semibold'>Creado el</p>
+        <div className='flex justify-between mb-1'>
+          <div>
+            <p className='font-semibold'>Creado</p>
             <p className='text-sm'>{note?.note_open_date ?? ''}</p>
           </div>
         </div>
 
-        <div className=''>
+        <div>
           <p className='font-semibold'>Reporta</p>
-
-          <p className='text-sm'>{note?.created_by_name ?? ''}.</p>
+          <p className='text-sm'>{note?.created_by_name ?? ''}</p>
         </div>
 
         <CloseNoteModal title='Cerrar nota' note={note} setIsOpen={setIsOpen} isOpen={open} isAnnided={true}>

@@ -23,7 +23,7 @@ const ListaPasesPage = () => {
     <div className="">
       <div className="flex flex-col">
         <div className="p-6 space-y-6 w-full mx-auto">
-          <PageTitle title="Historial de Pases" />
+          <PageTitle title="Historial De Pases De Entrada" />
           <PasesEntradaTable isLoading={isLoading} pases={records ?? []} onSearch={setSearchName} />
           {!isLoading && (
             <PaginationPases
