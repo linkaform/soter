@@ -35,11 +35,13 @@ const StatCard = ({
           <p className='text-sm font-medium'>{label}</p>
           <p className='text-2xl font-bold'>{value}</p>
         </div>
-        <div > {isValidElement(icon)
-            ? cloneElement(icon, {
-                className: `w-10 h-10 ${selected ? 'text-white' : 'text-primary'}`,
-              })
-            : null}</div>
+        <div > {
+          isValidElement(icon)
+          ? cloneElement(icon as React.ReactElement<any>, {
+              className: `w-10 h-10 ${selected ? 'text-white' : 'text-primary'}`,
+            })
+          : null
+        }</div>
       </div>
     </div>
   )
