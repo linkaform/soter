@@ -58,7 +58,7 @@ const BitacorasPage = () => {
 		}else{
 			setUbicacionSeleccionada(location|| "Planta Monterrey" )
 		}
-	}, [area, location, userNameSoter, tab, filter, setTab, setFilter]); 
+	}, [area, location, userNameSoter, tab, filter, setTab, setFilter, option, setOption]); 
 
 
 	const processBitacorasE = (bitacoras: Bitacora_record[]) => {
