@@ -181,7 +181,7 @@ const Credentials: React.FC<Props> = ({ searchPass }) => {
 						</div>
 					</div>
 					<div>
-	sa					<span className="text-gray-500">Estatus:  </span>
+					<span className="text-gray-500">Estatus:  </span>
 						<Badge
 						className={`text-white text-md ${
 							searchPass?.estatus.toLowerCase() == "vencido"
@@ -211,7 +211,7 @@ const Credentials: React.FC<Props> = ({ searchPass }) => {
 								<span>Limite de entradas:  </span>
 								<span className="text-black">
 									{searchPass?.total_entradas ?? 0}/{searchPass?.limite_de_acceso}
-								</spadn>
+								</span>
 						</div>
 					)}
 					<div className="grid grid-cols-2 gap-4">
