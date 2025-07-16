@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+import React, { useEffect, useRef, useCallback } from 'react'
 import { Html5Qrcode } from 'html5-qrcode'
 import {
   Dialog,
@@ -6,19 +6,20 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '../ui/dialog'
 import { useAccessStore } from '@/store/useAccessStore'
 
 interface ScanPassWithCameraModalProps {
   title: string
-  children: React.ReactNode
+  open: boolean
+  setOpen: (open: boolean) => void
 }
 
-export const ScanPassWithCameraModal: React.FC<
-  ScanPassWithCameraModalProps
-> = ({ title, children }: ScanPassWithCameraModalProps) => {
-  const [open, setOpen] = useState(false)
+export const ScanPassWithCameraModal: React.FC<ScanPassWithCameraModalProps> = ({
+  title,
+  open,
+  setOpen,
+}) => {
   const { setPassCode } = useAccessStore()
   const scannerRef = useRef<Html5Qrcode | null>(null)
   const cameraContainerId = 'qr-reader'
@@ -28,7 +29,7 @@ export const ScanPassWithCameraModal: React.FC<
       setPassCode(newPassCode)
       setOpen(false)
     },
-    [setPassCode]
+    [setPassCode, setOpen]
   )
 
   useEffect(() => {
@@ -57,17 +58,17 @@ export const ScanPassWithCameraModal: React.FC<
                   },
                   (errorMessage) => {
                     if (!errorMessage.includes('NotFoundException')) {
-                      console.error('QR scanner error:', errorMessage)
+                      console.log('QR scanner error:', errorMessage)
                     }
                   }
                 )
               }
             })
             .catch((err) => {
-              console.error('Error getting cameras:', err)
+              console.log('Error getting cameras:', err)
             })
         }
-      }, 300) // 300ms suele ser suficiente
+      }, 300)
 
       return () => {
         if (timeout) clearTimeout(timeout)
@@ -76,9 +77,8 @@ export const ScanPassWithCameraModal: React.FC<
             .stop()
             .then(() => scannerRef.current?.clear())
             .catch((err) => {
-              // Solo loguea si el error no es "scanner is not running"
               if (!String(err).includes('scanner is not running')) {
-                console.error('Error stopping scanner:', err)
+                console.log('Error stopping scanner:', err)
               }
             })
         }
@@ -88,10 +88,7 @@ export const ScanPassWithCameraModal: React.FC<
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent
-        className='max-w-xl'
-        aria-describedby='add-note-description'>
+      <DialogContent className='max-w-xl' aria-describedby='add-note-description'>
         <DialogHeader>
           <DialogTitle className='text-2xl text-center font-bold my-5'>
             {title}
@@ -100,7 +97,6 @@ export const ScanPassWithCameraModal: React.FC<
             Muestra el código QR del pase a escanear.
           </DialogDescription>
         </DialogHeader>
-
         <div
           id={cameraContainerId}
           style={{

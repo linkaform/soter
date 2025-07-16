@@ -5,6 +5,7 @@ import * as React from "react";
 
 import {
   ColumnFiltersState,
+  Row,
   SortingState,
   VisibilityState,
   flexRender,
@@ -13,8 +14,9 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
+  Table as TanstackTable
 } from "@tanstack/react-table";
-import { CalendarDays, FileX2, Plus, Search, Trash2 } from "lucide-react";
+import { CalendarDays, Eraser, FileX2, Plus, Search, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -32,28 +34,24 @@ import {
 //   DropdownMenuContent,
 //   DropdownMenuTrigger,
 // } from "@/components/ui/dropdown-menu";
-import { Incidencia_record, incidenciasColumns } from "./incidencias-columns";
-import { useEffect, useMemo } from "react";
+import { Incidencia_record, OptionsCell } from "./incidencias-columns";
+import { useMemo, useState } from "react";
 import { EliminarIncidenciaModal } from "@/components/modals/delete-incidencia-modal";
 import { catalogoFechas, downloadCSV } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DateTime from "@/components/dateTime";
-// import ChangeLocation from "@/components/changeLocation";
+import { EditarIncidenciaModal } from "@/components/modals/editar-incidencia";
+import ViewImage from "@/components/modals/view-image";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface ListProps {
-	refetch:() => void;
 	data: Incidencia_record[];
-	setPrioridades: React.Dispatch<React.SetStateAction<string[]>>;
 	isLoading:boolean;
 	openModal: () => void;
+	resetTableFilters: () => void;
 	setSelectedIncidencias:React.Dispatch<React.SetStateAction<string[]>>;
 	selectedIncidencias:string[];
-
-  	// setUbicacionSeleccionada: React.Dispatch<React.SetStateAction<string>>;
-	// setAreaSeleccionada:React.Dispatch<React.SetStateAction<string>>;
-	// areaSeleccionada:string;
-	// ubicacionSeleccionada:string;
 
 	setDate1 :React.Dispatch<React.SetStateAction<Date | "">>;
 	setDate2 :React.Dispatch<React.SetStateAction<Date | "">>;
@@ -64,7 +62,7 @@ interface ListProps {
 	Filter:() => void;
 }
 
-const fallasColumnsCSV = [
+const incidenciasColumnsCSV = [
   { label: 'Folio', key: 'folio' },
   { label: 'Ubicacion', key: 'ubicacion_incidencia' },
   { label: 'Lugar del Incidente', key: 'area_incidencia' },
@@ -73,15 +71,20 @@ const fallasColumnsCSV = [
   { label: 'Reporta', key: 'reporta_incidencia' },
 ];
 
-const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, isLoading, openModal,setSelectedIncidencias,selectedIncidencias,
-	setDate1, setDate2, date1, date2, dateFilter, setDateFilter,Filter
-	// setUbicacionSeleccionada, setAreaSeleccionada, areaSeleccionada, ubicacionSeleccionada
+const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSelectedIncidencias,selectedIncidencias,
+	setDate1, setDate2, date1, date2, dateFilter, setDateFilter,Filter, resetTableFilters
  })=> {
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
+
+	const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
+	const [modalEliminarAbierto, setModalEliminarAbierto] = useState(false);
+	const [modalEliminarMultiAbierto, setModalEliminarMultiAbierto] = useState(false);
+	const [incidenciaSeleccionada, setIncidenciaSeleccionada] = useState<Incidencia_record | null>(null);
+
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
@@ -91,7 +94,139 @@ const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, isLoading, openMo
   });
 
   const [globalFilter, setGlobalFilter] = React.useState("");
-  const columns = useMemo(() => (isLoading ? [] : incidenciasColumns), [isLoading]);
+
+
+	const handleEditar = (incidencia: Incidencia_record) => {
+		setIncidenciaSeleccionada(incidencia);
+		setModalEditarAbierto(true);
+	};
+	
+	const handleEliminar = (incidencia: Incidencia_record) => {
+		setIncidenciaSeleccionada(incidencia);
+		setModalEliminarAbierto(true);
+	};
+
+  const columns = useMemo(() => {
+	if (isLoading) return [];
+	 	return [
+			{
+			id: "select",
+			cell: ({ row}: { row: Row<Incidencia_record> }) => (
+				<div className="flex space-x-3 items-center">
+				<Checkbox
+					checked={row.getIsSelected()}
+					onCheckedChange={(value) => row.toggleSelected(!!value)}
+					aria-label="Select row"
+				/>
+				<OptionsCell row={row} onEditarClick={handleEditar} onEliminarClick={handleEliminar}/>
+				</div>
+			),
+			header: ({ table } : { table: TanstackTable<Incidencia_record> }) => (
+				<Checkbox
+				checked={
+					table.getIsAllPageRowsSelected() ||
+					(table.getIsSomePageRowsSelected() && "indeterminate")
+				}
+				onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+				aria-label="Select all"
+				/>
+			),
+			enableSorting: false,
+			enableHiding: false,
+			},
+			{
+			  accessorKey: "folio",
+			  header: "Folio",
+			  cell: ({ row }:{row: Row<Incidencia_record> }) => (
+			  <div className="capitalize">{row.getValue("folio")}</div>
+			  ),
+			  enableSorting: true,
+			},
+			{
+			  accessorKey: "area_incidencia",
+			  header: "Lugar del Incidente",
+			  cell: ({ row }:{row: Row <Incidencia_record> }) => (
+			  <div className="capitalize">{row.getValue("area_incidencia")}</div>
+			  ),
+			  enableSorting: true,
+			},
+			{
+			  accessorKey: "incidencia",
+			  header: "Incidencia",
+			  cell: ({ row }:{row: Row <Incidencia_record> }) => (
+			  <div className="capitalize">{row.getValue("incidencia")}</div>
+			  ),
+			  enableSorting: true,
+			},
+			{
+			  accessorKey: "evidencia_incidencia",
+			  header: "Evidencia",
+			  cell: ({ row }:{row: Row <Incidencia_record> }) => {
+			  const foto = row.original.evidencia_incidencia;
+			  // const primeraImagen = foto && foto.length > 0 ? foto[0].file_url : '/nouser.svg';
+			  return(<ViewImage imageUrl={foto ?? []} /> )},
+			  enableSorting: false,
+		  	},
+			{
+			accessorKey: "fecha_hora_incidencia",
+			header: "Fecha",
+			cell: ({ row }:{row: Row <Incidencia_record> }) => (
+			<div className="capitalize">{row.getValue("fecha_hora_incidencia")}</div>
+			),
+			enableSorting: true,
+			},
+			{
+				id: "tags",
+				header: "Tags",
+				accessorFn: (row: { tags: any[]; }) => {
+				  console.log("row.tags raw:", row.tags);
+				  if (Array.isArray(row.tags)) {
+					return row.tags.join(", ");
+				  }
+				  return "";
+				},
+				cell: ({ getValue }: { getValue: () => string }) => {
+					const value = getValue(); // string "tag1, tag2, tag3"
+					// Separa el string en array
+					const tagsArray = value ? value.split(",").map(tag => tag.trim()) : [];
+					return (
+					  <div className="flex flex-wrap gap-1">
+						{tagsArray.map((tag, idx) => (
+						  <span
+							key={idx}
+							className="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded capitalize"
+						  >
+							{tag}
+						  </span>
+						))}
+					  </div>
+					);
+				},
+				enableSorting: true,
+			},			  
+			{
+			  accessorKey: "comentario_incidencia",
+			  header: "Comentarios",
+			  cell: ({ row }:{row: Row <Incidencia_record>}) => {
+			  return (
+				<span>{row.getValue("comentario_incidencia")}</span>
+			  );
+			  },
+			  enableSorting: true,
+			},
+			{
+			  accessorKey: "reporta_incidencia",
+			  header: "Reporta",
+			  cell: ({ row }:{row: Row <Incidencia_record> }) => (
+			  <div>{row.getValue("reporta_incidencia")}</div>
+			  ),
+			  enableSorting: true,
+			},
+		  
+	];
+  }, [isLoading, handleEditar]);
+
+
   const memoizedData = useMemo(() => data || [], [data]);
 
   const table = useReactTable({
@@ -118,9 +253,7 @@ const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, isLoading, openMo
     },
   });
 
-  useEffect(()=>{
-    refetch()
-  },[])
+
 
 
   React.useEffect(()=>{
@@ -150,20 +283,21 @@ const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, isLoading, openMo
 					placeholder="Buscar"
 					value={globalFilter || ''}
 					onChange={(e) => setGlobalFilter(e.target.value)}
-					className=" border border-gray-300 rounded-md p-2 placeholder-gray-600 w-full" 
+					className="border border-gray-300 rounded-md p-2 placeholder-gray-600 w-full" 
 				/>
 					<Search />
 				</div>
 			</div>
 			
-		
-
 			<div className="flex w-full justify-end gap-3">
 				{dateFilter == "range" ?
 				<div className="flex items-center gap-2 mr-14">
-					<DateTime date={date1} setDate={setDate1} />
-					<DateTime date={date2} setDate={setDate2} />
+					<DateTime date={date1} setDate={setDate1} disablePastDates={false}/>
+					<DateTime date={date2} setDate={setDate2} disablePastDates={false}/>
 					<Button type="button"  className={"bg-blue-500 hover:bg-blue-600"} onClick={Filter}> Filtrar</Button>
+					<Button type="button"  className={"bg-blue-500 hover:bg-blue-600"} onClick={()=>{resetTableFilters()}}> 
+						<Eraser/> 
+					</Button>
 				</div>:null}
 				<div className="flex items-center w-48 gap-2"> 
 				<Select value={dateFilter}  onValueChange={(value) => { 
@@ -185,21 +319,6 @@ const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, isLoading, openMo
 				<CalendarDays />
 				</div>
 
-				{/* <div className="flex items-center gap-2">
-					<span className="text-lg font-semibold">Prioridad:</span>
-					<Select onValueChange={handleCheckboxChange} defaultValue={""}>
-						<SelectTrigger>
-							<SelectValue placeholder="Selecciona una opción" />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value="alta">Alta</SelectItem>
-							<SelectItem value="media">Media</SelectItem>
-							<SelectItem value="baja">Baja</SelectItem>
-							<SelectItem value="crítica">Crítica</SelectItem>
-						</SelectContent>
-					</Select>
-				</div> */}
-
 				<div className="flex flex-wrap gap-2">
 				<div>
 					<Button className="w-full md:w-auto bg-blue-500 hover:bg-blue-600" onClick={openModal}>
@@ -209,49 +328,45 @@ const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, isLoading, openMo
 				</div>
 
 				<div>
-					<Button className="w-full md:w-auto bg-blue-500 hover:bg-blue-600" onClick={()=>{downloadCSV(selectedIncidencias, fallasColumnsCSV, "incidencias.csv")}}>
+					<Button className="w-full md:w-auto bg-blue-500 hover:bg-blue-600" onClick={()=>{downloadCSV(selectedIncidencias, incidenciasColumnsCSV, "incidencias.csv")}}>
 						<FileX2 />
 						Descargar
 					</Button>
 				</div>
 
+				<Button
+				variant="destructive"
+				onClick={() => setModalEliminarMultiAbierto(true)}
+				disabled={selectedIncidencias.length === 0} 
+				>
+					<Trash2 />  
+					Eliminar
+				</Button>
+
 				<div>
-					<EliminarIncidenciaModal title="Eliminar Incidencias" arrayFolios={selectedIncidencias}>
-						<div className="flex flex-shrink p-2 rounded-sm px-3 w-full bg-red-500 text-white hover:bg-red-600 mb-0" >
-							<Trash2 />        
-							Eliminar
-						</div>
-					</EliminarIncidenciaModal>
+					<EliminarIncidenciaModal title="Eliminar Incidencias" arrayFolios={selectedIncidencias} 
+					modalEliminarAbierto={modalEliminarMultiAbierto}
+					setModalEliminarAbierto={setModalEliminarMultiAbierto}/>
 				</div>
 
-				{/* <div>
-					<DropdownMenu>
-						<DropdownMenuTrigger asChild>
-						<Button variant="outline" className="ml-auto">
-							Columnas <ChevronDown />
-						</Button>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end" className="bg-blue-500">
-						{table
-							.getAllColumns()
-							.filter((column) => column.getCanHide())
-							.map((column) => {
-							return (
-								<DropdownMenuCheckboxItem
-								key={column.id}
-								className="capitalize bg-blue-500"
-								checked={column.getIsVisible()}
-								onCheckedChange={(value) =>
-									column.toggleVisibility(!!value)
-								}
-								>
-								{column.id}
-								</DropdownMenuCheckboxItem>
-							);
-							})}
-						</DropdownMenuContent>
-					</DropdownMenu>
-				</div> */}
+
+				{modalEditarAbierto && incidenciaSeleccionada && (
+					<EditarIncidenciaModal
+					title="Editar Incidencia"
+					selectedIncidencia={incidenciaSeleccionada.incidencia}
+					data={incidenciaSeleccionada}
+					modalEditarAbierto={modalEditarAbierto}
+					setModalEditarAbierto={setModalEditarAbierto}
+					onClose={() => setModalEditarAbierto(false)}
+					/>
+				)}
+
+				{modalEliminarAbierto && incidenciaSeleccionada && (
+					<EliminarIncidenciaModal title="Eliminar Incidencias" arrayFolios={[incidenciaSeleccionada.folio]} 
+					modalEliminarAbierto={modalEliminarAbierto}
+					setModalEliminarAbierto={setModalEliminarAbierto}/>
+				)}
+
 			</div>
 			</div>
 		</div>
@@ -296,7 +411,7 @@ const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, isLoading, openMo
 				) : (
 				<TableRow>
 					<TableCell
-					colSpan={incidenciasColumns.length}
+					colSpan={table.getVisibleFlatColumns().length}
 					className="h-24 text-center"
 					>
 					{isLoading? (<div className='text-xl font-semibold'>Cargando registros... </div>): 
@@ -307,6 +422,7 @@ const IncidenciasTable:React.FC<ListProps> = ({ refetch, data, isLoading, openMo
 			</TableBody>
 			</Table>
 		</div>
+		
 		<div className="flex items-center justify-end space-x-2 py-4">
 			{!isLoading? 
 				<div className="flex-1 text-sm text-muted-foreground">

@@ -29,40 +29,6 @@ import { notasColumns } from './notas-columns'
 import Link from 'next/link'
 import { Imagen } from '@/lib/update-pass-full'
 
-// const data: Nota[] = [
-//   {
-//     id: 'a1b2c3d4',
-//     empleado: 'Juan Pérez',
-//     apertura: '2024-10-28 13:28',
-//     cierre: '2024-02-09 09:54:06',
-//     nota: 'Inventario pendiente',
-//     comentarios: 'Cumplimiento de tareas',
-//   },
-//   {
-//     id: 'e5f6g7h8',
-//     empleado: 'María López',
-//     apertura: '2024-10-22 11:14',
-//     cierre: '2024-03-10 10:30:00',
-//     nota: 'Revisión de seguridad',
-//     comentarios: 'Todo en orden',
-//   },
-//   {
-//     id: 'i9j0k1l2',
-//     empleado: 'Carlos Díaz',
-//     apertura: '2024-10-22 10:34',
-//     cierre: '2024-04-11 11:15:30',
-//     nota: 'Actualización de registros',
-//     comentarios: 'Registros actualizados',
-//   },
-//   {
-//     id: 'm3n4o5p6',
-//     empleado: 'Ana García',
-//     apertura: '2024-10-22 10:11',
-//     cierre: '2024-05-12 12:45:15',
-//     nota: 'Mantenimiento de equipos',
-//     comentarios: 'Equipos en buen estado',
-//   },
-// ]
 interface ListaNotasTableProps {
   data: Nota[]
 }
@@ -84,7 +50,6 @@ export interface Nota {
 export interface NoteComment {
   note_comments: string
 }
-
 
 export const NotasTable = ({ data }: ListaNotasTableProps) => {
   const [sorting, setSorting] = React.useState<SortingState>([])
@@ -128,14 +93,14 @@ export const NotasTable = ({ data }: ListaNotasTableProps) => {
   return (
     <div className='w-full'>
       <div className='my-5'>
-        <h1 className='text-2xl font-bold'>Notas</h1>
+        <h1 className='text-2xl font-bold'>Notas : {data?.length}</h1> 
       </div>
 
       <div className='flex justify-between items-center my-5'>
         {/* Campo de búsqueda a la izquierda */}
         <input
           type='text'
-          placeholder='Buscar en todos los campos...'
+          placeholder='Buscar...'
           value={globalFilter}
           onChange={(e) => setGlobalFilter(e.target.value)}
           className='border border-gray-300 rounded-md p-2 h-12 w-full max-w-xs'
@@ -143,7 +108,7 @@ export const NotasTable = ({ data }: ListaNotasTableProps) => {
 
         {/* Botones a la derecha */}
         <div className='flex items-center space-x-2'>
-          <AddNoteModal title='Nueva nota'>
+          <AddNoteModal title='Nueva Nota'>
             <Button className='bg-green-600 text-white hover:bg-green-700 px-4 py-2 rounded-md flex items-center'>
               <Plus /> Nota
             </Button>
@@ -226,7 +191,6 @@ export const NotasTable = ({ data }: ListaNotasTableProps) => {
           </Button>
         </div>
       </div>
-      <div className='text-slate-500' >Total de notas: {data.length}</div>
     </div>
   )
 }

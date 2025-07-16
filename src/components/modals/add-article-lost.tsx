@@ -36,6 +36,7 @@ import { catalogoColores } from "@/lib/utils";
 import { Input } from "../ui/input";
 import { useCatalogoArticulos } from "@/hooks/useCatalogoArticulos";
 import { useGetLockers } from "@/hooks/useGetLockers";
+import { useShiftStore } from "@/store/useShiftStore";
 
 interface AddFallaModalProps {
   	title: string;
@@ -65,7 +66,7 @@ const formSchema = z.object({
     quien_entrega_externo: z.string().optional(),
 	quien_entrega_interno: z.string().optional(), 
 	tipo_articulo_perdido: z.string().optional(),
-	ubicacion_perdido: z.string().min(1, { message: "Este campo es obligatorio" }),
+	ubicacion_perdido: z.string().optional()
 });
 
 export const AddArticuloModal: React.FC<AddFallaModalProps> = ({
@@ -74,8 +75,9 @@ export const AddArticuloModal: React.FC<AddFallaModalProps> = ({
 	setIsSuccess,
 }) => {
 	const [tipoArt, setTipoArt] = useState<string>("");
+	const { location, fetchShift } = useShiftStore();
 	// const [catalagoSub, setCatalogoSub] = useState<string[]>([]);
-	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState('');
+	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState("Planta Monterrey");
 	const { dataAreas:areas, dataLocations:ubicaciones, isLoadingAreas:loadingAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true,  ubicacionSeleccionada?true:false);
 
 	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado, refetch: refetchAreaEmpleado, } = useCatalogoAreaEmpleado(isSuccess, ubicacionSeleccionada,"Objetos Perdidos" );
@@ -111,11 +113,21 @@ export const AddArticuloModal: React.FC<AddFallaModalProps> = ({
 	const { reset } = form;
 
 	useEffect(()=>{
+		console.log("location",location)
+		if(location){
+			setUbicacionSeleccionada(location || "Planta Monterrey")
+		}else{
+			fetchShift()
+		}
+	},[])
+
+	useEffect(()=>{
 		if(isSuccess){
 			reset()
 			setDate(new Date())
 			setEvidencia([])
 			refetchAreaEmpleado()
+			setUbicacionSeleccionada(location || "Planta Monterrey")
 		}
 	},[isSuccess])
 
@@ -143,7 +155,7 @@ export const AddArticuloModal: React.FC<AddFallaModalProps> = ({
                     quien_entrega_externo:  values.quien_entrega_externo|| "",
                     quien_entrega_interno:  values.quien_entrega_interno|| "", 
                     tipo_articulo_perdido:  values.tipo_articulo_perdido|| "",
-                    ubicacion_perdido:  values.ubicacion_perdido|| "",
+                    ubicacion_perdido:  ubicacionSeleccionada|| "",
 				}
 				createArticulosPerdidosMutation.mutate({data_article: formatData})
 		}else{
@@ -161,7 +173,7 @@ export const AddArticuloModal: React.FC<AddFallaModalProps> = ({
 	};
 
   return (
-    <Dialog open={isSuccess} modal>
+    <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
       <DialogTrigger></DialogTrigger>
 
       <DialogContent className="max-w-3xl  overflow-y-auto max-h-[80vh] flex flex-col" aria-describedby="">
@@ -174,122 +186,23 @@ export const AddArticuloModal: React.FC<AddFallaModalProps> = ({
 		<div className="flex-grow overflow-y-auto p-4">
 			<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div className="flex justify-between">
-                    <LoadImage
-                        id="evidencia" 
-                        titulo={"Evidencia"} 
-                        setImg={setEvidencia}
-                        showWebcamOption={true}
-                        facingMode="user"
-                        imgArray={evidencia}
-                        showArray={true}
-                        limit={10}
-                        />
-				</div>
-
-                <FormField
-				control={form.control}
-				name="date_hallazgo_perdido"
-				render={() => (
-					<FormItem>
-					<FormLabel> Fecha del hallazgo:</FormLabel>
-					<FormControl>
-						{/* <Input type="datetime-local" placeholder="Fecha" {...field} /> */}
-						<DateTime date={date} setDate={setDate} />
-					</FormControl>
-
-					<FormMessage />
-					</FormItem>
-				)}
-				/>
-
-			    <FormField
-					control={form.control}
-					name="ubicacion_perdido"
-					render={({ field }:any) => (
-						<FormItem>
-							<FormLabel>Ubicacion:</FormLabel>
-							<FormControl>
-							<Select {...field} className="input"
-								onValueChange={(value:string) => {
-								field.onChange(value); 
-								setUbicacionSeleccionada(value); 
-							}}
-							value={field.value} 
-						>
-							<SelectTrigger className="w-full">
-								{loadingUbicaciones?
-								<SelectValue placeholder="Cargando ubicaciones..." />:<SelectValue placeholder="Selecciona una ubicación" />}
-							</SelectTrigger>
-							<SelectContent>
-							{ubicaciones?.map((vehiculo:string, index:number) => (
-								<SelectItem key={index} value={vehiculo}>
-									{vehiculo}
-								</SelectItem>
-							))}
-							</SelectContent>
-						</Select>
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-
+             
 				<FormField
-					control={form.control}
-					name="area_perdido"
-					render={({ field }:any) => (
-						<FormItem>
-							<FormLabel>Area:</FormLabel>
-							<FormControl>
-							<Select {...field} className="input"
-								onValueChange={(value:string) => {
-								field.onChange(value); 
-							}}
-							value={field.value} 
-						>
-							<SelectTrigger className="w-full">
-							{loadingAreas?
-								<SelectValue placeholder="Cargando areas..." />:<SelectValue placeholder="Selecciona una ubicación" />}
-							</SelectTrigger>
-							<SelectContent>
-							{areas?.length >0 ? (
-								<>
-								{areas?.map((area:string, index:number) => {
-								return(
-									<SelectItem key={index} value={area}>
-									{area}
-									</SelectItem>
-								)})} 
-								</>
-							):<SelectItem key={"1"} value={"1"} disabled>No hay opciones disponibles.</SelectItem>}
-							</SelectContent>
-						</Select>
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-
-                <FormField
-				control={form.control}
-				name="comentario_perdido"
-				render={({ field }:any) => (
-					<FormItem>
-					<FormLabel>Comentarios</FormLabel>
-					<FormControl className="col-span-2">
-						<Textarea
-						placeholder="Texto"
-						className="resize-none w-full"
-						{...field}
-						/>
-					</FormControl>
-
-					<FormMessage />
-					</FormItem>
-				)}
-				/>
-
+                    control={form.control}
+                    name="articulo_perdido"
+                    render={({ field}:any)=> (
+                        <FormItem>
+                            <FormLabel className="">
+                                <span className="text-red-500">*</span> Nombre:
+                            </FormLabel>{" "}
+                            <FormControl>
+                                <Input placeholder="Nombre Completo" {...field} 
+                                />
+                            </FormControl>
+                        <FormMessage />
+                        </FormItem>
+                    )}
+                />
 				<FormField
 					control={form.control}
 					name="tipo_articulo_perdido"
@@ -369,23 +282,19 @@ export const AddArticuloModal: React.FC<AddFallaModalProps> = ({
 						</FormItem>
 					)}
 				/>	
-	
-                <FormField
-                    control={form.control}
-                    name="articulo_perdido"
-                    render={({ field}:any)=> (
-                        <FormItem>
-                            <FormLabel className="">
-                                <span className="text-red-500">*</span> Nombre:
-                            </FormLabel>{" "}
-                            <FormControl>
-                                <Input placeholder="Nombre Completo" {...field} 
-                                />
-                            </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
-                />
+	   			<div className="flex justify-between">
+                    <LoadImage
+                        id="evidencia" 
+                        titulo={"Fotografía"} 
+                        setImg={setEvidencia}
+                        showWebcamOption={true}
+                        facingMode="environment"
+                        imgArray={evidencia}
+                        showArray={true}
+                        limit={10}
+                        />
+				</div>
+
 
                 <FormField
                     control={form.control}
@@ -435,6 +344,109 @@ export const AddArticuloModal: React.FC<AddFallaModalProps> = ({
                         </FormItem>
                     )}
                     />
+					
+                <FormField
+				control={form.control}
+				name="date_hallazgo_perdido"
+				render={() => (
+					<FormItem>
+					<FormLabel> Fecha del hallazgo:</FormLabel>
+					<FormControl>
+						{/* <Input type="datetime-local" placeholder="Fecha" {...field} /> */}
+						<DateTime date={date} setDate={setDate} />
+					</FormControl>
+
+					<FormMessage />
+					</FormItem>
+				)}
+				/>
+
+			    <FormField
+					control={form.control}
+					name="ubicacion_perdido"
+					render={({ field }:any) => (
+						<FormItem>
+							<FormLabel>Ubicacion:</FormLabel>
+							<FormControl>
+							<Select {...field} className="input"
+								onValueChange={(value:string) => {
+								field.onChange(value); 
+								setUbicacionSeleccionada(value); 
+							}}
+							value={ubicacionSeleccionada} 
+						>
+							<SelectTrigger className="w-full">
+								{loadingUbicaciones?
+								<SelectValue placeholder="Cargando ubicaciones..." />:<SelectValue placeholder="Selecciona una ubicación" />}
+							</SelectTrigger>
+							<SelectContent>
+							{ubicaciones?.map((vehiculo:string, index:number) => (
+								<SelectItem key={index} value={vehiculo}>
+									{vehiculo}
+								</SelectItem>
+							))}
+							</SelectContent>
+						</Select>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+
+				<FormField
+					control={form.control}
+					name="area_perdido"
+					render={({ field }:any) => (
+						<FormItem>
+							<FormLabel>Area:</FormLabel>
+							<FormControl>
+							<Select {...field} className="input"
+								onValueChange={(value:string) => {
+								field.onChange(value); 
+							}}
+							value={field.value} 
+						>
+							<SelectTrigger className="w-full">
+							{loadingAreas?
+								<SelectValue placeholder="Cargando areas..." />:<SelectValue placeholder="Selecciona una ubicación" />}
+							</SelectTrigger>
+							<SelectContent>
+							{areas?.length >0 ? (
+								<>
+								{areas?.map((area:string, index:number) => {
+								return(
+									<SelectItem key={index} value={area}>
+									{area}
+									</SelectItem>
+								)})} 
+								</>
+							):<SelectItem key={"1"} value={"1"} disabled>No hay opciones disponibles.</SelectItem>}
+							</SelectContent>
+						</Select>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+
+                <FormField
+				control={form.control}
+				name="comentario_perdido"
+				render={({ field }:any) => (
+					<FormItem>
+					<FormLabel>Comentarios</FormLabel>
+					<FormControl className="col-span-2">
+						<Textarea
+						placeholder="Texto"
+						className="resize-none w-full"
+						{...field}
+						/>
+					</FormControl>
+
+					<FormMessage />
+					</FormItem>
+				)}
+				/>  
         
                     <div className="flex gap-2 flex-col ">
 						<FormLabel className="mb-2">

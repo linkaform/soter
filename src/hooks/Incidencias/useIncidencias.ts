@@ -1,18 +1,18 @@
 import { getStats } from "@/lib/get-stats";
-import { crearIncidencia, deleteIncidencias, editarIncidencia, getListIncidencias, InputIncidencia } from "@/lib/incidencias";
+import { crearIncidencia, editarIncidencia, getListIncidencias, InputIncidencia } from "@/lib/incidencias";
 import { errorMsj } from "@/lib/utils";
 import { useShiftStore } from "@/store/useShiftStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-export const useInciencias = (location:string, area:string, prioridades:string[], enabled:boolean, dateFrom:string, dateTo:string, filterDate:string) => {
+export const useInciencias = (location:string, area:string, prioridades:string[], dateFrom:string, dateTo:string, filterDate:string) => {
     const queryClient = useQueryClient();
     
     const { isLoading: loading, setLoading} = useShiftStore();
     //Obtener lista de Incidencias
     const {data: listIncidencias, isLoading:isLoadingListIncidencias, error:errorListIncidencias, refetch:refetchTableIncidencias } = useQuery<any>({
         queryKey: ["getListIncidencias",location, area, prioridades, dateFrom, dateTo, filterDate],
-        enabled: enabled,
+        enabled: location!=="",
         queryFn: async () => {
             const data = await getListIncidencias(location, area, prioridades, dateFrom, dateTo, filterDate);
             return Array.isArray( data.response?.data) ?  data.response?.data: []; 
@@ -37,7 +37,7 @@ export const useInciencias = (location:string, area:string, prioridades:string[]
         },
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["getListIncidencias"] });
-          queryClient.invalidateQueries({ queryKey: ["getStats"] });
+          queryClient.invalidateQueries({ queryKey: ["getStatsIncidencias"] });
           toast.success("Incidencia creada correctamente.");
         },
         onError: (err) => {
@@ -81,50 +81,17 @@ export const useInciencias = (location:string, area:string, prioridades:string[]
         },
       });
 
-      //Eliminar Incidencia
-    const eliminarIncidenciaMutation = useMutation({
-      mutationFn: async ({ folio }: { folio: string[] }) => {
-          const response = await deleteIncidencias(folio);
-          const hasError= response.response.data.status_code
 
-          if(hasError == 400 || hasError == 401){
-              const textMsj = errorMsj(response.response.data) 
-              throw new Error(`Error al eliminar incidencia, Error: ${textMsj?.text}`);
-          }else{
-              return response.response?.data
-          }
-      },
-      onMutate: () => {
-        setLoading(true);
-      },
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["getListIncidencias"] });
-        queryClient.invalidateQueries({ queryKey: ["getStats"] });
-        toast.success("Incidencia eliminada correctamente.");
-      },
-      onError: (err) => {
-        console.error("Error al eliminar incidencia:", err);
-        toast.error(err.message || "Hubo un error al eliminar la incidencia.");
-  
-      },
-      onSettled: () => {
-        setLoading(false);
-      },
-    });
 
     const { data: stats, isLoading: isStatsLoading, error: statsError,
-	} = useQuery<any>({
-	queryKey: ["getStatsIncidencias", area, location],
-	enabled:enabled,
-	queryFn: async () => {
-		const data = await getStats( location, area, "Incidencias" );
-		const responseData = data.response?.data || {};
-		return responseData;
-	},
-	refetchOnWindowFocus: true,
-	refetchInterval: 60000,
-	refetchOnReconnect: true,
-	staleTime: 1000 * 60 * 5,
+    } = useQuery<any>({
+    queryKey: ["getStatsIncidencias", area, location],
+    enabled:location!=="",
+    queryFn: async () => {
+      const data = await getStats( location, area, "Incidencias" );
+      const responseData = data.response?.data || {};
+      return responseData;
+    },
 	});
 
   return {
@@ -139,8 +106,6 @@ export const useInciencias = (location:string, area:string, prioridades:string[]
     createIncidenciaMutation,
     //EditarIncidencia
     editarIncidenciaMutation,
-    //Eliminar Incidencia
-    eliminarIncidenciaMutation,
     //Stats Incidencias
     stats, 
     isStatsLoading,

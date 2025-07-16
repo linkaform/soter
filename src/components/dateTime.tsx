@@ -19,10 +19,11 @@ import Swal from 'sweetalert2'
 interface DateTimeListProps {
   setDate: React.Dispatch<React.SetStateAction<Date | "">> ;
   date: Date | "";
+  disablePastDates?: boolean;
 }
 
 const blue500="#2b7fff"
-const DateTime:React.FC<DateTimeListProps> = ({date, setDate})=> {
+const DateTime:React.FC<DateTimeListProps> = ({date, setDate , disablePastDates = true,})=> {
   const [isOpen, setIsOpen] = React.useState(false);
    const today = new Date();
     today.setSeconds(0, 0); 
@@ -59,12 +60,13 @@ const DateTime:React.FC<DateTimeListProps> = ({date, setDate})=> {
     }
 
   };
+
   const isDateDisabled = (date: Date) => {
+    if (!disablePastDates) return false;
     const today = new Date();
     const selectedDate = new Date(date);
     today.setHours(0, 0, 0, 0);
     selectedDate.setHours(0, 0, 0, 0);
-
     return selectedDate.getTime() < today.getTime();
   };
 

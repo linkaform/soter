@@ -122,8 +122,8 @@ return (
 			<div className="flex w-full justify-end">
 				{dateFilter == "range" ?
 				<div className="flex items-center gap-2 mr-14">
-					<DateTime date={date1} setDate={setDate1} />
-					<DateTime date={date2} setDate={setDate2} />
+					<DateTime date={date1} setDate={setDate1} disablePastDates={false}/>
+					<DateTime date={date2} setDate={setDate2} disablePastDates={false}/>
 					<Button type="button"  className={"bg-blue-500 hover:bg-blue-600"} onClick={Filter}> Filtrar</Button>
 				</div>:null}
 				<div className="flex items-center w-48 gap-2"> 

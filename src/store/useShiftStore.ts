@@ -1,5 +1,4 @@
 import { getShift } from "@/lib/get-shift";
-import { errorMsj } from "@/lib/utils";
 import { toast } from "sonner";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
@@ -13,10 +12,12 @@ interface ShiftStore {
   tab:string;
   filter:string;
   isFetching:boolean;
+  option:string[]
 
   setIsFetching: (isFetching: boolean) => void;
   setTab: (tab: string) => void;
-  setFilter:(filter:string)=>void
+  setFilter:(filter:string)=>void;
+  setOption:(option:string[])=>void;
   setArea: (area: string) => void;
   setLocation: (location: string) => void;
   setCheckin_id: (id: string | undefined) => void;
@@ -36,11 +37,13 @@ export const useShiftStore = create(
 		turno:false,
 		tab:"",
 		filter:"",
+		option:[],
 		isFetching:false,
 		setIsFetching:(isFetching) => set({isFetching}),
 
 		setTab:(tab) => set({tab}),
 		setFilter:(filter) => set({filter}),
+		setOption:(option) => set({option}),
 		setArea: (area) => set({ area }),
 		setLocation: (location) => set({ location }),
 		setCheckin_id: (id) => set({ checkin_id: id }),
@@ -62,15 +65,13 @@ export const useShiftStore = create(
 		  
 			try {
 			  const data = await getShift({ area, location });
-			  const textMsj = errorMsj(data) 
-				if (textMsj){
-					toast.error(`Error al obtener informacion, Error: ${textMsj.text}`);
-					return []
+				if(!data.success){
+					throw new Error(data.error?.exception?.msg[0] || "Hubo un error al obtener load shift");
+				}else{
+					setArea(data.response?.data?.location?.area ?? "");
+					setLocation(data.response?.data?.location?.name ?? "");
+					setTurno(data?.response.data?.guard?.status_turn === "Turno Abierto");
 				}
-			  setArea(data.response?.data?.location?.area ?? "");
-			  setLocation(data.response?.data?.location?.name ?? "");
-			  setTurno(data?.response.data?.guard?.status_turn === "Turno Abierto");
-		  
 			} catch (error) {
 			  toast.error("Error al obtener información: " + error);
 			} finally {

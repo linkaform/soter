@@ -12,45 +12,53 @@ import EquiposTable from "@/components/table/bitacoras/equipos/table";
 import ChangeLocation from "@/components/changeLocation";
 import { Comentarios_bitacoras, VisitaA } from "@/components/table/bitacoras/equipos/equipos-columns";
 import { Bitacora_record } from "@/components/table/bitacoras/bitacoras-columns";
-import { dateToString } from "@/lib/utils";
-import { useBitacoras } from "@/hooks/useBitacoras";
+import { arraysIguales, dateToString } from "@/lib/utils";
+import { useBitacoras } from "@/hooks/Bitacora/useBitacoras";
 import { toast } from "sonner";
 import { useGetStats } from "@/hooks/useGetStats";
 import useAuthStore from "@/store/useAuthStore";
 
 const BitacorasPage = () => {
-  	const [selectedOption, setSelectedOption] = useState<string[]>(["entrada"]);
-	const { tab, setTab, filter, setFilter} = useShiftStore()
+	const { tab, setTab, filter, setFilter, option, setOption} = useShiftStore()
   	const {location, area} = useShiftStore()
-	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
+	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location );
 	const [areaSeleccionada, setAreaSeleccionada] = useState("todas");
-	console.log("ubicacion area",ubicacionSeleccionada, areaSeleccionada)
 	const [equiposData, setEquiposData] = useState<Bitacora_record[]>([]);
 	const [vehiculosData, setVehiculosData] = useState<Bitacora_record[]>([]);
 
 	const [date1, setDate1] = useState<Date|"">("")
 	const [date2, setDate2] = useState<Date|"">("")
+	const [selectedOption, setSelectedOption] = useState<string[]>(option);
 
 	const [dates, setDates] = useState<string[]>([])
-	const [dateFilter, setDateFilter] = useState<string>(filter )
-	const { listBitacoras,isLoadingListBitacoras} = useBitacoras(ubicacionSeleccionada, areaSeleccionada == "todas" ? "": areaSeleccionada, selectedOption, ubicacionSeleccionada&&areaSeleccionada?true:false, dates[0], dates[1], dateFilter)
+	const [dateFilter, setDateFilter] = useState<string>(filter)
+	console.log("datefilter",dateFilter)
+	const { listBitacoras,isLoadingListBitacoras} = useBitacoras(
+		ubicacionSeleccionada, areaSeleccionada == "todas" ? "": areaSeleccionada, selectedOption, ubicacionSeleccionada&&areaSeleccionada?true:false, dates[0], dates[1], dateFilter)
 	const { data: stats } = useGetStats(ubicacionSeleccionada&& areaSeleccionada?true:false,ubicacionSeleccionada, areaSeleccionada=="todas"?"":areaSeleccionada, 'Bitacoras')
 	const [selectedTab, setSelectedTab] = useState<string>(tab ? tab: "Personal"); 
 
 	const userNameSoter = useAuthStore((state) => state.userNameSoter);
-	console.log("AREAA",location, ubicacionSeleccionada, areaSeleccionada)
 
 	useEffect(() => {
 		if(tab){
+			console.log("tab", tab)
 			setTab("")
 		}
 		if(filter){
+			console.log("filtro", filter)
 			setFilter("")
 		}
-		if(location)
-			setUbicacionSeleccionada(location)
-			// setUbicacionSeleccionada("todas")
-	}, [area, location, userNameSoter, tab, filter, setTab, setFilter]); 
+		if(option){
+			console.log("filtro", filter)
+			setOption([])
+		}
+		if(location){
+			setUbicacionSeleccionada(location )
+		}else{
+			setUbicacionSeleccionada(location|| "Planta Monterrey" )
+		}
+	}, [area, location, userNameSoter, tab, filter, setTab, setFilter, option, setOption]); 
 
 
 	const processBitacorasE = (bitacoras: Bitacora_record[]) => {
@@ -107,34 +115,25 @@ const BitacorasPage = () => {
 			});
 		});
     };
-
-	useEffect(()=>{
-		if(ubicacionSeleccionada=="todas"){
-			setSelectedOption(["entrada"])
-		}
-	},[ubicacionSeleccionada])
 	
 	useEffect(()=>{
-		if(Array.isArray(listBitacoras)){
-			setEquiposData(processBitacorasE(listBitacoras))
-			setVehiculosData(processBitacorasV(listBitacoras))
-		}else{
-			setEquiposData(processBitacorasE([]))
-			setVehiculosData(processBitacorasV([]))
+		if(listBitacoras?.records){
+			if(Array.isArray(listBitacoras.records)){
+				setEquiposData(processBitacorasE(listBitacoras.records))
+				setVehiculosData(processBitacorasV(listBitacoras.records))
+			}else{
+				setEquiposData(processBitacorasE([]))
+				setVehiculosData(processBitacorasV([]))
+			}
 		}
 	}, [listBitacoras])
 
 	const handleTabChange = (tab:string, option:string[], filter="") => {
-		if(tab == selectedTab && filter == dateFilter){
-			if(option[0] == selectedOption[0]){
-				setSelectedOption(["entrada"]);
-				setSelectedTab("Personal")  
+		console.log(tab, option, filter)
+		if(tab==selectedTab && arraysIguales(option, selectedOption) && filter == dateFilter){
+				setSelectedOption([]);
+				setSelectedTab(selectedTab)  
 				setDateFilter("")
-			}else{
-				setSelectedOption(option)
-				setSelectedTab(tab)  
-				setDateFilter( filter=="today"? filter:"")
-			}
 		}else{
 			setDateFilter( filter=="today"? filter:"")
 			setSelectedOption(option); 
@@ -188,7 +187,7 @@ return (
 							<div className="h-1 w-1/2 bg-cyan-100"></div>
 							<div className="h-1 w-1/2 bg-blue-500"></div>
 						</div>
-						<span className="text-md">Visitas en el día</span>
+						<span className="text-md">Visitas En El Día</span>
 					</div>
 
 					<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
@@ -203,11 +202,11 @@ return (
 							<div className="h-1 w-1/2 bg-cyan-100"></div>
 							<div className="h-1 w-1/2 bg-blue-500"></div>
 						</div>
-						<span className="text-md">Personas dentro</span>
+						<span className="text-md">Personas Dentro</span>
 					</div>
 
 					<div  className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
-						selectedTab === 'Vehiculos' && dateFilter == "" ? 'bg-blue-100' : 'hover:bg-gray-100'
+						selectedTab === 'Vehiculos' && selectedOption[0]=="entrada"  && dateFilter == "" ? 'bg-blue-100' : 'hover:bg-gray-100'
 						}`} 
 						onClick={() => handleTabChange("Vehiculos", ["entrada"], "")}>
 						<div className="flex gap-6">
@@ -252,7 +251,7 @@ return (
 							<div className="h-1 w-1/2 bg-cyan-100"></div>
 							<div className="h-1 w-1/2 bg-blue-500"></div>
 						</div>
-						<span className="text-md">Salidas del día</span>
+						<span className="text-md">Salidas Del Día</span>
 					</div>
 				</div>
 			</div> 
@@ -260,7 +259,7 @@ return (
 			<Tabs defaultValue="Personal" className="w-full"  value={selectedTab}  onValueChange={handleTabChangeE}>
 				<TabsContent value="Personal">
 				<div className="">
-					<BitacorasTable data={listBitacoras} isLoading={isLoadingListBitacoras} 
+					<BitacorasTable data={listBitacoras?.records} isLoading={isLoadingListBitacoras} 
 					date1={date1} date2={date2} setDate1={setDate1} setDate2={setDate2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter}
 					/>
 				</div>

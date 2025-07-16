@@ -6,9 +6,10 @@ import {
   VisibilityState,
   flexRender,
   getCoreRowModel,
+  getFilteredRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { FileX2, Plus } from 'lucide-react'
+import { FileDown, Plus, Search } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Table,
@@ -38,7 +39,6 @@ export const ListaNotasTable = ({ statusFilter, ubicacionSeleccionada, areaSelec
   const [registersPage, setRegistersPage] = useState(10)
   const [dateFromValue, setDateFromValue] = useState('')
   const [dateToValue, setDateToValue] = useState('')
-  console.log("abrir notas")
   if (statusFilter === '') {
     statusFilter = 'abierto'
   }
@@ -102,6 +102,7 @@ export const ListaNotasTable = ({ statusFilter, ubicacionSeleccionada, areaSelec
       rowSelection,
       globalFilter,
     },
+    getFilteredRowModel: getFilteredRowModel(),
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
@@ -213,13 +214,16 @@ export const ListaNotasTable = ({ statusFilter, ubicacionSeleccionada, areaSelec
   return (
     <div className='w-full'>
       <div className='flex flex-col md:flex-row justify-between items-center'>
-        <input
-          type='text'
-          placeholder='Buscar en todos los campos...'
-          value={globalFilter}
-          onChange={(e: any) => setGlobalFilter(e.target.value)}
-          className='w-full border border-gray-300 rounded-md p-2 h-12 max-w-xs mb-5'
-        />
+        <div className='flex items-center gap-2'>
+          <input
+            type='text'
+            placeholder='Buscar...'
+            value={globalFilter}
+            onChange={(e: any) => setGlobalFilter(e.target.value)}
+            className='w-full border border-gray-300 rounded-md p-2  max-w-xs mb-5'
+          />
+          <Search />
+        </div>
         <div className='w-full md:w-auto flex flex-col md:flex-row items-center gap-2'>
           <DateFilter
             dateFilter={dateFilter}
@@ -230,14 +234,15 @@ export const ListaNotasTable = ({ statusFilter, ubicacionSeleccionada, areaSelec
             date1={date1}
             date2={date2}
           />
+         
           <AddNoteModal title='Nueva nota' >
-            <Button className='w-full md:w-auto bg-blue-500 text-white hover:bg-blue-600 px-4 py-2 rounded-md flex items-center'>
+            <Button className='w-full md:w-auto bg-green-500 text-white hover:bg-green-600 px-4 py-2 rounded-md flex items-center'>
               <Plus />
               Nota
             </Button>
           </AddNoteModal>
           <Button className='w-full md:w-auto bg-blue-500 hover:bg-blue-600 text-white px-4 py-2'>
-            <FileX2 />
+            <FileDown/>
             Descargar
           </Button>
         </div>

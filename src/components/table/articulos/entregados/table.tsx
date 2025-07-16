@@ -131,7 +131,7 @@ export function ArticulosEntregadosTable() {
 
   return (
     <div className="w-full">
-      <div className="flex justify-between items-center my-5">
+      <div className="flex w-full max-w-sm items-center space-x-2">
         {/* Campo de búsqueda a la izquierda */}
         <input
           type="text"
@@ -143,17 +143,8 @@ export function ArticulosEntregadosTable() {
 
         {/* Botones a la derecha */}
         <div className="flex items-center justify-end space-x-6">
-
-
-
           <div className="flex items-center space-x-5">
-
-
           <Label className=""  htmlFor="terms">Estado:</Label>
-
-            
-
-
         <Select defaultValue="Pendiente">
         <SelectTrigger className="w-[180px]">
         <SelectValue placeholder="Seleccione un estado" />

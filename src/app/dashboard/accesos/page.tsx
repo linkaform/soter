@@ -52,7 +52,7 @@ import Image from "next/image";
 const AccesosPage = () => {
   const { isAuth } = useAuthStore()
   const { shift, isLoading:loadingShift } = useGetShift(true);
-  const { area, location, setLoading , turno} = useShiftStore();
+  const { area, location, setLoading , turno, setTab, setFilter, setOption} = useShiftStore();
   const { passCode, setPassCode, clearPassCode, selectedEquipos, setSelectedEquipos, setSelectedVehiculos, selectedVehiculos, setTipoMovimiento, tipoMovimiento} = useAccessStore();
   const { isLoading, loading, searchPass } = useSearchPass(false);
   const [inputValue, setInputValue] = useState("");
@@ -230,16 +230,22 @@ const AccesosPage = () => {
   }, [debouncedValue]);
   
 
+  function setTabAndFilter(tab:string, filter:string, option:string[]){
+    setTab(tab)
+    setFilter(filter)
+	setOption(option)
+  }
+
   if (isLoading || loading || loadingShift || loadingLocationArea) {
     return (
-      <div className="flex justify-center items-center h-screen">
+      <div className="flex justify-center items-center h-screen overflow-hidden">
 			<div className="w-24 h-24 border-8 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
       </div>
     );
   }
   if (!turno && isAuth) {
 	return (
-		<div className="flex justify-center items-center h-screen overflow-hidden">
+		<div className="flex justify-center items-center overflow-hidden">
 		  <div className="flex items-center flex-col gap-2">
 			  <Image
                 src="/guardia1.png"
@@ -257,7 +263,6 @@ const AccesosPage = () => {
 			  variant="default"
 			>
 			  Turnos
-			{/* <ArrowRight className="w-4 h-4" /> */}
 			</Button>
 			</Link>
 		  </div>
@@ -265,35 +270,36 @@ const AccesosPage = () => {
 		)
   }
 
+
   return (
-    <div className="h-screen ">
-		<div className="flex flex-col w-full">
-			<div className="p-6 space-y-6 w-full mx-auto pb-0">
+    <div >
+		<div className="flex flex-col w-full ">
+			<div className="p-6 space-y-6 w-full mx-auto pb-0 ">
+
 				<div className="flex justify-center flex-col md:flex-row gap-3 ">
 					<div className="flex justify-center mb-5 mr-5 w-full md:max-w-lg ">
-					<div className="relative w-full flex items-center ">
-						<Input
-						ref={inputRef}
-						type="text"
-						placeholder="Escanear Pase"
-						className="pl-5 pr-10 w-full"
-						value={inputValue} // Enlazamos el input con su estado
-						onChange={(e) => setInputValue(e.target.value)} // Actualizamos el estado
-						/>
-						 <Search className="absolute right-12 h-4 w-4 text-gray-500 pointer-events-none" />
+						<div className="relative w-full flex items-center ">
+							<Input
+							ref={inputRef}
+							type="text"
+							placeholder="Escanear Pase"
+							className="pl-5 pr-10 w-full"
+							value={inputValue} // Enlazamos el input con su estado
+							onChange={(e) => setInputValue(e.target.value)} // Actualizamos el estado
+							/>
+							<Search className="absolute right-12 h-4 w-4 text-gray-500 pointer-events-none" />
 
-						<ActivePassesModal title="Pases Activos"  input={debouncedValue} setOpen={setOpenActivePases} open={openActivePases}>
-						<Button
-							variant="ghost"
-							size="icon"
-							className="absolute right-0 top-0 h-full border rounded-tl-none rounded-bl-none rounded-tr-sm rounded-br-sm"
-						>
-							<Menu className="h-4 w-4" />
-						</Button>
-						</ActivePassesModal>
+							<ActivePassesModal title="Pases Activos"  input={debouncedValue} setOpen={setOpenActivePases} open={openActivePases}>
+							<Button
+								variant="ghost"
+								size="icon"
+								className="absolute right-0 top-0 h-full border rounded-tl-none rounded-bl-none rounded-tr-sm rounded-br-sm"
+							>
+								<Menu className="h-4 w-4" />
+							</Button>
+							</ActivePassesModal>
+						</div>
 					</div>
-					</div>
-
 					<div className="flex flex-col sm:flex-row gap-2">
 					{searchPass?.tipo_movimiento === "Entrada" && (
 						<Button
@@ -309,7 +315,7 @@ const AccesosPage = () => {
 						}}
 						>
 						<LogIn />
-						Registrar ingreso
+						Registrar Ingreso
 						</Button>
 					)}
 
@@ -332,12 +338,12 @@ const AccesosPage = () => {
 						</Button>
 					)}
 					<ScanPassOptionsModal
-						title="Escanea un pase"
+						title="Escanea Pase"
 						inputRef={inputRef}
 					>
 						<Button className="bg-yellow-400 hover:bg-yellow-500 text-black">
 					<Scan />
-									Escanear un pase
+									Escanear Pase
 								</Button>
 					</ScanPassOptionsModal>
 					{!passCode && (
@@ -355,7 +361,7 @@ const AccesosPage = () => {
 						className="bg-blue-500 hover:bg-blue-600 text-white"
 						>
 						<List className="text-white" />
-						Pases En Proceso
+						Pases en Proceso
 						</Button>
 					</TemporaryPassesModal></>):null}
 					{ searchPass ? (<>
@@ -372,26 +378,12 @@ const AccesosPage = () => {
 						<Button
 							className="bg-blue-500 hover:bg-blue-600 text-white"
 							variant="secondary"
-							// onClick={() => {
-							// 	navigator.clipboard.writeText(searchPass?.link).then(() => {
-							// 	toast("¡Enlace copiado!", {
-							// 	description:
-							// 		"El enlace ha sido copiado correctamente al portapapeles.",
-							// 	action: {
-							// 		label: "Abrir enlace",
-							// 		onClick: () => window.open(searchPass?.link, "_blank"), // Abre el enlace en una nueva pestaña
-							// 	},
-							// 	});
-							// });
-							// }}
 						>
 							<FileSymlink />  Completar Pase
 							
 						</Button>
 					</UpdatePassModal>
 					</>):null}
-					
-
 					</div>
 				</div>
 			</div>
@@ -399,18 +391,18 @@ const AccesosPage = () => {
 			{ searchPass ? (
 			<>
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-4 ">
-					<div className="row-span-3  flex flex-col p-4 pt-0">
+					<div className="row-span-3  flex flex-col p-4 ">
 						<Credentials searchPass={searchPass} />
 					</div>
-					<div className="flex flex-col h-fit p-4 gap-3 ">
+					<div className="flex flex-col p-4 gap-3 ">
 						<ComentariosAccesosTable allComments={allComments} />
 						<PermisosTable certificaciones={certificaciones}/>
 					</div>
 
-					<div className="flex flex-col h-fit p-4 gap-3 ">
+					<div className="flex flex-col p-4 gap-3 ">
 						<UltimosAccesosTable ultimosAccesos={ultimosAccesos} /> 
 							<AccesosPermitidosTable accesosPermitidos={accesosPermitidos} />
-						</div>
+					</div>
 
 						
 					  <div className="col-span-2 col-start-2 pr-4">
@@ -430,13 +422,14 @@ const AccesosPage = () => {
 			):null}
 		</div>
 		{!searchPass ?
-	  	<div className="flex flex-col justify-center items-center gap-10 mt-32">
+	  	<div className="flex flex-col justify-center items-center gap-10 mt-20 overflow-hidden">
 				<div className="flex flex-col justify-center w-1/6 gap-2">
 					<Input placeholder="Ubicacion" value={location} disabled/>
 					<Input placeholder="Area" value={area} disabled/>
 				</div>
 				<div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100`}>
+					<Link  href={"/dashboard/bitacoras"}>
+					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100`} onClick={() => setTabAndFilter("Personal", "today", ["entrada"])}>
 						<div className="flex gap-6"><Sun className="text-primary w-14 h-14" />
 							<span className="flex items-center font-bold text-5xl"> {stats?.visitas_en_dia}</span>
 						</div>
@@ -444,10 +437,12 @@ const AccesosPage = () => {
 							<div className="h-1 w-1/2 bg-cyan-100"></div>
 							<div className="h-1 w-1/2 bg-blue-500"></div>
 						</div>
-						<span className="text-lg">Visitas en el dia</span>
+						<span className="text-lg">Visitas En El Día</span>
 					</div>
+					</Link>
 
-					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100 `}>
+					<Link  href={"/dashboard/bitacoras"}>
+					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100 `} onClick={() => setTabAndFilter("Personal", "", ["entrada"])}>
 						<div className="flex gap-6"><UsersRound className="text-primary w-14 h-14"/>
 							<span className="flex items-center font-bold text-5xl"> {stats?.personas_dentro}</span>
 						</div>
@@ -455,10 +450,11 @@ const AccesosPage = () => {
 							<div className="h-1 w-1/2 bg-cyan-100"></div>
 							<div className="h-1 w-1/2 bg-blue-500"></div>
 						</div>
-						<span className="text-lg">Personas dentro</span>
+						<span className="text-lg">Personas Dentro</span>
 					</div>
-
-					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100 `} >
+					</Link>
+					<Link  href={"/dashboard/bitacoras"}>
+					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100 `} onClick={() => setTabAndFilter("Salidas", "", ["salida"])}>
 						<div className="flex gap-6"><DoorOpen className="text-primary w-14 h-14"/>
 							<span className="flex items-center font-bold text-5xl"> {stats?.salidas_registradas}</span>
 						</div>
@@ -466,10 +462,11 @@ const AccesosPage = () => {
 							<div className="h-1 w-1/2 bg-cyan-100"></div>
 							<div className="h-1 w-1/2 bg-blue-500"></div>
 						</div>
-						<span className="text-lg">Salidas registradas</span>
+						<span className="text-lg">Salidas Registradas</span>
 					</div>
-
-					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100 `} >
+					</Link>
+					<Link  href={"/dashboard/articulos"}>
+					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100 `} onClick={() => setTabAndFilter("Paqueteria", "",[])}>
 						<div className="flex gap-6"><PackageOpen className="text-primary w-14 h-14"/>
 							<span className="flex items-center font-bold text-5xl"> {stats?.paquetes_recibidos}</span>
 						</div>
@@ -479,8 +476,9 @@ const AccesosPage = () => {
 						</div>
 						<span className="text-lg">Paquetes Recibidos</span>
 					</div>
-
-					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100 `} >
+					</Link>
+					<Link href={"/dashboard/bitacoras"}>
+					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100 `} onClick={() => setTabAndFilter("Vehiculos", "",["entrada"])}>
 						<div className="flex gap-6"><CarFront className="text-primary w-14 h-14"/>
 							<span className="flex items-center font-bold text-5xl"> {stats?.total_vehiculos_dentro}</span>
 						</div>
@@ -488,10 +486,11 @@ const AccesosPage = () => {
 							<div className="h-1 w-1/2 bg-cyan-100"></div>
 							<div className="h-1 w-1/2 bg-blue-500"></div>
 						</div>
-						<span className="text-lg">Vehiculos Dentro</span>
+						<span className="text-lg">Vehículos Dentro</span>
 					</div>
-
-					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100 `} >
+					</Link>
+					<Link href={"/dashboard/bitacoras"}>
+					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100 `} onClick={() => setTabAndFilter("Equipos", "",["entrada"])}>
 						<div className="flex gap-6"><Wrench className="text-primary w-14 h-14"/>
 							<span className="flex items-center font-bold text-5xl"> {stats?.total_equipos_dentro}</span>
 						</div>
@@ -501,10 +500,10 @@ const AccesosPage = () => {
 						</div>
 						<span className="text-lg">Equipos Dentro</span>
 					</div>
-
+					</Link>
 				</div>
 		</div>
-	:null}
+		:null}
     </div>
   );
 };

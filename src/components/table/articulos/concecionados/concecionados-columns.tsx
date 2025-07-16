@@ -34,7 +34,7 @@ const OptionsCell: React.FC<{ row: any }> = ({ row}) => {
       <ViewArticuloCon 
           title="Información del Artículo Concesionado"
           data={articulo} isSuccess={false}>
-            <div className="cursor-pointer">
+            <div className="cursor-pointer" title="Ver Artículo">
               <Eye /> 
             </div>
         </ViewArticuloCon>
@@ -91,6 +91,14 @@ export const conColumns: ColumnDef<Articulo_con_record>[] = [
     //   enableSorting: false,
     //   enableHiding: false,
     // },
+    {
+      accessorKey: "folio",
+      header: "Folio",
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("folio")}</div>
+      ),
+      enableSorting: true,
+    },
     {
       accessorKey: "solicita_concesion",
       header: "Solicita",

@@ -7,7 +7,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "../ui/dialog";
 
 import {
@@ -21,7 +20,7 @@ import {
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import LoadImage from "../upload-Image";
 import { Imagen } from "@/lib/update-pass";
 import { Loader2 } from "lucide-react";
@@ -30,13 +29,14 @@ import LoadFile from "../upload-file";
 import { format } from "date-fns";
 import DateTime from "../dateTime";
 import { formatFecha } from "@/lib/utils";
-import { useFallas } from "@/hooks/useFallas";
+import { useFallas } from "@/hooks/Fallas/useFallas";
 import { useShiftStore } from "@/store/useShiftStore";
 
 interface AddFallaModalProps {
   	title: string;
 	data: any;
-	children: React.ReactNode;
+	isSuccess: boolean;
+	setIsSuccess: Dispatch<SetStateAction<boolean>>;
 }
 
 const formSchema = z.object({
@@ -61,10 +61,11 @@ const formSchema = z.object({
 export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
   	title,
 	data,
-	children
+	isSuccess,
+	setIsSuccess
 }) => {
 	const { area, location } = useShiftStore();
-	const [isSuccess, setIsSuccess] =useState(false)
+
 	const [evidencia , setEvidencia] = useState<Imagen[]>([]);
 	const [documento , setDocumento] = useState<Imagen[]>([]);
 	const [date, setDate] = useState<Date|"">("");
@@ -96,33 +97,10 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 		}
 	},[isSuccess, reset])
 
-	// useEffect(()=>{
-	// 	if(responseSeguimientoFalla?.status_code == 202){
-	// 		handleClose()
-	// 		refetchTableFallas()
-	// 		toast.success("Seguimiento actualizado correctamente!")
-	// 	}
-	// },[responseSeguimientoFalla])
-
-
-	useEffect(()=>{
-		if(!isLoading){
-			handleClose()			
-		}
-	},[isLoading])
-
-	// useEffect(()=>{
-	// 	if(modalData){
-			
-	// 	}
-	// },[modalData])
-
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		if(date){
-			const formattedDate = format( new Date(date), 'yyyy-MM-dd HH:mm:ss');
-			const formattedDateFin = format( new Date(dateFin), 'yyyy-MM-dd HH:mm:ss');
-			console.log("FORMATED", formattedDate, formattedDateFin)
-		console.log("QUE PASA",values.fechaInicioFallaCompleta)
+			// const formattedDate = format( new Date(date), 'yyyy-MM-dd HH:mm:ss');
+			// const formattedDateFin = format( new Date(dateFin), 'yyyy-MM-dd HH:mm:ss');
 			const formatData ={
 				falla_folio_accion_correctiva:values.falla_folio_accion_correctiva||"",
 				falla_comentario_solucion: values.falla_comentario_solucion||"",
@@ -131,7 +109,11 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 				falla_documento_solucion:documento,
 				falla_evidencia_solucion:evidencia,
 			}
-			seguimientoFallaMutation.mutate({falla_grupo_seguimiento:formatData, folio:data.folio, location,area , status:"abierto"})
+			seguimientoFallaMutation.mutate({falla_grupo_seguimiento:formatData, folio:data.folio, location,area , status:"abierto"},  {
+				onSuccess: () => {
+				  setIsSuccess(false); 
+				}
+			  })
 		}else{
 			form.setError("fechaInicioFallaCompleta", { type: "manual", message: "Fecha es un campo requerido." });
 		}
@@ -141,16 +123,8 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 		setIsSuccess(false); 
 	};
 
-	useEffect(()=>{
-		if(!isLoading){
-			handleClose()			
-		}
-	},[isLoading])
-
   return (
     <Dialog onOpenChange={setIsSuccess} open={isSuccess}>
-      <DialogTrigger>{children}</DialogTrigger> 
-
       <DialogContent className="max-w-3xl" aria-describedby="">
         <DialogHeader>
           <DialogTitle className="text-2xl text-center font-bold">
@@ -160,6 +134,10 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} >
+		  	<div className="w-full flex gap-2 mb-2">
+				<p className="font-bold ">Folio: </p>
+				<p className="font-bold text-blue-500">{data?.folio} </p>
+			</div>
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
 				<FormField
 				control={form.control}
@@ -204,7 +182,7 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 				name="fechaInicioFallaCompleta"
 				render={() => (
 					<FormItem>
-					<FormLabel>* Fecha</FormLabel>
+					<FormLabel> Fecha desde:</FormLabel>
 					<FormControl>
 						{/* <Input type="datetime-local" placeholder="Fecha"  /> */}
 						<DateTime date={date} setDate={setDate} />
@@ -219,7 +197,7 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 				name="fechaFinFallaCompleta"
 				render={() => (
 					<FormItem>
-					<FormLabel>* Fecha</FormLabel>
+					<FormLabel>Fecha hasta:</FormLabel>
 					<FormControl>
 						{/* <Input type="datetime-local" placeholder="Fecha" /> */}
 						<DateTime date={dateFin} setDate={setDateFin}/>

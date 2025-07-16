@@ -183,7 +183,7 @@ export function GuardiasApoyoTable() {
   return (
     <div className="w-full">
       <div className="mb-5">
-        <h1 className="text-2xl font-bold">Guardias de Apoyo</h1>
+        <h1 className="text-2xl font-bold">Guardias De Apoyo</h1>
       </div>
 
       <div className="flex flex-row justify-between items-center mb-5 gap-2">
@@ -192,18 +192,18 @@ export function GuardiasApoyoTable() {
           placeholder="Buscar"
           value={globalFilter}
           onChange={(e) => setGlobalFilter(e.target.value)}
-          className="border border-gray-300 rounded-md p-2 h-12 w-full max-w-xs"
+          className="border border-gray-300 rounded-md p-2 w-1/2 max-w-xs"
         />
 
           <AddGuardModal title="Guardias">
           <Button
             type="submit"
-            className={"w-full text-white bg-green-600 hover:bg-green-700"}
+            className={" text-white bg-green-600 hover:bg-green-700 w-auto"}
       
             disabled={shift?.guard?.status_turn === "Turno Cerrado"}
           >
             <Plus />
-            Guardia apoyo
+            Guardia Apoyo
           </Button>
         </AddGuardModal>
       </div>

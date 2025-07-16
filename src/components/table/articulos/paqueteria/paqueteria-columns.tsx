@@ -31,14 +31,13 @@ export interface Paquete_record {
 const OptionsCell: React.FC<{ row: any }> = ({ row}) => {
   	const paquete = row.original;
 	  const [showLoadingModal, setShowLoadingModal] = useState(false);
-	  console.log(paquete)
   return (
     <div className="flex space-x-2">
 
       <ViewPaqueteria 
           title="Información del Paquete"
           data={paquete} isSuccess={false}>
-            <div className="cursor-pointer">
+            <div className="cursor-pointer" title="Ver Paquete">
               <Eye /> 
             </div>
       </ViewPaqueteria>
@@ -53,12 +52,6 @@ const OptionsCell: React.FC<{ row: any }> = ({ row}) => {
       <DevolucionPaqModal 
               title="Devolver paquete"
               data={paquete} />
-		{/* 
-
-		
-		
-
-		 */}
 
     </div>
   );
@@ -75,7 +68,14 @@ export const paqueteriaColumns: ColumnDef<Paquete_record>[] = [
 		},
 		enableSorting: false,
 		enableHiding: false,
-	},
+	}, {
+    accessorKey: "folio",
+    header: "Folio",
+    cell: ({ row }) => (
+      <div className="capitalize">{row.getValue("folio")}</div>
+    ),
+    enableSorting: true,
+  },
   {
     accessorKey: "quien_recibe_paqueteria",
     header: "Destinatario",
@@ -96,8 +96,11 @@ export const paqueteriaColumns: ColumnDef<Paquete_record>[] = [
       accessorKey:"foto_perdido",
       header:"Fotografía",
       cell: ({ row }) => {
-        const foto = row.original.fotografia_paqueteria;
-          return <ViewImage imageUrl={foto?? []} />;
+        let foto = null
+        if(row.original.fotografia_paqueteria){
+          foto = row.original?.fotografia_paqueteria.length==0 ? [{file_url:"/package.svg", file_name:""}]: row.original.fotografia_paqueteria
+        }
+        return <ViewImage imageUrl={foto?? []} />;
       }
     },
     // {

@@ -120,7 +120,6 @@ const PaseUpdate = () =>{
 
 	const [mostrarAviso, setMostrarAviso] = useState(false);
 	const [radioSelected, setRadioSelected] = useState("3 meses");		
-	// const [showRadioGroup, setShowRadioGroup] = useState(false);
 
 	const onDescargarPNG = async (imgUrl: string) => {
 		try {
@@ -138,9 +137,6 @@ const PaseUpdate = () =>{
 			a.remove();
 			URL.revokeObjectURL(url);
 			toast.success("¡Pase descargado correctamente!");
-			setTimeout(() => {
-			window.location.href = "https://www.soter.mx/";
-			}, 1000);
 		} catch (error) {
 			toast.error("Error al descargar la imagen: " + error);
 		}
@@ -248,7 +244,6 @@ const PaseUpdate = () =>{
 	});
 
 	const onSubmit = (data: z.infer<typeof formSchema>) => {
-		console.log("data acepto_aviso_privacidad", data.acepto_aviso_privacidad)
 			const formattedData = {
 				grupo_vehiculos: vehicles,
 				grupo_equipos: equipos,
@@ -276,11 +271,12 @@ const PaseUpdate = () =>{
 			}else{
 				setErrorIdentificacion("-")
 			}
+			
 			setModalData(formattedData);
+			setIsSuccess(true)
 	};
 
 	const updateInfoActivePass= () => {
-		console.log("actualizar info de pase activo")
 		const formattedData = {
 			grupo_vehiculos: vehicles,
 			grupo_equipos: equipos,
@@ -298,7 +294,9 @@ const PaseUpdate = () =>{
 
 
 	useEffect(()=>{
-		console.log("errors",form.formState.errors)
+		if(form.formState.errors){
+			console.log("error",form.formState.errors)
+		}
 	}, [form.formState.errors])
 
 
@@ -356,9 +354,6 @@ const PaseUpdate = () =>{
 			onDescargarPDF(downloadUrl)
 			setEnablePdf(false)
 			toast.success("¡PDF descargado correctamente!");
-			setTimeout(() => {
-				window.location.href = "https://www.soter.mx/";
-			}, 1000);
 		}
 	},[downloadUrl])
 
@@ -581,7 +576,7 @@ return (
 			<>
 			<div className="flex flex-col flex-wrap space-y-5 max-w-5xl mx-auto">
 				<div className="text-center">
-						<h1 className="font-bold text-2xl">Pase de Entrada</h1>
+						<h1 className="font-bold text-2xl">Pase De Entrada</h1>
 				</div>
 				<div className="flex flex-col space-y-5">
 					{/* Nombre */}
@@ -828,7 +823,7 @@ return (
 			</>
 		): (<>
 		{dataCatalogos?.pass_selected?.estatus =="activo" || dataCatalogos?.pass_selected?.estatus =="vencido" ?(<>
-			<div className="flex flex-col items-center justify-start  space-y-5 max-w-2xl mx-auto h-screen">
+			<div className="flex flex-col items-center justify-start  space-y-3 max-w-2xl mx-auto h-screen">
 					<span className="font-bold text-3xl text-slate-800">{dataCatalogos?.pass_selected?.nombre}</span>
 					<div>
 						<p className="font-bold whitespace-nowrap">Visita General </p>
@@ -890,7 +885,7 @@ return (
 						</>}
 					</div>
 
-					<div className="flex flex-col lg:flex-row gap-6">
+					<div className="flex flex-row gap-3">
 						<button type="button" onClick={handleClickGoogleButton}>
 							<Image src="/esES_add_to_google_wallet_add-wallet-badge.png" alt="Add to Google Wallet" width={150} height={150} className="mt-2" />
 						</button>
@@ -917,7 +912,7 @@ return (
 						</Button>
 
 						<Button
-						className={`w-40 m-0 ${
+						className={`hidden w-40 m-0 ${
 							isActualizarOpen ? "bg-red-500 hover:bg-red-600" : "bg-blue-500 hover:bg-blue-600"
 						}`}
 						type="button"

@@ -21,7 +21,7 @@ import {
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import LoadImage from "../upload-Image";
 import { Imagen } from "@/lib/update-pass";
 import { Loader2 } from "lucide-react";
@@ -39,6 +39,8 @@ interface IncidenciaModalProps {
 	title: string;
 	folio: string;
 	children: React.ReactNode;
+	isSuccess: boolean;
+	setIsSuccess: Dispatch<SetStateAction<boolean>>;
 }
 
 const formSchema = z.object({
@@ -63,9 +65,11 @@ const formSchema = z.object({
 export const SeguimientoIncidenciaModal: React.FC<IncidenciaModalProps> = ({
 	title,
 	folio,
-	children
+	children,
+	isSuccess,
+	setIsSuccess
 }) => {
-	const [isSuccess, setIsSuccess] = useState(false)
+	// const [isSuccess, setIsSuccess] = useState(false)
 	const [evidencia, setEvidencia] = useState<Imagen[]>([]);
 	const [documento, setDocumento] = useState<Imagen[]>([]);
 	const [date, setDate] = useState<Date | "">("");
@@ -92,10 +96,12 @@ export const SeguimientoIncidenciaModal: React.FC<IncidenciaModalProps> = ({
 			queryClient.invalidateQueries({ queryKey: ["getListIncidencias"] });
 			queryClient.invalidateQueries({ queryKey: ["getStatsIncidencias"] });
 			toast.success("Seguimiento creado correctamente.");
+			setIsSuccess(false)
 		},
 		onError: (err) => {
 			console.error("Error al crear seguimiento:", err);
 			toast.error(err.message || "Hubo un error al crear el seguimiento.");
+			setIsSuccess(false)
 
 		},
 		onSettled: () => {
@@ -127,12 +133,6 @@ export const SeguimientoIncidenciaModal: React.FC<IncidenciaModalProps> = ({
 		}
 	}, [isSuccess, reset])
 
-	useEffect(() => {
-		if (!isLoading) {
-			handleClose()
-		}
-	}, [isLoading])
-
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		if (date) {
 			const formatData = {
@@ -143,7 +143,7 @@ export const SeguimientoIncidenciaModal: React.FC<IncidenciaModalProps> = ({
 				incidencia_documento_solucion: documento,
 				incidencia_evidencia_solucion: evidencia
 			}
-			seguimientoIncidenciaMutation.mutate({ incidencia_grupo_seguimiento: formatData, folio: folio })
+			seguimientoIncidenciaMutation.mutate({ incidencia_grupo_seguimiento: formatData, folio: folio });
 		} else {
 			form.setError("fechaInicioIncidenciaCompleta", { type: "manual", message: "Fecha es un campo requerido." });
 		}
@@ -153,11 +153,6 @@ export const SeguimientoIncidenciaModal: React.FC<IncidenciaModalProps> = ({
 		setIsSuccess(false);
 	};
 
-	useEffect(() => {
-		if (!isLoading) {
-			handleClose()
-		}
-	}, [isLoading])
 
 	return (
 		<Dialog onOpenChange={setIsSuccess} open={isSuccess}>
@@ -172,7 +167,12 @@ export const SeguimientoIncidenciaModal: React.FC<IncidenciaModalProps> = ({
 
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} >
+						<div className="w-full flex gap-2 mb-2">
+							<p className="font-bold ">Folio: </p>
+							<p  className="font-bold text-blue-500">{folio} </p>
+						</div>
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+						
 							<FormField
 								control={form.control}
 								name="incidencia_folio_accion_correctiva"
@@ -216,7 +216,7 @@ export const SeguimientoIncidenciaModal: React.FC<IncidenciaModalProps> = ({
 								name="fechaInicioIncidenciaCompleta"
 								render={() => (
 									<FormItem>
-										<FormLabel>* Fecha</FormLabel>
+										<FormLabel>* Fecha desde:</FormLabel>
 										<FormControl>
 											{/* <Input type="datetime-local" placeholder="Fecha"  /> */}
 											<DateTime date={date} setDate={setDate} />
@@ -231,7 +231,7 @@ export const SeguimientoIncidenciaModal: React.FC<IncidenciaModalProps> = ({
 								name="fechaFinIncidenciaCompleta"
 								render={() => (
 									<FormItem>
-										<FormLabel>* Fecha</FormLabel>
+										<FormLabel>* Fecha hasta:</FormLabel>
 										<FormControl>
 											{/* <Input type="datetime-local" placeholder="Fecha" /> */}
 											<DateTime date={dateFin} setDate={setDateFin} />

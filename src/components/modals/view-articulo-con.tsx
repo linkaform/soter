@@ -35,6 +35,10 @@ export const ViewArticuloCon: React.FC<ViewArtModalProps> = ({
 
         <div className="flex justify-between">
             <div className="w-full flex flex-col gap-3">
+                <div className="w-full flex gap-2">
+                  <p className="font-bold ">Folio: </p>
+                  <p  className="font-bold text-blue-500">{data?.folio} </p>
+                </div>
                 {data?.solicita_concesion ? ( 
                   <div className="w-full flex gap-2">
                       <p className="font-bold">Solicita: <span className="font-normal">{data?.solicita_concesion}</span></p>

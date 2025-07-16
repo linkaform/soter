@@ -1,8 +1,5 @@
-import { AddBadgeModal } from "@/components/modals/add-badge-modal";
 import { EqipmentLocalPassModal } from "@/components/modals/add-local-equipo";
 import { VehicleLocalPassModal } from "@/components/modals/add-local-vehicule";
-import { DoOutModal } from "@/components/modals/do-out-modal";
-import { ReturnGafeteModal } from "@/components/modals/return-gafete-modal";
 import { ViewListBitacoraModal } from "@/components/modals/view-bitacora";
 import { Equipo, Vehiculo } from "@/lib/update-pass";
 import {
@@ -79,7 +76,9 @@ export interface Areas_bitacora {
 	commentario_area: string
 }
 
-const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
+const OptionsCell: React.FC<{ row: any , onReturnGafete: (bitacora: Bitacora_record) => void , 
+	onAddBadgeClick: (bitacora: Bitacora_record) => void , onDoOutClick: (bitacora: Bitacora_record) => void }> = 
+	({ row, onReturnGafete, onAddBadgeClick ,onDoOutClick}) => {
 	const [vehiculos, setVehiculos] = useState<Vehiculo[]>([]);
 	const [equipos, setEquipos] = useState<Equipo[]>([]);
 	const bitacora = row.original;
@@ -91,54 +90,68 @@ const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
 				title="Información de visita"
 				data={bitacora} 
 				>
-					<div className="cursor-pointer">
+					<div className="cursor-pointer" title="Ver Bitacora">
 						<Eye /> 
 					</div>
 			</ViewListBitacoraModal>
 			
 			{ bitacora.status_visita.toLowerCase() !="salida" &&
 			<VehicleLocalPassModal title={"Agregar Vehiculo"} vehicles={vehiculos} setVehiculos={setVehiculos} isAccesos={false} id={bitacora._id} fetch={true}>
-				<Car></Car>
+				<div className="cursor-pointer" title="Agregar Vehiculo"><Car/></div>
 			</VehicleLocalPassModal>}
 
 			{ bitacora.status_visita.toLowerCase() !="salida" &&	
 			<EqipmentLocalPassModal title="Agregar equipo" id={bitacora._id} equipos={equipos} setEquipos={setEquipos} isAccesos={false}> 
-				<Hammer></Hammer>
+				<div className="cursor-pointer" title="Agregar Equipo"><Hammer/></div>
 			</EqipmentLocalPassModal>} 
 					
+			{ bitacora.status_visita.toLowerCase() =="entrada" && bitacora.status_gafete.toLowerCase()=="asignado" ? (
+				<div
+				className="cursor-pointer"
+				title="Regresar Gafete"
+				onClick={() => {
+					onReturnGafete(bitacora)}}
+				>
+					<IdCard className="text-red-700"/> 
+				</div>
+			):(
+			<>
+				<div
+				className="cursor-pointer"
+				title="Agregar Gafete"
+				onClick={() => {
+					onAddBadgeClick(bitacora)}}
+				>
+					<IdCard />
+				</div>
+			</>
+			)}
 
-		{ bitacora.status_visita.toLowerCase() =="entrada" && bitacora.status_gafete.toLowerCase()=="asignado" ? (
-			<ReturnGafeteModal title={"Recibir Gafete"} id_bitacora={bitacora._id}
-				ubicacion={bitacora.ubicacion} area={bitacora.status_visita.toLowerCase() == "entrada" ? bitacora.caseta_entrada : bitacora.caseta_salida || ""} 
-				fecha_salida={bitacora.fecha_salida} gafete={bitacora.id_gafet} locker={bitacora.id_locker||""} tipo_movimiento={bitacora.status_visita.toLowerCase()}> 
-				<IdCard className="text-red-700"/>
-			</ReturnGafeteModal>
-		 ):(
-		 <>
-		 	{ bitacora.status_visita.toLowerCase() =="entrada"? (
-				<AddBadgeModal title={"Gafete"} status={"Disponible"} id_bitacora= {bitacora._id}
-					tipo_movimiento={bitacora.status_visita} ubicacion={bitacora.ubicacion} area={bitacora.status_visita.toLowerCase()=="entrada" ? bitacora.caseta_entrada: bitacora.caseta_salida||""}/>
+			{ !bitacora.fecha_salida ? (
+				<div
+				className="cursor-pointer"
+				title="Registrar Salida"
+				onClick={() => {
+					onDoOutClick(bitacora)}}
+				>
+					<Forward /> 
+				</div>
 			):null}
-		 </>
-		)}
-
-		{ !bitacora.fecha_salida ? (
-			<DoOutModal title={"Registar Salida"} id_bitacora={bitacora.codigo_qr} ubicacion={bitacora.ubicacion} 
-				area={bitacora.status_visita.toLowerCase() == "entrada" ? bitacora.caseta_entrada : bitacora.caseta_salida || ""} fecha_salida={bitacora.fecha_salida}>
-					<Forward />
-				</DoOutModal>
-		):null}
 		</div>
 	);
 };
 
-export const bitacorasColumns: ColumnDef<Bitacora_record>[] = [
+export const getBitacorasColumns = (onReturnGafete: (bitacora: Bitacora_record) => void, 
+	onAddBadgeClick: (bitacora: Bitacora_record) => void, onDoOutClick: (bitacora: Bitacora_record) => void): ColumnDef<Bitacora_record>[] => [
 	{
 		id: "options",
 		header: "Opciones",
 		cell: ({ row }) => {
 			
-			return <OptionsCell row={row} key={row.original._id} />;
+			return <OptionsCell row={row} key={row.original._id} 
+			onReturnGafete={()=>{onReturnGafete(row.original)}} onAddBadgeClick={()=>{onAddBadgeClick(row.original)}} onDoOutClick={()=>{
+				onDoOutClick(row.original)
+			}}/>;
 		},
 		enableSorting: false,
 		enableHiding: false,

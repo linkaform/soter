@@ -8,26 +8,14 @@ import { useShiftStore } from '@/store/useShiftStore'
 
 const NotasPage = () => {
   const { location, area } = useShiftStore()
-  // const hasHydrated = useShiftStore.persist.hasHydrated()
-  // const [isReady, setIsReady] = useState(false)
   const [statusFilter, setStatusFilter] = useState<string>('')
   const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location)
   const [areaSeleccionada, setAreaSeleccionada] = useState(area)
 
-  // useEffect(() => {
-  //   if (hasHydrated) {
-  //     setUbicacionSeleccionada(location)
-  //     setAreaSeleccionada(area)
-  //     setIsReady(true)
-  //   }
-  // }, [hasHydrated, location, area])
-
-  // if (!isReady) return null
-
   return (
     <main className='mt-4 mx-4'>
       <header className='flex flex-col md:flex-row md:justify-between'>
-        <PageTitle title='Listado de Notas' />
+        <PageTitle title='Listado De Notas' />
         <div className='w-full md:w-3/5'>
           <Stats setStatusFilter={setStatusFilter} ubicacionSeleccionada={ubicacionSeleccionada}
             areaSeleccionada={areaSeleccionada}

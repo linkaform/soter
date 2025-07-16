@@ -56,7 +56,6 @@ export const pasesEntradaColumns: ColumnDef<PaseEntrada>[] = [
     header: "Pase",
     cell: ({ row }) => {
       const foto = row.original.fotografia;
-      console.log("fila",row.original)
       const estatus = row.original.estatus ?? "Activo";
       const nombre = row.original.nombre;
       const primeraImagen = foto && foto.length > 0 ? foto[0].file_url : '/nouser.svg';

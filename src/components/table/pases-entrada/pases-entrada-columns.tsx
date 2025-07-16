@@ -48,11 +48,11 @@ export interface PaseEntrada {
   grupo_equipos: string[]; 
   total_entradas?: number;
   limite_de_acceso?: number;
+   pdf_to_img: Imagen[];
 }
 
 const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
   const rowData = row.original;
-  console.log("Option cell", rowData.ubicacion)
   const dataFull= {
     _id:rowData._id,
     folio:rowData.folio,
@@ -93,11 +93,12 @@ const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
     },
     grupo_equipos: rowData.grupo_equipos||[],
     grupo_vehiculos: rowData.grupo_vehiculos||[],
+    pdf_to_img: rowData.pdf_to_img || [],
   }
   return (
     <div className="flex space-x-2">
       <ViewPassModal 
-        title="Pase de entrada"
+        title="Pase De Entrada"
         data={dataFull} 
         isSuccess={false} 
         >
@@ -124,7 +125,7 @@ export const pasesEntradaColumns: ColumnDef<PaseEntrada>[] = [
   },
   {
     accessorKey: "pase",
-    header: "Pase",
+    header: "Foto",
     cell: ({ row }) => {
       const foto = row.original.foto;
       const nombre = row.original.nombre;
@@ -149,7 +150,7 @@ export const pasesEntradaColumns: ColumnDef<PaseEntrada>[] = [
 			<span className="font-bold">{nombre}</span>
 				<div>
 					<Badge
-					className={`text-white text-md ${
+					className={`text-white text-sm ${
 						estatus.toLowerCase() == "vencido"
 						? "bg-red-600 hover:bg-red-600"
 						: estatus.toLowerCase() == "activo"
@@ -246,7 +247,7 @@ export const pasesEntradaColumns: ColumnDef<PaseEntrada>[] = [
           {dias.map((dia, index) => (
             <Badge
               key={index}
-              className="bg-blue-100 text-blue-800 hover:bg-blue-200 text-xs font-semibold px-2.5 py-0.5 rounded-full"
+              className="bg-blue-100 text-blue-800 hover:bg-blue-200 text-sm font-semibold px-2.5 py-0.5 rounded-full"
             >
               {dia}
             </Badge>

@@ -1,4 +1,4 @@
-import { crearFalla, crearSeguimientoFalla, deleteFalla, InputFalla, inputSeguimientoFalla, updateFalla } from "@/lib/fallas";
+import { crearFalla, crearSeguimientoFalla, InputFalla, inputSeguimientoFalla, updateFalla } from "@/lib/fallas";
 import { getListFallas } from "@/lib/get-list-fallas";
 import { errorMsj } from "@/lib/utils";
 import { useShiftStore } from "@/store/useShiftStore";
@@ -22,10 +22,6 @@ export const useFallas = (location:string, area:string,status:string, enableList
               return Array.isArray(data.response?.data)? data.response?.data : [];
             }
         },
-        refetchOnWindowFocus: true,
-        refetchInterval: 15000,
-        refetchOnReconnect: true,
-        staleTime: 1000 * 60 * 5,
     });
 
      //Crear Falla
@@ -78,7 +74,7 @@ export const useFallas = (location:string, area:string,status:string, enableList
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["getListFallas"] });
           queryClient.invalidateQueries({ queryKey: ["getStatsFallas"] });
-          toast.success("Falla creada correctamente.");
+          toast.success("Falla editada correctamente.");
         },
         onError: (err) => {
           console.error("Error al editar falla:", err);
@@ -90,36 +86,7 @@ export const useFallas = (location:string, area:string,status:string, enableList
         },
       });
 
-      //Eliminar Falla
-     const eliminarFallaMutation = useMutation({
-        mutationFn: async ({folio} : {folio:string[] }) => {
-            const response = await deleteFalla(folio);
-            const hasError= response.response.data.status_code
-
-            if(hasError == 400|| hasError == 401){
-                const textMsj = errorMsj(response.response.data) 
-                throw new Error(`Error al eliminar falla, Error: ${textMsj?.text}`);
-            }else{
-                return response.response?.data
-            }
-        },
-        onMutate: () => {
-          setLoading(true);
-        },
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["getListFallas"] });
-          queryClient.invalidateQueries({ queryKey: ["getStatsFallas"] });
-          toast.success("Falla eliminada correctamente.");
-        },
-        onError: (err) => {
-          console.error("Error al eliminar falla:", err);
-          toast.error(err.message || "Hubo un error al eliminar la falla.");
-    
-        },
-        onSettled: () => {
-          setLoading(false);
-        },
-      });
+ 
 
        //Crear Seguimiento
      const seguimientoFallaMutation = useMutation({
@@ -162,8 +129,6 @@ export const useFallas = (location:string, area:string,status:string, enableList
         isLoading,
         //Editar Falla
         editarFallaMutation,
-        //Eliminar Falla
-        eliminarFallaMutation,
         //Crear seguimiento
         seguimientoFallaMutation
     }

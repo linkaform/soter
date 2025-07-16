@@ -27,11 +27,6 @@ export const useCatalogoPaseAreaLocation = (location:string, enableLocation:bool
           return data.response?.data.areas_by_location
         }
     },
-   
-    refetchOnWindowFocus: true, 
-    // refetchInterval: 60000,
-    refetchOnReconnect: true, 
-    // staleTime: 1000 * 60 * 5, 
   });
 
   const { data: dataLocations, isLoading:isLoadingLocations, error:errorLocations, isFetching:isFetchingLocations, refetch:refetchLocations } = useQuery<any>({

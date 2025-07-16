@@ -16,7 +16,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
+import { Switch } from "@/components/ui/switch"
 import {
 	CircleDollarSign,
 	VenetianMask,
@@ -46,7 +46,7 @@ import {
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Textarea } from "../ui/textarea";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
@@ -57,17 +57,20 @@ import { format } from 'date-fns';
 import DateTime from "../dateTime";
 import LoadFile from "../upload-file";
 import { Loader2 } from "lucide-react";
-import { AccionesTomadas, PersonasInvolucradas } from "@/lib/incidencias";
+import { AccionesTomadas, Depositos, PersonasInvolucradas } from "@/lib/incidencias";
 import PersonasInvolucradasList from "../personas-involucradas-list";
 import AccionesTomadasList from "../acciones-tomadas-list";
-import { toast } from "sonner";
 import { useShiftStore } from "@/store/useShiftStore";
-import { useInciencias } from "@/hooks/useIncidencias";
+import { useInciencias } from "@/hooks/Incidencias/useIncidencias";
 // import DepositosList from "../depositos-list";
 import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
 import { Input } from "../ui/input";
 import { Slider } from "../slider";
 import { useCatalogoInciencias } from "@/hooks/useCatalogoIncidencias";
+import { PersonaExtraviadaFields } from "./persona-extraviada";
+import { RoboDeCableado } from "./robo-de-cableado";
+import { RoboDeVehiculo } from "./robo-de-vehiculo";
+import DepositosList from "../depositos-list";
 
 interface AddIncidenciaModalProps {
   	title: string;
@@ -76,7 +79,7 @@ interface AddIncidenciaModalProps {
 	onClose: ()=> void;
 }
 
- const categoriasConIconos = [
+export const categoriasConIconos = [
 	{
 	  nombre: "Fraude y extorsión",
 	  icon: <CircleDollarSign />,
@@ -138,7 +141,7 @@ interface AddIncidenciaModalProps {
 	  id: 12
 	}
   ];
-  const subCategoriasConIconos = [
+export const subCategoriasConIconos = [
 	{
 	  nombre: "Vandalismo",
 	  icon: <SprayCan />,
@@ -199,7 +202,7 @@ interface AddIncidenciaModalProps {
 export const formSchema = z.object({
 	reporta_incidencia: z.string().optional(),
 	fecha_hora_incidencia: z.string().optional(),
-	ubicacion_incidencia: z.string().min(1, { message: "Comentario es obligatorio" }),
+	ubicacion_incidencia: z.string().optional(),
 	area_incidencia: z.string().min(1, { message: "Comentario es obligatorio" }), 
 	evidencia_incidencia: z.array(
 	  z.object({
@@ -231,23 +234,26 @@ export const formSchema = z.object({
 		  tipo_deposito: z.string().optional(),
 		})
 	  ).optional(),
-	notificacion_incidencia: z.string().min(1, { message: "Este campo es requerido" }),
+	notificacion_incidencia: z.string().optional(),
 	prioridad_incidencia: z.string().optional(),
 	dano_incidencia: z.string().optional(),
 	tipo_dano_incidencia: z.string().optional(),
 	comentario_incidencia: z.string().min(1, { message: "Este campo es requerido" }),
-	incidencia: z.string().min(1, { message: "La ubicación es obligatoria" }),
+	incidencia: z.string().optional(),
 	tags: z.array(z.string()).optional(),
 
-	//PersonaExtraviada
-	nombre_completo: z.string().optional(),
-	edad: z.number().optional(),
+	categoria:z.string().optional(),
+	sub_categoria:z.string().optional(),
+	incidente:z.string().optional(),
+	//PersonaExtraviado
+	nombre_completo_persona_extraviada: z.string().optional(),
+	edad: z.string().optional(),
 	color_piel: z.string().optional(),
 	color_cabello: z.string().optional(),
 	estatura_aproximada: z.string().optional(),
 	descripcion_fisica_vestimenta: z.string().optional(),
 	nombre_completo_responsable: z.string().optional(),
-	prentesco: z.string().optional(),
+	parentesco: z.string().optional(),
 	num_doc_identidad: z.string().optional(),
 	telefono: z.string().optional(),
 	info_coincide_con_videos: z.string().optional(),
@@ -277,31 +283,47 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const [date, setDate] = useState<Date|"">("");
 
 	// const [incidencia, setIncidencia] = useState("")
-	// const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState("");
-	const { dataAreas:areas, isLoadingAreas:loadingAreas} = useCatalogoPaseAreaLocation(location, true,  location?true:false);
+	const[ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location)
+	const { dataAreas:areas, dataLocations:ubicaciones,isLoadingAreas:loadingAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, isSuccess,  location?true:false);
 	// const [catAreas, setCatAreas] = useState<any| string[]>(areas);
 	const [personasInvolucradas, setPersonasInvolucradas] = useState<PersonasInvolucradas[]>([])
 	const [accionesTomadas, setAccionesTomadas] = useState<AccionesTomadas[]>([])
-	// const [depositos, setDepositos] = useState<Depositos[]>([])
-	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado, error:errorAreEmpleado } = useCatalogoAreaEmpleado(isSuccess, location, "Incidencias");
-	const { createIncidenciaMutation , loading} = useInciencias("","",[], isSuccess, "", "", "");
+	const [depositos, setDepositos] = useState<Depositos[]>([])
+	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado } = useCatalogoAreaEmpleado(isSuccess, location, "Incidencias");
+	const { createIncidenciaMutation , loading} = useInciencias("","",[], "", "", "");
 	
 	const [search, setSearch]= useState("")
-	const [catCategorias, setCatCategorias] = useState<any>([])
 	const [catSubCategorias, setSubCatCategorias] = useState<any>([])
 	const [catSubIncidences, setCatSubIncidences] = useState<any>([])
 
 	const [subCategoria, setSubCategoria]= useState("")
 	const [categoria, setCategoria]= useState("")
 	const [selectedIncidencia, setSelectedIncidencia]= useState("")
-
-	const { catIncidencias, isLoadingCatIncidencias } = useCatalogoInciencias(true, categoria, subCategoria);
-
+	const { catIncidencias, isLoadingCatIncidencias } = useCatalogoInciencias(isSuccess, categoria, subCategoria);
+	const [catCategorias, setCatCategorias] = useState<any[]>([])
+	
 	const [selectedNotificacion, setSelectedNotification] = useState("no")
 	const [value, setValue] = useState([50])
 	const [inputTag, setInputTag] = useState('');
 	const [tagsSeleccionados, setTagsSeleccionados] = useState<string[]>([]);
 
+
+
+	const resetStates = ()=>{
+		setSearch("")
+		setSubCategoria("")
+		setCategoria("")
+		setSelectedIncidencia("")
+		console.log("cxatIncidencias", catIncidencias)
+		const catIncidenciasIcons = categoriasConIconos?.filter((cat) =>
+			catIncidencias?.data.includes(cat.nombre)
+			);
+		
+		setCatCategorias(catIncidenciasIcons)
+		setCatSubIncidences([])
+		setSubCatCategorias([])
+		setDepositos([])
+	}
 	const agregarTag = () => {
 		const nuevoTag = inputTag.trim();
 		if (nuevoTag && !tagsSeleccionados.includes(nuevoTag)) {
@@ -311,31 +333,33 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	};
   
 	useEffect(()=>{
-		if(catIncidencias && search==""){
-			const catIncidenciasIcons = categoriasConIconos.filter((cat) =>
-				catIncidencias.data.includes(cat.nombre)
-			  );
-			setCatCategorias(catIncidenciasIcons)
-		}
-		if(catIncidencias && search=="cat"){
-			console.log("tipo Incidencas",catIncidencias.tipo)
-			if (catIncidencias.tipo=="incidence"){
-				console.log("tipo Incidencas",catIncidencias.data)
-				setCatSubIncidences(catIncidencias.data)
-			}
-			if(catIncidencias.tipo="sub_category"){
-				const subCatIncidenciasIcons = subCategoriasConIconos.filter((cat) =>
+		if(catIncidencias){
+			if(search==""){
+				const catIncidenciasIcons = categoriasConIconos.filter((cat) =>
 					catIncidencias.data.includes(cat.nombre)
-				  );
-				setSubCatCategorias(subCatIncidenciasIcons)
+				);
+				if(catIncidenciasIcons.length>0){
+					setCatCategorias(catIncidenciasIcons)
+				}
+			}else if(search=="cat" || search=="subCat"){
+				if(catIncidencias.type=="incidence"){
+					const formattedSubIncidentes = catIncidencias.data.map((nombre:string) => ({
+						id: nombre,
+						nombre,
+						icono: ""
+					  }));
+					setSearch("subCat")
+					setSubCatCategorias([])
+					setCatSubIncidences(formattedSubIncidentes)
+				}else if (catIncidencias.type == "sub_catalog"){
+					const subCatIncidenciasIcons = subCategoriasConIconos.filter((cat) =>
+						catIncidencias.data.includes(cat.nombre)
+					);
+					setSearch("cat")
+					setSubCatCategorias(subCatIncidenciasIcons)
+				}
 			}
-			console.log("tipo Incidencas2",catIncidencias.tipo)
-			
 		}
-		if(catIncidencias && search=="subCat"){
-			setCatSubIncidences(catIncidencias.data)
-		}
-
 	},[catIncidencias] )
 
 	const quitarTag = (tag: string) => {
@@ -360,29 +384,57 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 			documento_incidencia:documento,
 			prioridad_incidencia:"",
 			notificacion_incidencia:"",
-			datos_deposito_incidencia: [],
-			tags:[]
+			datos_deposito_incidencia: depositos,
+			tags:[],
+			categoria:"",
+			sub_categoria:"",
+			incidente:"",
+
+			nombre_completo_persona_extraviada:"",
+			edad:"",
+			color_piel:"",
+			color_cabello:"",
+			estatura_aproximada:"",
+			descripcion_fisica_vestimenta:"",
+			nombre_completo_responsable:"",
+			parentesco:"",
+			num_doc_identidad:"",
+			telefono:"",
+			info_coincide_con_videos:"",
+			responsable_que_entrega:"",
+			responsable_que_recibe:"",
+		
+			//Robo de cableado
+			valor_estimado:"",
+			pertenencias_sustraidas:"",
+			//robo de vehiculo
+			placas:"",
+			tipo:"",
+			marca:"",
+			modelo:"",
+			color:"",
+
 		},
 	});
 
 	const { reset } = form;
 
 	useEffect(()=>{
-		if(isSuccess){
+		if(!isSuccess)
+			resetStates()
 			reset()
 			setDate(new Date())
 			setEvidencia([])
 			setDocumento([])
-		}
-		
-	},[isSuccess])
+			console.log("ubicacion seleccionada", location)
+			setUbicacionSeleccionada(location)
+	},[isSuccess]);	
 
 	useEffect(()=>{
-		if(errorAreEmpleado){
-			toast.error("Error al cargar catalogo de area empleado")
-			handleClose()
+		if(form.formState.errors){
+			console.log("console log", form.formState.errors)
 		}
-	},[errorAreEmpleado])
+	},[form.formState.errors])
 
 	useEffect(()=>{
 		if(!loading){
@@ -393,6 +445,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const handleToggleNotifications = (value:string)=>{
 		setSelectedNotification(value);
 	}
+
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		let formattedDate=""
 		if(date){
@@ -400,9 +453,9 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 			const formatData ={
 					reporta_incidencia: values.reporta_incidencia||"",
 					fecha_hora_incidencia:formattedDate||"",
-					ubicacion_incidencia:values.ubicacion_incidencia||"",
+					ubicacion_incidencia:ubicacionSeleccionada||"",
 					area_incidencia: values.area_incidencia||"",
-					incidencia:values.incidencia||"",
+					incidencia:selectedIncidencia||"",
 					comentario_incidencia: values.comentario_incidencia||"",
 					tipo_dano_incidencia: values.tipo_dano_incidencia||"",
 					dano_incidencia:values.dano_incidencia||"",
@@ -411,9 +464,36 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 					evidencia_incidencia:evidencia||[],
 					documento_incidencia:documento||[],
 					prioridad_incidencia:getNivel(value[0])||"",
-					notificacion_incidencia:values.notificacion_incidencia||"",
-					datos_deposito_incidencia: [],
-					tags:tagsSeleccionados
+					notificacion_incidencia:selectedNotificacion||"",
+					datos_deposito_incidencia: depositos,
+					tags:tagsSeleccionados,
+					categoria:categoria,
+					sub_categoria:subCategoria,
+					incidente:selectedIncidencia,
+
+					nombre_completo_persona_extraviada: values.nombre_completo_persona_extraviada,
+					edad: values.edad,
+					color_piel: values.color_piel,
+					color_cabello: values.color_cabello,
+					estatura_aproximada: values.estatura_aproximada,
+					descripcion_fisica_vestimenta: values.descripcion_fisica_vestimenta,
+					nombre_completo_responsable: values.nombre_completo_responsable,
+					parentesco: values.parentesco,
+					num_doc_identidad: values.num_doc_identidad,
+					telefono: values.telefono,
+					info_coincide_con_videos: values.info_coincide_con_videos,
+					responsable_que_entrega: values.responsable_que_entrega,
+					responsable_que_recibe: values.responsable_que_recibe,
+				
+					//Robo de cableado
+					valor_estimado: values.valor_estimado,
+					pertenencias_sustraidas: values.pertenencias_sustraidas,
+					//robo de vehiculo
+					placas: values.placas,
+					tipo: values.tipo,
+					marca: values.marca,
+					modelo: values.modelo,
+					color: values.color,
 				}
 				createIncidenciaMutation.mutate({ data_incidencia: formatData });
 		}else{
@@ -424,14 +504,16 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const handleClose = () => {
 		setIsSuccess(false); 
 	};
+
 	const getNivel = (val: number) => {
 		if (val < 35) return "Baja"
 		if (val < 70) return "Media"
 		return "Alta"
 	}
+
   return (
     <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
-      <DialogContent className="max-w-2xl overflow-y-auto max-h-[80vh] flex flex-col " aria-describedby="">
+      <DialogContent className="max-w-4xl overflow-y-auto max-h-[80vh] min-h-[80vh]  flex flex-col overflow-hidden" aria-describedby="">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center font-bold">
             {title}
@@ -444,10 +526,10 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 		   		</div>
 			): (
 				<div className="flex-grow overflow-y-auto">
-					{search =="" &&
+					{!selectedIncidencia && search =="" &&
 						<>
 							
-							<div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+							<div className="grid grid-cols-2 md:grid-cols-3 gap-4 ">
 								{catCategorias.map((cat:any) => (
 									<div
 									key={cat.id}
@@ -467,12 +549,11 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 						</>
 					}
 
-					{ search == "cat" &&
+					{ !selectedIncidencia && search == "cat" &&
 						<>
 							<button
 							onClick={() => {
 								setSearch("");  
-								setCategoria("");
 								setSelectedIncidencia("")
 								}
 							}
@@ -501,12 +582,17 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 						</>
 					}
 
-					{ search == "subCat" &&
+					{!selectedIncidencia &&  search == "subCat" &&
 						<>
-						<button
+							<button
 							onClick={() => {
-								setSearch("cat");  
+								if(catSubCategorias.length==0){
+									setSearch("");
+								}else{
+									setSearch("cat");
+								}
 								setSubCategoria("")
+
 								setSelectedIncidencia("")
 								}
 							}
@@ -515,29 +601,29 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 								<ChevronLeft className="w-5 h-5" />
 								<span>Atrás</span>
 							</button>
-						<div className="flex flex-col w-full">
-							{catSubIncidences?.map((cat:any) => (
-								<div
-								key={cat}
-								onClick={() => { 
-									setSearch("incidencia")
-									setSelectedIncidencia(cat)
-								}}
-								className="p-1 bg-white rounded hover:bg-gray-100 cursor-pointer flex justify-between"
-								>
-									<div className="text-sm font-medium">{cat}</div>
+							<div className="flex flex-col w-full">
+								{catSubIncidences?.map((cat:any) => (
+									<div
+									key={cat.id}
+									onClick={() => { 
+										setSearch("incidencia")
+										setSelectedIncidencia(cat.nombre)
+									}}
+									className="p-1 bg-white rounded hover:bg-gray-100 cursor-pointer flex justify-between"
+									>
+									<div className="text-sm font-medium">{cat.nombre}</div>
 									<ChevronRight className="w-4 h-4 text-gray-500" />
 
-								</div>
-							))}
-						</div>
+									</div>
+								))}
+							</div>
 						</>
 					}
 				</div>
 			)}
 			{selectedIncidencia && (
 				<>
-					<div className="flex-grow overflow-y-auto">
+					<div className="flex-grow overflow-y-auto p-1">
 						<div className="flex gap-2 mb-4">
 							<CircleAlert />
 							Incidente: <span className="font-bold"> {selectedIncidencia}</span>
@@ -594,7 +680,37 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 										</FormItem>
 									)}
 								/>	
-
+								<FormField
+									control={form.control}
+									name="ubicacion_incidencia"
+									render={({ field }:any) => (
+										<FormItem>
+											<FormLabel>Ubicacion:</FormLabel>
+											<FormControl>
+											<Select {...field} className="input"
+												onValueChange={(value:string) => {
+												field.onChange(value); 
+												setUbicacionSeleccionada(value); 
+											}}
+											value={ubicacionSeleccionada} 
+										>
+											<SelectTrigger className="w-full">
+												{loadingUbicaciones?
+												<SelectValue placeholder="Cargando ubicaciones..." />:<SelectValue placeholder="Selecciona una ubicación" />}
+											</SelectTrigger>
+											<SelectContent>
+											{ubicaciones?.map((vehiculo:string, index:number) => (
+												<SelectItem key={index} value={vehiculo}>
+													{vehiculo}
+												</SelectItem>
+											))}
+											</SelectContent>
+										</Select>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
 								<FormField
 									control={form.control}
 									name="area_incidencia"
@@ -646,7 +762,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 									defaultValue="media"
 									render={() => (
 										<FormItem className="w-full">
-											<div className="text-sm font-medium mb-7">
+												<div className="text-sm font-medium mb-7">
 													Importancia: <span className="font-bold">{getNivel(value[0])}</span>
 												</div> 
 											<FormControl>
@@ -681,7 +797,6 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 								)}
 								/>
 
-			
 								<LoadImage
 									id="evidencia" 
 									titulo={"Evidencia"} 
@@ -699,55 +814,8 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 									docArray={documento}
 									limit={10}/>
 
-								{/* <FormField
-									control={form.control}
-									name="incidencia"
-									render={({ field }:any) => (
-										<FormItem className="w-full">
-											<FormLabel>Incidencia: *</FormLabel>
-											<FormControl>
-											<Select {...field} className="input"
-												onValueChange={(value:string) => {
-												field.onChange(value);
-												if(value=="Depósitos") {
-													setIncidencia(value)
-												}
-											}}
-											value={field.value} 
-										>
-											<SelectTrigger className="w-full">
-												{isLoadingCatIncidencias ? (
-													<SelectValue placeholder="Cargando incidencias..." />
-												):
-												(
-													<SelectValue placeholder="Selecciona una incidencia" />
-												)}
-											</SelectTrigger>
-											<SelectContent>
-											{catIncidencias?.map((vehiculo:string, index:number) => {
-												return (
-													<SelectItem key={index} value={vehiculo}>
-														{vehiculo}
-													</SelectItem>
-												)
-											})}
-											</SelectContent>
-										</Select>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>	 */}
-
-								
-								{/* {incidencia=="Depósitos" && 
-								<div className="col-span-1 md:col-span-2">
-									<DepositosList depositos={depositos} setDepositos={setDepositos} ></DepositosList>
-								</div>
-								} */}
 
 								<div className="space-y-3">
-								{/* Input para escribir tag */}
 									<div className="text-sm font-medium ">
 										Tags: 
 									</div> 
@@ -765,96 +833,57 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 									/>
 									<Button type="button" onClick={agregarTag}>Agregar</Button>
 								</div>
-
-								{/* Tags seleccionados */}
-								<div className="flex flex-wrap gap-2">
-									
-									{tagsSeleccionados.map((tag, index) => (
-									<div
-										key={index}
-										className="flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
-									>
-										{tag}
-										<button
-										onClick={() => quitarTag(tag)}
-										className="ml-2 text-blue-500 hover:text-blue-700 font-bold"
+									<div className="flex flex-wrap gap-2">
+										{tagsSeleccionados.map((tag, index) => (
+										<div
+											key={index}
+											className="flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
 										>
-										&times;
-										</button>
+											{tag}
+											<button
+											onClick={() => quitarTag(tag)}
+											className="ml-2 text-blue-500 hover:text-blue-700 font-bold"
+											>
+											&times;
+											</button>
+										</div>
+										))}
 									</div>
-									))}
 								</div>
-								</div>
-
-								
 
 							
 								<div className="flex items-center flex-wrap gap-5">
-										<FormLabel>Visita de: </FormLabel>
-										<Controller
-											control={form.control}
-											name="notificacion_incidencia"
-											render={() => (
-												<FormItem>
-													<Button
-														type="button"
-														onClick={()=>{handleToggleNotifications("no")}}
-														className={`px-4 py-2 rounded-md transition-all duration-300 ${
-														selectedNotificacion=="no" ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
-														} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)] mr-2`}
-													>
-														<div className="flex flex-wrap items-center">
-														{selectedNotificacion =="no" ? (
-															<><div className="">No</div></>
-														):(
-															<><div className="text-blue-600">No</div></>
-														)}
-															
-														</div>
-													</Button>
-													<Button
-														type="button"
-														onClick={()=>{handleToggleNotifications("correo")}}
-														className={`px-4 py-2 rounded-md transition-all duration-300 ${
-															selectedNotificacion=="correo" ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
-														} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]  mr-2`}
-													>
-														<div className="flex flex-wrap items-center">
-														{selectedNotificacion =="correo"? (
-															<><div >Correo</div></>
-														):(
-															<><div className="text-blue-600">Correo</div></>
-														)}
-															
-														</div>
-													</Button>
-												</FormItem>
-											)}
+									<FormLabel>Notificaciones: {`(No/Correo)`}:  </FormLabel>
+										<Switch
+											defaultChecked={false}
+											onCheckedChange={()=>{handleToggleNotifications("no")}}
+											aria-readonly
 										/>
+								</div>
+      
+								{selectedIncidencia =="Persona extraviada" && (
+									<div className="col-span-2 w-full">
+										<PersonaExtraviadaFields control={form.control}></PersonaExtraviadaFields>
 									</div>
-											{/* <Select {...field} className="input"
-												onValueChange={(value:string) => {
-												field.onChange(value); 
-											}}
-											value={field.value} 
-										>
-											<SelectTrigger className="w-full">
-											<SelectValue placeholder="Selecciona una opcion" />
-											</SelectTrigger>
-											<SelectContent>
-												<SelectItem key={"no"} value={"no"}>
-													No
-												</SelectItem>
-												<SelectItem key={"correo"} value={"correo"}>
-												Correo
-											</SelectItem>
-											</SelectContent>
-										</Select> */}
-											{/* </FormControl>
-											<FormMessage />
-										</FormItem> */}
-									{/* )}
-								/>	 */}
+								)}
+								{selectedIncidencia =="Robo de cableado" && (
+									<div className="col-span-2 w-full flex flex-col ">
+										<Button className="w-full bg-blue-500 hover:bg-blue-600 text-white sm:w-2/3 md:w-1/2 lg:w-1/3 mb-2" >
+											Dar seguimiento
+										</Button>
+										<RoboDeCableado control={form.control} ></RoboDeCableado>
+									</div>
+								)}
+								{selectedIncidencia =="Robo de vehículo" && (
+									<div className="col-span-2 w-full">
+										<RoboDeVehiculo control={form.control} ></RoboDeVehiculo>
+									</div>
+								)}
+								{selectedIncidencia=="Depósitos y retiros de valores" && 
+								<div className="col-span-1 md:col-span-2">
+									<DepositosList depositos={depositos} setDepositos={setDepositos} ></DepositosList>
+								</div>
+								}
 							</form>
 						</Form>
 				

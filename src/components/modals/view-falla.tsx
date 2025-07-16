@@ -16,6 +16,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "..
 import { capitalizeFirstLetter, formatDateToText } from "@/lib/utils";
 import { Imagen } from "@/lib/update-pass";
 import { SeguimientoFallaModal } from "./seguimiento-falla";
+import { useState } from "react";
 
 interface ViewFallaModalProps {
   title: string;
@@ -30,6 +31,9 @@ export const ViewFalla: React.FC<ViewFallaModalProps> = ({
   children,
 }) => {
   const seguimientos = data.falla_grupo_seguimiento_formated || []
+
+  const [openModal, setOpenModal] = useState(false)
+
   return (
     <Dialog modal>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -52,7 +56,10 @@ export const ViewFalla: React.FC<ViewFallaModalProps> = ({
 							<p className="font-bold">Subconcepto: <span className="font-normal">{data?.falla_objeto_afectado}</span></p>
 						</div>
 					):null}
-
+					<div className="w-full flex gap-2">
+							<p className="font-bold ">Folio: </p>
+							<p  className="font-bold text-blue-500">{data?.folio} </p>
+					</div>
 					<div className="w-full flex gap-2">
 						<p className="font-bold">Fecha de la falla: <span className="font-normal">{formatDateToText(data?.falla_fecha_hora.slice(0, -3))}</span> </p>
 					</div> 
@@ -158,14 +165,16 @@ export const ViewFalla: React.FC<ViewFallaModalProps> = ({
 			</div>
 
 			<div className="flex justify-end items-center">
-				<div className="cursor-pointer  bg-blue-500 hover:bg-blue-600 text-white mr-5 rounded-sm p-1 w-1/4 text-center">
+				<div className="cursor-pointer  bg-blue-500 hover:bg-blue-600 text-white mr-5 rounded-sm p-1 w-1/4 text-center" onClick={()=>{setOpenModal(!openModal)}}>
 					Agregar seguimiento 
 				</div>
 			</div>
 			<SeguimientoFallaModal
 					title="Seguimiento Falla"
-					data={[]} >
-					<div></div>
+					data={data} 
+					isSuccess={openModal}
+					setIsSuccess={setOpenModal}
+					>
 			</SeguimientoFallaModal>
 			{seguimientos.length > 0 ? (
 			<div className="">

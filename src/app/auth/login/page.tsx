@@ -34,7 +34,7 @@ export default function LoginPage() {
 
   const [showPassword, setShowPassword] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const { setAuth, isAuth } = useAuthStore();
+  const { setAuth } = useAuthStore();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -51,16 +51,13 @@ export default function LoginPage() {
       const response = await getLogin(values.username, values.password);
 
       if (response.success) {
-
-
-        
         setAuth(response.jwt, response.session_id, response.user.name, response.user.email, response.user.id, response.user.thumb);
 
         router.push("/");
       } else {
         form.setError("password", {
           type: "manual",
-          message: "Usuario o contraseña inválida",
+          message: response.error || "Usuario o contraseña inválida",
         });
       }
     } catch (error) {
@@ -70,15 +67,13 @@ export default function LoginPage() {
     }
   };
 
-  console.log(isAuth)
-
   return (
     <Suspense>
       <div className="flex flex-col h-screen items-center justify-center">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <Card className="">
-              <CardContent className="flex w-[500px] h-[600px] flex-col justify-center items-center">
+              <CardContent className="flex  w-full md:w-[400px] h-[600px]  flex-col justify-center items-center ">
                 <Image
                   className="mb-10 flex mx-auto"
                   src="/company_pic_7742.jpg"

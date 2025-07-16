@@ -46,7 +46,7 @@ const OptionsCell: React.FC<{ row: any }> = ({ row}) => {
 		<ViewArticulo 
           title="Información del Artículo"
           data={articulo} isSuccess={false}>
-            <div className="cursor-pointer">
+            <div className="cursor-pointer" title="Ver Artículo">
               <Eye /> 
             </div>
         </ViewArticulo>
@@ -76,6 +76,14 @@ export const pendientesColumns: ColumnDef<Articulo_perdido_record>[] = [
       },
       enableSorting: false,
       enableHiding: false,
+    },
+    {
+      accessorKey: "folio",
+      header: "Folio",
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("folio")}</div>
+      ),
+      enableSorting: true,
     },
     {
       accessorKey: "articulo_perdido",
@@ -110,7 +118,7 @@ export const pendientesColumns: ColumnDef<Articulo_perdido_record>[] = [
       accessorKey:"foto_perdido",
       header:"Fotografía",
       cell: ({ row }) => {
-        const foto = row.original.foto_perdido;
+        const foto = row.original.foto_perdido.length==0 ? [{file_url:"/noarticle.svg", file_name:""}]:row.original.foto_perdido;
           return <ViewImage imageUrl={foto} />;
       }
     },

@@ -18,13 +18,6 @@ import {
   FormMessage,
 } from "../ui/form";
 
-// import {
-//   Select,
-//   SelectContent,
-//   SelectItem,
-//   SelectTrigger,
-//   SelectValue,
-// } from "../ui/select";
 
 import { Input } from "../ui/input";
 
@@ -90,7 +83,6 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
   });
 
   function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log("dataa", data)
     addNewEquipment(data)
     form.reset();
     toast.success(
@@ -100,7 +92,6 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
   }
 
   const addNewEquipment = (data: z.infer<typeof formSchema>) => {
-    console.log("tipo", data)
     if( isAccesos ){
 		setSelectedEquipos([...selectedEquipos,  {
 			color: data.color||"",
@@ -168,20 +159,9 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
     <Dialog open={open} onOpenChange={setOpen} >
     <DialogTrigger asChild onClick={() => setOpen(true)}>
         {children}
-        
       </DialogTrigger>
-
-      <DialogContent className="max-w-xl  overflow-y-auto max-h-[90vh] flex flex-col" aria-describedby=""
-        onInteractOutside={(e) => {
-          if ((e.target as HTMLElement).closest('.react-select__menu')) {
-            e.preventDefault();
-          }
-        }}
-        onPointerDownOutside={(e) => {
-          if ((e.target as HTMLElement).closest('.react-select__menu')) {
-            e.preventDefault();
-          }
-        }}
+      <DialogContent className="max-w-xl max-h-[90vh] flex flex-col" aria-describedby=""
+      
       > 
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center font-bold">
@@ -189,57 +169,43 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex-grow overflow-y-auto p-4">
+        <div className="">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <FormField
+              control={form.control}
+              name="nombre"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel> Nombre del equipo</FormLabel>
+                  <FormControl>
+                    <Input  placeholder="Nombre del equipo"  maxLength={20} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="tipo"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>* Tipo</FormLabel>
-                  <Select
-                    aria-labelledby="aria-label"
-                    inputId="aria-example-input"
-                    name="aria-live-color"
+                    
+                  <FormControl  >
+                    <Select
                     options={catTiposEquipos}
                     onChange={(value:any) =>{
-                      console.log(value.value)
                       field.onChange(value.value);
                     }}
+                     // asegúrate de que esté en el orden correcto
+                    aria-labelledby="tipo-label"
+                    inputId="tipo-input"
+                    name="tipo"
                   />
-                  {/* <Select onValueChange={(value) => field.onChange(value)}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecciona una opción" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {catalogoTipoEquipos().map((equipo) => (
-                        <SelectItem key={equipo} value={equipo}>
-                          {equipo}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>  */}
-               
-                  <FormMessage /> 
-                </FormItem>
-              )}
-            />
-
-
-            <FormField
-              control={form.control}
-              name="nombre"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>* Nombre del Equipo</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Nombre del equipo"  maxLength={20} {...field} />
                   </FormControl>
-
-                  <FormMessage />
+                  <FormMessage /> 
                 </FormItem>
               )}
             />
@@ -250,7 +216,7 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
                 name="marca"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>* Marca</FormLabel>
+                    <FormLabel> Marca</FormLabel>
                     <FormControl>
                       <Input placeholder="Marca" maxLength={20} {...field} />
                     </FormControl>
@@ -264,12 +230,11 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
                 control={form.control}
                 name="modelo"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>* Modelo</FormLabel>
-                    <FormControl>
+                  <FormItem >
+                    <FormLabel> Modelo</FormLabel>
+                    <FormControl >
                       <Input placeholder="Modelo" maxLength={20} {...field} />
                     </FormControl>
-
                     <FormMessage />
                   </FormItem>
                 )}
@@ -280,7 +245,7 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
                 name="serie"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>* Número de Serie</FormLabel>
+                    <FormLabel> Número de serie</FormLabel>
                     <FormControl>
                       <div className="relative">
                         <Input
@@ -294,7 +259,6 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
                           type="button"
                           className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-blue-600"
                           onClick={() => setOpenScan(true)}
-                          tabIndex={-1}
                         >
                           <ScanBarcode size={20} />
                         </button>
@@ -316,7 +280,7 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
                 name="color"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>* Color</FormLabel>
+                    <FormLabel> Color</FormLabel>
                     <Select
                       aria-labelledby="aria-label"
                       inputId="aria-example-input"

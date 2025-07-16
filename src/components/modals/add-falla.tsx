@@ -29,11 +29,11 @@ import { useCatalogoAreaEmpleado } from "@/hooks/useCatalogoAreaEmpleado";
 import { format } from 'date-fns';
 
 import { useCatalogoAreaEmpleadoApoyo } from "@/hooks/useCatalogoAreaEmpleadoApoyo";
-import { useCatalogoFallas } from "@/hooks/useCatalogoFallas";
+import { useCatalogoFallas } from "@/hooks/Fallas/useCatalogoFallas";
 import DateTime from "../dateTime";
 import LoadFile from "../upload-file";
 import { Loader2 } from "lucide-react";
-import { useFallas } from "@/hooks/useFallas";
+import { useFallas } from "@/hooks/Fallas/useFallas";
 import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
 import { useShiftStore } from "@/store/useShiftStore";
 
@@ -78,7 +78,7 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 	const [catalagoSub, setCatalogoSub] = useState<string[]>([]);
 	const [catalagoFallas, setFallas] = useState<string[]>([]);
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState('');
-	const { dataAreas:areas, dataLocations:ubicaciones, isLoadingAreas:loadingAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true,  ubicacionSeleccionada?true:false);
+	const { dataAreas:areas, dataLocations:ubicaciones, isLoadingAreas:loadingAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, isSuccess,  ubicacionSeleccionada?true:false);
 	const { location } = useShiftStore();
 	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado, refetch: refetchAreaEmpleado,  } = useCatalogoAreaEmpleado(isSuccess, location, "Incidencias");
 	const { data:dataAreaEmpleadoApoyo, isLoading:loadingAreaEmpleadoApoyo, refetch: refetchAreaEmpleadoApoyo, } = useCatalogoAreaEmpleadoApoyo(isSuccess);
@@ -119,6 +119,13 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 			refetchFallas()
 		}
 	},[isSuccess])
+
+	// const formatValueLabel = (array:any[])=>{
+	// 	return array.map((val: any) => ({
+	// 		value: val.nombre, 
+	// 		label: val.nombre
+	// 	}));
+	// }
 
 	useEffect(()=>{
 		if(!isLoading){
@@ -177,7 +184,7 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 		<div className="flex-grow overflow-y-auto p-4">
 			<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-5">
-			<FormField
+				<FormField
 					control={form.control}
 					name="falla_ubicacion"
 					render={({ field }:any) => (

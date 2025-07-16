@@ -47,11 +47,11 @@ export const ForceCloseShift: React.FC<StartShiftModalProps> = ({
 
         <div className="mb-2">
           <p className="text-center">
-            La caseta actual no esta disponible. Fue abierta por el guardia{" "}
+          La caseta está activa. Fue abierta por {" "}
             <span className="font-semibold">{boothInfo?.guard_on_dutty}</span> el dia 
-            <span className="font-semibold"> { formatDateToText(boothInfo?.stated_at ||"") }</span>
-            . ¿Desea proceder con el cierre forzado de la caseta? 
-            <span className="font-semibold"> Tenga en cuenta que una vez confirmado, esta accion no podrá deshacerse.</span>
+            <span className="font-semibold"> { formatDateToText(boothInfo?.stated_at ||"").split(",")[0] }</span> a las 
+            <span className="font-semibold"> {formatDateToText(boothInfo?.stated_at ||"").split(",")[1] }</span>
+            . ¿Desea forzar su cierre?  Tenga en cuenta que esta acción es irreversible.
           </p>
         </div>
 

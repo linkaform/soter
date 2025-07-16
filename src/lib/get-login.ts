@@ -1,4 +1,5 @@
 export interface LoginResponse {
+    error: string;
     code: number;
     jwt: string;
     session_id: string;

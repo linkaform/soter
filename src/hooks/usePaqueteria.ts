@@ -23,10 +23,6 @@ export const usePaqueteria = (location:string, area:string, status:string, enabl
               return data ? data?.response?.data : [];
             }
         },
-        refetchOnWindowFocus: true,
-        refetchInterval: 15000,
-        refetchOnReconnect: true,
-        staleTime: 1000 * 60 * 5,
     });
 
      //Crear Paquetes
@@ -110,6 +106,7 @@ export const usePaqueteria = (location:string, area:string, status:string, enabl
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["getListPaqueteria"] });
           queryClient.invalidateQueries({ queryKey: ["getStatsArticulos"] });
+          queryClient.invalidateQueries({ queryKey: ["getStats"] });
           toast.success("Devolución registrada correctamente.");
         },
         onError: (err) => {
@@ -131,10 +128,6 @@ export const usePaqueteria = (location:string, area:string, status:string, enabl
             const responseData = data.response?.data || {};
             return responseData;
         },
-        refetchOnWindowFocus: true,
-        refetchInterval: 60000,
-        refetchOnReconnect: true,
-        staleTime: 1000 * 60 * 5,
       });
 
     return{

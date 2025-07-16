@@ -60,11 +60,11 @@ export const AddArticuloConModal: React.FC<AddFallaModalProps> = ({
 	setIsSuccess,
 }) => {
 	const [conSelected, setConSelected] = useState<string>("");
-	const {location} = useShiftStore()
+	const {location, area} = useShiftStore()
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
 	const { dataAreas:areas, dataLocations:ubicaciones, isLoadingAreas:loadingAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true,  ubicacionSeleccionada?true:false);
 	const { data:dataAreaEmpleadoApoyo, isLoading:loadingAreaEmpleadoApoyo,} = useCatalogoAreaEmpleadoApoyo(isSuccess);
-	const { createArticulosConMutation, isLoading} = useArticulosConcesionados(false, "", "", "")
+	const { createArticulosConMutation, isLoading} = useArticulosConcesionados(ubicacionSeleccionada, area, "",false, "", "", "")
     const { dataCon, dataConSub, isLoadingCon, isLoadingConSub  } = useCatalogoConcesion(ubicacionSeleccionada ,conSelected,  isSuccess);
 	const [date, setDate] = useState<Date|"">("");
 
@@ -89,6 +89,7 @@ export const AddArticuloConModal: React.FC<AddFallaModalProps> = ({
 		if(isSuccess){
 			reset()
 			setDate(new Date())
+			setUbicacionSeleccionada(location)
 		}
 	},[isSuccess])
 
@@ -123,7 +124,7 @@ export const AddArticuloConModal: React.FC<AddFallaModalProps> = ({
 	};
 
   return (
-    <Dialog open={isSuccess} modal>
+    <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
       <DialogTrigger></DialogTrigger>
 
       <DialogContent className="max-w-3xl  overflow-y-auto max-h-[80vh] flex flex-col" aria-describedby="">

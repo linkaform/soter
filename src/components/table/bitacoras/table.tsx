@@ -23,17 +23,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {  Bitacora_record, bitacorasColumns } from "./bitacoras-columns";
+import {  Bitacora_record, getBitacorasColumns } from "./bitacoras-columns";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import DateTime from "@/components/dateTime";
 import { catalogoFechas } from "@/lib/utils";
+import { DoOutModal } from "@/components/modals/do-out-modal";
+import { AddBadgeModal } from "@/components/modals/add-badge-modal";
+import { ReturnGafeteModal } from "@/components/modals/return-gafete-modal";
 
 interface ListProps {
 	data: Bitacora_record[]|undefined;
 	isLoading:boolean;
-	
 	setDate1 :React.Dispatch<React.SetStateAction<Date | "">>;
 	setDate2 :React.Dispatch<React.SetStateAction<Date | "">>;
 	date1:Date| ""
@@ -49,6 +51,12 @@ const BitacorasTable:React.FC<ListProps> = ({ data, isLoading, setDate1, setDate
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
 		[]
 	);
+
+	const [modalRegresarGafeteAbierto, setModalRegresarGafeteAbierto] = useState(false);
+	const [modalAgregarBadgeAbierto, setModalAgregarBadgeAbierto] = useState(false);
+	const [modalSalidaAbierto, setModalSalidaAbierto] = useState(false);
+	const [bitacoraSeleccionada, setBitacoraSeleccionada] = useState<Bitacora_record | null>(null);
+
 	const [columnVisibility, setColumnVisibility] =
 		React.useState<VisibilityState>({});
 	const [rowSelection, setRowSelection] = React.useState({});
@@ -57,8 +65,28 @@ const BitacorasTable:React.FC<ListProps> = ({ data, isLoading, setDate1, setDate
 		pageSize: 23,
 	});
 
+	const handleRegresarGafete = (bitacora: Bitacora_record) => {
+		setBitacoraSeleccionada(bitacora);
+		setModalRegresarGafeteAbierto(true);
+	};
+	
+	const handleAgregarBadge= (bitacora: Bitacora_record) => {
+		setBitacoraSeleccionada(bitacora);
+		setModalAgregarBadgeAbierto(true);
+	};
+	
+	const handleSalida= (bitacora: Bitacora_record) => {
+		setBitacoraSeleccionada(bitacora);
+		setModalSalidaAbierto(true);
+	};
+	
+
+
   	const [globalFilter, setGlobalFilter] = React.useState("");
-   	const columns = useMemo(() => (isLoading ? [] : bitacorasColumns), [isLoading]);
+	const columns = useMemo(() => {
+		if (isLoading) return [];
+		return getBitacorasColumns(handleRegresarGafete, handleAgregarBadge, handleSalida);
+	}, [isLoading]);
    	const memoizedData = useMemo(() => data || [], [data]);
 
   	const table = useReactTable({
@@ -113,8 +141,8 @@ const BitacorasTable:React.FC<ListProps> = ({ data, isLoading, setDate1, setDate
 			<div className="flex w-full justify-end">
 				{dateFilter == "range" ?
 				<div className="flex items-center gap-2 mr-14">
-					<DateTime date={date1} setDate={setDate1} />
-					<DateTime date={date2} setDate={setDate2} />
+					<DateTime date={date1} setDate={setDate1} disablePastDates={false}/>
+					<DateTime date={date2} setDate={setDate2} disablePastDates={false}/>
 					<Button type="button"  className={"bg-blue-500 hover:bg-blue-600"} onClick={Filter}> Filtrar</Button>
 				</div>:null}
 				<div className="flex items-center w-48 gap-2"> 
@@ -137,6 +165,46 @@ const BitacorasTable:React.FC<ListProps> = ({ data, isLoading, setDate1, setDate
 				<CalendarDays />
 				</div>
 			</div>
+
+			{modalRegresarGafeteAbierto && bitacoraSeleccionada  ? (
+				<ReturnGafeteModal 
+					title={"Recibir Gafete"} 
+					id_bitacora={bitacoraSeleccionada._id}
+					ubicacion={bitacoraSeleccionada.ubicacion} 
+					area={bitacoraSeleccionada.status_visita.toLowerCase() == "entrada" ? bitacoraSeleccionada.caseta_entrada : bitacoraSeleccionada.caseta_salida || ""} 
+					fecha_salida={bitacoraSeleccionada.fecha_salida} 
+					gafete={bitacoraSeleccionada.id_gafet} 
+					locker={bitacoraSeleccionada.id_locker||""} 
+					tipo_movimiento={bitacoraSeleccionada.status_visita.toLowerCase()}
+					modalRegresarGafeteAbierto={modalRegresarGafeteAbierto}
+					setModalRegresarGafeteAbierto={setModalRegresarGafeteAbierto}
+					/> 
+			):null}
+
+			{ modalAgregarBadgeAbierto && bitacoraSeleccionada ? (
+				<AddBadgeModal 
+					title={"Gafete"} 
+					status={"Disponible"} 
+					id_bitacora= {bitacoraSeleccionada._id}
+					tipo_movimiento={bitacoraSeleccionada.status_visita} 
+					ubicacion={bitacoraSeleccionada.ubicacion} 
+					area={bitacoraSeleccionada.status_visita.toLowerCase()=="entrada" ? bitacoraSeleccionada.caseta_entrada: bitacoraSeleccionada.caseta_salida||""}
+					modalAgregarBadgeAbierto={modalAgregarBadgeAbierto}
+					setModalAgregarBadgeAbierto={setModalAgregarBadgeAbierto}
+					/>
+			):null}
+
+			{modalSalidaAbierto && bitacoraSeleccionada ? (
+				<DoOutModal 
+					title={"Registar Salida"} 
+					id_bitacora={bitacoraSeleccionada.codigo_qr} ubicacion={bitacoraSeleccionada.ubicacion} 
+					area={bitacoraSeleccionada.status_visita.toLowerCase() == "entrada" ? bitacoraSeleccionada.caseta_entrada : bitacoraSeleccionada.caseta_salida || ""} 
+					fecha_salida={bitacoraSeleccionada.fecha_salida}
+					modalSalidaAbierto={modalSalidaAbierto}
+					setModalSalidaAbierto={setModalSalidaAbierto}
+					/>
+			):null}
+
 		</div>
 
 		<div className="">
@@ -181,7 +249,7 @@ const BitacorasTable:React.FC<ListProps> = ({ data, isLoading, setDate1, setDate
 					) : (
 					<TableRow>
 						<TableCell
-						colSpan={bitacorasColumns.length}
+						colSpan={table.getVisibleFlatColumns().length}
 						className="h-36 text-center font-medium"
 						>
 							{isLoading? (<div className='text-xl font-semibold'>Cargando registros... </div>): 

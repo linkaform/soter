@@ -37,16 +37,19 @@ export const AddGuardModal: React.FC<AddGuardModalProps> = ({
   const { location, area, checkin_id } = useShiftStore();
   const [selectedGuard, setSelectedGuard] = useState<any>("");
   const [searchText, setSearchText] = useState<string>("");
+
   const filteredGuards = useMemo(() => {
     const uniqueGuards = supportGuards?.filter((guardia: any, index: number, self: any[]) =>
-      index === self.findIndex((g) => g.id === guardia.id)
+      index === self.findIndex((g) => g._id === guardia._id)
     );
-  
+ 
     return uniqueGuards?.filter((guardia: any) =>
       guardia.name.toLowerCase().includes(searchText.toLowerCase())
     );
   }, [supportGuards, searchText]);
 
+  console.log("filtrados",filteredGuards)
+  
   return (
     <Dialog open={open} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -120,7 +123,6 @@ export const AddGuardModal: React.FC<AddGuardModalProps> = ({
             className="w-full bg-blue-500 hover:bg-blue-600 text-white"
             onClick={() => {
               if (!selectedGuard) {
-                console.log("No hay guardias seleccionados.");
                 return;
               }
 

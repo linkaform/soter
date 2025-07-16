@@ -11,21 +11,17 @@ import FallasTable from "@/components/table/incidencias/fallas/table";
 import { useGetFallas } from "@/hooks/useGetFallas";
 import { AddFallaModal } from "@/components/modals/add-falla";
 import { AddIncidenciaModal } from "@/components/modals/add-incidencia";
-import { useInciencias } from "@/hooks/useIncidencias";
+import { useInciencias } from "@/hooks/Incidencias/useIncidencias";
 import { dateToString } from "@/lib/utils";
-import { toast } from "sonner";
 import ChangeLocation from "@/components/changeLocation";
 import { useShiftStore } from "@/store/useShiftStore";
 
 const IncidenciasPage = () => {
 
-  const [prioridades, setPrioridades] = useState<string[]>([]);
   const [isSuccess, setIsSuccess] = useState(false);
-  
   const {location} = useShiftStore()
   const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
   const [areaSeleccionada, setAreaSeleccionada] = useState("todas");
-
   const [isSuccessIncidencia, setIsSuccessIncidencia] = useState(false);
   const [modalData] = useState<any>(null);
   const [selectedFallas, setSelectedFallas]= useState<string[]>([]);
@@ -34,51 +30,57 @@ const IncidenciasPage = () => {
   const [date1, setDate1] = useState<Date|"">("")
   const [date2, setDate2] = useState<Date|"">("")
 
-  const [dates, setDates] = useState<string[]>([])
-  const [dateFilter, setDateFilter] = useState<string>("this_month")
+  const [datePrimera, setDatePrimera] = useState<string>("")
+  const [dateSegunda, setDateSegunda] = useState<string>("")
+  const [dateFilter, setDateFilter] = useState<string>("")
 
   const [fallasStatus, setFallasStatus] = useState<string>("")
-  const { data:dataFallas,isLoading:isLoadingFallas, refetch:refetchFallas} = useGetFallas(ubicacionSeleccionada, areaSeleccionada == "todas" ? "" : areaSeleccionada ,fallasStatus,  dates[0], dates[1], dateFilter);
-  const { stats, listIncidencias, refetchTableIncidencias, isLoadingListIncidencias} = useInciencias(ubicacionSeleccionada, areaSeleccionada == "todas" ? "" : areaSeleccionada, [], false, dates[0], dates[1], dateFilter);
+  const { data:dataFallas,isLoading:isLoadingFallas} = useGetFallas(ubicacionSeleccionada, areaSeleccionada == "todas" ? "" : areaSeleccionada ,fallasStatus,  datePrimera, dateSegunda, dateFilter);
+  const { stats, listIncidencias, isLoadingListIncidencias} = useInciencias(ubicacionSeleccionada, areaSeleccionada == "todas" ? "" : areaSeleccionada, [], datePrimera, dateSegunda, dateFilter);
   const [selectedTab, setSelectedTab] = useState<string>('Incidencias'); 
 
-  	useEffect(()=>{
-		if(prioridades){
-		refetchTableIncidencias()
+	useEffect(()=>{
+		if(location){
+			setUbicacionSeleccionada(location)
 		}
- 	},[prioridades, refetchTableIncidencias])
+	},[location])
+
   
- 	 const closeModal = () => {
+ 	const closeModal = () => {
 		setIsSuccess(false);  
 	};
+
   	const openModal = () => {
 		setIsSuccess(true);  
 	};
+
   	const openModalIncidencia = () => {
 		setIsSuccessIncidencia(true);  
 	};
 
 	const Filter = () => {
-		if(date1 && date2){
-			const f1= dateToString(new Date(date1)) 
-			const f2= dateToString(new Date(date2)) 
-			setDates([f1,f2])
-		}else{
-			toast.error("Escoge un rango de fechas.")
-		}
+		const f1= dateToString(new Date(date1)) 
+		const f2= dateToString(new Date(date2)) 
+		setDatePrimera(f1)
+		setDateSegunda(f2)
+		// setDates([f1,f2])
 	};
 
 	const handleTabChangeTab = (newTab: any) => {
 		setSelectedTab(newTab); 
-	  };
+	};
 
 	const handleTabChange = (tab:string, option:string) => {
-		if(tab == "Fallas"){
-			if(tab == selectedTab && fallasStatus=="abierto"){
-				setFallasStatus(""); 
+		if(tab==selectedTab && dateFilter == option){
+			setDateFilter(""); 
+			setSelectedTab(tab);
+		}
+		else if(tab == "Fallas"){
+			if(tab == selectedTab && dateFilter=="abierto"){
+				setDateFilter(""); 
 				setSelectedTab(tab);
 			}else{
-				setFallasStatus(option); 
+				setDateFilter(option); 
 				setSelectedTab(tab)
 			}
 		}else if (tab == "Incidencias"){
@@ -86,6 +88,29 @@ const IncidenciasPage = () => {
 			setSelectedTab(tab)
 		}
 	};
+	const handleTabChangeFallas = (tab:string, option:string, filter="") => {
+		if(tab==selectedTab && fallasStatus == option && dateFilter==filter){
+			setDateFilter(""); 
+			setSelectedTab(tab);
+			setFallasStatus("")
+		}
+		else if(tab == "Fallas"){
+			console.log("entrada aqui")
+			setDateFilter(filter); 
+			setSelectedTab(tab);
+			setFallasStatus(option)
+		}
+	};
+
+	const resetTableFilters = ()=>{
+		setDatePrimera("");
+		setDateSegunda("");
+		setDate1("")
+		setDate2("")
+		setDateFilter(""); 
+		setSelectedTab(selectedTab);
+		setFallasStatus("")
+	}
 
   return (
     <div className="">
@@ -93,7 +118,7 @@ const IncidenciasPage = () => {
       <div className="p-6 space-y-1 pt-3 mt-0 pb-0 mb-0 w-full mx-auto">
 		<div className="flex justify-between">
 			<div>
-				<PageTitle title="Registro de Incidencias y Fallas" />	
+				<PageTitle title="Registro De Incidencias Y Fallas" />	
 			</div>
 			<div className="flex gap-5">
 				<div>
@@ -113,7 +138,7 @@ const IncidenciasPage = () => {
 						<div className="h-1 w-1/2 bg-cyan-100"></div>
 						<div className="h-1 w-1/2 bg-blue-500"></div>
 					</div>
-					<span className="text-md">Incidencias del Día</span>
+					<span className="text-md">Incidencias Del Día</span>
 				</div>
 				<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
 						dateFilter== "this_week" && selectedTab!=="Fallas"? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => handleTabChange("Incidencias","this_week")}>
@@ -124,7 +149,7 @@ const IncidenciasPage = () => {
 						<div className="h-1 w-1/2 bg-cyan-100"></div>
 						<div className="h-1 w-1/2 bg-blue-500"></div>
 					</div>
-					<span className="text-md">Incidencias de la Semana</span>
+					<span className="text-md">Incidencias De La Semana</span>
 				</div>
 				<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
 						dateFilter== "this_month" && selectedTab!=="Fallas"? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => handleTabChange("Incidencias","this_month")}>
@@ -135,11 +160,11 @@ const IncidenciasPage = () => {
 						<div className="h-1 w-1/2 bg-cyan-100"></div>
 						<div className="h-1 w-1/2 bg-blue-500"></div>
 					</div>
-					<span className="text-md">Incidentes del Mes</span>
+					<span className="text-md">Incidentes Del Mes</span>
 				</div>
 
 				<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
-						fallasStatus== "abierto" && selectedTab!=="Incidencias" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => handleTabChange("Fallas","abierto")}>
+						fallasStatus== "abierto" && selectedTab!=="Incidencias" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => handleTabChangeFallas("Fallas","abierto","")}>
 					<div className="flex gap-6"><UndoDot className="text-primary w-10 h-10"/>
 						<span className="flex items-center font-bold text-4xl"> {stats?.fallas_pendientes}</span>
 					</div>
@@ -147,7 +172,7 @@ const IncidenciasPage = () => {
 						<div className="h-1 w-1/2 bg-cyan-100"></div>
 						<div className="h-1 w-1/2 bg-blue-500"></div>
 					</div>
-					<span className="text-md">Fallas pendientes</span>
+					<span className="text-md">Fallas Pendientes</span>
 				</div>
 			</div>
 		</div>
@@ -156,21 +181,17 @@ const IncidenciasPage = () => {
 			
             <TabsContent value="Incidencias">
               <div className="">
-                <IncidenciasTable data={listIncidencias} refetch={refetchTableIncidencias} setPrioridades={setPrioridades} 
+                <IncidenciasTable data={listIncidencias} 
                 isLoading={isLoadingListIncidencias} openModal={openModalIncidencia} setSelectedIncidencias={setSelectedIncidencias} selectedIncidencias={selectedIncidencias} 
-				date1={date1} date2={date2} setDate1={setDate1} setDate2={setDate2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter}
-				// ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} setUbicacionSeleccionada={setUbicacionSeleccionada} 
-				// setAreaSeleccionada={setAreaSeleccionada} 
+				date1={date1} date2={date2} setDate1={setDate1} setDate2={setDate2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters}
 				/>
               </div>
             </TabsContent>
             <TabsContent value="Fallas">
               <div className="">
-                <FallasTable  data={dataFallas} refetch={refetchFallas} setPrioridades={setPrioridades} isLoading={isLoadingFallas} 
+                <FallasTable  data={dataFallas} isLoading={isLoadingFallas} 
                 openModal={openModal} setSelectedFallas={setSelectedFallas} selectedFallas={selectedFallas} 
-				date1={date1} date2={date2} setDate1={setDate1} setDate2={setDate2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter}
-				// ubicacionSeleccionada={ubicacionSeleccionada} areaSeleccionada={areaSeleccionada} setUbicacionSeleccionada={setUbicacionSeleccionada} 
-				// 	setAreaSeleccionada={setAreaSeleccionada}
+				date1={date1} date2={date2} setDate1={setDate1} setDate2={setDate2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters}
 					/>
               </div>
             </TabsContent>

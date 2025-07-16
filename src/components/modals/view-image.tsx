@@ -29,31 +29,27 @@ const ViewImage = ({ imageUrl }: { imageUrl: Imagen[] }) => {
         <Image
             width={150}
             height={150}
-            className='p-12 w-full h-full object-cover'
+            className="p-12 w-full h-full object-cover border-none outline-none "
             src={imageUrl[0]?.file_url ?? "/nouser.svg"}
             alt="Imagen grande"
         />
       ):(
-        <div className="flex justify-center">
-            <Carousel className="w-full">
-                <CarouselContent>
+        <div className="flex justify-center ">
+            <Carousel className="w-full ">
+                <CarouselContent >
                     {imageUrl.map((a, index) => (
-                    <CarouselItem key={index}>
-                        <div className="p-1">
-                        <Card>
-                            <CardContent className="flex aspect-square items-center justify-center p-0">
-                            {/* <span className="text-4xl font-semibold"> */}
+                    <CarouselItem key={index} >
+                        <Card className='outline-none border-none'>
+                            <CardContent className="flex aspect-square items-center justify-center p-0 ">
                                 <Image
                                     width={150}
                                     height={150}
                                     src= {a?.file_url ?? "/nouser.svg"}
                                     alt="Imagen"
-                                    className="w-full h-full p-12 object-contain rounded-lg" 
+                                    className="w-full h-full p-12 object-contain rounded-lg "
                                 />
-                            {/* </span> */}
                             </CardContent>
                         </Card>
-                        </div>
                     </CarouselItem>
                     ))}
                 </CarouselContent>

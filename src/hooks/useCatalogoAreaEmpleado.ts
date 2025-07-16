@@ -17,11 +17,6 @@ export const useCatalogoAreaEmpleado = (isSuccess:boolean, location:string, bita
           return data.response?.data
         }
     }, 
-   
-    refetchOnWindowFocus: true, 
-    refetchInterval: 60000,
-    refetchOnReconnect: true, 
-    staleTime: 1000 * 60 * 5, 
   });
 
   return {

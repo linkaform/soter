@@ -343,7 +343,6 @@ type Column = {
 
 export const downloadCSV = (data: any[], columns: Column[], fileName: string = 'data.csv') => {
   if(data.length > 0){
-    console.log("DATAA", data)
     const header = columns.map(col => col.label);
     const rows = data.map(row => 
       columns.map(col => row[col.key]) 
@@ -452,3 +451,7 @@ export function isTokenExpired(token:string) {
   return payload.exp < currentTime;
 }
 
+export function arraysIguales(a:string[], b:string[]) {
+  if (a.length !== b.length) return false;
+  return a.every((val, index) => val === b[index]);
+}

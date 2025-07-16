@@ -86,7 +86,6 @@ export const EqipmentPassModal: React.FC<Props> = ({ title, children }) => {
   });
 
   function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log(data);
     addNewEquipment(data)
     form.reset();
     toast.success(

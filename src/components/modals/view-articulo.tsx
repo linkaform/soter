@@ -38,6 +38,10 @@ export const ViewArticulo: React.FC<ViewArtModalProps> = ({
 
         <div className="flex justify-start">
             <div className="w-1/2 flex flex-col gap-3">
+              <div className="w-full flex gap-2">
+                  <p className="font-bold ">Folio: </p>
+                  <p  className="font-bold text-blue-500">{data?.folio} </p>
+              </div>
                 {data?.articulo_seleccion ? ( 
                   <div className="w-full flex gap-2">
                       <p className="font-bold">Articulo: <span className="font-normal">{data?.articulo_seleccion}</span></p>

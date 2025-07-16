@@ -5,47 +5,48 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "../ui/dialog";
 
-import { useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { Loader2 } from "lucide-react";
-import { useDoOut } from "@/hooks/useDoOut";
+import { useDoOut } from "@/hooks/Bitacora/useDoOut";
+import { useShiftStore } from "@/store/useShiftStore";
 
 interface AddBadgeModalProps {
   title: string;
-  children: React.ReactNode;
   id_bitacora:string;
   ubicacion:string;
   area:string;
   fecha_salida:string;
+  setModalSalidaAbierto:Dispatch<SetStateAction<boolean>>; 
+	modalSalidaAbierto:boolean;
 }
 
 export const DoOutModal: React.FC<AddBadgeModalProps> = ({
   title,
-  children,
   area,
   id_bitacora,
   ubicacion,
+  modalSalidaAbierto,
+  setModalSalidaAbierto
 }) => {
-  const {  isLoading:loadingDoOut, doOutMutation} = useDoOut(id_bitacora ?? null, ubicacion?? null, area??null );
-  const [isOpen, setIsOpen] = useState(false);
+  const doOutMutation = useDoOut();
+  const { isLoading } = useShiftStore()
 
   function onSubmit() {
     doOutMutation.mutate({
       qr_code:id_bitacora,location:ubicacion, area
     }, {
       onSuccess: () => {
-        setIsOpen(false)
+        setModalSalidaAbierto(false)
       },
       onError: () => {
-        setIsOpen(false)
+        setModalSalidaAbierto(false)
       }},)
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+    <Dialog open={modalSalidaAbierto} onOpenChange={setModalSalidaAbierto} modal>
 
       <DialogContent className="max-w-xl">
         <DialogHeader>
@@ -66,8 +67,8 @@ export const DoOutModal: React.FC<AddBadgeModalProps> = ({
                 </Button>
               </DialogClose>
 
-              <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white" onClick={onSubmit} disabled={loadingDoOut}>
-              { !loadingDoOut ? (<>
+              <Button className="w-full h-12  bg-blue-500 hover:bg-blue-600 text-white" onClick={onSubmit} disabled={isLoading}>
+              { !isLoading ? (<>
               {("Confirmar")}
             </>) :(<> <Loader2 className="animate-spin"/> {"Cargando..."} </>)}
               </Button>

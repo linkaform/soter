@@ -45,7 +45,7 @@ export const Header = () => {
                       ? "bg-button-primary hover:bg-button-primary text-white hover:text-white"
                       : "hover:text-white hover:bg-button-primary"
                   }`} variant="ghost">
-                  Pase de entrada
+                  Pases De Entrada
                 </Button>
               </Link>
             ):null}

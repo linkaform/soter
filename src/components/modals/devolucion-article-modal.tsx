@@ -138,7 +138,7 @@ export const DevolucionArticuloModal: React.FC<AddFallaModalProps> = ({
 
   return (
     <Dialog onOpenChange={setIsSuccess} open={isSuccess}>
-      <div className="cursor-pointer" onClick={handleOpenModal}>
+      <div className="cursor-pointer" title="Devolver Artículo" onClick={handleOpenModal}>
         <ArrowRightLeft />
 	    </div>
 
@@ -151,6 +151,10 @@ export const DevolucionArticuloModal: React.FC<AddFallaModalProps> = ({
             <div className="overflow-y-auto p-2">
                 <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} >
+					<div className="w-full flex gap-2 mb-2">
+						<p className="font-bold ">Folio: </p>
+						<p  className="font-bold text-blue-500">{data?.folio} </p>
+					</div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6 ">
 
                     <div className="flex justify-between">
@@ -188,7 +192,7 @@ export const DevolucionArticuloModal: React.FC<AddFallaModalProps> = ({
                             <FormItem>
                             <FormLabel>Recibe:</FormLabel>
                             <FormControl>
-                                <Input placeholder="Acción realizada..." {...field} 
+                                <Input placeholder="Quién recibe..." {...field} 
                                 onChange={(e) => {
                                     field.onChange(e); // Actualiza el valor en react-hook-form
                                 }}
@@ -205,9 +209,9 @@ export const DevolucionArticuloModal: React.FC<AddFallaModalProps> = ({
                         name="telefono_recibe_perdido"
                         render={({ field }:any) => (
                             <FormItem>
-                            <FormLabel>Telefono de quien recibe:</FormLabel>
+                            <FormLabel>Teléfono de quien recibe:</FormLabel>
                             <FormControl>
-                                <Input placeholder="Acción realizada..." {...field} 
+                                <Input placeholder="Teléfono..." {...field} 
                                 onChange={(e) => {
                                     field.onChange(e); // Actualiza el valor en react-hook-form
                                 }}

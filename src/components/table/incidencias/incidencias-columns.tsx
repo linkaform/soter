@@ -1,14 +1,8 @@
-import { EliminarIncidenciaModal } from "@/components/modals/delete-incidencia-modal";
-import { EditarIncidenciaModal } from "@/components/modals/editar-incidencia";
 import { SeguimientoIncidenciaModal } from "@/components/modals/seguimiento-incidencia";
 import { LoadingModal } from "@/components/modals/loading-modal";
-import ViewImage from "@/components/modals/view-image";
 import { ViewIncidencia } from "@/components/modals/view-incidencia";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-    ColumnDef,  
-  } from "@tanstack/react-table";
-import { Check, Eye, Trash2 } from "lucide-react";
+
+import { Check, Edit, Eye, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 export type Incidencia = {
@@ -24,7 +18,7 @@ export type Incidencia = {
     fechaDevolucion: string;
     comentarios: string[]
   };
-  
+    
   export interface Incidencia_record {
     incidencia: string
     folio: string
@@ -45,6 +39,36 @@ export type Incidencia = {
     dano_incidencia?: string
     tipo_dano_incidencia?: string[]
     grupo_seguimiento_incidencia: []
+
+    //Categoria
+    categoria:string
+    sub_categoria:string
+    incidente:string
+
+    //Persona extraviada
+    nombre_completo_persona_extraviada:string,
+    edad:string ,
+    color_piel:string
+    color_cabello:string
+    estatura_aproximada:string
+    descripcion_fisica_vestimenta:string
+    nombre_completo_responsable:string
+    parentesco:string
+    num_doc_identidad:string
+    telefono:string
+    info_coincide_con_videos:string
+    responsable_que_entrega:string
+    responsable_que_recibe:string
+  
+    //Robo de cableado
+    valor_estimado:string
+    pertenencias_sustraidas:string
+    //robo de vehiculo
+    placas:string
+    tipo:string
+    marca:string
+    modelo:string
+    color:string
   }
   
 
@@ -73,123 +97,51 @@ export type Incidencia = {
     file_url: string
   }
   
-  const OptionsCell: React.FC<{ row: any }> = ({ row }) => {
+  export const OptionsCell: React.FC<{ row: any , onEditarClick: (incidencia: Incidencia_record) => void, 
+    onEliminarClick: (incidencia: Incidencia_record) => void
+   }> = ({ row, onEditarClick ,onEliminarClick}) => {
     const incidencia = row.original;
-    const [showLoadingModal, setShowLoadingModal] = useState(false);
+    const [showLoadingModal] = useState(false);
+    const [openModal, setOpenModal]= useState(false)
 
     return (
       <div className="flex space-x-2">
         <ViewIncidencia 
           title="Información de la Incidencia"
-          data={incidencia} isSuccess={false}>
-            <div className="cursor-pointer">
+          data={incidencia} >
+            <div className="cursor-pointer" title="Ver Incidencia">
               <Eye /> 
             </div>
         </ViewIncidencia>
 
         <LoadingModal isOpen={showLoadingModal} text="Cargando..."/>
         
-        <EditarIncidenciaModal
+        <div
+          className="cursor-pointer"
+          onClick={() => onEditarClick(incidencia)}
           title="Editar Incidencia"
-          data={incidencia} setShowLoadingModal={setShowLoadingModal} />
+        >
+        	<Edit />
+        </div>
+    
 
         <SeguimientoIncidenciaModal
-            title="Seguimiento Incidencia"
-            folio={incidencia?.folio} >
-          <div className="cursor-pointer">
+          title="Seguimiento Incidencia"
+          folio={incidencia?.folio} isSuccess={openModal} setIsSuccess={setOpenModal}>
+          <div className="cursor-pointer" title="Seguimiento Incidencia">
               <Check />   
           </div>
         </SeguimientoIncidenciaModal>
 
-        <EliminarIncidenciaModal
-          title="Eliminar Incidencia" arrayFolios={[incidencia.folio]}>
-            <div className="cursor-pointer">
-                <Trash2 />   
-            </div>
-        </EliminarIncidenciaModal>
+
+        <div
+          className="cursor-pointer"
+          title="Eliminar Incidencia"
+          onClick={() => onEliminarClick(incidencia)}
+        >
+        	<Trash2 />
+        </div>
+
       </div>
     );
   };
-
-  export const incidenciasColumns: ColumnDef<Incidencia_record>[] = [
-    {
-      id: "select",
-      cell: ({ row }) => {
-        return (
-          <>
-          <div className="flex space-x-3 items-center">
-            <Checkbox
-              checked={row.getIsSelected()}
-              onCheckedChange={(value) => row.toggleSelected(!!value)}
-              aria-label="Select row" />
-            <OptionsCell row={row} key={row.original._id}/>
-          </div>
-          </>
-        )
-      },
-      header: ({ table }) => (
-        <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
-          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-          aria-label="Select all"
-        />
-      ),
-      enableSorting: false,
-      enableHiding: false,
-    },
-		{
-			accessorKey: "ubicacion_incidencia",
-			header: "Ubicación",
-			cell: ({ row }) => (
-			<div className="capitalize">{row.getValue("ubicacion_incidencia")}</div>
-			),
-			enableSorting: true,
-		},
-		{
-			accessorKey: "area_incidencia",
-			header: "Lugar del Incidente",
-			cell: ({ row }) => (
-			<div className="capitalize">{row.getValue("area_incidencia")}</div>
-			),
-			enableSorting: true,
-      	},
-     	{
-			accessorKey: "fecha_hora_incidencia",
-			header: "Fecha",
-			cell: ({ row }) => (
-			<div className="capitalize">{row.getValue("fecha_hora_incidencia")}</div>
-			),
-			enableSorting: true,
-      	},
-      	{
-			accessorKey: "evidencia_incidencia",
-			header: "Evidencia",
-			cell: ({ row }) => {
-			const foto = row.original.evidencia_incidencia;
-			// const primeraImagen = foto && foto.length > 0 ? foto[0].file_url : '/nouser.svg';
-			return(<ViewImage imageUrl={foto ?? []} /> )},
-			enableSorting: false,
-     	},
-      	{
-			accessorKey: "comentario_incidencia",
-			header: "Comentarios",
-			cell: ({ row }) => {
-			return (
-				<span>{row.getValue("comentario_incidencia")}</span>
-			);
-			},
-			enableSorting: true,
-      	},
-      	{
-			accessorKey: "reporta_incidencia",
-			header: "Reporta",
-			cell: ({ row }) => (
-			<div>{row.getValue("reporta_incidencia")}</div>
-			),
-			enableSorting: true,
-      	},
-      
-    ];

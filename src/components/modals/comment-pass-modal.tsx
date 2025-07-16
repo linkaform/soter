@@ -43,16 +43,11 @@ export const CommentPassModal: React.FC<CommentPassModalProps> = ({
   const {
     newCommentsPase, 
     setNewCommentsPase,
- 
   } = useAccessStore();
-
 
   const addNewComment = (comment: string) => {
     setNewCommentsPase([{ comentario_pase: comment, tipo_de_comentario: "pase"}, ...newCommentsPase, ])
   }
-
-
-
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -62,21 +57,10 @@ export const CommentPassModal: React.FC<CommentPassModalProps> = ({
   });
 
   function onSubmit(data: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-
     addNewComment(data.comment)
     form.reset()
-
-
-
-    toast.success("Comentario de Pase listo para agregar al registro de ingreso.");
-
+    toast.success("Comentario registrado exitosamente");
     setOpen(false)
-
-
-
-
   }
 
   return (

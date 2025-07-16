@@ -87,7 +87,7 @@ const Credentials: React.FC<Props> = ({ searchPass }) => {
 						
 				</div>
 
-				<div className="flex flex-col justify-center items-center mb-2">
+				<div className="flex flex-col justify-center items-center my-1 mb-2">
 					{searchPass?.tipo_de_pase}
 				</div>
 						
@@ -181,7 +181,7 @@ const Credentials: React.FC<Props> = ({ searchPass }) => {
 						</div>
 					</div>
 					<div>
-						<span className="text-gray-500">Estatus:  </span>
+					<span className="text-gray-500">Estatus:  </span>
 						<Badge
 						className={`text-white text-md ${
 							searchPass?.estatus.toLowerCase() == "vencido"
@@ -205,33 +205,31 @@ const Credentials: React.FC<Props> = ({ searchPass }) => {
 				</div>
 			</div>
 
-			<div className="space-y-6">
-				
+				<div className="space-y-1">
 					{searchPass?.limite_de_acceso != null &&(
-						<div className="space-y-2 text-slate-500">
+						<div className=" text-slate-500">
 								<span>Limite de entradas:  </span>
 								<span className="text-black">
 									{searchPass?.total_entradas ?? 0}/{searchPass?.limite_de_acceso}
 								</span>
 						</div>
 					)}
-
-				<div className="grid grid-cols-2 gap-4">
-				{searchPass?.gafete_id &&
-					<div>
-						<span className="text-gray-500">Gafete:  <span className="text-black">{searchPass?.gafete_id}</span></span>
+					<div className="grid grid-cols-2 gap-4">
+					{searchPass?.gafete_id &&
+						<div>
+							<span className="text-gray-500">Gafete:  <span className="text-black">{searchPass?.gafete_id}</span></span>
+						</div>
+					}
+					{searchPass?.locker_id &&
+						<div>
+							<span className="text-gray-500">Locker:  <span className="text-black">{searchPass?.locker_id}</span></span>
+						</div>
+					}
 					</div>
-				}
-				{searchPass?.locker_id &&
-					<div>
-						<span className="text-gray-500">Locker:  <span className="text-black">{searchPass?.locker_id}</span></span>
-					</div>
-				}
 				</div>
-			</div>
 
-			<div className="max-w-sm">
-				{searchPass?.limitado_a_dias && (
+				<div className="max-w-sm">
+					{searchPass?.limitado_a_dias && (
 					<div className="">
 						<CalendarDays
 						diasDisponibles={searchPass?.limitado_a_dias}
