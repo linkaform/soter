@@ -36,11 +36,11 @@ return (
 			<div className="flex flex-col space-y-5 overflow-y-auto">
 				<div className="flex justify-between flex-col sm:flex-row sm:space-x-5 space-y-5 sm:space-y-0">
 					<div className="w-full flex gap-2 ">
-					<p className="font-bold flex-shrink-0">Nombre Completo : </p>
+					<p className="font-bold flex-shrink-0">Nombre completo: </p>
 					<p className="">{data?.nombre_visitante} </p>
 					</div>
 					<div className="w-full flex gap-2 ">
-						<p className="font-bold flex-shrink-0">Estatus : </p>
+						<p className="font-bold flex-shrink-0">Estatus: </p>
 						<p className={` ${data?.status_visita.toLowerCase() === "entrada" ? "text-green-500 font-bold" : data?.status_visita.toLowerCase() === "salida" ? "text-red-500" : ""}`}>
 						{data?.status_visita}</p>
 					</div>           
@@ -48,18 +48,18 @@ return (
 
 				<div className="flex justify-between flex-col sm:flex-row sm:space-x-5 space-y-5 sm:space-y-0">
 					<div className="w-full flex gap-2 ">
-						<p className="font-bold">Tipo de pase : </p>
+						<p className="font-bold">Tipo de pase: </p>
 						<p >Visita General</p>
 					</div>
 					<div className="w-full flex gap-2 ">
-						<p className="font-bold flex-shrink-0">Motivo de visita : </p>
+						<p className="font-bold flex-shrink-0">Motivo de visita: </p>
 						<p >{data?.motivo_visita}</p>
 					</div>
 				</div>
 
 				<div className="flex justify-between flex-col sm:flex-row  sm:space-x-5 space-y-5 sm:space-y-0">
 					<div className="w-full flex gap-2 ">
-						<p className="font-bold flex-shrink-0">Visita a : </p>
+						<p className="font-bold flex-shrink-0">Visita a: </p>
 						<p > {data?.visita_a.length>0 ? data?.visita_a[0].nombre: ""}</p>
 					</div>
 					
@@ -210,7 +210,7 @@ return (
 
 			{data?.grupo_areas_acceso.length>0 && (
 				<div className="">
-					<p className="text-lg font-bold mb-2">Areas</p>
+					<p className="text-lg font-bold mb-2">Áreas</p>
 					<Accordion type="single" collapsible>
 						{data?.grupo_areas_acceso.map((equipo, index) => (
 							<AccordionItem key={index} value={`equipo-${index}`}>

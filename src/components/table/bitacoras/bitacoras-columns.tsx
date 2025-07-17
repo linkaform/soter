@@ -1,7 +1,9 @@
 import { EqipmentLocalPassModal } from "@/components/modals/add-local-equipo";
 import { VehicleLocalPassModal } from "@/components/modals/add-local-vehicule";
 import { ViewListBitacoraModal } from "@/components/modals/view-bitacora";
+import { Badge } from "@/components/ui/badge";
 import { Equipo, Vehiculo } from "@/lib/update-pass";
+import { capitalizeFirstLetter } from "@/lib/utils";
 import {
 		ColumnDef,  
 	} from "@tanstack/react-table";
@@ -96,19 +98,19 @@ const OptionsCell: React.FC<{ row: any , onReturnGafete: (bitacora: Bitacora_rec
 			</ViewListBitacoraModal>
 			
 			{ bitacora.status_visita.toLowerCase() !="salida" &&
-			<VehicleLocalPassModal title={"Agregar Vehiculo"} vehicles={vehiculos} setVehiculos={setVehiculos} isAccesos={false} id={bitacora._id} fetch={true}>
-				<div className="cursor-pointer" title="Agregar Vehiculo"><Car/></div>
+			<VehicleLocalPassModal title={"Agregar vehículo"} vehicles={vehiculos} setVehiculos={setVehiculos} isAccesos={false} id={bitacora._id} fetch={true}>
+				<div className="cursor-pointer" title="Agregar vehículo"><Car/></div>
 			</VehicleLocalPassModal>}
 
 			{ bitacora.status_visita.toLowerCase() !="salida" &&	
 			<EqipmentLocalPassModal title="Agregar equipo" id={bitacora._id} equipos={equipos} setEquipos={setEquipos} isAccesos={false}> 
-				<div className="cursor-pointer" title="Agregar Equipo"><Hammer/></div>
+				<div className="cursor-pointer" title="Agregar equipo"><Hammer/></div>
 			</EqipmentLocalPassModal>} 
 					
 			{ bitacora.status_visita.toLowerCase() =="entrada" && bitacora.status_gafete.toLowerCase()=="asignado" ? (
 				<div
 				className="cursor-pointer"
-				title="Regresar Gafete"
+				title="Regresar gafete"
 				onClick={() => {
 					onReturnGafete(bitacora)}}
 				>
@@ -118,7 +120,7 @@ const OptionsCell: React.FC<{ row: any , onReturnGafete: (bitacora: Bitacora_rec
 			<>
 				<div
 				className="cursor-pointer"
-				title="Agregar Gafete"
+				title="Agregar gafete"
 				onClick={() => {
 					onAddBadgeClick(bitacora)}}
 				>
@@ -130,7 +132,7 @@ const OptionsCell: React.FC<{ row: any , onReturnGafete: (bitacora: Bitacora_rec
 			{ !bitacora.fecha_salida ? (
 				<div
 				className="cursor-pointer"
-				title="Registrar Salida"
+				title="Registrar salida"
 				onClick={() => {
 					onDoOutClick(bitacora)}}
 				>
@@ -179,9 +181,17 @@ export const getBitacorasColumns = (onReturnGafete: (bitacora: Bitacora_record) 
 			const isAbierto = row.getValue("status_visita") === "Entrada";
 	
 			return (
-			  <div className={`capitalize font-semibold ${isAbierto ? 'text-green-600' : 'text-red-600'}`}>
-				{row.getValue("status_visita")}
-			  </div>
+				<Badge
+					className={`text-white text-sm ${!isAbierto
+						? "bg-red-600 hover:bg-red-600"
+						: "bg-green-600 hover:bg-green-600"
+					}`}
+					>
+					{capitalizeFirstLetter(row.getValue("status_visita"))}
+					</Badge>
+			//   <div className={`capitalize font-semibold ${isAbierto ? 'text-green-600' : 'text-red-600'}`}>
+			// 	{row.getValue("status_visita")}
+			//   </div>
 			);
 		  },
 		enableSorting: true,
@@ -231,7 +241,7 @@ export const getBitacorasColumns = (onReturnGafete: (bitacora: Bitacora_record) 
 	},
 	{
 		accessorKey: "caseta_entrada",
-		header: "Caseta Entrada",
+		header: "Caseta entrada",
 		cell: ({ row }) => (
 			<div className="capitalize">{row.getValue("caseta_entrada")}</div>
 		),
@@ -239,7 +249,7 @@ export const getBitacorasColumns = (onReturnGafete: (bitacora: Bitacora_record) 
 	},
 	{
 		accessorKey: "nombre_area_salida",
-		header: "Caseta Salida",
+		header: "Caseta salida",
 		cell: ({ row }) => (
 			<div className="capitalize">{row.getValue("nombre_area_salida")}</div>
 		),

@@ -121,7 +121,7 @@ const BitacorasTable:React.FC<ListProps> = ({ data, isLoading, setDate1, setDate
 			<div className="flex w-1/2 justify-start gap-4 ">
 				<TabsList className="bg-blue-500 text-white">
 					<TabsTrigger value="Personal">Personal</TabsTrigger>
-					<TabsTrigger value="Vehiculos">Vehiculos</TabsTrigger>
+					<TabsTrigger value="Vehiculos">Vehículos</TabsTrigger>
                     <TabsTrigger value="Equipos">Equipos</TabsTrigger>
 					<TabsTrigger value="Locker">Locker</TabsTrigger>
 				</TabsList>

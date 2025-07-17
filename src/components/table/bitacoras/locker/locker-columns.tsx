@@ -79,7 +79,7 @@ export type Locker = {
     },
     {
       accessorKey: "numeroGafete",
-      header: "Número Gafete",
+      header: "Número gafete",
       cell: ({ row }) => (
         <div className="capitalize">{row.getValue("numeroGafete")}</div>
       ),

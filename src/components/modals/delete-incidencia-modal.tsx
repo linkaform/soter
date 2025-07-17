@@ -65,10 +65,10 @@ export const EliminarIncidenciaModal: React.FC<AddFallaModalProps> = ({
         </DialogHeader>
 
             <div className="my-3 flex flex-col items-center">
-            {arrayFolios.length==1 ?(<p className="text-2xl font-bold"> ¿Seguro que quieres eliminar esta incidencia?</p>):(
-               <p className="text-2xl font-bold"> ¿Seguro que quieres eliminar las incidencias seleccionadas?</p>)}
+            {arrayFolios.length==1 ?(<p className="text-2xl font-bold"> ¿Deseas eliminar la incidencia seleccionada?</p>):(
+               <p className="text-2xl font-bold"> ¿Deseas eliminar las incidencias seleccionadas?</p>)}
                 
-                <small>Esta acción no se puede revertir.</small>
+                <small> Esta acción no se puede deshacer..</small>
             </div>
 
 			<div className="flex gap-2">
@@ -84,8 +84,8 @@ export const EliminarIncidenciaModal: React.FC<AddFallaModalProps> = ({
 					className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={isLoading}
 				>
 					{ !isLoading ? (<>
-					{arrayFolios.length==1 ?("Eliminar incidencia seleccionada"):("Eliminar incidencias seleccionadas")}
-					</>) :(<> <Loader2 className="animate-spin"/> {arrayFolios.length==1 ?("Eliminando incidencia seleccionada"):("Eliminando incidencias seleccionadas")} </>)}
+					{arrayFolios.length==1 ?("Eliminar"):("Eliminar")}
+					</>) :(<> <Loader2 className="animate-spin"/> {arrayFolios.length==1 ?("Eliminando"):("Eliminando")} </>)}
 				</Button>
 			</div>
         

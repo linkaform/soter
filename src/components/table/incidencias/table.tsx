@@ -144,7 +144,7 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 			},
 			{
 			  accessorKey: "area_incidencia",
-			  header: "Lugar del Incidente",
+			  header: "Lugar del incidente",
 			  cell: ({ row }:{row: Row <Incidencia_record> }) => (
 			  <div className="capitalize">{row.getValue("area_incidencia")}</div>
 			  ),
@@ -321,7 +321,7 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 
 				<div className="flex flex-wrap gap-2">
 				<div>
-					<Button className="w-full md:w-auto bg-blue-500 hover:bg-blue-600" onClick={openModal}>
+					<Button className="w-full md:w-auto bg-green-500 hover:bg-green-600" onClick={openModal}>
 						<Plus />
 						Nuevo Incidente
 					</Button>
