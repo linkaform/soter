@@ -4,35 +4,35 @@ import {
 import { Eye, Pencil, Trash } from "lucide-react";
 
 
-export type Recorrido = {
-  folio: number;
-  status: boolean;
-  ubi: string;
-  area: string; 
-  nameGuard: string;
-  dateHourStart: string;
-  dateHourFin: string; 
-  nameRoute: string; 
-  pointsRoute: string; 
-  observations: string; 
-  evidence: string;
-  durationRoute: string;   
-  };
+  export interface Recorrido {
+    _id:string
+    folio: string
+    recurrencia: string
+    asignado_a: string
+    checkpoints: number
+    nombre_del_rondin: string
+    ubicacion: string
+    duracion_estimada?: string
+    fecha_hora_programada: string
+    cada_cuantos_dias_se_repite: string
+    areas: any
+  }
 
-
-  export const rondinesColumns: ColumnDef<Recorrido>[] = [
+  // export const rondinesColumns: ColumnDef<Recorrido>[] = [
+  export const getRondinesColumns = ( onEliminarClick: (rondin: Recorrido) => void, handleVerRondin: (rondin: Recorrido) => void, 
+  handleEditarRondin: (rondin: Recorrido) => void): ColumnDef<Recorrido>[] => [
     {
       id: "options",
       header: "Opciones",
-      cell: () => (
+      cell: ({ row }) => (
         <div className="flex space-x-2">
-          <div className="cursor-pointer">
+          <div className="cursor-pointer" onClick={() => { handleVerRondin(row.original) }}  title="Ver Rondin">
             <Eye /> 
           </div>
-          <div className="cursor-pointer">
+          <div className="cursor-pointer" title="Editar Rondin"  onClick={() => { handleEditarRondin(row.original) }}>
             <Pencil /> 
           </div>
-          <div className="cursor-pointer">
+          <div className="cursor-pointer" title="Eliminar Rondin" onClick={() => { onEliminarClick(row.original) }} >
             <Trash /> 
           </div>
         </div>
@@ -41,46 +41,54 @@ export type Recorrido = {
       enableHiding: false,
     }, 
     {
-      accessorKey: "ubi",
+      accessorKey: "folio",
+      header: "Folio",
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("folio")}</div>
+      ),
+      enableSorting: true,
+    },
+    {
+      accessorKey: "recurrencia",
+      header: "Recurrencia",
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("recurrencia")}</div>
+      ),
+      enableSorting: true,
+    },
+    {
+      accessorKey: "asignado_a",
+      header: "Asignado a",
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue("asignado_a")}</div>
+      ),
+      enableSorting: true,
+    },
+    {
+      accessorKey: "checkpoints",
+      header: "Checkpoints",
+      cell: ({ row }) => <div>{row.getValue("checkpoints")}</div>,
+      enableSorting: true,
+    },
+    {
+      accessorKey: "nombre_del_rondin",
+      header: "Nombre del rondin",
+      cell: ({ row }) => <div>{row.getValue("nombre_del_rondin")}</div>,
+      enableSorting: true,
+    },
+    {
+      accessorKey: "ubicacion",
       header: "Ubicación",
       cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("ubi")}</div>
+        <div className="capitalize">{row.getValue("ubicacion")}</div>
       ),
       enableSorting: true,
     },
     {
-      accessorKey: "nameRoute",
-      header: "Nombre del rondin",
+      accessorKey: "duracion_estimada",
+      header: "Duracion",
       cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("nameRoute")}</div>
-      ),
-      enableSorting: true,
-    },
-    {
-      accessorKey: "pointsRoute",
-      header: "Checkpoints",
-      cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("pointsRoute")}</div>
-      ),
-      enableSorting: true,
-    },
-    {
-      accessorKey: "recurrence",
-      header: "Recurrencia",
-      cell: ({ row }) => <div>{row.getValue("recurrence")}</div>,
-      enableSorting: true,
-    },
-    {
-      accessorKey: "durationRoute",
-      header: "Duración estimada",
-      cell: ({ row }) => <div>{row.getValue("durationRoute")}</div>,
-      enableSorting: true,
-    },
-    {
-      accessorKey: "nameGuard",
-      header: "Asingado a",
-      cell: ({ row }) => (
-        <div className="capitalize">{row.getValue("nameGuard")}</div>
+        <div className="capitalize">{row.getValue("duracion_estimada")}</div>
       ),
       enableSorting: true,
     },

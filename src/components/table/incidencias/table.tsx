@@ -364,7 +364,14 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 				{modalEliminarAbierto && incidenciaSeleccionada && (
 					<EliminarIncidenciaModal title="Eliminar Incidencias" arrayFolios={[incidenciaSeleccionada.folio]} 
 					modalEliminarAbierto={modalEliminarAbierto}
-					setModalEliminarAbierto={setModalEliminarAbierto}/>
+					setModalEliminarAbierto={(state) => {
+						setModalEliminarMultiAbierto(state);
+						console.log("holaaa")
+						if (!state) {
+						 	 setSelectedIncidencias([]); 
+							setRowSelection({});
+						}
+					  }}/>
 				)}
 
 			</div>

@@ -391,8 +391,8 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 						<Check /> Agregar seguimiento
 					</Button>
 				</SeguimientoIncidenciaModal> */}
-				<div className="flex justify-end items-center">
-					<div className="cursor-pointer  bg-blue-500 hover:bg-blue-600 text-white mr-5 rounded-sm p-1 w-full text-center" onClick={()=>{setOpenModal(!openModal)}}>
+				<div className="flex justify-end items-center ">
+					<div className="cursor-pointer  bg-blue-500 hover:bg-blue-600 text-white mr-5 rounded-sm p-1 px-3 w-full text-center" onClick={()=>{setOpenModal(!openModal)}}>
 						Agregar seguimiento 
 					</div>
 				</div>

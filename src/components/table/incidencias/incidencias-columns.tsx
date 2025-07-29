@@ -107,7 +107,7 @@ export type Incidencia = {
     return (
       <div className="flex space-x-2">
         <ViewIncidencia 
-          title="Información de la Incidencia"
+          title="Información De La Incidencia"
           data={incidencia} >
             <div className="cursor-pointer" title="Ver Incidencia">
               <Eye /> 
