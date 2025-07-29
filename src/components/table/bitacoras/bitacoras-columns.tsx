@@ -1,7 +1,9 @@
 import { EqipmentLocalPassModal } from "@/components/modals/add-local-equipo";
 import { VehicleLocalPassModal } from "@/components/modals/add-local-vehicule";
 import { ViewListBitacoraModal } from "@/components/modals/view-bitacora";
+import { Badge } from "@/components/ui/badge";
 import { Equipo, Vehiculo } from "@/lib/update-pass";
+import { capitalizeFirstLetter } from "@/lib/utils";
 import {
 		ColumnDef,  
 	} from "@tanstack/react-table";
@@ -14,6 +16,7 @@ export interface Bitacora_record {
 	fecha_entrada: string
 	caseta_salida: string
 	caseta_entrada: string
+	nombre_area_salida:string
 	updated_at: string
 	motivo_visita: string
 	folio: string
@@ -81,9 +84,18 @@ const OptionsCell: React.FC<{ row: any , onReturnGafete: (bitacora: Bitacora_rec
 	({ row, onReturnGafete, onAddBadgeClick ,onDoOutClick}) => {
 	const [vehiculos, setVehiculos] = useState<Vehiculo[]>([]);
 	const [equipos, setEquipos] = useState<Equipo[]>([]);
+
+	if (!row?.original) return null;
 	const bitacora = row.original;
-	bitacora.formated_visita = bitacora.visita_a.map((item: VisitaA) => item.nombre).join(', ');
-	bitacora.formated_comentarios = bitacora.comentarios.map((item: Comentarios_bitacoras) => item.comentario).join(', ');
+
+	bitacora.formated_visita = Array.isArray(bitacora.visita_a) 
+	? bitacora.visita_a.map((item: VisitaA) => item.nombre).join(', ') 
+	: '';
+
+	bitacora.formated_comentarios = Array.isArray(bitacora.comentarios) 
+	? bitacora.comentarios.map((item: Comentarios_bitacoras) => item.comentario).join(', ') 
+	: '';
+
 	return (
 		<div className="flex space-x-2">
 			<ViewListBitacoraModal 
@@ -96,19 +108,19 @@ const OptionsCell: React.FC<{ row: any , onReturnGafete: (bitacora: Bitacora_rec
 			</ViewListBitacoraModal>
 			
 			{ bitacora.status_visita.toLowerCase() !="salida" &&
-			<VehicleLocalPassModal title={"Agregar Vehiculo"} vehicles={vehiculos} setVehiculos={setVehiculos} isAccesos={false} id={bitacora._id} fetch={true}>
-				<div className="cursor-pointer" title="Agregar Vehiculo"><Car/></div>
+			<VehicleLocalPassModal title={"Agregar vehículo"} vehicles={vehiculos} setVehiculos={setVehiculos} isAccesos={false} id={bitacora._id} fetch={true}>
+				<div className="cursor-pointer" title="Agregar vehículo"><Car/></div>
 			</VehicleLocalPassModal>}
 
 			{ bitacora.status_visita.toLowerCase() !="salida" &&	
 			<EqipmentLocalPassModal title="Agregar equipo" id={bitacora._id} equipos={equipos} setEquipos={setEquipos} isAccesos={false}> 
-				<div className="cursor-pointer" title="Agregar Equipo"><Hammer/></div>
+				<div className="cursor-pointer" title="Agregar equipo"><Hammer/></div>
 			</EqipmentLocalPassModal>} 
 					
-			{ bitacora.status_visita.toLowerCase() =="entrada" && bitacora.status_gafete.toLowerCase()=="asignado" ? (
+			{ bitacora?.status_visita.toLowerCase() =="entrada" && bitacora?.status_gafete.toLowerCase()=="asignado" ? (
 				<div
 				className="cursor-pointer"
-				title="Regresar Gafete"
+				title="Regresar gafete"
 				onClick={() => {
 					onReturnGafete(bitacora)}}
 				>
@@ -118,7 +130,7 @@ const OptionsCell: React.FC<{ row: any , onReturnGafete: (bitacora: Bitacora_rec
 			<>
 				<div
 				className="cursor-pointer"
-				title="Agregar Gafete"
+				title="Agregar gafete"
 				onClick={() => {
 					onAddBadgeClick(bitacora)}}
 				>
@@ -127,10 +139,10 @@ const OptionsCell: React.FC<{ row: any , onReturnGafete: (bitacora: Bitacora_rec
 			</>
 			)}
 
-			{ !bitacora.fecha_salida ? (
+			{ !bitacora?.fecha_salida ? (
 				<div
 				className="cursor-pointer"
-				title="Registrar Salida"
+				title="Registrar salida"
 				onClick={() => {
 					onDoOutClick(bitacora)}}
 				>
@@ -160,7 +172,7 @@ export const getBitacorasColumns = (onReturnGafete: (bitacora: Bitacora_record) 
 		accessorKey: "folio",
 		header: "Folio",
 		cell: ({ row }) => (
-			<div className="capitalize">{row.getValue("folio")}</div>
+			<div className="capitalize">{row.getValue("folio")??""}</div>
 		),
 		enableSorting: true,
 	},
@@ -168,7 +180,7 @@ export const getBitacorasColumns = (onReturnGafete: (bitacora: Bitacora_record) 
 		accessorKey: "nombre_visitante",
 		header: "Visitante",
 		cell: ({ row }) => (
-			<div className="capitalize">{row.getValue("nombre_visitante")}</div>
+			<div className="capitalize">{row.getValue("nombre_visitante")??""}</div>
 		),
 		enableSorting: true,
 	},
@@ -179,9 +191,17 @@ export const getBitacorasColumns = (onReturnGafete: (bitacora: Bitacora_record) 
 			const isAbierto = row.getValue("status_visita") === "Entrada";
 	
 			return (
-			  <div className={`capitalize font-semibold ${isAbierto ? 'text-green-600' : 'text-red-600'}`}>
-				{row.getValue("status_visita")}
-			  </div>
+				<Badge
+					className={`text-white text-sm ${!isAbierto
+						? "bg-red-600 hover:bg-red-600"
+						: "bg-green-600 hover:bg-green-600"
+					}`}
+					>
+					{capitalizeFirstLetter(row.getValue("status_visita")??"")}
+					</Badge>
+			//   <div className={`capitalize font-semibold ${isAbierto ? 'text-green-600' : 'text-red-600'}`}>
+			// 	{row.getValue("status_visita")}
+			//   </div>
 			);
 		  },
 		enableSorting: true,
@@ -190,7 +210,7 @@ export const getBitacorasColumns = (onReturnGafete: (bitacora: Bitacora_record) 
 		accessorKey: "fecha_entrada",
 		header: "Entrada",
 		cell: ({ row }) => (
-			<div className="capitalize">{row.getValue("fecha_entrada")}</div>
+			<div className="capitalize">{row.getValue("fecha_entrada")??""}</div>
 		),
 		enableSorting: true,
 	},
@@ -198,7 +218,7 @@ export const getBitacorasColumns = (onReturnGafete: (bitacora: Bitacora_record) 
 		accessorKey: "fecha_salida",
 		header: "Salida",
 		cell: ({ row }) => (
-			<div className="capitalize">{row.getValue("fecha_salida")}</div>
+			<div className="capitalize">{row.getValue("fecha_salida")??""}</div>
 		),
 		enableSorting: true,
 	},
@@ -206,7 +226,7 @@ export const getBitacorasColumns = (onReturnGafete: (bitacora: Bitacora_record) 
 		accessorKey: "perfil_visita",
 		header: "Tipo",
 		cell: ({ row }) => (
-			<div className="capitalize">{row.getValue("perfil_visita")}</div>
+			<div className="capitalize">{row.getValue("perfil_visita")??""}</div>
 		),
 		enableSorting: true,
 	},
@@ -214,7 +234,7 @@ export const getBitacorasColumns = (onReturnGafete: (bitacora: Bitacora_record) 
 		accessorKey: "contratista",
 		header: "Empresa",
 		cell: ({ row }) => (
-			<div className="capitalize">{row.getValue("contratista")}</div>
+			<div className="capitalize">{row.getValue("contratista")??""}</div>
 		),
 		enableSorting: true,
 	},
@@ -222,7 +242,7 @@ export const getBitacorasColumns = (onReturnGafete: (bitacora: Bitacora_record) 
 		accessorKey: "visita_a",
 		header: "Visita a",
 		cell: ({ row }) => {
-			const visita_a= row.getValue("visita_a") as VisitaA[]
+			const visita_a = (row.getValue("visita_a") ?? []) as VisitaA[];
 			return(
 			<div className="capitalize">{visita_a.length>0 ? visita_a[0]?.nombre:""}</div>
 		)},
@@ -231,7 +251,7 @@ export const getBitacorasColumns = (onReturnGafete: (bitacora: Bitacora_record) 
 	},
 	{
 		accessorKey: "caseta_entrada",
-		header: "Caseta Entrada",
+		header: "Caseta entrada",
 		cell: ({ row }) => (
 			<div className="capitalize">{row.getValue("caseta_entrada")}</div>
 		),
@@ -239,7 +259,7 @@ export const getBitacorasColumns = (onReturnGafete: (bitacora: Bitacora_record) 
 	},
 	{
 		accessorKey: "nombre_area_salida",
-		header: "Caseta Salida",
+		header: "Caseta salida",
 		cell: ({ row }) => (
 			<div className="capitalize">{row.getValue("nombre_area_salida")}</div>
 		),
@@ -249,7 +269,7 @@ export const getBitacorasColumns = (onReturnGafete: (bitacora: Bitacora_record) 
 		accessorKey: "id_gafet",
 		header: "Gafete",
 		cell: ({ row }) => {
-			const statusGafete = row.original.status_gafete !== "" ? row.original.status_gafete.toLowerCase() : "";
+			const statusGafete = row.original?.status_gafete !== "" ? row.original?.status_gafete.toLowerCase() : "";
 			const isEntregado = statusGafete === "entregado";
 			const isAsignado = statusGafete === "asignado";
 			const textColorClass = isEntregado ? "text-red-500" : isAsignado ? "text-green-500" : "";
@@ -265,7 +285,7 @@ export const getBitacorasColumns = (onReturnGafete: (bitacora: Bitacora_record) 
 		accessorKey: "id_locker",
 		header: "Locker",
 		cell: ({ row }) => {
-			const statusLocker = row.original.status_gafete !== "" ? row.original.status_gafete.toLowerCase() : "";
+			const statusLocker = row.original?.status_gafete !== "" ? row.original?.status_gafete.toLowerCase() : "";
 			const isLockerEntregado = statusLocker === "entregado";
 			const isLockerAsignado = statusLocker === "asignado";
 			const lockerColorClass = isLockerEntregado ? "text-red-500" : isLockerAsignado ? "text-green-500" : "";
@@ -281,13 +301,13 @@ export const getBitacorasColumns = (onReturnGafete: (bitacora: Bitacora_record) 
 		accessorKey: "comentarios",
 		header: "Comentarios",
 		cell: ({ row }) => {
-			const comentarios = row.getValue("comentarios") as Comentarios_bitacoras[];
+			const comentarios = row.getValue("comentarios") as Comentarios_bitacoras[] ??""
 			return (
 				<div className="capitalize">
 					{Array.isArray(comentarios) ? (
 						<ul className="list-disc pl-5">
 							{comentarios.map((comentario, index) => (
-								<li key={index}>{comentario.comentario}</li>
+								<li key={index}>{comentario?.comentario}</li>
 							))}
 						</ul>
 					) : (

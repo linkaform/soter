@@ -133,7 +133,7 @@ export const equiposColumns: ColumnDef<Bitacora_record>[] = [
 	},
 	{
 		accessorKey: "fecha_entrada",
-		header: "Fecha de Entrada",
+		header: "Fecha de entrada",
 		cell: ({ row }) => (
 			<div className="capitalize">{row.getValue("fecha_entrada")}</div>
 		),

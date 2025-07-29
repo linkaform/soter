@@ -1,0 +1,394 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+import { Button } from "../ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "../ui/dialog";
+
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import {  Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import DateTime from "../dateTime";
+import { Loader2 } from "lucide-react";
+import { Input } from "../ui/input";
+import { format } from "date-fns";
+import Multiselect from "multiselect-react-dropdown";
+import { useEditarRondin } from "@/hooks/Rondines/useEditarRondin";
+import { useShiftStore } from "@/store/useShiftStore";
+
+interface EditarRondinModalProps {
+  	title: string;
+    data: any;
+    setModalEditarAbierto:Dispatch<SetStateAction<boolean>>; 
+	modalEditarAbierto:boolean;
+	onClose: () => void; 
+}
+
+const formSchema = z.object({
+    nombre_rondin:z.string().optional(),
+    duracion_estimada: z.string().optional(),
+    ubicacion:  z.string().optional(),
+    areas: z.array(z.string().optional()),
+    grupo_asignado:z.string().optional(),
+    fecha_hora_programada: z.string().optional(),
+    programar_anticipacion: z.string().optional(),
+    cuanto_tiempo_de_anticipacio:z.string().optional(),
+    cuanto_tiempo_de_anticipacion_expresado_en:z.string().optional(),
+    tiempo_para_ejecutar_tarea:z.number().optional(),
+    tiempo_para_ejecutar_tarea_expresado_en:z.string().optional(),
+    la_tarea_es_de: z.string().optional(),
+    se_repite_cada:z.string().optional(),
+    sucede_cada:z.string().optional(),
+    sucede_recurrencia: z.array(z.string().optional()),
+    en_que_minuto_sucede:z.string().optional(),
+    cada_cuantos_minutos_se_repite:z.string().optional(),
+    en_que_hora_sucede:z.string().optional(),
+    cada_cuantas_horas_se_repite:z.string().optional(),
+    que_dias_de_la_semana: z.array(z.string().optional()),
+    en_que_semana_sucede:z.string().optional(),
+    que_dia_del_mes:z.string().optional(),
+    cada_cuantos_dias_se_repite:z.string().optional(),
+    en_que_mes:z.string().optional(),
+    cada_cuantos_meses_se_repite:z.string().optional(),
+    la_recurrencia_cuenta_con_fecha_final: z.string().optional(),
+    fecha_final_recurrencia:z.string().optional(),
+});
+
+export const EditarRondinModal: React.FC<EditarRondinModalProps> = ({
+  	title,
+    data,
+    setModalEditarAbierto,
+    modalEditarAbierto,
+    onClose
+}) => { 
+    const areasFormatted = data?.areas?.map((u: any) => ({ id: u, name: u }))
+    console.log("formteo", areasFormatted)
+	const [areasSeleccionadas, setAreasSeleccionadas] = useState<any[]>(areasFormatted??[]); 
+	const { editarRondinMutation, isLoading} = useEditarRondin()
+	const [date, setDate] = useState<Date|"">("");
+    const { location } = useShiftStore()
+
+    console.log("duracion",data.folio)
+	const form = useForm<z.infer<typeof formSchema>>({
+		resolver: zodResolver(formSchema),
+		defaultValues: {
+            nombre_rondin: data.nombre_del_rondin,
+            duracion_estimada: data.duracion_estimada.split(" ")[0],
+            ubicacion: location,
+            areas: [],
+            grupo_asignado: '',
+            fecha_hora_programada: data.fecha_hora_programada,
+            programar_anticipacion: '',
+            cuanto_tiempo_de_anticipacio: '',
+            cuanto_tiempo_de_anticipacion_expresado_en: '',
+            tiempo_para_ejecutar_tarea: 30,
+            tiempo_para_ejecutar_tarea_expresado_en: '',
+            la_tarea_es_de: '',
+            se_repite_cada: '',
+            sucede_cada: '',
+            sucede_recurrencia: [],
+            en_que_minuto_sucede: '',
+            cada_cuantos_minutos_se_repite: '',
+            en_que_hora_sucede: '',
+            cada_cuantas_horas_se_repite: '',
+            que_dias_de_la_semana: [],
+            en_que_semana_sucede: '',
+            que_dia_del_mes: '',
+            cada_cuantos_dias_se_repite: data.cada_cuantos_dias_se_repite, 
+            en_que_mes: '',
+            cada_cuantos_meses_se_repite: '',
+            la_recurrencia_cuenta_con_fecha_final: '',
+            fecha_final_recurrencia: '',
+            
+            // nombre_recorrido:"",
+            // ubicacion_recorrido:"",
+            // fecha_hora_programada_rondin: "",
+            // fecha_hora_inicio_rondin: "",
+            // fecha_hora_fin_rondin: "",
+            // estatus_recorrido:"",
+            // recorrido: "",
+            // areas_recorrido:"",
+            // incidencias:"",
+            // duracion_recorrido_minutos: "",
+            // motivo_cancelacion: "",
+		},
+	});
+
+	const { reset } = form;
+
+ 	
+	useEffect(()=>{
+		if(modalEditarAbierto){
+			reset()
+			setDate(new Date(data.fecha_hora_programada ))
+            // const areasFormat = data?.areas?.map((u: any) => ({ id: u, name: u }))
+            // console.log("areas formateds",areasFormat)
+            // setAreasSeleccionadas(areasFormat)
+		}
+	},[modalEditarAbierto])
+
+	// useEffect(()=>{
+	// 	if(isSuccess){
+	// 		reset()
+	// 		setDate(new Date())
+	// 		// setEvidencia([])
+	// 		// setDocumento([])
+	// 		refetchAreaEmpleado()
+	// 		refetchAreaEmpleadoApoyo()
+	// 		refetchFallas()
+	// 	}
+	// },[isSuccess])
+
+
+
+	function onSubmit(values: z.infer<typeof formSchema>) {
+        console.log("values",values)
+		let formattedDate=""
+		if(date){
+			formattedDate = format( new Date(date), 'yyyy-MM-dd HH:mm:ss');
+            const areas = areasSeleccionadas.map( e => e.id);
+			const formatData ={
+                nombre_rondin: values.nombre_rondin ?? "",
+                duracion_estimada: values.duracion_estimada	+ " minutos",
+                ubicacion:location,
+                areas: areas,
+                fecha_hora_programada: formattedDate,
+                cada_cuantos_dias_se_repite: data.cada_cuantos_dias_se_repite,
+                // nombre_recorrido: values.nombre_recorrido,
+                // ubicacion_recorrido:values.ubicacion_recorrido,
+				// fecha_hora_programada_rondin:values.fecha_hora_programada_rondin||"",
+				// fecha_hora_inicio_rondin: values.fecha_hora_inicio_rondin||"",
+				// fecha_hora_fin_rondin:values.fecha_hora_fin_rondin||"",
+				// estatus_recorrido:"",
+				// recorrido:"abierto",
+				// areas_recorrido:"",
+				// incidencias: formattedDate||"",
+				// duracion_recorrido_minutos: values.duracion_recorrido_minutos||"",
+				// motivo_cancelacion:values.motivo_cancelacion||"",
+				}
+				editarRondinMutation.mutate({folio: data.folio, rondin_data: formatData},{
+                    onSuccess: ()=>{
+                        setModalEditarAbierto(false)
+                    }
+                })
+		}else{
+			form.setError("fecha_hora_programada", { type: "manual", message: "Fecha es un campo requerido." });
+		}
+	}
+
+    // useEffect(() => {
+	// 	if (ubicacionesDefaultFormatted) {
+	// 		setAreasSeleccionadas(ubicacionesDefaultFormatted)
+	// 	}
+	// }, [ubicacionesDefaultFormatted]); 
+
+    // useEffect(()=>{
+	// 	if(modalEditarAbierto){
+	// 		// setAreasSeleccionadas([{id:data.ubicacion, name:data.ubicacion}])
+	// 	}
+	// },[modalEditarAbierto])
+
+
+  return (
+    <Dialog open={modalEditarAbierto} onOpenChange={setModalEditarAbierto} modal>
+      {/* <DialogTrigger asChild>{children}</DialogTrigger> */}
+
+      <DialogContent className="max-w-xl flex flex-col"  aria-describedby="">
+        <DialogHeader className="flex-shrink-0">
+          <DialogTitle className="text-2xl text-center font-bold">
+            {title}
+          </DialogTitle>
+        </DialogHeader>
+
+		<div className="max-h-[80vh] flex-grow p-4 " >
+			<Form {...form}>
+			<form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-1 gap-5">
+                <FormField
+					control={form.control}
+					name="nombre_rondin"
+					render={({ field }:any) => (
+						<FormItem>
+                            <FormLabel>Nombre:</FormLabel>
+                            <FormControl>
+                                <Input
+                                placeholder="Texto"
+                                className="resize-none"
+                                {...field}
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+					)}
+				/>
+
+				<FormField
+					control={form.control}
+					name="fecha_hora_programada"
+					render={() => (
+						<FormItem>
+							<FormLabel>Fecha y hora programada rondin: *</FormLabel>
+							<FormControl>
+                                <DateTime date={date} setDate={setDate} />
+                            </FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+                <div className="flex flex-row gap-3">
+					<div>
+						<FormField
+							control={form.control}
+							name="duracion_estimada"
+							render={({field}:any) => (
+								<FormItem>
+									<FormLabel>Duración estimada: *
+									</FormLabel>
+									<FormControl>
+					
+									<Input
+									id="time-value"
+									type="number"
+									min={1}
+									max={60}
+									placeholder="1–60"
+									value={field.value}
+									onChange={(e) => {
+										field.onChange(e.target.value); 
+									}}
+									/>					
+
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+					</div>
+					<div className="w-32 flex items-center mt-7">
+						<div className="text-sm">Minutos</div>
+						{/* <Select value={unit} onValueChange={setUnit} >
+						<SelectTrigger id="unit-select">
+							<SelectValue placeholder="Unidad" />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectItem value="segundos">Segundos</SelectItem>
+							<SelectItem value="minutos">Minutos</SelectItem>
+							<SelectItem value="horas">Horas</SelectItem>
+						</SelectContent>
+						</Select> */}
+					</div>
+				</div>
+
+                <div className="mt-0">
+                    <div className="text-sm mb-2">Áreas: *</div>
+                    <Multiselect
+                    options={[{id:"Antenas", name:"Antenas"}, {id:"Papeleria", name:"Papeleria"}, {id:"Area de rampa 24", name:"Area de rampa 24"},{id:"Cuarto de servidores", name:"Cuarto de servidores"}]} 
+                    selectedValues={areasSeleccionadas}
+                    onSelect={(selectedList, selectedItem) => {
+                        setAreasSeleccionadas(prev=>{
+                            const exist= prev.some(area=>area.id===selectedItem.id);
+                            return exist? prev: [...prev, selectedItem]
+                        });
+                    }}
+                    onRemove={(selectedList, removedItem) => {
+                        setAreasSeleccionadas(prev=> 
+                            prev.filter( area=> area.id !== removedItem.id));
+                    }}
+                    displayValue="name"
+
+                    
+
+                    />
+                </div>
+
+				<FormField
+					control={form.control}
+					name="cada_cuantos_dias_se_repite"
+					render={({ field }:any) => (
+						<FormItem>
+							<FormLabel>Recurrencia: *</FormLabel>
+							<FormControl>
+							<Select {...field} className="input"
+								onValueChange={(value:string) => {
+								field.onChange(value); 
+							}}
+							value={field.value} 
+						>
+							<SelectTrigger className="w-full">
+                                <SelectValue placeholder="Selecciona una opción" />
+							</SelectTrigger>
+							<SelectContent>
+							{/* {catalagoSub.length>0 ? (
+								catalagoSub?.map((item:string, index:number) => {
+									return ( */}
+										<SelectItem value={"No se repite"}>
+                                        No se repite
+										</SelectItem>
+                                        <SelectItem value={"Diariamente"}>
+                                        Diariamente
+										</SelectItem>
+                                        <SelectItem value={"Semanalmente los jueves"}>
+                                        Semanalmente los jueves
+										</SelectItem>
+                                        <SelectItem value={"Anualmente el 10 de marzo"}>
+                                        Anualmente el 10 de marzo
+										</SelectItem>
+										<SelectItem value={"Todos los dias de la semana(Lunes a Viernes)"}>
+                                        Todos los dias de la semana(Lunes a Viernes)
+										</SelectItem>
+										<SelectItem value={"Personalizado "}>
+                                        Personalizado
+										</SelectItem>
+									{/* )
+								})
+							):(
+								<><SelectItem disabled value={"no opciones"}>No hay opciones disponibles</SelectItem></>
+							)} */}
+							</SelectContent>
+						</Select>
+							</FormControl>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>	
+
+			</form>
+			</Form>
+		</div>
+		<div className="flex gap-2">
+			<DialogClose asChild>
+				<Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700" onClick={onClose}>
+				Cancelar
+				</Button>
+			</DialogClose>
+
+			
+			<Button
+				type="submit"
+				onClick={form.handleSubmit(onSubmit)}
+				className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={isLoading}
+			>
+				{isLoading? (
+				<>
+					<Loader2 className="animate-spin"/> {"Editando rondin..."}
+				</>
+			):("Editar rondin")}
+			</Button>
+		</div>
+		
+      </DialogContent>
+    </Dialog>
+  );
+};

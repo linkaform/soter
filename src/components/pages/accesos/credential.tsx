@@ -80,23 +80,19 @@ const Credentials: React.FC<Props> = ({ searchPass }) => {
 						/>
 					</div>
 				</div>
+
 				<div className="flex flex-col justify-center items-center text-xl font-bold">
-						<p>
-						{searchPass?.nombre}
-						</p> 
-						
+					<p>
+					{searchPass?.nombre}
+					</p> 
 				</div>
 
 				<div className="flex flex-col justify-center items-center my-1 mb-2">
 					{searchPass?.tipo_de_pase}
 				</div>
 						
-
 				<div className="flex flex-col gap-3">
-					{/* <div>
-						<span className="text-gray-500">Ubicación:  <span className="text-black">{searchPass?.ubicacion}</span></span>
-					</div> */}
-				
+
 					<div className="w-full flex gap-2">
 						<p className="text-slate-500 whitespace-nowrap">Ubicación:</p>
 						<div className="relative group w-full break-words">
@@ -115,8 +111,7 @@ const Credentials: React.FC<Props> = ({ searchPass }) => {
 							</span>
 							)}
 						</div>
-						</div>
-
+					</div>
 
 					<div>
 						<span className="text-gray-500">Empresa:  <span className="text-black">{searchPass?.empresa}</span></span>
@@ -124,10 +119,27 @@ const Credentials: React.FC<Props> = ({ searchPass }) => {
 					<div>
 						<span className="text-gray-500">Motivo de visita:  <span className="text-black">{searchPass?.motivo_visita}</span></span>
 					</div>
-	
+
+					<div>
+						<span className="text-gray-500">Estatus:  </span>
+						<Badge
+							className={`text-white text-md ${
+								searchPass?.estatus.toLowerCase() == "vencido"
+								? "bg-red-600 hover:bg-red-600"
+								: searchPass?.estatus.toLowerCase() == "activo"
+								? "bg-green-600 hover:bg-green-600"
+								: searchPass?.estatus.toLowerCase() == "proceso"
+								? "bg-blue-600 hover:bg-blue-600"
+								: "bg-gray-400"
+							}`}
+							>
+							{capitalizeFirstLetter(searchPass?.estatus ??"")}
+						</Badge>
+					</div>
+
 					<div className="flex">
 						<p className="w-1/4 text-gray-500">Visita a:</p>
-						<div className="flex space-y-2 w-full justify-start">
+						<div className="flex w-full justify-start">
 						{searchPass?.visita_a?.map((visita, index) => (
 							<div
 							key={index}
@@ -180,63 +192,47 @@ const Credentials: React.FC<Props> = ({ searchPass }) => {
 						))}
 						</div>
 					</div>
-					<div>
-					<span className="text-gray-500">Estatus:  </span>
-						<Badge
-						className={`text-white text-md ${
-							searchPass?.estatus.toLowerCase() == "vencido"
-							? "bg-red-600 hover:bg-red-600"
-							: searchPass?.estatus.toLowerCase() == "activo"
-							? "bg-green-600 hover:bg-green-600"
-							: searchPass?.estatus.toLowerCase() == "proceso"
-							? "bg-blue-600 hover:bg-blue-600"
-							: "bg-gray-400"
-						}`}
-						>
-						{capitalizeFirstLetter(searchPass?.estatus ??"")}
-					</Badge>
-
-					</div>
 
 					<div>
 						<span className="text-gray-500">Vigencia del pase:  <span className="text-black">{searchPass?.fecha_de_caducidad?.toString()}</span></span>
 					</div>
 				
+					<div >
+						{searchPass?.limite_de_acceso != null &&(
+							<div className=" text-slate-500">
+									<span>Limite de entradas:  </span>
+									<span className="text-black">
+										{searchPass?.total_entradas ?? 0}/{searchPass?.limite_de_acceso}
+									</span>
+							</div>
+						)}
+						<div className="grid grid-cols-2 gap-4">
+						{searchPass?.gafete_id &&
+							<div>
+								<span className="text-gray-500">Gafete:  <span className="text-black">{searchPass?.gafete_id}</span></span>
+							</div>
+						}
+						{searchPass?.locker_id &&
+							<div>
+								<span className="text-gray-500">Locker:  <span className="text-black">{searchPass?.locker_id}</span></span>
+							</div>
+						}
+						</div>
+					</div>
+
+					<div className="max-w-sm">
+						{searchPass?.limitado_a_dias && (
+						<div className="">
+							<CalendarDays
+							diasDisponibles={searchPass?.limitado_a_dias}
+							/>
+						</div>
+						)}
+					</div>
+
 				</div>
 			</div>
-
-				<div className="space-y-1">
-					{searchPass?.limite_de_acceso != null &&(
-						<div className=" text-slate-500">
-								<span>Limite de entradas:  </span>
-								<span className="text-black">
-									{searchPass?.total_entradas ?? 0}/{searchPass?.limite_de_acceso}
-								</span>
-						</div>
-					)}
-					<div className="grid grid-cols-2 gap-4">
-					{searchPass?.gafete_id &&
-						<div>
-							<span className="text-gray-500">Gafete:  <span className="text-black">{searchPass?.gafete_id}</span></span>
-						</div>
-					}
-					{searchPass?.locker_id &&
-						<div>
-							<span className="text-gray-500">Locker:  <span className="text-black">{searchPass?.locker_id}</span></span>
-						</div>
-					}
-					</div>
-				</div>
-
-				<div className="max-w-sm">
-					{searchPass?.limitado_a_dias && (
-					<div className="">
-						<CalendarDays
-						diasDisponibles={searchPass?.limitado_a_dias}
-						/>
-					</div>
-					)}
-				</div>
+				
 			</div>
 		</CardContent>
 		</Card>

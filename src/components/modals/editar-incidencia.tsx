@@ -45,6 +45,7 @@ import { Switch } from "@/components/ui/switch"
 import { toast } from "sonner";
 import DepositosList from "../depositos-list";
 import SelectReact from 'react-select'
+import { SeguimientoIncidenciaModal } from "./seguimiento-incidencia";
 
 interface EditarIncidenciaModalProps {
   	title: string;
@@ -148,6 +149,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 	const [depositos, setDepositos] = useState<Depositos[]>([])
 	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado } = useCatalogoAreaEmpleado(modalEditarAbierto, location, "Incidencias" );
 	const { editarIncidenciaMutation} = useInciencias("", "",[], "", "", "");
+	const [openModal, setOpenModal] = useState(false)
 
 	const [search, setSearch]= useState("")
 	const [catSubCategorias, setSubCatCategorias] = useState<any>([])
@@ -159,12 +161,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 	const [loadingCatalogos, setLoadingCatalogos]= useState(false)
 
 	const { catIncidencias } = useCatalogoInciencias(modalEditarAbierto, categoria, subCategoria);
-
 	const [selectedNotificacion, setSelectedNotification] = useState(data.notificacion_incidencia)
-	// const catCategoriasFormatted = catCategorias.map((val: string) => ({
-	// 	value: val.toLowerCase(), 
-	// 	label: val
-	//   }));
 
 
 	const formatValueLabel = (array:any[])=>{
@@ -173,8 +170,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 			label: val.nombre
 		}));
 	}
-	// const [inputTag, setInputTag] = useState('');
-	// const [tagsSeleccionados, setTagsSeleccionados] = useState<string[]>([]);
+
 
 	const getNivelNumber = (val:string) => {
 		if (val =="Alta") return 100
@@ -776,30 +772,50 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 										docArray={documento}
 										limit={10}/>
 									
-									<FormField
-										control={form.control}
-										name="notificacion_incidencia"
-										render={() => (
-											<>
-												<FormLabel>Notificaciones: {`(No/Correo)`}:  </FormLabel>
-												<Switch
-												defaultChecked={false}
-												onCheckedChange={(value:boolean) => { handleToggleNotifications(value); } }
-												aria-readonly />
-											</>
-										)}
-									/>	
+									<div className="col-span-2  flex justify-between items-center my-2">
+											<div className="w-1/2"> 
+											<FormField
+												control={form.control}
+												name="notificacion_incidencia"
+												render={() => (
+													<>
+														<FormLabel>Notificaciones: {`(No/Correo)`}:  </FormLabel>
+														<Switch
+														defaultChecked={false}
+														onCheckedChange={(value:boolean) => { handleToggleNotifications(value); } }
+														aria-readonly />
+													</>
+												)}
+											/>	
+											</div>
+
+											<div className="flex justify-end items-center w-full">
+												<div className="cursor-pointer  bg-blue-500 hover:bg-blue-600 text-white mr-5 rounded-sm p-1 px-3 text-center" onClick={()=>{setOpenModal(!openModal)}}>
+													Agregar seguimiento 
+												</div>
+											</div>
+											<SeguimientoIncidenciaModal
+												title="Seguimiento Incidencia"
+												folio={data?.folio}
+												isSuccess={openModal}
+												setIsSuccess={setOpenModal}
+												>
+												<div></div>
+											</SeguimientoIncidenciaModal>
+									</div>
+
 
 									{selectedIncidencia =="Persona extraviada" && (
 										<div className="col-span-2 w-full">
 											<PersonaExtraviadaFields control={form.control} ></PersonaExtraviadaFields>
 										</div>
 									)}
+
+										
+
 									{selectedIncidencia =="Robo de cableado" && (
+											
 										<div className="col-span-2 w-full flex flex-col ">
-											<Button className="w-full bg-blue-500 hover:bg-blue-600 text-white sm:w-2/3 md:w-1/2 lg:w-1/3 mb-2" >
-												Dar seguimiento
-											</Button>
 											<RoboDeCableado control={form.control} ></RoboDeCableado>
 										</div>
 									)}

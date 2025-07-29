@@ -581,49 +581,6 @@ return (
 							)}
 						/>
 
-						{/* <FormField
-							control={form.control}
-							name="ubicacion"
-							render={() => (
-						
-							<FormItem>
-								<FormLabel>Ubicación:</FormLabel>
-								<div className="flex flex-wrap gap-2 flex-col sm:flex-row">
-									{ubicaciones?.map((ubicacion:string, index:number) => {
-									const isSelected = ubicacionesSeleccionadas.includes(ubicacion);
-									const toggleUbicacion = () => {
-										setUbicacionSeleccionada(ubicacion)
-										setUbicacionesSeleccionadas(prev =>
-										isSelected
-											? prev.filter(u => u !== ubicacion)
-											: [...prev, ubicacion]
-										);
-									};
-									return (
-										<Button
-										key={index}
-										type="button"
-										onClick={toggleUbicacion}
-										className={`px-4 py-2 rounded-md transition-all duration-300 ${
-										isSelected ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"}
-								 		hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)] mr-2`}
-										>
-										<div className="flex flex-wrap items-center">
-										{isSelected ? (
-												<><div className="">{ubicacion}</div></>
-											):(
-												<><div className="text-blue-600">{ubicacion}</div></>
-											)}
-										</div>
-										</Button>
-									);
-									})}
-								</div>
-								<FormMessage />
-							</FormItem>
-							)}
-						/> */}
-
 						<div className="mt-0">
 							<div className="text-sm mb-2">Ubicaciones del pase: </div>
 							<Multiselect

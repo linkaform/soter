@@ -49,10 +49,10 @@ const BitacorasPage = () => {
 			console.log("filtro", filter)
 			setFilter("")
 		}
-		if(option){
-			console.log("filtro", filter)
-			setOption([])
-		}
+		// if(option){
+		// 	console.log("filtro", filter)
+		// 	setOption([])
+		// }
 		if(location){
 			setUbicacionSeleccionada(location )
 		}else{
@@ -162,7 +162,7 @@ return (
 
 			<div className="flex justify-between">
 				<div>
-					<PageTitle title="Registro de Entradas y Salidas" />	
+					<PageTitle title="Registro De Entradas y Salidas" />	
 				</div>
 				<div className="flex items-center gap-5">
 					<div>

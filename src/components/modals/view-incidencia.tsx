@@ -52,7 +52,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 			<div className="flex flex-between gap-2 ">
 				<div className="w-full flex flex-col gap-3">
 					<div className="w-full flex gap-2">
-						<p className="font-bold flex flex-shrink-0">Fecha :</p>
+						<p className="font-bold flex flex-shrink-0">Fecha:</p>
 						<p className="">{formatDateToText(data?.fecha_hora_incidencia.slice(0,-3))} </p>
 					</div>
 					<div className="w-full flex gap-2">
@@ -77,7 +77,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 					<>
 					<div className="w-full">
 					<div className="mx-auto max-w-xs">
-						<p className="font-bold mb-2">Evidencia : </p>
+						<p className="font-bold mb-2">Evidencia: </p>
 						<Carousel className="w-36 max-w-xs">
 							<CarouselContent>
 								{data.evidencia_incidencia.map((a, index) => (
@@ -109,7 +109,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 					<>
 					<div className="w-full flex gap-2">
 						<div className="mx-auto max-w-xs">
-							<p className="font-bold mb-2">Evidencia : </p>
+							<p className="font-bold mb-2">Evidencia: </p>
 							<p className="mb-2">No hay evidencias disponibles </p>
 						</div>
 					</div>
@@ -244,7 +244,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 				{data.acciones_tomadas_incidencia.length > 0 ? (
 					<Accordion type="single" collapsible className="w-full">
 					<AccordionItem key={"1"} value={"1"}>
-					<AccordionTrigger><h1 className="font-bold text-xl">Acciones Realizadas: </h1></AccordionTrigger>
+					<AccordionTrigger><h1 className="font-bold text-xl">Acciones realizadas: </h1></AccordionTrigger>
 					<AccordionContent className="mb-0 pb-0">
 					{data.acciones_tomadas_incidencia.length > 0 ? (
 						<table className="min-w-full table-auto border-separate border-spacing-2">
@@ -352,7 +352,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 					<>
 					<Accordion type="single" collapsible className="w-full">
 						<AccordionItem key={"1"} value={"1"}>
-							<AccordionTrigger><h1 className="font-bold text-xl">Robo de Vehículo: </h1></AccordionTrigger>
+							<AccordionTrigger><h1 className="font-bold text-xl">Robo de vehículo: </h1></AccordionTrigger>
 							<AccordionContent className="mb-0 pb-0">
 								<table className="min-w-full table-auto border-separate border-spacing-2">
 									<tbody>
@@ -391,8 +391,8 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 						<Check /> Agregar seguimiento
 					</Button>
 				</SeguimientoIncidenciaModal> */}
-				<div className="flex justify-end items-center">
-					<div className="cursor-pointer  bg-blue-500 hover:bg-blue-600 text-white mr-5 rounded-sm p-1 w-full text-center" onClick={()=>{setOpenModal(!openModal)}}>
+				<div className="flex justify-end items-center ">
+					<div className="cursor-pointer  bg-blue-500 hover:bg-blue-600 text-white mr-5 rounded-sm p-1 px-3 w-full text-center" onClick={()=>{setOpenModal(!openModal)}}>
 						Agregar seguimiento 
 					</div>
 				</div>

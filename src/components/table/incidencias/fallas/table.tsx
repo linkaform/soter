@@ -104,6 +104,7 @@ import { CerrarFallaModal } from "@/components/modals/close-falla-modal";
 		setFallaSeleccionada(falla);
 		setModalEliminarAbierto(true);
 	};
+
 	const handleCerrar= (falla: Fallas_record) => {
 		setFallaSeleccionada(falla);
 		setModalCerrarAbierto(true);
@@ -111,6 +112,7 @@ import { CerrarFallaModal } from "@/components/modals/close-falla-modal";
 	
 
 	const [globalFilter, setGlobalFilter] = React.useState("");
+	
 	const columns = useMemo(() => {
 	if (isLoading) return [];
 	return getFallasColumns(handleEditar, handleSeguimiento, handleEliminar, handleCerrar);

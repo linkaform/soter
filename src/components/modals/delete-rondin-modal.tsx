@@ -7,42 +7,36 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog";
-import { Dispatch, SetStateAction } from "react";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
-import { useEliminarIncidencia } from "@/hooks/Incidencias/useEliminarIncidencias";
+import { Dispatch, SetStateAction } from "react";
 import { useShiftStore } from "@/store/useShiftStore";
+import { useEliminarRondin } from "@/hooks/Rondines/useEliminarRondin";
 
-interface AddFallaModalProps {
+interface DeleteRondinModalProps {
   	title: string;
-    arrayFolios:any[];
+	folio:string;
 	setModalEliminarAbierto:Dispatch<SetStateAction<boolean>>; 
 	modalEliminarAbierto:boolean;
 }
 
-export const EliminarIncidenciaModal: React.FC<AddFallaModalProps> = ({
+export const EliminarRondinModal: React.FC<DeleteRondinModalProps> = ({
   	title,
-	arrayFolios,
+	folio,
 	setModalEliminarAbierto,
 	modalEliminarAbierto
 }) => {
 	const { isLoading } = useShiftStore();
-	const eliminarIncidenciaMutation = useEliminarIncidencia();
+	const eliminarRondinMutation = useEliminarRondin();
 
 	const handleClose = () => {
 		setModalEliminarAbierto(false); 
 	};
 
-    const deleteFallas = ()=>{
-		if(arrayFolios.length>0){
-			let foliosArray=[]
-			if (Array.isArray(arrayFolios) && arrayFolios.every(item => typeof item === "string")) {
-				foliosArray = arrayFolios.map(item => item);
-			  } else {
-				foliosArray = arrayFolios.map(item => item.folio);
-			  }
-
-			eliminarIncidenciaMutation.mutate({folio : foliosArray},{
+	const deleteRondines = ()=>{
+		if(folio){
+			console.log("folio",folio)
+			eliminarRondinMutation.mutate({folio},{
 				onSuccess: () => {
 					handleClose(); 
 				  },
@@ -51,7 +45,7 @@ export const EliminarIncidenciaModal: React.FC<AddFallaModalProps> = ({
 				  },
 			})
 		}else{
-			toast.error("Selecciona una incidencia para poder eliminarla...")
+			toast.error("Selecciona un rondin para poder eliminarla...")
 		}
     }
 
@@ -65,10 +59,8 @@ export const EliminarIncidenciaModal: React.FC<AddFallaModalProps> = ({
         </DialogHeader>
 
             <div className="my-3 flex flex-col items-center">
-            {arrayFolios.length==1 ?(<p className="text-2xl font-bold"> ¿Deseas eliminar la incidencia seleccionada?</p>):(
-               <p className="text-2xl font-bold"> ¿Deseas eliminar las incidencias seleccionadas?</p>)}
-                
-                <small> Esta acción no se puede deshacer..</small>
+			<p className="text-2xl font-bold"> ¿Seguro que quieres eliminar este rondin?</p>
+                <small>Esta acción no se puede revertir.</small>
             </div>
 
 			<div className="flex gap-2">
@@ -80,12 +72,12 @@ export const EliminarIncidenciaModal: React.FC<AddFallaModalProps> = ({
 
 				
 				<Button
-                    onClick={deleteFallas}
+                    onClick={deleteRondines}
 					className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={isLoading}
 				>
 					{ !isLoading ? (<>
-					{arrayFolios.length==1 ?("Eliminar"):("Eliminar")}
-					</>) :(<> <Loader2 className="animate-spin"/> {arrayFolios.length==1 ?("Eliminando"):("Eliminando")} </>)}
+					<div>Eliminar rondin seleccionada</div>
+					</>) :(<> <Loader2 className="animate-spin"/> Eliminando rondin seleccionada </>)}
 				</Button>
 			</div>
         

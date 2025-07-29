@@ -55,8 +55,8 @@ export const DoOutModal: React.FC<AddBadgeModalProps> = ({
           </DialogTitle>
         </DialogHeader>
             <div className="flex flex-col justify-center items-center gap-2">
-                <p className="text-xl font-bold">¿Estás seguro de querer registrar la salida?</p> 
-                <p>Esta accion no se puede revertir.</p>           
+                <p className="text-xl font-bold"> ¿Estás seguro de registrar la salida? </p>
+                <p>Esta accion no se puede deshacer.</p>           
             </div>
             <div className="flex gap-5">
               <DialogClose asChild>

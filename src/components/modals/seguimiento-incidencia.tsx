@@ -178,7 +178,7 @@ export const SeguimientoIncidenciaModal: React.FC<IncidenciaModalProps> = ({
 								name="incidencia_folio_accion_correctiva"
 								render={({ field }: any) => (
 									<FormItem>
-										<FormLabel>Acción realizada:</FormLabel>
+										<FormLabel>Acción realizada: *</FormLabel>
 										<FormControl>
 											<Input placeholder="Acción realizada..." {...field}
 												onChange={(e) => {
@@ -279,7 +279,7 @@ export const SeguimientoIncidenciaModal: React.FC<IncidenciaModalProps> = ({
 								className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={isLoading}
 							>
 								{!isLoading ? (<>
-									{("Agregar seguimiento")}
+									{("Agregar")}
 								</>) : (<> <Loader2 className="animate-spin" /> {"Agregando seguimiento..."} </>)}
 							</Button>
 						</div>
