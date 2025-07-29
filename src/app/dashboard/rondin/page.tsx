@@ -24,13 +24,12 @@ const RondinesPage = () => {
 
   const [datePrimera, setDatePrimera] = useState<string>("")
   const [dateSegunda, setDateSegunda] = useState<string>("")
-  const [isSuccessRondin, setIsSuccessRondin] = useState(false);
   const [selectedRondin, setSelectedRondin]= useState<string[]>([]);
 
   const [date1, setDate1] = useState<Date|"">("")
   const [date2, setDate2] = useState<Date|"">("")
 
-  console.log(datePrimera, dateSegunda, isSuccessRondin)
+  console.log(datePrimera, dateSegunda)
 	const data: any[] = [
 		{
 		folio: 1,
@@ -330,11 +329,6 @@ const RondinesPage = () => {
 			setSelectedTab(tab)
 		}
 	};
-  
-
-	const openModalRondin = () => {
-		setIsSuccessRondin(true);  
-	};
 
 	const Filter = () => {
 		const f1= dateToString(new Date(date1)) 
@@ -457,21 +451,21 @@ const RondinesPage = () => {
 
               <TabsContent value="Fotos">
                 <div >
-                  	<RondinesTable data={data} isLoading={false} openModal={openModalRondin} setSelectedRondin={setSelectedRondin} selectedRondin={selectedRondin}
+                  	<RondinesTable data={data} isLoading={false} setSelectedRondin={setSelectedRondin} selectedRondin={selectedRondin}
 						setDate1={setDate1} setDate2={setDate2} date1={date1} date2={date2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters} />
                 </div>
               </TabsContent>
 
               <TabsContent value="Rondines">
                 <div >
-					<RondinesTable data={data} isLoading={false} openModal={openModalRondin} setSelectedRondin={setSelectedRondin} selectedRondin={selectedRondin}
+					<RondinesTable data={data} isLoading={false} setSelectedRondin={setSelectedRondin} selectedRondin={selectedRondin}
 						setDate1={setDate1} setDate2={setDate2} date1={date1} date2={date2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters} />
                 </div>
               </TabsContent>
 
               <TabsContent value="Calendario">
                 <div >
-					<RondinesTable data={data} isLoading={false} openModal={openModalRondin} setSelectedRondin={setSelectedRondin} selectedRondin={selectedRondin}
+					<RondinesTable data={data} isLoading={false} setSelectedRondin={setSelectedRondin} selectedRondin={selectedRondin}
 						setDate1={setDate1} setDate2={setDate2} date1={date1} date2={date2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters} />
                 </div>
               </TabsContent>
