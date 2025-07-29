@@ -104,7 +104,6 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 	}
 
 	const handleEditarRondin= (rondin:Recorrido)=>{
-		console.log("rondin", rondin);
 		setRondinSeleccionado(rondin); 
 		setModalEditarAbierto(true); 
 	}

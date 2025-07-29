@@ -136,12 +136,6 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
     }
   },[sendDataUpdate])
 
-	// useEffect(()=>{
-  //   console.log("abrir cerrar", responseUpdatePase)
-	// 	if(responseUpdatePase?.status_code == 202){
-  //     router.push(`/`); 
-	// 	}
-	// },[responseUpdatePase])
 
   useEffect(()=>{
     if(responseCreatePase?.status_code == 201|| responseCreatePase?.status_code == 202){

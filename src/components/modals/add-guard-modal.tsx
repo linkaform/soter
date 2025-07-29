@@ -48,7 +48,6 @@ export const AddGuardModal: React.FC<AddGuardModalProps> = ({
     );
   }, [supportGuards, searchText]);
 
-  console.log("filtrados",filteredGuards)
   
   return (
     <Dialog open={open} onOpenChange={setIsOpen}>

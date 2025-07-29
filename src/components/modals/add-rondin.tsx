@@ -121,32 +121,17 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 	});
 
 	const { reset } = form;
-	console.log("rest", reset)
 
 	useEffect(()=>{
 		if(isSuccess){
 			reset()
-			// setDate(new Date())
-			// // setEvidencia([])
-			// // setDocumento([])
-			// refetchAreaEmpleado()
-			// refetchAreaEmpleadoApoyo()
-			// refetchFallas()
 		}
 	},[isSuccess])
 
 
-	// useEffect(()=>{
-	// 	if(dataFallas && subconcepto){
-	// 		setCatalogoSub(dataFallas)
-	// 	}
-	// 	if(dataFallas && !subconcepto){
-	// 		setFallas(dataFallas)
-	// 	}
-	// },[dataFallas])
+
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log("NOMBRE DEL RONDIN",values.nombre_rondin)
 		let formattedDate=""
 		if(date){
 			formattedDate = format( new Date(date), 'yyyy-MM-dd HH:mm:ss');

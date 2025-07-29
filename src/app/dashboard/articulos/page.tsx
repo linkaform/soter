@@ -99,11 +99,8 @@ const ArticulosPage = () => {
 	}
 
 	const handleTabChange = (tab:string, option:string, estado:string) => {
-		console.log("Filtros", tab, option, estado)
-		console.log("Filtros valid", selectedTab, status, dateFilter)
 		if(tab == selectedTab && dateFilter==option){
 			if(tab =="Concecionados" || tab =="Perdidos"){
-				console.log("consesionados")
 				setSelectedTab("Paqueteria")
 				setStatus("")
 				setDateFilter("")

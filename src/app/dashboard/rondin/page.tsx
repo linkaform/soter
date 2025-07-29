@@ -318,7 +318,6 @@ const RondinesPage = () => {
 
   
   const handleTabChange = (tab:string, option:string[], filter="") => {
-		console.log(tab, option, filter)
 		if(tab==selectedTab && arraysIguales(option, selectedOption) && filter == dateFilter){
 				setSelectedOption([]);
 				setSelectedTab(selectedTab)  

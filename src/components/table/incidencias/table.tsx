@@ -179,7 +179,6 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 				id: "tags",
 				header: "Tags",
 				accessorFn: (row: { tags: any[]; }) => {
-				  console.log("row.tags raw:", row.tags);
 				  if (Array.isArray(row.tags)) {
 					return row.tags.join(", ");
 				  }

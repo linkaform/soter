@@ -75,13 +75,11 @@ export const EditarRondinModal: React.FC<EditarRondinModalProps> = ({
     onClose
 }) => { 
     const areasFormatted = data?.areas?.map((u: any) => ({ id: u, name: u }))
-    console.log("formteo", areasFormatted)
 	const [areasSeleccionadas, setAreasSeleccionadas] = useState<any[]>(areasFormatted??[]); 
 	const { editarRondinMutation, isLoading} = useEditarRondin()
 	const [date, setDate] = useState<Date|"">("");
     const { location } = useShiftStore()
 
-    console.log("duracion",data.folio)
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -134,25 +132,9 @@ export const EditarRondinModal: React.FC<EditarRondinModalProps> = ({
 		if(modalEditarAbierto){
 			reset()
 			setDate(new Date(data.fecha_hora_programada ))
-            // const areasFormat = data?.areas?.map((u: any) => ({ id: u, name: u }))
-            // console.log("areas formateds",areasFormat)
-            // setAreasSeleccionadas(areasFormat)
+          
 		}
 	},[modalEditarAbierto])
-
-	// useEffect(()=>{
-	// 	if(isSuccess){
-	// 		reset()
-	// 		setDate(new Date())
-	// 		// setEvidencia([])
-	// 		// setDocumento([])
-	// 		refetchAreaEmpleado()
-	// 		refetchAreaEmpleadoApoyo()
-	// 		refetchFallas()
-	// 	}
-	// },[isSuccess])
-
-
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
         console.log("values",values)

@@ -304,7 +304,6 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 	const handleOpenModal = async () =>{
 		setLoadingCatalogos(true)
 		const {catSubIncidenciasIcons, subCategories}= await LoadCategories()
-		console.log("catInci", catIncidencias)
 		if (catSubIncidenciasIcons.length>0) {
 			//Si me regresa el mismo catalogo de categorias, entonces rellenamos directo el cat Incidencias
 			const subCatSubIncidenciasIcons = subCategoriasConIconos.filter((cat) =>
@@ -327,7 +326,6 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 	const LoadCategories = async ()=>{
 		try{
 			const incidenciasRes = await getCatIncidencias("", "");
-			console.log("incidencias", incidenciasRes)
 			const catIncidenciasIcons = categoriasConIconos.filter((cat) =>
 				incidenciasRes.response.data.data.includes(cat.nombre)
 			);
