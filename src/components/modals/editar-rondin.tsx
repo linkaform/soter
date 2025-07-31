@@ -28,6 +28,7 @@ import { format } from "date-fns";
 import Multiselect from "multiselect-react-dropdown";
 import { useEditarRondin } from "@/hooks/Rondines/useEditarRondin";
 import { useShiftStore } from "@/store/useShiftStore";
+import { useCatalogAreasRondin } from "@/hooks/Rondines/useCatalogAreasRondin";
 
 interface EditarRondinModalProps {
   	title: string;
@@ -74,11 +75,13 @@ export const EditarRondinModal: React.FC<EditarRondinModalProps> = ({
     modalEditarAbierto,
     onClose
 }) => { 
+    const { location } = useShiftStore()
+
     const areasFormatted = data?.areas?.map((u: any) => ({ id: u, name: u }))
 	const [areasSeleccionadas, setAreasSeleccionadas] = useState<any[]>(areasFormatted??[]); 
 	const { editarRondinMutation, isLoading} = useEditarRondin()
+	const { data:catalogAreasRondin} = useCatalogAreasRondin(location, modalEditarAbierto)
 	const [date, setDate] = useState<Date|"">("");
-    const { location } = useShiftStore()
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -195,7 +198,7 @@ export const EditarRondinModal: React.FC<EditarRondinModalProps> = ({
           </DialogTitle>
         </DialogHeader>
 
-		<div className="max-h-[80vh] flex-grow p-4 " >
+		<div className=" p-4 " >
 			<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-1 gap-5">
                 <FormField
@@ -273,28 +276,6 @@ export const EditarRondinModal: React.FC<EditarRondinModalProps> = ({
 					</div>
 				</div>
 
-                <div className="mt-0">
-                    <div className="text-sm mb-2">Áreas: *</div>
-                    <Multiselect
-                    options={[{id:"Antenas", name:"Antenas"}, {id:"Papeleria", name:"Papeleria"}, {id:"Area de rampa 24", name:"Area de rampa 24"},{id:"Cuarto de servidores", name:"Cuarto de servidores"}]} 
-                    selectedValues={areasSeleccionadas}
-                    onSelect={(selectedList, selectedItem) => {
-                        setAreasSeleccionadas(prev=>{
-                            const exist= prev.some(area=>area.id===selectedItem.id);
-                            return exist? prev: [...prev, selectedItem]
-                        });
-                    }}
-                    onRemove={(selectedList, removedItem) => {
-                        setAreasSeleccionadas(prev=> 
-                            prev.filter( area=> area.id !== removedItem.id));
-                    }}
-                    displayValue="name"
-
-                    
-
-                    />
-                </div>
-
 				<FormField
 					control={form.control}
 					name="cada_cuantos_dias_se_repite"
@@ -345,6 +326,25 @@ export const EditarRondinModal: React.FC<EditarRondinModalProps> = ({
 						</FormItem>
 					)}
 				/>	
+				<div className="mt-0">
+                    <div className="text-sm mb-2">Áreas: *</div>
+                    <Multiselect
+                    options={catalogAreasRondin} 
+                    selectedValues={areasSeleccionadas}
+                    onSelect={(selectedList, selectedItem) => {
+                        setAreasSeleccionadas(prev=>{
+                            const exist= prev.some(area=>area.id===selectedItem.id);
+                            return exist? prev: [...prev, selectedItem]
+                        });
+                    }}
+                    onRemove={(selectedList, removedItem) => {
+                        setAreasSeleccionadas(prev=> 
+                            prev.filter( area=> area.id !== removedItem.id));
+                    }}
+                    displayValue="name"
+
+                    />
+                </div>
 
 			</form>
 			</Form>

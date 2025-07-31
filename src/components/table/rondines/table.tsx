@@ -36,14 +36,16 @@ import { AddRondinModal } from "@/components/modals/add-rondin";
 import { useMemo, useState } from "react";
 import { EliminarRondinModal } from "@/components/modals/delete-rondin-modal";
 import { EditarRondinModal } from "@/components/modals/editar-rondin";
+import { useGetRondinById } from "@/hooks/Rondines/useGetRondinById";
+import { AreasModal } from "@/components/modals/add-area-rondin";
 
 
 interface ListProps {
 	data: any[];
 	isLoading:boolean;
 	resetTableFilters: () => void;
-	setSelectedRondin:React.Dispatch<React.SetStateAction<string[]>>;
-	selectedRondin:string[];
+	setSelectedRondin:React.Dispatch<React.SetStateAction<string[]|null>>;
+	selectedRondin:string[]|null;
 
 	setDate1 :React.Dispatch<React.SetStateAction<Date | "">>;
 	setDate2 :React.Dispatch<React.SetStateAction<Date | "">>;
@@ -55,33 +57,33 @@ interface ListProps {
 }
 
 
-const fotos: string[]=[
+// const fotos: string[]=[
 	// 'https://cdn-3.expansion.mx/dims4/default/685434a/2147483647/strip/true/crop/1550x676+0+0/resize/1200x523!/format/webp/quality/60/?url=https%3A%2F%2Fcdn-3.expansion.mx%2F21%2F78%2Fe052aec14a47ab373f1a185e2b81%2Fistock-1397038664.jpg',
 	// 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAQA5rDSZ2ecN7r_I2F_aoUsH8Ol0sYPQ4-Q&s',
 	// 'https://previews.123rf.com/images/bialasiewicz/bialasiewicz1305/bialasiewicz130500224/19688905-entrance-and-reception-in-a-new-contemporary-office-building.jpg',
 	// 'https://www.bizneo.com/blog/wp-content/uploads/2020/04/departamentos-de-una-empresa-810x455.jpg.webp',
 	// 'https://content.knightfrank.com/property/spn1190a/images/011ff73f-b280-4ddd-8815-54aa12e18fe8-0.jpg?cio=true&w=1200',
 	// 'https://img.freepik.com/fotos-premium/interior-hall-entrada-moderno-edificio-oficinas-moderno_308547-4141.jpg',
-]
+// ]
 
-const items = [
-	{ id: 1, name: "Entrada principal" },
-	{ id: 2, name: "Zona de carga" },
-	{ id: 3, name: "Estacionamiento" },
-	{ id: 4, name: "Oficinas" },
-	{ id: 5, name: "Patio trasero" },
-	{ id: 6, name: "Bodega" },
-  ];
+// const items = [
+// 	{ id: 1, name: "Entrada principal" },
+// 	{ id: 2, name: "Zona de carga" },
+// 	{ id: 3, name: "Estacionamiento" },
+// 	{ id: 4, name: "Oficinas" },
+// 	{ id: 5, name: "Patio trasero" },
+// 	{ id: 6, name: "Bodega" },
+//   ];
 
 
-const areas = ["Entrada principal", "Zona de carga", "Patio trasero","Entrada principal", "Zona de carga", "Patio trasero","Entrada principal", "Zona de carga", "Patio trasero"];
+// const areas = ["Entrada principal", "Zona de carga", "Patio trasero","Entrada principal", "Zona de carga", "Patio trasero","Entrada principal", "Zona de carga", "Patio trasero"];
 const dias = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom","Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom","Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom", "Lun", "Mar","Mié", "Jue", "Vie",];
 
 const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,selectedRondin,
 	setDate1, setDate2, date1, date2, dateFilter, setDateFilter,Filter, resetTableFilters
  })=> {
 	console.log(setSelectedRondin, selectedRondin)
-	const [selectedRow, setSelectedRow] = React.useState<any | null>(null);
+	// const [ selectedRow, setSelectedRondin] = React.useState<any | null>(null);
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -92,6 +94,8 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
   const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
   const [rondinSeleccionado, setRondinSeleccionado] = useState<Recorrido | null>(null);
   const [verRondin, setVerRondin] = useState(false);
+
+  const { data:rondin , isLoadingRondin} = useGetRondinById(rondinSeleccionado?rondinSeleccionado._id: "")
 
   const handleEliminar= (rondin: Recorrido) => {
 		setRondinSeleccionado(rondin);
@@ -191,6 +195,7 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 						}}> 
 					<SelectTrigger className="w-full">
 					<SelectValue placeholder="Selecciona un filtro de fecha" />
+					<CalendarDays />
 					</SelectTrigger>
 					<SelectContent>
 					{catalogoFechas().map((option:any) => {
@@ -201,8 +206,9 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 						)
 					})}
 					</SelectContent>
+					
 				</Select>
-				<CalendarDays />
+				
 				</div>
 
 				<div className="flex flex-wrap gap-2">
@@ -248,40 +254,48 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 			</div>
 			</div>
     	</div>
-		{selectedRondin && verRondin ? (
-			// Contenido alternativo al seleccionar una fila
-			<div className="flex flex-col h-full">
-				<div className="flex">
-					<div className=" w-1/2 border rounded-md bg-white shadow-md pl-4 min-h-[550px] ">
+		{ rondin && verRondin ? (
 
+			<div className="flex flex-col h-full">
+				<div className="flex flex-col md:flex-row">
+					<div className=" w-1/2 border rounded-md bg-white shadow-md pl-4 min-h-[550px] ">
 						<div className="mt-4 flex">
-							<Button onClick={() => {setSelectedRow(null); setVerRondin(false)}} className="bg-transparent hover:bg-transparent cursor-pointer">
+							<Button onClick={() => {setRondinSeleccionado(null); setVerRondin(false)}} className="bg-transparent hover:bg-transparent cursor-pointer">
 							<MoveLeft className="text-black w-64"/>
 							</Button>
-							<h2 className="text-xl font-bold mb-4">Inspeccion perimetro exterior</h2>
+							<h2 className="text-xl font-bold mb-4">{rondin.nombre_del_rondin}</h2>
 						</div>
 				
-						<div className="grid grid-cols-1 md:grid-cols-1 gap-4 mb-6">
+						<div className="grid grid-cols-[auto,1fr] gap-4 mb-6">
 						<div className="flex ">
 							<span className="font-semibold min-w-[130px]">Descripcion:</span>
+							
+						</div>
+
+						<div>
 							<span >
-							{selectedRow?.folio} Esta es una descripcion y lorem ipsum dolor si amet constectur adisciption elit, Eitam eu triepu molkeste, dictum est, a mattis tellus.
+								{rondin?.descripcion}
 							</span>
 						</div>
+
 						<div className="flex">
 							<span className="font-semibold min-w-[130px]">Recurrencia:</span>
-							<div className="flex justify-between gap-5">
-								<span >
-								{selectedRow?.recurrencia} Semanalmente los Jueves
-								</span>
-								<Button onClick={() => {setSelectedRow(null);setVerRondin(false);}} className="bg-blue-500 hover:bg-blue-600 cursor-pointer p-2">
-									Editar
-								</Button>
-							</div>
 						</div>
+
+						<div className="flex justify-start gap-10">
+							<span >
+							{rondin?.recurrencia} 
+							</span>
+							<Button onClick={() => {setRondinSeleccionado(null);setVerRondin(false);}} className="bg-blue-500 hover:bg-blue-600 cursor-pointer p-2">
+								Editar
+							</Button>
+						</div>
+
 						<div className="flex">
 							<span className="font-semibold min-w-[130px]">Asignado a:</span>
-							<div className="w-1/2">
+							
+						</div>
+						<div className="w-1/2">
 								<SelectReact
 									aria-labelledby="aria-label"
 									inputId="select-categorias"
@@ -290,11 +304,13 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 									value={null} 
 									isDisabled={false}
 								/>
-							</div>
 						</div>
+
 						<div className="flex">
 							<span className="font-semibold min-w-[130px]">Ubicacion:</span>
-							<div className="w-1/2">
+						</div>
+
+						<div className="w-1/2">
 								<SelectReact
 									aria-labelledby="aria-label"
 									inputId="select-categorias"
@@ -303,73 +319,90 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 									value={null} 
 									isDisabled={false}
 								/>
-							</div>
 						</div>
+
 						<div className="flex">
 							<span className="font-semibold min-w-[130px]">Geolocalizacion:</span>
-							<div className="flex">
-							<MapPin/> Ver en mapa
-							</div>
 						</div>
 						<div className="flex">
-							<span className="font-semibold min-w-[130px]">Estatus:</span>
-							<span >
-							En proceso
-							</span>
+							<MapPin/> Ver en mapa
 						</div>
+
+						<div className="flex">
+							<span className="font-semibold min-w-[130px]">Estatus:</span>
+						</div>
+						<span >
+							En proceso
+						</span>
 
 						<div className="flex">
 							<span className="font-semibold min-w-[130px]">Inicio:</span>
-							<span >
-							15/05/25 1:42:23 hr
-							</span>
 						</div>
+						<span >
+							15/05/25 1:42:23 hr
+						</span>
+
 						<div className="flex">
 							<span className="font-semibold min-w-[130px]">Duracion promedio:</span>
-							<span >
-							63 horas
-							</span>
 						</div>
+						<span >
+							63 horas
+						</span>
+
 						<div className="flex">
 							<span className="font-semibold min-w-[130px]">Duracion esperada:</span>
-							<span >
-							50 min
-							</span>
 						</div>
+						<span >
+							{rondin.duracion_esperada}
+						</span>
+
 						<div className="flex">
 							<span className="font-semibold min-w-[130px]">Finalizacion:</span>
-							<span >
-							15/05/25 2:30:45 hrs
-							</span>
 						</div>
+						<span >
+							15/05/25 2:30:45 hrs
+						</span>
 
 						</div>
 					
 					</div>
+
+
 					<div className="w-2/3 ml-4 p-4 border rounded-md bg-white shadow-md">	
+					<div className="mb-2 font-bold">Fotografías de áreas a inspeccionar: </div>
 						<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-						{fotos.map((val, idx) => (
-							<div key={idx} className="rounded overflow-hidden shadow-md">
-							<Image
-							    height={100}
-							    width={100}
-								src={val}
-								alt={`Demo ${idx + 1}`}
-								className="w-full h-48 object-cover"
-							/>
-							</div>
-						))}
+						{rondin.areas.map((val:any, idx:any) => {
+							const imageUrl = val?.foto_area?.[0]?.file_url;
+							return imageUrl ? (
+								<div key={idx} className="rounded overflow-hidden shadow-md">
+								<Image
+									height={100}
+									width={100}
+									src={imageUrl}
+									alt={`Foto área ${idx + 1}`}
+									className="w-full h-48 object-cover"
+								/>
+								</div>
+							) :null; 
+							})}
 						</div>	
 					</div>
 				</div>
-				<div className="flex mt-4">
+				<div className="flex flex-col md:flex-row mt-4">
 					<div className="w-full max-w-2xl mx-auto space-y-4">
 						{/* Header */}
 						<div className="flex items-center justify-between">
-							<h2 className="text-lg font-semibold">Puntos de rondin: {items.length} puntos</h2>
-							<button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+							<h2 className="text-lg font-semibold">Puntos de rondin: {rondin.cantidad_de_puntos} puntos</h2>
+							<AreasModal title={"Agregar Área"} points={rondin.areas}>
+								<div className="flex w-full gap-2 md:w-auto bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-sm p-2 px-3">
+									<Plus className="size-5"/>
+									Agregar Área
+								</div>
+							</AreasModal>
+
+							{/* <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
 							Agregar Área
-							</button>
+							</button> */}
 						</div>
 
 						{/* Buscador */}
@@ -384,13 +417,13 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 
 						{/* Lista */}
 						<div className="space-y-2">
-							{items.map((item) => (
+							{rondin.areas.map((item:any) => (
 							<div
-								key={item.id}
+								key={item.rondin_area}
 								className="flex items-center justify-between border border-gray-200 rounded p-3 bg-white shadow-sm"
 							>
 								<div>
-								<p className="font-medium">{item.name}</p>
+								<p className="font-bold">{item.rondin_area}</p>
 								<small className="flex items-center text-gray-500 mt-1">
 									<Menu className="mr-1 h-4 w-4" /> Ordenar
 								</small>
@@ -419,8 +452,7 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 					</div>
 				</div>
 
-
-				<div className="flex w-full h-full">
+				<div className="flex flex-col md:flex-row w-full h-full mt-5">
 						<Tabs defaultValue="rondiness" className="w-full">
 						{/* Tabs header */}
 							<TabsList className="flex border-b border-gray-300 mb-4">
@@ -452,18 +484,21 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 									<table className="min-w-max table-auto border-collapse">
 										<thead>
 										<tr>
-											<th className="text-left px-4 py-2 border bg-gray-100">Listado de áreas</th>
+											<th className="text-left px-4 py-2 border">Listado de áreas</th>
 											{dias.map((dia, idx) => (
-											<th key={idx} className="px-2 py-2 border text-sm text-center bg-gray-100 w-16">
-												{dia}
+											<th key={idx} className="px-2 py-2 border text-sm text-center w-16">
+												<div className="flex flex-col">
+													<div>{idx}</div>
+													<div className="text-gray-500 font-normal">{dia}</div>
+												</div>
 											</th>
 											))}
 										</tr>
 										</thead>
 										<tbody>
-										{areas.map((area, rowIdx) => (
+										{rondin.areas.map((area:any, rowIdx:string) => (
 											<tr key={rowIdx} className="border-t">
-											<td className="px-4 py-2 text-left font-medium border">{area}</td>
+											<td className="px-4 py-2 text-left font-medium border">{area.rondin_area}</td>
 											{dias.map((_, colIdx) => (
 												<td key={colIdx} className="px-2 py-1 text-center border">
 												{/* Ejemplo: alternar entre paloma y signo */}
@@ -472,7 +507,7 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 													✅
 													</button>
 												) : (
-													<button className="bg-red-100 text-red-600 text-sm rounded-full px-2 py-1">
+													<button className="bg-red-100 text-red-600 text-sm rounded-full px-1.5 py-1">
 													❗
 													</button>
 												)}
@@ -503,61 +538,69 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 				</div>
 			</div>
 
-			
 		) : (
-		<div>
-			<Table>
-			<TableHeader className="bg-blue-100 hover:bg-blue-100 ">
-			{table.getHeaderGroups().map((headerGroup) => (
-				<TableRow key={headerGroup.id}>
-					{headerGroup.headers.map((header) => {
-					return (
-						<TableHead key={header.id} className="px-1">
-						{header.isPlaceholder
-							? null
-							: flexRender(
-								header.column.columnDef.header,
-								header.getContext()
-							)}
-						</TableHead>
-					);
-					})}
-				</TableRow>
-				))}
-			</TableHeader>
-			<TableBody>
-				{table.getRowModel().rows?.length ? (
-				table.getRowModel().rows.map((row) => (
-					<TableRow
-					// onClick={() =>{ handleVerRondin(row.original)}} 
-					key={row.id}
-					data-state={row.getIsSelected() && "selected"}
-					>
-					{row.getVisibleCells().map((cell) => (
-						<TableCell key={cell.id} className="p-1 pl-1">
-						{flexRender(
-							cell.column.columnDef.cell,
-							cell.getContext()
+			<>
+				{isLoadingRondin && verRondin?(
+					<div className="flex justify-center items-center h-screen">
+						<div className="w-24 h-24 border-8 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+					</div>
+				):(
+					<div>
+					<Table>
+					<TableHeader className="bg-blue-100 hover:bg-blue-100 ">
+					{table.getHeaderGroups().map((headerGroup) => (
+						<TableRow key={headerGroup.id}>
+							{headerGroup.headers.map((header) => {
+							return (
+								<TableHead key={header.id} className="px-1">
+								{header.isPlaceholder
+									? null
+									: flexRender(
+										header.column.columnDef.header,
+										header.getContext()
+									)}
+								</TableHead>
+							);
+							})}
+						</TableRow>
+						))}
+					</TableHeader>
+					<TableBody>
+						{table.getRowModel().rows?.length ? (
+						table.getRowModel().rows.map((row) => (
+							<TableRow
+							// onClick={() =>{ handleVerRondin(row.original)}} 
+							key={row.id}
+							data-state={row.getIsSelected() && "selected"}
+							>
+							{row.getVisibleCells().map((cell) => (
+								<TableCell key={cell.id} className="p-1 pl-1">
+								{flexRender(
+									cell.column.columnDef.cell,
+									cell.getContext()
+								)}
+								</TableCell>
+							))}
+							</TableRow>
+						))
+						) : (
+						<TableRow >
+							<TableCell
+							colSpan={table.getVisibleFlatColumns().length}
+							className="h-24 text-center"
+							>
+							{isLoading? (<div className='text-xl font-semibold'>Cargando registros... </div>): 
+									(<div className='text-xl font-semibold'>No hay registros disponibles...</div>)}
+							</TableCell>
+						</TableRow>
 						)}
-						</TableCell>
-					))}
-					</TableRow>
-				))
-				) : (
-				<TableRow >
-					<TableCell
-					colSpan={table.getVisibleFlatColumns().length}
-					className="h-24 text-center"
-					>
-					{isLoading? (<div className='text-xl font-semibold'>Cargando registros... </div>): 
-							(<div className='text-xl font-semibold'>No hay registros disponibles...</div>)}
-					</TableCell>
-				</TableRow>
-				)}
-			</TableBody>
-			</Table>
-		</div>
+					</TableBody>
+					</Table>
+					</div>
+				)}	
+			</>
 		)}
+
 		<div className="flex items-center justify-end space-x-2 py-4">
 			<div className="space-x-2">
 			<Button

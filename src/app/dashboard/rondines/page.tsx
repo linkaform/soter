@@ -6,17 +6,19 @@ import { Tabs, TabsContent } from "@/components/ui/tabs";
 import RondinesTable from "@/components/table/rondines/table";
 import RondinesCalendar from "@/components/pages/rondines/calendar";
 import PageTitle from "@/components/page-title";
-import { GuardiasRondinesTable } from "@/components/table/rondines/guardias/table";
 import ChangeLocation from "@/components/changeLocation";
 import { useShiftStore } from "@/store/useShiftStore";
 import { arraysIguales, dateToString } from "@/lib/utils";
 import { CalendarClock } from "lucide-react";
 import { useGetStats } from "@/hooks/useGetStats";
 import { useGetListRondines } from "@/hooks/Rondines/useGetListRondines";
+import GuardiasRondinesTable from "@/components/table/rondines/guardias/table";
+import { Gallery } from "@/components/modals/gallery";
 
 const RondinesPage = () => {
   const [selectedOption, setSelectedOption] = useState<string[]>([]);
-  const [ubicacionSeleccionada, setUbicacionSeleccionada]= useState<string>("")
+  const {location} = useShiftStore()
+  const [ubicacionSeleccionada, setUbicacionSeleccionada]= useState<string>(location)
   const [areaSeleccionada, setAreaSeleccionada]= useState<string>("")
   const { tab, filter} = useShiftStore()
   const [dateFilter, setDateFilter] = useState<string>(filter)
@@ -27,7 +29,7 @@ const RondinesPage = () => {
   const [datePrimera, setDatePrimera] = useState<string>("")
   const [dateSegunda, setDateSegunda] = useState<string>("")
   const [isSuccessRondin] = useState(false);
-  const [selectedRondin, setSelectedRondin]= useState<string[]>([]);
+  const [selectedRondin, setSelectedRondin]= useState<string[]|null>([]);
 
   const [date1, setDate1] = useState<Date|"">("")
   const [date2, setDate2] = useState<Date|"">("")
@@ -65,6 +67,40 @@ const RondinesPage = () => {
 		setSelectedTab(selectedTab);
 	}
 
+  const images = [
+    {
+      file_name: "image1.jpg",
+      file_url: "https://via.placeholder.com/150?text=Image+1",
+    },
+    {
+      file_name: "image2.jpg",
+      file_url: "https://via.placeholder.com/150?text=Image+2",
+    },
+    {
+      file_name: "image3.jpg",
+      file_url: "https://via.placeholder.com/150?text=Image+3",
+    },
+    {
+      file_name: "image4.jpg",
+      file_url: "https://via.placeholder.com/150?text=Image+4",
+    },
+    {
+      file_name: "image5.jpg",
+      file_url: "https://via.placeholder.com/150?text=Image+5",
+    },
+    {
+      file_name: "image6.jpg",
+      file_url: "https://via.placeholder.com/150?text=Image+6",
+    },
+    {
+      file_name: "image7.jpg",
+      file_url: "https://via.placeholder.com/150?text=Image+7",
+    },
+    {
+      file_name: "image8.jpg",
+      file_url: "https://via.placeholder.com/150?text=Image+8",
+    },
+  ];
 
   return (
     <div className="">
@@ -105,51 +141,45 @@ const RondinesPage = () => {
           <div className="">
             <Tabs defaultValue="Rondines" className="w-full">
               <TabsContent value="Bitacora">
+                <div >
+                  <RondinesTable data={listRondines} isLoading={false} setSelectedRondin={setSelectedRondin} selectedRondin={selectedRondin}
+                  setDate1={setDate1} setDate2={setDate2} date1={date1} date2={date2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters} />
+                </div>
+              </TabsContent>
+
+              <TabsContent value="Incidencias">
+                  <div>
+                    <RondinesTable data={listRondines} isLoading={false} setSelectedRondin={setSelectedRondin} selectedRondin={selectedRondin}
+                    setDate1={setDate1} setDate2={setDate2} date1={date1} date2={date2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters} />
+                  </div>
+              </TabsContent>
+
+              <TabsContent value="Fotos">
+                <div >
+                    <Gallery rondin={images}/>
+                  	{/* <RondinesTable data={listRondines} isLoading={false} setSelectedRondin={setSelectedRondin} selectedRondin={selectedRondin}
+						        setDate1={setDate1} setDate2={setDate2} date1={date1} date2={date2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters} /> */}
+                </div>
+              </TabsContent>
+
+              <TabsContent value="Rondines">
+                <div >
+                    <RondinesTable data={listRondines} isLoading={false} setSelectedRondin={setSelectedRondin} selectedRondin={selectedRondin}
+                    setDate1={setDate1} setDate2={setDate2} date1={date1} date2={date2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters} />
+                </div>
+              </TabsContent>
+
+              <TabsContent value="Calendario">
                 <div className="flex">
-                  <div className="w-1/4 px-4">
+                  <div className="w-1/4 mr-5">
                     <div className="space-y-1">
-                      <GuardiasRondinesTable />
+                      <GuardiasRondinesTable setSelectedRondin={setSelectedRondin} rest={()=>{setSelectedRondin(null); setSelectedTab("Rondines");}}/>
                     </div>
                   </div>
 
                   <div className="w-3/4">
                     <RondinesCalendar />
                   </div>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="Incidencias">
-                <div className="flex">
-                  <div className="w-1/4">
-                    <div className="space-y-1">
-                      <GuardiasRondinesTable />
-                    </div>
-                  </div>
-
-                  <div className="w-3/4 px-4">
-                    <RondinesCalendar />
-                  </div>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="Fotos">
-                <div >
-                  	<RondinesTable data={listRondines} isLoading={false} setSelectedRondin={setSelectedRondin} selectedRondin={selectedRondin}
-						setDate1={setDate1} setDate2={setDate2} date1={date1} date2={date2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters} />
-                </div>
-              </TabsContent>
-
-              <TabsContent value="Rondines">
-                <div >
-					<RondinesTable data={listRondines} isLoading={false} setSelectedRondin={setSelectedRondin} selectedRondin={selectedRondin}
-						setDate1={setDate1} setDate2={setDate2} date1={date1} date2={date2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters} />
-                </div>
-              </TabsContent>
-
-              <TabsContent value="Calendario">
-                <div >
-					<RondinesTable data={listRondines} isLoading={false} setSelectedRondin={setSelectedRondin} selectedRondin={selectedRondin}
-						setDate1={setDate1} setDate2={setDate2} date1={date1} date2={date2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters} />
                 </div>
               </TabsContent>
             </Tabs>
