@@ -76,7 +76,7 @@ export const getListRondin  = async (date1:string, date2:string, limit:number, o
         dateTo: date2,
         limit: limit,
         offset: offset,
-        option: "list_rondines",
+        option: "get_rondines",
         script_name: "rondines.py",
     };
   
@@ -142,6 +142,48 @@ export const getListRondin  = async (date1:string, date2:string, limit:number, o
     const payload = {
         folio,
         option: "delete_rondin",
+        script_name: "rondines.py",
+    };
+  
+    const userJwt = localStorage.getItem("access_token"); 
+    const response = await fetch(`https://app.linkaform.com/api/infosync/scripts/run/`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${userJwt}`,
+        },
+        body: JSON.stringify(payload),
+    });
+  
+    const data = await response.json();
+    return data;
+  };
+
+  export const catalogAreasRondin= async (ubicacion: string)=> {
+    const payload = {
+        ubicacion,
+        option: "get_catalog_areas",
+        script_name: "rondines.py",
+    };
+  
+    const userJwt = localStorage.getItem("access_token"); 
+    const response = await fetch(`https://app.linkaform.com/api/infosync/scripts/run/`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${userJwt}`,
+        },
+        body: JSON.stringify(payload),
+    });
+  
+    const data = await response.json();
+    return data;
+  };
+
+  export const getRondinById= async (record_id: string)=> {
+    const payload = {
+        record_id,
+        option: "get_rondin_by_id",
         script_name: "rondines.py",
     };
   

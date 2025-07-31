@@ -113,7 +113,6 @@ export const AddArticuloModal: React.FC<AddFallaModalProps> = ({
 	const { reset } = form;
 
 	useEffect(()=>{
-		console.log("location",location)
 		if(location){
 			setUbicacionSeleccionada(location || "Planta Monterrey")
 		}else{

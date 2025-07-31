@@ -243,21 +243,18 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
 		if(open){
 			form.setValue("fecha_desde_visita", dataPass.fecha_desde_visita.split(" ")[0])
 			form.setValue("fecha_desde_hasta", dataPass.fecha_desde_hasta.split(" ")[0])
-			console.log("data para editar==", dataPass)
 			setUbicacionesSeleccionadas(dataPass.ubicacion)
 		}
 	},[open])
 
 	useEffect(()=>{
 		if(form.formState.errors){
-			console.log("llaa",form.formState.errors)
+			console.log("errores",form.formState.errors)
 		}
 	},[form.formState.errors])
 
 	useEffect(()=>{
 		if(dataConfigLocation){
-			console.log("requerimientos",dataConfigLocation)
-
 			const docs: string[] = []
 			dataConfigLocation?.requerimientos?.map((value:string)=>{
 				if(value=="identificacion") {

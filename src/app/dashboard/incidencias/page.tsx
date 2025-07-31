@@ -95,7 +95,6 @@ const IncidenciasPage = () => {
 			setFallasStatus("")
 		}
 		else if(tab == "Fallas"){
-			console.log("entrada aqui")
 			setDateFilter(filter); 
 			setSelectedTab(tab);
 			setFallasStatus(option)

@@ -124,7 +124,6 @@ export const EditarFallaModal: React.FC<EditarFallaModalProps> = ({
 	},[modalEditarAbierto])
 
 	useEffect(()=>{
-		console.log("que pasa", dataFallas, subconcepto)
 		if(dataFallas && subconcepto && useSelects){
 			if (dataFallas.length == 1 && dataFallas[0] === null) {
 				setCatalogoSub([])

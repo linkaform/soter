@@ -52,7 +52,6 @@ export const AddEmailModal: React.FC<Props> = ({ title, open, setOpen, id, setOp
   });
 
   function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log("email para agregar",data);
     updateDataMutation.mutate({access_pass: data, id:id , account_id:userIdSoter }, 
       {
       onSuccess: () => {

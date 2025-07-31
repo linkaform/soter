@@ -32,7 +32,6 @@ const BitacorasPage = () => {
 
 	const [dates, setDates] = useState<string[]>([])
 	const [dateFilter, setDateFilter] = useState<string>(filter)
-	console.log("datefilter",dateFilter)
 	const { listBitacoras,isLoadingListBitacoras} = useBitacoras(
 		ubicacionSeleccionada, areaSeleccionada == "todas" ? "": areaSeleccionada, selectedOption, ubicacionSeleccionada&&areaSeleccionada?true:false, dates[0], dates[1], dateFilter)
 	const { data: stats } = useGetStats(ubicacionSeleccionada&& areaSeleccionada?true:false,ubicacionSeleccionada, areaSeleccionada=="todas"?"":areaSeleccionada, 'Bitacoras')
@@ -42,17 +41,11 @@ const BitacorasPage = () => {
 
 	useEffect(() => {
 		if(tab){
-			console.log("tab", tab)
 			setTab("")
 		}
 		if(filter){
-			console.log("filtro", filter)
 			setFilter("")
 		}
-		// if(option){
-		// 	console.log("filtro", filter)
-		// 	setOption([])
-		// }
 		if(location){
 			setUbicacionSeleccionada(location )
 		}else{
@@ -129,7 +122,6 @@ const BitacorasPage = () => {
 	}, [listBitacoras])
 
 	const handleTabChange = (tab:string, option:string[], filter="") => {
-		console.log(tab, option, filter)
 		if(tab==selectedTab && arraysIguales(option, selectedOption) && filter == dateFilter){
 				setSelectedOption([]);
 				setSelectedTab(selectedTab)  

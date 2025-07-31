@@ -29,6 +29,7 @@ import { format } from "date-fns";
 import Multiselect from "multiselect-react-dropdown";
 import { useEffect, useState } from "react";
 import { useShiftStore } from "@/store/useShiftStore";
+import { useCatalogAreasRondin } from "@/hooks/Rondines/useCatalogAreasRondin";
 
 interface AddRondinModalProps {
   	title: string;
@@ -70,10 +71,11 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
     children
 }) => {
     const [isSuccess, setIsSuccess] = useState(false);
+	const { location } = useShiftStore()
 	const [areasSeleccionadas, setAreasSeleccionadas] = useState<any[]>([]);
 	const { createRondinMutation, isLoading} = useRondines()
+	const { data:catalogAreasRondin} = useCatalogAreasRondin(location, isSuccess)
 	const [date, setDate] = useState<Date|"">("");
-	const { location} = useShiftStore()
 	
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -121,32 +123,17 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 	});
 
 	const { reset } = form;
-	console.log("rest", reset)
 
 	useEffect(()=>{
 		if(isSuccess){
 			reset()
-			// setDate(new Date())
-			// // setEvidencia([])
-			// // setDocumento([])
-			// refetchAreaEmpleado()
-			// refetchAreaEmpleadoApoyo()
-			// refetchFallas()
 		}
 	},[isSuccess])
 
 
-	// useEffect(()=>{
-	// 	if(dataFallas && subconcepto){
-	// 		setCatalogoSub(dataFallas)
-	// 	}
-	// 	if(dataFallas && !subconcepto){
-	// 		setFallas(dataFallas)
-	// 	}
-	// },[dataFallas])
+
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log("NOMBRE DEL RONDIN",values.nombre_rondin)
 		let formattedDate=""
 		if(date){
 			formattedDate = format( new Date(date), 'yyyy-MM-dd HH:mm:ss');
@@ -200,14 +187,14 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
     <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
       <DialogTrigger asChild>{children}</DialogTrigger>
 
-	  <DialogContent className="max-w-xl flex flex-col"  aria-describedby="">
+	  <DialogContent className="max-w-xl flex flex-col w-full "  aria-describedby="">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center font-bold">
             {title}
           </DialogTitle>
         </DialogHeader>
 
-		<div className="max-h-[80vh] flex-grow p-4 " >
+		<div className=" p-4 " >
 			<Form {...form}>
 			<form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-1 gap-5 ">
                 <FormField
@@ -339,7 +326,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 				<div className="">
 					<div className="text-sm mb-2">Áreas: </div>
 					<Multiselect
-					options={[{id:"Antenas", name:"Antenas"}, {id:"Papeleria", name:"Papeleria"}, {id:"Area de rampa 24", name:"Area de rampa 24"},{id:"Cuarto de servidores", name:"Cuarto de servidores"}]} 
+					options={catalogAreasRondin} 
 					// selectedValues={ubicacionesDefaultFormatted}
 					onSelect={(selectedList) => {
 						setAreasSeleccionadas(selectedList);
@@ -373,11 +360,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 				
 			</form>
 			</Form>
-			
-			
-
 		</div>
-
 		
       </DialogContent>
     </Dialog>

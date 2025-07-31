@@ -23,6 +23,7 @@ import {
 
 import { GuardiasRondinesColumns } from "./guardias-columns";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const initialData: GuardiaRondines[] = [
   {
@@ -86,10 +87,17 @@ export type GuardiaRondines = {
   id: string;
   empleado: string;
   avatar: string;
-  puesto: string
+  puesto: string;
+  
 };
 
-export function GuardiasRondinesTable() {
+export type ListProps={
+  setSelectedRondin: React.Dispatch<React.SetStateAction<any>>;
+  rest: () => void;
+}
+
+const GuardiasRondinesTable:React.FC<ListProps> =({
+ })=> {
 /*   const [guardias, setGuardias] =  React.useState<GuardiaRondines[]>(initialData);
  */
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -135,6 +143,20 @@ export function GuardiasRondinesTable() {
 
   return (
     <div className="w-full">
+      	{/* <Button onClick={() => {setSelectedRondin(null);}} className="bg-transparent hover:bg-transparent cursor-pointer">
+            <MoveLeft className="text-black w-64"/>
+        </Button> */}
+
+        <div className="flex justify-start items-center mb-4">
+					<TabsList className="bg-blue-500 text-white p-1 rounded-md ">
+						<TabsTrigger value="Bitacora">Bitácora</TabsTrigger>
+						<TabsTrigger value="Incidencias">Incidencias</TabsTrigger>
+						<TabsTrigger value="Fotos">Fotos</TabsTrigger>
+						<TabsTrigger value="Rondines">Rondines</TabsTrigger>
+						<TabsTrigger value="Calendario">Calendario</TabsTrigger>
+					</TabsList>
+				</div> 
+
       <div className="flex justify-between items-center mb-5">
         <input
           type="text"
@@ -188,3 +210,4 @@ export function GuardiasRondinesTable() {
     </div>
   );
 }
+export default GuardiasRondinesTable;

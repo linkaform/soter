@@ -63,7 +63,6 @@ export const useSendCorreoSms = () => {
 		toast.success("SMS enviado correctamente.");
 	},
 	onError: (err) => {
-		// console.error("Error al enviar SMS:", err);
 		toast.error(err.message || "Hubo un error al enviar SMS: "+ err );
 	},
 	onSettled: () => {

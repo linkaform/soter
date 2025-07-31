@@ -32,7 +32,6 @@ export const listaNotasColumns: ColumnDef<ListaNota>[] = [
     id: 'select',
     header: '',
     cell: ({ row }: any) => {
-      console.log("note", row.original)
       return (
         <div className='flex space-x-4'>
         {row.original.note_status !== "cerrado" ? (

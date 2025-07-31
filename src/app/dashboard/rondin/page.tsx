@@ -6,12 +6,12 @@ import { Tabs, TabsContent } from "@/components/ui/tabs";
 import RondinesTable from "@/components/table/rondines/table";
 import RondinesCalendar from "@/components/pages/rondines/calendar";
 import PageTitle from "@/components/page-title";
-import { GuardiasRondinesTable } from "@/components/table/rondines/guardias/table";
 import ChangeLocation from "@/components/changeLocation";
 import { useShiftStore } from "@/store/useShiftStore";
 import { arraysIguales, dateToString } from "@/lib/utils";
 import { CalendarClock } from "lucide-react";
 import { useGetStats } from "@/hooks/useGetStats";
+import GuardiasRondinesTable from "@/components/table/rondines/guardias/table";
 
 const RondinesPage = () => {
   const [selectedOption, setSelectedOption] = useState<string[]>([]);
@@ -24,7 +24,7 @@ const RondinesPage = () => {
 
   const [datePrimera, setDatePrimera] = useState<string>("")
   const [dateSegunda, setDateSegunda] = useState<string>("")
-  const [selectedRondin, setSelectedRondin]= useState<string[]>([]);
+  const [selectedRondin, setSelectedRondin]= useState<string[]|null>([]);
 
   const [date1, setDate1] = useState<Date|"">("")
   const [date2, setDate2] = useState<Date|"">("")
@@ -318,7 +318,6 @@ const RondinesPage = () => {
 
   
   const handleTabChange = (tab:string, option:string[], filter="") => {
-		console.log(tab, option, filter)
 		if(tab==selectedTab && arraysIguales(option, selectedOption) && filter == dateFilter){
 				setSelectedOption([]);
 				setSelectedTab(selectedTab)  
@@ -419,12 +418,12 @@ const RondinesPage = () => {
 				</div>
 			</div>
           <div className="">
-            <Tabs defaultValue="Rondines" className="w-full">
+            <Tabs defaultValue="Bitacora" className="w-full">
               <TabsContent value="Bitacora">
                 <div className="flex">
-                  <div className="w-1/4 px-4">
+                  <div className="w-1/4">
                     <div className="space-y-1">
-                      <GuardiasRondinesTable />
+                      <GuardiasRondinesTable setSelectedRondin={setSelectedRondin} rest={()=>{setSelectedRondin(null); setSelectedTab("Rondines");}}/>
                     </div>
                   </div>
 
@@ -436,9 +435,9 @@ const RondinesPage = () => {
 
               <TabsContent value="Incidencias">
                 <div className="flex">
-                  <div className="w-1/4">
+                  <div className="">
                     <div className="space-y-1">
-                      <GuardiasRondinesTable />
+                      <GuardiasRondinesTable setSelectedRondin={setSelectedRondin} rest={()=>{setSelectedRondin(null); setSelectedTab("Rondines");}}/>
                     </div>
                   </div>
 
@@ -464,6 +463,13 @@ const RondinesPage = () => {
               </TabsContent>
 
               <TabsContent value="Calendario">
+                <div >
+					<RondinesTable data={data} isLoading={false} setSelectedRondin={setSelectedRondin} selectedRondin={selectedRondin}
+						setDate1={setDate1} setDate2={setDate2} date1={date1} date2={date2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters} />
+                </div>
+              </TabsContent>
+
+              <TabsContent value="Incidencias">
                 <div >
 					<RondinesTable data={data} isLoading={false} setSelectedRondin={setSelectedRondin} selectedRondin={selectedRondin}
 						setDate1={setDate1} setDate2={setDate2} date1={date1} date2={date2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters} />

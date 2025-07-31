@@ -59,7 +59,6 @@ export const CloseNoteModal: React.FC<CloseNoteModalProps> = ({
   })
   const [open, setOpen] = useState(false)
   const { closeNoteMutation, isLoadingNotes } = useNotes(false,'', '')
-  console.log("chilkdrenn", isAnnided)
 
   function onSubmit() {
     const currentDate = new Date()

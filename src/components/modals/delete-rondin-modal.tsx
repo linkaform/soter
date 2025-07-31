@@ -35,7 +35,6 @@ export const EliminarRondinModal: React.FC<DeleteRondinModalProps> = ({
 
 	const deleteRondines = ()=>{
 		if(folio){
-			console.log("folio",folio)
 			eliminarRondinMutation.mutate({folio},{
 				onSuccess: () => {
 					handleClose(); 

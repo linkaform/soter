@@ -21,7 +21,6 @@ const QRScanner: React.FC<{ onScan: (result: string) => void }> = ({ onScan }) =
 
     qrScanner.render(
       (decodedText) => {
-        console.log("Código QR escaneado:", decodedText);
         setScanResult(decodedText);
         onScan(decodedText);
         qrScanner.clear(); // ❌ Detiene el escaneo tras éxito

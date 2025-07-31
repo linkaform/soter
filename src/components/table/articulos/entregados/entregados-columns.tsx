@@ -63,7 +63,6 @@ export const entregadosColumns: ColumnDef<ArticuloEntregado>[] = [
         accessorKey: "fotografia",
         header: "Fotografía",
         cell: ({ row }) => {
-          console.log(row.getValue("fotografia"))
          return (
             <div className="relative h-24 w-28">
             <Image

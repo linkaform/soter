@@ -102,8 +102,6 @@ export const ScanMethodModal: React.FC<Props> = ({ children }) => {
             <div>
               <QRScanner
                 onScan={(result: any) => {
-                  console.log("Código QR recibido en App:", result);
-
                   setPassCode(result);
                 }}
               />
