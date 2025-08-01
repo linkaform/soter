@@ -1,4 +1,3 @@
-import { BasicLayout } from "@/components/Layout/BasicLayout";
 import { Metadata } from "next";
 import React from "react";
 
@@ -13,7 +12,7 @@ export default function ReportsPageLayout({ children }: { children: React.ReactN
       <link rel="icon" href="/accesos.svg" type="image/svg+xml" />
 
       {/* Layout principal */}
-      <BasicLayout>{children}</BasicLayout>
+      {children}
     </>
   );
 }
