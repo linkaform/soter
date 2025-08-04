@@ -2,29 +2,15 @@
 "use client";
 
 import Link from "next/link";
-import { AlertTriangle, FileText, BarChart2 } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 
 const REPORTS = [
 	{
 		name: "Reporte de Fallas",
-		path: "/dashboard/reportes/reporte_fallas",
+		path: "/dashboard/reportes/reporte_auditoria",
 		icon: <AlertTriangle className="w-8 h-8 text-yellow-500" />,
 		description: "Consulta y gestiona las fallas reportadas en habitaciones por hotel.",
 		enabled: true,
-	},
-	{
-		name: "Reporte de Incidencias",
-		path: "#",
-		icon: <FileText className="w-8 h-8 text-gray-400" />,
-		description: "Ejemplo: Consulta incidencias generales del hotel.",
-		enabled: false,
-	},
-	{
-		name: "Reporte de Estadísticas",
-		path: "#",
-		icon: <BarChart2 className="w-8 h-8 text-gray-400" />,
-		description: "Ejemplo: Visualiza estadísticas y más.",
-		enabled: false,
 	},
 ];
 
