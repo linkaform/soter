@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FallaDetalle } from '../reporte_auditoria/page';
+import { FallaDetalle } from '../utils/dataProcessors';
 import { MapPin, Camera, MessageSquare, Calendar, ChevronDown, Filter, AlertTriangle } from 'lucide-react';
 import Image from "next/image";
 import Multiselect from "multiselect-react-dropdown";

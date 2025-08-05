@@ -11,7 +11,7 @@ import Image from "next/image";
 import React, { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import FallaImagesModal from '@/app/dashboard/reportes/modals/FallaImagesModal';
-import { FallaDetalle } from '../reporte_auditoria/page';
+import { FallaDetalle } from '../utils/dataProcessors';
 
 interface AuditCardProps {
     auditData: any;
