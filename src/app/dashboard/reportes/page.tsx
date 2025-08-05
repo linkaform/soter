@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { AlertTriangle, FileText, BarChart2 } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 
 const REPORTS = [
 	{
@@ -13,17 +13,15 @@ const REPORTS = [
 		enabled: true,
 	},
 	{
-		name: "Reporte de Incidencias",
+		name: "",
 		path: "#",
-		icon: <FileText className="w-8 h-8 text-gray-400" />,
-		description: "Ejemplo: Consulta incidencias generales del hotel.",
+		description: "",
 		enabled: false,
 	},
 	{
-		name: "Reporte de Estadísticas",
+		name: " ",
 		path: "#",
-		icon: <BarChart2 className="w-8 h-8 text-gray-400" />,
-		description: "Ejemplo: Visualiza estadísticas y más.",
+		description: "",
 		enabled: false,
 	},
 ];
