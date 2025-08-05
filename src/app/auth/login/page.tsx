@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense,  useState } from "react";
+import { Suspense, useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,7 +23,7 @@ import {
 
 const formSchema = z.object({
   username: z.string()
-  .min(2, { message: "El usuario debe tener al menos 2 caracteres" }),
+    .min(2, { message: "El usuario debe tener al menos 2 caracteres" }),
   password: z
     .string()
     .min(2, { message: "La contraseña debe tener al menos 2 caracteres" }),
@@ -76,7 +76,7 @@ export default function LoginPage() {
               <CardContent className="flex  w-full md:w-[400px] h-[600px]  flex-col justify-center items-center ">
                 <Image
                   className="mb-10 flex mx-auto"
-                  src="/company_pic_7742.jpg"
+                  src="/company_pic_17236.jpg"
                   alt="soter logo"
                   width={174}
                   height={58}

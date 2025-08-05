@@ -9,8 +9,20 @@ const REPORTS = [
 		name: "Reporte de Fallas",
 		path: "/dashboard/reportes/reporte_auditoria",
 		icon: <AlertTriangle className="w-8 h-8 text-yellow-500" />,
-		description: "Consulta y gestiona las fallas reportadas en habitaciones por hotel.",
+		description: "Consulta y gestiona las fallas reportadas en auditorías.",
 		enabled: true,
+	},
+	{
+		name: "",
+		path: "#",
+		description: "",
+		enabled: false,
+	},
+	{
+		name: " ",
+		path: "#",
+		description: "",
+		enabled: false,
 	},
 ];
 
