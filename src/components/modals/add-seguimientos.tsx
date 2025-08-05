@@ -29,18 +29,15 @@ import { Input } from "../ui/input";
 import LoadFile from "../upload-file";
 import { format } from "date-fns";
 import DateTime from "../dateTime";
-import { errorMsj, formatFecha } from "@/lib/utils";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { crearSeguimientoIncidencia } from "@/lib/incidencias";
+import { formatFecha } from "@/lib/utils";
 import { useShiftStore } from "@/store/useShiftStore";
-import { toast } from "sonner";
 
 interface IncidenciaModalProps {
 	title: string;
-	folio: string;
 	children: React.ReactNode;
 	isSuccess: boolean;
 	setIsSuccess: Dispatch<SetStateAction<boolean>>;
+    setSeguimientos: Dispatch<SetStateAction<any>>;
 }
 
 const formSchema = z.object({
@@ -62,52 +59,19 @@ const formSchema = z.object({
 	).optional(),
 });
 
-export const SeguimientoIncidenciaModal: React.FC<IncidenciaModalProps> = ({
+export const SeguimientoIncidenciaLista: React.FC<IncidenciaModalProps> = ({
 	title,
-	folio,
 	children,
 	isSuccess,
-	setIsSuccess
+	setIsSuccess,
+    setSeguimientos
 }) => {
 	// const [isSuccess, setIsSuccess] = useState(false)
 	const [evidencia, setEvidencia] = useState<Imagen[]>([]);
 	const [documento, setDocumento] = useState<Imagen[]>([]);
 	const [date, setDate] = useState<Date | "">("");
 	const [dateFin, setDateFin] = useState<Date | "">("");
-	const queryClient = useQueryClient();
-	const { isLoading, setLoading } = useShiftStore();
-
-	const seguimientoIncidenciaMutation = useMutation({
-		mutationFn: async ({ incidencia_grupo_seguimiento, folio }: { incidencia_grupo_seguimiento: any, folio: string }) => {
-			const response = await crearSeguimientoIncidencia(incidencia_grupo_seguimiento, folio);
-			const hasError = response.response.data.status_code
-
-			if (hasError == 400 || hasError == 401) {
-				const textMsj = errorMsj(response.response.data)
-				throw new Error(`Error al crear seguimiento, Error: ${textMsj?.text}`);
-			} else {
-				return response.response?.data
-			}
-		},
-		onMutate: () => {
-			setLoading(true);
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["getListIncidencias"] });
-			queryClient.invalidateQueries({ queryKey: ["getStatsIncidencias"] });
-			toast.success("Seguimiento creado correctamente.");
-			setIsSuccess(false)
-		},
-		onError: (err) => {
-			console.error("Error al crear seguimiento:", err);
-			toast.error(err.message || "Hubo un error al crear el seguimiento.");
-			setIsSuccess(false)
-
-		},
-		onSettled: () => {
-			setLoading(false);
-		},
-	});
+	const { isLoading} = useShiftStore();
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -143,7 +107,9 @@ export const SeguimientoIncidenciaModal: React.FC<IncidenciaModalProps> = ({
 				incidencia_documento_solucion: documento,
 				incidencia_evidencia_solucion: evidencia
 			}
-			seguimientoIncidenciaMutation.mutate({ incidencia_grupo_seguimiento: formatData, folio: folio });
+            console.log("format data", formatData)
+            setSeguimientos(formatData)
+			// seguimientoIncidenciaMutation.mutate({ incidencia_grupo_seguimiento: formatData });
 		} else {
 			form.setError("fechaInicioIncidenciaCompleta", { type: "manual", message: "Fecha es un campo requerido." });
 		}
@@ -169,7 +135,7 @@ export const SeguimientoIncidenciaModal: React.FC<IncidenciaModalProps> = ({
 					<form onSubmit={form.handleSubmit(onSubmit)} >
 						<div className="w-full flex gap-2 mb-2">
 							<p className="font-bold ">Folio: </p>
-							<p  className="font-bold text-blue-500">{folio} </p>
+							<p  className="font-bold text-blue-500"> </p>
 						</div>
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
 							<FormField

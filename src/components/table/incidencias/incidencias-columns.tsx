@@ -1,4 +1,3 @@
-import { SeguimientoIncidenciaModal } from "@/components/modals/seguimiento-incidencia";
 import { LoadingModal } from "@/components/modals/loading-modal";
 import { ViewIncidencia } from "@/components/modals/view-incidencia";
 
@@ -97,12 +96,11 @@ export type Incidencia = {
     file_url: string
   }
   
-  export const OptionsCell: React.FC<{ row: any , onEditarClick: (incidencia: Incidencia_record) => void, 
+  export const OptionsCell: React.FC<{ row: any , onEditarClick: (incidencia: Incidencia_record) => void, onSeguimientoClick: (seguimiento: Incidencia_record)=> void,
     onEliminarClick: (incidencia: Incidencia_record) => void
-   }> = ({ row, onEditarClick ,onEliminarClick}) => {
+   }> = ({ row, onEditarClick ,onEliminarClick, onSeguimientoClick}) => {
     const incidencia = row.original;
     const [showLoadingModal] = useState(false);
-    const [openModal, setOpenModal]= useState(false)
 
     return (
       <div className="flex space-x-2">
@@ -124,16 +122,15 @@ export type Incidencia = {
         	<Edit />
         </div>
     
-
-        <SeguimientoIncidenciaModal
+        <div
+          className="cursor-pointer"
+          onClick={() => onSeguimientoClick(incidencia)}
           title="Seguimiento Incidencia"
-          folio={incidencia?.folio} isSuccess={openModal} setIsSuccess={setOpenModal}>
-          <div className="cursor-pointer" title="Seguimiento Incidencia">
-              <Check />   
-          </div>
-        </SeguimientoIncidenciaModal>
+        >
+        	<Check />
+        </div>
 
-
+      
         <div
           className="cursor-pointer"
           title="Eliminar Incidencia"

@@ -43,7 +43,7 @@ import {
 	ChevronLeft,
 	CircleAlert,
   } from "lucide-react";
-
+import Image from "next/image";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -71,6 +71,10 @@ import { PersonaExtraviadaFields } from "./persona-extraviada";
 import { RoboDeCableado } from "./robo-de-cableado";
 import { RoboDeVehiculo } from "./robo-de-vehiculo";
 import DepositosList from "../depositos-list";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { Card, CardContent} from "../ui/card";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
+import { SeguimientoIncidenciaLista } from "./add-seguimientos";
 
 interface AddIncidenciaModalProps {
   	title: string;
@@ -289,6 +293,10 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const [personasInvolucradas, setPersonasInvolucradas] = useState<PersonasInvolucradas[]>([])
 	const [accionesTomadas, setAccionesTomadas] = useState<AccionesTomadas[]>([])
 	const [depositos, setDepositos] = useState<Depositos[]>([])
+
+	const [seguimientos, setSeguimientos] = useState([]);
+	const [openModal, setOpenModal] = useState(false);
+
 	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado } = useCatalogoAreaEmpleado(isSuccess, location, "Incidencias");
 	const { createIncidenciaMutation , loading} = useInciencias("","",[], "", "", "");
 	
@@ -307,8 +315,6 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const [inputTag, setInputTag] = useState('');
 	const [tagsSeleccionados, setTagsSeleccionados] = useState<string[]>([]);
 
-
-
 	const resetStates = ()=>{
 		setSearch("")
 		setSubCategoria("")
@@ -323,6 +329,9 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 		setCatSubIncidences([])
 		setSubCatCategorias([])
 		setDepositos([])
+		setPersonasInvolucradas([])
+		setAccionesTomadas([])
+		setTagsSeleccionados([])
 	}
 	const agregarTag = () => {
 		const nuevoTag = inputTag.trim();
@@ -511,6 +520,14 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 		return "Alta"
 	}
 
+	// const resetFirstLevel = () =>{
+	// 	console.log("resetear a primer nivel")
+	// }
+
+	// const resetSecondLevel=()=>{
+	// 	console.log("resetear a segundo nivel")
+	// }
+
   return (
     <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
       <DialogContent className="max-w-4xl overflow-y-auto max-h-[80vh] min-h-[80vh]  flex flex-col overflow-hidden" aria-describedby="">
@@ -534,6 +551,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 									<div
 									key={cat.id}
 									onClick={() => { 
+										console.log("primera cat seleccionada", cat.nombre)
 										setSearch("cat")
 										setCategoria(cat.nombre)
 									}}
@@ -553,6 +571,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 						<>
 							<button
 							onClick={() => {
+								console.log("segunda cat seleccionada")
 								setSearch("");  
 								setSelectedIncidencia("")
 								}
@@ -587,13 +606,19 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 							<button
 							onClick={() => {
 								if(catSubCategorias.length==0){
+									console.log("entrando sub categorias 0" )
 									setSearch("");
+									setCategoria("");
+									setSubCategoria("");
+									setSelectedIncidencia("")
 								}else{
+									console.log("entrando sub categorias si tiene algo " )
 									setSearch("cat");
+									setCategoria(categoria)
 								}
-								setSubCategoria("")
+								// setSubCategoria("")
 
-								setSelectedIncidencia("")
+								// setSelectedIncidencia("")
 								}
 							}
 							className="flex items-center gap-1 mb-2 text-blue-600 hover:text-blue-800"
@@ -623,300 +648,413 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 			)}
 			{selectedIncidencia && (
 				<>
-					<div className="flex-grow overflow-y-auto p-1">
-						<div className="flex gap-2 mb-4">
-							<CircleAlert />
-							Incidente: <span className="font-bold"> {selectedIncidencia}</span>
-						</div>
-						<Form {...form} >
-							<form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-5">
+				<div className="flex-grow overflow-y-auto ">
+					<Tabs defaultValue="datos" >
+						<TabsList>
+						<TabsTrigger value="datos">Datos</TabsTrigger>
+						<TabsTrigger value="seguimiento">Seguimiento</TabsTrigger>
+						</TabsList>
+						<TabsContent value="datos" >
+						<Card className="p-3 h-full">
+							<div >
+								<div className="flex gap-2 mb-4">
+									<CircleAlert />
+									Incidente: <span className="font-bold"> {selectedIncidencia}</span>
+								</div>
+								
+								<Form {...form} >
+									<form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-								<FormField
-								control={form.control}
-								name="fecha_hora_incidencia"
-								render={() => (
-									<FormItem className="w-full">
-									<FormLabel>Fecha: *</FormLabel>
-									<FormControl>
-										{/* <Input type="datetime-local" placeholder="Fecha" {...field} /> */}
-										<DateTime date={date} setDate={setDate} />
-									</FormControl>
-
-									<FormMessage />
-									</FormItem>
-								)}
-								/>
-
-								<FormField
-									control={form.control}
-									name="reporta_incidencia"
-									render={({ field }:any) => (
-										<FormItem className="w-full">
-											<FormLabel>Reporta:</FormLabel>
+										<FormField
+										control={form.control}
+										name="fecha_hora_incidencia"
+										render={() => (
+											<FormItem className="w-full">
+											<FormLabel>Fecha: *</FormLabel>
 											<FormControl>
-											<Select {...field} className="input"
-												onValueChange={(value:string) => {
-												field.onChange(value); 
-											}}
-											value={field.value} 
-										>
-											<SelectTrigger className="w-full">
-											{loadingAreaEmpleado?(<>
-													<SelectValue placeholder="Cargando opciones..." />
-												</>):(<>
-													<SelectValue placeholder="Selecciona una opcion" />
-												</>)}
-											</SelectTrigger>
-											<SelectContent>
-											{dataAreaEmpleado?.map((vehiculo:string, index:number) => (
-												<SelectItem key={index} value={vehiculo}>
-													{vehiculo}
-												</SelectItem>
-											))}
-											</SelectContent>
-										</Select>
+												{/* <Input type="datetime-local" placeholder="Fecha" {...field} /> */}
+												<DateTime date={date} setDate={setDate} />
 											</FormControl>
+
 											<FormMessage />
-										</FormItem>
-									)}
-								/>	
-								<FormField
-									control={form.control}
-									name="ubicacion_incidencia"
-									render={({ field }:any) => (
-										<FormItem>
-											<FormLabel>Ubicacion:</FormLabel>
-											<FormControl>
-											<Select {...field} className="input"
-												onValueChange={(value:string) => {
-												field.onChange(value); 
-												setUbicacionSeleccionada(value); 
-											}}
-											value={ubicacionSeleccionada} 
-										>
-											<SelectTrigger className="w-full">
-												{loadingUbicaciones?
-												<SelectValue placeholder="Cargando ubicaciones..." />:<SelectValue placeholder="Selecciona una ubicación" />}
-											</SelectTrigger>
-											<SelectContent>
-											{ubicaciones?.map((vehiculo:string, index:number) => (
-												<SelectItem key={index} value={vehiculo}>
-													{vehiculo}
-												</SelectItem>
-											))}
-											</SelectContent>
-										</Select>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-								<FormField
-									control={form.control}
-									name="area_incidencia"
-									render={({ field }:any) => (
-										<FormItem className="w-full">
-											<FormLabel>Area de la incidencia: *</FormLabel>
-											<FormControl>
-											<Select {...field} className="input"
-												onValueChange={(value:string) => {
-												field.onChange(value); 
-											}}
-											value={field.value} 
-										>
-											<SelectTrigger className="w-full">
-												{loadingAreas ? (
-													<SelectValue placeholder="Cargando áreas..." />
-												):(
-													<SelectValue placeholder="Selecciona una opción" />
-												)}
-											</SelectTrigger>
-											<SelectContent>
-											{areas? (
-												<>
-												{areas?.map((vehiculo:string, index:number) => (
-													<SelectItem key={index} value={vehiculo}>
-														{vehiculo}
-													</SelectItem>
-												))}
-												</>
-											):(
-												<>
-												<SelectItem key={0} value={"0"} disabled>
-													No hay opciones disponibles
-												</SelectItem>
-												</>
+											</FormItem>
+										)}
+										/>
+
+										<FormField
+											control={form.control}
+											name="reporta_incidencia"
+											render={({ field }:any) => (
+												<FormItem className="w-full">
+													<FormLabel>Reporta:</FormLabel>
+													<FormControl>
+													<Select {...field} className="input"
+														onValueChange={(value:string) => {
+														field.onChange(value); 
+													}}
+													value={field.value} 
+												>
+													<SelectTrigger className="w-full">
+													{loadingAreaEmpleado?(<>
+															<SelectValue placeholder="Cargando opciones..." />
+														</>):(<>
+															<SelectValue placeholder="Selecciona una opcion" />
+														</>)}
+													</SelectTrigger>
+													<SelectContent>
+													{dataAreaEmpleado?.map((vehiculo:string, index:number) => (
+														<SelectItem key={index} value={vehiculo}>
+															{vehiculo}
+														</SelectItem>
+													))}
+													</SelectContent>
+												</Select>
+													</FormControl>
+													<FormMessage />
+												</FormItem>
 											)}
-											
-											</SelectContent>
-										</Select>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
+										/>	
+										<FormField
+											control={form.control}
+											name="ubicacion_incidencia"
+											render={({ field }:any) => (
+												<FormItem>
+													<FormLabel>Ubicacion:</FormLabel>
+													<FormControl>
+													<Select {...field} className="input"
+														onValueChange={(value:string) => {
+														field.onChange(value); 
+														setUbicacionSeleccionada(value); 
+													}}
+													value={ubicacionSeleccionada} 
+												>
+													<SelectTrigger className="w-full">
+														{loadingUbicaciones?
+														<SelectValue placeholder="Cargando ubicaciones..." />:<SelectValue placeholder="Selecciona una ubicación" />}
+													</SelectTrigger>
+													<SelectContent>
+													{ubicaciones?.map((vehiculo:string, index:number) => (
+														<SelectItem key={index} value={vehiculo}>
+															{vehiculo}
+														</SelectItem>
+													))}
+													</SelectContent>
+												</Select>
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
+										<FormField
+											control={form.control}
+											name="area_incidencia"
+											render={({ field }:any) => (
+												<FormItem className="w-full">
+													<FormLabel>Area de la incidencia: *</FormLabel>
+													<FormControl>
+													<Select {...field} className="input"
+														onValueChange={(value:string) => {
+														field.onChange(value); 
+													}}
+													value={field.value} 
+												>
+													<SelectTrigger className="w-full">
+														{loadingAreas ? (
+															<SelectValue placeholder="Cargando áreas..." />
+														):(
+															<SelectValue placeholder="Selecciona una opción" />
+														)}
+													</SelectTrigger>
+													<SelectContent>
+													{areas? (
+														<>
+														{areas?.map((vehiculo:string, index:number) => (
+															<SelectItem key={index} value={vehiculo}>
+																{vehiculo}
+															</SelectItem>
+														))}
+														</>
+													):(
+														<>
+														<SelectItem key={0} value={"0"} disabled>
+															No hay opciones disponibles
+														</SelectItem>
+														</>
+													)}
+													
+													</SelectContent>
+												</Select>
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
 
-								<FormField
-									control={form.control}
-									name="prioridad_incidencia"
-									defaultValue="media"
-									render={() => (
-										<FormItem className="w-full">
-												<div className="text-sm font-medium mb-7">
-													Importancia: <span className="font-bold">{getNivel(value[0])}</span>
-												</div> 
-											<FormControl>
-												<Slider
-													defaultValue={[50]}
-													value={value}
-													onValueChange={setValue}
-													max={100}
-													step={1}
+										<FormField
+											control={form.control}
+											name="prioridad_incidencia"
+											defaultValue="media"
+											render={() => (
+												<FormItem className="w-full">
+														<div className="text-sm font-medium mb-7">
+															Importancia: <span className="font-bold">{getNivel(value[0])}</span>
+														</div> 
+													<FormControl>
+														<Slider
+															defaultValue={[50]}
+															value={value}
+															onValueChange={setValue}
+															max={100}
+															step={1}
+														/>
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>	
+										
+										<FormField
+										control={form.control}
+										name="comentario_incidencia"
+										render={({ field }:any) => (
+											<FormItem className="col-span-1 md:col-span-2">
+											<FormLabel>Comentarios: *</FormLabel>
+											<FormControl className="w-full">
+												<Textarea
+												placeholder="Texto"
+												className="resize-none w-full" 
+												{...field}
 												/>
 											</FormControl>
 											<FormMessage />
-										</FormItem>
-									)}
-								/>	
-								
-								<FormField
-								control={form.control}
-								name="comentario_incidencia"
-								render={({ field }:any) => (
-									<FormItem className="col-span-1 md:col-span-2">
-									<FormLabel>Comentarios: *</FormLabel>
-									<FormControl className="w-full">
-										<Textarea
-										placeholder="Texto"
-										className="resize-none w-full" 
-										{...field}
+											</FormItem>
+										)}
 										/>
-									</FormControl>
-									<FormMessage />
-									</FormItem>
-								)}
-								/>
 
-								<LoadImage
-									id="evidencia" 
-									titulo={"Evidencia"} 
-									setImg={setEvidencia}
-									showWebcamOption={true}
-									facingMode="environment"
-									imgArray={evidencia}
-									showArray={true}
-									limit={10}/>
+										<LoadImage
+											id="evidencia" 
+											titulo={"Evidencia"} 
+											setImg={setEvidencia}
+											showWebcamOption={true}
+											facingMode="environment"
+											imgArray={evidencia}
+											showArray={true}
+											limit={10}/>
 
-								<LoadFile
-									id="documento"
-									titulo={"Documento"}
-									setDocs={setDocumento}
-									docArray={documento}
-									limit={10}/>
+										<LoadFile
+											id="documento"
+											titulo={"Documento"}
+											setDocs={setDocumento}
+											docArray={documento}
+											limit={10}/>
 
 
-								<div className="space-y-3">
-									<div className="text-sm font-medium ">
-										Tags: 
-									</div> 
-								<div className="flex items-center gap-2">
-									<Input
-									placeholder="Escribe un tag... (ej: #Urgente)"
-									value={inputTag}
-									onChange={(e) => setInputTag(e.target.value)}
-									onKeyDown={(e) => {
-										if (e.key === 'Enter') {
-										e.preventDefault();
-										agregarTag();
-										}
-									}}
-									/>
-									<Button type="button" onClick={agregarTag}>Agregar</Button>
-								</div>
-									<div className="flex flex-wrap gap-2">
-										{tagsSeleccionados.map((tag, index) => (
-										<div
-											key={index}
-											className="flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
-										>
-											{tag}
-											<button
-											onClick={() => quitarTag(tag)}
-											className="ml-2 text-blue-500 hover:text-blue-700 font-bold"
-											>
-											&times;
-											</button>
+										<div className="space-y-3">
+											<div className="text-sm font-medium ">
+												Tags: 
+											</div> 
+										<div className="flex items-center gap-2">
+											<Input
+											placeholder="Escribe un tag... (ej: #Urgente)"
+											value={inputTag}
+											onChange={(e) => setInputTag(e.target.value)}
+											onKeyDown={(e) => {
+												if (e.key === 'Enter') {
+												e.preventDefault();
+												agregarTag();
+												}
+											}}
+											/>
+											<Button type="button" onClick={agregarTag}>Agregar</Button>
 										</div>
-										))}
-									</div>
-								</div>
+											<div className="flex flex-wrap gap-2">
+												{tagsSeleccionados.map((tag, index) => (
+												<div
+													key={index}
+													className="flex items-center bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
+												>
+													{tag}
+													<button
+													onClick={() => quitarTag(tag)}
+													className="ml-2 text-blue-500 hover:text-blue-700 font-bold"
+													>
+													&times;
+													</button>
+												</div>
+												))}
+											</div>
+										</div>
 
-							
-								<div className="flex items-center flex-wrap gap-5">
-									<FormLabel>Notificaciones: {`(No/Correo)`}:  </FormLabel>
-										<Switch
-											defaultChecked={false}
-											onCheckedChange={()=>{handleToggleNotifications("no")}}
-											aria-readonly
-										/>
-								</div>
-      
-								{selectedIncidencia =="Persona extraviada" && (
-									<div className="col-span-2 w-full">
-										<PersonaExtraviadaFields control={form.control}></PersonaExtraviadaFields>
-									</div>
-								)}
-								{selectedIncidencia =="Robo de cableado" && (
-									<div className="col-span-2 w-full flex flex-col ">
-										<Button className="w-full bg-blue-500 hover:bg-blue-600 text-white sm:w-2/3 md:w-1/2 lg:w-1/3 mb-2" >
-											Dar seguimiento
-										</Button>
-										<RoboDeCableado control={form.control} ></RoboDeCableado>
-									</div>
-								)}
-								{selectedIncidencia =="Robo de vehículo" && (
-									<div className="col-span-2 w-full">
-										<RoboDeVehiculo control={form.control} ></RoboDeVehiculo>
-									</div>
-								)}
-								{selectedIncidencia=="Depósitos y retiros de valores" && 
-								<div className="col-span-1 md:col-span-2">
-									<DepositosList depositos={depositos} setDepositos={setDepositos} ></DepositosList>
-								</div>
-								}
-							</form>
-						</Form>
-				
-						<div className="col-span-1 md:col-span-2">
-							<PersonasInvolucradasList personasInvolucradas={personasInvolucradas} setPersonasInvolucradas={setPersonasInvolucradas} ></PersonasInvolucradasList>
-						</div>
-						<div className="col-span-1 md:col-span-2">
-							<AccionesTomadasList accionesTomadas={accionesTomadas} setAccionesTomadas={setAccionesTomadas} ></AccionesTomadasList>
-						</div>
-					</div>
-					<div className="flex gap-2">
-						<DialogClose asChild>
-							<Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 sm:w-2/3 md:w-1/2 lg:w-1/2 mb-2" onClick={handleClose}>
-							Cancelar
-							</Button>
-						</DialogClose>
-
+									
+										<div className="flex items-center flex-wrap gap-5">
+											<FormLabel>Notificaciones: {`(No/Correo)`}:  </FormLabel>
+												<Switch
+													defaultChecked={false}
+													onCheckedChange={()=>{handleToggleNotifications("no")}}
+													aria-readonly
+												/>
+										</div>
+			
+										{selectedIncidencia =="Persona extraviada" && (
+											<div className="col-span-2 w-full">
+												<PersonaExtraviadaFields control={form.control}></PersonaExtraviadaFields>
+											</div>
+										)}
+										{selectedIncidencia =="Robo de cableado" && (
+											<div className="col-span-2 w-full flex flex-col ">
+												<Button className="w-full bg-blue-500 hover:bg-blue-600 text-white sm:w-2/3 md:w-1/2 lg:w-1/3 mb-2" >
+													Dar seguimiento
+												</Button>
+												<RoboDeCableado control={form.control} ></RoboDeCableado>
+											</div>
+										)}
+										{selectedIncidencia =="Robo de vehículo" && (
+											<div className="col-span-2 w-full">
+												<RoboDeVehiculo control={form.control} ></RoboDeVehiculo>
+											</div>
+										)}
+										{selectedIncidencia=="Depósitos y retiros de valores" && 
+										<div className="col-span-1 md:col-span-2">
+											<DepositosList depositos={depositos} setDepositos={setDepositos} ></DepositosList>
+										</div>
+										}
+									</form>
+								</Form>
 						
-						<Button
-							type="submit"
-							onClick={form.handleSubmit(onSubmit)}
-							className="w-full bg-blue-500 hover:bg-blue-600 text-white sm:w-2/3 md:w-1/2 lg:w-1/2 mb-2" disabled={isLoading}
-						>
-							{isLoading? (
-							<>
-								<Loader2 className="animate-spin"/> {"Creando incidencia..."}
-							</>
-						):("Crear incidencia")}
-						</Button>
-					</div>
+								<div className="col-span-1 md:col-span-2">
+									<PersonasInvolucradasList personasInvolucradas={personasInvolucradas} setPersonasInvolucradas={setPersonasInvolucradas} ></PersonasInvolucradasList>
+								</div>
+								<div className="col-span-1 md:col-span-2">
+									<AccionesTomadasList accionesTomadas={accionesTomadas} setAccionesTomadas={setAccionesTomadas} ></AccionesTomadasList>
+								</div>
+							</div>
+						</Card>
+						</TabsContent>
+						<TabsContent value="seguimiento" >
+						<Card className="p-3 h-screen">
+							<div >
+								<div className="flex gap-2 mb-4">
+									<div className="w-full flex gap-2">
+										<CircleAlert />
+										Incidente: <span className="font-bold"> {selectedIncidencia}</span>
+									</div>
+
+									<div className="flex justify-end items-center w-full">
+										<div className="cursor-pointer  bg-blue-500 hover:bg-blue-600 text-white mr-5 rounded-md p-2 px-4 text-center text-sm" onClick={()=>{setOpenModal(!openModal)}}>
+											Agregar seguimiento 
+										</div>
+									</div>
+								</div>
+								
+							</div>
+
+
+							<div >
+								<table className="min-w-full table-auto border-separate border-spacing-2">
+									<thead>
+										<tr>
+											<th className="px-4 py-2 text-left border-b">Fecha y hora</th>
+											<th className="px-4 py-2 text-left border-b">Acción realizada</th>
+											<th className="px-4 py-2 text-left border-b">Comentario</th>
+											<th className="px-4 py-2 text-left border-b">Evidencia</th>
+											<th className="px-4 py-2 text-left border-b">Documentos</th>
+										</tr>
+									</thead>
+									<tbody>
+										{seguimientos?.map((item: any, index: any) => (
+											<tr key={index}>
+												<td className="px-4 py-2"><p>{item?.fecha_inicio || "N/A"}</p></td>
+												<td className="px-4 py-2"><p>{item?.accion_correctiva || "N/A"}</p></td>
+												<td className="px-4 py-2"><p>{item?.comentario || "N/A"}</p></td>
+												
+												<td className="px-4 py-2">
+													{item?.evidencia.length > 0 ? (
+														<div className="w-full flex justify-center">
+															<Carousel className="w-16">
+																<CarouselContent>
+																	{item?.evidencia.map((a: any, index: number) => (
+																		<CarouselItem key={index}>
+																			<Card>
+																				<CardContent className="flex aspect-square items-center justify-center p-0">
+																					<Image
+																						width={280}
+																						height={280}
+																						src={a?.file_url || "/nouser.svg"}
+																						alt="Imagen"
+																						className="w-42 h-42 object-contain bg-gray-200 rounded-lg"
+																					/>
+																				</CardContent>
+																			</Card>
+																		</CarouselItem>
+																	))}
+																</CarouselContent>
+																<CarouselPrevious />
+																<CarouselNext />
+															</Carousel>
+														</div>
+													) : (
+														<p>No hay evidencias disponibles.</p>
+													)}
+												</td>
+												<td className="px-4 py-2">
+													{item?.documento && item?.documento.length > 0 ? (
+														<ul className="ms-2">
+															{item?.documento.map((file: any, index: any) => (
+																<li key={index}>
+																	<a
+																		href={file?.file_url}
+																		target="_blank"
+																		rel="noopener noreferrer"
+																		className="text-blue-600 hover:underline"
+																	>
+																		<p>{file.file_name}</p>
+																	</a>
+																</li>
+															))}
+														</ul>
+													) : null}
+												</td>
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</div>
+
+						</Card>
+						</TabsContent>
+					</Tabs>
+				</div>
 				</>
 			)}
-		
+			<SeguimientoIncidenciaLista
+				title="Seguimiento Incidencia"
+				isSuccess={openModal}
+				setIsSuccess={setOpenModal}
+				setSeguimientos={setSeguimientos}
+				>
+				<div></div>
+			</SeguimientoIncidenciaLista>
+
+			<div className="flex gap-2">
+				<DialogClose asChild>
+					<Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 sm:w-2/3 md:w-1/2 lg:w-1/2 mb-2" onClick={handleClose}>
+					Cancelar
+					</Button>
+				</DialogClose>
+
+				
+				<Button
+					type="submit"
+					onClick={form.handleSubmit(onSubmit)}
+					className="w-full bg-blue-500 hover:bg-blue-600 text-white sm:w-2/3 md:w-1/2 lg:w-1/2 mb-2" disabled={isLoading}
+				>
+					{isLoading? (
+					<>
+						<Loader2 className="animate-spin"/> {"Creando incidencia..."}
+					</>
+				):("Crear incidencia")}
+				</Button>
+			</div>
           
       </DialogContent>
     </Dialog>
