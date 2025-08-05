@@ -16,7 +16,7 @@ import {
   useReactTable,
   Table as TanstackTable
 } from "@tanstack/react-table";
-import { CalendarDays, Eraser, FileX2, Plus, Search, Trash2 } from "lucide-react";
+import { CalendarDays, Check, Eraser, FileX2, Plus, Search, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -44,6 +44,7 @@ import DateTime from "@/components/dateTime";
 import { EditarIncidenciaModal } from "@/components/modals/editar-incidencia";
 import ViewImage from "@/components/modals/view-image";
 import { Checkbox } from "@/components/ui/checkbox";
+import { SeguimientoIncidenciaModal } from "@/components/modals/seguimiento-incidencia";
 
 interface ListProps {
 	data: Incidencia_record[];
@@ -81,6 +82,7 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
   );
 
 	const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
+	const [modalSeguimientoAbierto, setModalSeguimientoAbierto] = useState(false);
 	const [modalEliminarAbierto, setModalEliminarAbierto] = useState(false);
 	const [modalEliminarMultiAbierto, setModalEliminarMultiAbierto] = useState(false);
 	const [incidenciaSeleccionada, setIncidenciaSeleccionada] = useState<Incidencia_record | null>(null);
@@ -105,6 +107,10 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 		setIncidenciaSeleccionada(incidencia);
 		setModalEliminarAbierto(true);
 	};
+	const handleSeguimiento = (incidencia: Incidencia_record) => {
+		setIncidenciaSeleccionada(incidencia);
+		setModalSeguimientoAbierto(true);
+	};
 
   const columns = useMemo(() => {
 	if (isLoading) return [];
@@ -118,7 +124,7 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 					onCheckedChange={(value) => row.toggleSelected(!!value)}
 					aria-label="Select row"
 				/>
-				<OptionsCell row={row} onEditarClick={handleEditar} onEliminarClick={handleEliminar}/>
+				<OptionsCell row={row} onEditarClick={handleEditar} onEliminarClick={handleEliminar} onSeguimientoClick={handleSeguimiento}/>
 				</div>
 			),
 			header: ({ table } : { table: TanstackTable<Incidencia_record> }) => (
@@ -371,6 +377,16 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 							setRowSelection({});
 						}
 					  }}/>
+				)}
+
+				{modalSeguimientoAbierto && incidenciaSeleccionada && (
+					<SeguimientoIncidenciaModal
+						title="Seguimiento Incidencia"
+						folio={incidenciaSeleccionada?.folio} isSuccess={modalSeguimientoAbierto} setIsSuccess={setModalSeguimientoAbierto}>
+						<div className="cursor-pointer" title="Seguimiento Incidencia">
+							<Check />   
+						</div>
+					</SeguimientoIncidenciaModal>
 				)}
 
 			</div>

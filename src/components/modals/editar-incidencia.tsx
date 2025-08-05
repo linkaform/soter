@@ -787,19 +787,12 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 											/>	
 											</div>
 
-											<div className="flex justify-end items-center w-full">
+											{/* <div className="flex justify-end items-center w-full">
 												<div className="cursor-pointer  bg-blue-500 hover:bg-blue-600 text-white mr-5 rounded-sm p-1 px-3 text-center" onClick={()=>{setOpenModal(!openModal)}}>
 													Agregar seguimiento 
 												</div>
-											</div>
-											<SeguimientoIncidenciaModal
-												title="Seguimiento Incidencia"
-												folio={data?.folio}
-												isSuccess={openModal}
-												setIsSuccess={setOpenModal}
-												>
-												<div></div>
-											</SeguimientoIncidenciaModal>
+											</div> */}
+											
 									</div>
 
 
@@ -829,6 +822,16 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 									}
 								</form>
 						</Form>
+
+						<SeguimientoIncidenciaModal
+							title="Seguimiento Incidencia"
+							folio={data?.folio}
+							isSuccess={openModal}
+							setIsSuccess={setOpenModal}
+							>
+							<div></div>
+						</SeguimientoIncidenciaModal>
+
 					<div className="col-span-1 md:col-span-2 mt-2">
 						<PersonasInvolucradasList personasInvolucradas={personasInvolucradas} setPersonasInvolucradas={setPersonasInvolucradas} ></PersonasInvolucradasList>
 					</div>
@@ -844,6 +847,19 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 						</DialogClose>
 
 						
+						<Button
+							type="submit"
+							onClick={()=>{setOpenModal(!openModal)}}
+							className="w-full bg-yellow-500 hover:bg-yellow-600 text-white sm:w-2/3 md:w-1/2 lg:w-1/2 mb-2" disabled={isLoading}
+						>
+							{isLoading? (
+							<>
+								<Loader2 className="animate-spin"/> {"Agregando seguimiento..."}
+							</>
+						):("Agregar seguimiento")}
+						</Button>
+
+
 						<Button
 							type="submit"
 							onClick={form.handleSubmit(onSubmit)}

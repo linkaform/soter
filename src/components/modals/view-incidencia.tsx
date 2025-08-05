@@ -18,6 +18,7 @@ import { AccionesTomadas, Depositos, PersonasInvolucradas } from "@/lib/incidenc
 
 import { SeguimientoIncidenciaModal } from "./seguimiento-incidencia";
 import { useState } from "react";
+import { Loader2 } from "lucide-react";
 // import { Check } from "lucide-react";
 // import { SeguimientoIncidenciaModal } from "./seguimiento-incidencia";
 
@@ -418,8 +419,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 										<tr>
 											<th className="px-4 py-2 text-left border-b">Acción realizada</th>
 											<th className="px-4 py-2 text-left border-b">Comentario</th>
-											<th className="px-4 py-2 text-left border-b">Fecha inicio</th>
-											<th className="px-4 py-2 text-left border-b">Fecha fin</th>
+											<th className="px-4 py-2 text-left border-b">Fecha del seguimiento</th>
 											<th className="px-4 py-2 text-left border-b">Evidencia</th>
 											<th className="px-4 py-2 text-left border-b">Documentos</th>
 										</tr>
@@ -430,7 +430,6 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 												<td className="px-4 py-2"><p>{item?.accion_correctiva || "N/A"}</p></td>
 												<td className="px-4 py-2"><p>{item?.comentario || "N/A"}</p></td>
 												<td className="px-4 py-2"><p>{item?.fecha_inicio || "N/A"}</p></td>
-												<td className="px-4 py-2"><p>{item?.fecha_fin || "N/A"}</p></td>
 												<td className="px-4 py-2">
 													{item?.evidencia.length > 0 ? (
 														<div className="w-full flex justify-center">
@@ -490,11 +489,21 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 		</div>
         
         <div className="flex gap-1 my-5 col-span-2">
-          <DialogClose asChild>
+          	<DialogClose asChild>
             <Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700">
               Cerrar
             </Button>
-          </DialogClose>
+          	</DialogClose>
+
+		  	<Button
+			type="submit"
+			className="w-full  bg-yellow-500 hover:bg-yellow-600 text-white " disabled={false}
+			>
+			{true ? (<>
+				{("Descargar seguimientos")}
+			</>) : (<> <Loader2 className="animate-spin" /> {"Descargando seguimientos..."} </>)}
+			</Button>
+
         </div>
       </DialogContent>
     </Dialog>
