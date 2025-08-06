@@ -61,7 +61,7 @@ export const habitacionesInspeccionadasColumns: ColumnDef<HabitacionInspeccionad
         header: "Ponderación (%)",
         cell: ({ row }) => (
             <Badge variant="outline" className="text-red-800 bg-red-300 font-semibold rounded-md p-2">
-                {row.original.grade * 100}%
+                {(row.original.grade * 100).toFixed(2)}%
             </Badge>
         ),
     },
