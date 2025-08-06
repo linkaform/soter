@@ -11,7 +11,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { YearSelect } from "../components/YearSelect"
 import { useGetReportAuditorias, useGetStates, useGetAuditorias } from "../hooks/useReportInspecciones";
-import { getAuditoriaById } from "../requests/peticiones";
+import { getAuditoriaById, getInspeccionPDF } from "../requests/peticiones";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { processAuditoriasData, processFallasDetalle } from "../utils/dataProcessors"
 import {
@@ -46,6 +46,11 @@ interface State {
 	name: string;
 }
 
+interface AuditoriaSeleccionada {
+	folio?: string;
+	[key: string]: any;
+}
+
 const ReportsPage = () => {
 
 	const formatSelectedStates = (states: State[]) => {
@@ -54,7 +59,7 @@ const ReportsPage = () => {
 
 	const [selectedYear, setSelectedYear] = useState<string>(currentYear);
 	const [activeTab, setActiveTab] = useState("habitaciones");
-	const [auditoriaSeleccionada, setAuditoriaSeleccionada] = useState({});
+	const [auditoriaSeleccionada, setAuditoriaSeleccionada] = useState<AuditoriaSeleccionada>({});
 	const [selectedAuditItem, setSelectedAuditItem] = useState<string | null>(null);
 	const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 	const [fallasStates, setFallasStates] = useState<string[]>([]);
@@ -319,8 +324,34 @@ const ReportsPage = () => {
 												{selectedAuditItem ? (
 													<AuditCard
 														auditData={auditoriaSeleccionada}
-														onDownloadReport={(auditId) => {
-															console.log('Descargar reporte para:', auditId);
+														onDownloadReport={async (auditId) => {
+															try {
+																const data = await getInspeccionPDF({ recordId: auditId });
+																const downloadURL = data?.response?.response?.pdf?.data?.download_url;
+																if (downloadURL) {
+																	try {
+																		const response = await fetch(downloadURL);
+																		const blob = await response.blob();
+																		const blobURL = URL.createObjectURL(blob);
+																		const link = document.createElement("a");
+																		link.href = blobURL;
+																		link.download = `Auditoria-${auditoriaSeleccionada?.folio}.pdf`;
+																		document.body.appendChild(link);
+																		link.click();
+																		document.body.removeChild(link);
+																		URL.revokeObjectURL(blobURL);
+																	} catch (err) {
+																		console.error("Error downloading PDF blob:", err);
+																		alert("Error al descargar el archivo PDF");
+																	}
+																} else {
+																	console.error("No se encontró URL de descarga");
+																	alert("No se pudo generar el PDF");
+																}
+															} catch (err) {
+																console.error("Error fetching audit PDF:", err);
+																alert("Error al generar el reporte PDF");
+															}
 														}}
 														onImageModal={(imageUrl, auditData) => {
 															console.log('Abrir modal con imagen:', imageUrl, auditData);

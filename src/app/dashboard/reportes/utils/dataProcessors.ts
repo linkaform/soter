@@ -14,7 +14,8 @@ export const processAuditoriasData = (tableSection: any[]): Auditoria[] => {
                 obtained_points: audit.obtained_points || 0,
                 folio: audit.folio,
                 grade: audit.grade,
-                max_points: audit.max_points
+                max_points: audit.max_points,
+                _id: section._id
             });
         });
     });

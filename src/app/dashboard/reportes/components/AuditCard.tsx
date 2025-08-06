@@ -5,12 +5,14 @@ import {
     MapPin,
     AlertTriangle,
     CheckCircle,
+    MessageSquare,
 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Image from "next/image";
 import React, { useEffect, useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import FallaImagesModal from '@/app/dashboard/reportes/modals/FallaImagesModal';
+import CommentsModal from '@/app/dashboard/reportes/modals/CommentsModal';
 import { FallaDetalle } from '../utils/dataProcessors';
 
 interface AuditCardProps {
@@ -32,6 +34,7 @@ const AuditCard = ({ auditData, onDownloadReport, onImageModal }: AuditCardProps
     const zona = auditData?.zona || 'Sin zona';
     const createdAt = auditData?.created_at || '';
     const nes = Array.isArray(auditData?.nes) ? auditData.nes[0] : 'Sin NES';
+    const accionesCorrectivas = auditData?.acciones_correctivas || 0;
 
     // Extraer datos de la auditoría
     const aciertos = audit.aciertos || 0;
@@ -238,7 +241,7 @@ const AuditCard = ({ auditData, onDownloadReport, onImageModal }: AuditCardProps
     const porcentajeCalificacion = maxPoints > 0 ? (obtainedPoints / maxPoints) * 100 : 0;
 
     return (
-        <div className="flex w-full h-80 gap-4">
+        <div className="flex w-full h-full gap-4"> {/* Cambiar h-80 por h-full */}
             {/* Sección de imágenes */}
             <div
                 className="w-2/5 flex items-center justify-center"
@@ -311,6 +314,18 @@ const AuditCard = ({ auditData, onDownloadReport, onImageModal }: AuditCardProps
                                         <FileDown className="w-4 h-4" />
                                     </Button>
                                 )}
+
+                                <CommentsModal auditData={auditData}>
+                                    <Button
+                                        size="sm"
+                                        variant="outline"
+                                        title="Ver Comentarios Detallados"
+                                        className="hover:bg-yellow-50 hover:border-yellow-300"
+                                    >
+                                        <MessageSquare className="w-4 h-4" />
+                                    </Button>
+                                </CommentsModal>
+
                                 <div className={`px-3 py-1 rounded-full text-xs font-medium border ${auditStatus.bgColor}`}>
                                     <div className="flex items-center gap-1">
                                         {auditStatus.icon}
@@ -337,10 +352,8 @@ const AuditCard = ({ auditData, onDownloadReport, onImageModal }: AuditCardProps
                                 <div className="text-xl font-bold text-red-800">{fallasCount}</div>
                             </div>
                             <div className="bg-gray-50 p-3 rounded-lg">
-                                <div className="text-gray-600 font-medium">Puntos</div>
-                                <div className="text-sm font-bold text-gray-800">
-                                    {obtainedPoints.toFixed(1)} / {maxPoints.toFixed(1)}
-                                </div>
+                                <div className="text-gray-600 font-medium">Acciones correctivas</div>
+                                <div className="text-xl font-bold text-gray-800">{accionesCorrectivas}</div>
                             </div>
                         </div>
 

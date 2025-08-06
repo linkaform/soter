@@ -208,3 +208,54 @@ export const getAuditoriaById = async (id: string) => {
         throw error;
     }
 }
+
+export const getInspeccionPDF = async ({ recordId }: { recordId: string }) => {
+    toast.loading("Obteniendo PDF...", {
+        style: {
+            background: "#000",
+            color: "#fff",
+            border: 'none'
+        },
+    });
+
+    try {
+        const payload = {
+            option: "get_pdf",
+            script_name: "report_inspecciones.py",
+            record_id: recordId,
+        };
+
+        const userJwt = localStorage.getItem("access_token");
+        const response = await fetch(`https://app.linkaform.com/api/infosync/scripts/run/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${userJwt}`,
+            },
+            body: JSON.stringify(payload),
+        });
+
+        toast.dismiss();
+        toast.success("PDF obtenido correctamente.", {
+            style: {
+                background: "#000",
+                color: "#fff",
+                border: 'none'
+            },
+        });
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        toast.dismiss();
+        toast.error(`${error}` || "Hubo un error al obtener el PDF.", {
+            style: {
+                background: "#000",
+                color: "#fff",
+                border: 'none'
+            },
+        });
+        console.error("Error al ejecutar el script:", error);
+        throw error;
+    }
+}

@@ -4,6 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { Eye } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import AuditDetailModal from "../modals/AuditDetailModal";
 
 export type Auditoria = {
     created_at: string;
@@ -15,20 +16,43 @@ export type Auditoria = {
     folio?: string;
     grade?: number;
     max_points?: number;
+    _id?: string;
 };
 
 export const auditoriasColumns: ColumnDef<Auditoria>[] = [
     {
         id: "acciones",
         header: "Acciones",
-        cell: ({ row }) => (
-            <Button variant="outline" size="sm" onClick={() => {
-                // Aquí puedes agregar la funcionalidad más tarde
-                console.log("Ver detalle de auditoría:", row.original);
-            }}>
-                <Eye className="w-4 h-4" />
-            </Button>
-        ),
+        cell: ({ row }) => {
+            const auditId = row.original._id;
+
+            // Si no hay ID, mostrar botón deshabilitado
+            if (!auditId) {
+                return (
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        disabled
+                        title="ID de auditoría no disponible"
+                    >
+                        <Eye className="w-4 h-4" />
+                    </Button>
+                );
+            }
+
+            return (
+                <AuditDetailModal auditId={auditId}>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        title={`Ver detalle de auditoría: ${row.original.folio || auditId}`}
+                        className="hover:bg-blue-50 hover:border-blue-300"
+                    >
+                        <Eye className="w-4 h-4" />
+                    </Button>
+                </AuditDetailModal>
+            );
+        },
     },
     {
         accessorKey: "state",
