@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, TrendingUp } from "lucide-react";
 
 const REPORTS = [
 	{
@@ -13,10 +13,11 @@ const REPORTS = [
 		enabled: true,
 	},
 	{
-		name: "",
-		path: "#",
-		description: "",
-		enabled: false,
+		name: "Reporte de Avances",
+		path: "/dashboard/reportes/reporte_avances",
+		icon: <TrendingUp className="w-8 h-8 text-yellow-500" />,
+		description: "Consulta el avance de inspecciones y calificaciones por hotel.",
+		enabled: true,
 	},
 	{
 		name: " ",

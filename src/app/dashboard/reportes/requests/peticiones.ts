@@ -258,3 +258,107 @@ export const getHabitacionPDF = async ({ recordId }: { recordId: string }) => {
         throw error;
     }
 }
+
+////////// REPORTE DE AVANCES //////////////////////
+export const getHotelesAvances = async () => {
+    toast.loading("Obteniendo hoteles...", {
+        style: {
+            background: "#000",
+            color: "#fff",
+            border: 'none'
+        },
+    });
+
+    try {
+        const payload = {
+            option: "get_hoteles",
+            script_name: "reporte_avances.py",
+        };
+
+        const userJwt = localStorage.getItem("access_token");
+        const response = await fetch(`https://app.linkaform.com/api/infosync/scripts/run/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${userJwt}`,
+            },
+            body: JSON.stringify(payload),
+        });
+
+        toast.dismiss();
+        toast.success("Hoteles obtenidos correctamente.", {
+            style: {
+                background: "#000",
+                color: "#fff",
+                border: 'none'
+            },
+        });
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        toast.dismiss();
+        toast.error(`${error}` || "Hubo un error al obtener tus hoteles.", {
+            style: {
+                background: "#000",
+                color: "#fff",
+                border: 'none'
+            },
+        });
+        console.error("Error al ejecutar el reporte:", error);
+        throw error;
+    }
+}
+
+export const getReportAvances = async ({ anio, cuatrimestres, hoteles }: reportFalla) => {
+    toast.loading("Obteniendo reporte...", {
+        style: {
+            background: "#000",
+            color: "#fff",
+            border: 'none'
+        },
+    });
+
+    try {
+        const payload = {
+            option: "get_report",
+            script_name: "reporte_avances.py",
+            anio,
+            cuatrimestres,
+            hoteles
+        };
+
+        const userJwt = localStorage.getItem("access_token");
+        const response = await fetch(`https://app.linkaform.com/api/infosync/scripts/run/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${userJwt}`,
+            },
+            body: JSON.stringify(payload),
+        });
+
+        toast.dismiss();
+        toast.success("Reporte obtenido correctamente.", {
+            style: {
+                background: "#000",
+                color: "#fff",
+                border: 'none'
+            },
+        });
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        toast.dismiss();
+        toast.error(`${error}` || "Hubo un error al obtener el reporte.", {
+            style: {
+                background: "#000",
+                color: "#fff",
+                border: 'none'
+            },
+        });
+        console.error("Error al ejecutar el reporte:", error);
+        throw error;
+    }
+}
