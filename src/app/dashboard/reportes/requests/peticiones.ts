@@ -259,3 +259,55 @@ export const getInspeccionPDF = async ({ recordId }: { recordId: string }) => {
         throw error;
     }
 }
+
+export const getPieChart = async (states: string[]) => {
+    toast.loading("Obteniendo gráfico de pastel...", {
+        style: {
+            background: "#000",
+            color: "#fff",
+            border: 'none'
+        },
+    });
+
+    try {
+        const payload = {
+            option: "get_pie_chart",
+            script_name: "report_inspecciones.py",
+            states: states
+        };
+
+        const userJwt = localStorage.getItem("access_token");
+        const response = await fetch(`https://app.linkaform.com/api/infosync/scripts/run/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${userJwt}`,
+            },
+            body: JSON.stringify(payload),
+        });
+
+        toast.dismiss();
+        toast.success("Gráfico de pastel obtenido correctamente.", {
+            style: {
+                background: "#000",
+                color: "#fff",
+                border: 'none'
+            },
+        });
+
+        const res = await response.json();
+        const data = res?.response?.response ?? [];
+        return data;
+    } catch (error) {
+        toast.dismiss();
+        toast.error(`${error}` || "Hubo un error al obtener el gráfico de pastel.", {
+            style: {
+                background: "#000",
+                color: "#fff",
+                border: 'none'
+            },
+        });
+        console.error("Error al ejecutar el script:", error);
+        throw error;
+    }
+}

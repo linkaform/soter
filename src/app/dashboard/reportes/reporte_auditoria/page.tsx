@@ -10,7 +10,7 @@ import AuditCard from "../components/AuditCard";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { YearSelect } from "../components/YearSelect"
-import { useGetReportAuditorias, useGetStates, useGetAuditorias } from "../hooks/useReportInspecciones";
+import { useGetReportAuditorias, useGetStates, useGetAuditorias, useGetPieChart } from "../hooks/useReportInspecciones";
 import { getAuditoriaById, getInspeccionPDF } from "../requests/peticiones";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { processAuditoriasData, processFallasDetalle } from "../utils/dataProcessors"
@@ -30,6 +30,7 @@ import AuditStatsCard from "../components/AuditStatsCard";
 import AuditoriasTable from "../tables/auditoriasTable";
 import ImagesSection from "../components/ImagesSection";
 import CommentsSection from "../components/CommentsSection";
+import DynamicPieChart from "../graphs/DynamicPieChart";
 // import BubbleChart from "../graphs/BubbleChart";
 // import MultiLineChart from "../graphs/MultiLineChart";
 // import RadarChart from "../graphs/RadarChart";
@@ -58,13 +59,18 @@ const ReportsPage = () => {
 	};
 
 	const [selectedYear, setSelectedYear] = useState<string>(currentYear);
-	const [activeTab, setActiveTab] = useState("habitaciones");
+	const [activeTab, setActiveTab] = useState("grafica");
 	const [auditoriaSeleccionada, setAuditoriaSeleccionada] = useState<AuditoriaSeleccionada>({});
 	const [selectedAuditItem, setSelectedAuditItem] = useState<string | null>(null);
 	const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 	const [fallasStates, setFallasStates] = useState<string[]>([]);
 	const [searchCategory, setSearchCategory] = useState("");
 	const [selectedStates, setSelectedStates] = useState<State[]>([]);
+	const {
+		data: pieChartData,
+		isLoading: isPieChartLoading,
+		refetch: executePieChart
+	} = useGetPieChart(fallasStates, false);
 	const [filters, setFilters] = useState<Filters>({
 		year: currentYear,
 		states: formatSelectedStates(selectedStates)
@@ -171,6 +177,18 @@ const ReportsPage = () => {
 	};
 
 	useEffect(() => {
+		if (activeTab === "grafica" && fallasStates.length > 0 && reportData) {
+			executePieChart();
+		}
+	}, [activeTab, fallasStates, reportData]);
+
+	useEffect(() => {
+		if (activeTab === "grafica" && fallasStates.length > 0 && reportData) {
+			executePieChart();
+		}
+	}, [activeTab, fallasStates, reportData]);
+
+	useEffect(() => {
 		if (states && Array.isArray(states) && states.length > 0 && selectedStates.length === 0) {
 			setSelectedStates(states);
 			const formattedStates = formatSelectedStates(states);
@@ -192,6 +210,16 @@ const ReportsPage = () => {
 			setFallasStates(filters.states);
 		}
 	}, [filters.states]);
+
+	useEffect(() => {
+		const estadosCount = selectedStates.length;
+
+		if (estadosCount > 1) {
+			setActiveTab("grafica");
+		} else if (estadosCount === 1) {
+			setActiveTab("habitaciones");
+		}
+	}, [selectedStates.length]);
 
 	if (isLoading || isReportLoading) {
 		return (
@@ -316,6 +344,29 @@ const ReportsPage = () => {
 									</div>
 									<TabsContent value="grafica" className="flex-1 min-h-0">
 										<div className="h-full flex-1 min-h-0">
+											{isPieChartLoading ? (
+												<div className="flex flex-col items-center justify-center h-full text-gray-400">
+													<div className="text-xl mb-2">📊 Cargando gráfico...</div>
+													<div className="text-sm">Obteniendo datos de fallas</div>
+												</div>
+											) : pieChartData ? (
+												<DynamicPieChart
+													pieChartData={pieChartData}
+													selectedCategories={selectedCategories}
+													statesCount={selectedStates.length}
+													onSegmentClick={() => { }}
+												/>
+											) : (
+												<div className="flex flex-col items-center justify-center h-full text-gray-400">
+													<div className="text-xl mb-2">📈 Sin datos de gráfico</div>
+													<div className="text-sm">
+														{fallasStates.length === 0
+															? "Selecciona estados para ver el gráfico de fallas"
+															: "No hay datos disponibles para el gráfico"
+														}
+													</div>
+												</div>
+											)}
 										</div>
 									</TabsContent>
 									<TabsContent value="habitaciones" className="flex-1 min-h-0">

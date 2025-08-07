@@ -32,9 +32,7 @@ const AuditDetailModal: React.FC<AuditDetailModalProps> = ({
         setError(null);
 
         try {
-            console.log('🔄 Cargando auditoría con ID:', auditId);
             const response = await getAuditoriaById(auditId);
-            console.log('📄 Respuesta de la auditoría:', response);
 
             if (response?.auditoria) {
                 setAuditoriaData(response.auditoria);
@@ -67,19 +65,13 @@ const AuditDetailModal: React.FC<AuditDetailModalProps> = ({
 
     // Función para manejar descarga de PDF
     const handleDownloadReport = async (auditId: string) => {
-        console.log('🔽 Iniciando descarga para audit ID:', auditId);
-
         try {
             const data = await getInspeccionPDF({ recordId: auditId });
-            console.log('📄 Respuesta del PDF:', data);
-
             const downloadURL = data?.response?.response?.pdf?.data?.download_url ||
                 data?.response?.data?.json?.download_url ||
                 data?.download_url;
 
             if (downloadURL) {
-                console.log('🔗 URL de descarga obtenida:', downloadURL);
-
                 try {
                     const response = await fetch(downloadURL);
 
@@ -101,9 +93,6 @@ const AuditDetailModal: React.FC<AuditDetailModalProps> = ({
                     link.click();
                     document.body.removeChild(link);
                     URL.revokeObjectURL(blobURL);
-
-                    console.log('✅ Descarga completada:', fileName);
-
                 } catch (downloadError) {
                     console.error("❌ Error downloading PDF blob:", downloadError);
                     alert("Error al descargar el archivo PDF. Por favor, inténtalo de nuevo.");
@@ -156,9 +145,7 @@ const AuditDetailModal: React.FC<AuditDetailModalProps> = ({
             <AuditCard
                 auditData={auditoriaData}
                 onDownloadReport={handleDownloadReport}
-                onImageModal={(imageUrl, auditData) => {
-                    console.log('Abrir modal con imagen:', imageUrl, auditData);
-                }}
+                onImageModal={() => { }}
             />
         );
     };
