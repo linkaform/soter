@@ -199,20 +199,24 @@ const ReportsPage = () => {
 
 	return (
 		<div className="h-screen mt-8">
-			<div className="flex gap-3 w-3/4 justify-between items-center m-auto">
-				<div className="flex items-center">
-					<Image
-						width={1200}
-						height={1000}
-						src="/company_pic_17236.jpg"
-						alt="Imagen"
-						className="w-full h-full object-contain bg-gray-200 rounded-lg"
-					/>
+			<div className="flex justify-between w-11/12 m-auto mt-6 gap-4">
+				<div className="grid grid-cols-3 items-center w-full mx-auto mt-8 px-4">
+					<div className="justify-self-start">
+						<Image
+							width={160}
+							height={80}
+							src="/company_pic_17236.jpg"
+							alt="Logo de la empresa"
+							className="w-32 h-20 sm:w-40 sm:h-24 object-contain"
+						/>
+					</div>
+					<div className="justify-self-center">
+						<h1 className="text-2xl sm:text-3xl font-semibold text-gray-800">
+							Reporte de Auditorías
+						</h1>
+					</div>
+					<div></div>
 				</div>
-				<div>
-					<h1 className="text-3xl font-semibold">Reporte fallas</h1>
-				</div>
-				<div></div>
 			</div>
 			<div className="flex justify-between w-11/12 m-auto mt-6 gap-4">
 				<div className="flex gap-4">
