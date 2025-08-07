@@ -357,9 +357,7 @@ const ReportsPage = () => {
 																alert("Error al generar el reporte PDF");
 															}
 														}}
-														onImageModal={(imageUrl, auditData) => {
-															console.log('Abrir modal con imagen:', imageUrl, auditData);
-														}}
+														onImageModal={() => { }}
 													/>
 												) : 'Selecciona un elemento para ver sus detalles'}
 											</div>
