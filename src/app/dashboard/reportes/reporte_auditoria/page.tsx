@@ -181,6 +181,18 @@ const ReportsPage = () => {
 		}
 	}, [states]);
 
+	useEffect(() => {
+		if (selectedCategories.length > 0 && fallasStates.length > 0) {
+			executeAuditorias();
+		}
+	}, [selectedCategories]);
+
+	useEffect(() => {
+		if (filters.states.length > 0) {
+			setFallasStates(filters.states);
+		}
+	}, [filters.states]);
+
 	if (isLoading || isReportLoading) {
 		return (
 			<div className="flex justify-center items-center h-40 text-gray-400">
