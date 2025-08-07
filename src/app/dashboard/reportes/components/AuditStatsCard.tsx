@@ -73,8 +73,8 @@ const AuditStatsCard: React.FC<AuditStatsCardProps> = ({
 
     // Calcular porcentaje basado en obtained_points
     // Asumiendo que el máximo es 100 si no se proporciona max_points
-    const maxPoints = data.max_points || 100;
-    const obtainedPoints = data.obtained_points || 0;
+    const maxPoints = data?.max_points || 100;
+    const obtainedPoints = data?.obtained_points || 0;
     const percentage = Math.round((obtainedPoints / maxPoints) * 100);
 
     // Determinar el estado basado en el porcentaje
@@ -96,21 +96,21 @@ const AuditStatsCard: React.FC<AuditStatsCardProps> = ({
             <div className="flex justify-between items-center">
                 <div className="flex-1">
                     {/* Label/ID de la auditoría */}
-                    {data.label && (
+                    {data?.label && (
                         <div className="font-semibold text-lg">NES: {data.label}</div>
                     )}
 
                     {/* Estadísticas principales */}
                     <div className="text-gray-500 text-sm mt-1">
                         {[
-                            data.cantidad_auditorias && `${data.cantidad_auditorias} auditorías`,
-                            data.fallas !== undefined && `${data.fallas} fallas`,
-                            data.aciertos !== undefined && `${data.aciertos} aciertos`
+                            data?.cantidad_auditorias && `${data.cantidad_auditorias} auditorías`,
+                            data?.fallas !== undefined && `${data.fallas} fallas`,
+                            data?.aciertos !== undefined && `${data.aciertos} aciertos`
                         ].filter(Boolean).join(', ')}
                     </div>
 
                     {/* Puntuación obtenida */}
-                    {data.obtained_points !== undefined && (
+                    {data?.obtained_points !== undefined && (
                         <div className="text-sm text-gray-600 mt-1">
                             Puntuación: <span className="font-medium">{data.obtained_points.toFixed(2)} pts</span>
                         </div>
@@ -140,7 +140,7 @@ const AuditStatsCard: React.FC<AuditStatsCardProps> = ({
                     </div>
 
                     {/* Ratio de fallas/aciertos */}
-                    {(data.fallas !== undefined && data.aciertos !== undefined) && (
+                    {(data?.fallas !== undefined && data.aciertos !== undefined) && (
                         <div className="text-xs text-gray-500 text-center">
                             Ratio: {data.aciertos}:{data.fallas}
                         </div>
@@ -158,15 +158,15 @@ const AuditStatsCard: React.FC<AuditStatsCardProps> = ({
             {/* Información de detalle */}
             <div className="grid grid-cols-3 gap-2 text-xs bg-gray-50 p-2 rounded">
                 <div className="text-center">
-                    <div className="font-medium text-green-600">{data.aciertos || 0}</div>
+                    <div className="font-medium text-green-600">{data?.aciertos || 0}</div>
                     <div className="text-gray-500">Aciertos</div>
                 </div>
                 <div className="text-center">
-                    <div className="font-medium text-red-600">{data.fallas || 0}</div>
+                    <div className="font-medium text-red-600">{data?.fallas || 0}</div>
                     <div className="text-gray-500">Fallas</div>
                 </div>
                 <div className="text-center">
-                    <div className="font-medium text-blue-600">{data.cantidad_auditorias || 0}</div>
+                    <div className="font-medium text-blue-600">{data?.cantidad_auditorias || 0}</div>
                     <div className="text-gray-500">Auditorías</div>
                 </div>
             </div>

@@ -71,7 +71,7 @@ const ReportsPage = () => {
 	});
 	const { data: states, isLoading, error } = useGetStates(true);
 	const { data: reportData, isLoading: isReportLoading, error: reportError, refetch: executeReport } = useGetReportAuditorias(filters, false);
-	const { data: auditoriasData } = useGetAuditorias(selectedCategories, fallasStates, true);
+	const { data: auditoriasData, refetch: executeAuditorias } = useGetAuditorias(selectedCategories, fallasStates, false);
 	const auditorias = processAuditoriasData(reportData?.table_section || []);
 	const fallasDetalle = processFallasDetalle(reportData?.table_section || []);
 
@@ -166,6 +166,7 @@ const ReportsPage = () => {
 		setFallasStates(formattedStates);
 		setTimeout(() => {
 			executeReport();
+			executeAuditorias();
 		}, 100);
 	};
 
@@ -274,7 +275,7 @@ const ReportsPage = () => {
 							<div className="border rounded-lg p-4 w-2/5 flex flex-col gap-4 h-full">
 								<FilterPanel
 									title="Fallas de Auditoría"
-									items={reportData?.fallas || {}}
+									items={reportData?.fallas || []}
 									selectedItems={selectedCategories}
 									searchTerm={searchCategory}
 									searchPlaceholder="Buscar fallas..."
@@ -318,6 +319,9 @@ const ReportsPage = () => {
 													gap: "gap-3",
 													itemSize: "w-14 h-14"
 												}}
+												// Nuevas props para agrupación
+												enableGrouping={true}
+												groupByField="label" // Agrupar por NES (campo label)
 											/>
 
 											<div className="border rounded-lg p-4 flex justify-center items-center flex-1 min-h-0 text-gray-400 text-xl">
