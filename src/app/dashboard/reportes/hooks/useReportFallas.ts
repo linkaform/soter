@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getHoteles, getHotelesAvances, getHotelHabitaciones, getReportAvances, getReportFallas } from "../requests/peticiones";
+import { getAvancesInspecciones, getHoteles, getHotelesAvances, getHotelHabitaciones, getReportAvances, getReportFallas } from "../requests/peticiones";
 import { errorMsj } from "@/lib/utils";
 
 export interface reportFalla {
@@ -174,5 +174,41 @@ export const useReportAvances = ({ enabled = false, anio, cuatrimestres, hoteles
         isLoadingReportAvances,
         errorReportAvances,
         refetchReportAvances,
+    };
+};
+
+export const useGetAvancesInspecciones = ({ enabled = false, anio, cuatrimestres, hoteles }: reportFalla) => {
+
+    anio = anio ? Number.parseInt(anio as any, 10) : undefined;
+    cuatrimestres = cuatrimestres?.map((item: any) => item.id);
+    hoteles = hoteles?.map((item: any) => item.nombre_hotel);
+
+    const {
+        data: avancesInspecciones,
+        isLoading: isLoadingAvancesInspecciones,
+        error: errorAvancesInspecciones,
+        refetch: refetchAvancesInspecciones,
+    } = useQuery<any>({
+        queryKey: ["getAvancesInspecciones"],
+        enabled,
+        queryFn: async () => {
+            const data = await getAvancesInspecciones({ anio, cuatrimestres, hoteles });
+            const textMsj = errorMsj?.(data);
+            if (textMsj) {
+                throw new Error(`Error al obtener avances de inspecciones: ${data.error}`);
+            } else {
+                console.log('==========', data.response?.data)
+                return data.response?.data ?? [];
+            }
+        },
+        refetchOnWindowFocus: false,
+        retry: 1,
+    });
+
+    return {
+        avancesInspecciones,
+        isLoadingAvancesInspecciones,
+        errorAvancesInspecciones,
+        refetchAvancesInspecciones,
     };
 };
