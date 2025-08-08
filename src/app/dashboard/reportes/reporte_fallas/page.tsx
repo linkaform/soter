@@ -348,7 +348,6 @@ const ReportsPage = () => {
 	useEffect(() => {
 		// Ejecutar avances de inspecciones cuando la tab activa sea "cuarta"
 		if (activePrincipalTab === "cuarta" && filters.enabled) {
-			console.log('📊 Tab cuarta activada, ejecutando avances de inspecciones');
 			handleAvancesInspecciones();
 		}
 	}, [activePrincipalTab, filters.enabled]);
@@ -567,7 +566,7 @@ const ReportsPage = () => {
 								<RadarChart data={radarData} />
 							</TabsContent>
 							<TabsContent value="cuarta">
-								<div className="text-2xl underline my-4">Avance de Inspecciones ADVERTENCIA: En construccion, verificando veracidad de datos.</div>
+								<div className="text-2xl underline my-4">Avance de Inspecciones(En construccion).</div>
 								{/* ✅ Agregar contenido para mostrar los datos */}
 								{isLoadingAvancesInspecciones ? (
 									<div className="flex justify-center items-center h-40 text-xl text-gray-400">

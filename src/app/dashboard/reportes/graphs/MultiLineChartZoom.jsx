@@ -76,8 +76,6 @@ const MultiLineChartZoom = ({ data = [] }) => {
       const week = weekMap.get(mondayOfWeek);
       week.inspecciones += dia.inspecciones;
       week.dias.push(dia);
-      
-      console.log(`📅 ${dia.fecha} → ${week.weekLabel} (${dia.inspecciones} inspecciones)`);
     });
     
     return Array.from(weekMap.values()).sort((a, b) => a.sortOrder - b.sortOrder);
@@ -156,7 +154,7 @@ const MultiLineChartZoom = ({ data = [] }) => {
       week.mondayDate >= startWeekKey && week.mondayDate <= endWeekKey
     );
 
-    // Generar todos los días de las semanas seleccionadas
+    // ✅ Generar TODOS los días de las semanas seleccionadas (incluye días sin datos)
     const allDays = [];
     selectedWeeks.forEach(week => {
       week.allDaysOfWeek.forEach(day => {
@@ -168,11 +166,17 @@ const MultiLineChartZoom = ({ data = [] }) => {
     
     allDays.sort();
 
-    // Crear mapa de datos por hotel y día
+    // ✅ Crear mapa de datos por hotel y día (incluyendo días con 0)
     const hotelDayData = {};
     data.forEach(hotel => {
       hotelDayData[hotel.hotel] = {};
       
+      // ✅ Inicializar TODOS los días con 0
+      allDays.forEach(day => {
+        hotelDayData[hotel.hotel][day] = 0;
+      });
+      
+      // ✅ Llenar con datos reales donde existan
       hotel.cuatrimestres_data.forEach(cuatrimestre => {
         cuatrimestre.dias_data?.forEach(dia => {
           if (allDays.includes(dia.fecha)) {
@@ -180,15 +184,21 @@ const MultiLineChartZoom = ({ data = [] }) => {
           }
         });
       });
+
     });
 
     // Crear datasets por hotel
     const datasets = data.map((hotel, idx) => {
-      const hotelData = allDays.map(day => 
-        hotelDayData[hotel.hotel][day] || 0
-      );
+      
+      const hotelData = [];
+      
+      // Procesar día por día para ver exactamente qué está pasando
+      allDays.forEach((day) => {
+        const value = hotelDayData[hotel.hotel][day];
+        hotelData.push(value || 0);
+      });
 
-      return {
+      const dataset = {
         label: hotel.hotel.replace(/_/g, ' ').toUpperCase(),
         data: hotelData,
         borderColor: COLORS[idx % COLORS.length],
@@ -198,18 +208,21 @@ const MultiLineChartZoom = ({ data = [] }) => {
         pointRadius: 3,
         pointHoverRadius: 5,
       };
+      
+      return dataset;
     });
+
 
     // Formatear labels de días
     const labels = allDays.map(day => {
-      const date = new Date(day);
+      const date = new Date(day + 'T00:00:00'); // ✅ Forzar timezone local
       const dayName = date.toLocaleDateString('es-ES', { weekday: 'short' });
       const dayNum = date.getDate();
       const month = date.toLocaleDateString('es-ES', { month: 'short' });
+      
+      
       return `${dayName} ${dayNum}/${month}`;
     });
-
-    console.log('📊 Vista diaria:', { allDays, labels, datasets: datasets.length });
 
     return { labels, datasets, allDays };
   }, [data, selectedWeekRange, weeklyData.weekDetails]);
@@ -219,13 +232,20 @@ const MultiLineChartZoom = ({ data = [] }) => {
 
   // ✅ Efecto para renderizar el gráfico
   useEffect(() => {
-    if (!chartRef.current || !currentData.labels?.length) return;
+    if (!chartRef.current || !currentData.labels?.length) {
+      return;
+    }
 
     const ctx = chartRef.current.getContext('2d');
 
+    // ✅ Destruir instancia anterior SIEMPRE
     if (chartInstanceRef.current) {
       chartInstanceRef.current.destroy();
+      chartInstanceRef.current = null;
     }
+
+    // ✅ Limpiar canvas
+    ctx.clearRect(0, 0, chartRef.current.width, chartRef.current.height);
 
     chartInstanceRef.current = new Chart(ctx, {
       type: 'line',
@@ -236,6 +256,7 @@ const MultiLineChartZoom = ({ data = [] }) => {
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        animation: false, // ✅ Desactivar animación temporalmente para debug
         scales: {
           yAxes: [{
             ticks: {
@@ -295,16 +316,10 @@ const MultiLineChartZoom = ({ data = [] }) => {
             const clickedIndex = elements[0]._index;
             const weekKey = weeklyData.weekKeys[clickedIndex];
             
-            console.log(`🔍 Click en semana: ${weekKey}`);
-            
             // Hacer zoom a esa semana específica
             setSelectedWeekRange([weekKey, weekKey]);
             setZoomLevel('day');
           }
-        },
-        animation: {
-          duration: 750,
-          easing: 'easeInOutQuart'
         }
       },
     });
@@ -312,9 +327,10 @@ const MultiLineChartZoom = ({ data = [] }) => {
     return () => {
       if (chartInstanceRef.current) {
         chartInstanceRef.current.destroy();
+        chartInstanceRef.current = null;
       }
     };
-  }, [currentData, zoomLevel, weeklyData.weekKeys]);
+  }, [currentData, zoomLevel, weeklyData.weekKeys]); // ✅ Agregar todas las dependencias
 
   // ✅ Funciones de control
   const handleZoomOut = () => {
@@ -379,7 +395,10 @@ const MultiLineChartZoom = ({ data = [] }) => {
 
       {/* Gráfico */}
       <div className="h-96 w-full">
-        <canvas ref={chartRef} />
+        <canvas 
+          ref={chartRef} 
+          key={`chart-${zoomLevel}-${selectedWeekRange ? selectedWeekRange.join('-') : 'all'}`}
+        />
       </div>
 
       {/* Información adicional */}
