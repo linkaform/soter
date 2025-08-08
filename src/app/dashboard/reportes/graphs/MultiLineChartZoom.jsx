@@ -8,6 +8,7 @@ const MultiLineChartZoom = ({ data = [] }) => {
   const chartInstanceRef = useRef(null);
   const [zoomLevel, setZoomLevel] = useState('week'); // 'week' | 'day'
   const [selectedWeekRange, setSelectedWeekRange] = useState(null);
+  const [isTransitioning, setIsTransitioning] = useState(false); // ✅ Nuevo estado
 
   // ✅ Función para obtener el lunes de una fecha
   const getMondayOfWeek = React.useCallback((date) => {
@@ -238,25 +239,43 @@ const MultiLineChartZoom = ({ data = [] }) => {
 
     const ctx = chartRef.current.getContext('2d');
 
-    // ✅ Destruir instancia anterior SIEMPRE
+    // ✅ Destruir instancia anterior
     if (chartInstanceRef.current) {
       chartInstanceRef.current.destroy();
       chartInstanceRef.current = null;
     }
 
-    // ✅ Limpiar canvas
     ctx.clearRect(0, 0, chartRef.current.width, chartRef.current.height);
 
     chartInstanceRef.current = new Chart(ctx, {
       type: 'line',
       data: {
         labels: currentData.labels,
-        datasets: currentData.datasets,
+        datasets: currentData.datasets.map(dataset => ({
+          ...dataset,
+          pointRadius: zoomLevel === 'week' ? 6 : 4,
+          pointHoverRadius: zoomLevel === 'week' ? 8 : 6,
+          pointBorderWidth: 2,
+          pointHoverBorderWidth: 3,
+        }))
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        animation: false, // ✅ Desactivar animación temporalmente para debug
+        // ✅ Animación suave habilitada
+        animation: {
+          duration: isTransitioning ? 0 : 750, // Sin animación durante transición
+          easing: 'easeInOutQuart',
+          onComplete: function() {}
+        },
+        // ✅ Animaciones específicas para elementos
+        hover: {
+          animationDuration: 200
+        },
+        responsiveAnimationDuration: 300,
+        onHover: function(evt, elements) {
+          evt.target.style.cursor = (zoomLevel === 'week' && elements.length > 0) ? 'pointer' : 'default';
+        },
         scales: {
           yAxes: [{
             ticks: {
@@ -276,7 +295,7 @@ const MultiLineChartZoom = ({ data = [] }) => {
           xAxes: [{
             scaleLabel: {
               display: true,
-              labelString: zoomLevel === 'week' ? 'Semanas' : 'Días',
+              labelString: zoomLevel === 'week' ? 'Semanas (click para ver días)' : 'Días de la semana',
             },
             gridLines: {
               drawOnChartArea: true,
@@ -299,7 +318,7 @@ const MultiLineChartZoom = ({ data = [] }) => {
             title: function(tooltipItems, data) {
               const label = data.labels[tooltipItems[0].index];
               if (zoomLevel === 'week') {
-                return `Semana: ${label}`;
+                return `Semana: ${label} (click para ver días)`;
               } else {
                 return `Día: ${label}`;
               }
@@ -308,17 +327,21 @@ const MultiLineChartZoom = ({ data = [] }) => {
               const dataset = data.datasets[tooltipItem.datasetIndex];
               const value = tooltipItem.yLabel;
               return `${dataset.label}: ${value} inspecciones`;
+            },
+            footer: function() {
+              if (zoomLevel === 'week') {
+                return '💡 Haz click para zoom a vista diaria';
+              }
+              return '';
             }
           }
         },
         onClick: function(evt, elements) {
-          if (zoomLevel === 'week' && elements && elements.length > 0) {
+          if (zoomLevel === 'week' && elements && elements.length > 0 && !isTransitioning) {
             const clickedIndex = elements[0]._index;
             const weekKey = weeklyData.weekKeys[clickedIndex];
             
-            // Hacer zoom a esa semana específica
-            setSelectedWeekRange([weekKey, weekKey]);
-            setZoomLevel('day');
+            handleZoomIn(weekKey); // ✅ Usar función animada
           }
         }
       },
@@ -330,22 +353,36 @@ const MultiLineChartZoom = ({ data = [] }) => {
         chartInstanceRef.current = null;
       }
     };
-  }, [currentData, zoomLevel, weeklyData.weekKeys]); // ✅ Agregar todas las dependencias
+  }, [currentData, zoomLevel, weeklyData.weekKeys, isTransitioning]);
 
   // ✅ Funciones de control
   const handleZoomOut = () => {
-    setZoomLevel('week');
-    setSelectedWeekRange(null);
+    setIsTransitioning(true);
+    
+    // Animación de salida
+    setTimeout(() => {
+      setZoomLevel('week');
+      setSelectedWeekRange(null);
+      
+      // Animación de entrada
+      setTimeout(() => {
+        setIsTransitioning(false);
+      }, 150);
+    }, 150);
   };
 
-  const handleZoomToRange = () => {
-    if (zoomLevel === 'week' && weeklyData.weekKeys?.length > 0) {
-      // Zoom a las primeras semanas disponibles
-      const start = weeklyData.weekKeys[0];
-      const end = weeklyData.weekKeys[Math.min(2, weeklyData.weekKeys.length - 1)];
-      setSelectedWeekRange([start, end]);
+  // ✅ Función animada para hacer zoom in
+  const handleZoomIn = (weekKey) => {
+    setIsTransitioning(true);
+    
+    setTimeout(() => {
+      setSelectedWeekRange([weekKey, weekKey]);
       setZoomLevel('day');
-    }
+      
+      setTimeout(() => {
+        setIsTransitioning(false);
+      }, 150);
+    }, 150);
   };
 
   if (!data || data.length === 0) {
@@ -358,58 +395,108 @@ const MultiLineChartZoom = ({ data = [] }) => {
 
   return (
     <div className="w-full">
-      {/* Controles de zoom */}
+      {/* Controles con animaciones */}
       <div className="flex justify-between items-center mb-4">
-        <div className="flex gap-2">
-          <button
-            onClick={handleZoomOut}
-            disabled={zoomLevel === 'week'}
-            className={`px-3 py-1 rounded text-sm ${
-              zoomLevel === 'week' 
-                ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
-                : 'bg-blue-500 text-white hover:bg-blue-600'
-            }`}
-          >
-            🔍➖ Vista Semanal
-          </button>
-          <button
-            onClick={handleZoomToRange}
-            disabled={zoomLevel === 'day'}
-            className={`px-3 py-1 rounded text-sm ${
-              zoomLevel === 'day' 
-                ? 'bg-gray-200 text-gray-400 cursor-not-allowed' 
-                : 'bg-green-500 text-white hover:bg-green-600'
-            }`}
-          >
-            🔍➕ Vista Diaria
-          </button>
-        </div>
-        <div className="text-sm text-gray-600">
-          {zoomLevel === 'week' ? (
-            <span>📊 Vista semanal - Haz click en un punto para ver días</span>
-          ) : (
-            <span>📅 Vista diaria - Incluye todos los días de la semana</span>
+        <div className="flex items-center gap-3">
+          {/* ✅ Botón que desaparece completamente cuando no se necesita */}
+          {zoomLevel === 'day' && (
+            <div className="animate-in slide-in-from-left-4 duration-300">
+              <button
+                onClick={handleZoomOut}
+                disabled={isTransitioning}
+                className={`flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all duration-200 transform hover:scale-105 ${
+                  isTransitioning ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+              >
+                <span className="transition-transform duration-200 group-hover:-translate-x-1">←</span>
+                Volver a vista semanal
+              </button>
+            </div>
           )}
+          
+          {/* ✅ Badge que se ajusta dinámicamente sin espacio reservado */}
+          <div className="transition-all duration-500 ease-in-out">
+            {zoomLevel === 'week' ? (
+              <span className="flex items-center gap-2 px-3 py-1 bg-green-100 text-green-700 rounded-full transition-all duration-300 transform hover:scale-105">
+                <span className="animate-pulse">📊</span> Vista Semanal
+                <span className="text-xs opacity-75">• Click en puntos para ver días</span>
+              </span>
+            ) : (
+              <span className="flex items-center gap-2 px-3 py-1 bg-blue-100 text-blue-700 rounded-full transition-all duration-300 transform hover:scale-105">
+                <span className="animate-pulse">📅</span> Vista Diaria
+                <span className="text-xs opacity-75">• Semana del {selectedWeekRange?.[0]}</span>
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* ✅ Info con contador animado */}
+        <div className="text-sm text-gray-500 transition-all duration-300">
+          🏨 {data.length} hoteles • 📊 
+          <span className="inline-block transition-all duration-300 transform">
+            {currentData.labels?.length || 0}
+          </span> puntos
         </div>
       </div>
 
-      {/* Gráfico */}
-      <div className="h-96 w-full">
+      {/* ✅ Gráfico con overlay de transición */}
+      <div className="relative h-96 w-full">
+        {/* Overlay de transición */}
+        <div className={`absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex items-center justify-center transition-all duration-300 ${
+          isTransitioning 
+            ? 'opacity-100' 
+            : 'opacity-0 pointer-events-none'
+        }`}>
+          <div className="flex items-center gap-2 text-gray-600">
+            <div className="animate-spin rounded-full h-6 w-6 border-2 border-blue-500 border-t-transparent"></div>
+            <span>Cargando vista...</span>
+          </div>
+        </div>
+
+        {/* Canvas con animación de escala */}
         <canvas 
           ref={chartRef} 
           key={`chart-${zoomLevel}-${selectedWeekRange ? selectedWeekRange.join('-') : 'all'}`}
+          className={`transition-all duration-300 ${
+            isTransitioning 
+              ? 'transform scale-95 opacity-50' 
+              : 'transform scale-100 opacity-100'
+          }`}
         />
       </div>
 
-      {/* Información adicional */}
-      <div className="mt-4 text-xs text-gray-500">
-        <div className="flex flex-wrap gap-4">
-          <span>🏨 Hoteles: {data.length}</span>
-          <span>📈 Vista: {zoomLevel === 'week' ? 'Semanal' : 'Diaria'}</span>
-          <span>📊 Puntos: {currentData.labels?.length || 0}</span>
-          {zoomLevel === 'day' && selectedWeekRange && (
-            <span>📅 Período: {selectedWeekRange[0]} a {selectedWeekRange[1]}</span>
-          )}
+      {/* ✅ Información con animación de slide */}
+      <div className={`mt-4 text-xs text-gray-400 border-t pt-3 transition-all duration-500 ${
+        isTransitioning ? 'transform translate-y-2 opacity-50' : 'transform translate-y-0 opacity-100'
+      }`}>
+        <div className="flex justify-between items-center">
+          <div className="flex gap-4">
+            <span className="transition-all duration-300">
+              📈 Vista: {zoomLevel === 'week' ? 'Semanal' : 'Diaria'}
+            </span>
+            <div className={`transition-all duration-300 ${
+              zoomLevel === 'day' && selectedWeekRange 
+                ? 'opacity-100 transform translate-x-0' 
+                : 'opacity-0 transform translate-x-4'
+            }`}>
+              {zoomLevel === 'day' && selectedWeekRange && (
+                <span>📅 Período: {new Date(selectedWeekRange[0]).toLocaleDateString('es-ES', { 
+                  weekday: 'long', 
+                  day: 'numeric', 
+                  month: 'long' 
+                })}</span>
+              )}
+            </div>
+          </div>
+          
+          {/* ✅ Tips con fade animado */}
+          <div className="text-right transition-all duration-500">
+            {zoomLevel === 'week' ? (
+              <span className="animate-fade-in">💡 Tip: Haz click en cualquier punto para ver los días de esa semana</span>
+            ) : (
+              <span className="animate-fade-in">💡 Tip: Usa el botón &quot;← Volver&quot; para regresar a la vista semanal</span>
+            )}
+          </div>
         </div>
       </div>
     </div>
