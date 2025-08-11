@@ -14,13 +14,10 @@ import { Card, CardContent } from "../ui/card";
 import { Incidencia_record } from "../table/incidencias/incidencias-columns";
 import { capitalizeFirstLetter, formatCurrency, formatDateToText } from "@/lib/utils";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
-import { AccionesTomadas, Depositos, PersonasInvolucradas } from "@/lib/incidencias";
+import { Depositos } from "@/lib/incidencias";
 
-import { SeguimientoIncidenciaModal } from "./seguimiento-incidencia";
-import { useState } from "react";
-import { Loader2 } from "lucide-react";
-// import { Check } from "lucide-react";
-// import { SeguimientoIncidenciaModal } from "./seguimiento-incidencia";
+import { CircleAlert, Loader2 } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 interface ViewFallaModalProps {
   title: string;
@@ -33,7 +30,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
   data,
   children,
 }) => {
-	const [openModal, setOpenModal] = useState(false)
+	// const [openModal, setOpenModal] = useState(false)
 	
   function sumDepositos(item:Depositos[]){
     const sumaTotal = item.reduce((total: any, item: { cantidad: number; }) => total + item.cantidad, 0);
@@ -48,6 +45,24 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
             {title}
           </DialogTitle>
         </DialogHeader>
+
+		<div className="flex-grow overflow-y-auto ">
+					<Tabs defaultValue="datos" >
+						<TabsList>
+							<TabsTrigger value="datos">Datos</TabsTrigger>
+							<TabsTrigger value="afectacion">Afectación Patrimonial</TabsTrigger>
+							<TabsTrigger value="seguimiento">Seguimiento</TabsTrigger>
+						</TabsList>
+
+						<TabsContent value="datos" >
+						<Card className="p-3 h-full">
+
+							<div >
+								<div className="flex gap-2 mb-4">
+									<CircleAlert />
+									Incidente: <span className="font-bold"> {data.incidencia}</span>
+								</div>
+
 
 		<div className="overflow-y-auto ">
 			<div className="flex flex-between gap-2 ">
@@ -206,73 +221,6 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 			:null}
 
 
-			{data.personas_involucradas_incidencia.length>0? 
-			<>
-				<div className="flex justify-between w-full h-full mb-2">
-					{data.personas_involucradas_incidencia.length > 0 ? (
-						<Accordion type="single" collapsible className="w-full">
-						<AccordionItem key={"1"} value={"1"}>
-						<AccordionTrigger><h1 className="font-bold text-xl">Detalles de los involucrados: </h1></AccordionTrigger>
-						<AccordionContent className="mb-0 pb-0">
-						{data.personas_involucradas_incidencia.length > 0 ? (
-							<table className="min-w-full table-auto border-separate border-spacing-2">
-							<thead>
-								<tr>
-								<th className="px-4 py-2 text-left border-b">Nombre completo</th>
-								<th className="px-4 py-2 text-left border-b">Tipo de persona</th>
-								</tr>
-							</thead>
-							<tbody>
-								{data.personas_involucradas_incidencia.map((item: PersonasInvolucradas, index: number) => (
-								<tr key={index}>
-									<td className="px-4 py-2"><p>{capitalizeFirstLetter(item.nombre_completo) || "N/A"}</p></td>
-									<td className="px-4 py-2"><p>{capitalizeFirstLetter(item.tipo_persona) || "N/A"}</p></td>
-								</tr>
-								))}
-							</tbody>
-							</table>
-						) : (
-							null
-						)}
-						</AccordionContent>
-						</AccordionItem>
-						</Accordion>
-					):(<div>No hay detalles d elos involucrados</div>)}
-				</div>
-			</>:null}
-
-			<div className="flex justify-between w-full h-full ">
-				{data.acciones_tomadas_incidencia.length > 0 ? (
-					<Accordion type="single" collapsible className="w-full">
-					<AccordionItem key={"1"} value={"1"}>
-					<AccordionTrigger><h1 className="font-bold text-xl">Acciones realizadas: </h1></AccordionTrigger>
-					<AccordionContent className="mb-0 pb-0">
-					{data.acciones_tomadas_incidencia.length > 0 ? (
-						<table className="min-w-full table-auto border-separate border-spacing-2">
-						<thead>
-							<tr>
-							<th className="px-4 py-2 text-left border-b">Acción realizada</th>
-							<th className="px-4 py-2 text-left border-b">Responsable</th>
-							</tr>
-						</thead>
-						<tbody>
-							{data.acciones_tomadas_incidencia.map((item: AccionesTomadas, index: number) => (
-							<tr key={index}>
-								<td className="px-4 py-2"><p>{item.acciones_tomadas || "N/A"}</p></td>
-								<td className="px-4 py-2"><p>{item.responsable_accion || "N/A"}</p></td>
-							</tr>
-							))}
-						</tbody>
-						</table>
-					) : (
-						null
-					)}
-					</AccordionContent>
-					</AccordionItem>
-					</Accordion>
-				):(null)}
-			</div>
-
 			<div className="flex flex-col justify-between w-full h-full">
 				{data.incidente == 	"Persona extraviada" ? (
 					<>
@@ -347,7 +295,6 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 				):null}
 			</div>
 
-
 			<div className="flex flex-col justify-between w-full h-full">
 				{data.incidente == 	"Robo de vehículo" ? (
 					<>
@@ -385,108 +332,209 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 					</>
 				):null}
 			</div>
+		</div>
 
-			<div className="w-full flex justify-end items-center my-2">
-				{/* <SeguimientoIncidenciaModal title="Seguimiento Incidencia" folio={data?.folio}>
-					<Button className="bg-blue-500 hover:bg-blue-600 text-white">
-						<Check /> Agregar seguimiento
-					</Button>
-				</SeguimientoIncidenciaModal> */}
-				<div className="flex justify-end items-center ">
-					<div className="cursor-pointer  bg-blue-500 hover:bg-blue-600 text-white mr-5 rounded-sm p-1 px-3 w-full text-center" onClick={()=>{setOpenModal(!openModal)}}>
-						Agregar seguimiento 
-					</div>
-				</div>
-				<SeguimientoIncidenciaModal
-					title="Seguimiento Incidencia"
-					folio={data?.folio}
-					isSuccess={openModal}
-					setIsSuccess={setOpenModal}
-					>
-					<div></div>
-				</SeguimientoIncidenciaModal>
-			</div>
-			{data?.grupo_seguimiento_incidencia?.length > 0 ? (
-				<div>
-					<Accordion type="single" collapsible>
-						<AccordionItem key={"1"} value={`1`}>
-							<div className="flex justify-between">
-								<AccordionTrigger>{`Seguimientos`}</AccordionTrigger>
-							</div>
-							<AccordionContent className="mb-0 pb-0">
-								<table className="min-w-full table-auto border-separate border-spacing-2">
-									<thead>
+
+								<div className="col-span-1 md:col-span-2">
+									<table className="min-w-full table-auto border-separate mb-5">
+										<thead>
 										<tr>
-											<th className="px-4 py-2 text-left border-b">Acción realizada</th>
-											<th className="px-4 py-2 text-left border-b">Comentario</th>
-											<th className="px-4 py-2 text-left border-b">Fecha del seguimiento</th>
-											<th className="px-4 py-2 text-left border-b">Evidencia</th>
-											<th className="px-4 py-2 text-left border-b">Documentos</th>
+											<th className="px-4 py-2 text-left border-b">Nombre completo</th>
+											<th className="px-4 py-2 text-left border-b">Rol </th>
+											<th className="px-4 py-2 text-left border-b">Sexo </th>
+											<th className="px-4 py-2 text-left border-b">Grupo Etario</th>
+											<th className="px-4 py-2 text-left border-b">Atención Médica</th>
+											<th className="px-4 py-2 text-left border-b">Retenido</th>
+											<th className="px-4 py-2 text-left border-b">Comentarios/ Observaciones</th>
+											<th className="px-4 py-2 text-left border-b"></th>
 										</tr>
-									</thead>
-									<tbody>
-										{data?.grupo_seguimiento_incidencia?.map((item: any, index: any) => (
+										</thead>
+										<tbody>
+										{data.personas_involucradas_incidencia.map((item, index) => (
 											<tr key={index}>
-												<td className="px-4 py-2"><p>{item?.accion_correctiva || "N/A"}</p></td>
-												<td className="px-4 py-2"><p>{item?.comentario || "N/A"}</p></td>
-												<td className="px-4 py-2"><p>{item?.fecha_inicio || "N/A"}</p></td>
-												<td className="px-4 py-2">
-													{item?.evidencia.length > 0 ? (
-														<div className="w-full flex justify-center">
-															<Carousel className="w-16">
-																<CarouselContent>
-																	{item?.evidencia.map((a: any, index: number) => (
-																		<CarouselItem key={index}>
-																			<Card>
-																				<CardContent className="flex aspect-square items-center justify-center p-0">
-																					<Image
-																						width={280}
-																						height={280}
-																						src={a?.file_url || "/nouser.svg"}
-																						alt="Imagen"
-																						className="w-42 h-42 object-contain bg-gray-200 rounded-lg"
-																					/>
-																				</CardContent>
-																			</Card>
-																		</CarouselItem>
-																	))}
-																</CarouselContent>
-																<CarouselPrevious />
-																<CarouselNext />
-															</Carousel>
-														</div>
-													) : (
-														<p>No hay evidencias disponibles.</p>
-													)}
-												</td>
-												<td className="px-4 py-2">
-													{item?.documento && item?.documento.length > 0 ? (
-														<ul className="ms-2">
-															{item?.documento.map((file: any, index: any) => (
-																<li key={index}>
-																	<a
-																		href={file?.file_url}
-																		target="_blank"
-																		rel="noopener noreferrer"
-																		className="text-blue-600 hover:underline"
-																	>
-																		<p>{file.file_name}</p>
-																	</a>
-																</li>
-															))}
-														</ul>
-													) : null}
-												</td>
+											<td className="px-4 py-2">{item.nombre_completo}</td>
+											<td className="px-4 py-2">{item.rol}</td>
+											<td className="px-4 py-2">{item.sexo}</td>
+											<td className="px-4 py-2">{item.grupo_etario}</td>
+											<td className="px-4 py-2">{item.atencion_medica}</td>
+											<td className="px-4 py-2">{item.retenido}</td>
+											<td className="px-4 py-2 capitalize">{item.comentarios || "N/A"}</td>
 											</tr>
 										))}
+										</tbody>
+									</table>
+								</div>
+
+								<div className="col-span-1 md:col-span-2">
+									<table className="min-w-full table-auto border-separate mb-5">
+										<thead>
+										<tr>
+											<th className="px-4 py-2 text-left border-b">Acciones Tomadas</th>
+											<th className="max-w-28 px-4 py-2 text-left border-b">Llamado a la Policia </th>
+											<th className="px-4 py-2 text-left border-b">Autoridad </th>
+											<th className="px-4 py-2 text-left border-b">No. Folio </th>
+											<th className="px-4 py-2 text-left border-b">Responsable</th>
+											<th className="px-4 py-2 text-left border-b"></th>
+										</tr>
+										</thead>
+										<tbody>
+										{data.acciones_tomadas_incidencia.map((item, index) => (
+											<tr key={index}>
+											<td className="px-4 py-2">{item.acciones_tomadas}</td>
+											<td className="px-4 py-2">{item.llamo_a_policia}</td>
+											<td className="px-4 py-2">{item.autoridad}</td>
+											<td className="px-4 py-2">{item.numero_folio_referencia}</td>
+											<td className="px-4 py-2">{item.responsable}</td>
+											</tr>
+										))}
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</Card>
+						</TabsContent>
+
+						<TabsContent value="seguimiento" >
+						<Card className="p-3 h-screen">
+							<div >
+								<div className="flex gap-2 mb-4">
+									<div className="w-full flex gap-2">
+										<CircleAlert />
+										Incidente: <span className="font-bold"> {data.incidencia}</span>
+									</div>
+								</div>
+							</div>
+
+
+							<div >
+							{data.seguimientos_incidencias && data.seguimientos_incidencias.length > 0 ? (
+								<table className="min-w-full table-auto border-separate ">
+									<thead>
+									<tr>
+										<th className="px-4 py-2 text-left border-b">Fecha y hora</th>
+										<th className="px-4 py-2 text-left border-b">Tiempo transcurrido</th>
+										<th className="px-4 py-2 text-left border-b">Acción realizada</th>
+										<th className="px-4 py-2 text-left border-b">Personas involucradas</th>
+										<th className="px-4 py-2 text-left border-b">Evidencia</th>
+										<th className="px-4 py-2 text-left border-b">Documentos</th>
+										<th className="px-4 py-2 text-left border-b">Acciones</th> 
+									</tr>
+									</thead>
+									<tbody>
+									{data.seguimientos_incidencias.map((item: any, index: number) => (
+										<tr key={index}>
+										<td className="px-4 py-2">{item?.fecha_inicio_seg || "N/A"}</td>
+										<td className="px-4 py-2">0 min</td>
+										<td className="px-4 py-2">{item?.incidencia_folio_accion_correctiva || "N/A"}</td>
+										<td className="px-4 py-2">{item?.incidencia_personas_involucradas || "N/A"}</td>
+
+										<td className="px-4 py-2">
+											{item?.incidencia_evidencia_solucion?.length > 0 ? (
+											<div className="w-full flex justify-center">
+												<Carousel className="w-16">
+												<CarouselContent>
+													{item.incidencia_evidencia_solucion.map((a: any, i: number) => (
+													<CarouselItem key={i}>
+														<Card>
+														<CardContent className="flex aspect-square items-center justify-center p-0">
+															<Image
+															width={280}
+															height={280}
+															src={a?.file_url || "/nouser.svg"}
+															alt="Imagen"
+															className="w-42 h-42 object-contain bg-gray-200 rounded-lg"
+															/>
+														</CardContent>
+														</Card>
+													</CarouselItem>
+													))}
+												</CarouselContent>
+												<CarouselPrevious />
+												<CarouselNext />
+												</Carousel>
+											</div>
+											) : (
+											<p>No hay evidencias disponibles.</p>
+											)}
+										</td>
+
+										<td className="px-4 py-2">
+											{item?.incidencia_documento_solucion?.length > 0 ? (
+											<ul className="ms-2">
+												{item.incidencia_documento_solucion.map((file: any, i: number) => (
+												<li key={i}>
+													<a
+													href={file?.file_url}
+													target="_blank"
+													rel="noopener noreferrer"
+													className="text-blue-600 hover:underline"
+													>
+													<p>{file.file_name}</p>
+													</a>
+												</li>
+												))}
+											</ul>
+											) : (
+												<p>No hay documentos disponibles.</p>
+												)}
+										</td>
+										</tr>
+									))}
 									</tbody>
 								</table>
-							</AccordionContent>
-						</AccordionItem>
-					</Accordion>
+								) : (
+								<div className="px-4 py-2 text-center text-gray-500">
+									No se han agregado seguimientos.
+								</div>
+								)}
+							</div>
+
+						</Card>
+						</TabsContent>
+
+						<TabsContent value="afectacion">
+							<Card className="p-3 h-screen">
+							<div >
+								<div className="flex gap-2 mb-4">
+									<div className="w-full flex gap-2">
+										<CircleAlert />
+										Incidente: <span className="font-bold"> {data.incidencia}</span>
+									</div>
+								</div>
+							</div>
+
+								<div >
+								{data.afectacion_patrimonial_incidencias && data.afectacion_patrimonial_incidencias.length > 0 ? (
+									<table className="min-w-full table-auto border-separate ">
+										<thead>
+										<tr>
+											<th className="px-4 py-2 text-left border-b">Tipo de Afectación</th>
+											<th className="px-4 py-2 text-left border-b">Monto Estimado de Daño ($)</th>
+											<th className="px-4 py-2 text-left border-b">Duración Estimada Afectación</th>
+										</tr>
+										</thead>
+										<tbody>
+										{data.afectacion_patrimonial_incidencias.map((item: any, index: number) => (
+											<tr key={index}>
+											<td className="px-4 py-2">{item?.tipo_afectacion || "N/A"}</td>
+											<td className="px-4 py-2">{item?.monto_estimado || "N/A"}</td>
+											<td className="px-4 py-2">{item?.duracion_estimada || "N/A"}</td>
+											</tr>
+										))}
+										</tbody>
+									</table>
+									) : (
+									<div className="px-4 py-2 text-center text-gray-500">
+										No se han agregado afectaciones patrimoniales.
+									</div>
+									)}
+								</div>
+							</Card>
+						</TabsContent>
+					</Tabs>
 				</div>
-			) : (null)}
-		</div>
+
+
         
         <div className="flex gap-1 my-5 col-span-2">
           	<DialogClose asChild>

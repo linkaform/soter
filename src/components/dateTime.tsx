@@ -53,6 +53,12 @@ const DateTime:React.FC<DateTimeListProps> = ({date, setDate , disablePastDates 
           title:"Error",
           text: "Por favor, seleccione una hora futura.",
           confirmButtonColor:blue500,
+          didOpen: () => {
+            const swalContainer = Swal.getPopup();
+            if (swalContainer) {
+              swalContainer.style.zIndex = "-1"; // o más alto si es necesario
+            }
+          }
         });
       } else {
         setDate(newDate);

@@ -110,10 +110,10 @@ const BitacorasPage = () => {
     };
 	
 	useEffect(()=>{
-		if(listBitacoras?.records){
-			if(Array.isArray(listBitacoras.records)){
-				setEquiposData(processBitacorasE(listBitacoras.records))
-				setVehiculosData(processBitacorasV(listBitacoras.records))
+		if(listBitacoras){
+			if(Array.isArray(listBitacoras)){
+				setEquiposData(processBitacorasE(listBitacoras))
+				setVehiculosData(processBitacorasV(listBitacoras))
 			}else{
 				setEquiposData(processBitacorasE([]))
 				setVehiculosData(processBitacorasV([]))
@@ -251,7 +251,7 @@ return (
 			<Tabs defaultValue="Personal" className="w-full"  value={selectedTab}  onValueChange={handleTabChangeE}>
 				<TabsContent value="Personal">
 				<div className="">
-					<BitacorasTable data={listBitacoras?.records} isLoading={isLoadingListBitacoras} 
+					<BitacorasTable data={listBitacoras} isLoading={isLoadingListBitacoras} 
 					date1={date1} date2={date2} setDate1={setDate1} setDate2={setDate2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter}
 					/>
 				</div>

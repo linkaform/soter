@@ -42,6 +42,8 @@ import {
 	ChevronRight,
 	ChevronLeft,
 	CircleAlert,
+	Edit,
+	Trash2,
   } from "lucide-react";
 import Image from "next/image";
 import { z } from "zod";
@@ -57,12 +59,9 @@ import { format } from 'date-fns';
 import DateTime from "../dateTime";
 import LoadFile from "../upload-file";
 import { Loader2 } from "lucide-react";
-import { AccionesTomadas, Depositos, PersonasInvolucradas } from "@/lib/incidencias";
-import PersonasInvolucradasList from "../personas-involucradas-list";
-import AccionesTomadasList from "../acciones-tomadas-list";
+import { AccionesTomadas, AfectacionPatrimonial, Depositos, PersonasInvolucradas } from "@/lib/incidencias";
 import { useShiftStore } from "@/store/useShiftStore";
 import { useInciencias } from "@/hooks/Incidencias/useIncidencias";
-// import DepositosList from "../depositos-list";
 import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
 import { Input } from "../ui/input";
 import { Slider } from "../slider";
@@ -75,6 +74,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Card, CardContent} from "../ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
 import { SeguimientoIncidenciaLista } from "./add-seguimientos";
+import { toast } from "sonner";
+import SeccionPersonasInvolucradas from "../personas-involucradas";
+import SeccionAccionesTomadas from "../acciones-tomadas";
+import { AfectacionPatrimonialModal } from "./add-afectacion-patrimonial";
 
 interface AddIncidenciaModalProps {
   	title: string;
@@ -220,18 +223,6 @@ export const formSchema = z.object({
 		  file_name: z.string().optional(),
 		})
 	  ).optional(),
-	personas_involucradas_incidencia: z.array(
-		z.object({
-		  nombre_completo: z.string().optional(),
-		  tipo_persona: z.string().optional(),
-		})
-	  ).optional(),
-	acciones_tomadas_incidencia: z.array(
-		z.object({
-		  acciones_tomadas: z.string().optional(),
-		  responsable_accion: z.string().optional(),
-		})
-	  ).optional(),
 	datos_deposito_incidencia: z.array(
 		z.object({
 		  cantidad: z.number().optional(),
@@ -274,6 +265,11 @@ export const formSchema = z.object({
 	modelo: z.string().optional(),
 	color: z.string().optional(),
 
+	afectacion_patrimonial_incidencia:z.array(z.any()).optional(),
+	personas_involucradas_incidencia: z.array(z.any()).optional(),
+	acciones_tomadas_incidencia:z.array(z.any()).optional(),
+	seguimientos_incidencia:z.array(z.any()).optional(),
+
 });
 
 export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
@@ -286,16 +282,15 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const [documento , setDocumento] = useState<Imagen[]>([]);
 	const [date, setDate] = useState<Date|"">("");
 
-	// const [incidencia, setIncidencia] = useState("")
 	const[ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location)
 	const { dataAreas:areas, dataLocations:ubicaciones,isLoadingAreas:loadingAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, isSuccess,  location?true:false);
-	// const [catAreas, setCatAreas] = useState<any| string[]>(areas);
 	const [personasInvolucradas, setPersonasInvolucradas] = useState<PersonasInvolucradas[]>([])
 	const [accionesTomadas, setAccionesTomadas] = useState<AccionesTomadas[]>([])
 	const [depositos, setDepositos] = useState<Depositos[]>([])
 
-	const [seguimientos, setSeguimientos] = useState([]);
+	const [seguimientos, setSeguimientos] = useState<any>([]);
 	const [openModal, setOpenModal] = useState(false);
+
 
 	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado } = useCatalogoAreaEmpleado(isSuccess, location, "Incidencias");
 	const { createIncidenciaMutation , loading} = useInciencias("","",[], "", "", "");
@@ -315,6 +310,15 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const [inputTag, setInputTag] = useState('');
 	const [tagsSeleccionados, setTagsSeleccionados] = useState<string[]>([]);
 
+	const [indiceSeleccionado, setIndiceSeleccionado] = useState<number | null>(null);
+	const [editarSeguimiento, setEditarSeguimiento] = useState(false);
+	const [seguimientoSeleccionado, setSeguimientoSeleccionado] = useState(null);
+
+	const [afectacionPatrimonialSeleccionada, setAfectacionPatrimonialSeleccionada] = useState<AfectacionPatrimonial | null>(null);
+	const [afectacionPatrimonial,setAfectacionPatrimonial] = useState<AfectacionPatrimonial []>([])
+	const [openAfectacionPatrimonialModal,setOpenAfectacionPatrimonialModal] = useState(false)
+	const [editarAfectacionPatrimonial, setEditarAfectacionPatrimonial] = useState(false)
+
 	const resetStates = ()=>{
 		setSearch("")
 		setSubCategoria("")
@@ -328,9 +332,20 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 		setCatCategorias(catIncidenciasIcons)
 		setCatSubIncidences([])
 		setSubCatCategorias([])
-		setDepositos([])
+
+		setEditarSeguimiento(false)
+		setSeguimientos([])
+		setSeguimientoSeleccionado(null)
+
+		setAfectacionPatrimonial([])
+		setEditarAfectacionPatrimonial(false)
+		setAfectacionPatrimonialSeleccionada(null)
+
 		setPersonasInvolucradas([])
 		setAccionesTomadas([])
+
+		setIndiceSeleccionado(null)
+		setDepositos([])
 		setTagsSeleccionados([])
 	}
 	const agregarTag = () => {
@@ -387,8 +402,6 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 			comentario_incidencia: "",
 			tipo_dano_incidencia: "",
 			dano_incidencia:"",
-			personas_involucradas_incidencia:personasInvolucradas,
-			acciones_tomadas_incidencia: accionesTomadas,
 			evidencia_incidencia: evidencia,
 			documento_incidencia:documento,
 			prioridad_incidencia:"",
@@ -413,6 +426,12 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 			responsable_que_entrega:"",
 			responsable_que_recibe:"",
 		
+			//Grupos repetitivos
+			afectacion_patrimonial_incidencia:[],
+			personas_involucradas_incidencia: [],
+			acciones_tomadas_incidencia:[],
+			seguimientos_incidencia:[],
+
 			//Robo de cableado
 			valor_estimado:"",
 			pertenencias_sustraidas:"",
@@ -422,7 +441,6 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 			marca:"",
 			modelo:"",
 			color:"",
-
 		},
 	});
 
@@ -435,6 +453,10 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 			setDate(new Date())
 			setEvidencia([])
 			setDocumento([])
+			setSeguimientoSeleccionado(null)
+			setEditarSeguimiento(false)
+			setIndiceSeleccionado(null)
+			setSeguimientos([])
 			console.log("ubicacion seleccionada", location)
 			setUbicacionSeleccionada(location)
 	},[isSuccess]);	
@@ -468,8 +490,6 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 					comentario_incidencia: values.comentario_incidencia||"",
 					tipo_dano_incidencia: values.tipo_dano_incidencia||"",
 					dano_incidencia:values.dano_incidencia||"",
-					personas_involucradas_incidencia: personasInvolucradas||[],
-					acciones_tomadas_incidencia: accionesTomadas||[],
 					evidencia_incidencia:evidencia||[],
 					documento_incidencia:documento||[],
 					prioridad_incidencia:getNivel(value[0])||"",
@@ -480,6 +500,13 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 					sub_categoria:subCategoria,
 					incidente:selectedIncidencia,
 
+					//Grupos repetitivos
+					afectacion_patrimonial_incidencia:afectacionPatrimonial,
+					personas_involucradas_incidencia:personasInvolucradas||[],
+					acciones_tomadas_incidencia:accionesTomadas||[],
+					seguimientos_incidencia:seguimientos,
+
+					//Perosona extraviada
 					nombre_completo_persona_extraviada: values.nombre_completo_persona_extraviada,
 					edad: values.edad,
 					color_piel: values.color_piel,
@@ -520,13 +547,36 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 		return "Alta"
 	}
 
-	// const resetFirstLevel = () =>{
-	// 	console.log("resetear a primer nivel")
-	// }
+	
+	const handleEdit = (item: any, index: number) => {
+		setEditarSeguimiento(true)
+		setSeguimientoSeleccionado(item);
+		setIndiceSeleccionado(index);
+		setOpenModal(true); // abre el modal
+	};
+	
+	const handleDelete = (index: number) => {
+		const nuevosSeguimientos = [...seguimientos];
+		nuevosSeguimientos.splice(index, 1); // elimina por índice
+		setSeguimientos(nuevosSeguimientos);
+		toast.success("Seguimiento eliminado correctamente.")
+	  };
 
-	// const resetSecondLevel=()=>{
-	// 	console.log("resetear a segundo nivel")
-	// }
+
+	  	
+	const handleEditAP = (item: any, index: number) => {
+		setEditarAfectacionPatrimonial(true)
+		setAfectacionPatrimonialSeleccionada(item);
+		setIndiceSeleccionado(index);
+		setOpenAfectacionPatrimonialModal(true); // abre el modal
+	};
+	
+	const handleDeleteAP = (index: number) => {
+		const nuevoAP = [...afectacionPatrimonial];
+		nuevoAP.splice(index, 1); 
+		setAfectacionPatrimonial(nuevoAP);
+		toast.success("Afectación patrimonial eliminada correctamente.")
+	  };
 
   return (
     <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
@@ -651,9 +701,11 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 				<div className="flex-grow overflow-y-auto ">
 					<Tabs defaultValue="datos" >
 						<TabsList>
-						<TabsTrigger value="datos">Datos</TabsTrigger>
-						<TabsTrigger value="seguimiento">Seguimiento</TabsTrigger>
+							<TabsTrigger value="datos">Datos</TabsTrigger>
+							<TabsTrigger value="afectacion">Afectación Patrimonial</TabsTrigger>
+							<TabsTrigger value="seguimiento">Seguimiento</TabsTrigger>
 						</TabsList>
+
 						<TabsContent value="datos" >
 						<Card className="p-3 h-full">
 							<div >
@@ -922,14 +974,15 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 								</Form>
 						
 								<div className="col-span-1 md:col-span-2">
-									<PersonasInvolucradasList personasInvolucradas={personasInvolucradas} setPersonasInvolucradas={setPersonasInvolucradas} ></PersonasInvolucradasList>
+									<SeccionPersonasInvolucradas personasInvolucradas={personasInvolucradas} setPersonasInvolucradas={setPersonasInvolucradas} ></SeccionPersonasInvolucradas>
 								</div>
 								<div className="col-span-1 md:col-span-2">
-									<AccionesTomadasList accionesTomadas={accionesTomadas} setAccionesTomadas={setAccionesTomadas} ></AccionesTomadasList>
+									<SeccionAccionesTomadas accionesTomadas={accionesTomadas} setAccionesTomadas={setAccionesTomadas} ></SeccionAccionesTomadas>
 								</div>
 							</div>
 						</Card>
 						</TabsContent>
+
 						<TabsContent value="seguimiento" >
 						<Card className="p-3 h-screen">
 							<div >
@@ -950,79 +1003,192 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 
 
 							<div >
-								<table className="min-w-full table-auto border-separate border-spacing-2">
+							{seguimientos && seguimientos.length > 0 ? (
+								<table className="min-w-full table-auto border-separate ">
 									<thead>
-										<tr>
-											<th className="px-4 py-2 text-left border-b">Fecha y hora</th>
-											<th className="px-4 py-2 text-left border-b">Acción realizada</th>
-											<th className="px-4 py-2 text-left border-b">Comentario</th>
-											<th className="px-4 py-2 text-left border-b">Evidencia</th>
-											<th className="px-4 py-2 text-left border-b">Documentos</th>
-										</tr>
+									<tr>
+										<th className="px-4 py-2 text-left border-b">Fecha y hora</th>
+										<th className="px-4 py-2 text-left border-b">Tiempo transcurrido</th>
+										<th className="px-4 py-2 text-left border-b">Acción realizada</th>
+										<th className="px-4 py-2 text-left border-b">Personas involucradas</th>
+										<th className="px-4 py-2 text-left border-b">Evidencia</th>
+										<th className="px-4 py-2 text-left border-b">Documentos</th>
+										<th className="px-4 py-2 text-left border-b">Acciones</th> 
+									</tr>
 									</thead>
 									<tbody>
-										{seguimientos?.map((item: any, index: any) => (
-											<tr key={index}>
-												<td className="px-4 py-2"><p>{item?.fecha_inicio || "N/A"}</p></td>
-												<td className="px-4 py-2"><p>{item?.accion_correctiva || "N/A"}</p></td>
-												<td className="px-4 py-2"><p>{item?.comentario || "N/A"}</p></td>
-												
-												<td className="px-4 py-2">
-													{item?.evidencia.length > 0 ? (
-														<div className="w-full flex justify-center">
-															<Carousel className="w-16">
-																<CarouselContent>
-																	{item?.evidencia.map((a: any, index: number) => (
-																		<CarouselItem key={index}>
-																			<Card>
-																				<CardContent className="flex aspect-square items-center justify-center p-0">
-																					<Image
-																						width={280}
-																						height={280}
-																						src={a?.file_url || "/nouser.svg"}
-																						alt="Imagen"
-																						className="w-42 h-42 object-contain bg-gray-200 rounded-lg"
-																					/>
-																				</CardContent>
-																			</Card>
-																		</CarouselItem>
-																	))}
-																</CarouselContent>
-																<CarouselPrevious />
-																<CarouselNext />
-															</Carousel>
-														</div>
-													) : (
-														<p>No hay evidencias disponibles.</p>
-													)}
-												</td>
-												<td className="px-4 py-2">
-													{item?.documento && item?.documento.length > 0 ? (
-														<ul className="ms-2">
-															{item?.documento.map((file: any, index: any) => (
-																<li key={index}>
-																	<a
-																		href={file?.file_url}
-																		target="_blank"
-																		rel="noopener noreferrer"
-																		className="text-blue-600 hover:underline"
-																	>
-																		<p>{file.file_name}</p>
-																	</a>
-																</li>
-															))}
-														</ul>
-													) : null}
-												</td>
-											</tr>
-										))}
+									{seguimientos.map((item: any, index: number) => (
+										<tr key={index}>
+										<td className="px-4 py-2">{item?.fecha_inicio_seg || "N/A"}</td>
+										<td className="px-4 py-2">0 min</td>
+										<td className="px-4 py-2">{item?.incidencia_folio_accion_correctiva || "N/A"}</td>
+										<td className="px-4 py-2">{item?.incidencia_personas_involucradas || "N/A"}</td>
+
+										<td className="px-4 py-2">
+											{item?.incidencia_evidencia_solucion?.length > 0 ? (
+											<div className="w-full flex justify-center">
+												<Carousel className="w-16">
+												<CarouselContent>
+													{item.incidencia_evidencia_solucion.map((a: any, i: number) => (
+													<CarouselItem key={i}>
+														<Card>
+														<CardContent className="flex aspect-square items-center justify-center p-0">
+															<Image
+															width={280}
+															height={280}
+															src={a?.file_url || "/nouser.svg"}
+															alt="Imagen"
+															className="w-42 h-42 object-contain bg-gray-200 rounded-lg"
+															/>
+														</CardContent>
+														</Card>
+													</CarouselItem>
+													))}
+												</CarouselContent>
+												<CarouselPrevious />
+												<CarouselNext />
+												</Carousel>
+											</div>
+											) : (
+											<p>No hay evidencias disponibles.</p>
+											)}
+										</td>
+
+										<td className="px-4 py-2">
+											{item?.incidencia_documento_solucion?.length > 0 ? (
+											<ul className="ms-2">
+												{item.incidencia_documento_solucion.map((file: any, i: number) => (
+												<li key={i}>
+													<a
+													href={file?.file_url}
+													target="_blank"
+													rel="noopener noreferrer"
+													className="text-blue-600 hover:underline"
+													>
+													<p>{file.file_name}</p>
+													</a>
+												</li>
+												))}
+											</ul>
+											) : (
+												<p>No hay documentos disponibles.</p>
+												)}
+										</td>
+
+										<td className="flex items-center justify-center gap-2 mt-4 ">
+											<div
+											title="Editar"
+											className="hover:cursor-pointer text-blue-500 hover:text-blue-600"
+											onClick={() => handleEdit(item, index)}
+											>
+												<Edit/>
+											</div>
+											<div
+											title="Borrar"
+											className="hover:cursor-pointer text-red-500 hover:text-red-600"
+											onClick={() => handleDelete(index)}
+											>
+												<Trash2/>
+											</div>
+										</td>
+										</tr>
+									))}
 									</tbody>
 								</table>
+								) : (
+								<div className="px-4 py-2 text-center text-gray-500">
+									No se han agregado seguimientos.
+								</div>
+								)}
 							</div>
 
 						</Card>
 						</TabsContent>
+
+						<TabsContent value="afectacion">
+							<Card className="p-3 h-screen">
+							<div >
+								<div className="flex gap-2 mb-4">
+									<div className="w-full flex gap-2">
+										<CircleAlert />
+										Incidente: <span className="font-bold"> {selectedIncidencia}</span>
+									</div>
+
+									<div className="flex justify-end items-center w-full">
+										<div className="cursor-pointer  bg-blue-500 hover:bg-blue-600 text-white mr-5 rounded-md p-2 px-4 text-center text-sm" onClick={()=>{setOpenAfectacionPatrimonialModal(!openAfectacionPatrimonialModal)}}>
+											Agregar 
+										</div>
+									</div>
+								</div>
+								
+							</div>
+
+								<div >
+								{afectacionPatrimonial && afectacionPatrimonial.length > 0 ? (
+									<table className="min-w-full table-auto border-separate ">
+										<thead>
+										<tr>
+											<th className="px-4 py-2 text-left border-b">Tipo de Afectación</th>
+											<th className="px-4 py-2 text-left border-b">Monto Estimado de Daño ($)</th>
+											<th className="px-4 py-2 text-left border-b">Duración Estimada Afectación</th>
+										</tr>
+										</thead>
+										<tbody>
+										{afectacionPatrimonial.map((item: any, index: number) => (
+											<tr key={index}>
+											<td className="px-4 py-2">{item?.tipo_afectacion || "N/A"}</td>
+											<td className="px-4 py-2">{item?.monto_estimado || "N/A"}</td>
+											<td className="px-4 py-2">{item?.duracion_estimada || "N/A"}</td>
+											<td className="flex items-center justify-center gap-2 mt-4 ">
+												<div
+												title="Editar"
+												className="hover:cursor-pointer text-blue-500 hover:text-blue-600"
+												onClick={() => handleEditAP(item, index)}
+												>
+													<Edit/>
+												</div>
+												<div
+												title="Borrar"
+												className="hover:cursor-pointer text-red-500 hover:text-red-600"
+												onClick={() => handleDeleteAP(index)}
+												>
+													<Trash2/>
+												</div>
+											</td>
+											</tr>
+										))}
+										</tbody>
+									</table>
+									) : (
+									<div className="px-4 py-2 text-center text-gray-500">
+										No se han agregado afectaciones patrimoniales.
+									</div>
+									)}
+								</div>
+							</Card>
+						</TabsContent>
 					</Tabs>
+				</div>
+
+				<div className="flex gap-2">
+					<DialogClose asChild>
+						<Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 sm:w-2/3 md:w-1/2 lg:w-1/2 mb-2" onClick={handleClose}>
+						Cancelar
+						</Button>
+					</DialogClose>
+
+					
+					<Button
+						type="submit"
+						onClick={form.handleSubmit(onSubmit)}
+						className="w-full bg-blue-500 hover:bg-blue-600 text-white sm:w-2/3 md:w-1/2 lg:w-1/2 mb-2" disabled={isLoading}
+					>
+						{isLoading? (
+						<>
+							<Loader2 className="animate-spin"/> {"Creando incidencia..."}
+						</>
+					):("Crear incidencia")}
+					</Button>
 				</div>
 				</>
 			)}
@@ -1030,31 +1196,28 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 				title="Seguimiento Incidencia"
 				isSuccess={openModal}
 				setIsSuccess={setOpenModal}
+				seguimientoSeleccionado={seguimientoSeleccionado}
 				setSeguimientos={setSeguimientos}
+				setEditarSeguimiento={setEditarSeguimiento}
+				editarSeguimiento={editarSeguimiento}
+				indice={indiceSeleccionado}
 				>
 				<div></div>
 			</SeguimientoIncidenciaLista>
 
-			<div className="flex gap-2">
-				<DialogClose asChild>
-					<Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 sm:w-2/3 md:w-1/2 lg:w-1/2 mb-2" onClick={handleClose}>
-					Cancelar
-					</Button>
-				</DialogClose>
-
-				
-				<Button
-					type="submit"
-					onClick={form.handleSubmit(onSubmit)}
-					className="w-full bg-blue-500 hover:bg-blue-600 text-white sm:w-2/3 md:w-1/2 lg:w-1/2 mb-2" disabled={isLoading}
+			<AfectacionPatrimonialModal
+				title="Afectación Patrimonial"
+				openAfectacionPatrimonialModal={openAfectacionPatrimonialModal}
+				setOpenAfectacionPatrimonialModal={setOpenAfectacionPatrimonialModal}
+				afectacionPatrimonialSeleccionada={afectacionPatrimonialSeleccionada}
+				setAfectacionPatrimonial={setAfectacionPatrimonial}
+				setEditarAfectacionPatrimonial={setEditarAfectacionPatrimonial}
+				editarAfectacionPatrimonial={editarAfectacionPatrimonial}
+				indice={indiceSeleccionado}
 				>
-					{isLoading? (
-					<>
-						<Loader2 className="animate-spin"/> {"Creando incidencia..."}
-					</>
-				):("Crear incidencia")}
-				</Button>
-			</div>
+				<div></div>
+			</AfectacionPatrimonialModal>
+
           
       </DialogContent>
     </Dialog>

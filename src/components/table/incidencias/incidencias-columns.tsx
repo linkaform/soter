@@ -1,5 +1,6 @@
 import { LoadingModal } from "@/components/modals/loading-modal";
 import { ViewIncidencia } from "@/components/modals/view-incidencia";
+import { AccionesTomadas, AfectacionPatrimonial, PersonasInvolucradas } from "@/lib/incidencias";
 
 import { Check, Edit, Eye, Trash2 } from "lucide-react";
 import { useState } from "react";
@@ -25,8 +26,12 @@ export type Incidencia = {
     prioridad_incidencia: string
     area_incidencia: string
     fecha_hora_incidencia: string
-    acciones_tomadas_incidencia: AccionesTomadasIncidencum[]
-    personas_involucradas_incidencia: PersonasInvolucradasIncidencum[]
+
+    seguimientos_incidencias:any[]
+		afectacion_patrimonial_incidencias:AfectacionPatrimonial[]
+    acciones_tomadas_incidencia: AccionesTomadas[]
+    personas_involucradas_incidencia: PersonasInvolucradas[]
+
     notificacion_incidencia: string
     ubicacion_incidencia: string
     comentario_incidencia: string

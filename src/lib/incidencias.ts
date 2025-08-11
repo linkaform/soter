@@ -53,11 +53,25 @@ export const getListIncidencias = async (
   
 export interface AccionesTomadas {
     acciones_tomadas:string,
-    responsable_accion:string
+    llamo_a_policia:string
+    autoridad:string,
+    numero_folio_referencia:string,
+    responsable:string
 }
 export interface PersonasInvolucradas {
     nombre_completo:string,
-    tipo_persona:string
+    rol:string,
+    sexo:string,
+    grupo_etario:string
+    atencion_medica:string
+    retenido:string
+    comentarios:string
+}
+
+export interface AfectacionPatrimonial{
+    tipo_afectacion:string
+    monto_estimado:string
+    duracion_estimada:string
 }
 export interface Depositos {
     cantidad:number
