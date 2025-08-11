@@ -53,7 +53,7 @@ const MultiLineChartZoom = ({ data = [] }) => {
     }
   }, []);
 
-  // ✅ Agrupar datos por semanas
+  // ✅ Modificar groupByWeeks para mantener el progreso acumulativo
   const groupByWeeks = React.useCallback((diasData, cuatrimestreInfo) => {
     const weekMap = new Map();
     
@@ -68,6 +68,7 @@ const MultiLineChartZoom = ({ data = [] }) => {
           anio: cuatrimestreInfo.anio,
           weekLabel: formatWeekLabel(mondayOfWeek, cuatrimestreInfo.cuatrimestre, cuatrimestreInfo.anio),
           inspecciones: 0,
+          porcentaje_progresivo_final: 0,
           dias: [],
           allDaysOfWeek: getDaysOfWeek(mondayOfWeek),
           sortOrder: new Date(mondayOfWeek).getTime()
@@ -77,12 +78,17 @@ const MultiLineChartZoom = ({ data = [] }) => {
       const week = weekMap.get(mondayOfWeek);
       week.inspecciones += dia.inspecciones;
       week.dias.push(dia);
+      
+      // ✅ El porcentaje progresivo final de la semana es el mayor porcentaje de esa semana
+      if (dia.porcentaje_progresivo > week.porcentaje_progresivo_final) {
+        week.porcentaje_progresivo_final = dia.porcentaje_progresivo;
+      }
     });
     
     return Array.from(weekMap.values()).sort((a, b) => a.sortOrder - b.sortOrder);
   }, [getMondayOfWeek, formatWeekLabel, getDaysOfWeek]);
 
-  // ✅ Procesar datos para vista semanal
+  // ✅ Modificar weeklyData para mantener progreso acumulativo
   const weeklyData = useMemo(() => {
     if (!data || data.length === 0) return { labels: [], datasets: [], weekDetails: [] };
 
@@ -106,7 +112,7 @@ const MultiLineChartZoom = ({ data = [] }) => {
             allWeeks.set(key, week);
           }
           
-          hotelWeekData[hotel.hotel][key] = week.inspecciones;
+          hotelWeekData[hotel.hotel][key] = week.porcentaje_progresivo_final;
         });
       });
     });
@@ -116,11 +122,20 @@ const MultiLineChartZoom = ({ data = [] }) => {
     const labels = sortedWeeks.map(week => week.weekLabel);
     const weekKeys = sortedWeeks.map(week => week.mondayDate);
     
-    // Crear datasets por hotel
+    // ✅ Crear datasets por hotel manteniendo progreso acumulativo
     const datasets = data.map((hotel, idx) => {
-      const hotelData = sortedWeeks.map(week => 
-        hotelWeekData[hotel.hotel][week.mondayDate] || 0
-      );
+      let lastKnownPercentage = 0; // ✅ Mantener último porcentaje conocido
+    
+      const hotelData = sortedWeeks.map(week => {
+        const currentPercentage = hotelWeekData[hotel.hotel][week.mondayDate];
+        
+        if (currentPercentage !== undefined && currentPercentage > 0) {
+          lastKnownPercentage = currentPercentage; // ✅ Actualizar último conocido
+          return currentPercentage;
+        } else {
+          return lastKnownPercentage; // ✅ Mantener el anterior si no hay datos
+        }
+      });
 
       return {
         label: hotel.hotel.replace(/_/g, ' ').toUpperCase(),
@@ -142,7 +157,7 @@ const MultiLineChartZoom = ({ data = [] }) => {
     };
   }, [data, groupByWeeks]);
 
-  // ✅ Procesar datos para vista diaria (con zoom)
+  // ✅ Modificar dailyData para mantener progreso acumulativo diario
   const dailyData = useMemo(() => {
     if (!selectedWeekRange || !data || !weeklyData.weekDetails) {
       return { labels: [], datasets: [] };
@@ -155,7 +170,7 @@ const MultiLineChartZoom = ({ data = [] }) => {
       week.mondayDate >= startWeekKey && week.mondayDate <= endWeekKey
     );
 
-    // ✅ Generar TODOS los días de las semanas seleccionadas (incluye días sin datos)
+    // Generar todos los días de las semanas seleccionadas
     const allDays = [];
     selectedWeeks.forEach(week => {
       week.allDaysOfWeek.forEach(day => {
@@ -167,39 +182,64 @@ const MultiLineChartZoom = ({ data = [] }) => {
     
     allDays.sort();
 
-    // ✅ Crear mapa de datos por hotel y día (incluyendo días con 0)
+    // ✅ Crear mapa de datos por hotel y día
     const hotelDayData = {};
     data.forEach(hotel => {
       hotelDayData[hotel.hotel] = {};
       
-      // ✅ Inicializar TODOS los días con 0
-      allDays.forEach(day => {
-        hotelDayData[hotel.hotel][day] = 0;
-      });
-      
-      // ✅ Llenar con datos reales donde existan
+      // ✅ Obtener TODOS los días de datos del hotel para encontrar progreso previo
+      const allHotelDays = [];
       hotel.cuatrimestres_data.forEach(cuatrimestre => {
         cuatrimestre.dias_data?.forEach(dia => {
-          if (allDays.includes(dia.fecha)) {
-            hotelDayData[hotel.hotel][dia.fecha] = dia.inspecciones;
-          }
+          allHotelDays.push({
+            fecha: dia.fecha,
+            porcentaje_progresivo: dia.porcentaje_progresivo || 0,
+            inspecciones: dia.inspecciones || 0
+          });
         });
       });
-
+      
+      // Ordenar todos los días por fecha
+      allHotelDays.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+      
+      // ✅ Llenar datos día por día manteniendo progreso acumulativo
+      let lastKnownPercentage = 0;
+      
+      allDays.forEach(day => {
+        // Buscar si hay datos para este día específico
+        const dayData = allHotelDays.find(d => d.fecha === day);
+        
+        if (dayData && dayData.porcentaje_progresivo > 0) {
+          // ✅ Hay datos para este día
+          lastKnownPercentage = dayData.porcentaje_progresivo;
+          hotelDayData[hotel.hotel][day] = {
+            porcentaje_progresivo: dayData.porcentaje_progresivo,
+            inspecciones: dayData.inspecciones
+          };
+        } else {
+          // ✅ No hay datos para este día - buscar el último porcentaje conocido ANTES de esta fecha
+          const previousDays = allHotelDays.filter(d => new Date(d.fecha) < new Date(day));
+          if (previousDays.length > 0) {
+            const lastPreviousDay = previousDays[previousDays.length - 1];
+            lastKnownPercentage = lastPreviousDay.porcentaje_progresivo;
+          }
+          
+          hotelDayData[hotel.hotel][day] = {
+            porcentaje_progresivo: lastKnownPercentage, // ✅ Mantener progreso anterior
+            inspecciones: 0 // ✅ Inspecciones sí van a 0 porque no hubo ese día
+          };
+        }
+      });
     });
 
-    // Crear datasets por hotel
+    // ✅ Crear datasets por hotel (porcentaje como principal)
     const datasets = data.map((hotel, idx) => {
-      
-      const hotelData = [];
-      
-      // Procesar día por día para ver exactamente qué está pasando
-      allDays.forEach((day) => {
-        const value = hotelDayData[hotel.hotel][day];
-        hotelData.push(value || 0);
+      const hotelData = allDays.map(day => {
+        const dayData = hotelDayData[hotel.hotel][day];
+        return dayData ? dayData.porcentaje_progresivo : 0;
       });
 
-      const dataset = {
+      return {
         label: hotel.hotel.replace(/_/g, ' ').toUpperCase(),
         data: hotelData,
         borderColor: COLORS[idx % COLORS.length],
@@ -208,24 +248,25 @@ const MultiLineChartZoom = ({ data = [] }) => {
         tension: 0.1,
         pointRadius: 3,
         pointHoverRadius: 5,
+        // ✅ Datos adicionales para tooltips
+        inspecciones: allDays.map(day => {
+          const dayData = hotelDayData[hotel.hotel][day];
+          return dayData ? dayData.inspecciones : 0;
+        })
       };
-      
-      return dataset;
     });
-
 
     // Formatear labels de días
     const labels = allDays.map(day => {
-      const date = new Date(day + 'T00:00:00'); // ✅ Forzar timezone local
+      const date = new Date(day + 'T00:00:00');
       const dayName = date.toLocaleDateString('es-ES', { weekday: 'short' });
       const dayNum = date.getDate();
       const month = date.toLocaleDateString('es-ES', { month: 'short' });
       
-      
       return `${dayName} ${dayNum}/${month}`;
     });
 
-    return { labels, datasets, allDays };
+    return { labels, datasets, allDays, hotelDayData };
   }, [data, selectedWeekRange, weeklyData.weekDetails]);
 
   // Datos actuales según el nivel de zoom
@@ -280,12 +321,15 @@ const MultiLineChartZoom = ({ data = [] }) => {
           yAxes: [{
             ticks: {
               min: 0,
-              stepSize: 1,
-              callback: (value) => value + ' insp.',
+              // ✅ Formatear como porcentaje
+              callback: (value) => value.toFixed(1) + '%',
             },
             scaleLabel: {
               display: true,
-              labelString: 'Inspecciones Completadas',
+              // ✅ Etiqueta según el contexto
+              labelString: zoomLevel === 'week' 
+                ? 'Porcentaje Progresivo Semanal' 
+                : 'Porcentaje Progresivo Diario',
             },
             gridLines: {
               drawOnChartArea: true,
@@ -311,6 +355,7 @@ const MultiLineChartZoom = ({ data = [] }) => {
           display: true,
           position: 'top',
         },
+        // ✅ Actualizar los tooltips para mostrar información más clara
         tooltips: {
           mode: 'index',
           intersect: false,
@@ -318,7 +363,7 @@ const MultiLineChartZoom = ({ data = [] }) => {
             title: function(tooltipItems, data) {
               const label = data.labels[tooltipItems[0].index];
               if (zoomLevel === 'week') {
-                return `Semana: ${label} (click para ver días)`;
+                return `Semana: ${label}`;
               } else {
                 return `Día: ${label}`;
               }
@@ -326,11 +371,30 @@ const MultiLineChartZoom = ({ data = [] }) => {
             label: function(tooltipItem, data) {
               const dataset = data.datasets[tooltipItem.datasetIndex];
               const value = tooltipItem.yLabel;
-              return `${dataset.label}: ${value} inspecciones`;
+              
+              if (zoomLevel === 'week') {
+                // ✅ Vista semanal: solo porcentaje progresivo
+                return `${dataset.label}: ${value.toFixed(1)}% progreso acumulado`;
+              } else {
+                // ✅ Vista diaria: porcentaje + inspecciones
+                const inspecciones = dataset.inspecciones ? dataset.inspecciones[tooltipItem.index] : 0;
+                
+                if (inspecciones > 0) {
+                  return [
+                    `${dataset.label}: ${value.toFixed(1)}% progreso`,
+                    `Inspecciones del día: ${inspecciones}`
+                  ];
+                } else {
+                  return [
+                    `${dataset.label}: ${value.toFixed(1)}% progreso`,
+                    `Sin inspecciones`
+                  ];
+                }
+              }
             },
             footer: function() {
               if (zoomLevel === 'week') {
-                return '💡 Haz click para zoom a vista diaria';
+                return '💡 Haz click para ver progreso diario';
               }
               return '';
             }
@@ -341,7 +405,7 @@ const MultiLineChartZoom = ({ data = [] }) => {
             const clickedIndex = elements[0]._index;
             const weekKey = weeklyData.weekKeys[clickedIndex];
             
-            handleZoomIn(weekKey); // ✅ Usar función animada
+            handleZoomIn(weekKey);
           }
         }
       },
@@ -435,7 +499,8 @@ const MultiLineChartZoom = ({ data = [] }) => {
           🏨 {data.length} hoteles • 📊 
           <span className="inline-block transition-all duration-300 transform">
             {currentData.labels?.length || 0}
-          </span> puntos
+          </span> puntos • 
+          {zoomLevel === 'week' ? '📈 % Progreso Semanal' : '📅 % Progreso Diario'}
         </div>
       </div>
 
