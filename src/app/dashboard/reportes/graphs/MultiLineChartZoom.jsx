@@ -1,7 +1,24 @@
 import React, { useRef, useEffect, useMemo, useState } from 'react';
 import Chart from 'chart.js';
 
-const COLORS = ['#8cd610', '#efc600', '#e71831', '#1e90ff', '#ff6384', '#36a2eb', '#cc65fe', '#ffce56'];
+const COLORS = [
+  '#e74c3c', // Rojo
+  '#3498db', // Azul
+  '#2ecc71', // Verde
+  '#f39c12', // Naranja
+  '#9b59b6', // Púrpura
+  '#1abc9c', // Turquesa
+  '#e67e22', // Naranja oscuro
+  '#34495e', // Azul grisáceo
+  '#f1c40f', // Amarillo
+  '#e91e63', // Rosa magenta
+  '#00bcd4', // Cian
+  '#ff5722', // Rojo naranja
+  '#795548', // Marrón
+  '#607d8b', // Azul gris
+  '#8bc34a', // Verde lima
+  '#ff9800'  // Ámbar
+];
 
 const MultiLineChartZoom = ({ data = [] }) => {
   const chartRef = useRef(null);
@@ -357,8 +374,10 @@ const MultiLineChartZoom = ({ data = [] }) => {
         },
         // ✅ Actualizar los tooltips para mostrar información más clara
         tooltips: {
-          mode: 'index',
-          intersect: false,
+          mode: 'point',              // ✅ Cambiar de 'index' a 'point' para tooltips individuales
+          intersect: true,            // ✅ Cambiar a true para que solo aparezca en el punto específico
+          usePointStyle: true,
+          displayColors: true,
           callbacks: {
             title: function(tooltipItems, data) {
               const label = data.labels[tooltipItems[0].index];
@@ -374,7 +393,7 @@ const MultiLineChartZoom = ({ data = [] }) => {
               
               if (zoomLevel === 'week') {
                 // ✅ Vista semanal: solo porcentaje progresivo
-                return `${dataset.label}: ${value.toFixed(1)}% progreso acumulado`;
+                return `${dataset.label}: ${value.toFixed(1)}%`;
               } else {
                 // ✅ Vista diaria: porcentaje + inspecciones
                 const inspecciones = dataset.inspecciones ? dataset.inspecciones[tooltipItem.index] : 0;
