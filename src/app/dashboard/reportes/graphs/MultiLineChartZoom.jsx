@@ -174,7 +174,7 @@ const MultiLineChartZoom = ({ data = [] }) => {
     };
   }, [data, groupByWeeks]);
 
-  // ✅ Modificar dailyData para mantener progreso acumulativo diario
+  // ✅ Modificar dailyData para usar inspecciones como dato principal
   const dailyData = useMemo(() => {
     if (!selectedWeekRange || !data || !weeklyData.weekDetails) {
       return { labels: [], datasets: [] };
@@ -204,7 +204,7 @@ const MultiLineChartZoom = ({ data = [] }) => {
     data.forEach(hotel => {
       hotelDayData[hotel.hotel] = {};
       
-      // ✅ Obtener TODOS los días de datos del hotel para encontrar progreso previo
+      // ✅ Obtener TODOS los días de datos del hotel
       const allHotelDays = [];
       hotel.cuatrimestres_data.forEach(cuatrimestre => {
         cuatrimestre.dias_data?.forEach(dia => {
@@ -219,22 +219,25 @@ const MultiLineChartZoom = ({ data = [] }) => {
       // Ordenar todos los días por fecha
       allHotelDays.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
       
-      // ✅ Llenar datos día por día manteniendo progreso acumulativo
+      // ✅ Llenar datos día por día
       let lastKnownPercentage = 0;
       
       allDays.forEach(day => {
         // Buscar si hay datos para este día específico
         const dayData = allHotelDays.find(d => d.fecha === day);
         
-        if (dayData && dayData.porcentaje_progresivo > 0) {
+        if (dayData) {
           // ✅ Hay datos para este día
-          lastKnownPercentage = dayData.porcentaje_progresivo;
+          if (dayData.porcentaje_progresivo > 0) {
+            lastKnownPercentage = dayData.porcentaje_progresivo;
+          }
+          
           hotelDayData[hotel.hotel][day] = {
-            porcentaje_progresivo: dayData.porcentaje_progresivo,
-            inspecciones: dayData.inspecciones
+            inspecciones: dayData.inspecciones, // ✅ PRINCIPAL: Inspecciones reales del día
+            porcentaje_progresivo: dayData.porcentaje_progresivo > 0 ? dayData.porcentaje_progresivo : lastKnownPercentage
           };
         } else {
-          // ✅ No hay datos para este día - buscar el último porcentaje conocido ANTES de esta fecha
+          // ✅ No hay datos para este día
           const previousDays = allHotelDays.filter(d => new Date(d.fecha) < new Date(day));
           if (previousDays.length > 0) {
             const lastPreviousDay = previousDays[previousDays.length - 1];
@@ -242,23 +245,23 @@ const MultiLineChartZoom = ({ data = [] }) => {
           }
           
           hotelDayData[hotel.hotel][day] = {
-            porcentaje_progresivo: lastKnownPercentage, // ✅ Mantener progreso anterior
-            inspecciones: 0 // ✅ Inspecciones sí van a 0 porque no hubo ese día
+            inspecciones: 0, // ✅ PRINCIPAL: Sin inspecciones ese día
+            porcentaje_progresivo: lastKnownPercentage // ✅ SECUNDARIO: Mantener progreso anterior
           };
         }
       });
     });
 
-    // ✅ Crear datasets por hotel (porcentaje como principal)
+    // ✅ Crear datasets por hotel (INSPECCIONES como dato principal)
     const datasets = data.map((hotel, idx) => {
       const hotelData = allDays.map(day => {
         const dayData = hotelDayData[hotel.hotel][day];
-        return dayData ? dayData.porcentaje_progresivo : 0;
+        return dayData ? dayData.inspecciones : 0; // ✅ Usar inspecciones como Y
       });
 
       return {
         label: hotel.hotel.replace(/_/g, ' ').toUpperCase(),
-        data: hotelData,
+        data: hotelData, // ✅ Array de inspecciones por día
         borderColor: COLORS[idx % COLORS.length],
         backgroundColor: COLORS[idx % COLORS.length] + '20',
         fill: false,
@@ -266,9 +269,9 @@ const MultiLineChartZoom = ({ data = [] }) => {
         pointRadius: 3,
         pointHoverRadius: 5,
         // ✅ Datos adicionales para tooltips
-        inspecciones: allDays.map(day => {
+        porcentajes: allDays.map(day => {
           const dayData = hotelDayData[hotel.hotel][day];
-          return dayData ? dayData.inspecciones : 0;
+          return dayData ? dayData.porcentaje_progresivo : 0;
         })
       };
     });
@@ -297,7 +300,6 @@ const MultiLineChartZoom = ({ data = [] }) => {
 
     const ctx = chartRef.current.getContext('2d');
 
-    // ✅ Destruir instancia anterior
     if (chartInstanceRef.current) {
       chartInstanceRef.current.destroy();
       chartInstanceRef.current = null;
@@ -320,17 +322,13 @@ const MultiLineChartZoom = ({ data = [] }) => {
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        // ✅ Animación suave habilitada
         animation: {
-          duration: isTransitioning ? 0 : 750, // Sin animación durante transición
+          duration: isTransitioning ? 0 : 750,
           easing: 'easeInOutQuart',
-          onComplete: function() {}
         },
-        // ✅ Animaciones específicas para elementos
         hover: {
           animationDuration: 200
         },
-        responsiveAnimationDuration: 300,
         onHover: function(evt, elements) {
           evt.target.style.cursor = (zoomLevel === 'week' && elements.length > 0) ? 'pointer' : 'default';
         },
@@ -338,15 +336,22 @@ const MultiLineChartZoom = ({ data = [] }) => {
           yAxes: [{
             ticks: {
               min: 0,
-              // ✅ Formatear como porcentaje
-              callback: (value) => value.toFixed(1) + '%',
+              // ✅ Ajustar stepSize según la vista
+              stepSize: zoomLevel === 'week' ? 10 : 1, // ✅ 10% para semanal, 1 inspección para diaria
+              // ✅ Formatear según el tipo de vista
+              callback: (value) => {
+                if (zoomLevel === 'week') {
+                  return value.toFixed(0) + '%'; // ✅ Sin decimales para pasos más grandes
+                } else {
+                  return Math.floor(value) + ' insp.';
+                }
+              },
             },
             scaleLabel: {
               display: true,
-              // ✅ Etiqueta según el contexto
               labelString: zoomLevel === 'week' 
                 ? 'Porcentaje Progresivo Semanal' 
-                : 'Porcentaje Progresivo Diario',
+                : 'Inspecciones Completadas',
             },
             gridLines: {
               drawOnChartArea: true,
@@ -372,10 +377,9 @@ const MultiLineChartZoom = ({ data = [] }) => {
           display: true,
           position: 'top',
         },
-        // ✅ Actualizar los tooltips para mostrar información más clara
         tooltips: {
-          mode: 'point',              // ✅ Cambiar de 'index' a 'point' para tooltips individuales
-          intersect: true,            // ✅ Cambiar a true para que solo aparezca en el punto específico
+          mode: 'point',
+          intersect: true,
           usePointStyle: true,
           displayColors: true,
           callbacks: {
@@ -392,28 +396,29 @@ const MultiLineChartZoom = ({ data = [] }) => {
               const value = tooltipItem.yLabel;
               
               if (zoomLevel === 'week') {
-                // ✅ Vista semanal: solo porcentaje progresivo
-                return `${dataset.label}: ${value.toFixed(1)}%`;
+                // ✅ Vista semanal: porcentaje progresivo
+                return `${dataset.label}: ${value.toFixed(1)}% progreso`;
               } else {
-                // ✅ Vista diaria: porcentaje + inspecciones
-                const inspecciones = dataset.inspecciones ? dataset.inspecciones[tooltipItem.index] : 0;
+                // ✅ Vista diaria: inspecciones + porcentaje
+                const inspecciones = Math.floor(value); // ✅ Valor principal del gráfico
+                const porcentaje = dataset.porcentajes ? dataset.porcentajes[tooltipItem.index] : 0;
                 
                 if (inspecciones > 0) {
                   return [
-                    `${dataset.label}: ${value.toFixed(1)}% progreso`,
-                    `Inspecciones del día: ${inspecciones}`
+                    `${dataset.label}: ${inspecciones} inspecciones`, // ✅ PRINCIPAL
+                    `Progreso acumulado: ${porcentaje.toFixed(1)}%`    // ✅ SECUNDARIO
                   ];
                 } else {
                   return [
-                    `${dataset.label}: ${value.toFixed(1)}% progreso`,
-                    `Sin inspecciones`
+                    `${dataset.label}: Sin inspecciones`,              // ✅ PRINCIPAL
+                    `Progreso acumulado: ${porcentaje.toFixed(1)}%`    // ✅ SECUNDARIO
                   ];
                 }
               }
             },
             footer: function() {
               if (zoomLevel === 'week') {
-                return '💡 Haz click para ver progreso diario';
+                return '💡 Haz click para ver inspecciones diarias';
               }
               return '';
             }
@@ -519,7 +524,7 @@ const MultiLineChartZoom = ({ data = [] }) => {
           <span className="inline-block transition-all duration-300 transform">
             {currentData.labels?.length || 0}
           </span> puntos • 
-          {zoomLevel === 'week' ? '📈 % Progreso Semanal' : '📅 % Progreso Diario'}
+          {zoomLevel === 'week' ? '📈 % Progreso Semanal' : '📋 Inspecciones Diarias'} {/* ✅ Cambiar texto */}
         </div>
       </div>
 
