@@ -22,15 +22,15 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import LoadImage from "../upload-Image";
 import { Imagen } from "@/lib/update-pass";
-import { Loader2 } from "lucide-react";
-import { Input } from "../ui/input";
-import LoadFile from "../upload-file";
-import { format } from "date-fns";
-import DateTime from "../dateTime";
 import { formatFecha } from "@/lib/utils";
 import { useShiftStore } from "@/store/useShiftStore";
+import { Textarea } from "../ui/textarea";
+import DateTime from "../dateTime";
+import { Input } from "../ui/input";
+import LoadImage from "../upload-Image";
+import LoadFile from "../upload-file";
+import { toast } from "sonner";
 
 interface IncidenciaModalProps {
 	title: string;
@@ -38,13 +38,17 @@ interface IncidenciaModalProps {
 	isSuccess: boolean;
 	setIsSuccess: Dispatch<SetStateAction<boolean>>;
     setSeguimientos: Dispatch<SetStateAction<any>>;
+    indice:number| null;
+    editarSeguimiento:boolean;
+    setEditarSeguimiento: Dispatch<SetStateAction<any>>;
+    seguimientoSeleccionado:any;
 }
 
 const formSchema = z.object({
-	incidencia_folio_accion_correctiva: z.string().min(1, { message: "Este campo es oblicatorio" }),
-	incidencia_comentario_solucion: z.string().optional(),
-	fechaInicioIncidenciaCompleta: z.string().optional(),
-	fechaFinIncidenciaCompleta: z.string().optional(),
+	accion_correctiva_incidencia: z.string().min(1, { message: "Este campo es oblicatorio" }),
+	incidencia_personas_involucradas: z.string().optional(),
+	fecha_inicio_seg: z.string().optional(),
+	// fechaFinIncidenciaCompleta: z.string().optional(),
 	incidencia_documento_solucion: z.array(
 		z.object({
 			file_url: z.string(),
@@ -64,67 +68,96 @@ export const SeguimientoIncidenciaLista: React.FC<IncidenciaModalProps> = ({
 	children,
 	isSuccess,
 	setIsSuccess,
-    setSeguimientos
+    setSeguimientos,
+    indice,
+    editarSeguimiento,
+    setEditarSeguimiento,
+    seguimientoSeleccionado
 }) => {
 	// const [isSuccess, setIsSuccess] = useState(false)
 	const [evidencia, setEvidencia] = useState<Imagen[]>([]);
 	const [documento, setDocumento] = useState<Imagen[]>([]);
 	const [date, setDate] = useState<Date | "">("");
-	const [dateFin, setDateFin] = useState<Date | "">("");
 	const { isLoading} = useShiftStore();
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			incidencia_folio_accion_correctiva: "",
-			incidencia_comentario_solucion: "",
-			fechaInicioIncidenciaCompleta: date !== "" ? format(new Date(date), 'yyyy-MM-dd HH:mm:ss') : "",
-			fechaFinIncidenciaCompleta: dateFin !== "" ? format(new Date(dateFin), 'yyyy-MM-dd HH:mm:ss') : "",
-			incidencia_documento_solucion: documento,
-			incidencia_evidencia_solucion: evidencia,
+			accion_correctiva_incidencia: "",
+			incidencia_personas_involucradas: "",
+			fecha_inicio_seg: "",
+			incidencia_documento_solucion: [],
+			incidencia_evidencia_solucion: [],
 		},
 	});
 
 	const { reset } = form;
 
+
 	useEffect(() => {
-		if (isSuccess) {
-			reset()
+        if (isSuccess){
+            reset({
+                accion_correctiva_incidencia: "",
+                incidencia_personas_involucradas:  "",
+              });
 			setDate("")
-			setDateFin("")
 			setEvidencia([])
 			setDocumento([])
+        }
+        console.log("seg",editarSeguimiento)
+
+		if (editarSeguimiento && seguimientoSeleccionado) {
+			reset({
+                accion_correctiva_incidencia: seguimientoSeleccionado.accion_correctiva_incidencia || "",
+                incidencia_personas_involucradas: seguimientoSeleccionado.incidencia_personas_involucradas || "",
+              });
+            setEvidencia(seguimientoSeleccionado.incidencia_evidencia_solucion)
+            setDocumento(seguimientoSeleccionado.incidencia_documento_solucion)
+            setDate(new Date(seguimientoSeleccionado.fecha_inicio_seg))
 		}
 	}, [isSuccess, reset])
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		if (date) {
 			const formatData = {
-				incidencia_folio_accion_correctiva: values.incidencia_folio_accion_correctiva || "",
-				incidencia_comentario_solucion: values.incidencia_comentario_solucion || "",
-				fechaInicioIncidenciaCompleta: values.fechaInicioIncidenciaCompleta ? formatFecha(values.fechaInicioIncidenciaCompleta) + `:00` : "2024-03-24 11:04:00",
-				fechaFinIncidenciaCompleta: values.fechaFinIncidenciaCompleta ? formatFecha(values.fechaFinIncidenciaCompleta) + `:00` : "2024-03-12 09:04:00",
+				accion_correctiva_incidencia: values.accion_correctiva_incidencia || "",
+				incidencia_personas_involucradas: values.incidencia_personas_involucradas || "",
+				fecha_inicio_seg: values.fecha_inicio_seg ? formatFecha(values.fecha_inicio_seg) + `:00` : "2024-03-24 11:04:00",
 				incidencia_documento_solucion: documento,
 				incidencia_evidencia_solucion: evidencia
 			}
-            console.log("format data", formatData)
-            setSeguimientos(formatData)
-			// seguimientoIncidenciaMutation.mutate({ incidencia_grupo_seguimiento: formatData });
+            if(editarSeguimiento){
+                setEditarSeguimiento(false)
+                setSeguimientos((prev: any[]) =>
+                    prev.map((item, i) => (i === indice ? formatData : item))
+                  );
+                toast.success("Seguimiento editado correctamente.")
+            }else{
+                setSeguimientos((prev: any) => [...prev, formatData]);
+                toast.success("Seguimiento agregado correctamente.")
+            }
+            setIsSuccess(false)
 		} else {
-			form.setError("fechaInicioIncidenciaCompleta", { type: "manual", message: "Fecha es un campo requerido." });
+			form.setError("fecha_inicio_seg", { type: "manual", message: "Fecha es un campo requerido." });
 		}
 	}
 
 	const handleClose = () => {
 		setIsSuccess(false);
+        setEditarSeguimiento(false);
 	};
 
+    useEffect(() => {
+        if(form.formState.errors){
+            console.log("Errores:", form.formState.errors)
+        }
+    }, [form.formState.errors])
 
 	return (
 		<Dialog onOpenChange={setIsSuccess} open={isSuccess}>
 			<DialogTrigger>{children}</DialogTrigger>
 
-			<DialogContent className="max-w-3xl" aria-describedby="">
+			<DialogContent className="max-w-lg" aria-describedby="">
 				<DialogHeader>
 					<DialogTitle className="text-2xl text-center font-bold">
 						{title}
@@ -133,17 +166,14 @@ export const SeguimientoIncidenciaLista: React.FC<IncidenciaModalProps> = ({
 
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} >
-						<div className="w-full flex gap-2 mb-2">
-							<p className="font-bold ">Folio: </p>
-							<p  className="font-bold text-blue-500"> </p>
-						</div>
-						<div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+						<div className="grid grid-cols-1 gap-5 mb-6">
 							<FormField
 									control={form.control}
-									name="fechaInicioIncidenciaCompleta"
+									name="fecha_inicio_seg"
 									render={() => (
 										<FormItem>
-											<FormLabel>* Fecha del seguimiento:</FormLabel>
+											<FormLabel>* Fecha y hora de la accion: *
+                                            </FormLabel>
 											<FormControl>
 												{/* <Input type="datetime-local" placeholder="Fecha"  /> */}
 												<DateTime date={date} setDate={setDate} />
@@ -155,12 +185,12 @@ export const SeguimientoIncidenciaLista: React.FC<IncidenciaModalProps> = ({
 								/>
 							<FormField
 								control={form.control}
-								name="incidencia_folio_accion_correctiva"
+								name="accion_correctiva_incidencia"
 								render={({ field }: any) => (
 									<FormItem>
 										<FormLabel>Acción realizada: *</FormLabel>
 										<FormControl>
-											<Input placeholder="Acción realizada..." {...field}
+											<Textarea placeholder="Acción realizada..." {...field}
 												onChange={(e) => {
 													field.onChange(e); // Actualiza el valor en react-hook-form
 													// handleSelectChange("placas", e.target.value); // Acción adicional
@@ -173,15 +203,14 @@ export const SeguimientoIncidenciaLista: React.FC<IncidenciaModalProps> = ({
 								)}
 							/>
 							
-							<div className="mt-5">
 								<FormField
 									control={form.control}
-									name="incidencia_comentario_solucion"
+									name="incidencia_personas_involucradas"
 									render={({ field }: any) => (
 										<FormItem>
-											<FormLabel>Comentario:</FormLabel>
+											<FormLabel>Personas Involucradas:</FormLabel>
 											<FormControl>
-												<Input placeholder="Comentario..." {...field}
+												<Input placeholder="Personas involucradas" {...field}
 													onChange={(e) => {
 														field.onChange(e); // Actualiza el valor en react-hook-form
 														// handleSelectChange("placas", e.target.value); // Acción adicional
@@ -193,7 +222,6 @@ export const SeguimientoIncidenciaLista: React.FC<IncidenciaModalProps> = ({
 										</FormItem>
 									)}
 								/>
-							</div>
 							
 							<div className="flex justify-between">
 								<LoadImage
@@ -218,6 +246,7 @@ export const SeguimientoIncidenciaLista: React.FC<IncidenciaModalProps> = ({
 								/>
 							</div>
 						</div>
+                        
 
 						<div className="flex gap-2">
 							<DialogClose asChild>
@@ -231,9 +260,7 @@ export const SeguimientoIncidenciaLista: React.FC<IncidenciaModalProps> = ({
 								type="submit"
 								className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={isLoading}
 							>
-								{!isLoading ? (<>
-									{("Agregar")}
-								</>) : (<> <Loader2 className="animate-spin" /> {"Agregando seguimiento..."} </>)}
+							    {editarSeguimiento? ("Editar"):(("Agregar"))}
 							</Button>
 						</div>
 					</form>
