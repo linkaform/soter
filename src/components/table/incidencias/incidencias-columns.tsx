@@ -1,6 +1,6 @@
 import { LoadingModal } from "@/components/modals/loading-modal";
 import { ViewIncidencia } from "@/components/modals/view-incidencia";
-import { AccionesTomadas, AfectacionPatrimonial, PersonasInvolucradas } from "@/lib/incidencias";
+import { AccionesTomadas, AfectacionPatrimonial, Depositos, PersonasInvolucradas } from "@/lib/incidencias";
 
 import { Check, Edit, Eye, Trash2 } from "lucide-react";
 import { useState } from "react";
@@ -27,8 +27,8 @@ export type Incidencia = {
     area_incidencia: string
     fecha_hora_incidencia: string
 
-    seguimientos_incidencias:any[]
-		afectacion_patrimonial_incidencias:AfectacionPatrimonial[]
+    seguimientos_incidencia:any[]
+		afectacion_patrimonial_incidencia:AfectacionPatrimonial[]
     acciones_tomadas_incidencia: AccionesTomadas[]
     personas_involucradas_incidencia: PersonasInvolucradas[]
 
@@ -36,14 +36,15 @@ export type Incidencia = {
     ubicacion_incidencia: string
     comentario_incidencia: string
     total_deposito_incidencia?: number
-    datos_deposito_incidencia: DatosDepositoIncidencum[]
+    datos_deposito_incidencia: Depositos[]
     _id: string
     evidencia_incidencia?: EvidenciaIncidencum[]
     documento_incidencia?: DocumentoIncidencum[]
     dano_incidencia?: string
     tipo_dano_incidencia?: string[]
     grupo_seguimiento_incidencia: []
-
+    tags:string[]
+    
     //Categoria
     categoria:string
     sub_categoria:string
@@ -76,21 +77,6 @@ export type Incidencia = {
   }
   
 
-  export interface AccionesTomadasIncidencum {
-    acciones_tomadas: string
-    responsable_accion: string
-  }
-  
-  export interface PersonasInvolucradasIncidencum {
-    nombre_completo: string
-    tipo_persona: string
-  }
-  
-  export interface DatosDepositoIncidencum {
-    tipo_deposito: string
-    cantidad: number
-  }
-  
   export interface EvidenciaIncidencum {
     file_name: string
     file_url: string

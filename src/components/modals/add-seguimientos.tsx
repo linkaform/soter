@@ -45,7 +45,7 @@ interface IncidenciaModalProps {
 }
 
 const formSchema = z.object({
-	incidencia_folio_accion_correctiva: z.string().min(1, { message: "Este campo es oblicatorio" }),
+	accion_correctiva_incidencia: z.string().min(1, { message: "Este campo es oblicatorio" }),
 	incidencia_personas_involucradas: z.string().optional(),
 	fecha_inicio_seg: z.string().optional(),
 	// fechaFinIncidenciaCompleta: z.string().optional(),
@@ -83,7 +83,7 @@ export const SeguimientoIncidenciaLista: React.FC<IncidenciaModalProps> = ({
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			incidencia_folio_accion_correctiva: "",
+			accion_correctiva_incidencia: "",
 			incidencia_personas_involucradas: "",
 			fecha_inicio_seg: "",
 			incidencia_documento_solucion: [],
@@ -97,7 +97,7 @@ export const SeguimientoIncidenciaLista: React.FC<IncidenciaModalProps> = ({
 	useEffect(() => {
         if (isSuccess){
             reset({
-                incidencia_folio_accion_correctiva: "",
+                accion_correctiva_incidencia: "",
                 incidencia_personas_involucradas:  "",
               });
 			setDate("")
@@ -108,7 +108,7 @@ export const SeguimientoIncidenciaLista: React.FC<IncidenciaModalProps> = ({
 
 		if (editarSeguimiento && seguimientoSeleccionado) {
 			reset({
-                incidencia_folio_accion_correctiva: seguimientoSeleccionado.incidencia_folio_accion_correctiva || "",
+                accion_correctiva_incidencia: seguimientoSeleccionado.accion_correctiva_incidencia || "",
                 incidencia_personas_involucradas: seguimientoSeleccionado.incidencia_personas_involucradas || "",
               });
             setEvidencia(seguimientoSeleccionado.incidencia_evidencia_solucion)
@@ -120,7 +120,7 @@ export const SeguimientoIncidenciaLista: React.FC<IncidenciaModalProps> = ({
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		if (date) {
 			const formatData = {
-				incidencia_folio_accion_correctiva: values.incidencia_folio_accion_correctiva || "",
+				accion_correctiva_incidencia: values.accion_correctiva_incidencia || "",
 				incidencia_personas_involucradas: values.incidencia_personas_involucradas || "",
 				fecha_inicio_seg: values.fecha_inicio_seg ? formatFecha(values.fecha_inicio_seg) + `:00` : "2024-03-24 11:04:00",
 				incidencia_documento_solucion: documento,
@@ -185,7 +185,7 @@ export const SeguimientoIncidenciaLista: React.FC<IncidenciaModalProps> = ({
 								/>
 							<FormField
 								control={form.control}
-								name="incidencia_folio_accion_correctiva"
+								name="accion_correctiva_incidencia"
 								render={({ field }: any) => (
 									<FormItem>
 										<FormLabel>Acción realizada: *</FormLabel>

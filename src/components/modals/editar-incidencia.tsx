@@ -52,6 +52,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import Image from "next/image";
 import { SeguimientoIncidenciaLista } from "./add-seguimientos";
 import { AfectacionPatrimonialModal } from "./add-afectacion-patrimonial";
+import { formatCurrency } from "@/lib/utils";
 
 interface EditarIncidenciaModalProps {
   	title: string;
@@ -92,6 +93,7 @@ const formSchema = z.object({
 	tipo_dano_incidencia: z.string().optional(),
 	comentario_incidencia: z.string().min(1, { message: "Este campo es requerido" }),
 	incidencia: z.string().min(1, { message: "La ubicación es obligatoria" }),
+	tags: z.array(z.string()).optional(),
 
 	categoria:z.string().optional(),
 	sub_categoria:z.string().optional(),
@@ -161,16 +163,16 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 	const [loadingCatalogos, setLoadingCatalogos]= useState(false)
 
 	const { catIncidencias } = useCatalogoInciencias(modalEditarAbierto, categoria, subCategoria);
-	const [selectedNotificacion, setSelectedNotification] = useState(data.notificacion_incidencia);
+	const [selectedNotificacion, setSelectedNotification] = useState(data.notificacion_incidencia == "no" ? false:true);
 
-	const [tagsSeleccionados, setTagsSeleccionados] = useState<string[]>([]);
-	const [seguimientos, setSeguimientos] = useState<any>([]);
+	const [tagsSeleccionados, setTagsSeleccionados] = useState<string[]>(data.tags);
+	const [seguimientos, setSeguimientos] = useState<any>(data.seguimientos_incidencia);
 	const [indiceSeleccionado, setIndiceSeleccionado] = useState<number | null>(null);
 	const [editarSeguimiento, setEditarSeguimiento] = useState(false);
 	const [seguimientoSeleccionado, setSeguimientoSeleccionado] = useState(null);
 
 	const [afectacionPatrimonialSeleccionada, setAfectacionPatrimonialSeleccionada] = useState<AfectacionPatrimonial | null>(null);
-	const [afectacionPatrimonial,setAfectacionPatrimonial] = useState<AfectacionPatrimonial []>([])
+	const [afectacionPatrimonial,setAfectacionPatrimonial] = useState<AfectacionPatrimonial []>(data.afectacion_patrimonial_incidencia)
 	const [openAfectacionPatrimonialModal,setOpenAfectacionPatrimonialModal] = useState(false)
 	const [editarAfectacionPatrimonial, setEditarAfectacionPatrimonial] = useState(false)
 
@@ -190,8 +192,11 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 		}));
 	}
 
-
-
+	const getNivel = (val: number) => {
+		if (val < 35) return "Baja"
+		if (val > 34 && val < 70) return "Media"
+		if (val > 70) return "Alta"
+	}
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -206,8 +211,8 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 			dano_incidencia: data.dano_incidencia||"",
 			evidencia_incidencia: evidencia,
 			documento_incidencia:documento,
-			prioridad_incidencia: data.prioridad_incidencia ||"",
-			notificacion_incidencia: data.notificacion_incidencia ||"",
+			prioridad_incidencia:getNivel(value[0])||"",
+			notificacion_incidencia: selectedNotificacion? "correo":"no",
 			datos_deposito_incidencia: depositos,
 
 			//Categoria
@@ -245,16 +250,15 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 			marca:data.marca||"",
 			modelo:data.modelo||"",
 			color:data.color||"",
+
+			
 		},
 	});
-
-
 
 	useEffect(()=>{
 		if(!modalEditarAbierto){
 			resetStates()
 		}
-	
 	},[modalEditarAbierto]);	
 
 	const resetStates = ()=>{
@@ -283,7 +287,6 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 
 		setIndiceSeleccionado(null)
 		setTagsSeleccionados([])
-
 	}
 
 	useEffect(()=>{
@@ -329,7 +332,6 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 			setSelectedIncidencia(data.incidente)
 			setDepositos(data.datos_deposito_incidencia	)
 			handleOpenModal()
-			
 		}
 	},[modalEditarAbierto])
 
@@ -404,19 +406,14 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 					dano_incidencia:values.dano_incidencia||"",
 					evidencia_incidencia:evidencia||[],
 					documento_incidencia:documento||[],
-					prioridad_incidencia:values.prioridad_incidencia||"",
-					notificacion_incidencia:selectedNotificacion||"",
+					prioridad_incidencia:getNivel(value[0])||"",
+					notificacion_incidencia:selectedNotificacion ? "correo": "no",
 					datos_deposito_incidencia: depositos||[],
+					tags:tagsSeleccionados,
 
 					categoria: categoria,
 					sub_categoria: subCategoria,
 					incidente: selectedIncidencia,
-
-					//Grupos repetitivos
-					personas_involucradas_incidencia:personasInvolucradas||[],
-					acciones_tomadas_incidencia:accionesTomadas||[],
-					seguimientos_incidencia: seguimientos||[],
-					afectacion_patrimonial_incidencia: afectacionPatrimonial||[],
 
 					nombre_completo_persona_extraviada: values.nombre_completo_persona_extraviada,
 					edad: values.edad,
@@ -432,6 +429,12 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 					responsable_que_entrega: values.responsable_que_entrega,
 					responsable_que_recibe: values.responsable_que_recibe,
 				
+					//Grupos repetitivos
+					afectacion_patrimonial_incidencia:afectacionPatrimonial||[],
+					personas_involucradas_incidencia:personasInvolucradas||[],
+					acciones_tomadas_incidencia:accionesTomadas||[],
+					seguimientos_incidencia:seguimientos||[],
+
 					//Robo de cableado
 					valor_estimado: values.valor_estimado,
 					pertenencias_sustraidas: values.pertenencias_sustraidas,
@@ -455,16 +458,6 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 		}
 	}
 
-	const handleToggleNotifications = (value:string)=>{
-		const stringValue = !value? "no":"correo"
-		setSelectedNotification(stringValue);
-	}
-
-	const getNivel = (val: number) => {
-		if (val < 35) return "Baja"
-		if (val < 70) return "Media"
-		return "Alta"
-	}
 
 	const handleEdit = (item: any, index: number) => {
 		setEditarSeguimiento(true)
@@ -695,36 +688,6 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 											/>	
 										</>
 									):null}
-									<FormField
-										control={form.control}
-										name="area_incidencia"
-										render={({ field }:any) => (
-											<FormItem className="w-full">
-												<FormLabel>Area: *</FormLabel>
-												<FormControl>
-												<Select {...field} className="input"
-													onValueChange={(value:string) => {
-													field.onChange(value); 
-												}}
-												value={field.value} 
-											>
-												<SelectTrigger className="w-full">
-													<SelectValue placeholder="Selecciona una ubicacion" />
-												</SelectTrigger>
-												<SelectContent>
-												{areas?.map((vehiculo:string, index:number) => (
-													<SelectItem key={index} value={vehiculo}>
-														{vehiculo}
-													</SelectItem>
-												))}
-												</SelectContent>
-											</Select>
-												</FormControl>
-												<FormMessage />
-											</FormItem>
-										)}
-									/>
-
 
 										<FormField
 										control={form.control}
@@ -950,8 +913,8 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 										<div className="flex items-center flex-wrap gap-5">
 											<FormLabel>Notificaciones: {`(No/Correo)`}:  </FormLabel>
 												<Switch
-													defaultChecked={false}
-													onCheckedChange={()=>{handleToggleNotifications("no")}}
+													defaultChecked={selectedNotificacion}
+													onCheckedChange={()=>{ setSelectedNotification(!selectedNotificacion);}}
 													aria-readonly
 												/>
 										</div>
@@ -1013,24 +976,24 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 
 							<div >
 							{seguimientos && seguimientos.length > 0 ? (
-								<table className="min-w-full table-auto border-separate ">
+								<table className="min-w-full table-auto mb-5 border">
 									<thead>
-									<tr>
-										<th className="px-4 py-2 text-left border-b">Fecha y hora</th>
-										<th className="px-4 py-2 text-left border-b">Tiempo transcurrido</th>
-										<th className="px-4 py-2 text-left border-b">Acción realizada</th>
-										<th className="px-4 py-2 text-left border-b">Personas involucradas</th>
-										<th className="px-4 py-2 text-left border-b">Evidencia</th>
-										<th className="px-4 py-2 text-left border-b">Documentos</th>
-										<th className="px-4 py-2 text-left border-b">Acciones</th> 
+									<tr className="bg-gray-100">
+										<th className="px-4 py-2 text-left border-b border-gray-300">Fecha y hora</th>
+										<th className="px-4 py-2 text-left border-b border-gray-300">Tiempo transcurrido</th>
+										<th className="px-4 py-2 text-left border-b border-gray-300">Acción realizada</th>
+										<th className="px-4 py-2 text-left border-b border-gray-300">Personas involucradas</th>
+										<th className="px-4 py-2 text-left border-b border-gray-300">Evidencia</th>
+										<th className="px-4 py-2 text-left border-b border-gray-300">Documentos</th>
+										<th className="px-4 py-2 text-left border-b border-gray-300"></th>
 									</tr>
 									</thead>
 									<tbody>
 									{seguimientos.map((item: any, index: number) => (
-										<tr key={index}>
-										<td className="px-4 py-2">{item?.fechaInicioIncidenciaCompleta || "N/A"}</td>
+										<tr key={index} className="border-t border-gray-200">
+										<td className="px-4 py-2">{item?.fecha_inicio_seg || "N/A"}</td>
 										<td className="px-4 py-2">0 min</td>
-										<td className="px-4 py-2">{item?.incidencia_folio_accion_correctiva || "N/A"}</td>
+										<td className="px-4 py-2">{item?.accion_correctiva_incidencia || "N/A"}</td>
 										<td className="px-4 py-2">{item?.incidencia_personas_involucradas || "N/A"}</td>
 
 										<td className="px-4 py-2">
@@ -1081,10 +1044,10 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 											</ul>
 											) : (
 												<p>No hay documentos disponibles.</p>
-												)}
+											)}
 										</td>
 
-										<td className="flex items-center justify-center gap-2 mt-4 ">
+										<td className="flex items-center justify-center gap-2 mt-4 pr-2">
 											<div
 											title="Editar"
 											className="hover:cursor-pointer text-blue-500 hover:text-blue-600"
@@ -1134,21 +1097,22 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 
 								<div >
 								{afectacionPatrimonial && afectacionPatrimonial.length > 0 ? (
-									<table className="min-w-full table-auto border-separate ">
+									<table className="min-w-full table-auto mb-5 border">
 										<thead>
-										<tr>
-											<th className="px-4 py-2 text-left border-b">Tipo de Afectación</th>
-											<th className="px-4 py-2 text-left border-b">Monto Estimado de Daño ($)</th>
-											<th className="px-4 py-2 text-left border-b">Duración Estimada Afectación</th>
+										<tr className="bg-gray-100">
+											<th className="px-4 py-2 text-left border-b border-gray-300">Tipo de Afectación</th>
+											<th className="px-4 py-2 text-left border-b border-gray-300">Monto Estimado de Daño ($)</th>
+											<th className="px-4 py-2 text-left border-b border-gray-300">Duración Estimada Afectación</th>
+											<th className="px-4 py-2 text-left border-b border-gray-300"></th>
 										</tr>
 										</thead>
 										<tbody>
 										{afectacionPatrimonial.map((item: any, index: number) => (
-											<tr key={index}>
+											<tr key={index} className="border-t border-gray-200">
 											<td className="px-4 py-2">{item?.tipo_afectacion || "N/A"}</td>
-											<td className="px-4 py-2">{item?.monto_estimado || "N/A"}</td>
+											<td className="px-4 py-2">{formatCurrency(item?.monto_estimado) || "N/A"}</td>
 											<td className="px-4 py-2">{item?.duracion_estimada || "N/A"}</td>
-											<td className="flex items-center justify-center gap-2 mt-4 ">
+											<td className="flex items-center justify-center gap-2 mt-2 ">
 												<div
 												title="Editar"
 												className="hover:cursor-pointer text-blue-500 hover:text-blue-600"

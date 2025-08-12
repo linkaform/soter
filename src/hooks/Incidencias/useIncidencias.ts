@@ -1,6 +1,5 @@
 import { getStats } from "@/lib/get-stats";
 import { crearIncidencia, editarIncidencia, getListIncidencias, InputIncidencia } from "@/lib/incidencias";
-import { errorMsj } from "@/lib/utils";
 import { useShiftStore } from "@/store/useShiftStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -23,11 +22,9 @@ export const useInciencias = (location:string, area:string, prioridades:string[]
     const createIncidenciaMutation = useMutation({
         mutationFn: async ({ data_incidencia} : { data_incidencia: InputIncidencia }) => {
             const response = await crearIncidencia(data_incidencia);
-            const hasError= response.response.data.status_code
-
-            if(hasError == 400|| hasError == 401){
-                const textMsj = errorMsj(response.response.data) 
-                throw new Error(`Error al crear incidencia, Error: ${textMsj?.text}`);
+            if(response.success === false){
+                // const textMsj = errorMsj(response.error)
+                throw new Error(`Error al crear incidencia, Error: ${response.error}`);
             }else{
                 return response.response?.data
             }
@@ -56,9 +53,8 @@ export const useInciencias = (location:string, area:string, prioridades:string[]
             const response = await editarIncidencia(data_incidencia, folio);
             const hasError= response.response.data.status_code
 
-            if(hasError == 400 || hasError == 401){
-                const textMsj = errorMsj(response.response.data) 
-                throw new Error(`Error al editar incidencia, Error: ${textMsj?.text}`);
+            if(hasError == 400 || hasError == 401|| hasError == 500){
+                throw new Error(`Error al editar incidencia, Error: ${response?.response.data.json.error}`);
             }else{
                 return response.response?.data
             }
@@ -68,7 +64,7 @@ export const useInciencias = (location:string, area:string, prioridades:string[]
         },
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["getListIncidencias"] });
-          queryClient.invalidateQueries({ queryKey: ["getStats"] });
+          queryClient.invalidateQueries({ queryKey: ["getStatsIncidencias"] });
           toast.success("Incidencia editada correctamente.");
         },
         onError: (err) => {

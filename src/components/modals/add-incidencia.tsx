@@ -78,6 +78,7 @@ import { toast } from "sonner";
 import SeccionPersonasInvolucradas from "../personas-involucradas";
 import SeccionAccionesTomadas from "../acciones-tomadas";
 import { AfectacionPatrimonialModal } from "./add-afectacion-patrimonial";
+import { formatCurrency } from "@/lib/utils";
 
 interface AddIncidenciaModalProps {
   	title: string;
@@ -305,7 +306,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const { catIncidencias, isLoadingCatIncidencias } = useCatalogoInciencias(isSuccess, categoria, subCategoria);
 	const [catCategorias, setCatCategorias] = useState<any[]>([])
 	
-	const [selectedNotificacion, setSelectedNotification] = useState("no")
+	const [selectedNotificacion, setSelectedNotification] = useState(false)
 	const [value, setValue] = useState([50])
 	const [inputTag, setInputTag] = useState('');
 	const [tagsSeleccionados, setTagsSeleccionados] = useState<string[]>([]);
@@ -473,10 +474,6 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 		}
 	},[loading])
 
-	const handleToggleNotifications = (value:string)=>{
-		setSelectedNotification(value);
-	}
-
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		let formattedDate=""
 		if(date){
@@ -493,7 +490,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 					evidencia_incidencia:evidencia||[],
 					documento_incidencia:documento||[],
 					prioridad_incidencia:getNivel(value[0])||"",
-					notificacion_incidencia:selectedNotificacion||"",
+					notificacion_incidencia:selectedNotificacion? "correo":"no",
 					datos_deposito_incidencia: depositos,
 					tags:tagsSeleccionados,
 					categoria:categoria,
@@ -531,6 +528,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 					modelo: values.modelo,
 					color: values.color,
 				}
+				console.log("format data", formatData)
 				createIncidenciaMutation.mutate({ data_incidencia: formatData });
 		}else{
 			form.setError("fecha_hora_incidencia", { type: "manual", message: "Fecha es un campo requerido." });
@@ -543,8 +541,8 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 
 	const getNivel = (val: number) => {
 		if (val < 35) return "Baja"
-		if (val < 70) return "Media"
-		return "Alta"
+		if (val > 34 && val < 70) return "Media"
+		if (val > 70) return "Alta"
 	}
 
 	
@@ -601,7 +599,6 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 									<div
 									key={cat.id}
 									onClick={() => { 
-										console.log("primera cat seleccionada", cat.nombre)
 										setSearch("cat")
 										setCategoria(cat.nombre)
 									}}
@@ -621,7 +618,6 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 						<>
 							<button
 							onClick={() => {
-								console.log("segunda cat seleccionada")
 								setSearch("");  
 								setSelectedIncidencia("")
 								}
@@ -656,19 +652,14 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 							<button
 							onClick={() => {
 								if(catSubCategorias.length==0){
-									console.log("entrando sub categorias 0" )
 									setSearch("");
 									setCategoria("");
 									setSubCategoria("");
 									setSelectedIncidencia("")
 								}else{
-									console.log("entrando sub categorias si tiene algo " )
 									setSearch("cat");
 									setCategoria(categoria)
 								}
-								// setSubCategoria("")
-
-								// setSelectedIncidencia("")
 								}
 							}
 							className="flex items-center gap-1 mb-2 text-blue-600 hover:text-blue-800"
@@ -942,7 +933,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 											<FormLabel>Notificaciones: {`(No/Correo)`}:  </FormLabel>
 												<Switch
 													defaultChecked={false}
-													onCheckedChange={()=>{handleToggleNotifications("no")}}
+													onCheckedChange={()=>{setSelectedNotification(!selectedNotificacion)}}
 													aria-readonly
 												/>
 										</div>
@@ -1004,24 +995,24 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 
 							<div >
 							{seguimientos && seguimientos.length > 0 ? (
-								<table className="min-w-full table-auto border-separate ">
+								<table className="min-w-full table-auto mb-5 border">
 									<thead>
-									<tr>
-										<th className="px-4 py-2 text-left border-b">Fecha y hora</th>
-										<th className="px-4 py-2 text-left border-b">Tiempo transcurrido</th>
-										<th className="px-4 py-2 text-left border-b">Acción realizada</th>
-										<th className="px-4 py-2 text-left border-b">Personas involucradas</th>
-										<th className="px-4 py-2 text-left border-b">Evidencia</th>
-										<th className="px-4 py-2 text-left border-b">Documentos</th>
-										<th className="px-4 py-2 text-left border-b">Acciones</th> 
+									<tr className="bg-gray-100">
+										<th className="px-4 py-2 text-left border-b border-gray-300">Fecha y hora</th>
+										<th className="px-4 py-2 text-left border-b border-gray-300">Tiempo transcurrido</th>
+										<th className="px-4 py-2 text-left border-b border-gray-300">Acción realizada</th>
+										<th className="px-4 py-2 text-left border-b border-gray-300">Personas involucradas</th>
+										<th className="px-4 py-2 text-left border-b border-gray-300">Evidencia</th>
+										<th className="px-4 py-2 text-left border-b border-gray-300">Documentos</th>
+										<th className="px-4 py-2 text-left border-b border-gray-300">Acciones</th> 
 									</tr>
 									</thead>
 									<tbody>
 									{seguimientos.map((item: any, index: number) => (
-										<tr key={index}>
+										<tr key={index} className="border-t border-gray-200">
 										<td className="px-4 py-2">{item?.fecha_inicio_seg || "N/A"}</td>
 										<td className="px-4 py-2">0 min</td>
-										<td className="px-4 py-2">{item?.incidencia_folio_accion_correctiva || "N/A"}</td>
+										<td className="px-4 py-2">{item?.accion_correctiva_incidencia || "N/A"}</td>
 										<td className="px-4 py-2">{item?.incidencia_personas_involucradas || "N/A"}</td>
 
 										<td className="px-4 py-2">
@@ -1075,7 +1066,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 												)}
 										</td>
 
-										<td className="flex items-center justify-center gap-2 mt-4 ">
+										<td className="flex items-center justify-center gap-2 mt-2">
 											<div
 											title="Editar"
 											className="hover:cursor-pointer text-blue-500 hover:text-blue-600"
@@ -1125,21 +1116,22 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 
 								<div >
 								{afectacionPatrimonial && afectacionPatrimonial.length > 0 ? (
-									<table className="min-w-full table-auto border-separate ">
+									<table className="min-w-full table-auto mb-5 border">
 										<thead>
-										<tr>
-											<th className="px-4 py-2 text-left border-b">Tipo de Afectación</th>
-											<th className="px-4 py-2 text-left border-b">Monto Estimado de Daño ($)</th>
-											<th className="px-4 py-2 text-left border-b">Duración Estimada Afectación</th>
+										<tr className="bg-gray-100">
+											<th className="px-4 py-2 text-left border-b border-gray-300">Tipo de Afectación</th>
+											<th className="px-4 py-2 text-left border-b border-gray-300">Monto Estimado de Daño ($)</th>
+											<th className="px-4 py-2 text-left border-b border-gray-300">Duración Estimada Afectación</th>
+											<th className="px-4 py-2 text-left border-b border-gray-300"></th>
 										</tr>
 										</thead>
 										<tbody>
 										{afectacionPatrimonial.map((item: any, index: number) => (
-											<tr key={index}>
+											<tr key={index} className="border-t border-gray-200">
 											<td className="px-4 py-2">{item?.tipo_afectacion || "N/A"}</td>
-											<td className="px-4 py-2">{item?.monto_estimado || "N/A"}</td>
+											<td className="px-4 py-2">{formatCurrency(item?.monto_estimado) || "N/A"}</td>
 											<td className="px-4 py-2">{item?.duracion_estimada || "N/A"}</td>
-											<td className="flex items-center justify-center gap-2 mt-4 ">
+											<td className="flex items-center justify-center gap-2 mt-2">
 												<div
 												title="Editar"
 												className="hover:cursor-pointer text-blue-500 hover:text-blue-600"

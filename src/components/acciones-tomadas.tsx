@@ -55,51 +55,53 @@ const SeccionAccionesTomadas:React.FC<PersonasInvolucradasListProps> = ({ accion
 			<div></div>
 		</AccionesTomadasModal>
 
-      {accionesTomadas && accionesTomadas.length > 0 ? (
-			<table className="min-w-full table-auto border-separate mb-5">
-				<thead>
-				<tr>
-					<th className="px-4 py-2 text-left border-b">Acciones Tomadas</th>
-					<th className="max-w-28 px-4 py-2 text-left border-b">Llamado a la Policia </th>
-					<th className="px-4 py-2 text-left border-b">Autoridad </th>
-					<th className="px-4 py-2 text-left border-b">No. Folio </th>
-					<th className="px-4 py-2 text-left border-b">Responsable</th>
-					<th className="px-4 py-2 text-left border-b"></th>
-				</tr>
-				</thead>
-				<tbody>
-				{accionesTomadas.map((item, index) => (
-					<tr key={index}>
-					<td className="px-4 py-2">{item.acciones_tomadas}</td>
-					<td className="px-4 py-2">{item.llamo_a_policia}</td>
-					<td className="px-4 py-2">{item.autoridad}</td>
-					<td className="px-4 py-2">{item.numero_folio_referencia}</td>
-					<td className="px-4 py-2">{item.responsable}</td>
-					<td className="flex items-center justify-center gap-2 mt-4 ">
-						<div
+		{accionesTomadas && accionesTomadas.length > 0 ? (
+		<table className="min-w-full table-auto mb-5 border">
+			<thead>
+			<tr className="bg-gray-100">
+				<th className="px-4 py-2 text-left border-b border-gray-300">Acciones Tomadas</th>
+				<th className="px-4 py-2 text-left border-b border-gray-300">Llamado a la Policía</th>
+				<th className="px-4 py-2 text-left border-b border-gray-300">Autoridad</th>
+				<th className="px-4 py-2 text-left border-b border-gray-300">No. Folio</th>
+				<th className="px-4 py-2 text-left border-b border-gray-300">Responsable</th>
+				<th className="px-4 py-2 text-left border-b border-gray-300"></th>
+			</tr>
+			</thead>
+			<tbody>
+			{accionesTomadas.map((item, index) => (
+				<tr key={index} className="border-t border-gray-200">
+				<td className="px-4 py-2">{item.acciones_tomadas}</td>
+				<td className="px-4 py-2">{item.llamo_a_policia}</td>
+				<td className="px-4 py-2">{item.autoridad}</td>
+				<td className="px-4 py-2">{item.numero_folio_referencia}</td>
+				<td className="px-4 py-2">{item.responsable}</td>
+				<td className="px-4 py-2">
+					<div className="flex items-center justify-center gap-2">
+					<div
 						title="Editar"
 						className="hover:cursor-pointer text-blue-500 hover:text-blue-600"
 						onClick={() => handleEditAccionesTomadas(item, index)}
-						>
-							<Edit/>
-						</div>
-						<div
+					>
+						<Edit />
+					</div>
+					<div
 						title="Borrar"
 						className="hover:cursor-pointer text-red-500 hover:text-red-600"
 						onClick={() => handleDeleteAccionesTomadas(index)}
-						>
-							<Trash2/>
-						</div>
-					</td>
-					</tr>
-				))}
-				</tbody>
-         	 </table>
-        ) : (
-			<div className="mt-3">
-          		<div className="text-center text-gray-500 mb-4">No hay acciones tomadas.</div>
-			</div>
-        )}
+					>
+						<Trash2 />
+					</div>
+					</div>
+				</td>
+				</tr>
+			))}
+			</tbody>
+		</table>
+		) : (
+		<div className="mt-3">
+			<div className="text-center text-gray-500 mb-4">No hay acciones tomadas.</div>
+		</div>
+		)}
 
     </div>
   );

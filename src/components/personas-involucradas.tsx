@@ -57,23 +57,23 @@ const SeccionPersonasInvolucradas:React.FC<PersonasInvolucradasListProps> = ({ p
 			<div></div>
 		</PersonasInvolucradasModal>
 			
-      {personasInvolucradas && personasInvolucradas.length > 0 ? (
-			<table className="min-w-full table-auto border-separate mb-5">
+			{personasInvolucradas && personasInvolucradas.length > 0 ? (
+			<table className="min-w-full table-auto mb-5 border">
 				<thead>
-				<tr>
-					<th className="px-4 py-2 text-left border-b">Nombre completo</th>
-					<th className="px-4 py-2 text-left border-b">Rol </th>
-					<th className="px-4 py-2 text-left border-b">Sexo </th>
-					<th className="px-4 py-2 text-left border-b">Grupo Etario</th>
-					<th className="px-4 py-2 text-left border-b">Atención Médica</th>
-					<th className="px-4 py-2 text-left border-b">Retenido</th>
-					<th className="px-4 py-2 text-left border-b">Comentarios/ Observaciones</th>
-					<th className="px-4 py-2 text-left border-b"></th>
+				<tr className="bg-gray-100">
+					<th className="px-4 py-2 text-left border-b border-gray-300">Nombre completo</th>
+					<th className="px-4 py-2 text-left border-b border-gray-300">Rol</th>
+					<th className="px-4 py-2 text-left border-b border-gray-300">Sexo</th>
+					<th className="px-4 py-2 text-left border-b border-gray-300">Grupo Etario</th>
+					<th className="px-4 py-2 text-left border-b border-gray-300">Atención Médica</th>
+					<th className="px-4 py-2 text-left border-b border-gray-300">Retenido</th>
+					<th className="px-4 py-2 text-left border-b border-gray-300">Comentarios / Observaciones</th>
+					<th className="px-4 py-2 text-left border-b border-gray-300"></th>
 				</tr>
 				</thead>
 				<tbody>
 				{personasInvolucradas.map((item, index) => (
-					<tr key={index}>
+					<tr key={index} className="border-t border-gray-200">
 					<td className="px-4 py-2">{item.nombre_completo}</td>
 					<td className="px-4 py-2">{item.rol}</td>
 					<td className="px-4 py-2">{item.sexo}</td>
@@ -82,33 +82,35 @@ const SeccionPersonasInvolucradas:React.FC<PersonasInvolucradasListProps> = ({ p
 					<td className="px-4 py-2">{item.retenido}</td>
 					<td className="px-4 py-2 capitalize">{item.comentarios || "N/A"}</td>
 					<td className="flex items-center justify-center gap-2 mt-4 ">
+						<div className="flex items-center justify-center gap-2">
 						<div
-						title="Editar"
-						className="hover:cursor-pointer text-blue-500 hover:text-blue-600"
-						onClick={() => handleEditPersonasInvolucradas(item, index)}
+							title="Editar"
+							className="hover:cursor-pointer text-blue-500 hover:text-blue-600"
+							onClick={() => handleEditPersonasInvolucradas(item, index)}
 						>
-							<Edit/>
+							<Edit />
 						</div>
 						<div
-						title="Borrar"
-						className="hover:cursor-pointer text-red-500 hover:text-red-600"
-						onClick={() => handleDeletePersonasInvolucradas(index)}
+							title="Borrar"
+							className="hover:cursor-pointer text-red-500 hover:text-red-600"
+							onClick={() => handleDeletePersonasInvolucradas(index)}
 						>
-							<Trash2/>
+							<Trash2 />
+						</div>
 						</div>
 					</td>
 					</tr>
 				))}
 				</tbody>
-         	 </table>
-        ) : (
+			</table>
+			) : (
 			<div className="mt-3">
-          		<div className="text-center text-gray-500 mb-4">No hay personas involucradas.</div>
+				<div className="text-center text-gray-500 mb-4">No hay personas involucradas.</div>
 			</div>
-        )}
+			)}
 
-    </div>
-  );
+		</div>
+	);
 };
 
 export default SeccionPersonasInvolucradas;

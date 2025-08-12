@@ -170,8 +170,11 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
 										<FormControl>
 											<Input placeholder="Monto estimado del daño..." {...field}
 												onChange={(e) => {
-													field.onChange(e);
-												}}
+                                                    const value = e.target.value;
+                                                    if (/^\d*\.?\d*$/.test(value)) {
+                                                      field.onChange(e); // Solo si es número válido (entero o decimal)
+                                                    }
+                                                  }}
 												value={field.value || ""}
 											/>
 										</FormControl>

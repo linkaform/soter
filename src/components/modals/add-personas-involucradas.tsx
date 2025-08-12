@@ -63,7 +63,6 @@ export const PersonasInvolucradasModal: React.FC<IncidenciaModalProps> = ({
     setPersonasInvolucradasSeleccion
 }) => {
 	const { isLoading} = useShiftStore();
-    console.log("persona seleccionada", personasInvolucradasSeleccion)
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
