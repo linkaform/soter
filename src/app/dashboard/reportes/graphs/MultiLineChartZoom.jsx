@@ -475,7 +475,7 @@ const MultiLineChartZoom = ({ data = [] }) => {
 
   if (!data || data.length === 0) {
     return (
-      <div className="flex items-center justify-center h-96 text-gray-400">
+      <div className="flex items-center justify-center h-[34rem] text-gray-400">
         <div className="text-xl">No hay datos de inspecciones disponibles</div>
       </div>
     );
@@ -529,7 +529,7 @@ const MultiLineChartZoom = ({ data = [] }) => {
       </div>
 
       {/* ✅ Gráfico con overlay de transición */}
-      <div className="relative h-96 w-full">
+      <div className="relative h-[34rem] w-full">
         {/* Overlay de transición */}
         <div className={`absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex items-center justify-center transition-all duration-300 ${
           isTransitioning 
