@@ -121,3 +121,63 @@ export const exportFilteredData = (
         return false;
     }
 };
+
+// ✅ Nueva función simple para exportar solo stats
+export const exportStatsSimple = (
+    stats: any[],
+    filename: string = 'estadisticas_reporte'
+) => {
+    try {
+        // ✅ Formatear datos del arreglo stats para Excel
+        const excelData = stats.map((stat, index) => ({
+            'No.': index + 1,
+            'Estadística': stat.label || '',
+            'Valor': stat.value || '',
+            'Descripción': getStatDescription(stat.label || ''),
+        }));
+
+        // ✅ Crear workbook y worksheet
+        const workbook = XLSX.utils.book_new();
+        const worksheet = XLSX.utils.json_to_sheet(excelData);
+
+        // ✅ Configurar ancho de columnas
+        const columnWidths = [
+            { width: 8 },   // No.
+            { width: 35 },  // Estadística
+            { width: 15 },  // Valor
+            { width: 45 },  // Descripción
+        ];
+        worksheet['!cols'] = columnWidths;
+
+        // ✅ Agregar worksheet al workbook
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Estadísticas');
+
+        // ✅ Generar y descargar archivo
+        const now = new Date();
+        const timestamp = now.toISOString().split('T')[0];
+        const fullFilename = `${filename}_${timestamp}.xlsx`;
+
+        XLSX.writeFile(workbook, fullFilename);
+        return true;
+
+    } catch (error) {
+        console.error('Error al exportar estadísticas:', error);
+        return false;
+    }
+};
+
+// ✅ Función auxiliar para descripciones
+const getStatDescription = (label: string): string => {
+    const descriptions: { [key: string]: string } = {
+        'Habitaciones inspeccionadas': 'Total de habitaciones que han sido inspeccionadas',
+        'Habitaciones remodeladas': 'Cantidad de habitaciones que han sido remodeladas',
+        'Aciertos (Si)': 'Total de criterios cumplidos satisfactoriamente',
+        'Fallas (No)': 'Total de criterios que no cumplieron con los estándares',
+        'Calificacion maxima': 'La calificación más alta obtenida en las inspecciones',
+        'Calificacion minima': 'La calificación más baja obtenida en las inspecciones',
+        'Calificacion promedio': 'Promedio general de todas las calificaciones',
+        'Calificacion de hotel': 'Calificación específica del hotel seleccionado',
+        'Calificacion de los hoteles': 'Calificación promedio de los hoteles seleccionados'
+    };
+    return descriptions[label] || 'Estadística del reporte de fallas';
+};

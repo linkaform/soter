@@ -10,6 +10,7 @@ import {
 	Grid3x3,
 	Play,
 	Square,
+	FileSpreadsheet,
 } from "lucide-react";
 import GaugeChart from "../graphs/GaugeChart";
 import MultiLineChart from "../graphs/MultiLineChart";
@@ -37,6 +38,7 @@ import FallaBadge from "../components/FallaBadge";
 import Multiselect from "multiselect-react-dropdown";
 import { useGetAvancesInspecciones, useGetHoteles, useReportFallas } from "../hooks/useReportFallas";
 import { formatNumber } from "../utils/formatNumber";
+import { exportStatsSimple } from "../utils/exportUtils";
 
 import {
 	Bed,
@@ -93,6 +95,7 @@ const ReportsPage = () => {
 	const hotelesFotografias = reportFallas?.rooms_details ?? [];
 	const hotelesComentarios = reportFallas?.rooms_details ?? [];
 	const [hotelHabitaciones, setHotelHabitaciones] = useState<any[]>([]);
+	const [isExportingStats, setIsExportingStats] = useState(false); // ✅ Agregar estado
 	const [hotelHabitacion, setHotelHabitacion] = useState<any>();
 	const {
 		avancesInspecciones,
@@ -203,6 +206,25 @@ const ReportsPage = () => {
 			setImageGrid(cols)
 		}
 	}
+
+	const handleExportStats = async () => {
+		setIsExportingStats(true);
+
+		try {
+			const success = exportStatsSimple(stats, 'estadisticas_reporte_fallas');
+
+			if (success) {
+				console.log('✅ Estadísticas exportadas exitosamente');
+			} else {
+				alert('Error al generar el archivo de estadísticas');
+			}
+		} catch (error) {
+			console.error('❌ Error durante la exportación de estadísticas:', error);
+			alert('Error al exportar las estadísticas');
+		} finally {
+			setIsExportingStats(false);
+		}
+	};
 
 	const handleGetReport = () => {
 		setFilters({
@@ -535,10 +557,31 @@ const ReportsPage = () => {
 								<StatCard key={idx} icon={stat.icon} value={stat.value} label={stat.label} />
 							))}
 						</div>
-						<div>
+						<div className="flex flex-col gap-2">
+							{/* ✅ Contenedor del gauge chart */}
 							<div className="border p-4 h-full flex items-center rounded-lg">
 								<GaugeChart porcentaje={porcentaje} />
 							</div>
+
+							{/* ✅ Botón simple de exportar estadísticas */}
+							<Button
+								onClick={handleExportStats}
+								disabled={isExportingStats || !stats || stats.length === 0}
+								className="bg-green-600 hover:bg-green-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+								size="sm"
+							>
+								{isExportingStats ? (
+									<>
+										<div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+										Exportando...
+									</>
+								) : (
+									<>
+										<FileSpreadsheet className="mr-2 h-4 w-4" />
+										Exportar Stats
+									</>
+								)}
+							</Button>
 						</div>
 					</div>
 					<div className="flex flex-col w-11/12 m-auto mt-6 gap-4 border p-4 rounded-lg">
