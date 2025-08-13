@@ -1,5 +1,7 @@
 import React, { useRef, useEffect, useMemo, useState } from 'react';
 import Chart from 'chart.js';
+import { HotelProgressModal } from '../modals/HotelProgressModal';
+import { Table } from 'lucide-react';
 
 const COLORS = [
   '#e74c3c', // Rojo
@@ -473,6 +475,29 @@ const MultiLineChartZoom = ({ data = [] }) => {
     }, 150);
   };
 
+  // ✅ Preparar datos para el modal de tabla
+  const hotelProgressData = useMemo(() => {
+    if (!data || data.length === 0 || zoomLevel !== 'week') return [];
+
+    return data.map(hotel => {
+      // Obtener el último porcentaje conocido para este hotel
+      let ultimoPorcentaje = 0;
+      
+      hotel.cuatrimestres_data.forEach(cuatrimestre => {
+        cuatrimestre.dias_data?.forEach(dia => {
+          if (dia.porcentaje_progresivo > ultimoPorcentaje) {
+            ultimoPorcentaje = dia.porcentaje_progresivo;
+          }
+        });
+      });
+
+      return {
+        hotel: hotel.hotel,
+        porcentaje_inspeccion: ultimoPorcentaje
+      };
+    }).sort((a, b) => b.porcentaje_inspeccion - a.porcentaje_inspeccion); // Ordenar por porcentaje descendente
+  }, [data, zoomLevel]);
+
   if (!data || data.length === 0) {
     return (
       <div className="flex items-center justify-center h-[34rem] text-gray-400">
@@ -518,13 +543,26 @@ const MultiLineChartZoom = ({ data = [] }) => {
           </div>
         </div>
 
-        {/* ✅ Info con contador animado */}
-        <div className="text-sm text-gray-500 transition-all duration-300">
-          🏨 {data.length} hoteles • 📊 
-          <span className="inline-block transition-all duration-300 transform">
-            {currentData.labels?.length || 0}
-          </span> puntos • 
-          {zoomLevel === 'week' ? '📈 % Progreso Semanal' : '📋 Inspecciones Diarias'} {/* ✅ Cambiar texto */}
+        {/* ✅ Controles del lado derecho */}
+        <div className="flex items-center gap-3">
+          {/* ✅ Nuevo botón para ver en tabla (solo en vista semanal) */}
+          {zoomLevel === 'week' && hotelProgressData.length > 0 && (
+            <HotelProgressModal hotelData={hotelProgressData}>
+              <button className="flex items-center gap-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-all duration-200 transform hover:scale-105">
+                <Table className="h-4 w-4" />
+                Ver en Vista Tabla
+              </button>
+            </HotelProgressModal>
+          )}
+
+          {/* ✅ Info con contador animado */}
+          <div className="text-sm text-gray-500 transition-all duration-300">
+            🏨 {data.length} hoteles • 📊 
+            <span className="inline-block transition-all duration-300 transform">
+              {currentData.labels?.length || 0}
+            </span> puntos • 
+            {zoomLevel === 'week' ? '📈 % Progreso Semanal' : '📋 Inspecciones Diarias'}
+          </div>
         </div>
       </div>
 
