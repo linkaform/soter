@@ -24,7 +24,8 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";
-// import { Download } from "lucide-react";
+import { FileSpreadsheet } from "lucide-react";
+import { exportToExcel, exportFilteredData } from "../utils/exportUtils";
 
 interface ListProps {
     isLoading: boolean;
@@ -43,8 +44,8 @@ const HabitacionesInspeccionadasTable: React.FC<ListProps> = ({
         pageIndex: 0,
         pageSize: 10,
     });
-
     const [globalFilter, setGlobalFilter] = React.useState("");
+    const [isExporting, setIsExporting] = React.useState(false);
 
     const table = useReactTable({
         data: habitaciones || [],
@@ -70,6 +71,36 @@ const HabitacionesInspeccionadasTable: React.FC<ListProps> = ({
         },
     });
 
+    // ✅ Función para manejar la descarga
+    const handleDownload = async () => {
+        setIsExporting(true);
+
+        try {
+            let success = false;
+
+            if (globalFilter || columnFilters.length > 0) {
+                // ✅ Exportar solo datos filtrados si hay filtros activos
+                success = exportFilteredData(table, 'habitaciones_filtradas');
+            } else {
+                // ✅ Exportar todos los datos si no hay filtros
+                success = exportToExcel(habitaciones, 'habitaciones_inspeccionadas');
+            }
+
+            if (success) {
+                // ✅ Opcional: mostrar mensaje de éxito
+                console.log('✅ Descarga completada exitosamente');
+            } else {
+                console.error('❌ Error al generar el archivo');
+                alert('Error al generar el archivo de descarga');
+            }
+        } catch (error) {
+            console.error('❌ Error durante la descarga:', error);
+            alert('Error al descargar el archivo');
+        } finally {
+            setIsExporting(false);
+        }
+    };
+
     return (
         <div className="w-full">
             <div className="flex justify-between items-center my-5">
@@ -80,9 +111,33 @@ const HabitacionesInspeccionadasTable: React.FC<ListProps> = ({
                     onChange={(e) => setGlobalFilter(e.target.value)}
                     className="border border-gray-300 rounded-md p-2 h-12 w-full max-w-xs"
                 />
-                {/* <Button className="bg-white text-black border-black border hover:text-white hover:bg-black">
-                    <Download /> Exportar
-                </Button> */}
+
+                {/* ✅ Botón de descarga mejorado */}
+                <div className="flex gap-2">
+                    <div className="text-sm text-gray-500 flex items-center">
+                        {globalFilter || columnFilters.length > 0
+                            ? `${table.getFilteredRowModel().rows.length} registros filtrados`
+                            : `${habitaciones.length} registros totales`
+                        }
+                    </div>
+                    <Button
+                        onClick={handleDownload}
+                        disabled={isExporting || isLoading || habitaciones.length === 0}
+                        className="bg-white text-black border-black border hover:text-white hover:bg-black disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        {isExporting ? (
+                            <>
+                                <div className="animate-spin rounded-full h-4 w-4 border-2 border-black border-t-transparent mr-2"></div>
+                                Exportando...
+                            </>
+                        ) : (
+                            <>
+                                <FileSpreadsheet className="mr-2 h-4 w-4" />
+                                Exportar Excel
+                            </>
+                        )}
+                    </Button>
+                </div>
             </div>
 
             <ScrollArea className="h-100 w-full border rounded-md">
