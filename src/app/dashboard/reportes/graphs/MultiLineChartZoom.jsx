@@ -29,47 +29,59 @@ const MultiLineChartZoom = ({ data = [] }) => {
   const [selectedWeekRange, setSelectedWeekRange] = useState(null);
   const [isTransitioning, setIsTransitioning] = useState(false); // ✅ Nuevo estado
 
-  // ✅ Función para obtener el lunes de una fecha
+  // ✅ Función corregida y con debugging para getMondayOfWeek
   const getMondayOfWeek = React.useCallback((date) => {
-    const d = new Date(date);
-    const dayOfWeek = d.getDay();
-    const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Domingo = 6, Lunes = 0
+    const d = new Date(date + 'T00:00:00'); // ✅ Agregar hora para evitar problemas de timezone
+    const day = d.getDay(); // 0 = Domingo, 1 = Lunes, ..., 6 = Sábado
+    
+    console.log(`Fecha original: ${date}, Día de semana: ${day} (${['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'][day]})`);
+    
+    // ✅ Convertir domingo (0) a 7 para facilitar el cálculo
+    const dayOfWeek = day === 0 ? 7 : day;
+    
+    // ✅ Calcular días para retroceder al lunes (día 1)
+    const daysToSubtract = dayOfWeek - 1;
+    
     const monday = new Date(d);
-    monday.setDate(d.getDate() - mondayOffset);
-    return monday.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+    monday.setDate(d.getDate() - daysToSubtract);
+    
+    const mondayString = monday.toISOString().split('T')[0];
+    console.log(`Lunes calculado: ${mondayString} (${monday.toLocaleDateString('es-ES', { weekday: 'long' })})`);
+    
+    return mondayString;
   }, []);
 
-  // ✅ Función para generar todos los días de una semana
+  // ✅ Función mejorada para generar todos los días de una semana
   const getDaysOfWeek = React.useCallback((mondayDate) => {
     const days = [];
-    const monday = new Date(mondayDate);
+    const monday = new Date(mondayDate + 'T00:00:00'); // ✅ Agregar hora para evitar problemas de timezone
+    
+    console.log(`Generando días desde lunes: ${mondayDate}`);
     
     for (let i = 0; i < 7; i++) {
       const day = new Date(monday);
       day.setDate(monday.getDate() + i);
-      days.push(day.toISOString().split('T')[0]);
+      const dayString = day.toISOString().split('T')[0];
+      days.push(dayString);
+      console.log(`Día ${i}: ${dayString} (${day.toLocaleDateString('es-ES', { weekday: 'long' })})`);
     }
     
     return days;
   }, []);
 
-  // ✅ Función para formatear fecha de semana
-  const formatWeekLabel = React.useCallback((mondayDate, cuatrimestre) => {
-    const monday = new Date(mondayDate);
+  // ✅ Agregar la función formatWeekLabel que falta
+  const formatWeekLabel = React.useCallback((mondayDate) => {
+    const monday = new Date(mondayDate + 'T00:00:00');
     const sunday = new Date(monday);
     sunday.setDate(monday.getDate() + 6);
-    
-    const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 
-                       'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
-    
-    const startMonth = monthNames[monday.getMonth()];
-    const endMonth = monthNames[sunday.getMonth()];
-    
-    if (startMonth === endMonth) {
-      return `C${cuatrimestre}-${startMonth}-${monday.getDate()}-${sunday.getDate()}`;
-    } else {
-      return `C${cuatrimestre}-${startMonth}${monday.getDate()}-${endMonth}${sunday.getDate()}`;
-    }
+
+    const formatDate = (date) => {
+      const day = date.getDate();
+      const month = date.toLocaleDateString('es-ES', { month: 'short' });
+      return `${day}/${month}`;
+    };
+
+    return `${formatDate(monday)} - ${formatDate(sunday)}`;
   }, []);
 
   // ✅ Modificar groupByWeeks para mantener el progreso acumulativo
