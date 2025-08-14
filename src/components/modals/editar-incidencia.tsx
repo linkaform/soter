@@ -42,7 +42,6 @@ import { useCatalogoInciencias } from "@/hooks/useCatalogoIncidencias";
 import { Slider } from "../slider";
 import { Switch } from "@/components/ui/switch"
 import { toast } from "sonner";
-import DepositosList from "../depositos-list";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Card, CardContent } from "../ui/card";
 import { Input } from "../ui/input";
@@ -53,6 +52,7 @@ import Image from "next/image";
 import { SeguimientoIncidenciaLista } from "./add-seguimientos";
 import { AfectacionPatrimonialModal } from "./add-afectacion-patrimonial";
 import { formatCurrency } from "@/lib/utils";
+import { SeccionDepositos } from "../depositos-section";
 
 interface EditarIncidenciaModalProps {
   	title: string;
@@ -939,7 +939,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 										)}
 										{selectedIncidencia=="Depósitos y retiros de valores" && 
 										<div className="col-span-1 md:col-span-2">
-											<DepositosList depositos={depositos} setDepositos={setDepositos} ></DepositosList>
+											<SeccionDepositos depositos={depositos} setDepositos={setDepositos} ></SeccionDepositos>
 										</div>
 										}
 									</form>

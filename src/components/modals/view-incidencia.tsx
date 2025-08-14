@@ -12,7 +12,7 @@ import Image from "next/image";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
 import { Card, CardContent } from "../ui/card";
 import { Incidencia_record } from "../table/incidencias/incidencias-columns";
-import { capitalizeFirstLetter, formatCurrency, formatDateToText } from "@/lib/utils";
+import {  formatCurrency, formatDateToText } from "@/lib/utils";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import { Depositos } from "@/lib/incidencias";
 
@@ -56,7 +56,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 			</TabsList>
 
 				<TabsContent value="datos" >
-					<Card className="p-3 max-h-screen">
+					<Card className="p-3 ">
 						<div >
 							<div className="flex gap-2 mb-4">
 								<CircleAlert />
@@ -188,7 +188,43 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 
 				
 								<Separator></Separator>
-								{data.datos_deposito_incidencia.length>0 && data.incidente == "Depósitos y retiros de valores" ? 
+							{data.datos_deposito_incidencia.length>0 && data.incidente == "Depósitos y retiros de valores" ? 
+								<>	
+								<div className="my-2 font-bold text-lg">Depositos: </div>
+								<table className="min-w-full table-auto mb-5 border" >
+									<thead>
+										<tr className="bg-gray-100">
+											<th className="px-4 py-2 text-left border-b border-gray-300">Tipo deposito</th>
+											<th className="px-4 py-2 text-left border-b border-gray-300">Origen</th>
+											<th className="px-4 py-2 text-left border-b border-gray-300">Cantidad</th>
+										</tr>
+									</thead>
+									<tbody>
+										{data.datos_deposito_incidencia.length > 0 ? (
+											data.datos_deposito_incidencia.map((item, index) => (
+												<tr key={index} className="border-t border-gray-200">
+													<td className="px-4 py-2">{item.tipo_deposito}</td>
+													<td className="px-4 py-2">{item.origen}</td>
+													<td className="px-4 py-2 text-right">{formatCurrency(item.cantidad) ?? 0}</td>
+												</tr>
+											))
+										) : (
+											<tr>
+												<td colSpan={4} className="text-center text-gray-500 py-4">
+													No hay depósitos agregados.
+												</td>
+											</tr>
+										)}
+									</tbody>
+								</table>
+								
+								<div className="flex gap-2 items-center ml-5 mb-3">
+									<span className="font-bold text-base">Total:</span>
+									<span className="font-bold text-base">{sumDepositos(data.datos_deposito_incidencia)}</span>
+								</div>
+								</> :null}
+								
+								{/* {data.datos_deposito_incidencia.length>0 && data.incidente == "Depósitos y retiros de valores" ? 
 								<>
 									<div className="flex flex-col mt-2">
 										<div className=" flex justify-between">
@@ -203,23 +239,20 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 													<thead>
 													<tr>
 														<th className="px-4 py-2 text-left border-b">Cantidad</th>
-														<th className="px-4 py-2 text-left border-b">Tipo dde depósito</th>
+														<th className="px-4 py-2 text-left border-b">Tipo de depósito</th>
 													</tr>
 													</thead>
 													<tbody>
 													{data.datos_deposito_incidencia.map((item:Depositos, index: number) => (
 														<tr key={index}>
-														<td className="px-4 py-2"><p>{formatCurrency(item.cantidad) || "N/A"}</p></td>
+														<td className="px-4 py-2 text-right"><p>{formatCurrency(item.cantidad) || "N/A"}</p></td>
 														<td className="px-4 py-2"><p>{capitalizeFirstLetter(item.tipo_deposito) || "N/A"}</p></td>
 														</tr>
 													))}
 													</tbody>
 												</table>
 
-												<div className="flex gap-2 items-center ml-5 mb-3">
-												<span className="font-bold text-base">Total:</span>
-												<span className="font-bold text-base">{sumDepositos(data.datos_deposito_incidencia)}</span>
-												</div>
+												
 												</>
 												) :null}
 												</AccordionContent>
@@ -229,7 +262,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 										</div>
 									</div>
 								</>
-								:null}
+								:null} */}
 
 
 								<div className="flex flex-col justify-between w-full h-full">
@@ -344,10 +377,10 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 									):null}
 								</div>
 							</div>
-
+							<div className="mt-2 font-bold text-lg">Personas involucradas:</div>
 							{data.personas_involucradas_incidencia.length > 0 ?
 								<div className="col-span-1 md:col-span-2">
-									<div className="my-2 font-bold text-lg">Personas involucradas:</div>
+									
 									<table className="min-w-full table-auto mb-5 border">
 										<thead>
 										<tr className="bg-gray-100">

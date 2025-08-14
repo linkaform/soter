@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { useShiftStore } from "@/store/useShiftStore";
 import { Textarea } from "../ui/textarea";
@@ -78,7 +78,7 @@ export const AccionesTomadasModal: React.FC<IncidenciaModalProps> = ({
         if (isSuccess){
             reset({
                 acciones_tomadas: "",
-                llamo_a_policia: "sí",
+                llamo_a_policia: "",
                 autoridad: "",
                 numero_folio_referencia: "",
                 responsable: "",
@@ -128,6 +128,12 @@ export const AccionesTomadasModal: React.FC<IncidenciaModalProps> = ({
         }
     }, [form.formState.errors])
 
+    const llamo_a_policia = useWatch({
+        control: form.control,
+        name: "llamo_a_policia"
+      });
+      
+      
 	return (
 		<Dialog onOpenChange={setIsSuccess} open={isSuccess}>
 			<DialogTrigger>{children}</DialogTrigger>
@@ -168,7 +174,7 @@ export const AccionesTomadasModal: React.FC<IncidenciaModalProps> = ({
                                 defaultValue="si"
                                 render={({ field }: any) => (
                                     <FormItem>
-                                        <FormLabel>¿Se contacto a las autorizadas? *</FormLabel>
+                                        <FormLabel>¿Se contactó a las autoridades? *</FormLabel>
                                         <FormControl>
                                             <div className="flex gap-2 ">
                                                 <button
@@ -200,57 +206,75 @@ export const AccionesTomadasModal: React.FC<IncidenciaModalProps> = ({
                                 )}
                             />
 
+                        {llamo_a_policia === "sí" && (
+                            <>
                             <FormField
-                                control={form.control}
-                                name="autoridad"
-                                render={({ field }: any) => (
-                                    <FormItem className="w-full">
-                                        <FormLabel>Autoridad ante la que se presentó: *</FormLabel>
-                                        <FormControl>
-                                        <Select {...field} className="input"
-                                            onValueChange={(value:string) => {
-                                            field.onChange(value); 
-                                        }}
-                                        value={field.value} 
-                                    >
-                                        <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="Selecciona una opción" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem key={""} value={"Policía"}> Policía</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            <FormField
-                                control={form.control}
-                                name="numero_folio_referencia"
-                                render={({ field }: any) => (
-                                    <FormItem>
-                                        <FormLabel>Número de folio o referencia:</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="Número de folio o referencia..." {...field}
-                                                onChange={(e) => {
-                                                    field.onChange(e);
-                                                }}
-                                                value={field.value || ""}
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
+                                    control={form.control}
+                                    name="autoridad"
+                                    render={({ field }:any) => (
+                                        <FormItem className="w-full">
+                                            <FormLabel>Autoridad ante la que se presentó: *</FormLabel>
+                                            <FormControl>
+                                                <Select {...field} className="input"
+                                                    onValueChange={(value: string) => {
+                                                        field.onChange(value);
+                                                    } }
+                                                    value={field.value}
+                                                >
+                                                    <SelectTrigger className="w-full">
+                                                        <SelectValue placeholder="Selecciona una opción" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem key={"911 Emergencias"} value={"911 Emergencias"}> 911 Emergencias</SelectItem>
+                                                        <SelectItem key={"Policía Municipal"} value={"Policía Municipal"}> Policía Municipal</SelectItem>
+                                                        <SelectItem key={"Policía Estatal"} value={"Policía Estatal"}> Policía Estatal</SelectItem>
+                                                        <SelectItem key={"Policía Auxiliar"} value={"Policía Auxiliar"}> Policía Auxiliar</SelectItem>
+                                                        <SelectItem key={"Policía Bancaria e Industrial (PBI)"} value={"Policía Bancaria e Industrial (PBI)"}> Policía Bancaria e Industrial (PBI)</SelectItem>
+                                                        <SelectItem key={"Guardia Nacional"} value={"Guardia Nacional"}> Guardia Nacional</SelectItem>
+                                                        <SelectItem key={"Policía Federal Ministerial (FGR)"} value={"Policía Federal Ministerial (FGR)"}> Policía Federal Ministerial (FGR)</SelectItem>
+                                                        <SelectItem key={"Fiscalía General del Estado / Fiscalía Local"} value={"Fiscalía General del Estado / Fiscalía Local"}> Fiscalía General del Estado / Fiscalía Local</SelectItem>
+                                                        <SelectItem key={"Ministerio Público (MP)"} value={"Ministerio Público (MP)"}> Ministerio Público (MP)</SelectItem>
+                                                        <SelectItem key={"DIF Municipal / Estatal (Desarrollo Integral de la Familia)"} value={"DIF Municipal / Estatal (Desarrollo Integral de la Familia)"}> DIF Municipal / Estatal (Desarrollo Integral de la Familia)</SelectItem>
+                                                        <SelectItem key={"Comisión Estatal de Derechos Humanos (CEDH)"} value={"Comisión Estatal de Derechos Humanos (CEDH)"}> Comisión Estatal de Derechos Humanos (CEDH)</SelectItem>
+                                                        <SelectItem key={"Comisión Nacional de los Derechos Humanos (CNDH)"} value={"Comisión Nacional de los Derechos Humanos (CNDH)"}> Comisión Nacional de los Derechos Humanos (CNDH)</SelectItem>
+                                                        <SelectItem key={"Protección Civil Municipal / Estatal"} value={"Protección Civil Municipal / Estatal"}> Protección Civil Municipal / Estatal</SelectItem>
+                                                        <SelectItem key={"Coordinación Nacional de Protección Civil (CNPC)"} value={"Coordinación Nacional de Protección Civil (CNPC)"}> Coordinación Nacional de Protección Civil (CNPC)</SelectItem>
+                                                        <SelectItem key={"Cruz Roja Mexicana"} value={"Cruz Roja Mexicana"}> Cruz Roja Mexicana</SelectItem>
+                                                        <SelectItem key={"Bomberos"} value={"Bomberos"}> Bomberos</SelectItem>
+                                                        <SelectItem key={"Servicios Médicos de Emergencia (Urgencias, ERUM)"} value={"Servicios Médicos de Emergencia (Urgencias, ERUM)"}> Servicios Médicos de Emergencia (Urgencias, ERUM)</SelectItem>
+                                                        <SelectItem key={"Instituto Nacional de Migración (INM)"} value={"Instituto Nacional de Migración (INM)"}>Instituto Nacional de Migración (INM)</SelectItem>
+                                                        <SelectItem key={"CONAPRED"} value={"CONAPRED"}>CONAPRED</SelectItem>
+                                                        <SelectItem key={"SAT / Aduana"} value={"SAT / Aduana"}>SAT / Aduana</SelectItem>
+                                                        <SelectItem key={"Fiscalía Especializada"} value={"Fiscalía Especializada"}>Fiscalía Especializada</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )} /><FormField
+                                        control={form.control}
+                                        name="numero_folio_referencia"
+                                        render={({ field }: any) => (
+                                            <FormItem>
+                                                <FormLabel>Número de folio o referencia:</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder="Número de folio o referencia..." {...field}
+                                                        onChange={(e) => {
+                                                            field.onChange(e);
+                                                        } }
+                                                        value={field.value || ""} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )} />
+                                </>
+                            )}
                             <FormField
                                 control={form.control}
                                 name="responsable"
                                 render={({ field }: any) => (
                                     <FormItem>
-                                        <FormLabel>Responsable:</FormLabel>
+                                        <FormLabel>Responsable de la acción tomada:</FormLabel>
                                         <FormControl>
                                             <Input placeholder="Responsable..." {...field}
                                                 onChange={(e) => {

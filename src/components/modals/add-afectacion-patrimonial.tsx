@@ -151,8 +151,11 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
                                             <SelectValue placeholder="Selecciona una opción..." />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem key={"1"} value={"tipo1"}> Tipo 1</SelectItem>
-                                            <SelectItem key={"2"} value={"tipo2"}> Tipo 2</SelectItem>
+                                            <SelectItem key={"Daño a infraestructura"} value={"Daño a infraestructura"}> Daño a infraestructura</SelectItem>
+                                            <SelectItem key={"Suspensión de actividades"} value={"Suspensión de actividades"}> Suspensión de actividades</SelectItem>
+                                            <SelectItem key={"Paro de producción"} value={"Paro de producción"}> Paro de producción</SelectItem>
+                                            <SelectItem key={"Impacto económico estimado"} value={"Impacto económico estimado"}> Impacto económico estimado</SelectItem>
+                                            <SelectItem key={"Otro"} value={"Otro"}> Otro</SelectItem>
                                         </SelectContent>
                                     </Select>
                                         </FormControl>

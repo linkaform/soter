@@ -69,7 +69,6 @@ import { useCatalogoInciencias } from "@/hooks/useCatalogoIncidencias";
 import { PersonaExtraviadaFields } from "./persona-extraviada";
 import { RoboDeCableado } from "./robo-de-cableado";
 import { RoboDeVehiculo } from "./robo-de-vehiculo";
-import DepositosList from "../depositos-list";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Card, CardContent} from "../ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
@@ -79,6 +78,7 @@ import SeccionPersonasInvolucradas from "../personas-involucradas";
 import SeccionAccionesTomadas from "../acciones-tomadas";
 import { AfectacionPatrimonialModal } from "./add-afectacion-patrimonial";
 import { formatCurrency } from "@/lib/utils";
+import { SeccionDepositos } from "../depositos-section";
 
 interface AddIncidenciaModalProps {
   	title: string;
@@ -958,7 +958,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 										)}
 										{selectedIncidencia=="Depósitos y retiros de valores" && 
 										<div className="col-span-1 md:col-span-2">
-											<DepositosList depositos={depositos} setDepositos={setDepositos} ></DepositosList>
+											<SeccionDepositos depositos={depositos} setDepositos={setDepositos} ></SeccionDepositos>
 										</div>
 										}
 									</form>
@@ -985,7 +985,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 
 									<div className="flex justify-end items-center w-full">
 										<div className="cursor-pointer  bg-blue-500 hover:bg-blue-600 text-white mr-5 rounded-md p-2 px-4 text-center text-sm" onClick={()=>{setOpenModal(!openModal)}}>
-											Agregar seguimiento 
+											Agregar 
 										</div>
 									</div>
 								</div>
@@ -994,7 +994,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 
 
 							<div >
-							{seguimientos && seguimientos.length > 0 ? (
+							
 								<table className="min-w-full table-auto mb-5 border">
 									<thead>
 									<tr className="bg-gray-100">
@@ -1008,89 +1008,92 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 									</tr>
 									</thead>
 									<tbody>
-									{seguimientos.map((item: any, index: number) => (
-										<tr key={index} className="border-t border-gray-200">
-										<td className="px-4 py-2">{item?.fecha_inicio_seg || "N/A"}</td>
-										<td className="px-4 py-2">0 min</td>
-										<td className="px-4 py-2">{item?.accion_correctiva_incidencia || "N/A"}</td>
-										<td className="px-4 py-2">{item?.incidencia_personas_involucradas || "N/A"}</td>
+									{seguimientos && seguimientos.length > 0 ? (
+										seguimientos.map((item: any, index: number) => (
+											<tr key={index} className="border-t border-gray-200">
+											<td className="px-4 py-2">{item?.fecha_inicio_seg || "N/A"}</td>
+											<td className="px-4 py-2">0 min</td>
+											<td className="px-4 py-2">{item?.accion_correctiva_incidencia || "N/A"}</td>
+											<td className="px-4 py-2">{item?.incidencia_personas_involucradas || "N/A"}</td>
 
-										<td className="px-4 py-2">
-											{item?.incidencia_evidencia_solucion?.length > 0 ? (
-											<div className="w-full flex justify-center">
-												<Carousel className="w-16">
-												<CarouselContent>
-													{item.incidencia_evidencia_solucion.map((a: any, i: number) => (
-													<CarouselItem key={i}>
-														<Card>
-														<CardContent className="flex aspect-square items-center justify-center p-0">
-															<Image
-															width={280}
-															height={280}
-															src={a?.file_url || "/nouser.svg"}
-															alt="Imagen"
-															className="w-42 h-42 object-contain bg-gray-200 rounded-lg"
-															/>
-														</CardContent>
-														</Card>
-													</CarouselItem>
-													))}
-												</CarouselContent>
-												<CarouselPrevious />
-												<CarouselNext />
-												</Carousel>
-											</div>
-											) : (
-											<p>No hay evidencias disponibles.</p>
-											)}
-										</td>
-
-										<td className="px-4 py-2">
-											{item?.incidencia_documento_solucion?.length > 0 ? (
-											<ul className="ms-2">
-												{item.incidencia_documento_solucion.map((file: any, i: number) => (
-												<li key={i}>
-													<a
-													href={file?.file_url}
-													target="_blank"
-													rel="noopener noreferrer"
-													className="text-blue-600 hover:underline"
-													>
-													<p>{file.file_name}</p>
-													</a>
-												</li>
-												))}
-											</ul>
-											) : (
-												<p>No hay documentos disponibles.</p>
+											<td className="px-4 py-2">
+												{item?.incidencia_evidencia_solucion?.length > 0 ? (
+												<div className="w-full flex justify-center">
+													<Carousel className="w-16">
+													<CarouselContent>
+														{item.incidencia_evidencia_solucion.map((a: any, i: number) => (
+														<CarouselItem key={i}>
+															<Card>
+															<CardContent className="flex aspect-square items-center justify-center p-0">
+																<Image
+																width={280}
+																height={280}
+																src={a?.file_url || "/nouser.svg"}
+																alt="Imagen"
+																className="w-42 h-42 object-contain bg-gray-200 rounded-lg"
+																/>
+															</CardContent>
+															</Card>
+														</CarouselItem>
+														))}
+													</CarouselContent>
+													<CarouselPrevious />
+													<CarouselNext />
+													</Carousel>
+												</div>
+												) : (
+												<p>No hay evidencias disponibles.</p>
 												)}
-										</td>
+											</td>
 
-										<td className="flex items-center justify-center gap-2 mt-2">
-											<div
-											title="Editar"
-											className="hover:cursor-pointer text-blue-500 hover:text-blue-600"
-											onClick={() => handleEdit(item, index)}
-											>
-												<Edit/>
-											</div>
-											<div
-											title="Borrar"
-											className="hover:cursor-pointer text-red-500 hover:text-red-600"
-											onClick={() => handleDelete(index)}
-											>
-												<Trash2/>
-											</div>
-										</td>
-										</tr>
-									))}
+											<td className="px-4 py-2">
+												{item?.incidencia_documento_solucion?.length > 0 ? (
+												<ul className="ms-2">
+													{item.incidencia_documento_solucion.map((file: any, i: number) => (
+													<li key={i}>
+														<a
+														href={file?.file_url}
+														target="_blank"
+														rel="noopener noreferrer"
+														className="text-blue-600 hover:underline"
+														>
+														<p>{file.file_name}</p>
+														</a>
+													</li>
+													))}
+												</ul>
+												) : (
+													<p>No hay documentos disponibles.</p>
+													)}
+											</td>
+
+											<td className="flex items-center justify-center gap-2 mt-2">
+												<div
+												title="Editar"
+												className="hover:cursor-pointer text-blue-500 hover:text-blue-600"
+												onClick={() => handleEdit(item, index)}
+												>
+													<Edit/>
+												</div>
+												<div
+												title="Borrar"
+												className="hover:cursor-pointer text-red-500 hover:text-red-600"
+												onClick={() => handleDelete(index)}
+												>
+													<Trash2/>
+												</div>
+											</td>
+											</tr>
+										))) : (
+											<tr>
+											<td colSpan={8} className="text-center text-gray-500 py-4">
+												No hay personas involucradas.
+											</td>
+											</tr>
+											)}
 									</tbody>
 								</table>
-								) : (
-								<div className="px-4 py-2 text-center text-gray-500">
-									No se han agregado seguimientos.
-								</div>
-								)}
+								
 							</div>
 
 						</Card>
@@ -1115,7 +1118,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 							</div>
 
 								<div >
-								{afectacionPatrimonial && afectacionPatrimonial.length > 0 ? (
+								
 									<table className="min-w-full table-auto mb-5 border">
 										<thead>
 										<tr className="bg-gray-100">
@@ -1126,36 +1129,39 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 										</tr>
 										</thead>
 										<tbody>
-										{afectacionPatrimonial.map((item: any, index: number) => (
-											<tr key={index} className="border-t border-gray-200">
-											<td className="px-4 py-2">{item?.tipo_afectacion || "N/A"}</td>
-											<td className="px-4 py-2">{formatCurrency(item?.monto_estimado) || "N/A"}</td>
-											<td className="px-4 py-2">{item?.duracion_estimada || "N/A"}</td>
-											<td className="flex items-center justify-center gap-2 mt-2">
-												<div
-												title="Editar"
-												className="hover:cursor-pointer text-blue-500 hover:text-blue-600"
-												onClick={() => handleEditAP(item, index)}
-												>
-													<Edit/>
-												</div>
-												<div
-												title="Borrar"
-												className="hover:cursor-pointer text-red-500 hover:text-red-600"
-												onClick={() => handleDeleteAP(index)}
-												>
-													<Trash2/>
-												</div>
-											</td>
-											</tr>
-										))}
+										{afectacionPatrimonial && afectacionPatrimonial.length > 0 ? (
+											afectacionPatrimonial.map((item: any, index: number) => (
+												<tr key={index} className="border-t border-gray-200">
+												<td className="px-4 py-2">{item?.tipo_afectacion || "N/A"}</td>
+												<td className="px-4 py-2">{formatCurrency(item?.monto_estimado) || "N/A"}</td>
+												<td className="px-4 py-2">{item?.duracion_estimada || "N/A"}</td>
+												<td className="flex items-center justify-center gap-2 mt-2">
+													<div
+													title="Editar"
+													className="hover:cursor-pointer text-blue-500 hover:text-blue-600"
+													onClick={() => handleEditAP(item, index)}
+													>
+														<Edit/>
+													</div>
+													<div
+													title="Borrar"
+													className="hover:cursor-pointer text-red-500 hover:text-red-600"
+													onClick={() => handleDeleteAP(index)}
+													>
+														<Trash2/>
+													</div>
+												</td>
+												</tr>
+											))) : (
+												<tr>
+												<td colSpan={8} className="text-center text-gray-500 py-4">
+													No hay personas involucradas.
+												</td>
+												</tr>
+											)}
 										</tbody>
 									</table>
-									) : (
-									<div className="px-4 py-2 text-center text-gray-500">
-										No se han agregado afectaciones patrimoniales.
-									</div>
-									)}
+									
 								</div>
 							</Card>
 						</TabsContent>

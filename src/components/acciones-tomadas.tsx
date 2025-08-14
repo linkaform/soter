@@ -55,7 +55,7 @@ const SeccionAccionesTomadas:React.FC<PersonasInvolucradasListProps> = ({ accion
 			<div></div>
 		</AccionesTomadasModal>
 
-		{accionesTomadas && accionesTomadas.length > 0 ? (
+		
 		<table className="min-w-full table-auto mb-5 border">
 			<thead>
 			<tr className="bg-gray-100">
@@ -68,7 +68,8 @@ const SeccionAccionesTomadas:React.FC<PersonasInvolucradasListProps> = ({ accion
 			</tr>
 			</thead>
 			<tbody>
-			{accionesTomadas.map((item, index) => (
+			{accionesTomadas && accionesTomadas.length > 0 ? (
+			accionesTomadas.map((item, index) => (
 				<tr key={index} className="border-t border-gray-200">
 				<td className="px-4 py-2">{item.acciones_tomadas}</td>
 				<td className="px-4 py-2">{item.llamo_a_policia}</td>
@@ -94,14 +95,16 @@ const SeccionAccionesTomadas:React.FC<PersonasInvolucradasListProps> = ({ accion
 					</div>
 				</td>
 				</tr>
-			))}
+			))) : (
+				<tr>
+				<td colSpan={8} className="text-center text-gray-500 py-4">
+					No hay personas involucradas.
+				</td>
+				</tr>
+			)}
 			</tbody>
 		</table>
-		) : (
-		<div className="mt-3">
-			<div className="text-center text-gray-500 mb-4">No hay acciones tomadas.</div>
-		</div>
-		)}
+		
 
     </div>
   );
