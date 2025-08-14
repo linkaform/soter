@@ -482,9 +482,14 @@ const MultiLineChartZoom = ({ data = [] }) => {
     return data.map(hotel => {
       // Obtener el último porcentaje conocido para este hotel
       let ultimoPorcentaje = 0;
-      
+      let totalInspecciones = 0; // ✅ Nueva variable para contar inspecciones
+    
       hotel.cuatrimestres_data.forEach(cuatrimestre => {
         cuatrimestre.dias_data?.forEach(dia => {
+          // ✅ Sumar todas las inspecciones
+          totalInspecciones += dia.inspecciones || 0;
+          
+          // Mantener el porcentaje más alto
           if (dia.porcentaje_progresivo > ultimoPorcentaje) {
             ultimoPorcentaje = dia.porcentaje_progresivo;
           }
@@ -493,7 +498,8 @@ const MultiLineChartZoom = ({ data = [] }) => {
 
       return {
         hotel: hotel.hotel,
-        porcentaje_inspeccion: ultimoPorcentaje
+        porcentaje_inspeccion: ultimoPorcentaje,
+        total_inspecciones: totalInspecciones // ✅ Agregar total de inspecciones
       };
     }).sort((a, b) => b.porcentaje_inspeccion - a.porcentaje_inspeccion); // Ordenar por porcentaje descendente
   }, [data, zoomLevel]);

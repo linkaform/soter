@@ -73,6 +73,7 @@ const HotelProgressTable: React.FC<HotelProgressTableProps> = ({
             const excelData = hoteles.map((hotel, index) => ({
                 'No.': index + 1,
                 'Hotel': hotel.hotel.replace(/_/g, ' ').toUpperCase(),
+                'Total Inspecciones': hotel.total_inspecciones,
                 'Porcentaje de Inspección': `${hotel.porcentaje_inspeccion.toFixed(1)}%`,
                 'Estado': hotel.porcentaje_inspeccion >= 90 ? 'Excelente' :
                     hotel.porcentaje_inspeccion >= 70 ? 'Bueno' :
@@ -85,6 +86,7 @@ const HotelProgressTable: React.FC<HotelProgressTableProps> = ({
             worksheet['!cols'] = [
                 { width: 8 },   // No.
                 { width: 30 },  // Hotel
+                { width: 18 },  // Total Inspecciones ✅ Nueva columna
                 { width: 25 },  // Porcentaje
                 { width: 20 },  // Estado
             ];
@@ -187,30 +189,61 @@ const HotelProgressTable: React.FC<HotelProgressTableProps> = ({
                 </Table>
             </ScrollArea>
 
-            {/* ✅ Resumen estadístico */}
-            <div className="mt-4 grid grid-cols-4 gap-4 text-sm">
-                <div className="bg-green-50 p-3 rounded-lg text-center">
-                    <div className="font-semibold text-green-800">Excelentes (≥90%)</div>
-                    <div className="text-green-600">
-                        {hoteles.filter(h => h.porcentaje_inspeccion >= 90).length}
+            {/* ✅ Resumen estadístico actualizado con información de inspecciones */}
+            <div className="mt-4 space-y-4">
+                {/* ✅ Estadísticas por categoría */}
+                <div className="grid grid-cols-4 gap-4 text-sm">
+                    <div className="bg-green-50 p-3 rounded-lg text-center">
+                        <div className="font-semibold text-green-800">Excelentes (≥90%)</div>
+                        <div className="text-green-600">
+                            {hoteles.filter(h => h.porcentaje_inspeccion >= 90).length} hoteles
+                        </div>
+                    </div>
+                    <div className="bg-yellow-50 p-3 rounded-lg text-center">
+                        <div className="font-semibold text-yellow-800">Buenos (≥70%)</div>
+                        <div className="text-yellow-600">
+                            {hoteles.filter(h => h.porcentaje_inspeccion >= 70 && h.porcentaje_inspeccion < 90).length} hoteles
+                        </div>
+                    </div>
+                    <div className="bg-orange-50 p-3 rounded-lg text-center">
+                        <div className="font-semibold text-orange-800">Regulares (≥50%)</div>
+                        <div className="text-orange-600">
+                            {hoteles.filter(h => h.porcentaje_inspeccion >= 50 && h.porcentaje_inspeccion < 70).length} hoteles
+                        </div>
+                    </div>
+                    <div className="bg-red-50 p-3 rounded-lg text-center">
+                        <div className="font-semibold text-red-800">Críticos (&lt;50%)</div>
+                        <div className="text-red-600">
+                            {hoteles.filter(h => h.porcentaje_inspeccion < 50).length} hoteles
+                        </div>
                     </div>
                 </div>
-                <div className="bg-yellow-50 p-3 rounded-lg text-center">
-                    <div className="font-semibold text-yellow-800">Buenos (≥70%)</div>
-                    <div className="text-yellow-600">
-                        {hoteles.filter(h => h.porcentaje_inspeccion >= 70 && h.porcentaje_inspeccion < 90).length}
+
+                {/* ✅ Nuevo resumen de inspecciones totales */}
+                <div className="grid grid-cols-3 gap-4 text-sm bg-gray-50 p-4 rounded-lg">
+                    <div className="text-center">
+                        <div className="font-semibold text-gray-800">Total de Inspecciones</div>
+                        <div className="text-2xl font-bold text-blue-600">
+                            {hoteles.reduce((sum, hotel) => sum + hotel.total_inspecciones, 0).toLocaleString()}
+                        </div>
                     </div>
-                </div>
-                <div className="bg-orange-50 p-3 rounded-lg text-center">
-                    <div className="font-semibold text-orange-800">Regulares (≥50%)</div>
-                    <div className="text-orange-600">
-                        {hoteles.filter(h => h.porcentaje_inspeccion >= 50 && h.porcentaje_inspeccion < 70).length}
+                    <div className="text-center">
+                        <div className="font-semibold text-gray-800">Promedio por Hotel</div>
+                        <div className="text-2xl font-bold text-green-600">
+                            {hoteles.length > 0
+                                ? Math.round(hoteles.reduce((sum, hotel) => sum + hotel.total_inspecciones, 0) / hoteles.length).toLocaleString()
+                                : 0
+                            }
+                        </div>
                     </div>
-                </div>
-                <div className="bg-red-50 p-3 rounded-lg text-center">
-                    <div className="font-semibold text-red-800">Críticos (&lt;50%)</div>
-                    <div className="text-red-600">
-                        {hoteles.filter(h => h.porcentaje_inspeccion < 50).length}
+                    <div className="text-center">
+                        <div className="font-semibold text-gray-800">Porcentaje Promedio</div>
+                        <div className="text-2xl font-bold text-purple-600">
+                            {hoteles.length > 0
+                                ? (hoteles.reduce((sum, hotel) => sum + hotel.porcentaje_inspeccion, 0) / hoteles.length).toFixed(1)
+                                : 0
+                            }%
+                        </div>
                     </div>
                 </div>
             </div>

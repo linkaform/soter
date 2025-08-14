@@ -6,15 +6,16 @@ import { Badge } from "@/components/ui/badge";
 export type HotelProgress = {
     hotel: string;
     porcentaje_inspeccion: number;
+    total_inspecciones: number; // ✅ Nueva propiedad
 };
 
 export const hotelProgressColumns: ColumnDef<HotelProgress>[] = [
     {
         accessorKey: "hotel",
         header: "Hotel",
-        size: 300, // ✅ Ancho fijo para hotel (más grande)
-        minSize: 200,
-        maxSize: 400,
+        size: 250, // ✅ Reducir un poco para hacer espacio
+        minSize: 180,
+        maxSize: 350,
         cell: ({ row }) => (
             <div className="font-medium">
                 {row.original.hotel.replace(/_/g, ' ').toUpperCase()}
@@ -22,11 +23,29 @@ export const hotelProgressColumns: ColumnDef<HotelProgress>[] = [
         ),
     },
     {
+        accessorKey: "total_inspecciones",
+        header: "Total Inspecciones", // ✅ Nueva columna
+        size: 140,
+        minSize: 120,
+        maxSize: 160,
+        cell: ({ row }) => {
+            const total = row.original.total_inspecciones;
+
+            return (
+                <div className="text-center font-semibold">
+                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
+                        {total.toLocaleString()} {/* ✅ Formato con comas para números grandes */}
+                    </span>
+                </div>
+            );
+        },
+    },
+    {
         accessorKey: "porcentaje_inspeccion",
         header: "Porcentaje",
-        size: 150, // ✅ Ancho fijo para porcentaje (más pequeño)
-        minSize: 120,
-        maxSize: 180,
+        size: 130, // ✅ Reducir un poco
+        minSize: 110,
+        maxSize: 150,
         cell: ({ row }) => {
             const porcentaje = row.original.porcentaje_inspeccion;
 
