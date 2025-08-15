@@ -609,7 +609,7 @@ const ReportsPage = () => {
 								<RadarChart data={radarData} />
 							</TabsContent>
 							<TabsContent value="cuarta">
-								<div className="text-2xl underline my-4">Avance de Inspecciones(En construccion).</div>
+								<div className="text-2xl underline my-4">Avance de Inspecciones</div>
 								{/* ✅ Agregar contenido para mostrar los datos */}
 								{isLoadingAvancesInspecciones ? (
 									<div className="flex justify-center items-center h-40 text-xl text-gray-400">
