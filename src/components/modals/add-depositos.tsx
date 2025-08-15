@@ -131,7 +131,7 @@ export const DepositosModal: React.FC<IncidenciaModalProps> = ({
 				</DialogHeader>
 
 				<Form {...form}>
-					<form onSubmit={form.handleSubmit(onSubmit)} >
+					<form  onSubmit={form.handleSubmit(onSubmit)}>
 						<div className="grid grid-cols-1 gap-5 mb-6">
 
                         <FormField
@@ -201,23 +201,24 @@ export const DepositosModal: React.FC<IncidenciaModalProps> = ({
 						</div>
                         
 
-						<div className="flex gap-2">
-							<DialogClose asChild>
-								<Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700" onClick={handleClose}>
-									Cancelar
-								</Button>
-							</DialogClose>
-
-
-							<Button
-								type="submit"
-								className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={isLoading}
-							>
-							    {editarDepositos? ("Editar"):(("Agregar"))}
-							</Button>
-						</div>
+						
 					</form>
 				</Form>
+                <div className="flex gap-2">
+                    <DialogClose asChild>
+                        <Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700" onClick={handleClose}>
+                            Cancelar
+                        </Button>
+                    </DialogClose>
+
+
+                    <Button
+                        onClick={form.handleSubmit(onSubmit)}
+                        className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={isLoading}
+                    >
+                        {editarDepositos? ("Editar"):(("Agregar"))}
+                    </Button>
+                </div>
 			</DialogContent>
 		</Dialog>
 	);

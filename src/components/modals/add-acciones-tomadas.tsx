@@ -138,17 +138,16 @@ export const AccionesTomadasModal: React.FC<IncidenciaModalProps> = ({
 		<Dialog onOpenChange={setIsSuccess} open={isSuccess}>
 			<DialogTrigger>{children}</DialogTrigger>
 
-			<DialogContent className="max-w-lg" aria-describedby="">
+			<DialogContent className="max-w-lg overflow-y-auto max-h-[80vh] min-h-[80vh]  flex flex-col overflow-hidden" aria-describedby="">
 				<DialogHeader>
 					<DialogTitle className="text-2xl text-center font-bold">
 						{title}
 					</DialogTitle>
 				</DialogHeader>
-
-				<Form {...form}>
+                <div className="flex-grow overflow-y-auto ">
+                <Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} >
 						<div className="grid grid-cols-1 gap-5 mb-6">
-
 							<FormField
 								control={form.control}
 								name="acciones_tomadas"
@@ -307,6 +306,8 @@ export const AccionesTomadasModal: React.FC<IncidenciaModalProps> = ({
 						</div>
 					</form>
 				</Form>
+                </div>
+				
 			</DialogContent>
 		</Dialog>
 	);

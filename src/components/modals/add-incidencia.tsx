@@ -1133,7 +1133,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 											afectacionPatrimonial.map((item: any, index: number) => (
 												<tr key={index} className="border-t border-gray-200">
 												<td className="px-4 py-2">{item?.tipo_afectacion || "N/A"}</td>
-												<td className="px-4 py-2">{formatCurrency(item?.monto_estimado) || "N/A"}</td>
+												<td className="px-4 py-2 text-right">{formatCurrency(item?.monto_estimado) || "N/A"}</td>
 												<td className="px-4 py-2">{item?.duracion_estimada || "N/A"}</td>
 												<td className="flex items-center justify-center gap-2 mt-2">
 													<div

@@ -147,42 +147,72 @@ export const PersonasInvolucradasModal: React.FC<IncidenciaModalProps> = ({
 		<Dialog onOpenChange={setIsSuccess} open={isSuccess}>
 			<DialogTrigger>{children}</DialogTrigger>
 
-			<DialogContent className="max-w-lg" aria-describedby="">
+			<DialogContent className="max-w-lg overflow-y-auto max-h-[80vh] min-h-[80vh]  flex flex-col overflow-hidden"  aria-describedby="">
 				<DialogHeader>
 					<DialogTitle className="text-2xl text-center font-bold">
 						{title}
 					</DialogTitle>
 				</DialogHeader>
-
-				<Form {...form}>
-					<form onSubmit={form.handleSubmit(onSubmit)} >
-						<div className="grid grid-cols-1 gap-5 mb-6">
-                                <FormField
-									control={form.control}
-									name="nombre_completo"
-									render={({ field }: any) => (
-										<FormItem>
-											<FormLabel>Nombre completo:</FormLabel>
-											<FormControl>
-												<Input placeholder="Nombre completo..." {...field}
-													onChange={(e) => {
-														field.onChange(e); // Actualiza el valor en react-hook-form
-														// handleSelectChange("placas", e.target.value); // Acción adicional
-													}}
-													value={field.value || ""}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-                                <FormField
-									control={form.control}
-									name="rol"
-									render={({ field }: any) => (
-										<FormItem>
-											<FormLabel>Rol en el incidente:</FormLabel>
-											<FormControl>
+				<div className="flex-grow overflow-y-auto">
+				<Form {...form}  >
+						<form onSubmit={form.handleSubmit(onSubmit)} >
+							<div className="grid grid-cols-1 gap-5 mb-6 px-3">
+									<FormField
+										control={form.control}
+										name="nombre_completo"
+										render={({ field }: any) => (
+											<FormItem>
+												<FormLabel>Nombre completo:</FormLabel>
+												<FormControl>
+													<Input placeholder="Nombre completo..." {...field}
+														onChange={(e) => {
+															field.onChange(e); // Actualiza el valor en react-hook-form
+															// handleSelectChange("placas", e.target.value); // Acción adicional
+														}}
+														value={field.value || ""}
+													/>
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+									<FormField
+										control={form.control}
+										name="rol"
+										render={({ field }: any) => (
+											<FormItem>
+												<FormLabel>Rol en el incidente:</FormLabel>
+												<FormControl>
+													<Select {...field} className="input"t
+														onValueChange={(value:string) => {
+														field.onChange(value); 
+														}}
+														value={field.value}
+													>
+														<SelectTrigger className="w-full">
+															<SelectValue placeholder="Selecciona una opcion" />
+														</SelectTrigger>
+														<SelectContent>
+															<SelectItem key={"Testigo"} value={"Testigo"}>Testigo</SelectItem>
+															<SelectItem key={"Afectado"} value={"Afectado"}>Afectado</SelectItem>
+															<SelectItem key={"Agresor"} value={"Agresor"}>Agresor</SelectItem>
+															<SelectItem key={"Sospechoso"} value={"Sospechoso"}>Sospechoso</SelectItem>
+															<SelectItem key={"Responsable"} value={"Responsable"}>Responsable</SelectItem>
+															<SelectItem key={"Otro"} value={"Otro"}>Otro</SelectItem>
+														</SelectContent>
+													</Select>
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+									<FormField
+										control={form.control}
+										name="sexo"
+										render={({ field }: any) => (
+											<FormItem>
+												<FormLabel>Sexo:</FormLabel>
+												<FormControl>
 												<Select {...field} className="input"t
 													onValueChange={(value:string) => {
 													field.onChange(value); 
@@ -193,149 +223,118 @@ export const PersonasInvolucradasModal: React.FC<IncidenciaModalProps> = ({
 														<SelectValue placeholder="Selecciona una opcion" />
 													</SelectTrigger>
 													<SelectContent>
-														<SelectItem key={"Testigo"} value={"Testigo"}>Testigo</SelectItem>
-														<SelectItem key={"Afectado"} value={"Afectado"}>Afectado</SelectItem>
-														<SelectItem key={"Agresor"} value={"Agresor"}>Agresor</SelectItem>
-														<SelectItem key={"Sospechoso"} value={"Sospechoso"}>Sospechoso</SelectItem>
-														<SelectItem key={"Responsable"} value={"Responsable"}>Responsable</SelectItem>
-														<SelectItem key={"Otro"} value={"Otro"}>Otro</SelectItem>
+														<SelectItem key={"Masculino"} value={"Masculino"}>Masculino</SelectItem>
+														<SelectItem key={"Femenino"} value={"Femenino"}>Femenino</SelectItem>
+														<SelectItem key={"Prefiere no decirlo"} value={"Prefiere no decirlo"}>Prefiere no decirlo</SelectItem>
 													</SelectContent>
 												</Select>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-                                <FormField
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+									<FormField
+										control={form.control}
+										name="grupo_etario"
+										render={({ field }: any) => (
+											<FormItem>
+												<FormLabel>Grupo etario:</FormLabel>
+												<FormControl>
+													<Select {...field} className="input"t
+														onValueChange={(value:string) => {
+														field.onChange(value); 
+														}}
+														value={field.value}
+													>
+														<SelectTrigger className="w-full">
+															<SelectValue placeholder="Selecciona una opcion" />
+														</SelectTrigger>
+														<SelectContent>
+															<SelectItem key={"Infancia"} value={"Infancia"}>Infancia</SelectItem>
+															<SelectItem key={"Adolescencia"} value={"Adolescencia"}>Adolescencia</SelectItem>
+															<SelectItem key={"Juventud"} value={"Juventud"}>Juventud</SelectItem>
+															<SelectItem key={"Adultez temprana"} value={"Adultez temprana"}>Adultez temprana</SelectItem>
+															<SelectItem key={"Adultez media"} value={"Adultez media"}>Adultez media</SelectItem>
+															<SelectItem key={"Adultez mayor"} value={"Adultez mayor"}>Adultez mayor</SelectItem>
+														</SelectContent>
+													</Select>
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+									<FormField
+										control={form.control}
+										name="atencion_medica"
+										render={({ field }: any) => (
+											<FormItem>
+												<FormLabel>¿Requiere atención medica?:</FormLabel>
+												<FormControl>
+												<div className="flex gap-2 ">
+													<button
+													type="button"
+													onClick={() => field.onChange("sí")}
+													className={`px-6 py-2 rounded ${
+														field.value === "sí"
+														? "bg-blue-600 text-white "
+														: "bg-white-200 text-blue-600 border border-blue-500 "
+													}`}
+													>
+													Sí
+													</button>
+													<button
+													type="button"
+													onClick={() => field.onChange("no")}
+													className={`px-6 py-2 rounded ${
+														field.value === "no"
+														? "bg-blue-600 text-white"
+														: "bg-white-200 text-blue-600 border border-blue-500"
+													}`}
+													>
+													No
+													</button>
+												</div>
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+								<FormField
 									control={form.control}
-									name="sexo"
+									name="retenido"
 									render={({ field }: any) => (
 										<FormItem>
-											<FormLabel>Sexo:</FormLabel>
-											<FormControl>
-											<Select {...field} className="input"t
-												onValueChange={(value:string) => {
-												field.onChange(value); 
-												}}
-												value={field.value}
-											>
-												<SelectTrigger className="w-full">
-													<SelectValue placeholder="Selecciona una opcion" />
-												</SelectTrigger>
-												<SelectContent>
-													<SelectItem key={"Masculino"} value={"Masculino"}>Masculino</SelectItem>
-													<SelectItem key={"Femenino"} value={"Femenino"}>Femenino</SelectItem>
-													<SelectItem key={"Prefiere no decirlo"} value={"Prefiere no decirlo"}>Prefiere no decirlo</SelectItem>
-												</SelectContent>
-											</Select>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-                                <FormField
-									control={form.control}
-									name="grupo_etario"
-									render={({ field }: any) => (
-										<FormItem>
-											<FormLabel>Grupo etario:</FormLabel>
-											<FormControl>
-												<Select {...field} className="input"t
-													onValueChange={(value:string) => {
-													field.onChange(value); 
-													}}
-													value={field.value}
-												>
-													<SelectTrigger className="w-full">
-														<SelectValue placeholder="Selecciona una opcion" />
-													</SelectTrigger>
-													<SelectContent>
-														<SelectItem key={"Infancia"} value={"Infancia"}>Infancia</SelectItem>
-														<SelectItem key={"Adolescencia"} value={"Adolescencia"}>Adolescencia</SelectItem>
-														<SelectItem key={"Juventud"} value={"Juventud"}>Juventud</SelectItem>
-														<SelectItem key={"Adultez temprana"} value={"Adultez temprana"}>Adultez temprana</SelectItem>
-														<SelectItem key={"Adultez media"} value={"Adultez media"}>Adultez media</SelectItem>
-														<SelectItem key={"Adultez mayor"} value={"Adultez mayor"}>Adultez mayor</SelectItem>
-													</SelectContent>
-												</Select>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-                                <FormField
-									control={form.control}
-									name="atencion_medica"
-									render={({ field }: any) => (
-										<FormItem>
-											<FormLabel>¿Requiere atención medica?:</FormLabel>
+											<FormLabel>¿Persona retenida?: *</FormLabel>
 											<FormControl>
 											<div className="flex gap-2 ">
-                                                <button
-                                                type="button"
-                                                onClick={() => field.onChange("sí")}
-                                                className={`px-6 py-2 rounded ${
-                                                    field.value === "sí"
-                                                    ? "bg-blue-600 text-white "
-                                                    : "bg-white-200 text-blue-600 border border-blue-500 "
-                                                }`}
-                                                >
-                                                Sí
-                                                </button>
-                                                <button
-                                                type="button"
-                                                onClick={() => field.onChange("no")}
-                                                className={`px-6 py-2 rounded ${
-                                                    field.value === "no"
-                                                    ? "bg-blue-600 text-white"
-                                                    : "bg-white-200 text-blue-600 border border-blue-500"
-                                                }`}
-                                                >
-                                                No
-                                                </button>
-                                            </div>
+													<button
+													type="button"
+													onClick={() => field.onChange("sí")}
+													className={`px-6 py-2 rounded ${
+														field.value === "sí"
+														? "bg-blue-600 text-white "
+														: "bg-white-200 text-blue-600 border border-blue-500 "
+													}`}
+													>
+													Sí
+													</button>
+													<button
+													type="button"
+													onClick={() => field.onChange("no")}
+													className={`px-6 py-2 rounded ${
+														field.value === "no"
+														? "bg-blue-600 text-white"
+														: "bg-white-200 text-blue-600 border border-blue-500"
+													}`}
+													>
+													No
+													</button>
+												</div>
 											</FormControl>
 											<FormMessage />
 										</FormItem>
 									)}
 								/>
-							<FormField
-								control={form.control}
-								name="retenido"
-								render={({ field }: any) => (
-									<FormItem>
-										<FormLabel>¿Persona retenida?: *</FormLabel>
-										<FormControl>
-										<div className="flex gap-2 ">
-                                                <button
-                                                type="button"
-                                                onClick={() => field.onChange("sí")}
-                                                className={`px-6 py-2 rounded ${
-                                                    field.value === "sí"
-                                                    ? "bg-blue-600 text-white "
-                                                    : "bg-white-200 text-blue-600 border border-blue-500 "
-                                                }`}
-                                                >
-                                                Sí
-                                                </button>
-                                                <button
-                                                type="button"
-                                                onClick={() => field.onChange("no")}
-                                                className={`px-6 py-2 rounded ${
-                                                    field.value === "no"
-                                                    ? "bg-blue-600 text-white"
-                                                    : "bg-white-200 text-blue-600 border border-blue-500"
-                                                }`}
-                                                >
-                                                No
-                                                </button>
-                                            </div>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							
 								<FormField
 									control={form.control}
 									name="comentarios"
@@ -346,7 +345,6 @@ export const PersonasInvolucradasModal: React.FC<IncidenciaModalProps> = ({
 												<Textarea placeholder="Comentarios/ Observaciónes..." {...field}
 													onChange={(e) => {
 														field.onChange(e); // Actualiza el valor en react-hook-form
-														// handleSelectChange("placas", e.target.value); // Acción adicional
 													}}
 													value={field.value || ""}
 												/>
@@ -355,27 +353,24 @@ export const PersonasInvolucradasModal: React.FC<IncidenciaModalProps> = ({
 										</FormItem>
 									)}
 								/>
-							
-						</div>
-                        
-
-						<div className="flex gap-2">
-							<DialogClose asChild>
-								<Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700" onClick={handleClose}>
-									Cancelar
-								</Button>
-							</DialogClose>
-
-
-							<Button
-								type="submit"
-								className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={isLoading}
-							>
-							    {editarPersonasInvolucradas? ("Editar"):(("Agregar"))}
-							</Button>
-						</div>
-					</form>
-				</Form>
+							</div>
+						</form>
+					</Form>
+				</div>
+				<div className="flex gap-2">
+					<DialogClose asChild>
+						<Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700" onClick={handleClose}>
+							Cancelar
+						</Button>
+					</DialogClose>
+					<Button
+						// type="submit"
+						onClick={form.handleSubmit(onSubmit)}
+						className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={isLoading}
+					>
+						{editarPersonasInvolucradas? ("Editar"):(("Agregar"))}
+					</Button>
+				</div>
 			</DialogContent>
 		</Dialog>
 	);
