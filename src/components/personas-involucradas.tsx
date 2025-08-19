@@ -75,13 +75,13 @@ const SeccionPersonasInvolucradas:React.FC<PersonasInvolucradasListProps> = ({ p
 					{personasInvolucradas && personasInvolucradas.length > 0 ? (
 						personasInvolucradas.map((item, index) => (
 						<tr key={index} className="border-t border-gray-200">
-							<td className="px-4 py-2">{item.nombre_completo}</td>
-							<td className="px-4 py-2">{item.rol}</td>
-							<td className="px-4 py-2">{item.sexo}</td>
-							<td className="px-4 py-2">{item.grupo_etario}</td>
-							<td className="px-4 py-2">{item.atencion_medica}</td>
-							<td className="px-4 py-2">{item.retenido}</td>
-							<td className="px-4 py-2 capitalize">{item.comentarios || "N/A"}</td>
+							<td className="px-4 py-2">{item.nombre_completo||"-"}</td>
+							<td className="px-4 py-2">{item.rol||"-"}</td>
+							<td className="px-4 py-2">{item.sexo||"-"}</td>
+							<td className="px-4 py-2">{item.grupo_etario||"-"}</td>
+							<td className="px-4 py-2">{item.atencion_medica||"-"}</td>
+							<td className="px-4 py-2">{item.retenido||"-"}</td>
+							<td className="px-4 py-2">{item.comentarios||"-"}</td>
 							<td className="px-4 py-2">
 							<div className="flex items-center justify-center gap-2">
 								<div

@@ -77,7 +77,7 @@ import { toast } from "sonner";
 import SeccionPersonasInvolucradas from "../personas-involucradas";
 import SeccionAccionesTomadas from "../acciones-tomadas";
 import { AfectacionPatrimonialModal } from "./add-afectacion-patrimonial";
-import { formatCurrency } from "@/lib/utils";
+import { convertirDateToISO, formatCurrency } from "@/lib/utils";
 import { SeccionDepositos } from "../depositos-section";
 
 interface AddIncidenciaModalProps {
@@ -243,10 +243,10 @@ export const formSchema = z.object({
 	incidente:z.string().optional(),
 	//PersonaExtraviado
 	nombre_completo_persona_extraviada: z.string().optional(),
-	edad: z.string().optional(),
+	edad: z.number().optional(),
 	color_piel: z.string().optional(),
 	color_cabello: z.string().optional(),
-	estatura_aproximada: z.string().optional(),
+	estatura_aproximada: z.number().optional(),
 	descripcion_fisica_vestimenta: z.string().optional(),
 	nombre_completo_responsable: z.string().optional(),
 	parentesco: z.string().optional(),
@@ -414,10 +414,10 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 			incidente:"",
 
 			nombre_completo_persona_extraviada:"",
-			edad:"",
+			edad:0,
 			color_piel:"",
 			color_cabello:"",
-			estatura_aproximada:"",
+			estatura_aproximada:0,
 			descripcion_fisica_vestimenta:"",
 			nombre_completo_responsable:"",
 			parentesco:"",
@@ -490,7 +490,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 					evidencia_incidencia:evidencia||[],
 					documento_incidencia:documento||[],
 					prioridad_incidencia:getNivel(value[0])||"",
-					notificacion_incidencia:selectedNotificacion? "correo":"no",
+					notificacion_incidencia:selectedNotificacion? "sí":"no",
 					datos_deposito_incidencia: depositos,
 					tags:tagsSeleccionados,
 					categoria:categoria,
@@ -540,9 +540,14 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	};
 
 	const getNivel = (val: number) => {
-		if (val < 35) return "Baja"
-		if (val > 34 && val < 70) return "Media"
-		if (val > 70) return "Alta"
+		if (val < 35) return "Leve"
+		if (val > 34 && val < 70) return "Moderada"
+		if (val > 70) return "Crítica"
+	}
+
+	const openModalAgregarSeg = () =>{
+		console.log("date incidencia", date)
+		setOpenModal(!openModal)
 	}
 
 	
@@ -578,7 +583,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 
   return (
     <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
-      <DialogContent className="max-w-4xl overflow-y-auto max-h-[80vh] min-h-[80vh]  flex flex-col overflow-hidden" aria-describedby="">
+      <DialogContent className="max-w-5xl overflow-y-auto max-h-[80vh] min-h-[80vh]  flex flex-col overflow-hidden" aria-describedby="">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center font-bold">
             {title}
@@ -838,7 +843,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 											name="prioridad_incidencia"
 											defaultValue="media"
 											render={() => (
-												<FormItem className="w-full">
+												<FormItem className="w-3/4">
 														<div className="text-sm font-medium mb-7">
 															Importancia: <span className="font-bold">{getNivel(value[0])}</span>
 														</div> 
@@ -855,6 +860,15 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 												</FormItem>
 											)}
 										/>	
+
+										<div className="flex items-center flex-wrap gap-5">
+											<FormLabel>Notificaciones: {`(No/Correo)`}:  </FormLabel>
+												<Switch
+													defaultChecked={false}
+													onCheckedChange={()=>{setSelectedNotification(!selectedNotificacion)}}
+													aria-readonly
+												/>
+										</div>
 										
 										<FormField
 										control={form.control}
@@ -929,14 +943,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 										</div>
 
 									
-										<div className="flex items-center flex-wrap gap-5">
-											<FormLabel>Notificaciones: {`(No/Correo)`}:  </FormLabel>
-												<Switch
-													defaultChecked={false}
-													onCheckedChange={()=>{setSelectedNotification(!selectedNotificacion)}}
-													aria-readonly
-												/>
-										</div>
+										
 			
 										{selectedIncidencia =="Persona extraviada" && (
 											<div className="col-span-2 w-full">
@@ -984,17 +991,13 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 									</div>
 
 									<div className="flex justify-end items-center w-full">
-										<div className="cursor-pointer  bg-blue-500 hover:bg-blue-600 text-white mr-5 rounded-md p-2 px-4 text-center text-sm" onClick={()=>{setOpenModal(!openModal)}}>
+										<div className="cursor-pointer  bg-blue-500 hover:bg-blue-600 text-white mr-5 rounded-md p-2 px-4 text-center text-sm" onClick={()=>{openModalAgregarSeg()}}>
 											Agregar 
 										</div>
 									</div>
 								</div>
-								
 							</div>
-
-
 							<div >
-							
 								<table className="min-w-full table-auto mb-5 border">
 									<thead>
 									<tr className="bg-gray-100">
@@ -1004,7 +1007,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 										<th className="px-4 py-2 text-left border-b border-gray-300">Personas involucradas</th>
 										<th className="px-4 py-2 text-left border-b border-gray-300">Evidencia</th>
 										<th className="px-4 py-2 text-left border-b border-gray-300">Documentos</th>
-										<th className="px-4 py-2 text-left border-b border-gray-300">Acciones</th> 
+										<th className="px-4 py-2 text-left border-b border-gray-300"></th> 
 									</tr>
 									</thead>
 									<tbody>
@@ -1012,11 +1015,11 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 										seguimientos.map((item: any, index: number) => (
 											<tr key={index} className="border-t border-gray-200">
 											<td className="px-4 py-2">{item?.fecha_inicio_seg || "N/A"}</td>
-											<td className="px-4 py-2">0 min</td>
+											<td className="px-4 py-2">{item?.tiempo_transcurrido}</td>
 											<td className="px-4 py-2">{item?.accion_correctiva_incidencia || "N/A"}</td>
 											<td className="px-4 py-2">{item?.incidencia_personas_involucradas || "N/A"}</td>
 
-											<td className="px-4 py-2">
+											<td className="px-4 py-2 min-w-[150px] align-top">
 												{item?.incidencia_evidencia_solucion?.length > 0 ? (
 												<div className="w-full flex justify-center">
 													<Carousel className="w-16">
@@ -1030,7 +1033,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 																height={280}
 																src={a?.file_url || "/nouser.svg"}
 																alt="Imagen"
-																className="w-42 h-42 object-contain bg-gray-200 rounded-lg"
+																className="w-42 h-42 object-contain bg-gray-200 rounded-lg border"
 																/>
 															</CardContent>
 															</Card>
@@ -1042,7 +1045,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 													</Carousel>
 												</div>
 												) : (
-												<p>No hay evidencias disponibles.</p>
+												<p>-</p>
 												)}
 											</td>
 
@@ -1063,11 +1066,11 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 													))}
 												</ul>
 												) : (
-													<p>No hay documentos disponibles.</p>
+													<p>-</p>
 													)}
 											</td>
 
-											<td className="flex items-center justify-center gap-2 mt-2">
+											<td className="flex items-center justify-center gap-2 mt-2 px-2">
 												<div
 												title="Editar"
 												className="hover:cursor-pointer text-blue-500 hover:text-blue-600"
@@ -1087,7 +1090,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 										))) : (
 											<tr>
 											<td colSpan={8} className="text-center text-gray-500 py-4">
-												No hay personas involucradas.
+												No se han agregado seguimientos.
 											</td>
 											</tr>
 											)}
@@ -1155,7 +1158,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 											))) : (
 												<tr>
 												<td colSpan={8} className="text-center text-gray-500 py-4">
-													No hay personas involucradas.
+													No se han agregado afectaciones patrimoniales.
 												</td>
 												</tr>
 											)}
@@ -1199,6 +1202,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 				setEditarSeguimiento={setEditarSeguimiento}
 				editarSeguimiento={editarSeguimiento}
 				indice={indiceSeleccionado}
+				dateIncidencia={date ? convertirDateToISO(date):""}
 				>
 				<div></div>
 			</SeguimientoIncidenciaLista>

@@ -123,87 +123,88 @@ export const DepositosModal: React.FC<IncidenciaModalProps> = ({
 		<Dialog onOpenChange={setIsSuccess} open={isSuccess}>
 			<DialogTrigger>{children}</DialogTrigger>
 
-			<DialogContent className="max-w-lg" aria-describedby="">
+			<DialogContent className="max-w-lg overflow-y-auto flex flex-col overflow-hidden" aria-describedby="">
 				<DialogHeader>
 					<DialogTitle className="text-2xl text-center font-bold">
 						{title}
 					</DialogTitle>
 				</DialogHeader>
+                <div className="flex-grow overflow-y-auto px-3">
+                    <Form {...form}>
+                        <form  onSubmit={form.handleSubmit(onSubmit)}>
+                            <div className="grid grid-cols-1 gap-5 mb-6">
 
-				<Form {...form}>
-					<form  onSubmit={form.handleSubmit(onSubmit)}>
-						<div className="grid grid-cols-1 gap-5 mb-6">
-
-                        <FormField
-                            control={form.control}
-                            name="tipo_deposito"
-                            render={({ field }:any) => (
-                                <FormItem>
-                                <FormLabel>Tipo Deposito:</FormLabel>
-                                <FormControl>
-                                    <Select {...field} className="input"t
-                                        onValueChange={(value:string) => {
-                                        field.onChange(value); 
-                                        }}
-                                        value={field.value}
-                                    >
-                                        <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="Selecciona una opcion" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem key={"Efectivo"} value={"Efectivo"}>Efectivo</SelectItem>
-                                            <SelectItem key={"Fichas Deposito"} value={"Fichas Deposito"}>Fichas Deposito</SelectItem>
-                                            <SelectItem key={"Menos Dev. DEP-PDT"} value={"Menos Dev. DEP-PDT"}>Menos Dev. DEP-PDT</SelectItem>
-                                            <SelectItem key={"Cheques"} value={"Cheques"}>Cheques</SelectItem>
-                                            <SelectItem key={"Cheques Dlls"} value={"Cheques Dlls"}>Cheques Dlls</SelectItem>
-                                            <SelectItem key={"Vales"} value={"Vales"}>Vales</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </FormControl>
-                                <FormMessage />
-                                </FormItem>
-                            )}
-                            />
-                              <FormField
-                            control={form.control}
-                            name="origen"
-                            render={({ field }:any) => (
-                                <FormItem>
-                                <FormLabel>Origen:</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="Origen..." {...field} 
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                                </FormItem>
-                            )}
-                            />
                             <FormField
-                            control={form.control}
-                            name="cantidad"
-                            render={({ field }:any) => (
-                                <FormItem>
-                                <FormLabel>Cantidad:</FormLabel>
-                                <FormControl>
-                                    <Input placeholder="Cantidad..." {...field} 
-                                    onChange={(e) => {
-                                        const value = e.target.value;
-                                        if (value === "" || !isNaN(Number(value))) {
-                                            field.onChange(value === "" ? "" : Number(value)); // Si es vacío, lo mantiene vacío
-                                        }
-                                    }}
-                                    />
-                                </FormControl>
-                                <FormMessage />
-                                </FormItem>
-                            )}
-                            />
-						</div>
-                        
+                                control={form.control}
+                                name="tipo_deposito"
+                                render={({ field }:any) => (
+                                    <FormItem>
+                                    <FormLabel>Tipo Deposito:</FormLabel>
+                                    <FormControl>
+                                        <Select {...field} className="input"t
+                                            onValueChange={(value:string) => {
+                                            field.onChange(value); 
+                                            }}
+                                            value={field.value}
+                                        >
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Selecciona una opcion" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem key={"Efectivo"} value={"Efectivo"}>Efectivo</SelectItem>
+                                                <SelectItem key={"Fichas Deposito"} value={"Fichas Deposito"}>Fichas Deposito</SelectItem>
+                                                <SelectItem key={"Menos Dev. DEP-PDT"} value={"Menos Dev. DEP-PDT"}>Menos Dev. DEP-PDT</SelectItem>
+                                                <SelectItem key={"Cheques"} value={"Cheques"}>Cheques</SelectItem>
+                                                <SelectItem key={"Cheques Dlls"} value={"Cheques Dlls"}>Cheques Dlls</SelectItem>
+                                                <SelectItem key={"Vales"} value={"Vales"}>Vales</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </FormControl>
+                                    <FormMessage />
+                                    </FormItem>
+                                )}
+                                />
+                                <FormField
+                                control={form.control}
+                                name="origen"
+                                render={({ field }:any) => (
+                                    <FormItem>
+                                    <FormLabel>Origen:</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Origen..." {...field} 
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                    </FormItem>
+                                )}
+                                />
+                                <FormField
+                                control={form.control}
+                                name="cantidad"
+                                render={({ field }:any) => (
+                                    <FormItem>
+                                    <FormLabel>Cantidad:</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="Cantidad..." {...field} 
+                                        onChange={(e) => {
+                                            const value = e.target.value;
+                                            if (value === "" || !isNaN(Number(value))) {
+                                                field.onChange(value === "" ? "" : Number(value)); // Si es vacío, lo mantiene vacío
+                                            }
+                                        }}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                    </FormItem>
+                                )}
+                                />
+                            </div>
+                            
 
-						
-					</form>
-				</Form>
+                            
+                        </form>
+                    </Form>
+                </div>
                 <div className="flex gap-2">
                     <DialogClose asChild>
                         <Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700" onClick={handleClose}>

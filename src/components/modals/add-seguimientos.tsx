@@ -23,7 +23,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Imagen } from "@/lib/update-pass";
-import { formatFecha } from "@/lib/utils";
+import { calcularTiempoDesdeIncidencia, convertirDateToISO, formatDateToString } from "@/lib/utils";
 import { useShiftStore } from "@/store/useShiftStore";
 import { Textarea } from "../ui/textarea";
 import DateTime from "../dateTime";
@@ -42,6 +42,7 @@ interface IncidenciaModalProps {
     editarSeguimiento:boolean;
     setEditarSeguimiento: Dispatch<SetStateAction<any>>;
     seguimientoSeleccionado:any;
+	dateIncidencia:string;
 }
 
 const formSchema = z.object({
@@ -61,6 +62,7 @@ const formSchema = z.object({
 			file_name: z.string(),
 		})
 	).optional(),
+	tiempo_transcurrido: z.string().optional()
 });
 
 export const SeguimientoIncidenciaLista: React.FC<IncidenciaModalProps> = ({
@@ -72,7 +74,8 @@ export const SeguimientoIncidenciaLista: React.FC<IncidenciaModalProps> = ({
     indice,
     editarSeguimiento,
     setEditarSeguimiento,
-    seguimientoSeleccionado
+    seguimientoSeleccionado,
+	dateIncidencia
 }) => {
 	// const [isSuccess, setIsSuccess] = useState(false)
 	const [evidencia, setEvidencia] = useState<Imagen[]>([]);
@@ -88,6 +91,7 @@ export const SeguimientoIncidenciaLista: React.FC<IncidenciaModalProps> = ({
 			fecha_inicio_seg: "",
 			incidencia_documento_solucion: [],
 			incidencia_evidencia_solucion: [],
+			tiempo_transcurrido:""
 		},
 	});
 
@@ -99,12 +103,12 @@ export const SeguimientoIncidenciaLista: React.FC<IncidenciaModalProps> = ({
             reset({
                 accion_correctiva_incidencia: "",
                 incidencia_personas_involucradas:  "",
+				tiempo_transcurrido:""
               });
 			setDate("")
 			setEvidencia([])
 			setDocumento([])
         }
-        console.log("seg",editarSeguimiento)
 
 		if (editarSeguimiento && seguimientoSeleccionado) {
 			reset({
@@ -119,20 +123,37 @@ export const SeguimientoIncidenciaLista: React.FC<IncidenciaModalProps> = ({
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		if (date) {
-			const formatData = {
-				accion_correctiva_incidencia: values.accion_correctiva_incidencia || "",
-				incidencia_personas_involucradas: values.incidencia_personas_involucradas || "",
-				fecha_inicio_seg: values.fecha_inicio_seg ? formatFecha(values.fecha_inicio_seg) + `:00` : "2024-03-24 11:04:00",
-				incidencia_documento_solucion: documento,
-				incidencia_evidencia_solucion: evidencia
-			}
             if(editarSeguimiento){
+				const fecha2 = convertirDateToISO(date)
+				console.log("FECHA DATE INCIDENCIA EDICION",dateIncidencia, fecha2)
+				console.log("holaa", calcularTiempoDesdeIncidencia( dateIncidencia, fecha2))
+				const formatData = {
+					accion_correctiva_incidencia: values.accion_correctiva_incidencia || "",
+					incidencia_personas_involucradas: values.incidencia_personas_involucradas || "",
+					fecha_inicio_seg: date ? formatDateToString(date) : "",
+					incidencia_documento_solucion: documento,
+					incidencia_evidencia_solucion: evidencia,
+					tiempo_transcurrido: calcularTiempoDesdeIncidencia( dateIncidencia, fecha2)
+				}
+
                 setEditarSeguimiento(false)
                 setSeguimientos((prev: any[]) =>
                     prev.map((item, i) => (i === indice ? formatData : item))
                   );
                 toast.success("Seguimiento editado correctamente.")
             }else{
+				const fecha2 = convertirDateToISO(date)
+				console.log("seguimiento creacion",dateIncidencia , fecha2)
+				console.log("tiempo", calcularTiempoDesdeIncidencia( dateIncidencia, fecha2))
+				const formatData = {
+					accion_correctiva_incidencia: values.accion_correctiva_incidencia || "",
+					incidencia_personas_involucradas: values.incidencia_personas_involucradas || "",
+					fecha_inicio_seg: date ? formatDateToString(date) : "",
+					incidencia_documento_solucion: documento,
+					incidencia_evidencia_solucion: evidencia,
+					tiempo_transcurrido: calcularTiempoDesdeIncidencia(dateIncidencia, fecha2)
+				}
+
                 setSeguimientos((prev: any) => [...prev, formatData]);
                 toast.success("Seguimiento agregado correctamente.")
             }
@@ -153,17 +174,23 @@ export const SeguimientoIncidenciaLista: React.FC<IncidenciaModalProps> = ({
         }
     }, [form.formState.errors])
 
+	useEffect(() => {
+        if(date){
+            console.log("date:", date)
+        }
+    }, [date])
+
 	return (
 		<Dialog onOpenChange={setIsSuccess} open={isSuccess}>
 			<DialogTrigger>{children}</DialogTrigger>
 
-			<DialogContent className="max-w-lg" aria-describedby="">
+			<DialogContent className="max-w-lg overflow-y-auto max-h-[80vh] min-h-auto  flex flex-col overflow-hidden" aria-describedby="">
 				<DialogHeader>
 					<DialogTitle className="text-2xl text-center font-bold">
 						{title}
 					</DialogTitle>
 				</DialogHeader>
-
+				<div className="flex-grow overflow-y-auto px-2">
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} >
 						<div className="grid grid-cols-1 gap-5 mb-6">
@@ -176,7 +203,7 @@ export const SeguimientoIncidenciaLista: React.FC<IncidenciaModalProps> = ({
                                             </FormLabel>
 											<FormControl>
 												{/* <Input type="datetime-local" placeholder="Fecha"  /> */}
-												<DateTime date={date} setDate={setDate} />
+												<DateTime date={date} setDate={setDate} disablePastDates={false}/>
 											</FormControl>
 
 											<FormMessage />
@@ -248,23 +275,26 @@ export const SeguimientoIncidenciaLista: React.FC<IncidenciaModalProps> = ({
 						</div>
                         
 
-						<div className="flex gap-2">
-							<DialogClose asChild>
-								<Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700" onClick={handleClose}>
-									Cancelar
-								</Button>
-							</DialogClose>
-
-
-							<Button
-								type="submit"
-								className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={isLoading}
-							>
-							    {editarSeguimiento? ("Editar"):(("Agregar"))}
-							</Button>
-						</div>
+						
 					</form>
 				</Form>
+				</div>
+				<div className="flex gap-2">
+					<DialogClose asChild>
+						<Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700" onClick={handleClose}>
+							Cancelar
+						</Button>
+					</DialogClose>
+
+
+					<Button
+						// type="submit"
+						onClick={form.handleSubmit(onSubmit)} 
+						className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={isLoading}
+					>
+						{editarSeguimiento? ("Editar"):(("Agregar"))}
+					</Button>
+				</div>
 			</DialogContent>
 		</Dialog>
 	);

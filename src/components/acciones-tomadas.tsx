@@ -71,11 +71,11 @@ const SeccionAccionesTomadas:React.FC<PersonasInvolucradasListProps> = ({ accion
 			{accionesTomadas && accionesTomadas.length > 0 ? (
 			accionesTomadas.map((item, index) => (
 				<tr key={index} className="border-t border-gray-200">
-				<td className="px-4 py-2">{item.acciones_tomadas}</td>
-				<td className="px-4 py-2">{item.llamo_a_policia}</td>
-				<td className="px-4 py-2">{item.autoridad}</td>
-				<td className="px-4 py-2">{item.numero_folio_referencia}</td>
-				<td className="px-4 py-2">{item.responsable}</td>
+				<td className="px-4 py-2">{item.acciones_tomadas||"-"}</td>
+				<td className="px-4 py-2">{item.llamo_a_policia||"-"}</td>
+				<td className="px-4 py-2">{item.autoridad||"-"}</td>
+				<td className="px-4 py-2">{item.numero_folio_referencia||"-"}</td>
+				<td className="px-4 py-2">{item.responsable||"-"}</td>
 				<td className="px-4 py-2">
 					<div className="flex items-center justify-center gap-2">
 					<div
@@ -98,7 +98,7 @@ const SeccionAccionesTomadas:React.FC<PersonasInvolucradasListProps> = ({ accion
 			))) : (
 				<tr>
 				<td colSpan={8} className="text-center text-gray-500 py-4">
-					No hay personas involucradas.
+					No hay acciones tomadas.
 				</td>
 				</tr>
 			)}

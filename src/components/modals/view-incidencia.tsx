@@ -108,7 +108,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 										{data?.tags.map((tag, idx) => (
 										<span
 											key={idx}
-											className="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-0.5 h  rounded capitalize"
+											className="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-1 h  rounded capitalize"
 										>
 											{tag}
 										</span>
@@ -377,7 +377,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 									):null}
 								</div>
 							</div>
-							<div className="mt-2 font-bold text-lg">Personas involucradas:</div>
+							<div className="mt-2 font-bold text-lg mb-2">Personas involucradas:</div>
 							{data.personas_involucradas_incidencia.length > 0 ?
 								<div className="col-span-1 md:col-span-2">
 									

@@ -41,11 +41,11 @@ const LoadFile: React.FC<CalendarDaysProps>= ({id, titulo, setDocs, docArray, li
 
   return (
     <>
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 w-full">
             <div className="flex  items-start">
                 <Label htmlFor="picture" className="font-bold text-base">{titulo}</Label>
                 <div className="ml-3 flex justify-between gap-2">
-                    <Button className="bg-yellow-500 rounded hover:bg-yellow-600 w-8 h-8"
+                    <Button className="bg-yellow-500 rounded hover:bg-yellow-600 w-8 h-8" type="button"
                         onClick={cleanPhoto}>
                         <Trash  size={24} className="p-0 " />
                     </Button>

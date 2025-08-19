@@ -138,7 +138,7 @@ export const AccionesTomadasModal: React.FC<IncidenciaModalProps> = ({
 		<Dialog onOpenChange={setIsSuccess} open={isSuccess}>
 			<DialogTrigger>{children}</DialogTrigger>
 
-			<DialogContent className="max-w-lg overflow-y-auto max-h-[80vh] min-h-[80vh]  flex flex-col overflow-hidden" aria-describedby="">
+			<DialogContent className="max-w-lg overflow-y-auto max-h-[80vh] min-h-auto flex flex-col overflow-hidden" aria-describedby="">
 				<DialogHeader>
 					<DialogTitle className="text-2xl text-center font-bold">
 						{title}
@@ -146,8 +146,8 @@ export const AccionesTomadasModal: React.FC<IncidenciaModalProps> = ({
 				</DialogHeader>
                 <div className="flex-grow overflow-y-auto ">
                 <Form {...form}>
-					<form onSubmit={form.handleSubmit(onSubmit)} >
-						<div className="grid grid-cols-1 gap-5 mb-6">
+					<form  >
+						<div className="grid grid-cols-1 gap-5 mb-6 px-2">
 							<FormField
 								control={form.control}
 								name="acciones_tomadas"
@@ -289,25 +289,25 @@ export const AccionesTomadasModal: React.FC<IncidenciaModalProps> = ({
 						</div>
                         
 
-						<div className="flex gap-2">
-							<DialogClose asChild>
-								<Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700" onClick={handleClose}>
-									Cancelar
-								</Button>
-							</DialogClose>
-
-
-							<Button
-								type="submit"
-								className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={isLoading}
-							>
-							    {editarAccionesTomadas? ("Editar"):(("Agregar"))}
-							</Button>
-						</div>
+						
 					</form>
 				</Form>
                 </div>
-				
+				<div className="flex gap-2">
+                    <DialogClose asChild>
+                        <Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700" onClick={handleClose}>
+                            Cancelar
+                        </Button>
+                    </DialogClose>
+
+                    <Button
+                        // type="submit"
+                        onClick={form.handleSubmit(onSubmit)}
+                        className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={isLoading}
+                    >
+                        {editarAccionesTomadas? ("Editar"):(("Agregar"))}
+                    </Button>
+                </div>
 			</DialogContent>
 		</Dialog>
 	);

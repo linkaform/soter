@@ -238,9 +238,9 @@ export const EditarPaqueteria: React.FC<EditarFallaModalProps> = ({
 								name="fecha_recibido_paqueteria"
 								render={() => (
 									<FormItem>
-										<FormLabel>* Fecha de la recepción</FormLabel>
+										<FormLabel>* Fecha de entrega: </FormLabel>
 										<FormControl>
-											<DateTime date={date} setDate={setDate} />
+											<DateTime date={date} setDate={setDate} disablePastDates={false}/>
 										</FormControl>
 
 										<FormMessage />
@@ -251,7 +251,7 @@ export const EditarPaqueteria: React.FC<EditarFallaModalProps> = ({
 								name="quien_recibe_paqueteria"
 								render={({ field }:any) => (
 									<FormItem>
-										<FormLabel>Quien recibe:</FormLabel>
+										<FormLabel>Destinatario:</FormLabel>
 										<FormControl>
 										<Select {...field} className="input"
 											onValueChange={(value:string) => {

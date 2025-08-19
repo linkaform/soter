@@ -455,3 +455,47 @@ export function arraysIguales(a:string[], b:string[]) {
   if (a.length !== b.length) return false;
   return a.every((val, index) => val === b[index]);
 }
+
+
+export function calcularTiempoDesdeIncidencia(fechaInicioStr: string, fechaFinStr: string): string {
+  const inicio = new Date(fechaInicioStr);
+  const fin = new Date(fechaFinStr);
+
+  if (fin < inicio) {
+    return "La fecha es anterior a la fecha de la incidencia.";
+  }
+
+  const diferenciaMs = fin.getTime() - inicio.getTime();
+
+  const segundosTotales = Math.floor(diferenciaMs / 1000);
+  const dias = Math.floor(segundosTotales / (24 * 60 * 60));
+  const horas = Math.floor((segundosTotales % (24 * 60 * 60)) / 3600);
+  const minutos = Math.floor((segundosTotales % 3600) / 60);
+
+  const partes: string[] = [];
+
+  if (dias > 0) partes.push(`${dias} día(s)`);
+  if (horas > 0) partes.push(`${horas} hora(s)`);
+  if (minutos > 0) partes.push(`${minutos} minuto(s)`);
+
+  return partes.length > 0
+    ? `${partes.join(", ")}.`
+    : "0 minutos";
+}
+
+
+export function dateStringToISO (fechaStr:string){
+    const fecha2ISO = fechaStr.replace(" ", "T");
+    return fecha2ISO
+}
+
+export function convertirDateToISO(fecha:Date): string {
+  const year = fecha.getFullYear();
+  const month = String(fecha.getMonth() + 1).padStart(2, '0'); 
+  const day = String(fecha.getDate()).padStart(2, '0');
+  const hours = String(fecha.getHours()).padStart(2, '0');
+  const minutes = String(fecha.getMinutes()).padStart(2, '0');
+  const seconds = String(fecha.getSeconds()).padStart(2, '0');
+
+  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+}
