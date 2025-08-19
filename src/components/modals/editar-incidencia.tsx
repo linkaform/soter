@@ -177,7 +177,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 	const [editarAfectacionPatrimonial, setEditarAfectacionPatrimonial] = useState(false)
 
 	const getNivelNumber = (val:string) => {
-		if (val =="Crítica") return 100
+		if (val =="Critica") return 100
 		if (val =="Moderada") return 50
 		if (val =="Leve") return 0
 	}
@@ -195,7 +195,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 	const getNivel = (val: number) => {
 		if (val < 35) return "Leve"
 		if (val > 34 && val < 70) return "Moderada"
-		if (val > 70) return "Crítica"
+		if (val > 70) return "Critica"
 	}
 
 	const openModalAgregarSeg = () =>{

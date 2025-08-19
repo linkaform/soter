@@ -542,7 +542,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const getNivel = (val: number) => {
 		if (val < 35) return "Leve"
 		if (val > 34 && val < 70) return "Moderada"
-		if (val > 70) return "Crítica"
+		if (val > 70) return "Critica"
 	}
 
 	const openModalAgregarSeg = () =>{
