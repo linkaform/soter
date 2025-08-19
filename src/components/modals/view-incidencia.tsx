@@ -378,7 +378,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 								</div>
 							</div>
 							<div className="mt-2 font-bold text-lg mb-2">Personas involucradas:</div>
-							{data.personas_involucradas_incidencia.length > 0 ?
+							
 								<div className="col-span-1 md:col-span-2">
 									
 									<table className="min-w-full table-auto mb-5 border">
@@ -395,7 +395,8 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 										</tr>
 										</thead>
 										<tbody>
-										{data.personas_involucradas_incidencia.map((item, index) => (
+										{data.personas_involucradas_incidencia.length > 0 ?
+										 data.personas_involucradas_incidencia.map((item, index) => (
 											<tr key={index} className="border-t border-gray-200">
 											<td className="px-4 py-2">{item.nombre_completo}</td>
 											<td className="px-4 py-2">{item.rol}</td>
@@ -405,14 +406,20 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 											<td className="px-4 py-2">{item.retenido}</td>
 											<td className="px-4 py-2 capitalize">{item.comentarios || "N/A"}</td>
 											</tr>
-										))}
+										)): 
+										<tr>
+											<td colSpan={6} className="text-center text-gray-500 py-4">
+												No se han agregado personas involucradas.
+											</td>
+										</tr>
+									}
 										</tbody>
 									</table>
 								</div> 
-							: <div className="col-span-1 md:col-span-2 text-gray-500 py-4"> No se han agregado personas involucradas.</div> }
+							
 
 							<div className="my-2 font-bold text-lg">Acciones tomadas:</div>
-							{data.acciones_tomadas_incidencia.length > 0 ?
+							
 								<div className="col-span-1 md:col-span-2">
 									<table className="min-w-full table-auto mb-5 border">
 										<thead>
@@ -426,7 +433,8 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 										</tr>
 										</thead>
 										<tbody>
-										{data.acciones_tomadas_incidencia.map((item, index) => (
+									{data.acciones_tomadas_incidencia.length > 0 ?
+										data.acciones_tomadas_incidencia.map((item, index) => (
 											<tr key={index} className="border-t border-gray-200">
 											<td className="px-4 py-2">{item.acciones_tomadas}</td>
 											<td className="px-4 py-2">{item.llamo_a_policia}</td>
@@ -434,11 +442,14 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 											<td className="px-4 py-2">{item.numero_folio_referencia}</td>
 											<td className="px-4 py-2">{item.responsable}</td>
 											</tr>
-										))}
+										)): <tr>
+										<td colSpan={6} className="text-center text-gray-500 py-4">
+											No se han agregado acciones.
+										</td>
+									</tr>}
 										</tbody>
 									</table>
 								</div>
-						: <div className="col-span-1 md:col-span-2 text-gray-500"> No se han agregado acciones.</div>}
 						</div>
 					</Card>
 				</TabsContent>
