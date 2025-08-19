@@ -192,6 +192,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 		}));
 	}
 
+
 	const getNivel = (val: number) => {
 		if (val < 35) return "Leve"
 		if (val > 34 && val < 70) return "Moderada"
@@ -319,7 +320,6 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 						const subCatIncidenciasIcons = subCategoriasConIconos.filter((cat) =>
 							catIncidencias.data.includes(cat.nombre)
 						);
-						// setSearch("cat")
 						setSubCatCategorias(subCatIncidenciasIcons)
 					}
 			}

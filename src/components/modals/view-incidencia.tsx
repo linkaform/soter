@@ -456,7 +456,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 
 
 					<div >
-					{data.seguimientos_incidencia && data.seguimientos_incidencia.length > 0 ? (
+					
 						<table className="min-w-full table-auto mb-5 border">
 							<thead>
 							<tr className="bg-gray-100">
@@ -469,7 +469,8 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 							</tr>
 							</thead>
 							<tbody>
-							{data.seguimientos_incidencia.map((item: any, index: number) => (
+							{data.seguimientos_incidencia && data.seguimientos_incidencia.length > 0 ? (
+								data.seguimientos_incidencia.map((item: any, index: number) => (
 								<tr key={index} className="border-t border-gray-200">
 								<td className="px-4 py-2">{item?.fecha_inicio_seg || "N/A"}</td>
 								<td className="px-4 py-2">0 min</td>
@@ -527,14 +528,15 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 										)}
 								</td>
 								</tr>
-							))}
+							))) : (
+								<tr>
+										<td colSpan={6} className="text-center text-gray-500 py-4">
+											No hay seguimientos disponibles.
+										</td>
+									</tr>
+								)}
 							</tbody>
 						</table>
-						) : (
-						<div className="px-4 py-2 text-center text-gray-500">
-							No se han agregado seguimientos.
-						</div>
-						)}
 					</div>
 
 				</Card>
@@ -552,7 +554,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 					</div>
 
 						<div >
-						{data.afectacion_patrimonial_incidencia && data.afectacion_patrimonial_incidencia.length > 0 ? (
+						
 							<table className="min-w-full table-auto mb-5 border">
 								<thead>
 								<tr className="bg-gray-100"> 
@@ -562,20 +564,23 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 								</tr>
 								</thead>
 								<tbody>
-								{data.afectacion_patrimonial_incidencia.map((item: any, index: number) => (
+								{data.afectacion_patrimonial_incidencia && data.afectacion_patrimonial_incidencia.length > 0 ? (
+								data.afectacion_patrimonial_incidencia.map((item: any, index: number) => (
 									<tr key={index} className="border-t border-gray-200">
 									<td className="px-4 py-2">{item?.tipo_afectacion || "N/A"}</td>
 									<td className="px-4 py-2">{formatCurrency(item?.monto_estimado) || "N/A"}</td>
 									<td className="px-4 py-2">{item?.duracion_estimada || "N/A"}</td>
 									</tr>
-								))}
+								))) : (
+									<tr>
+										<td colSpan={6} className="text-center text-gray-500 py-4">
+											No hay afectaciones patrimoniales disponibles.
+										</td>
+									</tr>
+									)}
 								</tbody>
 							</table>
-							) : (
-							<div className="px-4 py-2 text-center text-gray-500">
-								No se han agregado afectaciones patrimoniales.
-							</div>
-							)}
+							
 						</div>
 					</Card>
 				</TabsContent>
