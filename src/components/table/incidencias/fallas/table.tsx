@@ -14,7 +14,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { CalendarDays,  Eraser,  FileX2,  Plus,  Search, Trash2 } from "lucide-react";
+import { CalendarDays,  Eraser,  Eye,  FileX2,  Plus,  Search, Trash2 } from "lucide-react";
 
 
 
@@ -39,6 +39,7 @@ import { useMemo, useState } from "react";
 import { EditarFallaModal } from "@/components/modals/editar-falla";
 import { SeguimientoFallaModal } from "@/components/modals/seguimiento-falla";
 import { CerrarFallaModal } from "@/components/modals/close-falla-modal";
+import { ViewFalla } from "@/components/modals/view-falla";
 
   interface ListProps {
     data: Fallas_record[];
@@ -76,6 +77,7 @@ import { CerrarFallaModal } from "@/components/modals/close-falla-modal";
 		[]
 	);
 	const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
+	const [modalVerSeguimientoAbierto, setModalVerSeguimientoAbierto] = useState(false);
 	const [modalSeguimientoAbierto, setModalSeguimientoAbierto] = useState(false);
 	const [modalEliminarAbierto, setModalEliminarAbierto] = useState(false);
 	const [modalEliminarMultiAbierto, setModalEliminarMultiAbierto] = useState(false);
@@ -90,15 +92,15 @@ import { CerrarFallaModal } from "@/components/modals/close-falla-modal";
 		pageSize: 23,
 	});
 
-	const handleEditar = (falla: Fallas_record) => {
-		setFallaSeleccionada(falla);
-		setModalEditarAbierto(true);
-	};
+	// const handleEditar = (falla: Fallas_record) => {
+	// 	setFallaSeleccionada(falla);
+	// 	setModalEditarAbierto(true);
+	// };
 	
-	const handleSeguimiento= (falla: Fallas_record) => {
-		setFallaSeleccionada(falla);
-		setModalSeguimientoAbierto(true);
-	};
+	// const handleSeguimiento= (falla: Fallas_record) => {
+	// 	setFallaSeleccionada(falla);
+	// 	setModalSeguimientoAbierto(true);
+	// };
 	
 	const handleEliminar= (falla: Fallas_record) => {
 		setFallaSeleccionada(falla);
@@ -109,13 +111,18 @@ import { CerrarFallaModal } from "@/components/modals/close-falla-modal";
 		setFallaSeleccionada(falla);
 		setModalCerrarAbierto(true);
 	};
+
+	const handleVer= (falla: Fallas_record) => {
+		setFallaSeleccionada(falla);
+		setModalVerSeguimientoAbierto(true);
+	};
 	
 
 	const [globalFilter, setGlobalFilter] = React.useState("");
 	
 	const columns = useMemo(() => {
 	if (isLoading) return [];
-	return getFallasColumns(handleEditar, handleSeguimiento, handleEliminar, handleCerrar);
+	return getFallasColumns( handleEliminar, handleCerrar, handleVer);
 	}, [isLoading]);
 
 	const memoizedData = useMemo(() => data || [], [data]);
@@ -223,6 +230,7 @@ return (
 					</Button>
 				</div>
 				
+				
 				<Button
 				variant="destructive"
 				onClick={() => setModalEliminarMultiAbierto(true)}
@@ -237,6 +245,7 @@ return (
 						title="Eliminar Falla"
 						arrayFolios={selectedFallas} setModalEliminarAbierto={setModalEliminarMultiAbierto} modalEliminarAbierto={modalEliminarMultiAbierto}/>
 				</div>
+				
 				</div>
 			</div>
 			
@@ -248,6 +257,18 @@ return (
 					setModalEditarAbierto={setModalEditarAbierto}
 					onClose={() => setModalEditarAbierto(false)}
 				/>
+			)}
+
+
+			{modalVerSeguimientoAbierto && fallaSeleccionada && (
+				<ViewFalla 
+					title="Información de la Falla"
+					data={fallaSeleccionada} isSuccess={modalVerSeguimientoAbierto}
+					setIsSuccess={setModalVerSeguimientoAbierto} setModalEditarAbierto={setModalEditarAbierto }>
+					<div className="cursor-pointer" title="Ver Falla">
+						<Eye /> 
+					</div>
+				</ViewFalla>
 			)}
 
 			{modalSeguimientoAbierto && fallaSeleccionada && (

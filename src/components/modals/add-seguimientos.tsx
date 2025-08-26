@@ -125,8 +125,6 @@ export const SeguimientoIncidenciaLista: React.FC<IncidenciaModalProps> = ({
 		if (date) {
             if(editarSeguimiento){
 				const fecha2 = convertirDateToISO(date)
-				console.log("FECHA DATE INCIDENCIA EDICION",dateIncidencia, fecha2)
-				console.log("holaa", calcularTiempoDesdeIncidencia( dateIncidencia, fecha2))
 				const formatData = {
 					accion_correctiva_incidencia: values.accion_correctiva_incidencia || "",
 					incidencia_personas_involucradas: values.incidencia_personas_involucradas || "",
@@ -143,8 +141,6 @@ export const SeguimientoIncidenciaLista: React.FC<IncidenciaModalProps> = ({
                 toast.success("Seguimiento editado correctamente.")
             }else{
 				const fecha2 = convertirDateToISO(date)
-				console.log("seguimiento creacion",dateIncidencia , fecha2)
-				console.log("tiempo", calcularTiempoDesdeIncidencia( dateIncidencia, fecha2))
 				const formatData = {
 					accion_correctiva_incidencia: values.accion_correctiva_incidencia || "",
 					incidencia_personas_involucradas: values.incidencia_personas_involucradas || "",
@@ -173,12 +169,6 @@ export const SeguimientoIncidenciaLista: React.FC<IncidenciaModalProps> = ({
             console.log("Errores:", form.formState.errors)
         }
     }, [form.formState.errors])
-
-	useEffect(() => {
-        if(date){
-            console.log("date:", date)
-        }
-    }, [date])
 
 	return (
 		<Dialog onOpenChange={setIsSuccess} open={isSuccess}>

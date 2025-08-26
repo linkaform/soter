@@ -21,11 +21,12 @@ import {
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { useShiftStore } from "@/store/useShiftStore";
 import { Input } from "../ui/input";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { formatCurrencyString } from "@/lib/utils";
 
 interface IncidenciaModalProps {
 	title: string;
@@ -57,8 +58,9 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
     afectacionPatrimonialSeleccionada
 }) => {
 	const { isLoading} = useShiftStore();
-
-    console.log("openAfectacionPatrimonialModal",openAfectacionPatrimonialModal)
+    const [inputValue, setInputValue] = useState(""); // texto visible
+    const debounceRef = useRef<NodeJS.Timeout | null>(null);
+    
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -80,6 +82,8 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
         }
 
 		if (editarAfectacionPatrimonial && afectacionPatrimonialSeleccionada) {
+            console.log("monto", afectacionPatrimonialSeleccionada)
+            setInputValue(afectacionPatrimonialSeleccionada.monto_estimado)
 			reset({
                 tipo_afectacion:afectacionPatrimonialSeleccionada.tipo_afectacion,
                 monto_estimado:afectacionPatrimonialSeleccionada.monto_estimado,
@@ -167,25 +171,40 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
                                 <FormField
                                     control={form.control}
                                     name="monto_estimado"
-                                    render={({ field }: any) => (
+                                    render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Monto estimado del daño: *</FormLabel>
-                                            <FormControl>
-                                                <Input placeholder="Monto estimado del daño..." {...field}
-                                                    onChange={(e) => {
-                                                        const value = e.target.value;
-                                                        if (/^\d*\.?\d*$/.test(value)) {
-                                                        field.onChange(e); // Solo si es número válido (entero o decimal)
-                                                        }
-                                                    }}
-                                                    value={field.value || ""}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
+                                        <FormLabel>Monto estimado del daño: *</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                            placeholder="Monto estimado del daño..."
+                                            value={inputValue}
+                                            onChange={(e) => {
+                                                const rawInput = e.target.value;
+
+                                                // Eliminar caracteres no válidos (mantener solo números y punto)
+                                                const numeric = rawInput.replace(/[^\d.]/g, "").replace(/(\..*)\./g, "$1");
+
+                                                // Actualizar el texto sin formatear para que el usuario lo vea mientras escribe
+                                                setInputValue(numeric);
+
+                                                // Guardar valor numérico limpio en el formulario
+                                                field.onChange(numeric);
+
+                                                // Limpiar debounce anterior
+                                                if (debounceRef.current) clearTimeout(debounceRef.current);
+
+                                                // Esperar 500ms antes de formatear
+                                                debounceRef.current = setTimeout(() => {
+                                                setInputValue(formatCurrencyString(numeric));
+                                                }, 500);
+                                            }}
+                                            onBlur={field.onBlur}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
                                         </FormItem>
                                     )}
-                                />
-                                
+                                    />
 
                                 <FormField
                                     control={form.control}
@@ -233,3 +252,4 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
 		</Dialog>
 	);
 };
+

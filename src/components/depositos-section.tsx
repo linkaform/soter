@@ -25,7 +25,6 @@ export const SeccionDepositos: React.FC<IncidenciaModalProps> = ({
 	const [total, setTotal] = useState<string>("");
 
 	const handleEditDepositos = (item: any, index: number) => {
-		console.log(item, index)
 		setDepositosSeleccion(item);
 		setIndice(index);
 		setEditarDepositos(true)

@@ -113,13 +113,9 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
 	}
 
 	function onEnviarSMS(){
-		console.log("hola")
 		if(data?.status_pase.toLowerCase()!='vencido'){
 			if(data?.telefono!==""){
-				// const data_cel_msj = {
-				// mensaje: `Estimado ${data.nombre}, ${data.visita_a.length>0 ? data.visita_a[0].nombre :''}, te esta invitando a: ${data.ubicacion}, Descarga tu pase en: `, //${responsePdf.response?.data?.data?.download_url}
-				// numero: data.telefono
-				// }
+
         const data_for_msj = {
           email_to: data.email,
           asunto: data.tema_cita,

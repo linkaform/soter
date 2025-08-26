@@ -58,8 +58,6 @@ export const DepositosModal: React.FC<IncidenciaModalProps> = ({
 }) => {
 	const { isLoading} = useShiftStore();
 
-    console.log("conf", depositosSeleccion)
-
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {

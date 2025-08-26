@@ -29,7 +29,6 @@ export const CloseShiftModal: React.FC<CloseShiftModalProps> = ({
     ?.map((guardia: { name: string }) => guardia.name)
     .join(", ");
 
-  console.log("lala",shift)
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>

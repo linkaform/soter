@@ -17,7 +17,6 @@ const SeccionAccionesTomadas:React.FC<PersonasInvolucradasListProps> = ({ accion
 	const [indiceSeleccionado, setIndiceSeleccionado]= useState<number | null>(null)
 
 	const handleEditAccionesTomadas = (item: any, index: number) => {
-		console.log(item, index)
 		setAccionesTomadasSeleccion(item);
 		setIndiceSeleccionado(index);
 		setEditarAccionesTomadas(true)

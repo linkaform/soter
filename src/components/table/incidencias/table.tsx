@@ -371,10 +371,11 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 					modalEliminarAbierto={modalEliminarAbierto}
 					setModalEliminarAbierto={(state) => {
 						setModalEliminarMultiAbierto(state);
-						console.log("holaaa")
 						if (!state) {
-						 	 setSelectedIncidencias([]); 
+							console.log("ELIMINAR", state)
+						 	setSelectedIncidencias([]); 
 							setRowSelection({});
+							setModalEliminarAbierto(state)
 						}
 					  }}/>
 				)}

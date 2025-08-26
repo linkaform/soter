@@ -9,33 +9,39 @@ import {
 } from "../ui/dialog";
 import { Separator } from "../ui/separator";
 import Image from "next/image";
-import { FallaGrupoSeguimiento, Fallas_record } from "../table/incidencias/fallas/fallas-columns";
+import { Fallas_record } from "../table/incidencias/fallas/fallas-columns";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
 import { Card, CardContent } from "../ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import { capitalizeFirstLetter, formatDateToText } from "@/lib/utils";
 import { Imagen } from "@/lib/update-pass";
 import { SeguimientoFallaModal } from "./seguimiento-falla";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 interface ViewFallaModalProps {
   title: string;
   data:Fallas_record
   isSuccess: boolean;
   children: React.ReactNode;
+  setIsSuccess: Dispatch<SetStateAction<boolean>>;
+  setModalEditarAbierto: Dispatch<SetStateAction<boolean>>;
 }
 
 export const ViewFalla: React.FC<ViewFallaModalProps> = ({
   title,
   data,
   children,
+  setIsSuccess,
+  isSuccess,
+  setModalEditarAbierto,
 }) => {
-  const seguimientos = data.falla_grupo_seguimiento_formated || []
-
-  const [openModal, setOpenModal] = useState(false)
-
+  	const seguimientos = data.falla_grupo_seguimiento_formated || []
+	//const [fallaSeleccionada, setFallaSeleccionada] = useState(data)
+  	const [openModal, setOpenModal] = useState(false)
   return (
-    <Dialog modal>
+    <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="max-w-3xl overflow-y-auto max-h-[80vh] flex flex-col" aria-describedby="">
         <DialogHeader className="flex-shrink-0">
@@ -191,26 +197,25 @@ export const ViewFalla: React.FC<ViewFallaModalProps> = ({
 				<thead>
 					<tr>
 					<th className="px-4 py-2 text-left border-b">Acción realizada</th>
-					<th className="px-4 py-2 text-left border-b">Comentario</th>
-					<th className="px-4 py-2 text-left border-b">Fecha inicio</th>
-					<th className="px-4 py-2 text-left border-b">Fecha fin</th>
-					<th className="px-4 py-2 text-left border-b">Evidencia</th>
+					<th className="px-4 py-2 text-left border-b">Personas Involucradas</th>
+					<th className="px-4 py-2 text-left border-b">Fecha</th>
+					<th className="px-4 py-2 text-left border-b">Tiempo transcurrido</th>
 					<th className="px-4 py-2 text-left border-b">Documentos</th>
 					</tr>
 				</thead>
 				<tbody>
-					{seguimientos.map((item: FallaGrupoSeguimiento, index: number) => (
+					{seguimientos.map((item: any, index: number) => (
 					<tr key={index}>
-						<td className="px-4 py-2"><small>{item?.accion_correctiva || "N/A"}</small></td>
-						<td className="px-4 py-2"><small>{item?.comentario || "N/A"}</small></td>
-						<td className="px-4 py-2"><small>{item?.fecha_inicio || "N/A"}</small></td>
-						<td className="px-4 py-2"><small>{item?.fecha_fin || "N/A"}</small></td>
+						<td className="px-4 py-2"><small>{item?.falla_accion_realizada || "N/A"}</small></td>
+						<td className="px-4 py-2"><small>{item?.falla_personas_involucradas	|| "N/A"}</small></td>
+						<td className="px-4 py-2"><small>{item?.falla_fecha_seguimiento || "N/A"}</small></td>
+						<td className="px-4 py-2"><small>{item?.falla_tiempo_transcurrido || "N/A"}</small></td>
 						<td className="px-4 py-2">
-						{item?.evidencia.length > 0 ? (
+						{item?.falla_evidencia_solucion?.length > 0 ? (
 							<div className="w-full flex justify-center">
 							<Carousel className="w-16">
 								<CarouselContent>
-								{item?.evidencia.map((a: Imagen, index: number) => (
+								{item?.falla_evidencia_solucion	.map((a: Imagen, index: number) => (
 									<CarouselItem key={index}>
 									<Card>
 										<CardContent className="flex aspect-square items-center justify-center p-0">
@@ -235,9 +240,9 @@ export const ViewFalla: React.FC<ViewFallaModalProps> = ({
 						)}
 						</td>
 						<td className="px-4 py-2">
-						{item?.documento && item?.documento.length > 0 ? (
+						{item?.falla_documento_solucion	 && item?.falla_documento_solucion	.length > 0 ? (
 							<ul className="ms-2">
-							{item?.documento.map((file, index) => (
+							{item?.falla_documento_solucion	.map((file:any, index:number) => (
 								<li key={index}>
 								<a
 									href={file?.file_url}
@@ -266,13 +271,45 @@ export const ViewFalla: React.FC<ViewFallaModalProps> = ({
 			):(<div>No hay seguimientos disponibles.</div>)}
 		</div>
 
-        <div className="flex gap-1 my-5">
+        {/* <div className="flex gap-1 my-5">
           <DialogClose asChild> 
             <Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700">
               Cerrar
             </Button>
           </DialogClose>
+        </div> */}
+		 <div className="flex gap-1 my-5 col-span-2">
+          	<DialogClose asChild>
+            <Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700">
+              Cerrar
+            </Button>
+          	</DialogClose>
+
+			  <Button
+			type="submit"
+			className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={false} onClick={()=>{setIsSuccess(false); setModalEditarAbierto(true)}}
+			>
+			{true ? (<>
+				{("Editar Falla")}
+			</>) : (<> <Loader2 className="animate-spin" /> {"Editar Falla..."} </>)}
+			</Button>
+
+
+		  	<Button
+			type="submit"
+			className="w-full  bg-yellow-500 hover:bg-yellow-600 text-white " disabled={false} onClick={()=>{toast.error("SERVICIO PENDIENTE...",{
+				duration: 4000,
+				description: "Este servicio está pendiente. Aún no se ha generado el PDF.",
+				position: "top-right",
+			  })}}
+			>
+			{true ? (<>
+				{("Descargar fallas")}
+			</>) : (<> <Loader2 className="animate-spin" /> {"Descargando fallas..."} </>)}
+			</Button>
+
         </div>
+
         </DialogContent>
     </Dialog>
   );

@@ -499,3 +499,15 @@ export function convertirDateToISO(fecha:Date): string {
 
   return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
 }
+
+export function formatCurrencyString(value: string) {
+  if (!value) return "";
+  const number = parseFloat(value);
+  if (isNaN(number)) return "";
+  return number.toLocaleString("es-MX", {
+    style: "currency",
+    currency: "MXN",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+}

@@ -484,7 +484,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 								data.seguimientos_incidencia.map((item: any, index: number) => (
 								<tr key={index} className="border-t border-gray-200">
 								<td className="px-4 py-2">{item?.fecha_inicio_seg || "N/A"}</td>
-								<td className="px-4 py-2">0 min</td>
+								<td className="px-4 py-2">{item?.tiempo_transcurrido}</td>
 								<td className="px-4 py-2">{item?.accion_correctiva_incidencia || "N/A"}</td>
 								<td className="px-4 py-2">{item?.incidencia_personas_involucradas || "N/A"}</td>
 

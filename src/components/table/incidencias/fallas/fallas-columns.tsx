@@ -3,9 +3,8 @@ import {
     ColumnDef,   
   } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Check, ClipboardCheck, Edit, Eye, Trash2 } from "lucide-react";
+import { ClipboardCheck, Eye, Trash2 } from "lucide-react";
 import { Imagen } from "@/lib/update-pass";
-import { ViewFalla } from "@/components/modals/view-falla";
 import ViewImage from "@/components/modals/view-image";
 
   export interface Fallas_record{
@@ -40,48 +39,56 @@ import ViewImage from "@/components/modals/view-image";
     fecha_fin: string
   }
 
-  const OptionsCell: React.FC<{ row: any , onEditarClick: (incidencia: Fallas_record) => void , 
-  onSeguimientoClick: (falla: Fallas_record) => void , onEliminarClick: (falla: Fallas_record) => void , onCerrarClick: (falla: Fallas_record) => void }> = 
-  ({ row, onEditarClick, onSeguimientoClick ,onEliminarClick, onCerrarClick}) => {
+  const OptionsCell: React.FC<{ row: any ,  onEliminarClick: (falla: Fallas_record) => void , onCerrarClick: (falla: Fallas_record) => void, onView: (falla: Fallas_record) => void}> = 
+  ({ row ,onEliminarClick, onCerrarClick, onView}) => {
     const falla = row.original;
     return (
       <div className="flex space-x-2">
-        <ViewFalla 
+        {/* <ViewFalla 
           title="Información de la Falla"
           data={falla} isSuccess={false}>
             <div className="cursor-pointer" title="Ver Falla">
               <Eye /> 
             </div>
         </ViewFalla>
-        
-
+         */}
         <div
+          className="cursor-pointer"
+          title="Información de la Falla"
+          onClick={() => {
+            onView(falla)}}
+        >
+        	<Eye /> 
+        </div>
+    
+        {/* <div
           className="cursor-pointer"
           title="Editar Falla"
           onClick={() => {
             onEditarClick(falla)}}
         >
         	<Edit />
-        </div>
+        </div> */}
     
-        <div
+        {/* <div
           className="cursor-pointer"
            title="Seguimiento Falla"
           onClick={() => {
             onSeguimientoClick(falla)}}
         >
         	<Check />
-        </div>
+        </div> */}
 
-        <div
-          className="cursor-pointer"
-          title="Cerrar Falla"
-          onClick={() => {
-            onCerrarClick(falla)}}
-        >
-        	<ClipboardCheck />
-        </div>
-
+       {falla?.falla_estatus !=="resuelto" ?
+		 <div
+		 className="cursor-pointer"
+		 title="Cerrar Falla"
+		 onClick={() => {
+		   onCerrarClick(falla)}}
+	   >
+		   <ClipboardCheck />
+	   </div> :null
+	   }
 
         <div
           className="cursor-pointer"
@@ -98,9 +105,9 @@ import ViewImage from "@/components/modals/view-image";
     );
   };
 
-  export const getFallasColumns = (onEdit: (falla: Fallas_record) => void, 
-  onSeguimientoClick: (falla: Fallas_record) => void, onEliminarClick: (falla: Fallas_record) => void, 
-  onCerrarClick: (falla: Fallas_record) => void): ColumnDef<Fallas_record>[] => [
+  export const getFallasColumns = (
+ onEliminarClick: (falla: Fallas_record) => void, 
+  onCerrarClick: (falla: Fallas_record) => void, onView:(falla:Fallas_record)=> void): ColumnDef<Fallas_record>[] => [
     {
       id: "select",
       cell: ({ row }) => {
@@ -111,9 +118,8 @@ import ViewImage from "@/components/modals/view-image";
               checked={row.getIsSelected()}
               onCheckedChange={(value) => row.toggleSelected(!!value)}
               aria-label="Select row" />
-            <OptionsCell row={row} key={row.original._id} onEditarClick={() => onEdit(row.original)} 
-              onSeguimientoClick={()=>onSeguimientoClick(row.original)} onEliminarClick={()=>{onEliminarClick(row.original)}}
-              onCerrarClick={()=>{onCerrarClick(row.original)}}/>
+            <OptionsCell row={row} key={row.original._id}  onEliminarClick={()=>{onEliminarClick(row.original)}}
+              onCerrarClick={()=>{onCerrarClick(row.original)}} onView={()=>{onView(row.original)}}/>
           </div>
           </>
         )

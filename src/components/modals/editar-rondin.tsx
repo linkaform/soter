@@ -140,7 +140,6 @@ export const EditarRondinModal: React.FC<EditarRondinModalProps> = ({
 	},[modalEditarAbierto])
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
-        console.log("values",values)
 		let formattedDate=""
 		if(date){
 			formattedDate = format( new Date(date), 'yyyy-MM-dd HH:mm:ss');
@@ -152,17 +151,7 @@ export const EditarRondinModal: React.FC<EditarRondinModalProps> = ({
                 areas: areas,
                 fecha_hora_programada: formattedDate,
                 cada_cuantos_dias_se_repite: data.cada_cuantos_dias_se_repite,
-                // nombre_recorrido: values.nombre_recorrido,
-                // ubicacion_recorrido:values.ubicacion_recorrido,
-				// fecha_hora_programada_rondin:values.fecha_hora_programada_rondin||"",
-				// fecha_hora_inicio_rondin: values.fecha_hora_inicio_rondin||"",
-				// fecha_hora_fin_rondin:values.fecha_hora_fin_rondin||"",
-				// estatus_recorrido:"",
-				// recorrido:"abierto",
-				// areas_recorrido:"",
-				// incidencias: formattedDate||"",
-				// duracion_recorrido_minutos: values.duracion_recorrido_minutos||"",
-				// motivo_cancelacion:values.motivo_cancelacion||"",
+                
 				}
 				editarRondinMutation.mutate({folio: data.folio, rondin_data: formatData},{
                     onSuccess: ()=>{

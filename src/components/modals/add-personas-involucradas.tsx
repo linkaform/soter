@@ -131,6 +131,7 @@ export const PersonasInvolucradasModal: React.FC<IncidenciaModalProps> = ({
         }
 
 		if (editarPersonasInvolucradas && personasInvolucradasSeleccion) {
+			console.log("peronsas", personasInvolucradasSeleccion)
 			reset({
                 nombre_completo: personasInvolucradasSeleccion.nombre_completo,
                 rol: personasInvolucradasSeleccion.rol,
@@ -193,12 +194,12 @@ export const PersonasInvolucradasModal: React.FC<IncidenciaModalProps> = ({
 															<SelectValue placeholder="Selecciona una opcion" />
 														</SelectTrigger>
 														<SelectContent>
-															<SelectItem key={"Testigo"} value={"Testigo"}>Testigo</SelectItem>
-															<SelectItem key={"Afectado"} value={"Afectado"}>Afectado</SelectItem>
-															<SelectItem key={"Agresor"} value={"Agresor"}>Agresor</SelectItem>
-															<SelectItem key={"Sospechoso"} value={"Sospechoso"}>Sospechoso</SelectItem>
-															<SelectItem key={"Responsable"} value={"Responsable"}>Responsable</SelectItem>
-															<SelectItem key={"Otro"} value={"Otro"}>Otro</SelectItem>
+															<SelectItem key={"testigo"} value={"testigo"}>Testigo</SelectItem>
+															<SelectItem key={"afectado"} value={"afectado"}>Afectado</SelectItem>
+															<SelectItem key={"agresor"} value={"agresor"}>Agresor</SelectItem>
+															<SelectItem key={"sospechoso"} value={"sospechoso"}>Sospechoso</SelectItem>
+															<SelectItem key={"responsable"} value={"responsable"}>Responsable</SelectItem>
+															<SelectItem key={"otro"} value={"otro"}>Otro</SelectItem>
 														</SelectContent>
 													</Select>
 												</FormControl>
@@ -223,9 +224,9 @@ export const PersonasInvolucradasModal: React.FC<IncidenciaModalProps> = ({
 														<SelectValue placeholder="Selecciona una opcion" />
 													</SelectTrigger>
 													<SelectContent>
-														<SelectItem key={"Masculino"} value={"Masculino"}>Masculino</SelectItem>
-														<SelectItem key={"Femenino"} value={"Femenino"}>Femenino</SelectItem>
-														<SelectItem key={"Prefiere no decirlo"} value={"Prefiere no decirlo"}>Prefiere no decirlo</SelectItem>
+														<SelectItem key={"masculino"} value={"masculino"}>Masculino</SelectItem>
+														<SelectItem key={"femenino"} value={"femenino"}>Femenino</SelectItem>
+														<SelectItem key={"prefiere no decirlo"} value={"prefiere no decirlo"}>Prefiere no decirlo</SelectItem>
 													</SelectContent>
 												</Select>
 												</FormControl>
@@ -250,12 +251,12 @@ export const PersonasInvolucradasModal: React.FC<IncidenciaModalProps> = ({
 															<SelectValue placeholder="Selecciona una opcion" />
 														</SelectTrigger>
 														<SelectContent>
-															<SelectItem key={"Infancia"} value={"Infancia"}>Infancia</SelectItem>
-															<SelectItem key={"Adolescencia"} value={"Adolescencia"}>Adolescencia</SelectItem>
-															<SelectItem key={"Juventud"} value={"Juventud"}>Juventud</SelectItem>
-															<SelectItem key={"Adultez temprana"} value={"Adultez temprana"}>Adultez temprana</SelectItem>
-															<SelectItem key={"Adultez media"} value={"Adultez media"}>Adultez media</SelectItem>
-															<SelectItem key={"Adultez mayor"} value={"Adultez mayor"}>Adultez mayor</SelectItem>
+															<SelectItem key={"infancia"} value={"infancia"}>Infancia</SelectItem>
+															<SelectItem key={"adolescencia"} value={"adolescencia"}>Adolescencia</SelectItem>
+															<SelectItem key={"juventud"} value={"juventud"}>Juventud</SelectItem>
+															<SelectItem key={"adultez temprana"} value={"adultez temprana"}>Adultez temprana</SelectItem>
+															<SelectItem key={"adultez media"} value={"adultez media"}>Adultez media</SelectItem>
+															<SelectItem key={"adultez mayor"} value={"adultez mayor"}>Adultez mayor</SelectItem>
 														</SelectContent>
 													</Select>
 												</FormControl>

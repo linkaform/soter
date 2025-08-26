@@ -515,7 +515,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
             {title}
           </DialogTitle>
         </DialogHeader>
-		{loadingCatalogos? (
+			{loadingCatalogos? (
 				<div className="flex justify-center items-center h-screen">
 				 	<div className="w-24 h-24 border-8 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
 		   		</div>
@@ -997,10 +997,10 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 									{seguimientos && seguimientos.length > 0 ? (
 										seguimientos.map((item: any, index: number) => (
 										<tr key={index} className="border-t border-gray-200">
-										<td className="px-4 py-2">{item?.fecha_inicio_seg || "N/A"}</td>
-										<td className="px-4 py-2">{item?.tiempo_transcurrido}</td>
-										<td className="px-4 py-2">{item?.accion_correctiva_incidencia || "N/A"}</td>
-										<td className="px-4 py-2">{item?.incidencia_personas_involucradas || "N/A"}</td>
+										<td className="px-4 py-2">{item?.fecha_inicio_seg ||"-"}</td>
+										<td className="px-4 py-2">{item?.tiempo_transcurrido || "-"}</td>
+										<td className="px-4 py-2">{item?.accion_correctiva_incidencia ||"-"}</td>
+										<td className="px-4 py-2">{item?.incidencia_personas_involucradas ||"-"}</td>
 
 										<td className="px-4 py-2">
 											{item?.incidencia_evidencia_solucion?.length > 0 ? (
@@ -1160,20 +1160,6 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 							</Button>
 						</DialogClose>
 
-						
-						{/* <Button
-							type="submit"
-							onClick={()=>{setOpenModal(!openModal)}}
-							className="w-full bg-yellow-500 hover:bg-yellow-600 text-white sm:w-2/3 md:w-1/2 lg:w-1/2 mb-2" disabled={isLoading}
-						>
-							{isLoading? (
-							<>
-								<Loader2 className="animate-spin"/> {"Agregando seguimiento..."}
-							</>
-						):("Agregar seguimiento")}
-						</Button> */}
-
-
 						<Button
 							type="submit"
 							onClick={form.handleSubmit(onSubmit)}
@@ -1181,9 +1167,9 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 						>
 							{isLoading? (
 							<>
-								<Loader2 className="animate-spin"/> {"Editando incidencia..."}
+								<Loader2 className="animate-spin"/> {"Guardando cambios..."}
 							</>
-						):("Editar incidencia")}
+						):("Guardar incidencia")}
 						</Button>
 					</div>
 				</>

@@ -303,7 +303,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const [subCategoria, setSubCategoria]= useState("")
 	const [categoria, setCategoria]= useState("")
 	const [selectedIncidencia, setSelectedIncidencia]= useState("")
-	const { catIncidencias, isLoadingCatIncidencias } = useCatalogoInciencias(isSuccess, categoria, subCategoria);
+	const {catIncidencias, isLoadingCatIncidencias } = useCatalogoInciencias(isSuccess, categoria, subCategoria);
 	const [catCategorias, setCatCategorias] = useState<any[]>([])
 	
 	const [selectedNotificacion, setSelectedNotification] = useState(false)
@@ -325,7 +325,6 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 		setSubCategoria("")
 		setCategoria("")
 		setSelectedIncidencia("")
-		console.log("cxatIncidencias", catIncidencias)
 		const catIncidenciasIcons = categoriasConIconos?.filter((cat) =>
 			catIncidencias?.data.includes(cat.nombre)
 			);
@@ -458,7 +457,6 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 			setEditarSeguimiento(false)
 			setIndiceSeleccionado(null)
 			setSeguimientos([])
-			console.log("ubicacion seleccionada", location)
 			setUbicacionSeleccionada(location)
 	},[isSuccess]);	
 
@@ -528,7 +526,6 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 					modelo: values.modelo,
 					color: values.color,
 				}
-				console.log("format data", formatData)
 				createIncidenciaMutation.mutate({ data_incidencia: formatData });
 		}else{
 			form.setError("fecha_hora_incidencia", { type: "manual", message: "Fecha es un campo requerido." });
@@ -546,7 +543,6 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	}
 
 	const openModalAgregarSeg = () =>{
-		console.log("date incidencia", date)
 		setOpenModal(!openModal)
 	}
 
@@ -1015,11 +1011,11 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 										seguimientos.map((item: any, index: number) => (
 											<tr key={index} className="border-t border-gray-200">
 											<td className="px-4 py-2">{item?.fecha_inicio_seg || "N/A"}</td>
-											<td className="px-4 py-2">{item?.tiempo_transcurrido}</td>
+											<td className="px-4 py-2">{item?.tiempo_transcurrido == "La fecha es anterior a la fecha de la incidencia." ? ( <div className="text-red-500"> {item?.tiempo_transcurrido }</div> ): item?.tiempo_transcurrido}</td>
 											<td className="px-4 py-2">{item?.accion_correctiva_incidencia || "N/A"}</td>
 											<td className="px-4 py-2">{item?.incidencia_personas_involucradas || "N/A"}</td>
 
-											<td className="px-4 py-2 min-w-[150px] align-top">
+											<td className="px-4 py-2 min-w-[150px] ">
 												{item?.incidencia_evidencia_solucion?.length > 0 ? (
 												<div className="w-full flex justify-center">
 													<Carousel className="w-16">
@@ -1045,7 +1041,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 													</Carousel>
 												</div>
 												) : (
-												<p>-</p>
+													<div className="flex justify-center">-</div>
 												)}
 											</td>
 
@@ -1066,7 +1062,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 													))}
 												</ul>
 												) : (
-													<p>-</p>
+													<div className="flex justify-center">-</div>
 													)}
 											</td>
 
