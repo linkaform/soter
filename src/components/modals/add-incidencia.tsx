@@ -579,7 +579,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 
   return (
     <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
-      <DialogContent className="max-w-5xl overflow-y-auto max-h-[80vh] min-h-[80vh]  flex flex-col overflow-hidden" aria-describedby="">
+      <DialogContent className="max-w-5xl overflow-y-auto max-h-[80vh] min-h-[80vh]  flex flex-col overflow-hidden"  onInteractOutside={(e) => e.preventDefault()}  aria-describedby="">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center font-bold">
             {title}
