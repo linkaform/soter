@@ -113,13 +113,9 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
 	}
 
 	function onEnviarSMS(){
-		console.log("hola")
 		if(data?.status_pase.toLowerCase()!='vencido'){
 			if(data?.telefono!==""){
-				// const data_cel_msj = {
-				// mensaje: `Estimado ${data.nombre}, ${data.visita_a.length>0 ? data.visita_a[0].nombre :''}, te esta invitando a: ${data.ubicacion}, Descarga tu pase en: `, //${responsePdf.response?.data?.data?.download_url}
-				// numero: data.telefono
-				// }
+
         const data_for_msj = {
           email_to: data.email,
           asunto: data.tema_cita,
@@ -185,7 +181,7 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
   return (
     <Dialog open={open} onOpenChange={setOpen} modal>
           <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="max-w-3xl overflow-y-auto max-h-[90vh] flex flex-col" aria-describedby="">
+      <DialogContent className="max-w-3xl overflow-y-auto max-h-[90vh] flex flex-col"  onInteractOutside={(e) => e.preventDefault()} aria-describedby="">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center font-bold">
             {title}

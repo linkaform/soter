@@ -33,26 +33,25 @@ const OptionsCell: React.FC<{ row: any }> = ({ row}) => {
 	  const [showLoadingModal, setShowLoadingModal] = useState(false);
   return (
     <div className="flex space-x-2">
+		<ViewPaqueteria 
+			title="Información del Paquete"
+			data={paquete} isSuccess={false}>
+			<div className="cursor-pointer" title="Ver Paquete">
+			<Eye /> 
+			</div>
+		</ViewPaqueteria>
 
-      <ViewPaqueteria 
-          title="Información del Paquete"
-          data={paquete} isSuccess={false}>
-            <div className="cursor-pointer" title="Ver Paquete">
-              <Eye /> 
-            </div>
-      </ViewPaqueteria>
+      	<LoadingModal isOpen={showLoadingModal} text="Cargando..."/>
 
+      	<EditarPaqueteria
+        	title="Editar Paqueteria"
+        	data={paquete} setShowLoadingModal={setShowLoadingModal} showLoadingModal={showLoadingModal}/>
 
-      <LoadingModal isOpen={showLoadingModal} text="Cargando..."/>
-
-      <EditarPaqueteria
-        title="Editar Paqueteria"
-        data={paquete} setShowLoadingModal={setShowLoadingModal} showLoadingModal={showLoadingModal}/>
-
-      <DevolucionPaqModal 
-              title="Devolver paquete"
-              data={paquete} />
-
+      {paquete.estatus_paqueteria !=="entregado" &&
+       	<DevolucionPaqModal 
+            title="Entregar paquete"
+            data={paquete} />
+      }
     </div>
   );
 };
@@ -103,22 +102,6 @@ export const paqueteriaColumns: ColumnDef<Paquete_record>[] = [
         return <ViewImage imageUrl={foto?? []} />;
       }
     },
-    // {
-    //   accessorKey:"fotografia_paqueteria",
-    //   header:"Fotografía",
-    //   cell: ({ row }) => {
-		// const foto = row.original.fotografia_paqueteria;
-    //     const ultimaImagen = foto && foto.length > 0 ? foto[foto.length - 1].file_url : '/nouser.svg'; 
-    //     return(
-		// 	<>
-		// 	<Avatar>
-		// 		<AvatarImage src={ultimaImagen|| "/nouser.svg"} alt="Avatar" style={{ objectFit: 'cover', width: '100%', height: '100%' }}/>
-		// 	</Avatar>
-		// 	</>
-    //     )},
-    //     enableSorting: false,
-    // },
-
     {
       accessorKey: "guardado_en_paqueteria",
       header: "Locker",
@@ -134,7 +117,7 @@ export const paqueteriaColumns: ColumnDef<Paquete_record>[] = [
       const isAbierto = row.getValue("estatus_paqueteria") === "entregado";
   
       return (
-        <div className={`capitalize font-semibold ${isAbierto ? 'text-green-600' : 'text-red-600'}`}>
+        <div className={`capitalize font-semibold ${isAbierto ? 'text-red-600':'text-green-600'  }`}>
         {row.getValue("estatus_paqueteria")}
         </div>
       );

@@ -21,11 +21,12 @@ import {
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { useShiftStore } from "@/store/useShiftStore";
 import { Input } from "../ui/input";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { formatCurrencyString } from "@/lib/utils";
 
 interface IncidenciaModalProps {
 	title: string;
@@ -57,8 +58,9 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
     afectacionPatrimonialSeleccionada
 }) => {
 	const { isLoading} = useShiftStore();
-
-    console.log("openAfectacionPatrimonialModal",openAfectacionPatrimonialModal)
+    const [inputValue, setInputValue] = useState(""); // texto visible
+    const debounceRef = useRef<NodeJS.Timeout | null>(null);
+    
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -80,6 +82,8 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
         }
 
 		if (editarAfectacionPatrimonial && afectacionPatrimonialSeleccionada) {
+            console.log("monto", afectacionPatrimonialSeleccionada)
+            setInputValue(afectacionPatrimonialSeleccionada.monto_estimado)
 			reset({
                 tipo_afectacion:afectacionPatrimonialSeleccionada.tipo_afectacion,
                 monto_estimado:afectacionPatrimonialSeleccionada.monto_estimado,
@@ -123,107 +127,129 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
 		<Dialog onOpenChange={setOpenAfectacionPatrimonialModal} open={openAfectacionPatrimonialModal}>
 			<DialogTrigger>{children}</DialogTrigger>
 
-			<DialogContent className="max-w-lg" aria-describedby="">
+			<DialogContent className="max-w-lg overflow-y-auto max-h-[60vh] min-h-auto flex flex-col overflow-hidden" aria-describedby="">
 				<DialogHeader>
 					<DialogTitle className="text-2xl text-center font-bold">
 						{title}
 					</DialogTitle>
 				</DialogHeader>
+                <div className="flex-grow overflow-y-auto">
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} >
+                            <div className="grid grid-cols-1 gap-5 mb-6 px-3">
 
-				<Form {...form}>
-					<form onSubmit={form.handleSubmit(onSubmit)} >
-						<div className="grid grid-cols-1 gap-5 mb-6">
+                                <FormField
+                                    control={form.control}
+                                    name="tipo_afectacion"
+                                    render={({ field }: any) => (
+                                        <FormItem className="w-full">
+                                            <FormLabel>Tipo de afectación: *</FormLabel>
+                                            <FormControl>
+                                            <Select {...field} className="input"
+                                                onValueChange={(value:string) => {
+                                                field.onChange(value); 
+                                            }}
+                                            value={field.value} 
+                                        >
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Selecciona una opción..." />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem key={"Daño a infraestructura"} value={"Daño a infraestructura"}> Daño a infraestructura</SelectItem>
+                                                <SelectItem key={"Suspensión de actividades"} value={"Suspensión de actividades"}> Suspensión de actividades</SelectItem>
+                                                <SelectItem key={"Paro de producción"} value={"Paro de producción"}> Paro de producción</SelectItem>
+                                                <SelectItem key={"Impacto económico estimado"} value={"Impacto económico estimado"}> Impacto económico estimado</SelectItem>
+                                                <SelectItem key={"Otro"} value={"Otro"}> Otro</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
-                            <FormField
-                                control={form.control}
-                                name="tipo_afectacion"
-                                render={({ field }: any) => (
-                                    <FormItem className="w-full">
-                                        <FormLabel>Tipo de afectación: *</FormLabel>
+                                <FormField
+                                    control={form.control}
+                                    name="monto_estimado"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                        <FormLabel>Monto estimado del daño: *</FormLabel>
                                         <FormControl>
-                                        <Select {...field} className="input"
-                                            onValueChange={(value:string) => {
-                                            field.onChange(value); 
-                                        }}
-                                        value={field.value} 
-                                    >
-                                        <SelectTrigger className="w-full">
-                                            <SelectValue placeholder="Selecciona una opción..." />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem key={"1"} value={"tipo1"}> Tipo 1</SelectItem>
-                                            <SelectItem key={"2"} value={"tipo2"}> Tipo 2</SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                                            <Input
+                                            placeholder="Monto estimado del daño..."
+                                            value={inputValue}
+                                            onChange={(e) => {
+                                                const rawInput = e.target.value;
 
-                            <FormField
-								control={form.control}
-								name="monto_estimado"
-								render={({ field }: any) => (
-									<FormItem>
-										<FormLabel>Monto estimado del daño: *</FormLabel>
-										<FormControl>
-											<Input placeholder="Monto estimado del daño..." {...field}
-												onChange={(e) => {
-                                                    const value = e.target.value;
-                                                    if (/^\d*\.?\d*$/.test(value)) {
-                                                      field.onChange(e); // Solo si es número válido (entero o decimal)
-                                                    }
-                                                  }}
-												value={field.value || ""}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							
+                                                // Eliminar caracteres no válidos (mantener solo números y punto)
+                                                const numeric = rawInput.replace(/[^\d.]/g, "").replace(/(\..*)\./g, "$1");
 
-                            <FormField
-                                control={form.control}
-                                name="duracion_estimada"
-                                render={({ field }: any) => (
-                                    <FormItem>
-                                        <FormLabel>Duración estimada de la afectación: *</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="Duración estimada de la afectación..." {...field}
-                                                onChange={(e) => {
-                                                    field.onChange(e);
-                                                }}
-                                                value={field.value || ""}
+                                                // Actualizar el texto sin formatear para que el usuario lo vea mientras escribe
+                                                setInputValue(numeric);
+
+                                                // Guardar valor numérico limpio en el formulario
+                                                field.onChange(numeric);
+
+                                                // Limpiar debounce anterior
+                                                if (debounceRef.current) clearTimeout(debounceRef.current);
+
+                                                // Esperar 500ms antes de formatear
+                                                debounceRef.current = setTimeout(() => {
+                                                setInputValue(formatCurrencyString(numeric));
+                                                }, 500);
+                                            }}
+                                            onBlur={field.onBlur}
                                             />
                                         </FormControl>
                                         <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                                        </FormItem>
+                                    )}
+                                    />
 
-						</div>
-                        
+                                <FormField
+                                    control={form.control}
+                                    name="duracion_estimada"
+                                    render={({ field }: any) => (
+                                        <FormItem>
+                                            <FormLabel>Duración estimada de la afectación: *</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Duración estimada de la afectación..." {...field}
+                                                    onChange={(e) => {
+                                                        field.onChange(e);
+                                                    }}
+                                                    value={field.value || ""}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
-						<div className="flex gap-2">
-							<DialogClose asChild>
-								<Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700" onClick={handleClose}>
-									Cancelar
-								</Button>
-							</DialogClose>
+                            </div>
+                            
+
+                           
+                        </form>
+                    </Form>
+                </div>
+                <div className="flex gap-2">
+                    <DialogClose asChild>
+                        <Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700" onClick={handleClose}>
+                            Cancelar
+                        </Button>
+                    </DialogClose>
 
 
-							<Button
-								type="submit"
-								className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={isLoading}
-							>
-							    {editarAfectacionPatrimonial? ("Editar"):(("Agregar"))}
-							</Button>
-						</div>
-					</form>
-				</Form>
+                    <Button
+                        // type="submit"
+                        onClick={form.handleSubmit(onSubmit)}
+                        className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={isLoading}
+                    >
+                        {editarAfectacionPatrimonial? ("Editar"):(("Agregar"))}
+                    </Button>
+                </div>
 			</DialogContent>
 		</Dialog>
 	);
 };
+

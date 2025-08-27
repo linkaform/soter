@@ -13,8 +13,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import Swal from 'sweetalert2'
-
 
 interface DateTimeListProps {
   setDate: React.Dispatch<React.SetStateAction<Date | "">> ;
@@ -22,12 +20,10 @@ interface DateTimeListProps {
   disablePastDates?: boolean;
 }
 
-const blue500="#2b7fff"
 const DateTime:React.FC<DateTimeListProps> = ({date, setDate , disablePastDates = true,})=> {
   const [isOpen, setIsOpen] = React.useState(false);
    const today = new Date();
     today.setSeconds(0, 0); 
-    const now = today.getTime(); 
    const hours = Array.from({ length: 24 }, (_, i) => i);
    
   const handleDateSelect = (selectedDate: Date | undefined) => {
@@ -36,36 +32,37 @@ const DateTime:React.FC<DateTimeListProps> = ({date, setDate , disablePastDates 
     }
   };
  
-  const handleTimeChange = (
-    type: "hour" | "minute",
-    value: string
-  ) => {
-    if (date) {
-      const newDate = new Date(date);
-      if (type === "hour") {
-        newDate.setHours(parseInt(value));
-      } else if (type === "minute") {
-        newDate.setMinutes(parseInt(value));
-      }
-      if (newDate.getTime() <= now) {
-        Swal.fire({
-          icon: "error",
-          title:"Error",
-          text: "Por favor, seleccione una hora futura.",
-          confirmButtonColor:blue500,
-          didOpen: () => {
-            const swalContainer = Swal.getPopup();
-            if (swalContainer) {
-              swalContainer.style.zIndex = "-1"; // o más alto si es necesario
-            }
-          }
-        });
-      } else {
-        setDate(newDate);
-      }
-    }
+	const handleTimeChange = (
+		type: "hour" | "minute",
+		value: string
+	) => {
+		if (date) {
+			const newDate = new Date(date);
+			if (type === "hour") {
+				newDate.setHours(parseInt(value));
+			} else if (type === "minute") {
+				newDate.setMinutes(parseInt(value));
+			}
+			// if (newDate.getTime() <= now) {
+			// 	toast.error("Por favor, seleccione una hora futura.")
+			// 		// Swal.fire({
+			// 		// icon: "error",
+			// 		// title:"Error",
+			// 		// text: "Por favor, seleccione una hora futura.",
+			// 		// confirmButtonColor:blue500,
+			// 		// didOpen: () => {
+			// 		// 	const swalContainer = Swal.getPopup();
+			// 		// 	if (swalContainer) {
+			// 		// 	swalContainer.style.zIndex = "99999999"; // o más alto si es necesario
+			// 		// 	}
+			// 		// }
+			// 		// });
+			// } else {
+				setDate(newDate);
+			// }
+		}
 
-  };
+	};
 
   const isDateDisabled = (date: Date) => {
     if (!disablePastDates) return false;

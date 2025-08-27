@@ -12,35 +12,40 @@ import Image from "next/image";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
 import { Card, CardContent } from "../ui/card";
 import { Incidencia_record } from "../table/incidencias/incidencias-columns";
-import { capitalizeFirstLetter, formatCurrency, formatDateToText } from "@/lib/utils";
+import {  formatCurrency, formatDateToText } from "@/lib/utils";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import { Depositos } from "@/lib/incidencias";
 
 import { CircleAlert, Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { toast } from "sonner";
+import { Dispatch, SetStateAction } from "react";
 
 interface ViewFallaModalProps {
   title: string;
   data: Incidencia_record
   children: React.ReactNode;
+  setIsSuccess:Dispatch<SetStateAction<boolean>>
+  isSuccess: boolean;
+  setModalEditarAbierto: Dispatch<SetStateAction<boolean>>;
 }
 
 export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
   title,
   data,
   children,
+  setIsSuccess,
+  isSuccess,
+  setModalEditarAbierto,
 }) => {
-	// const [openModal, setOpenModal] = useState(false)
-	
   function sumDepositos(item:Depositos[]){
     const sumaTotal = item.reduce((total: any, item: { cantidad: number; }) => total + item.cantidad, 0);
     return formatCurrency(sumaTotal)
   }
   return (
-    <Dialog >
+    <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="max-w-4xl overflow-y-auto max-h-[80vh] flex flex-col" aria-describedby="">
+      <DialogContent className="max-w-4xl overflow-y-auto max-h-[80vh] flex flex-col" onInteractOutside={(e) => e.preventDefault()} aria-describedby="">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center font-bold">
             {title}
@@ -56,7 +61,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 			</TabsList>
 
 				<TabsContent value="datos" >
-					<Card className="p-3 max-h-screen">
+					<Card className="p-3 ">
 						<div >
 							<div className="flex gap-2 mb-4">
 								<CircleAlert />
@@ -108,7 +113,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 										{data?.tags.map((tag, idx) => (
 										<span
 											key={idx}
-											className="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-0.5 h  rounded capitalize"
+											className="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-1 h  rounded capitalize"
 										>
 											{tag}
 										</span>
@@ -188,7 +193,43 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 
 				
 								<Separator></Separator>
-								{data.datos_deposito_incidencia.length>0 && data.incidente == "Depósitos y retiros de valores" ? 
+							{data.datos_deposito_incidencia.length>0 && data.incidente == "Depósitos y retiros de valores" ? 
+								<>	
+								<div className="my-2 font-bold text-lg">Depositos: </div>
+								<table className="min-w-full table-auto mb-5 border" >
+									<thead>
+										<tr className="bg-gray-100">
+											<th className="px-4 py-2 text-left border-b border-gray-300">Tipo deposito</th>
+											<th className="px-4 py-2 text-left border-b border-gray-300">Origen</th>
+											<th className="px-4 py-2 text-left border-b border-gray-300">Cantidad</th>
+										</tr>
+									</thead>
+									<tbody>
+										{data.datos_deposito_incidencia.length > 0 ? (
+											data.datos_deposito_incidencia.map((item, index) => (
+												<tr key={index} className="border-t border-gray-200">
+													<td className="px-4 py-2">{item.tipo_deposito}</td>
+													<td className="px-4 py-2">{item.origen}</td>
+													<td className="px-4 py-2 text-right">{formatCurrency(item.cantidad) ?? 0}</td>
+												</tr>
+											))
+										) : (
+											<tr>
+												<td colSpan={4} className="text-center text-gray-500 py-4">
+													No hay depósitos agregados.
+												</td>
+											</tr>
+										)}
+									</tbody>
+								</table>
+								
+								<div className="flex gap-2 items-center ml-5 mb-3">
+									<span className="font-bold text-base">Total:</span>
+									<span className="font-bold text-base">{sumDepositos(data.datos_deposito_incidencia)}</span>
+								</div>
+								</> :null}
+								
+								{/* {data.datos_deposito_incidencia.length>0 && data.incidente == "Depósitos y retiros de valores" ? 
 								<>
 									<div className="flex flex-col mt-2">
 										<div className=" flex justify-between">
@@ -203,23 +244,20 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 													<thead>
 													<tr>
 														<th className="px-4 py-2 text-left border-b">Cantidad</th>
-														<th className="px-4 py-2 text-left border-b">Tipo dde depósito</th>
+														<th className="px-4 py-2 text-left border-b">Tipo de depósito</th>
 													</tr>
 													</thead>
 													<tbody>
 													{data.datos_deposito_incidencia.map((item:Depositos, index: number) => (
 														<tr key={index}>
-														<td className="px-4 py-2"><p>{formatCurrency(item.cantidad) || "N/A"}</p></td>
+														<td className="px-4 py-2 text-right"><p>{formatCurrency(item.cantidad) || "N/A"}</p></td>
 														<td className="px-4 py-2"><p>{capitalizeFirstLetter(item.tipo_deposito) || "N/A"}</p></td>
 														</tr>
 													))}
 													</tbody>
 												</table>
 
-												<div className="flex gap-2 items-center ml-5 mb-3">
-												<span className="font-bold text-base">Total:</span>
-												<span className="font-bold text-base">{sumDepositos(data.datos_deposito_incidencia)}</span>
-												</div>
+												
 												</>
 												) :null}
 												</AccordionContent>
@@ -229,7 +267,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 										</div>
 									</div>
 								</>
-								:null}
+								:null} */}
 
 
 								<div className="flex flex-col justify-between w-full h-full">
@@ -344,10 +382,10 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 									):null}
 								</div>
 							</div>
-
-							{data.personas_involucradas_incidencia.length > 0 ?
+							<div className="mt-2 font-bold text-lg mb-2">Personas involucradas:</div>
+							
 								<div className="col-span-1 md:col-span-2">
-									<div className="my-2 font-bold text-lg">Personas involucradas:</div>
+									
 									<table className="min-w-full table-auto mb-5 border">
 										<thead>
 										<tr className="bg-gray-100">
@@ -362,7 +400,8 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 										</tr>
 										</thead>
 										<tbody>
-										{data.personas_involucradas_incidencia.map((item, index) => (
+										{data.personas_involucradas_incidencia.length > 0 ?
+										 data.personas_involucradas_incidencia.map((item, index) => (
 											<tr key={index} className="border-t border-gray-200">
 											<td className="px-4 py-2">{item.nombre_completo}</td>
 											<td className="px-4 py-2">{item.rol}</td>
@@ -372,14 +411,20 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 											<td className="px-4 py-2">{item.retenido}</td>
 											<td className="px-4 py-2 capitalize">{item.comentarios || "N/A"}</td>
 											</tr>
-										))}
+										)): 
+										<tr>
+											<td colSpan={6} className="text-center text-gray-500 py-4">
+												No se han agregado personas involucradas.
+											</td>
+										</tr>
+									}
 										</tbody>
 									</table>
 								</div> 
-							: <div className="col-span-1 md:col-span-2 text-gray-500 py-4"> No se han agregado personas involucradas.</div> }
+							
 
 							<div className="my-2 font-bold text-lg">Acciones tomadas:</div>
-							{data.acciones_tomadas_incidencia.length > 0 ?
+							
 								<div className="col-span-1 md:col-span-2">
 									<table className="min-w-full table-auto mb-5 border">
 										<thead>
@@ -393,7 +438,8 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 										</tr>
 										</thead>
 										<tbody>
-										{data.acciones_tomadas_incidencia.map((item, index) => (
+									{data.acciones_tomadas_incidencia.length > 0 ?
+										data.acciones_tomadas_incidencia.map((item, index) => (
 											<tr key={index} className="border-t border-gray-200">
 											<td className="px-4 py-2">{item.acciones_tomadas}</td>
 											<td className="px-4 py-2">{item.llamo_a_policia}</td>
@@ -401,11 +447,14 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 											<td className="px-4 py-2">{item.numero_folio_referencia}</td>
 											<td className="px-4 py-2">{item.responsable}</td>
 											</tr>
-										))}
+										)): <tr>
+										<td colSpan={6} className="text-center text-gray-500 py-4">
+											No se han agregado acciones.
+										</td>
+									</tr>}
 										</tbody>
 									</table>
 								</div>
-						: <div className="col-span-1 md:col-span-2 text-gray-500"> No se han agregado acciones.</div>}
 						</div>
 					</Card>
 				</TabsContent>
@@ -423,7 +472,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 
 
 					<div >
-					{data.seguimientos_incidencia && data.seguimientos_incidencia.length > 0 ? (
+					
 						<table className="min-w-full table-auto mb-5 border">
 							<thead>
 							<tr className="bg-gray-100">
@@ -436,10 +485,11 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 							</tr>
 							</thead>
 							<tbody>
-							{data.seguimientos_incidencia.map((item: any, index: number) => (
+							{data.seguimientos_incidencia && data.seguimientos_incidencia.length > 0 ? (
+								data.seguimientos_incidencia.map((item: any, index: number) => (
 								<tr key={index} className="border-t border-gray-200">
 								<td className="px-4 py-2">{item?.fecha_inicio_seg || "N/A"}</td>
-								<td className="px-4 py-2">0 min</td>
+								<td className="px-4 py-2">{item?.tiempo_transcurrido}</td>
 								<td className="px-4 py-2">{item?.accion_correctiva_incidencia || "N/A"}</td>
 								<td className="px-4 py-2">{item?.incidencia_personas_involucradas || "N/A"}</td>
 
@@ -494,14 +544,15 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 										)}
 								</td>
 								</tr>
-							))}
+							))) : (
+								<tr>
+										<td colSpan={6} className="text-center text-gray-500 py-4">
+											No hay seguimientos disponibles.
+										</td>
+									</tr>
+								)}
 							</tbody>
 						</table>
-						) : (
-						<div className="px-4 py-2 text-center text-gray-500">
-							No se han agregado seguimientos.
-						</div>
-						)}
 					</div>
 
 				</Card>
@@ -519,7 +570,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 					</div>
 
 						<div >
-						{data.afectacion_patrimonial_incidencia && data.afectacion_patrimonial_incidencia.length > 0 ? (
+						
 							<table className="min-w-full table-auto mb-5 border">
 								<thead>
 								<tr className="bg-gray-100"> 
@@ -529,20 +580,23 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 								</tr>
 								</thead>
 								<tbody>
-								{data.afectacion_patrimonial_incidencia.map((item: any, index: number) => (
+								{data.afectacion_patrimonial_incidencia && data.afectacion_patrimonial_incidencia.length > 0 ? (
+								data.afectacion_patrimonial_incidencia.map((item: any, index: number) => (
 									<tr key={index} className="border-t border-gray-200">
 									<td className="px-4 py-2">{item?.tipo_afectacion || "N/A"}</td>
 									<td className="px-4 py-2">{formatCurrency(item?.monto_estimado) || "N/A"}</td>
 									<td className="px-4 py-2">{item?.duracion_estimada || "N/A"}</td>
 									</tr>
-								))}
+								))) : (
+									<tr>
+										<td colSpan={6} className="text-center text-gray-500 py-4">
+											No hay afectaciones patrimoniales disponibles.
+										</td>
+									</tr>
+									)}
 								</tbody>
 							</table>
-							) : (
-							<div className="px-4 py-2 text-center text-gray-500">
-								No se han agregado afectaciones patrimoniales.
-							</div>
-							)}
+							
 						</div>
 					</Card>
 				</TabsContent>
@@ -557,6 +611,15 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
               Cerrar
             </Button>
           	</DialogClose>
+
+			  <Button
+			type="submit"
+			className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={false} onClick={()=>{setIsSuccess(false); setModalEditarAbierto(true)}}
+			>
+			{true ? (<>
+				{("Editar Falla")}
+			</>) : (<> <Loader2 className="animate-spin" /> {"Editar Falla..."} </>)}
+			</Button>
 
 		  	<Button
 			type="submit"

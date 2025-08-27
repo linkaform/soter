@@ -41,9 +41,8 @@ interface AddFallaModalProps {
 
 const formSchema = z.object({
 	falla_folio_accion_correctiva: z.string().min(1, { message: "Este campo es oblicatorio" }),
-	falla_comentario_solucion: z.string().optional(),
 	fechaInicioFallaCompleta: z.string().optional(), 
-	fechaFinFallaCompleta: z.string().optional(),
+	// fechaFinFallaCompleta: z.string().optional(),
 	falla_documento_solucion: z.array(
         z.object({
           file_url: z.string(),
@@ -69,7 +68,7 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 	const [evidencia , setEvidencia] = useState<Imagen[]>([]);
 	const [documento , setDocumento] = useState<Imagen[]>([]);
 	const [date, setDate] = useState<Date|"">("");
-	const [dateFin, setDateFin] = useState<Date|"">("");
+	// const [dateFin, setDateFin] = useState<Date|"">("");
 	const { seguimientoFallaMutation, isLoading} = useFallas("","", "abierto", false, "", "", "")
 
 
@@ -77,9 +76,8 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			falla_folio_accion_correctiva: "",
-			falla_comentario_solucion: "",
 			fechaInicioFallaCompleta: date !=="" ? format( new Date(date), 'yyyy-MM-dd HH:mm:ss'):"",
-			fechaFinFallaCompleta: dateFin !==""  ? format( new Date(dateFin), 'yyyy-MM-dd HH:mm:ss'):"",
+			// fechaFinFallaCompleta: dateFin !==""  ? format( new Date(dateFin), 'yyyy-MM-dd HH:mm:ss'):"",
 			falla_documento_solucion:documento,
 			falla_evidencia_solucion:evidencia,
 		},
@@ -91,7 +89,7 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 		if(isSuccess){
 			reset()
 			setDate("")
-			setDateFin("")
+			// setDateFin("")
 			setEvidencia([])
 			setDocumento([])
 		}
@@ -103,9 +101,8 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 			// const formattedDateFin = format( new Date(dateFin), 'yyyy-MM-dd HH:mm:ss');
 			const formatData ={
 				falla_folio_accion_correctiva:values.falla_folio_accion_correctiva||"",
-				falla_comentario_solucion: values.falla_comentario_solucion||"",
 				fechaInicioFallaCompleta:values.fechaInicioFallaCompleta? formatFecha(values.fechaInicioFallaCompleta)+`:00`:"2024-03-24 11:04:00",// values.fechaInicioFallaCompleta,//date?format( new Date(date), 'yyyy-MM-dd HH:mm:ss'):"", // formattedDate, //formatFecha(values.fechaInicioFallaCompleta)+":00",
-				fechaFinFallaCompleta:values.fechaFinFallaCompleta? formatFecha(values.fechaFinFallaCompleta)+`:00`:"2024-03-12 09:04:00",// values.fechaFinFallaCompleta,//dateFin?format( new Date(dateFin), 'yyyy-MM-dd HH:mm:ss'):"",//formattedDateFin,//formatFecha(values.fechaFinFallaCompleta)+":00",
+				// fechaFinFallaCompleta:values.fechaFinFallaCompleta? formatFecha(values.fechaFinFallaCompleta)+`:00`:"2024-03-12 09:04:00",// values.fechaFinFallaCompleta,//dateFin?format( new Date(dateFin), 'yyyy-MM-dd HH:mm:ss'):"",//formattedDateFin,//formatFecha(values.fechaFinFallaCompleta)+":00",
 				falla_documento_solucion:documento,
 				falla_evidencia_solucion:evidencia,
 			}
@@ -139,6 +136,22 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 				<p className="font-bold text-blue-500">{data?.folio} </p>
 			</div>
 			<div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
+			<FormField
+				control={form.control}
+				name="fechaInicioFallaCompleta"
+				render={() => (
+					<FormItem>
+					<FormLabel> Fecha desde:</FormLabel>
+					<FormControl>
+						{/* <Input type="datetime-local" placeholder="Fecha"  /> */}
+						<DateTime date={date} setDate={setDate} disablePastDates={false} />
+					</FormControl>
+
+					<FormMessage />
+					</FormItem>
+				)}
+				/>
+
 				<FormField
 				control={form.control}
 				name="falla_folio_accion_correctiva"
@@ -160,12 +173,12 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 				/>
 				<FormField
 				control={form.control}
-				name="falla_comentario_solucion"
-				render={({ field }:any) => (
+				name="falla_folio_accion_correctiva"
+				render={({field}:any) => (
 					<FormItem>
-					<FormLabel>Comentario:</FormLabel>
+					<FormLabel> Perosonas involucradas:</FormLabel>
 					<FormControl>
-						<Input placeholder="Comentario..." {...field} 
+						<Input placeholder="Personas Involucradas..." {...field}
 						onChange={(e) => {
 							field.onChange(e); // Actualiza el valor en react-hook-form
 							// handleSelectChange("placas", e.target.value); // Acción adicional
@@ -173,40 +186,13 @@ export const SeguimientoFallaModal: React.FC<AddFallaModalProps> = ({
 						value={field.value || ""}
 						/>
 					</FormControl>
-					<FormMessage />
-					</FormItem>
-				)}
-				/>
-				<FormField
-				control={form.control}
-				name="fechaInicioFallaCompleta"
-				render={() => (
-					<FormItem>
-					<FormLabel> Fecha desde:</FormLabel>
-					<FormControl>
-						{/* <Input type="datetime-local" placeholder="Fecha"  /> */}
-						<DateTime date={date} setDate={setDate} />
-					</FormControl>
 
 					<FormMessage />
 					</FormItem>
 				)}
 				/>
-				<FormField
-				control={form.control}
-				name="fechaFinFallaCompleta"
-				render={() => (
-					<FormItem>
-					<FormLabel>Fecha hasta:</FormLabel>
-					<FormControl>
-						{/* <Input type="datetime-local" placeholder="Fecha" /> */}
-						<DateTime date={dateFin} setDate={setDateFin}/>
-					</FormControl>
-
-					<FormMessage />
-					</FormItem>
-				)}
-				/>
+				
+				{/*  */}
 
 				<div className="flex justify-between">
 					<LoadImage

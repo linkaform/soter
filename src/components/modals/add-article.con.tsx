@@ -127,7 +127,7 @@ export const AddArticuloConModal: React.FC<AddFallaModalProps> = ({
     <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
       <DialogTrigger></DialogTrigger>
 
-      <DialogContent className="max-w-3xl  overflow-y-auto max-h-[80vh] flex flex-col" aria-describedby="">
+      <DialogContent className="max-w-3xl  overflow-y-auto max-h-[80vh] flex flex-col" onInteractOutside={(e) => e.preventDefault()} aria-describedby="">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center font-bold">
             {title}

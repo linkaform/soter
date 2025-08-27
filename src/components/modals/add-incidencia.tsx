@@ -69,7 +69,6 @@ import { useCatalogoInciencias } from "@/hooks/useCatalogoIncidencias";
 import { PersonaExtraviadaFields } from "./persona-extraviada";
 import { RoboDeCableado } from "./robo-de-cableado";
 import { RoboDeVehiculo } from "./robo-de-vehiculo";
-import DepositosList from "../depositos-list";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Card, CardContent} from "../ui/card";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
@@ -78,7 +77,8 @@ import { toast } from "sonner";
 import SeccionPersonasInvolucradas from "../personas-involucradas";
 import SeccionAccionesTomadas from "../acciones-tomadas";
 import { AfectacionPatrimonialModal } from "./add-afectacion-patrimonial";
-import { formatCurrency } from "@/lib/utils";
+import { convertirDateToISO, formatCurrency } from "@/lib/utils";
+import { SeccionDepositos } from "../depositos-section";
 
 interface AddIncidenciaModalProps {
   	title: string;
@@ -243,10 +243,10 @@ export const formSchema = z.object({
 	incidente:z.string().optional(),
 	//PersonaExtraviado
 	nombre_completo_persona_extraviada: z.string().optional(),
-	edad: z.string().optional(),
+	edad: z.number().optional(),
 	color_piel: z.string().optional(),
 	color_cabello: z.string().optional(),
-	estatura_aproximada: z.string().optional(),
+	estatura_aproximada: z.number().optional(),
 	descripcion_fisica_vestimenta: z.string().optional(),
 	nombre_completo_responsable: z.string().optional(),
 	parentesco: z.string().optional(),
@@ -303,7 +303,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const [subCategoria, setSubCategoria]= useState("")
 	const [categoria, setCategoria]= useState("")
 	const [selectedIncidencia, setSelectedIncidencia]= useState("")
-	const { catIncidencias, isLoadingCatIncidencias } = useCatalogoInciencias(isSuccess, categoria, subCategoria);
+	const {catIncidencias, isLoadingCatIncidencias } = useCatalogoInciencias(isSuccess, categoria, subCategoria);
 	const [catCategorias, setCatCategorias] = useState<any[]>([])
 	
 	const [selectedNotificacion, setSelectedNotification] = useState(false)
@@ -325,7 +325,6 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 		setSubCategoria("")
 		setCategoria("")
 		setSelectedIncidencia("")
-		console.log("cxatIncidencias", catIncidencias)
 		const catIncidenciasIcons = categoriasConIconos?.filter((cat) =>
 			catIncidencias?.data.includes(cat.nombre)
 			);
@@ -414,10 +413,10 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 			incidente:"",
 
 			nombre_completo_persona_extraviada:"",
-			edad:"",
+			edad:0,
 			color_piel:"",
 			color_cabello:"",
-			estatura_aproximada:"",
+			estatura_aproximada:0,
 			descripcion_fisica_vestimenta:"",
 			nombre_completo_responsable:"",
 			parentesco:"",
@@ -458,7 +457,6 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 			setEditarSeguimiento(false)
 			setIndiceSeleccionado(null)
 			setSeguimientos([])
-			console.log("ubicacion seleccionada", location)
 			setUbicacionSeleccionada(location)
 	},[isSuccess]);	
 
@@ -490,7 +488,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 					evidencia_incidencia:evidencia||[],
 					documento_incidencia:documento||[],
 					prioridad_incidencia:getNivel(value[0])||"",
-					notificacion_incidencia:selectedNotificacion? "correo":"no",
+					notificacion_incidencia:selectedNotificacion? "sí":"no",
 					datos_deposito_incidencia: depositos,
 					tags:tagsSeleccionados,
 					categoria:categoria,
@@ -528,7 +526,6 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 					modelo: values.modelo,
 					color: values.color,
 				}
-				console.log("format data", formatData)
 				createIncidenciaMutation.mutate({ data_incidencia: formatData });
 		}else{
 			form.setError("fecha_hora_incidencia", { type: "manual", message: "Fecha es un campo requerido." });
@@ -540,9 +537,13 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	};
 
 	const getNivel = (val: number) => {
-		if (val < 35) return "Baja"
-		if (val > 34 && val < 70) return "Media"
-		if (val > 70) return "Alta"
+		if (val < 35) return "Leve"
+		if (val > 34 && val < 70) return "Moderada"
+		if (val > 70) return "Critica"
+	}
+
+	const openModalAgregarSeg = () =>{
+		setOpenModal(!openModal)
 	}
 
 	
@@ -578,7 +579,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 
   return (
     <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
-      <DialogContent className="max-w-4xl overflow-y-auto max-h-[80vh] min-h-[80vh]  flex flex-col overflow-hidden" aria-describedby="">
+      <DialogContent className="max-w-5xl overflow-y-auto max-h-[80vh] min-h-[80vh]  flex flex-col overflow-hidden"  onInteractOutside={(e) => e.preventDefault()}  aria-describedby="">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center font-bold">
             {title}
@@ -838,7 +839,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 											name="prioridad_incidencia"
 											defaultValue="media"
 											render={() => (
-												<FormItem className="w-full">
+												<FormItem className="w-3/4">
 														<div className="text-sm font-medium mb-7">
 															Importancia: <span className="font-bold">{getNivel(value[0])}</span>
 														</div> 
@@ -855,6 +856,15 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 												</FormItem>
 											)}
 										/>	
+
+										<div className="flex items-center flex-wrap gap-5">
+											<FormLabel>Notificaciones: {`(No/Correo)`}:  </FormLabel>
+												<Switch
+													defaultChecked={false}
+													onCheckedChange={()=>{setSelectedNotification(!selectedNotificacion)}}
+													aria-readonly
+												/>
+										</div>
 										
 										<FormField
 										control={form.control}
@@ -929,14 +939,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 										</div>
 
 									
-										<div className="flex items-center flex-wrap gap-5">
-											<FormLabel>Notificaciones: {`(No/Correo)`}:  </FormLabel>
-												<Switch
-													defaultChecked={false}
-													onCheckedChange={()=>{setSelectedNotification(!selectedNotificacion)}}
-													aria-readonly
-												/>
-										</div>
+										
 			
 										{selectedIncidencia =="Persona extraviada" && (
 											<div className="col-span-2 w-full">
@@ -958,7 +961,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 										)}
 										{selectedIncidencia=="Depósitos y retiros de valores" && 
 										<div className="col-span-1 md:col-span-2">
-											<DepositosList depositos={depositos} setDepositos={setDepositos} ></DepositosList>
+											<SeccionDepositos depositos={depositos} setDepositos={setDepositos} ></SeccionDepositos>
 										</div>
 										}
 									</form>
@@ -984,17 +987,13 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 									</div>
 
 									<div className="flex justify-end items-center w-full">
-										<div className="cursor-pointer  bg-blue-500 hover:bg-blue-600 text-white mr-5 rounded-md p-2 px-4 text-center text-sm" onClick={()=>{setOpenModal(!openModal)}}>
-											Agregar seguimiento 
+										<div className="cursor-pointer  bg-blue-500 hover:bg-blue-600 text-white mr-5 rounded-md p-2 px-4 text-center text-sm" onClick={()=>{openModalAgregarSeg()}}>
+											Agregar 
 										</div>
 									</div>
 								</div>
-								
 							</div>
-
-
 							<div >
-							{seguimientos && seguimientos.length > 0 ? (
 								<table className="min-w-full table-auto mb-5 border">
 									<thead>
 									<tr className="bg-gray-100">
@@ -1004,93 +1003,96 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 										<th className="px-4 py-2 text-left border-b border-gray-300">Personas involucradas</th>
 										<th className="px-4 py-2 text-left border-b border-gray-300">Evidencia</th>
 										<th className="px-4 py-2 text-left border-b border-gray-300">Documentos</th>
-										<th className="px-4 py-2 text-left border-b border-gray-300">Acciones</th> 
+										<th className="px-4 py-2 text-left border-b border-gray-300"></th> 
 									</tr>
 									</thead>
 									<tbody>
-									{seguimientos.map((item: any, index: number) => (
-										<tr key={index} className="border-t border-gray-200">
-										<td className="px-4 py-2">{item?.fecha_inicio_seg || "N/A"}</td>
-										<td className="px-4 py-2">0 min</td>
-										<td className="px-4 py-2">{item?.accion_correctiva_incidencia || "N/A"}</td>
-										<td className="px-4 py-2">{item?.incidencia_personas_involucradas || "N/A"}</td>
+									{seguimientos && seguimientos.length > 0 ? (
+										seguimientos.map((item: any, index: number) => (
+											<tr key={index} className="border-t border-gray-200">
+											<td className="px-4 py-2">{item?.fecha_inicio_seg || "N/A"}</td>
+											<td className="px-4 py-2">{item?.tiempo_transcurrido == "La fecha es anterior a la fecha de la incidencia." ? ( <div className="text-red-500"> {item?.tiempo_transcurrido }</div> ): item?.tiempo_transcurrido}</td>
+											<td className="px-4 py-2">{item?.accion_correctiva_incidencia || "N/A"}</td>
+											<td className="px-4 py-2">{item?.incidencia_personas_involucradas || "N/A"}</td>
 
-										<td className="px-4 py-2">
-											{item?.incidencia_evidencia_solucion?.length > 0 ? (
-											<div className="w-full flex justify-center">
-												<Carousel className="w-16">
-												<CarouselContent>
-													{item.incidencia_evidencia_solucion.map((a: any, i: number) => (
-													<CarouselItem key={i}>
-														<Card>
-														<CardContent className="flex aspect-square items-center justify-center p-0">
-															<Image
-															width={280}
-															height={280}
-															src={a?.file_url || "/nouser.svg"}
-															alt="Imagen"
-															className="w-42 h-42 object-contain bg-gray-200 rounded-lg"
-															/>
-														</CardContent>
-														</Card>
-													</CarouselItem>
-													))}
-												</CarouselContent>
-												<CarouselPrevious />
-												<CarouselNext />
-												</Carousel>
-											</div>
-											) : (
-											<p>No hay evidencias disponibles.</p>
-											)}
-										</td>
-
-										<td className="px-4 py-2">
-											{item?.incidencia_documento_solucion?.length > 0 ? (
-											<ul className="ms-2">
-												{item.incidencia_documento_solucion.map((file: any, i: number) => (
-												<li key={i}>
-													<a
-													href={file?.file_url}
-													target="_blank"
-													rel="noopener noreferrer"
-													className="text-blue-600 hover:underline"
-													>
-													<p>{file.file_name}</p>
-													</a>
-												</li>
-												))}
-											</ul>
-											) : (
-												<p>No hay documentos disponibles.</p>
+											<td className="px-4 py-2 min-w-[150px] ">
+												{item?.incidencia_evidencia_solucion?.length > 0 ? (
+												<div className="w-full flex justify-center">
+													<Carousel className="w-16">
+													<CarouselContent>
+														{item.incidencia_evidencia_solucion.map((a: any, i: number) => (
+														<CarouselItem key={i}>
+															<Card>
+															<CardContent className="flex aspect-square items-center justify-center p-0">
+																<Image
+																width={280}
+																height={280}
+																src={a?.file_url || "/nouser.svg"}
+																alt="Imagen"
+																className="w-42 h-42 object-contain bg-gray-200 rounded-lg border"
+																/>
+															</CardContent>
+															</Card>
+														</CarouselItem>
+														))}
+													</CarouselContent>
+													<CarouselPrevious />
+													<CarouselNext />
+													</Carousel>
+												</div>
+												) : (
+													<div className="flex justify-center">-</div>
 												)}
-										</td>
+											</td>
 
-										<td className="flex items-center justify-center gap-2 mt-2">
-											<div
-											title="Editar"
-											className="hover:cursor-pointer text-blue-500 hover:text-blue-600"
-											onClick={() => handleEdit(item, index)}
-											>
-												<Edit/>
-											</div>
-											<div
-											title="Borrar"
-											className="hover:cursor-pointer text-red-500 hover:text-red-600"
-											onClick={() => handleDelete(index)}
-											>
-												<Trash2/>
-											</div>
-										</td>
-										</tr>
-									))}
+											<td className="px-4 py-2">
+												{item?.incidencia_documento_solucion?.length > 0 ? (
+												<ul className="ms-2">
+													{item.incidencia_documento_solucion.map((file: any, i: number) => (
+													<li key={i}>
+														<a
+														href={file?.file_url}
+														target="_blank"
+														rel="noopener noreferrer"
+														className="text-blue-600 hover:underline"
+														>
+														<p>{file.file_name}</p>
+														</a>
+													</li>
+													))}
+												</ul>
+												) : (
+													<div className="flex justify-center">-</div>
+													)}
+											</td>
+
+											<td className="flex items-center justify-center gap-2 mt-2 px-2">
+												<div
+												title="Editar"
+												className="hover:cursor-pointer text-blue-500 hover:text-blue-600"
+												onClick={() => handleEdit(item, index)}
+												>
+													<Edit/>
+												</div>
+												<div
+												title="Borrar"
+												className="hover:cursor-pointer text-red-500 hover:text-red-600"
+												onClick={() => handleDelete(index)}
+												>
+													<Trash2/>
+												</div>
+											</td>
+											</tr>
+										))) : (
+											<tr>
+											<td colSpan={8} className="text-center text-gray-500 py-4">
+												No se han agregado seguimientos.
+											</td>
+											</tr>
+											)}
 									</tbody>
 								</table>
-								) : (
-								<div className="px-4 py-2 text-center text-gray-500">
-									No se han agregado seguimientos.
-								</div>
-								)}
+								
 							</div>
 
 						</Card>
@@ -1115,7 +1117,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 							</div>
 
 								<div >
-								{afectacionPatrimonial && afectacionPatrimonial.length > 0 ? (
+								
 									<table className="min-w-full table-auto mb-5 border">
 										<thead>
 										<tr className="bg-gray-100">
@@ -1126,36 +1128,39 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 										</tr>
 										</thead>
 										<tbody>
-										{afectacionPatrimonial.map((item: any, index: number) => (
-											<tr key={index} className="border-t border-gray-200">
-											<td className="px-4 py-2">{item?.tipo_afectacion || "N/A"}</td>
-											<td className="px-4 py-2">{formatCurrency(item?.monto_estimado) || "N/A"}</td>
-											<td className="px-4 py-2">{item?.duracion_estimada || "N/A"}</td>
-											<td className="flex items-center justify-center gap-2 mt-2">
-												<div
-												title="Editar"
-												className="hover:cursor-pointer text-blue-500 hover:text-blue-600"
-												onClick={() => handleEditAP(item, index)}
-												>
-													<Edit/>
-												</div>
-												<div
-												title="Borrar"
-												className="hover:cursor-pointer text-red-500 hover:text-red-600"
-												onClick={() => handleDeleteAP(index)}
-												>
-													<Trash2/>
-												</div>
-											</td>
-											</tr>
-										))}
+										{afectacionPatrimonial && afectacionPatrimonial.length > 0 ? (
+											afectacionPatrimonial.map((item: any, index: number) => (
+												<tr key={index} className="border-t border-gray-200">
+												<td className="px-4 py-2">{item?.tipo_afectacion || "N/A"}</td>
+												<td className="px-4 py-2 text-right">{formatCurrency(item?.monto_estimado) || "N/A"}</td>
+												<td className="px-4 py-2">{item?.duracion_estimada || "N/A"}</td>
+												<td className="flex items-center justify-center gap-2 mt-2">
+													<div
+													title="Editar"
+													className="hover:cursor-pointer text-blue-500 hover:text-blue-600"
+													onClick={() => handleEditAP(item, index)}
+													>
+														<Edit/>
+													</div>
+													<div
+													title="Borrar"
+													className="hover:cursor-pointer text-red-500 hover:text-red-600"
+													onClick={() => handleDeleteAP(index)}
+													>
+														<Trash2/>
+													</div>
+												</td>
+												</tr>
+											))) : (
+												<tr>
+												<td colSpan={8} className="text-center text-gray-500 py-4">
+													No se han agregado afectaciones patrimoniales.
+												</td>
+												</tr>
+											)}
 										</tbody>
 									</table>
-									) : (
-									<div className="px-4 py-2 text-center text-gray-500">
-										No se han agregado afectaciones patrimoniales.
-									</div>
-									)}
+									
 								</div>
 							</Card>
 						</TabsContent>
@@ -1193,6 +1198,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 				setEditarSeguimiento={setEditarSeguimiento}
 				editarSeguimiento={editarSeguimiento}
 				indice={indiceSeleccionado}
+				dateIncidencia={date ? convertirDateToISO(date):""}
 				>
 				<div></div>
 			</SeguimientoIncidenciaLista>

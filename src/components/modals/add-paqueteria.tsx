@@ -56,13 +56,9 @@ const formSchema = z.object({
           file_name: z.string(),
         })
       ).optional(),
-	descripcion_paqueteria: z.string().min(2, {
-		message: "Este campo es requerido."
-	}),
+	descripcion_paqueteria: z.string().optional(),
 	quien_recibe_paqueteria: z.string().optional(),
-	guardado_en_paqueteria: z.string().min(2, {
-		message: "Este campo es requerido.",
-	}),
+	guardado_en_paqueteria: z.string().optional(),
 	fecha_recibido_paqueteria:z.string().optional(),
 	estatus_paqueteria: z.array(z.string()).optional(),
 	proveedor: z.string().optional(),
@@ -73,8 +69,8 @@ export const AddPaqueteriaModal: React.FC<AddFallaModalProps> = ({
 	isSuccess,
 	setIsSuccess,
 }) => {
-	const [conSelected, setConSelected] = useState<string>("");
 	const {location, area} = useShiftStore()
+	const [conSelected, setConSelected] = useState<string>(area);
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
 	const { dataAreas:areas, dataLocations:ubicaciones, isLoadingAreas:loadingAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true,  ubicacionSeleccionada?true:false);
 	const { data:dataAreaEmpleadoApoyo, isLoading:loadingAreaEmpleadoApoyo,} = useCatalogoAreaEmpleadoApoyo(isSuccess);
@@ -87,8 +83,8 @@ export const AddPaqueteriaModal: React.FC<AddFallaModalProps> = ({
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			ubicacion_paqueteria: "Guardado",
-			area_paqueteria:"",
+			ubicacion_paqueteria: location,
+			area_paqueteria: area,
 			fotografia_paqueteria: [],
 			descripcion_paqueteria:"",
 			quien_recibe_paqueteria:"",
@@ -106,6 +102,11 @@ export const AddPaqueteriaModal: React.FC<AddFallaModalProps> = ({
 			reset()
 			setDate(new Date())
 			setUbicacionSeleccionada(location)
+			setConSelected(area)
+			reset({
+				ubicacion_paqueteria:location,
+				area_paqueteria: area
+			})
 		}
 	},[isSuccess])
 
@@ -230,10 +231,10 @@ export const AddPaqueteriaModal: React.FC<AddFallaModalProps> = ({
 					name="fecha_recibido_paqueteria"
 					render={() => (
 						<FormItem>
-						<FormLabel> Fecha de la recepcion:</FormLabel>
+						<FormLabel> Fecha de entrega:</FormLabel>
 						<FormControl>
 							{/* <Input type="datetime-local" placeholder="Fecha" {...field} /> */}
-							<DateTime date={date} setDate={setDate} />
+							<DateTime date={date} setDate={setDate} disablePastDates={false} />
 						</FormControl>
 
 						<FormMessage />
@@ -305,7 +306,7 @@ export const AddPaqueteriaModal: React.FC<AddFallaModalProps> = ({
 				<div className="flex justify-between">
                     <LoadImage
                         id="evidencia" 
-                        titulo={"Fotografia"} 
+                        titulo={"Evidencia: "} 
                         setImg={setEvidencia}
                         showWebcamOption={true}
                         facingMode="environment"
@@ -419,9 +420,9 @@ export const AddPaqueteriaModal: React.FC<AddFallaModalProps> = ({
 			>
 				{isLoading? (
 				<>
-					<Loader2 className="animate-spin"/> {"Creando Articulo..."}
+					<Loader2 className="animate-spin"/> {"Guardando Articulo..."}
 				</>
-			):("Crear Articulo")}
+			):("Guardar Articulo")}
 			</Button>
 		</div>
 		

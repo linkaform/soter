@@ -57,7 +57,7 @@ const SeccionPersonasInvolucradas:React.FC<PersonasInvolucradasListProps> = ({ p
 			<div></div>
 		</PersonasInvolucradasModal>
 			
-			{personasInvolucradas && personasInvolucradas.length > 0 ? (
+			
 			<table className="min-w-full table-auto mb-5 border">
 				<thead>
 				<tr className="bg-gray-100">
@@ -72,42 +72,46 @@ const SeccionPersonasInvolucradas:React.FC<PersonasInvolucradasListProps> = ({ p
 				</tr>
 				</thead>
 				<tbody>
-				{personasInvolucradas.map((item, index) => (
-					<tr key={index} className="border-t border-gray-200">
-					<td className="px-4 py-2">{item.nombre_completo}</td>
-					<td className="px-4 py-2">{item.rol}</td>
-					<td className="px-4 py-2">{item.sexo}</td>
-					<td className="px-4 py-2">{item.grupo_etario}</td>
-					<td className="px-4 py-2">{item.atencion_medica}</td>
-					<td className="px-4 py-2">{item.retenido}</td>
-					<td className="px-4 py-2 capitalize">{item.comentarios || "N/A"}</td>
-					<td className="flex items-center justify-center gap-2 mt-4 ">
-						<div className="flex items-center justify-center gap-2">
-						<div
-							title="Editar"
-							className="hover:cursor-pointer text-blue-500 hover:text-blue-600"
-							onClick={() => handleEditPersonasInvolucradas(item, index)}
-						>
-							<Edit />
-						</div>
-						<div
-							title="Borrar"
-							className="hover:cursor-pointer text-red-500 hover:text-red-600"
-							onClick={() => handleDeletePersonasInvolucradas(index)}
-						>
-							<Trash2 />
-						</div>
-						</div>
-					</td>
-					</tr>
-				))}
-				</tbody>
+					{personasInvolucradas && personasInvolucradas.length > 0 ? (
+						personasInvolucradas.map((item, index) => (
+						<tr key={index} className="border-t border-gray-200">
+							<td className="px-4 py-2">{item.nombre_completo||"-"}</td>
+							<td className="px-4 py-2">{item.rol||"-"}</td>
+							<td className="px-4 py-2">{item.sexo||"-"}</td>
+							<td className="px-4 py-2">{item.grupo_etario||"-"}</td>
+							<td className="px-4 py-2">{item.atencion_medica||"-"}</td>
+							<td className="px-4 py-2">{item.retenido||"-"}</td>
+							<td className="px-4 py-2">{item.comentarios||"-"}</td>
+							<td className="px-4 py-2">
+							<div className="flex items-center justify-center gap-2">
+								<div
+								title="Editar"
+								className="hover:cursor-pointer text-blue-500 hover:text-blue-600"
+								onClick={() => handleEditPersonasInvolucradas(item, index)}
+								>
+								<Edit />
+								</div>
+								<div
+								title="Borrar"
+								className="hover:cursor-pointer text-red-500 hover:text-red-600"
+								onClick={() => handleDeletePersonasInvolucradas(index)}
+								>
+								<Trash2 />
+								</div>
+							</div>
+							</td>
+						</tr>
+						))
+					) : (
+						<tr>
+						<td colSpan={8} className="text-center text-gray-500 py-4">
+							No hay personas involucradas.
+						</td>
+						</tr>
+					)}
+					</tbody>
 			</table>
-			) : (
-			<div className="mt-3">
-				<div className="text-center text-gray-500 mb-4">No hay personas involucradas.</div>
-			</div>
-			)}
+			
 
 		</div>
 	);

@@ -284,7 +284,7 @@ export const AddArticuloModal: React.FC<AddFallaModalProps> = ({
 	   			<div className="flex justify-between">
                     <LoadImage
                         id="evidencia" 
-                        titulo={"Fotografía"} 
+                        titulo={"Evidencia"} 
                         setImg={setEvidencia}
                         showWebcamOption={true}
                         facingMode="environment"

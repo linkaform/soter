@@ -42,7 +42,6 @@ import { useCatalogoInciencias } from "@/hooks/useCatalogoIncidencias";
 import { Slider } from "../slider";
 import { Switch } from "@/components/ui/switch"
 import { toast } from "sonner";
-import DepositosList from "../depositos-list";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Card, CardContent } from "../ui/card";
 import { Input } from "../ui/input";
@@ -52,7 +51,8 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import Image from "next/image";
 import { SeguimientoIncidenciaLista } from "./add-seguimientos";
 import { AfectacionPatrimonialModal } from "./add-afectacion-patrimonial";
-import { formatCurrency } from "@/lib/utils";
+import { convertirDateToISO, formatCurrency } from "@/lib/utils";
+import { SeccionDepositos } from "../depositos-section";
 
 interface EditarIncidenciaModalProps {
   	title: string;
@@ -100,10 +100,10 @@ const formSchema = z.object({
 	incidente:z.string().optional(),
 	//PersonaExtraviado
 	nombre_completo_persona_extraviada: z.string().optional(),
-	edad: z.string().optional(),
+	edad: z.number().optional(),
 	color_piel: z.string().optional(),
 	color_cabello: z.string().optional(),
-	estatura_aproximada: z.string().optional(),
+	estatura_aproximada: z.number().optional(),
 	descripcion_fisica_vestimenta: z.string().optional(),
 	nombre_completo_responsable: z.string().optional(),
 	parentesco: z.string().optional(),
@@ -177,9 +177,9 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 	const [editarAfectacionPatrimonial, setEditarAfectacionPatrimonial] = useState(false)
 
 	const getNivelNumber = (val:string) => {
-		if (val =="Alta") return 100
-		if (val =="Media") return 50
-		if (val =="Baja") return 0
+		if (val =="Critica") return 100
+		if (val =="Moderada") return 50
+		if (val =="Leve") return 0
 	}
 
 	const [value, setValue] = useState<number[]>([getNivelNumber(data.prioridad_incidencia) ?? 0]);
@@ -192,10 +192,16 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 		}));
 	}
 
+
 	const getNivel = (val: number) => {
-		if (val < 35) return "Baja"
-		if (val > 34 && val < 70) return "Media"
-		if (val > 70) return "Alta"
+		if (val < 35) return "Leve"
+		if (val > 34 && val < 70) return "Moderada"
+		if (val > 70) return "Critica"
+	}
+
+	const openModalAgregarSeg = () =>{
+		setSeguimientoSeleccionado(data)
+		setOpenModal(!openModal)
 	}
 
 	const form = useForm<z.infer<typeof formSchema>>({
@@ -212,7 +218,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 			evidencia_incidencia: evidencia,
 			documento_incidencia:documento,
 			prioridad_incidencia:getNivel(value[0])||"",
-			notificacion_incidencia: selectedNotificacion? "correo":"no",
+			notificacion_incidencia: selectedNotificacion? "sí":"no",
 			datos_deposito_incidencia: depositos,
 
 			//Categoria
@@ -228,10 +234,10 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 
 			//Persona extraviada
 			nombre_completo_persona_extraviada:data.nombre_completo_persona_extraviada||"",
-			edad:data.edad||"",
+			edad:data.edad||0,
 			color_piel:data.color_piel||"",
 			color_cabello:data.color_cabello||"",
-			estatura_aproximada:data.estatura_aproximada||"",
+			estatura_aproximada:data.estatura_aproximada||0,
 			descripcion_fisica_vestimenta:data.descripcion_fisica_vestimenta||"",
 			nombre_completo_responsable:data.nombre_completo_responsable||"",
 			parentesco:data.parentesco||"",
@@ -314,7 +320,6 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 						const subCatIncidenciasIcons = subCategoriasConIconos.filter((cat) =>
 							catIncidencias.data.includes(cat.nombre)
 						);
-						// setSearch("cat")
 						setSubCatCategorias(subCatIncidenciasIcons)
 					}
 			}
@@ -407,7 +412,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 					evidencia_incidencia:evidencia||[],
 					documento_incidencia:documento||[],
 					prioridad_incidencia:getNivel(value[0])||"",
-					notificacion_incidencia:selectedNotificacion ? "correo": "no",
+					notificacion_incidencia:selectedNotificacion ? "sí": "no",
 					datos_deposito_incidencia: depositos||[],
 					tags:tagsSeleccionados,
 
@@ -504,13 +509,13 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 
 	return (
     <Dialog open={modalEditarAbierto} onOpenChange={setModalEditarAbierto} modal>
-  <DialogContent className="max-w-4xl overflow-y-auto max-h-[80vh] min-h-[80vh]  flex flex-col overflow-hidden" aria-describedby="">
+  <DialogContent className="max-w-4xl overflow-y-auto max-h-[80vh] min-h-[80vh]  flex flex-col overflow-hidden" onInteractOutside={(e) => e.preventDefault()} aria-describedby="">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center font-bold">
             {title}
           </DialogTitle>
         </DialogHeader>
-		{loadingCatalogos? (
+			{loadingCatalogos? (
 				<div className="flex justify-center items-center h-screen">
 				 	<div className="w-24 h-24 border-8 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
 		   		</div>
@@ -939,7 +944,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 										)}
 										{selectedIncidencia=="Depósitos y retiros de valores" && 
 										<div className="col-span-1 md:col-span-2">
-											<DepositosList depositos={depositos} setDepositos={setDepositos} ></DepositosList>
+											<SeccionDepositos depositos={depositos} setDepositos={setDepositos} ></SeccionDepositos>
 										</div>
 										}
 									</form>
@@ -965,7 +970,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 									</div>
 
 									<div className="flex justify-end items-center w-full">
-										<div className="cursor-pointer  bg-blue-500 hover:bg-blue-600 text-white mr-5 rounded-md p-2 px-4 text-center text-sm" onClick={()=>{setOpenModal(!openModal)}}>
+										<div className="cursor-pointer  bg-blue-500 hover:bg-blue-600 text-white mr-5 rounded-md p-2 px-4 text-center text-sm" onClick={()=>{openModalAgregarSeg()}}>
 											Agregar seguimiento 
 										</div>
 									</div>
@@ -975,7 +980,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 
 
 							<div >
-							{seguimientos && seguimientos.length > 0 ? (
+							
 								<table className="min-w-full table-auto mb-5 border">
 									<thead>
 									<tr className="bg-gray-100">
@@ -989,12 +994,13 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 									</tr>
 									</thead>
 									<tbody>
-									{seguimientos.map((item: any, index: number) => (
+									{seguimientos && seguimientos.length > 0 ? (
+										seguimientos.map((item: any, index: number) => (
 										<tr key={index} className="border-t border-gray-200">
-										<td className="px-4 py-2">{item?.fecha_inicio_seg || "N/A"}</td>
-										<td className="px-4 py-2">0 min</td>
-										<td className="px-4 py-2">{item?.accion_correctiva_incidencia || "N/A"}</td>
-										<td className="px-4 py-2">{item?.incidencia_personas_involucradas || "N/A"}</td>
+										<td className="px-4 py-2">{item?.fecha_inicio_seg ||"-"}</td>
+										<td className="px-4 py-2">{item?.tiempo_transcurrido || "-"}</td>
+										<td className="px-4 py-2">{item?.accion_correctiva_incidencia ||"-"}</td>
+										<td className="px-4 py-2">{item?.incidencia_personas_involucradas ||"-"}</td>
 
 										<td className="px-4 py-2">
 											{item?.incidencia_evidencia_solucion?.length > 0 ? (
@@ -1017,13 +1023,12 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 													</CarouselItem>
 													))}
 												</CarouselContent>
-												<CarouselPrevious />
-												<CarouselNext />
+												{item?.incidencia_evidencia_solucion.length > 1 &&
+													<><CarouselPrevious /><CarouselNext /></>
+												}
 												</Carousel>
 											</div>
-											) : (
-											<p>No hay evidencias disponibles.</p>
-											)}
+											) :( <div className="text-center">-</div> )}
 										</td>
 
 										<td className="px-4 py-2">
@@ -1042,9 +1047,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 												</li>
 												))}
 											</ul>
-											) : (
-												<p>No hay documentos disponibles.</p>
-											)}
+											) : ( <div className="text-center">-</div> )}
 										</td>
 
 										<td className="flex items-center justify-center gap-2 mt-4 pr-2">
@@ -1064,14 +1067,16 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 											</div>
 										</td>
 										</tr>
-									))}
+									))) : (
+										<tr>
+											<td colSpan={8} className="text-center text-gray-500 py-4">
+												No se han agregado seguimientos.
+											</td>
+										</tr>
+										)}
 									</tbody>
 								</table>
-								) : (
-								<div className="px-4 py-2 text-center text-gray-500">
-									No se han agregado seguimientos.
-								</div>
-								)}
+								
 							</div>
 
 						</Card>
@@ -1096,7 +1101,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 							</div>
 
 								<div >
-								{afectacionPatrimonial && afectacionPatrimonial.length > 0 ? (
+								
 									<table className="min-w-full table-auto mb-5 border">
 										<thead>
 										<tr className="bg-gray-100">
@@ -1107,7 +1112,8 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 										</tr>
 										</thead>
 										<tbody>
-										{afectacionPatrimonial.map((item: any, index: number) => (
+										{afectacionPatrimonial && afectacionPatrimonial.length > 0 ? (
+										afectacionPatrimonial.map((item: any, index: number) => (
 											<tr key={index} className="border-t border-gray-200">
 											<td className="px-4 py-2">{item?.tipo_afectacion || "N/A"}</td>
 											<td className="px-4 py-2">{formatCurrency(item?.monto_estimado) || "N/A"}</td>
@@ -1129,14 +1135,16 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 												</div>
 											</td>
 											</tr>
-										))}
+										))) : (
+											<tr>
+											<td colSpan={8} className="text-center text-gray-500 py-4">
+												No se han agregado afectaciones patrimoniales.
+											</td>
+											</tr>
+											)}
 										</tbody>
 									</table>
-									) : (
-									<div className="px-4 py-2 text-center text-gray-500">
-										No se han agregado afectaciones patrimoniales.
-									</div>
-									)}
+									
 								</div>
 							</Card>
 						</TabsContent>
@@ -1152,20 +1160,6 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 							</Button>
 						</DialogClose>
 
-						
-						{/* <Button
-							type="submit"
-							onClick={()=>{setOpenModal(!openModal)}}
-							className="w-full bg-yellow-500 hover:bg-yellow-600 text-white sm:w-2/3 md:w-1/2 lg:w-1/2 mb-2" disabled={isLoading}
-						>
-							{isLoading? (
-							<>
-								<Loader2 className="animate-spin"/> {"Agregando seguimiento..."}
-							</>
-						):("Agregar seguimiento")}
-						</Button> */}
-
-
 						<Button
 							type="submit"
 							onClick={form.handleSubmit(onSubmit)}
@@ -1173,9 +1167,9 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 						>
 							{isLoading? (
 							<>
-								<Loader2 className="animate-spin"/> {"Editando incidencia..."}
+								<Loader2 className="animate-spin"/> {"Guardando cambios..."}
 							</>
-						):("Editar incidencia")}
+						):("Guardar incidencia")}
 						</Button>
 					</div>
 				</>
@@ -1190,6 +1184,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 				setEditarSeguimiento={setEditarSeguimiento}
 				editarSeguimiento={editarSeguimiento}
 				indice={indiceSeleccionado}
+				dateIncidencia={ date ? convertirDateToISO(date):""}
 				>
 				<div></div>
 			</SeguimientoIncidenciaLista>

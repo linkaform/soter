@@ -10,7 +10,6 @@ export const useGetListRondines = (enableList:boolean, date1:string, date2:strin
         enabled:enableList,
         queryFn: async () => {
             const data = await getListRondin(date1, date2, limit, offset);
-            console.log("lista de data", data)
             const textMsj = errorMsj(data) 
             if (textMsj){
               throw new Error (`Error al obtener lista de rondines, Error: ${data.error}`);

@@ -1,5 +1,6 @@
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Input } from "../ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { Textarea } from "../ui/textarea";
 
 type Props = {
@@ -28,18 +29,45 @@ export function PersonaExtraviadaFields({ control }: Props) {
 					render={({ field }) => (
 						<FormItem>
 						<FormLabel>Edad</FormLabel>
-						<FormControl><Input {...field}   /></FormControl>
+						<FormControl><Input {...field}  placeholder="Edad..."
+							onChange={(e) => {
+								const value = e.target.value;
+								if (/^\d*\.?\d*$/.test(value)) {
+								field.onChange(e); 
+								}
+							}}
+						 /></FormControl>
 						<FormMessage />
 						</FormItem>
 					)}
 					/>
 					<FormField
-					control={control}
-					name="color_piel"
-					render={({ field }) => (
-						<FormItem>
-						<FormLabel>Color piel</FormLabel>
-						<FormControl><Input {...field}   /></FormControl>
+					  control={control}
+					  name="color_piel"
+					  render={({ field }:any) => (
+						<FormItem className="w-full">
+							<FormLabel>Color de piel</FormLabel>
+							<FormControl>
+								<Select {...field} className="input"
+									onValueChange={(value: string) => {
+										field.onChange(value);
+									} }
+									value={field.value}
+								>
+									<SelectTrigger className="w-full">
+										<SelectValue placeholder="Selecciona una opción" />
+									</SelectTrigger>
+									<SelectContent>
+										<SelectItem key={"Muy clara"} value={"Muy clara"}>Muy clara</SelectItem>
+										<SelectItem key={"Claro"} value={"Claro"}>Claro</SelectItem>
+										<SelectItem key={"Trigueña clara (Latina clara, mestiza clara)"} value={"Trigueña clara (Latina clara, mestiza clara)"}>Trigueña clara (Latina clara, mestiza clara)</SelectItem>
+										<SelectItem key={"Trigueña (Morena clara, tono oliva)"} value={"Trigueña (Morena clara, tono oliva)"}>Trigueña (Morena clara, tono oliva)</SelectItem>
+										<SelectItem key={"Morena (Morena oscura, tono bronceado)"} value={"Morena (Morena oscura, tono bronceado)"}>Morena (Morena oscura, tono bronceado)</SelectItem>
+										<SelectItem key={"Oscura (Negra clara)"} value={"Oscura (Negra clara)"}>Oscura (Negra clara)</SelectItem>
+										<SelectItem key={"Muy oscura (Negra profunda)"} value={"Muy oscura (Negra profunda)"}>Muy oscura (Negra profunda)</SelectItem>
+									</SelectContent>
+								</Select>
+							</FormControl>
 						<FormMessage />
 						</FormItem>
 					)}
@@ -60,12 +88,22 @@ export function PersonaExtraviadaFields({ control }: Props) {
 					name="estatura_aproximada"
 					render={({ field }) => (
 						<FormItem>
-						<FormLabel>Estatura aproximada</FormLabel>
-						<FormControl><Input {...field}  /></FormControl>
+						<FormLabel>Estatura apróximada</FormLabel>
+						<FormControl>
+							<Input placeholder="Estatura apróximada..." {...field}
+							 onChange={(e) => {
+								const value = e.target.value;
+								if (/^\d*\.?\d*$/.test(value)) {
+								field.onChange(e); 
+								}
+							}}
+							/>
+						</FormControl>
 						<FormMessage />
 						</FormItem>
 					)}
 					/>
+				
 					<FormField
 					control={control}
 					name="descripcion_fisica_vestimenta"
@@ -126,8 +164,33 @@ export function PersonaExtraviadaFields({ control }: Props) {
 					name="info_coincide_con_videos"
 					render={({ field }) => (
 						<FormItem>
-						<FormLabel>La informacion coincide con los videos?</FormLabel>
-						<FormControl><Input {...field}  /></FormControl>
+						<FormLabel>La información coincide con los videos?</FormLabel>
+						<FormControl>
+							<div className="flex gap-2 ">
+								<button
+								type="button"
+								onClick={() => field.onChange("sí")}
+								className={`px-6 py-2 rounded ${
+									field.value === "sí"
+									? "bg-blue-600 text-white "
+									: "bg-white-200 text-blue-600 border border-blue-500 "
+								}`}
+								>
+								Sí
+								</button>
+								<button
+								type="button"
+								onClick={() => field.onChange("no")}
+								className={`px-6 py-2 rounded ${
+									field.value === "no"
+									? "bg-blue-600 text-white"
+									: "bg-white-200 text-blue-600 border border-blue-500"
+								}`}
+								>
+								No
+								</button>
+							</div>
+						</FormControl>
 						<FormMessage />
 						</FormItem>
 					)}

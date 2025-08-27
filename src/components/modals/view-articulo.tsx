@@ -29,7 +29,7 @@ export const ViewArticulo: React.FC<ViewArtModalProps> = ({
   return (
     <Dialog >
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="max-w-4xl overflow-scroll">
+      <DialogContent className="max-w-4xl overflow-scroll"  onInteractOutside={(e) => e.preventDefault()} >
         <DialogHeader>
           <DialogTitle className="text-2xl text-center font-bold">
             {title}

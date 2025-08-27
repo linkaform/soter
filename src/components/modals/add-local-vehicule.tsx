@@ -206,7 +206,7 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
         {children}
       </DialogTrigger>
 
-      <DialogContent className="max-w-xl   max-h-[90vh] flex flex-col" aria-describedby="" >
+      <DialogContent className="max-w-xl   max-h-[90vh] flex flex-col" onInteractOutside={(e) => e.preventDefault()} aria-describedby="" >
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center font-bold">
             {title}

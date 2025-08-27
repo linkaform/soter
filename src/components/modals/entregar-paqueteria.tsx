@@ -93,7 +93,7 @@ export const DevolucionPaqModal: React.FC<DevPaqModalProps> = ({
  
     return (
         <Dialog onOpenChange={setIsSuccess} open={isSuccess}>
-          <div className="cursor-pointer" title="Devolver Paquete" onClick={handleOpenModal}>
+          <div className="cursor-pointer" title="Entregar Paquete" onClick={handleOpenModal}>
             <ArrowRightLeft />
             </div>
     
@@ -161,8 +161,8 @@ export const DevolucionPaqModal: React.FC<DevPaqModalProps> = ({
                         type="submit"
                         className="w-full bg-blue-500 hover:bg-blue-600 text-white " disabled={isLoading} onClick={form.handleSubmit(onSubmit)}>
                         { !isLoading ? (<>
-                        {("Devolver artículo")}
-                        </>) :(<> <Loader2 className="animate-spin"/> {"Devolver artículo..."} </>)}
+                        {("Entregar artículo")}
+                        </>) :(<> <Loader2 className="animate-spin"/> {"Entregando artículo..."} </>)}
                     </Button>
                 </div>   
           </DialogContent>

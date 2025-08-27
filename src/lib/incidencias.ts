@@ -53,6 +53,12 @@ export const getListIncidencias = async (
     return data;
   };
   
+export interface Depositos {
+    tipo_deposito: string,
+    origen: string,
+	cantidad: number
+}
+
 export interface AccionesTomadas {
     acciones_tomadas:string,
     llamo_a_policia:string
@@ -82,10 +88,6 @@ export interface AfectacionPatrimonial{
     tipo_afectacion:string
     monto_estimado:string
     duracion_estimada:string
-}
-export interface Depositos {
-    cantidad:number
-    tipo_deposito:string
 }
 
 export interface InputIncidencia {

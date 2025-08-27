@@ -49,7 +49,7 @@ export const CerrarFallaModal: React.FC<AddFallaModalProps> = ({
 
   return (
     <Dialog onOpenChange={setModalCerrarAbierto} open={modalCerrarAbierto} modal>
-      <DialogContent className="max-w-3xl" aria-describedby="">
+      <DialogContent className="max-w-3xl" aria-describedby=""  onInteractOutside={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle className="text-2xl text-center font-bold">
             {title}

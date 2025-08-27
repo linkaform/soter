@@ -95,7 +95,7 @@ export const usePaqueteria = (location:string, area:string, status:string, enabl
 
             if(hasError == 400|| hasError == 401){
                 const textMsj = errorMsj(response.response.data) 
-                throw new Error(`Error al devolver artículo, Error: ${textMsj?.text}`);
+                throw new Error(`Error al entregar artículo, Error: ${textMsj?.text}`);
             }else{
                 return response.response?.data
             }
@@ -107,11 +107,11 @@ export const usePaqueteria = (location:string, area:string, status:string, enabl
           queryClient.invalidateQueries({ queryKey: ["getListPaqueteria"] });
           queryClient.invalidateQueries({ queryKey: ["getStatsArticulos"] });
           queryClient.invalidateQueries({ queryKey: ["getStats"] });
-          toast.success("Devolución registrada correctamente.");
+          toast.success("Entrega registrada correctamente.");
         },
         onError: (err) => {
-          console.error("Error al realizar la devolución:", err);
-          toast.error(err.message || "Hubo un error al realizar la devolución.");
+          console.error("Error al realizar la entrega:", err);
+          toast.error(err.message || "Hubo un error al realizar la entrega.");
     
         },
         onSettled: () => {
