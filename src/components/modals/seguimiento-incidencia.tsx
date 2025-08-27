@@ -113,7 +113,7 @@ export const SeguimientoIncidenciaModal: React.FC<IncidenciaModalProps> = ({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			incidencia_folio_accion_correctiva: "",
-			incidencia_comentario_solucion: "",
+			// incidencia_comentario_solucion: "",
 			fechaInicioIncidenciaCompleta: date !== "" ? format(new Date(date), 'yyyy-MM-dd HH:mm:ss') : "",
 			fechaFinIncidenciaCompleta: dateFin !== "" ? format(new Date(dateFin), 'yyyy-MM-dd HH:mm:ss') : "",
 			incidencia_documento_solucion: documento,
@@ -158,7 +158,7 @@ export const SeguimientoIncidenciaModal: React.FC<IncidenciaModalProps> = ({
 		<Dialog onOpenChange={setIsSuccess} open={isSuccess}>
 			<DialogTrigger>{children}</DialogTrigger>
 
-			<DialogContent className="max-w-3xl" aria-describedby="">
+			<DialogContent className="max-w-3xl" aria-describedby=""  onInteractOutside={(e) => e.preventDefault()}>
 				<DialogHeader>
 					<DialogTitle className="text-2xl text-center font-bold">
 						{title}
@@ -180,7 +180,7 @@ export const SeguimientoIncidenciaModal: React.FC<IncidenciaModalProps> = ({
 											<FormLabel>* Fecha del seguimiento:</FormLabel>
 											<FormControl>
 												{/* <Input type="datetime-local" placeholder="Fecha"  /> */}
-												<DateTime date={date} setDate={setDate} />
+												<DateTime date={date} setDate={setDate} disablePastDates={false} />
 											</FormControl>
 
 											<FormMessage />
@@ -213,7 +213,7 @@ export const SeguimientoIncidenciaModal: React.FC<IncidenciaModalProps> = ({
 									name="incidencia_comentario_solucion"
 									render={({ field }: any) => (
 										<FormItem>
-											<FormLabel>Comentario:</FormLabel>
+											<FormLabel>Perosnas Involucradas:</FormLabel>
 											<FormControl>
 												<Input placeholder="Comentario..." {...field}
 													onChange={(e) => {

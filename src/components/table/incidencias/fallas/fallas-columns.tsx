@@ -44,14 +44,6 @@ import ViewImage from "@/components/modals/view-image";
     const falla = row.original;
     return (
       <div className="flex space-x-2">
-        {/* <ViewFalla 
-          title="Información de la Falla"
-          data={falla} isSuccess={false}>
-            <div className="cursor-pointer" title="Ver Falla">
-              <Eye /> 
-            </div>
-        </ViewFalla>
-         */}
         <div
           className="cursor-pointer"
           title="Información de la Falla"
@@ -60,35 +52,24 @@ import ViewImage from "@/components/modals/view-image";
         >
         	<Eye /> 
         </div>
-    
-        {/* <div
-          className="cursor-pointer"
-          title="Editar Falla"
-          onClick={() => {
-            onEditarClick(falla)}}
-        >
-        	<Edit />
-        </div> */}
-    
-        {/* <div
-          className="cursor-pointer"
-           title="Seguimiento Falla"
-          onClick={() => {
-            onSeguimientoClick(falla)}}
-        >
-        	<Check />
-        </div> */}
+  
 
        {falla?.falla_estatus !=="resuelto" ?
-		 <div
-		 className="cursor-pointer"
-		 title="Cerrar Falla"
-		 onClick={() => {
-		   onCerrarClick(falla)}}
-	   >
-		   <ClipboardCheck />
-	   </div> :null
-	   }
+        <div
+        className="cursor-pointer"
+        title="Cerrar Falla"
+        onClick={() => {
+          onCerrarClick(falla)}}
+        >
+          <ClipboardCheck />
+        </div> : 
+        <div
+        
+        title="Cerrar Falla"
+        >
+          <ClipboardCheck  className="text-gray-300"/>
+        </div>
+        }
 
         <div
           className="cursor-pointer"
@@ -162,7 +143,7 @@ import ViewImage from "@/components/modals/view-image";
         const isAbierto = row.getValue("falla_estatus") === "abierto";
 
         return (
-          <div className={`capitalize font-semibold ${isAbierto ? 'text-green-600' : 'text-red-600'}`}>
+          <div className={`capitalize font-semibold ${isAbierto ? 'text-red-600' : 'text-blue-600'}`}>
             {row.getValue("falla_estatus")}
           </div>
         );

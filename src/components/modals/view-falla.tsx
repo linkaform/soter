@@ -15,7 +15,7 @@ import { Card, CardContent } from "../ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import { capitalizeFirstLetter, formatDateToText } from "@/lib/utils";
 import { Imagen } from "@/lib/update-pass";
-import { SeguimientoFallaModal } from "./seguimiento-falla";
+import { SeguimientoFallaModal } from "./add-seguimiento-falla";
 import { Dispatch, SetStateAction, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -43,7 +43,7 @@ export const ViewFalla: React.FC<ViewFallaModalProps> = ({
   return (
     <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="max-w-3xl overflow-y-auto max-h-[80vh] flex flex-col" aria-describedby="">
+      <DialogContent className="max-w-3xl overflow-y-auto max-h-[80vh] flex flex-col" onInteractOutside={(e) => e.preventDefault()} aria-describedby="">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center font-bold">
             {title}
@@ -285,7 +285,7 @@ export const ViewFalla: React.FC<ViewFallaModalProps> = ({
             </Button>
           	</DialogClose>
 
-			  <Button
+			<Button
 			type="submit"
 			className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={false} onClick={()=>{setIsSuccess(false); setModalEditarAbierto(true)}}
 			>

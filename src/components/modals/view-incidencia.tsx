@@ -19,28 +19,33 @@ import { Depositos } from "@/lib/incidencias";
 import { CircleAlert, Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { toast } from "sonner";
+import { Dispatch, SetStateAction } from "react";
 
 interface ViewFallaModalProps {
   title: string;
   data: Incidencia_record
   children: React.ReactNode;
+  setIsSuccess:Dispatch<SetStateAction<boolean>>
+  isSuccess: boolean;
+  setModalEditarAbierto: Dispatch<SetStateAction<boolean>>;
 }
 
 export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
   title,
   data,
   children,
+  setIsSuccess,
+  isSuccess,
+  setModalEditarAbierto,
 }) => {
-	// const [openModal, setOpenModal] = useState(false)
-	
   function sumDepositos(item:Depositos[]){
     const sumaTotal = item.reduce((total: any, item: { cantidad: number; }) => total + item.cantidad, 0);
     return formatCurrency(sumaTotal)
   }
   return (
-    <Dialog >
+    <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="max-w-4xl overflow-y-auto max-h-[80vh] flex flex-col" aria-describedby="">
+      <DialogContent className="max-w-4xl overflow-y-auto max-h-[80vh] flex flex-col" onInteractOutside={(e) => e.preventDefault()} aria-describedby="">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center font-bold">
             {title}
@@ -606,6 +611,15 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
               Cerrar
             </Button>
           	</DialogClose>
+
+			  <Button
+			type="submit"
+			className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={false} onClick={()=>{setIsSuccess(false); setModalEditarAbierto(true)}}
+			>
+			{true ? (<>
+				{("Editar Falla")}
+			</>) : (<> <Loader2 className="animate-spin" /> {"Editar Falla..."} </>)}
+			</Button>
 
 		  	<Button
 			type="submit"

@@ -1,5 +1,4 @@
 import { LoadingModal } from "@/components/modals/loading-modal";
-import { ViewIncidencia } from "@/components/modals/view-incidencia";
 import { AccionesTomadas, AfectacionPatrimonial, Depositos, PersonasInvolucradas } from "@/lib/incidencias";
 
 import { Check, Edit, Eye, Trash2 } from "lucide-react";
@@ -88,21 +87,23 @@ export type Incidencia = {
   }
   
   export const OptionsCell: React.FC<{ row: any , onEditarClick: (incidencia: Incidencia_record) => void, onSeguimientoClick: (seguimiento: Incidencia_record)=> void,
-    onEliminarClick: (incidencia: Incidencia_record) => void
-   }> = ({ row, onEditarClick ,onEliminarClick, onSeguimientoClick}) => {
+    onEliminarClick: (incidencia: Incidencia_record) => void, onView: (incidencia: Incidencia_record) => void
+   }> = ({ row, onEditarClick ,onEliminarClick, onSeguimientoClick, onView}) => {
     const incidencia = row.original;
     const [showLoadingModal] = useState(false);
 
     return (
       <div className="flex space-x-2">
-        <ViewIncidencia 
-          title="Información De La Incidencia"
-          data={incidencia} >
-            <div className="cursor-pointer" title="Ver Incidencia">
-              <Eye /> 
-            </div>
-        </ViewIncidencia>
-
+        
+        <div
+          className="cursor-pointer"
+          title="Información de la Incidencia"
+          onClick={() => {
+            onView(incidencia)}}
+        >
+        	<Eye /> 
+        </div>
+        
         <LoadingModal isOpen={showLoadingModal} text="Cargando..."/>
         
         <div

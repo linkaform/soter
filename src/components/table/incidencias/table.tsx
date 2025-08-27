@@ -16,7 +16,7 @@ import {
   useReactTable,
   Table as TanstackTable
 } from "@tanstack/react-table";
-import { CalendarDays, Check, Eraser, FileX2, Plus, Search, Trash2 } from "lucide-react";
+import { CalendarDays, Check, Eraser, Eye, FileX2, Plus, Search, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -45,6 +45,7 @@ import { EditarIncidenciaModal } from "@/components/modals/editar-incidencia";
 import ViewImage from "@/components/modals/view-image";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SeguimientoIncidenciaModal } from "@/components/modals/seguimiento-incidencia";
+import { ViewIncidencia } from "@/components/modals/view-incidencia";
 
 interface ListProps {
 	data: Incidencia_record[];
@@ -82,6 +83,7 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
   );
 
 	const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
+	const [modalVerAbierto, setModalVerAbierto] = useState(false);
 	const [modalSeguimientoAbierto, setModalSeguimientoAbierto] = useState(false);
 	const [modalEliminarAbierto, setModalEliminarAbierto] = useState(false);
 	const [modalEliminarMultiAbierto, setModalEliminarMultiAbierto] = useState(false);
@@ -112,6 +114,11 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 		setModalSeguimientoAbierto(true);
 	};
 
+	const handleVer= (incidencia: Incidencia_record) => {
+		setIncidenciaSeleccionada(incidencia);
+		setModalVerAbierto(true);
+	};
+
   const columns = useMemo(() => {
 	if (isLoading) return [];
 	 	return [
@@ -124,7 +131,7 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 					onCheckedChange={(value) => row.toggleSelected(!!value)}
 					aria-label="Select row"
 				/>
-				<OptionsCell row={row} onEditarClick={handleEditar} onEliminarClick={handleEliminar} onSeguimientoClick={handleSeguimiento}/>
+				<OptionsCell row={row} onEditarClick={handleEditar} onEliminarClick={handleEliminar} onSeguimientoClick={handleSeguimiento} onView={()=>{handleVer(row.original)}}/>
 				</div>
 			),
 			header: ({ table } : { table: TanstackTable<Incidencia_record> }) => (
@@ -354,6 +361,16 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 					setModalEliminarAbierto={setModalEliminarMultiAbierto}/>
 				</div>
 
+				{modalVerAbierto && incidenciaSeleccionada && (
+					<ViewIncidencia 
+					title="Información De La Incidencia"
+					data={incidenciaSeleccionada} isSuccess={modalVerAbierto}
+								setIsSuccess={setModalVerAbierto} setModalEditarAbierto={setModalEditarAbierto }>
+						<div className="cursor-pointer" title="Ver Incidencia">
+						<Eye /> 
+						</div>
+					</ViewIncidencia>
+				)}
 
 				{modalEditarAbierto && incidenciaSeleccionada && (
 					<EditarIncidenciaModal
@@ -372,7 +389,6 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 					setModalEliminarAbierto={(state) => {
 						setModalEliminarMultiAbierto(state);
 						if (!state) {
-							console.log("ELIMINAR", state)
 						 	setSelectedIncidencias([]); 
 							setRowSelection({});
 							setModalEliminarAbierto(state)

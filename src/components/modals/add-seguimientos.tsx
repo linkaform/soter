@@ -174,7 +174,7 @@ export const SeguimientoIncidenciaLista: React.FC<IncidenciaModalProps> = ({
 		<Dialog onOpenChange={setIsSuccess} open={isSuccess}>
 			<DialogTrigger>{children}</DialogTrigger>
 
-			<DialogContent className="max-w-lg overflow-y-auto max-h-[80vh] min-h-auto  flex flex-col overflow-hidden" aria-describedby="">
+			<DialogContent className="max-w-lg overflow-y-auto max-h-[80vh] min-h-auto  flex flex-col overflow-hidden" onInteractOutside={(e) => e.preventDefault()} aria-describedby="">
 				<DialogHeader>
 					<DialogTitle className="text-2xl text-center font-bold">
 						{title}

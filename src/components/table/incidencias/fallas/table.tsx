@@ -37,7 +37,7 @@ import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DateTime from "@/components/dateTime";
 import { useMemo, useState } from "react";
 import { EditarFallaModal } from "@/components/modals/editar-falla";
-import { SeguimientoFallaModal } from "@/components/modals/seguimiento-falla";
+import { SeguimientoFallaModal } from "@/components/modals/add-seguimiento-falla";
 import { CerrarFallaModal } from "@/components/modals/close-falla-modal";
 import { ViewFalla } from "@/components/modals/view-falla";
 

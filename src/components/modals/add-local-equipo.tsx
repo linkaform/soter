@@ -160,7 +160,7 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
     <DialogTrigger asChild onClick={() => setOpen(true)}>
         {children}
       </DialogTrigger>
-      <DialogContent className="max-w-xl max-h-[90vh] flex flex-col" aria-describedby=""
+      <DialogContent className="max-w-xl max-h-[90vh] flex flex-col" onInteractOutside={(e) => e.preventDefault()} aria-describedby=""
       
       > 
         <DialogHeader className="flex-shrink-0">

@@ -105,10 +105,9 @@ export const updateFalla = async (data_failure_update: InputFalla | null, folio:
   };
 
   export interface inputSeguimientoFalla {
-    falla_comentario_solucion:string,
     falla_documento_solucion: Imagen[],
     falla_evidencia_solucion:Imagen[],
-    fechaFinFallaCompleta: string,
+    // fechaFinFallaCompleta: string,
     fechaInicioFallaCompleta: string,
     falla_folio_accion_correctiva: string,
 }
