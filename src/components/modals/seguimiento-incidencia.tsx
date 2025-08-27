@@ -215,7 +215,7 @@ export const SeguimientoIncidenciaModal: React.FC<IncidenciaModalProps> = ({
 										<FormItem>
 											<FormLabel>Perosnas Involucradas:</FormLabel>
 											<FormControl>
-												<Input placeholder="Comentario..." {...field}
+												<Input placeholder="Personas involucradas..." {...field}
 													onChange={(e) => {
 														field.onChange(e); // Actualiza el valor en react-hook-form
 														// handleSelectChange("placas", e.target.value); // Acción adicional
