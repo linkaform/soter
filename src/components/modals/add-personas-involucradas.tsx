@@ -26,7 +26,9 @@ import { useShiftStore } from "@/store/useShiftStore";
 import { Textarea } from "../ui/textarea";
 import { Input } from "../ui/input";
 import { toast } from "sonner";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import Select from 'react-select';
+import { formatForMultiselect } from "@/lib/utils";
 
 interface IncidenciaModalProps {
 	title: string;
@@ -168,7 +170,6 @@ export const PersonasInvolucradasModal: React.FC<IncidenciaModalProps> = ({
 													<Input placeholder="Nombre completo..." {...field}
 														onChange={(e) => {
 															field.onChange(e); // Actualiza el valor en react-hook-form
-															// handleSelectChange("placas", e.target.value); // Acción adicional
 														}}
 														value={field.value || ""}
 													/>
@@ -181,29 +182,30 @@ export const PersonasInvolucradasModal: React.FC<IncidenciaModalProps> = ({
 										control={form.control}
 										name="rol"
 										render={({ field }: any) => (
-											<FormItem>
-												<FormLabel>Rol en el incidente:</FormLabel>
-												<FormControl>
-													<Select {...field} className="input"t
-														onValueChange={(value:string) => {
-														field.onChange(value); 
+											<FormItem className="w-full">
+												 	<FormLabel>Rol en el incidente:</FormLabel>
+													<Select 
+														placeholder={"Rol en el incidente"}
+														inputId="select-rol"
+														name="rol"
+														aria-labelledby="aria-label"
+														value ={field.value ? formatForMultiselect([field.value]):[]}
+														options={formatForMultiselect([
+															"Testigo",
+															"Afectado",
+															"Agresor",
+															"Sospechoso",
+															"Responsable",
+															"Otro"
+														  ])} 
+														onChange={(selectedOption:any) => {
+															field.onChange(selectedOption ? selectedOption.value :"");
 														}}
-														value={field.value}
-													>
-														<SelectTrigger className="w-full">
-															<SelectValue placeholder="Selecciona una opcion" />
-														</SelectTrigger>
-														<SelectContent>
-															<SelectItem key={"testigo"} value={"testigo"}>Testigo</SelectItem>
-															<SelectItem key={"afectado"} value={"afectado"}>Afectado</SelectItem>
-															<SelectItem key={"agresor"} value={"agresor"}>Agresor</SelectItem>
-															<SelectItem key={"sospechoso"} value={"sospechoso"}>Sospechoso</SelectItem>
-															<SelectItem key={"responsable"} value={"responsable"}>Responsable</SelectItem>
-															<SelectItem key={"otro"} value={"otro"}>Otro</SelectItem>
-														</SelectContent>
-													</Select>
-												</FormControl>
-												<FormMessage />
+														isClearable
+														styles={{
+															menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
+														}}
+													/>
 											</FormItem>
 										)}
 									/>
@@ -211,26 +213,27 @@ export const PersonasInvolucradasModal: React.FC<IncidenciaModalProps> = ({
 										control={form.control}
 										name="sexo"
 										render={({ field }: any) => (
-											<FormItem>
+											<FormItem className="w-full">
 												<FormLabel>Sexo:</FormLabel>
-												<FormControl>
-												<Select {...field} className="input"t
-													onValueChange={(value:string) => {
-													field.onChange(value); 
+												<Select 
+													placeholder={"Sexo"}
+													inputId="select-sexo"
+													name="sexo"
+													aria-labelledby="aria-label"
+													className="border border-slate-100 rounded-2xl"
+													value={field.value ? formatForMultiselect([field.value]):[]}
+													options={formatForMultiselect([
+														"Masculino",
+														"Femenino",
+														])} 
+													onChange={(selectedOption:any) => {
+														field.onChange(selectedOption ? selectedOption.value :"");
 													}}
-													value={field.value}
-												>
-													<SelectTrigger className="w-full">
-														<SelectValue placeholder="Selecciona una opcion" />
-													</SelectTrigger>
-													<SelectContent>
-														<SelectItem key={"masculino"} value={"masculino"}>Masculino</SelectItem>
-														<SelectItem key={"femenino"} value={"femenino"}>Femenino</SelectItem>
-														<SelectItem key={"prefiere no decirlo"} value={"prefiere no decirlo"}>Prefiere no decirlo</SelectItem>
-													</SelectContent>
-												</Select>
-												</FormControl>
-												<FormMessage />
+													isClearable
+													styles={{
+														menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
+													}}
+													/>
 											</FormItem>
 										)}
 									/>
@@ -238,30 +241,54 @@ export const PersonasInvolucradasModal: React.FC<IncidenciaModalProps> = ({
 										control={form.control}
 										name="grupo_etario"
 										render={({ field }: any) => (
-											<FormItem>
-												<FormLabel>Grupo etario:</FormLabel>
-												<FormControl>
-													<Select {...field} className="input"t
-														onValueChange={(value:string) => {
-														field.onChange(value); 
+											<FormItem className="w-full">
+												 	<FormLabel>Grupo etario:</FormLabel>
+													<Select 
+														placeholder={"Grupo Etario"}
+														className="border border-slate-100 rounded-2xl"
+														value={field.value ? formatForMultiselect([field.value]):[]}
+														options={formatForMultiselect([
+															"Infancia (0 a 11)",
+															"Adolescencia (12 a 17)",
+															"Juventud (18 a 29)",
+															"Adultez temprana (30 a 44)",
+															"Adultez media (45 a 59)",
+															"Adultez mayor (60+)"
+														  ])} 
+														onChange={(selectedOption:any) => {
+															field.onChange(selectedOption ? selectedOption.value :"");
 														}}
-														value={field.value}
-													>
-														<SelectTrigger className="w-full">
-															<SelectValue placeholder="Selecciona una opcion" />
-														</SelectTrigger>
-														<SelectContent>
-															<SelectItem key={"infancia"} value={"infancia"}>Infancia</SelectItem>
-															<SelectItem key={"adolescencia"} value={"adolescencia"}>Adolescencia</SelectItem>
-															<SelectItem key={"juventud"} value={"juventud"}>Juventud</SelectItem>
-															<SelectItem key={"adultez temprana"} value={"adultez temprana"}>Adultez temprana</SelectItem>
-															<SelectItem key={"adultez media"} value={"adultez media"}>Adultez media</SelectItem>
-															<SelectItem key={"adultez mayor"} value={"adultez mayor"}>Adultez mayor</SelectItem>
-														</SelectContent>
-													</Select>
-												</FormControl>
-												<FormMessage />
+														isClearable
+														menuPortalTarget={document.body}
+														styles={{
+															menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
+														}}
+														/>
 											</FormItem>
+											// <FormItem>
+											// 	<FormLabel>Grupo etario:</FormLabel>
+											// 	<FormControl>
+											// 		<Select {...field} className="input"t
+											// 			onValueChange={(value:string) => {
+											// 			field.onChange(value); 
+											// 			}}
+											// 			value={field.value}
+											// 		>
+											// 			<SelectTrigger className="w-full">
+											// 				<SelectValue placeholder="Selecciona una opcion" />
+											// 			</SelectTrigger>
+											// 			<SelectContent>
+											// 				<SelectItem key={"infancia"} value={"infancia"}>Infancia</SelectItem>
+											// 				<SelectItem key={"adolescencia"} value={"adolescencia"}>Adolescencia</SelectItem>
+											// 				<SelectItem key={"juventud"} value={"juventud"}>Juventud</SelectItem>
+											// 				<SelectItem key={"adultez temprana"} value={"adultez temprana"}>Adultez temprana</SelectItem>
+											// 				<SelectItem key={"adultez media"} value={"adultez media"}>Adultez media</SelectItem>
+											// 				<SelectItem key={"adultez mayor"} value={"adultez mayor"}>Adultez mayor</SelectItem>
+											// 			</SelectContent>
+											// 		</Select>
+											// 	</FormControl>
+											// 	<FormMessage />
+											// </FormItem>
 										)}
 									/>
 									<FormField

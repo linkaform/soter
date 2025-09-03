@@ -161,7 +161,6 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
         {children}
       </DialogTrigger>
       <DialogContent className="max-w-xl max-h-[90vh] flex flex-col" onInteractOutside={(e) => e.preventDefault()} aria-describedby=""
-      
       > 
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center font-bold">
@@ -169,7 +168,7 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
           </DialogTitle>
         </DialogHeader>
 
-        <div className="">
+        <div className="flex-grow overflow-y-auto px-4">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
@@ -191,26 +190,27 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
               name="tipo"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>* Tipo</FormLabel>
-                    
-                  <FormControl  >
+                  	<FormLabel>* Tipo</FormLabel>
                     <Select
                     options={catTiposEquipos}
-                    onChange={(value:any) =>{
-                      field.onChange(value.value);
-                    }}
-                     // asegúrate de que esté en el orden correcto
                     aria-labelledby="tipo-label"
                     inputId="tipo-input"
                     name="tipo"
+                    onChange={(selectedOption) => {
+                      field.onChange(selectedOption ? selectedOption.value :"");
+                      }}
+                    isClearable
+                    menuPortalTarget={document.body}
+                    styles={{
+                      menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
+                    }}
                   />
-                  </FormControl>
                   <FormMessage /> 
                 </FormItem>
               )}
             />
 
-            <div className="grid md:grid-cols-2 gap-x-4 gap-y-8">
+            <div className="grid md:grid-cols-2 gap-x-4 gap-y-8 pl-2">
               <FormField
                 control={form.control}
                 name="marca"
@@ -282,11 +282,18 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
                   <FormItem>
                     <FormLabel> Color</FormLabel>
                     <Select
-                      aria-labelledby="aria-label"
-                      inputId="aria-example-input"
-                      name="aria-live-color"
-                      options={catColores}
-                      onChange={(value:any) => field.onChange(value.value)}
+						aria-labelledby="aria-label"
+						inputId="aria-example-input"
+						name="aria-live-color"
+						options={catColores}
+						onChange={(selectedOption) => {
+						field.onChange(selectedOption ? selectedOption.value : "");
+						}}
+						isClearable
+						menuPortalTarget={document.body}
+						styles={{
+							menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
+						}}
                     />
                     <FormMessage />
                   </FormItem>
@@ -299,21 +306,21 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
         </div>
 
         <div className="flex gap-5">
-              <DialogClose asChild>
-                <Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700">
-                  Cancelar
-                </Button>
-              </DialogClose>
+			<DialogClose asChild>
+			<Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700">
+				Cancelar
+			</Button>
+			</DialogClose>
 
-              <Button
-                type="submit"
-                onClick={form.handleSubmit(onSubmit)}
-                className="w-full  bg-blue-500 hover:bg-blue-600 text-white "
-                disabled={isLoading}
-              >
-               {isLoading? "Cargando...": "Agregar"} 
-              </Button>
-            </div>
+			<Button
+			type="submit"
+			onClick={form.handleSubmit(onSubmit)}
+			className="w-full  bg-blue-500 hover:bg-blue-600 text-white "
+			disabled={isLoading}
+			>
+			{isLoading? "Cargando...": "Agregar"} 
+			</Button>
+        </div>
 
       </DialogContent>
     </Dialog>

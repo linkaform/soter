@@ -18,8 +18,10 @@ import { Depositos } from "@/lib/incidencias";
 
 import { CircleAlert, Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import { Dispatch, SetStateAction, useEffect } from "react";
+import { useGetPdfIncidencias } from "@/hooks/Incidencias/usePdfIncidencias";
+import { descargarPdfPase } from "@/lib/download-pdf";
 import { toast } from "sonner";
-import { Dispatch, SetStateAction } from "react";
 
 interface ViewFallaModalProps {
   title: string;
@@ -38,10 +40,34 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
   isSuccess,
   setModalEditarAbierto,
 }) => {
-  function sumDepositos(item:Depositos[]){
-    const sumaTotal = item.reduce((total: any, item: { cantidad: number; }) => total + item.cantidad, 0);
-    return formatCurrency(sumaTotal)
-  }
+	const {refetch, isLoading, data:pdfSeguimientos } = useGetPdfIncidencias(data._id, 592, 17780)
+	const downloadUrl = pdfSeguimientos?.response?.data?.json?.download_url
+
+	useEffect(()=>{
+		if(downloadUrl){
+			onDescargarPDF(downloadUrl)
+		}
+	},[downloadUrl])
+
+
+	const handleGetPdf = () => {
+		refetch();
+	};
+
+	async function onDescargarPDF(download_url: string) {
+		try {
+			await descargarPdfPase(download_url);
+			toast.success("¡PDF descargado correctamente!");
+		} catch (error) {
+			toast.error("Error al descargar el PDF: " + error);
+		}
+	}
+
+	function sumDepositos(item:Depositos[]){
+		const sumaTotal = item.reduce((total: any, item: { cantidad: number; }) => total + item.cantidad, 0);
+		return formatCurrency(sumaTotal)
+	}
+
   return (
     <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -623,13 +649,8 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 
 		  	<Button
 			type="submit"
-			className="w-full  bg-yellow-500 hover:bg-yellow-600 text-white " disabled={false} onClick={()=>{toast.error("SERVICIO PENDIENTE...",{
-				duration: 4000,
-				description: "Este servicio está pendiente. Aún no se ha generado el PDF.",
-				position: "top-right",
-			  })}}
-			>
-			{true ? (<>
+			className="w-full  bg-yellow-500 hover:bg-yellow-600 text-white " disabled={isLoading} onClick={()=>{handleGetPdf()}}>
+			{!isLoading ? (<>
 				{("Descargar seguimientos")}
 			</>) : (<> <Loader2 className="animate-spin" /> {"Descargando seguimientos..."} </>)}
 			</Button>

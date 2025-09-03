@@ -48,7 +48,7 @@ export const ActivePassesModal: React.FC<ActivePassesModalProps> = ({
 
   const filteredTemporaryPasses = (search:string) => {
     return  (activePasses?.filter((item: any) =>
-      item.nombre?.toLowerCase().includes(search.toLowerCase()) ))
+      item.nombre?.toLowerCase().includes(search?.toLowerCase()) ))
   }
 
   const handleSelectPass = (item: any) => {
@@ -67,7 +67,7 @@ export const ActivePassesModal: React.FC<ActivePassesModalProps> = ({
         {children}
       </DialogTrigger>
 
-      <DialogContent className="max-w-xl flex flex-col">
+      <DialogContent className="max-w-xl flex flex-col" >
         <DialogHeader>
           <DialogTitle className="text-2xl text-center font-bold my-5">
             {title}

@@ -37,9 +37,8 @@ import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DateTime from "@/components/dateTime";
 import { useMemo, useState } from "react";
 import { EditarFallaModal } from "@/components/modals/editar-falla";
-import { SeguimientoFallaModal } from "@/components/modals/add-seguimiento-falla";
-import { CerrarFallaModal } from "@/components/modals/close-falla-modal";
 import { ViewFalla } from "@/components/modals/view-falla";
+import { SeguimientoFallaCerrarModal } from "@/components/modals/add-seguimiento-falla-cerrar";
 
   interface ListProps {
     data: Fallas_record[];
@@ -78,11 +77,12 @@ import { ViewFalla } from "@/components/modals/view-falla";
 	);
 	const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
 	const [modalVerSeguimientoAbierto, setModalVerSeguimientoAbierto] = useState(false);
-	const [modalSeguimientoAbierto, setModalSeguimientoAbierto] = useState(false);
 	const [modalEliminarAbierto, setModalEliminarAbierto] = useState(false);
 	const [modalEliminarMultiAbierto, setModalEliminarMultiAbierto] = useState(false);
 	const [modalCerrarAbierto, setModalCerrarAbierto] = useState(false);
 	const [fallaSeleccionada, setFallaSeleccionada] = useState<Fallas_record | null>(null);
+	const [ editarSeguimiento, setEditarSeguimiento]= useState<any>(false)
+	const [setSeguimientos] = useState<any>([])
 
 	const [columnVisibility, setColumnVisibility] =
 		React.useState<VisibilityState>({});
@@ -92,16 +92,6 @@ import { ViewFalla } from "@/components/modals/view-falla";
 		pageSize: 23,
 	});
 
-	// const handleEditar = (falla: Fallas_record) => {
-	// 	setFallaSeleccionada(falla);
-	// 	setModalEditarAbierto(true);
-	// };
-	
-	// const handleSeguimiento= (falla: Fallas_record) => {
-	// 	setFallaSeleccionada(falla);
-	// 	setModalSeguimientoAbierto(true);
-	// };
-	
 	const handleEliminar= (falla: Fallas_record) => {
 		setFallaSeleccionada(falla);
 		setModalEliminarAbierto(true);
@@ -271,11 +261,22 @@ return (
 				</ViewFalla>
 			)}
 
-			{modalSeguimientoAbierto && fallaSeleccionada && (
-				<SeguimientoFallaModal
+			{modalCerrarAbierto && fallaSeleccionada && (
+				<SeguimientoFallaCerrarModal
 					title="Seguimiento Falla"
-					data={fallaSeleccionada} isSuccess={modalSeguimientoAbierto} setIsSuccess={setModalSeguimientoAbierto}
-				/>
+					isSuccess={modalCerrarAbierto}
+					setIsSuccess={setModalCerrarAbierto}
+					setSeguimientos={setSeguimientos}
+					indice={0}
+					editarSeguimiento={editarSeguimiento}
+					setEditarSeguimiento={setEditarSeguimiento}
+					seguimientoSeleccionado={null}
+					dateIncidencia={""}
+					enviarSeguimiento={true}
+					folioIncidencia={fallaSeleccionada.folio}
+				>
+					<div></div>
+				</SeguimientoFallaCerrarModal>
 			)}
 			{modalEliminarAbierto && fallaSeleccionada && (
 				<EliminarFallaModal
@@ -286,14 +287,14 @@ return (
 					/>
 			)}
 
-			{modalCerrarAbierto && fallaSeleccionada && (
+			{/* {modalCerrarAbierto && fallaSeleccionada && (
 				<CerrarFallaModal
 					title="Cerrar Falla"
 					folio={fallaSeleccionada.folio}
 					modalCerrarAbierto={modalCerrarAbierto}
 					setModalCerrarAbierto={setModalCerrarAbierto}
 					/>
-			)}
+			)} */}
 		</div>
 		<div className="">
 			<Table>

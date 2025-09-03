@@ -31,7 +31,7 @@ import { Input } from "../ui/input";
 import LoadImage from "../upload-Image";
 import LoadFile from "../upload-file";
 import { toast } from "sonner";
-import { useSeguimientoIncidencia } from "@/hooks/Incidencias/useSeguimientoIncidencia";
+import { useSeguimientoFallas } from "@/hooks/Fallas/useSeguimientoFallas";
 
 interface IncidenciaModalProps {
 	title: string;
@@ -49,6 +49,7 @@ interface IncidenciaModalProps {
 }
 
 const formSchema = z.object({
+    cerrar_falla: z.string().optional(),
 	accion_correctiva_incidencia: z.string().min(1, { message: "Este campo es oblicatorio" }),
 	incidencia_personas_involucradas: z.string().optional(),
 	fecha_inicio_seg: z.string().optional(),
@@ -68,7 +69,7 @@ const formSchema = z.object({
 	tiempo_transcurrido: z.string().optional()
 });
 
-export const SeguimientoFallaModal: React.FC<IncidenciaModalProps> = ({
+export const SeguimientoFallaCerrarModal: React.FC<IncidenciaModalProps> = ({
 	title,
 	children,
 	isSuccess,
@@ -87,11 +88,12 @@ export const SeguimientoFallaModal: React.FC<IncidenciaModalProps> = ({
 	const [documento, setDocumento] = useState<Imagen[]>([]);
 	const [date, setDate] = useState<Date | "">("");
 	const { isLoading} = useShiftStore();
-	const seguimientoIncidenciaMutation = useSeguimientoIncidencia()
-console.log(enviarSeguimiento)
+	const seguimientoFallasMutation = useSeguimientoFallas()
+
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
+            cerrar_falla:"",
 			accion_correctiva_incidencia: "",
 			incidencia_personas_involucradas: "",
 			fecha_inicio_seg: "",
@@ -107,6 +109,7 @@ console.log(enviarSeguimiento)
 	useEffect(() => {
         if (isSuccess){
             reset({
+                cerrar_falla:"",
                 accion_correctiva_incidencia: "",
                 incidencia_personas_involucradas:  "",
 				tiempo_transcurrido:""
@@ -132,6 +135,7 @@ console.log(enviarSeguimiento)
             if(editarSeguimiento){
 				const fecha2 = convertirDateToISO(date)
 				const formatData = {
+                    cerrar_falla:values.cerrar_falla|| "",
 					accion_correctiva_incidencia: values.accion_correctiva_incidencia || "",
 					incidencia_personas_involucradas: values.incidencia_personas_involucradas || "",
 					fecha_inicio_seg: date ? formatDateToString(date) : "",
@@ -157,7 +161,7 @@ console.log(enviarSeguimiento)
 				}
 
 				if(enviarSeguimiento){
-					seguimientoIncidenciaMutation.mutate({ seguimientos_incidencia: formatData, folio: folioIncidencia },
+					seguimientoFallasMutation.mutate({ seguimientos_falla: formatData, folio: folioIncidencia, cerrar_falla:values.cerrar_falla|| "no" },
 						{
 							onSuccess: () => {
 								handleClose()
@@ -172,7 +176,7 @@ console.log(enviarSeguimiento)
 					setSeguimientos((prev: any) => [...prev, formatData]);
 				}
 				
-                toast.success("Seguimiento agregado correctamente.")
+                // toast.success("Seguimiento agregado correctamente.")
             }
             setIsSuccess(false)
 		} else {
@@ -205,6 +209,27 @@ console.log(enviarSeguimiento)
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} >
 						<div className="grid grid-cols-1 gap-5 mb-6">
+                            <FormField
+                                control={form.control}
+                                name="cerrar_falla"
+                                render={({ field }) => (
+                                    <FormItem className="flex items-center space-x-2 ">
+                                          <FormLabel htmlFor="cerrar_falla" className="text-sm mt-2">
+                                        ¿Quieres cerrar esta falla?
+                                    </FormLabel>
+                                    <FormControl>
+                                        <input
+                                        type="checkbox"
+                                        id="cerrar_falla"
+                                        className="form-checkbox"
+                                        checked={field.value === "si"}
+                                        onChange={(e) => field.onChange(e.target.checked ? "si" : "no")}
+                                        />
+                                    </FormControl>
+                                  
+                                    </FormItem>
+                                )}
+                            />
 							<FormField
 									control={form.control}
 									name="fecha_inicio_seg"

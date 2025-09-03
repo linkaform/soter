@@ -16,7 +16,7 @@ import {
   useReactTable,
   Table as TanstackTable
 } from "@tanstack/react-table";
-import { CalendarDays, Check, Eraser, Eye, FileX2, Plus, Search, Trash2 } from "lucide-react";
+import { CalendarDays, Eraser, Eye, FileX2, Plus, Search, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -28,24 +28,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-// import {
-//   DropdownMenu,
-//   DropdownMenuCheckboxItem,
-//   DropdownMenuContent,
-//   DropdownMenuTrigger,
-// } from "@/components/ui/dropdown-menu";
+
 import { Incidencia_record, OptionsCell } from "./incidencias-columns";
 import { useMemo, useState } from "react";
 import { EliminarIncidenciaModal } from "@/components/modals/delete-incidencia-modal";
-import { catalogoFechas, downloadCSV } from "@/lib/utils";
+import { catalogoFechas, convertirDateToISO, downloadCSV } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import DateTime from "@/components/dateTime";
 import { EditarIncidenciaModal } from "@/components/modals/editar-incidencia";
 import ViewImage from "@/components/modals/view-image";
 import { Checkbox } from "@/components/ui/checkbox";
-import { SeguimientoIncidenciaModal } from "@/components/modals/seguimiento-incidencia";
 import { ViewIncidencia } from "@/components/modals/view-incidencia";
+import { SeguimientoIncidenciaLista } from "@/components/modals/add-seguimientos";
 
 interface ListProps {
 	data: Incidencia_record[];
@@ -88,6 +83,11 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 	const [modalEliminarAbierto, setModalEliminarAbierto] = useState(false);
 	const [modalEliminarMultiAbierto, setModalEliminarMultiAbierto] = useState(false);
 	const [incidenciaSeleccionada, setIncidenciaSeleccionada] = useState<Incidencia_record | null>(null);
+
+	const [ setSeguimientos] = useState<any>([]);
+	const [editarSeguimiento, setEditarSeguimiento] = useState(false);
+	const [seguimientoSeleccionado] = useState(null);
+
 
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -397,13 +397,30 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 				)}
 
 				{modalSeguimientoAbierto && incidenciaSeleccionada && (
-					<SeguimientoIncidenciaModal
-						title="Seguimiento Incidencia"
-						folio={incidenciaSeleccionada?.folio} isSuccess={modalSeguimientoAbierto} setIsSuccess={setModalSeguimientoAbierto}>
-						<div className="cursor-pointer" title="Seguimiento Incidencia">
-							<Check />   
-						</div>
-					</SeguimientoIncidenciaModal>
+					// <SeguimientoIncidenciaModal
+					// 	title="Seguimiento Incidencia"
+					// 	folio={incidenciaSeleccionada?.folio} isSuccess={modalSeguimientoAbierto} setIsSuccess={setModalSeguimientoAbierto}>
+					// 	<div className="cursor-pointer" title="Seguimiento Incidencia">
+					// 		<Check />   
+					// 	</div>
+					// </SeguimientoIncidenciaModal>
+
+				<SeguimientoIncidenciaLista
+					title="Seguimiento Incidencia"
+					isSuccess={modalSeguimientoAbierto}
+					setIsSuccess={setModalSeguimientoAbierto}
+					seguimientoSeleccionado={seguimientoSeleccionado}
+					setSeguimientos={setSeguimientos}
+					setEditarSeguimiento={setEditarSeguimiento}
+					editarSeguimiento={editarSeguimiento}
+					indice={0}
+					dateIncidencia={incidenciaSeleccionada.fecha_hora_incidencia ? convertirDateToISO(new Date(incidenciaSeleccionada.fecha_hora_incidencia)):""}
+					enviarSeguimiento={true}
+					folioIncidencia={incidenciaSeleccionada.folio}
+
+					>
+					<div></div>
+				</SeguimientoIncidenciaLista>
 				)}
 
 			</div>

@@ -20,16 +20,7 @@ import {
   FormMessage,
 } from "../ui/form";
 
-// import {
-//   Select,
-//   SelectContent,
-//   SelectItem,
-//   SelectTrigger,
-//   SelectValue,
-// } from "../ui/select";
-
 import { Input } from "../ui/input";
-
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 // import { catalogoColores, catalogoEstados } from "@/lib/utils";
@@ -206,14 +197,14 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
         {children}
       </DialogTrigger>
 
-      <DialogContent className="max-w-xl   max-h-[90vh] flex flex-col" onInteractOutside={(e) => e.preventDefault()} aria-describedby="" >
+      <DialogContent className="max-w-xl max-h-[90vh] flex flex-col" onInteractOutside={(e) => e.preventDefault()} aria-describedby="" >
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center font-bold">
             {title}
           </DialogTitle>
         </DialogHeader>
 
-        <div className=""> 
+        <div className="flex-grow overflow-y-auto px-3"> 
 			<Form {...form}>
 				<form  className="space-y-8 ">
 					<FormField
@@ -446,7 +437,7 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 							// onMenuClose={onMenuClose}
 							options={catColores}
 							onChange={(value:any) => field.onChange([value.value])}
-						
+							
 						/>
 
 						{/* <Select onValueChange={(value) => field.onChange([value])}>
@@ -467,7 +458,6 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 						</FormItem>
 					)}
 					/>
-
 				
 				</form>
 			</Form>

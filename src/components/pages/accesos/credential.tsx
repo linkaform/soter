@@ -124,11 +124,11 @@ const Credentials: React.FC<Props> = ({ searchPass }) => {
 						<span className="text-gray-500">Estatus:  </span>
 						<Badge
 							className={`text-white text-md ${
-								searchPass?.estatus.toLowerCase() == "vencido"
+								searchPass?.estatus?.toLowerCase() == "vencido"
 								? "bg-red-600 hover:bg-red-600"
-								: searchPass?.estatus.toLowerCase() == "activo"
+								: searchPass?.estatus?.toLowerCase() == "activo"
 								? "bg-green-600 hover:bg-green-600"
-								: searchPass?.estatus.toLowerCase() == "proceso"
+								: searchPass?.estatus?.toLowerCase() == "proceso"
 								? "bg-blue-600 hover:bg-blue-600"
 								: "bg-gray-400"
 							}`}

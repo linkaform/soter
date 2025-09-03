@@ -90,7 +90,7 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
   const [openAddPhone, setOpenAddPhone]= useState(false)
 
 	function onEnviarCorreo(){
-		if(data?.status_pase.toLowerCase()!='vencido'){
+		if(data?.status_pase?.toLowerCase()!='vencido'){
 			if(data?.email!==""){
 				const data_for_msj = {
 				email_to: data.email,
@@ -113,7 +113,7 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
 	}
 
 	function onEnviarSMS(){
-		if(data?.status_pase.toLowerCase()!='vencido'){
+		if(data?.status_pase?.toLowerCase()!='vencido'){
 			if(data?.telefono!==""){
 
         const data_for_msj = {

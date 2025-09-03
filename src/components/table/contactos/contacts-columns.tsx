@@ -73,11 +73,11 @@ export const pasesEntradaColumns: ColumnDef<PaseEntrada>[] = [
             <div>
 					<Badge
 					className={`text-white text-md ${
-						estatus.toLowerCase() == "vencido"
+						estatus?.toLowerCase() == "vencido"
 						? "bg-red-600 hover:bg-red-600"
-						: estatus.toLowerCase() == "activo"
+						: estatus?.toLowerCase() == "activo"
 						? "bg-green-600 hover:bg-green-600"
-						: estatus.toLowerCase() == "proceso"
+						: estatus?.toLowerCase() == "proceso"
 						? "bg-blue-600 hover:bg-blue-600"
 						: "bg-gray-400"
 					}`}

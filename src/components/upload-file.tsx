@@ -65,6 +65,7 @@ const LoadFile: React.FC<CalendarDaysProps>= ({id, titulo, setDocs, docArray, li
                 {docArray.length<limit ?(
                     <>
                     <Input 
+                    className="mt-1"
                     type="file" 
                     accept="*/*"
                     onChange={handleFileChange}

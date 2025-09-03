@@ -25,8 +25,10 @@ import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { useShiftStore } from "@/store/useShiftStore";
 import { Input } from "../ui/input";
 import { toast } from "sonner";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { formatCurrencyString } from "@/lib/utils";
+// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { formatCurrencyString, formatForMultiselect } from "@/lib/utils";
+import Select from "react-select";
+import { Textarea } from "../ui/textarea";
 
 interface IncidenciaModalProps {
 	title: string;
@@ -42,6 +44,7 @@ interface IncidenciaModalProps {
 
 const formSchema = z.object({
 	tipo_afectacion: z.string().min(1, { message: "Este campo es oblicatorio" }),
+    descripcion: z.string().min(1, { message: "Este campo es oblicatorio" }),
 	monto_estimado: z.string().min(1, { message: "Este campo es oblicatorio" }),
 	duracion_estimada: z.string().optional(),
 });
@@ -65,6 +68,7 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
             tipo_afectacion:"",
+            descripcion:"",
             monto_estimado:"",
             duracion_estimada:""
 		},
@@ -76,6 +80,7 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
         if (openAfectacionPatrimonialModal){
             reset({
                 tipo_afectacion:"",
+                descripcion:"",
                 monto_estimado:"",
                 duracion_estimada:""
               });
@@ -86,6 +91,7 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
             setInputValue(afectacionPatrimonialSeleccionada.monto_estimado)
 			reset({
                 tipo_afectacion:afectacionPatrimonialSeleccionada.tipo_afectacion,
+                descripcion:afectacionPatrimonialSeleccionada.descripcion,
                 monto_estimado:afectacionPatrimonialSeleccionada.monto_estimado,
                 duracion_estimada:afectacionPatrimonialSeleccionada.duracion_estimada
               });
@@ -95,6 +101,7 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
 	function onSubmit(values: z.infer<typeof formSchema>) {
         const formatData = {
             tipo_afectacion: values.tipo_afectacion,
+            descripcion:values.descripcion,
             monto_estimado: values.monto_estimado,
             duracion_estimada: values.duracion_estimada,
         }
@@ -144,29 +151,48 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
                                     render={({ field }: any) => (
                                         <FormItem className="w-full">
                                             <FormLabel>Tipo de afectación: *</FormLabel>
-                                            <FormControl>
-                                            <Select {...field} className="input"
-                                                onValueChange={(value:string) => {
-                                                field.onChange(value); 
-                                            }}
-                                            value={field.value} 
-                                        >
-                                            <SelectTrigger className="w-full">
-                                                <SelectValue placeholder="Selecciona una opción..." />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem key={"Daño a infraestructura"} value={"Daño a infraestructura"}> Daño a infraestructura</SelectItem>
-                                                <SelectItem key={"Suspensión de actividades"} value={"Suspensión de actividades"}> Suspensión de actividades</SelectItem>
-                                                <SelectItem key={"Paro de producción"} value={"Paro de producción"}> Paro de producción</SelectItem>
-                                                <SelectItem key={"Impacto económico estimado"} value={"Impacto económico estimado"}> Impacto económico estimado</SelectItem>
-                                                <SelectItem key={"Otro"} value={"Otro"}> Otro</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
+                                                <Select 
+                                                    placeholder={"Tipo de afectación"}
+                                                    inputId="select-rol"
+                                                    name="rol"
+                                                    aria-labelledby="aria-label"
+                                                    value ={field.value ? formatForMultiselect([field.value]):[]}
+                                                    options={formatForMultiselect([
+                                                        "Daño a infraestructura",
+                                                        "Suspensión de actividades",
+                                                        "Paro de producción",
+                                                        "Impacto económico estimado",
+                                                        "Otro",
+                                                        ])} 
+                                                    onChange={(selectedOption:any) => {
+                                                        field.onChange(selectedOption ? selectedOption.value :"");
+                                                    }}
+                                                    isClearable
+                                                    styles={{
+                                                        menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
+                                                    }}
+                                                />
+										</FormItem>
                                     )}
                                 />
+                            <FormField
+								control={form.control}
+								name="descripcion"
+								render={({ field }: any) => (
+									<FormItem>
+										<FormLabel>Descripcion de la afectación: *</FormLabel>
+										<FormControl>
+											<Textarea placeholder="Acciones Tomadas..." {...field}
+												onChange={(e) => {
+													field.onChange(e);
+												}}
+												value={field.value || ""}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
 
                                 <FormField
                                     control={form.control}
@@ -180,20 +206,10 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
                                             value={inputValue}
                                             onChange={(e) => {
                                                 const rawInput = e.target.value;
-
-                                                // Eliminar caracteres no válidos (mantener solo números y punto)
                                                 const numeric = rawInput.replace(/[^\d.]/g, "").replace(/(\..*)\./g, "$1");
-
-                                                // Actualizar el texto sin formatear para que el usuario lo vea mientras escribe
                                                 setInputValue(numeric);
-
-                                                // Guardar valor numérico limpio en el formulario
                                                 field.onChange(numeric);
-
-                                                // Limpiar debounce anterior
                                                 if (debounceRef.current) clearTimeout(debounceRef.current);
-
-                                                // Esperar 500ms antes de formatear
                                                 debounceRef.current = setTimeout(() => {
                                                 setInputValue(formatCurrencyString(numeric));
                                                 }, 500);

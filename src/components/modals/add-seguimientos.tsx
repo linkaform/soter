@@ -31,18 +31,21 @@ import { Input } from "../ui/input";
 import LoadImage from "../upload-Image";
 import LoadFile from "../upload-file";
 import { toast } from "sonner";
+import { useSeguimientoIncidencia } from "@/hooks/Incidencias/useSeguimientoIncidencia";
 
 interface IncidenciaModalProps {
 	title: string;
 	children: React.ReactNode;
 	isSuccess: boolean;
 	setIsSuccess: Dispatch<SetStateAction<boolean>>;
-    setSeguimientos: Dispatch<SetStateAction<any>>;
+    setSeguimientos: Dispatch<SetStateAction<any[]>>;
     indice:number| null;
     editarSeguimiento:boolean;
     setEditarSeguimiento: Dispatch<SetStateAction<any>>;
     seguimientoSeleccionado:any;
 	dateIncidencia:string;
+	enviarSeguimiento?:boolean;
+	folioIncidencia:string;
 }
 
 const formSchema = z.object({
@@ -75,14 +78,17 @@ export const SeguimientoIncidenciaLista: React.FC<IncidenciaModalProps> = ({
     editarSeguimiento,
     setEditarSeguimiento,
     seguimientoSeleccionado,
-	dateIncidencia
+	dateIncidencia,
+	enviarSeguimiento = false,
+	folioIncidencia
 }) => {
 	// const [isSuccess, setIsSuccess] = useState(false)
 	const [evidencia, setEvidencia] = useState<Imagen[]>([]);
 	const [documento, setDocumento] = useState<Imagen[]>([]);
 	const [date, setDate] = useState<Date | "">("");
 	const { isLoading} = useShiftStore();
-
+	const seguimientoIncidenciaMutation = useSeguimientoIncidencia()
+console.log(enviarSeguimiento)
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -150,7 +156,22 @@ export const SeguimientoIncidenciaLista: React.FC<IncidenciaModalProps> = ({
 					tiempo_transcurrido: calcularTiempoDesdeIncidencia(dateIncidencia, fecha2)
 				}
 
-                setSeguimientos((prev: any) => [...prev, formatData]);
+				if(enviarSeguimiento){
+					seguimientoIncidenciaMutation.mutate({ seguimientos_incidencia: formatData, folio: folioIncidencia },
+						{
+							onSuccess: () => {
+								handleClose()
+							},
+							onError: (error) => {
+							  console.error("❌ Error en la mutación:", error);
+							  handleClose()
+							}
+						  }
+					);
+				}else{
+					setSeguimientos((prev: any) => [...prev, formatData]);
+				}
+				
                 toast.success("Seguimiento agregado correctamente.")
             }
             setIsSuccess(false)

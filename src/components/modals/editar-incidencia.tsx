@@ -20,9 +20,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Textarea } from "../ui/textarea";
-import SelectReact from 'react-select'
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { Select ,SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+// import { Select ,SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import LoadImage from "../upload-Image";
 import { Imagen } from "@/lib/update-pass";
 import { useCatalogoAreaEmpleado } from "@/hooks/useCatalogoAreaEmpleado";
@@ -51,8 +50,9 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import Image from "next/image";
 import { SeguimientoIncidenciaLista } from "./add-seguimientos";
 import { AfectacionPatrimonialModal } from "./add-afectacion-patrimonial";
-import { convertirDateToISO, formatCurrency } from "@/lib/utils";
+import { convertirDateToISO, formatCurrency, formatForMultiselect, formatToValueLabel } from "@/lib/utils";
 import { SeccionDepositos } from "../depositos-section";
+import Select from 'react-select';
 
 interface EditarIncidenciaModalProps {
   	title: string;
@@ -143,13 +143,13 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 	const [documento , setDocumento] = useState<Imagen[]>([]);
 	const [date, setDate] = useState<Date|"">("");
 	const [ubicacionSeleccionada, setUbicacionSeleccionada ] = useState(data.ubicacion_incidencia);
-	const { dataAreas:areas, dataLocations:ubicaciones,isLoadingAreas:loadingAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, modalEditarAbierto,  location?true:false);
+	const { dataAreas:areas, dataLocations:ubicaciones,} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, modalEditarAbierto,  location?true:false);
 	// const { dataAreas:areas} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true,  ubicacionSeleccionada?true:false);
 
 	const [personasInvolucradas, setPersonasInvolucradas] = useState<PersonasInvolucradas[]>(data.personas_involucradas_incidencia)
 	const [accionesTomadas, setAccionesTomadas] = useState<AccionesTomadas[]>(data.acciones_tomadas_incidencia)
 	const [depositos, setDepositos] = useState<Depositos[]>([])
-	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado } = useCatalogoAreaEmpleado(modalEditarAbierto, location, "Incidencias" );
+	const { data:dataAreaEmpleado} = useCatalogoAreaEmpleado(modalEditarAbierto, location, "Incidencias" );
 	const { editarIncidenciaMutation} = useInciencias("", "",[], "", "", "");
 	const [openModal, setOpenModal] = useState(false)
 
@@ -184,14 +184,6 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 
 	const [value, setValue] = useState<number[]>([getNivelNumber(data.prioridad_incidencia) ?? 0]);
 	const [inputTag, setInputTag] = useState('');
-
-	const formatValueLabel = (array:any[])=>{
-		return array.map((val: any) => ({
-			value: val.nombre, 
-			label: val.nombre
-		}));
-	}
-
 
 	const getNivel = (val: number) => {
 		if (val < 35) return "Leve"
@@ -302,6 +294,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 					catIncidencias.data.includes(cat.nombre)
 					);
 				if(catIncidenciasIcons.length>0){
+					console.log("catIncidenciasIcons",catIncidenciasIcons)
 					setCatCategorias(catIncidenciasIcons)
 				}
 			}else if(search=="cat" || search=="subCat"){
@@ -332,6 +325,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 			setEvidencia(data.evidencia_incidencia)
 			setDocumento(data.evidencia_incidencia)
 			setDate(new Date(data.fecha_hora_incidencia))
+			console.log("data.categoria", data.categoria)
 			setCategoria(data.categoria)
 			setSubCategoria(data.sub_categoria)
 			setSelectedIncidencia(data.incidente)
@@ -545,23 +539,26 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 										name="categoria"
 										render={({ field }:any) => (
 											<FormItem className="w-full">
-												<FormLabel>Categoria: * </FormLabel>
-												<FormControl>
-												<SelectReact
+												<FormLabel>Categoría: * </FormLabel>
+												 <FormControl>
+												 <Select
+												 	placeholder={"Categoría"}
 													inputId="select-categorias"
   													name="categoria"
 													aria-labelledby="aria-label"
-													// inputId="aria-example-input"
-													// name="aria-live-color"
-													options={formatValueLabel(catCategorias)}
-													onChange={(value:any) =>{
-														field.onChange(value.value); 
+													value={ formatForMultiselect([categoria]) }
+													options={catCategorias && catCategorias.length>0 ? formatToValueLabel( catCategorias):[]} 
+													onChange={(selectedOption) => {
+														field.onChange(selectedOption?.value ??"");
 														setSearch("cat")
-														setCategoria(value.value)
+														setCategoria(selectedOption?.value ??"")
 														setSubCategoria("")
 													}}
-													value={formatValueLabel(catCategorias).find(opt => opt.value === categoria) || null} 
-													isDisabled={catCategorias.length==0}
+													isClearable
+													styles={{
+													  menuPortal: (base) => ({...base, zIndex: 9999, pointerEvents: "auto" }),
+													  menu: (base) => ({...base, overflowY: "auto"}),
+													}}
 												/>
 												</FormControl>
 												
@@ -601,16 +598,23 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 													<FormItem className="w-full">
 														<FormLabel>Sub categoria: *</FormLabel>
 														<FormControl>
-														<SelectReact
-															aria-labelledby="aria-label"
+
+														<Select
+															placeholder={"Categoría"}
 															inputId="select-categorias"
-  															name="categoria"
-															options={formatValueLabel(catSubCategorias)}
-															onChange={(value:any) =>{
-																field.onChange(value.value); 
-																setSubCategoria(value.value)
+															name="sub_categoria"
+															aria-labelledby="aria-label"
+															value={formatForMultiselect([subCategoria])}
+															options={catSubCategorias && catSubCategorias.length>0 ? formatToValueLabel( catSubCategorias):[]} 
+															onChange={(selectedOption:any) => {
+																field.onChange(selectedOption ? selectedOption.value :""); 
+																setSubCategoria(selectedOption ? selectedOption.value :"");
 															}}
-															value={formatValueLabel(catSubCategorias).find(opt => opt.value === subCategoria) || null} 
+															isClearable
+															styles={{
+																menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
+																menu: (base) => ({...base, overflowY: "auto", }),
+															}}
 															isDisabled={catSubCategorias.length==0}
 														/>
 														</FormControl>
@@ -646,23 +650,30 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 											<FormField
 											control={form.control}
 											name="incidente"
-											render={({ field }:any) => (
+											render={() => (
 												<FormItem className="w-full">
 													<FormLabel>Incidente: *</FormLabel>
 													<FormControl>
-													<SelectReact
-															aria-labelledby="aria-label"
-															inputId="select-categorias"
-  															name="categoria"
-															options={formatValueLabel(catSubIncidences)}
-															onChange={(value:any) =>{
-																field.onChange(value.value);
-																setSearch("subCat")
-																setSelectedIncidencia(value.value)
-															}}
-															value={formatValueLabel(catSubIncidences).find(opt => opt.value === selectedIncidencia) || null} 
-															isDisabled={catSubIncidences.length==0}
-														/>
+
+													{/* <Select
+														aria-labelledby="aria-label"
+														inputId="select-categorias"
+														name="incidente"
+														options={catSubIncidences && catSubIncidences.length>0 ?formatForMultiselect( catSubIncidences):[]}
+														onChange={(selectedOption:any) =>{
+															field.onChange(selectedOption ? selectedOption.value :"");
+															setSearch("subCat")
+															setSelectedIncidencia(selectedOption ? selectedOption.value :"")
+														}}
+														value={ formatValueLabel(catSubIncidences).find(opt => opt.value === selectedIncidencia) || ""} 
+														isDisabled={catSubIncidences.length==0}
+														isClearable
+														menuPortalTarget={document.body}
+														styles={{
+															menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
+														}}
+													/> */}
+
 													</FormControl>
 												
 													{/* <FormControl>
@@ -717,27 +728,57 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 												<FormItem className="w-full">
 													<FormLabel>Reporta:</FormLabel>
 													<FormControl>
-													<Select {...field} className="input"
-														onValueChange={(value:string) => {
-														field.onChange(value); 
-													}}
-													value={field.value} 
-												>
-													<SelectTrigger className="w-full">
-													{loadingAreaEmpleado?(<>
-															<SelectValue placeholder="Cargando opciones..." />
-														</>):(<>
-															<SelectValue placeholder="Selecciona una opcion" />
-														</>)}
-													</SelectTrigger>
-													<SelectContent>
-													{dataAreaEmpleado?.map((vehiculo:string, index:number) => (
-														<SelectItem key={index} value={vehiculo}>
-															{vehiculo}
-														</SelectItem>
-													))}
-													</SelectContent>
-												</Select>
+														{/* <Select
+															aria-labelledby="aria-label"
+															inputId="select-categorias"
+  															name="reporta_incidencia"
+															options={formatValueLabel(dataAreaEmpleado)}
+															onChange={(value:any) =>{
+																field.onChange(value.value);
+																setSearch("subCat")
+																setSelectedIncidencia(value.value)
+															}}
+															value={formatValueLabel(catSubIncidences).find(opt => opt.value === selectedIncidencia) || null} 
+														/> */}
+
+															<Select
+																placeholder={"Reporta"}
+																inputId="select-categorias"
+																name="reporta_incidencia"
+																aria-labelledby="aria-label"
+																value= {formatForMultiselect(dataAreaEmpleado).find(opt => opt.value === field.value) || ""} 
+																options={dataAreaEmpleado && dataAreaEmpleado.length>0 ? formatForMultiselect( dataAreaEmpleado):[]} 
+																onChange={(selectedOption:any) => {
+																	field.onChange(selectedOption ? selectedOption.value :""); 
+																}}
+																isClearable
+																styles={{
+																	menuPortal: (base) => ({...base, zIndex: 9999, pointerEvents: "auto" }),
+																	menu: (base) => ({...base, overflowY: "auto"}),
+																}}
+																// isDisabled={dataAreaEmpleado.length==0}
+															/>
+														{/* <Select {...field} className="input"
+															onValueChange={(value:string) => {
+															field.onChange(value); 
+														}}
+														value={field.value} 
+													>
+														<SelectTrigger className="w-full">
+														{loadingAreaEmpleado?(<>
+																<SelectValue placeholder="Cargando opciones..." />
+															</>):(<>
+																<SelectValue placeholder="Selecciona una opcion" />
+															</>)}
+														</SelectTrigger>
+														<SelectContent>
+														{dataAreaEmpleado?.map((vehiculo:string, index:number) => (
+															<SelectItem key={index} value={vehiculo}>
+																{vehiculo}
+															</SelectItem>
+														))}
+														</SelectContent>
+													</Select> */}
 													</FormControl>
 													<FormMessage />
 												</FormItem>
@@ -748,8 +789,27 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 											name="ubicacion_incidencia"
 											render={({ field }:any) => (
 												<FormItem>
-													<FormLabel>Ubicacion:</FormLabel>
-													<FormControl>
+													<FormLabel>Ubicación:</FormLabel>
+
+													<Select 
+														placeholder="Ubicación"
+														name="ubicacion_incidencia"
+														aria-labelledby="aria-label"
+														className="border border-slate-100 rounded-2xl"
+														options={ ubicaciones && ubicaciones.length > 0 ? formatForMultiselect(ubicaciones):[]} 
+														value={formatForMultiselect([ubicacionSeleccionada])}
+														onChange={(selectedOption:any) => {
+															field.onChange(selectedOption?.value ?? ""); 
+															setUbicacionSeleccionada(selectedOption?.value ?? ""); 
+														}}
+														isClearable
+														styles={{
+															menuPortal: (base) => ({...base, zIndex: 9999, pointerEvents: "auto" }),
+															menu: (base) => ({...base, overflowY: "auto"}),
+														}}
+													/>
+
+													{/* <FormControl>
 													<Select {...field} className="input"
 														onValueChange={(value:string) => {
 														field.onChange(value); 
@@ -769,7 +829,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 													))}
 													</SelectContent>
 												</Select>
-													</FormControl>
+													</FormControl> */}
 													<FormMessage />
 												</FormItem>
 											)}
@@ -779,8 +839,26 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 											name="area_incidencia"
 											render={({ field }:any) => (
 												<FormItem className="w-full">
-													<FormLabel>Area de la incidencia: *</FormLabel>
-													<FormControl>
+													<FormLabel>Área de la incidencia: *</FormLabel>
+													<Select
+														placeholder={"Reporta"}
+														inputId="select-categorias"
+														name="reporta_incidencia"
+														aria-labelledby="aria-label"
+														value= {formatForMultiselect(areas).find(opt => opt.value === field.value) || ""} 
+														options={areas && areas.length>0 ? formatForMultiselect( areas):[]} 
+														onChange={(selectedOption:any) => {
+															field.onChange(selectedOption ? selectedOption.value :""); 
+														}}
+														isClearable
+														styles={{
+															menuPortal: (base) => ({...base, zIndex: 9999, pointerEvents: "auto" }),
+															menu: (base) => ({...base, overflowY: "auto"}),
+														}}
+													/>
+
+													
+													{/* <FormControl>
 													<Select {...field} className="input"
 														onValueChange={(value:string) => {
 														field.onChange(value); 
@@ -813,7 +891,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 													
 													</SelectContent>
 												</Select>
-													</FormControl>
+													</FormControl> */}
 													<FormMessage />
 												</FormItem>
 											)}
@@ -1176,16 +1254,16 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 			)}
 
 			<SeguimientoIncidenciaLista
-				title="Seguimiento Incidencia"
-				isSuccess={openModal}
-				setIsSuccess={setOpenModal}
-				seguimientoSeleccionado={seguimientoSeleccionado}
-				setSeguimientos={setSeguimientos}
-				setEditarSeguimiento={setEditarSeguimiento}
-				editarSeguimiento={editarSeguimiento}
-				indice={indiceSeleccionado}
-				dateIncidencia={ date ? convertirDateToISO(date):""}
-				>
+					title="Seguimiento Incidencia"
+					isSuccess={openModal}
+					setIsSuccess={setOpenModal}
+					seguimientoSeleccionado={seguimientoSeleccionado}
+					setSeguimientos={setSeguimientos}
+					setEditarSeguimiento={setEditarSeguimiento}
+					editarSeguimiento={editarSeguimiento}
+					indice={indiceSeleccionado}
+					dateIncidencia={date ? convertirDateToISO(date) : ""} 
+					folioIncidencia={""}					>
 				<div></div>
 			</SeguimientoIncidenciaLista>
 

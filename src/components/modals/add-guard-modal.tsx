@@ -44,7 +44,7 @@ export const AddGuardModal: React.FC<AddGuardModalProps> = ({
     );
  
     return uniqueGuards?.filter((guardia: any) =>
-      guardia.name.toLowerCase().includes(searchText.toLowerCase())
+      guardia?.name?.toLowerCase().includes(searchText?.toLowerCase())
     );
   }, [supportGuards, searchText]);
 

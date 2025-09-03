@@ -41,7 +41,7 @@ return (
 					</div>
 					<div className="w-full flex gap-2 ">
 						<p className="font-bold flex-shrink-0">Estatus: </p>
-						<p className={` ${data?.status_visita.toLowerCase() === "entrada" ? "text-green-500 font-bold" : data?.status_visita.toLowerCase() === "salida" ? "text-red-500" : ""}`}>
+						<p className={` ${data?.status_visita?.toLowerCase() === "entrada" ? "text-green-500 font-bold" : data?.status_visita?.toLowerCase() === "salida" ? "text-red-500" : ""}`}>
 						{data?.status_visita}</p>
 					</div>           
 				</div>
