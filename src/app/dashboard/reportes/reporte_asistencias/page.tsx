@@ -131,7 +131,7 @@ const ReportsPage = () => {
 		alert("Función de exportación no implementada aún");
 	};
 
-	const [groupByLocation, setGroupByLocation] = useState(true);
+	const [groupByLocation, setGroupByLocation] = useState(false);
 
 	const handleGroupByLocationToggle = () => {
 		setGroupByLocation(prev => !prev);
