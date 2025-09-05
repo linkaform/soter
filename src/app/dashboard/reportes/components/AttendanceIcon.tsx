@@ -26,6 +26,12 @@ const AttendanceIcon: React.FC<AttendanceIconProps> = ({ status }) => {
                     <X className="h-3.5 w-3.5 text-white" strokeWidth={3} />
                 </div>
             );
+        case 'absentTimeOff':
+            return (
+                <div className="w-6 h-6 rounded-full bg-yellow-500 flex items-center justify-center">
+                    <X className="h-3.5 w-3.5 text-white" strokeWidth={3} />
+                </div>
+            );
         case 'noRecord':
             return (
                 <div className="w-6 h-6 rounded-full bg-gray-200 border-2 border-gray-300"></div>

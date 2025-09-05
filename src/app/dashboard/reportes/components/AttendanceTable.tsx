@@ -282,7 +282,7 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
                                         <span>Empleado</span>
                                         <input
                                             type="text"
-                                            className="border rounded px-2 py-1 w-full text-sm"
+                                            className="border rounded px-2 py-1 w-full text-sm font-light"
                                             placeholder="Buscar empleado..."
                                             value={search}
                                             onChange={e => setSearch(e.target.value)}
@@ -296,7 +296,7 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
                                     <span>Empleado</span>
                                     <input
                                         type="text"
-                                        className="border rounded px-2 py-1 w-full text-sm"
+                                        className="border rounded px-2 py-1 w-full text-sm font-light"
                                         placeholder="Buscar empleado..."
                                         value={search}
                                         onChange={e => setSearch(e.target.value)}
@@ -342,7 +342,7 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
                                     {employeeIndex === 0 && (
                                         <td
                                             rowSpan={locationGroup.employees.length}
-                                            className="p-2 border-b border-gray-200 bg-white sticky left-0 z-10"
+                                            className="py-1 border-b border-gray-200 bg-white sticky left-0 z-10 w-56"
                                         >
                                             <div className="font-semibold">
                                                 {locationGroup.locationName}
