@@ -11,6 +11,7 @@ export interface DailyAttendance {
     status: AttendanceStatus;
     date: string;
     userName?: string;
+    location: string[]; // Nombres de las ubicaciones asociadas
 }
 
 export interface AttendanceSummary {
@@ -32,6 +33,7 @@ export interface BaseAttendanceRow {
 export interface EmployeeAttendance extends BaseAttendanceRow {
     name: string;
     type: 'employee';
+    locations?: string[]; // Nombres de las ubicaciones asociadas
 }
 
 // Para turnos en ubicaciones

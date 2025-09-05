@@ -3,17 +3,21 @@ import {
     AttendanceRow,
     EmployeeAttendance,
     LocationAttendance,
-    GroupingMode
+    GroupingMode,
+    DailyAttendance
 } from '../types/attendance';
 import AttendanceCell from './AttendanceCell';
 import UserCell from './UserCell';
+import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight } from "lucide-react"; // Asegúrate de tener estos íconos instalados
 
 interface AttendanceTableProps {
-    data: AttendanceRow[];
+    data: any; // Cambiado para aceptar cualquier formato de datos
     month?: number;
     year?: number;
     groupingMode: GroupingMode;
-    groupByLocation?: boolean; // NUEVO: Prop para controlar la agrupación
+    groupByLocation?: boolean;
+    timeframe?: 'mes' | 'semana';
 }
 
 const AttendanceTable: React.FC<AttendanceTableProps> = ({
@@ -21,29 +25,49 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
     month = new Date().getMonth() + 1,
     year = new Date().getFullYear(),
     groupingMode = 'employees',
-    groupByLocation = true // Por defecto, agrupar por ubicación
+    groupByLocation = true,
+    timeframe = 'mes'
 }) => {
+    const [selectedWeek, setSelectedWeek] = React.useState(0);
+
     // Get days in month and start day of week
-    const daysInMonth = useMemo(() => {
+    const daysInMonth = React.useMemo(() => {
         return new Date(year, month, 0).getDate();
     }, [month, year]);
 
-    // Generate array of days for the month
-    const days = useMemo(() => {
-        const dayNames = ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'];
-        return Array.from({ length: daysInMonth }, (_, i) => {
-            const day = i + 1;
-            const date = new Date(year, month - 1, day);
-            const dayOfWeek = date.getDay(); // 0 = Sunday, 1 = Monday, etc.
-            const isWeekend = dayOfWeek === 0 || dayOfWeek === 6; // Sunday or Saturday
-
-            return {
-                day,
-                dayName: dayNames[dayOfWeek],
-                isWeekend,
-            };
-        });
+    // Calcula el número de semanas en el mes
+    const weeksInMonth = React.useMemo(() => {
+        const firstDay = new Date(year, month - 1, 1).getDay() || 7; // Lunes=1, Domingo=7
+        return Math.ceil((daysInMonth + firstDay - 1) / 7);
     }, [daysInMonth, month, year]);
+
+    // Utilidad para obtener los días de la semana seleccionada
+    const getWeekDays = React.useCallback((year: number, month: number, weekIndex: number) => {
+        const dayNames = ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'];
+        const firstDayOfMonth = new Date(year, month - 1, 1);
+        const firstDayOfWeek = firstDayOfMonth.getDay() || 7; // Lunes=1, Domingo=7
+        const startDay = 1 + weekIndex * 7 - (firstDayOfWeek - 1);
+        const weekDays = [];
+        for (let i = 0; i < 7; i++) {
+            const day = startDay + i;
+            if (day > 0 && day <= daysInMonth) {
+                const date = new Date(year, month - 1, day);
+                const dayOfWeek = date.getDay();
+                weekDays.push({
+                    day,
+                    dayName: dayNames[dayOfWeek],
+                    isWeekend: dayOfWeek === 0 || dayOfWeek === 6,
+                });
+            }
+        }
+        return weekDays;
+    }, [daysInMonth]);
+
+    // Transformar los datos al formato esperado por el componente
+    const transformedData = useMemo(() => {
+        console.log("Datos recibidos:", data);
+        return transformNewDataFormat(data, month, year, groupingMode);
+    }, [data, month, year, groupingMode]);
 
     // Organizar los datos según el modo y si hay información de ubicación
     const organizedData = useMemo(() => {
@@ -51,7 +75,7 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
             // Código existente para modo 'locations'
             const locationMap = new Map<string, LocationAttendance[]>();
 
-            (data as LocationAttendance[]).forEach(item => {
+            (transformedData as LocationAttendance[]).forEach(item => {
                 if (!item.locationName) return; // Ignorar datos malformados
 
                 if (!locationMap.has(item.locationName)) {
@@ -85,38 +109,45 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
                 groupedByLocation: true,
                 locationGroups,
                 employeesByLocation: null,
-                groupEmployeesByLocation: false
+                groupEmployeesByLocation: false,
+                data: transformedData
             };
         } else {
             // Modo 'employees'
-            // Verificar si hay datos de ubicación y si está activada la agrupación
-            const hasLocationData = data.some(item => 'location' in item && (item as any).location);
-
-            // MODIFICADO: Solo agrupar si hay datos y groupByLocation está activo
-            if (!hasLocationData || !groupByLocation) {
-                // Sin datos de ubicación o agrupación desactivada, mostrar sin agrupar
+            // CAMBIO: Simplificar la lógica para respetar siempre la opción groupByLocation
+            if (!groupByLocation) {
+                // Si la agrupación está desactivada, mostrar sin agrupar
                 return {
                     groupedByLocation: false,
-                    data,
+                    data: transformedData,
                     employeesByLocation: null,
                     groupEmployeesByLocation: false
                 };
             }
 
+            // Si llegamos aquí, el usuario quiere agrupar por ubicación
             // Agrupar empleados por ubicación
             const locationMap = new Map<string, EmployeeAttendance[]>();
 
-            // Grupo para empleados sin ubicación asignada - TEXTO ACTUALIZADO
+            // Grupo para empleados sin ubicación asignada
             locationMap.set('Sin asistencia registrada', []);
 
-            (data as EmployeeAttendance[]).forEach(item => {
-                // TEXTO ACTUALIZADO
-                const location = (item as any).location || 'Sin asistencia registrada';
+            (transformedData as EmployeeAttendance[]).forEach(item => {
+                // Si el empleado tiene ubicaciones, agregarlo a cada una
+                const locations = (item as any).locations || [];
 
-                if (!locationMap.has(location)) {
-                    locationMap.set(location, []);
+                if (locations.length === 0) {
+                    // Si no tiene ubicaciones, agregarlo al grupo "Sin asistencia registrada"
+                    locationMap.get('Sin asistencia registrada')?.push(item);
+                } else {
+                    // Agregar el empleado a cada una de sus ubicaciones
+                    locations.forEach((location: string) => {
+                        if (!locationMap.has(location)) {
+                            locationMap.set(location, []);
+                        }
+                        locationMap.get(location)?.push(item);
+                    });
                 }
-                locationMap.get(location)?.push(item);
             });
 
             // Convertir el mapa a un array de grupos de ubicación
@@ -137,29 +168,71 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
 
             // Ordenar por nombre de ubicación
             employeesByLocation.sort((a, b) => {
-                // TEXTO ACTUALIZADO: Poner "Sin asistencia registrada" al final
+                // Poner "Sin asistencia registrada" al final
                 if (a.locationName === 'Sin asistencia registrada') return 1;
                 if (b.locationName === 'Sin asistencia registrada') return -1;
 
                 return a.locationName.localeCompare(b.locationName);
             });
 
-            // Determinar si se debe agrupar
-            // Solo agrupar si hay más de una ubicación significativa
-            const hasMultipleLocations = employeesByLocation.length > 1 ||
-                (employeesByLocation.length === 1 && employeesByLocation[0].locationName !== 'Sin asistencia registrada');
-
             return {
                 groupedByLocation: false,
-                data,
+                data: transformedData,
                 employeesByLocation,
-                groupEmployeesByLocation: hasMultipleLocations && groupByLocation // MODIFICADO
+                groupEmployeesByLocation: true  // CAMBIO: Siempre true cuando groupByLocation es true
             };
         }
-    }, [data, groupingMode, groupByLocation]); // MODIFICADO: Añadir groupByLocation como dependencia
+    }, [transformedData, groupingMode, groupByLocation]);
+
+    // Obtener los días de la semana seleccionada
+    const days = useMemo(() => {
+        if (timeframe === 'semana') {
+            return getWeekDays(year, month, selectedWeek);
+        }
+
+        // Por defecto, mostrar todos los días del mes
+        const dayNames = ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'];
+        return Array.from({ length: daysInMonth }, (_, i) => {
+            const day = i + 1;
+            const date = new Date(year, month - 1, day);
+            const dayOfWeek = date.getDay();
+            return {
+                day,
+                dayName: dayNames[dayOfWeek],
+                isWeekend: dayOfWeek === 0 || dayOfWeek === 6,
+            };
+        });
+    }, [month, year, selectedWeek, timeframe, daysInMonth, getWeekDays]);
 
     return (
         <div className="w-full overflow-x-auto">
+            {/* Navegación por semanas (solo para el modo de semana) */}
+            {timeframe === 'semana' && (
+                <div className="flex items-center justify-center gap-4 mb-4">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        disabled={selectedWeek === 0}
+                        onClick={() => setSelectedWeek(w => w - 1)}
+                        aria-label="Semana anterior"
+                    >
+                        <ChevronLeft className="w-5 h-5" />
+                    </Button>
+                    <span className="text-base font-medium text-gray-700">
+                        Semana <span className="font-bold">{selectedWeek + 1}</span> de <span className="font-bold">{weeksInMonth}</span>
+                    </span>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        disabled={selectedWeek === weeksInMonth - 1}
+                        onClick={() => setSelectedWeek(w => w + 1)}
+                        aria-label="Semana siguiente"
+                    >
+                        <ChevronRight className="w-5 h-5" />
+                    </Button>
+                </div>
+            )}
+
             <table className="w-full border-collapse">
                 <thead>
                     <tr>
@@ -213,7 +286,7 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
                 </thead>
 
                 <tbody>
-                    {/* NUEVO: Renderizado para empleados (modo employees) con agrupación por ubicación */}
+                    {/* Renderizado para empleados (modo employees) con agrupación por ubicación */}
                     {!organizedData.groupedByLocation && organizedData.groupEmployeesByLocation &&
                         organizedData.employeesByLocation?.map((locationGroup, locationIndex) => {
                             const isEvenLocation = locationIndex % 2 === 0;
@@ -272,41 +345,43 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
 
                     {/* Renderizado para empleados (modo employees) sin agrupación */}
                     {!organizedData.groupedByLocation && !organizedData.groupEmployeesByLocation &&
-                        data.map((row, rowIndex) => (
-                            <tr key={row.id} className={rowIndex % 2 === 0 ? 'hover:bg-gray-50' : 'bg-gray-50 hover:bg-gray-100'}>
-                                {/* Nombre del empleado */}
-                                <td className="p-2 border-b border-gray-200 bg-white sticky left-0 z-10 font-medium">
-                                    {(row as EmployeeAttendance).name}
-                                </td>
+                        organizedData.data
+                            .filter((row): row is EmployeeAttendance => row.type === 'employee')
+                            .map((row, rowIndex) => (
+                                <tr key={row.id} className={rowIndex % 2 === 0 ? 'hover:bg-gray-50' : 'bg-gray-50 hover:bg-gray-100'}>
+                                    {/* Nombre del empleado */}
+                                    <td className="p-2 border-b border-gray-200 bg-white sticky left-0 z-10 font-medium">
+                                        {row.name}
+                                    </td>
 
-                                {/* Attendance cells */}
-                                {days.map((day) => {
-                                    const attendance = row.attendance[day.day] || { status: 'noRecord', date: '' };
-                                    return (
-                                        <td
-                                            key={`${row.id}-${day.day}`}
-                                            className={`border-b border-gray-200 text-center ${day.isWeekend ? 'bg-blue-50' : ''}`}
-                                        >
-                                            <AttendanceCell
-                                                status={attendance.status}
-                                                isWeekend={day.isWeekend}
-                                            />
-                                        </td>
-                                    );
-                                })}
+                                    {/* Attendance cells */}
+                                    {days.map((day) => {
+                                        const attendance = row.attendance[day.day] || { status: 'noRecord', date: '' };
+                                        return (
+                                            <td
+                                                key={`${row.id}-${day.day}`}
+                                                className={`border-b border-gray-200 text-center ${day.isWeekend ? 'bg-blue-50' : ''}`}
+                                            >
+                                                <AttendanceCell
+                                                    status={attendance.status}
+                                                    isWeekend={day.isWeekend}
+                                                />
+                                            </td>
+                                        );
+                                    })}
 
-                                {/* Summary cells */}
-                                <td className="p-2 border-b border-gray-200 text-center font-semibold">
-                                    {row.summary.totalPresent}
-                                </td>
-                                <td className="p-2 border-b border-gray-200 text-center font-semibold">
-                                    {row.summary.totalLate}
-                                </td>
-                                <td className="p-2 border-b border-gray-200 text-center font-semibold">
-                                    {row.summary.totalAbsent}
-                                </td>
-                            </tr>
-                        ))}
+                                    {/* Summary cells */}
+                                    <td className="p-2 border-b border-gray-200 text-center font-semibold">
+                                        {row.summary.totalPresent}
+                                    </td>
+                                    <td className="p-2 border-b border-gray-200 text-center font-semibold">
+                                        {row.summary.totalLate}
+                                    </td>
+                                    <td className="p-2 border-b border-gray-200 text-center font-semibold">
+                                        {row.summary.totalAbsent}
+                                    </td>
+                                </tr>
+                            ))}
 
                     {/* Renderizado para ubicaciones agrupadas (modo locations) */}
                     {organizedData.groupedByLocation &&
@@ -369,6 +444,94 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
             </table>
         </div>
     );
+};
+
+// Actualiza la función transformNewDataFormat para manejar ambos modos
+
+const transformNewDataFormat = (data: any, month: number, year: number, groupingMode: GroupingMode): AttendanceRow[] => {
+    console.log("Transforming data for mode:", groupingMode);
+
+    if (!Array.isArray(data)) {
+        console.error("Data is not an array:", data);
+        return [];
+    }
+
+    // Modo empleados: array de objetos con estructura { name, attendance: [...], summary: {...} }
+    if (groupingMode === 'employees') {
+        console.log("Processing employee data");
+
+        return data.map((employee: any) => {
+            // Convertir el array de attendance a un objeto indexado por día
+            const attendanceMap: { [key: number]: DailyAttendance } = {};
+
+            if (Array.isArray(employee.attendance)) {
+                employee.attendance.forEach((record: any) => {
+                    const dayNumber = typeof record.day === 'string' ? parseInt(record.day, 10) : record.day;
+
+                    attendanceMap[dayNumber] = {
+                        status: record.status,
+                        date: `${year}-${month.toString().padStart(2, '0')}-${dayNumber.toString().padStart(2, '0')}`,
+                        location: record.location || employee.locations || []
+                    };
+                });
+            }
+
+            return {
+                id: employee.id,
+                name: employee.name,
+                type: 'employee',
+                locations: employee.locations || [],
+                attendance: attendanceMap,
+                summary: {
+                    totalPresent: employee.summary.present || 0,
+                    totalLate: employee.summary.late || 0,
+                    totalAbsent: employee.summary.absent || 0
+                }
+            } as EmployeeAttendance;
+        });
+    }
+
+    // Modo ubicaciones: array de objetos con estructura { locationName, shiftInfo, attendance: [...], summary: {...} }
+    if (groupingMode === 'locations') {
+        console.log("Processing location data");
+
+        return data.map((location: any) => {
+            // Convertir el array de attendance a un objeto indexado por día
+            const attendanceMap: { [key: number]: DailyAttendance } = {};
+
+            if (Array.isArray(location.attendance)) {
+                location.attendance.forEach((record: any) => {
+                    const dayNumber = typeof record.day === 'string' ? parseInt(record.day, 10) : record.day;
+
+                    attendanceMap[dayNumber] = {
+                        status: record.status,
+                        userName: record.userName || null,
+                        date: `${year}-${month.toString().padStart(2, '0')}-${dayNumber.toString().padStart(2, '0')}`,
+                        location: record.location || location.locationName ? [location.locationName] : []
+                    };
+                });
+            }
+
+            return {
+                id: location.id,
+                locationName: location.locationName,
+                type: 'location',
+                shiftInfo: {
+                    id: location.shiftId || 'T1',
+                    name: location.shiftName || 'Turno 1'
+                },
+                attendance: attendanceMap,
+                summary: {
+                    totalPresent: location.summary.present || 0,
+                    totalLate: location.summary.late || 0,
+                    totalAbsent: location.summary.absent || 0
+                }
+            } as LocationAttendance;
+        });
+    }
+
+    console.warn("Unknown grouping mode:", groupingMode);
+    return [];
 };
 
 export default AttendanceTable;

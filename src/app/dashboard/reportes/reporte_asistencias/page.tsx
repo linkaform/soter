@@ -71,6 +71,7 @@ const ReportsPage = () => {
 			setIsManualLoading(false);
 
 			if (reportAsistencias) {
+				console.log("Datos de asistencias cargados:", reportAsistencias);
 				setData(reportAsistencias);
 				setAppliedGroupingMode(filters.groupBy as GroupingMode);
 			}
@@ -271,6 +272,7 @@ const ReportsPage = () => {
 						year={year}
 						groupingMode={appliedGroupingMode}
 						groupByLocation={groupByLocation}
+						timeframe={timeframe}
 					/>
 				)}
 			</div>
