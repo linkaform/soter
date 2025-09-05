@@ -40,7 +40,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
   isSuccess,
   setModalEditarAbierto,
 }) => {
-	const {refetch, isLoading, data:pdfSeguimientos } = useGetPdfIncidencias(data._id, 592, 17780)
+	const {refetch, isLoading, data:pdfSeguimientos ,isFetching} = useGetPdfIncidencias(data._id, 592, 17780, `Seguimiento_de_Incidente_145636-${data.folio}`)
 	const downloadUrl = pdfSeguimientos?.response?.data?.json?.download_url
 
 	useEffect(()=>{
@@ -50,13 +50,53 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 	},[downloadUrl])
 
 
-	const handleGetPdf = () => {
-		refetch();
+	const handleGetPdf = async () => {
+		try {
+			const result = await refetch();
+
+			if (result.error) {
+			  	toast.error(`Error de red: ${result.error}`,{
+				style: {
+					backgroundColor: "#f44336", 
+					color: "#fff",
+					},
+				});
+			  return;
+			}
+		
+			const data = result.data?.response?.data;
+
+			if (!data || data.status_code !== 200) {
+			  const errorMsg = data?.json?.error || result.data?.error|| "Error desconocido del servidor";
+			  toast.error(`Error de red: ${errorMsg}`, {
+				style: {
+					backgroundColor: "#f44336", 
+					color: "#fff",
+					},
+				});
+			  return;
+			}
+			
+			const downloadUrl = data?.json?.download_url;
+			if (downloadUrl) {
+			  onDescargarPDF(downloadUrl);
+			} else {
+			  toast.warning("No se encontró URL de descarga");
+			}
+		
+		  } catch (err) {
+			toast.error(`Error inesperado: ${err}`, {
+				style: {
+					backgroundColor: "#f44336", 
+					color: "#fff",
+					},
+				});
+		  }
 	};
 
 	async function onDescargarPDF(download_url: string) {
 		try {
-			await descargarPdfPase(download_url);
+			await descargarPdfPase(download_url, "Seguimientio_de_incidente.pdf");
 			toast.success("¡PDF descargado correctamente!");
 		} catch (error) {
 			toast.error("Error al descargar el PDF: " + error);
@@ -71,7 +111,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
   return (
     <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="max-w-4xl overflow-y-auto max-h-[80vh] flex flex-col" onInteractOutside={(e) => e.preventDefault()} aria-describedby="">
+      <DialogContent className="max-w-5xl overflow-y-auto max-h-[80vh] flex flex-col" onInteractOutside={(e) => e.preventDefault()} aria-describedby="">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center font-bold">
             {title}
@@ -545,7 +585,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 										</Carousel>
 									</div>
 									) : (
-									<p>No hay evidencias disponibles.</p>
+										<div className="flex justify-center">-</div>
 									)}
 								</td>
 
@@ -566,7 +606,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 										))}
 									</ul>
 									) : (
-										<p>No hay documentos disponibles.</p>
+										<div className="flex justify-center">-</div>
 										)}
 								</td>
 								</tr>
@@ -643,16 +683,16 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 			className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={false} onClick={()=>{setIsSuccess(false); setModalEditarAbierto(true)}}
 			>
 			{true ? (<>
-				{("Editar Falla")}
-			</>) : (<> <Loader2 className="animate-spin" /> {"Editar Falla..."} </>)}
+				{("Editar Incidencia")}
+			</>) : (<> <Loader2 className="animate-spin" /> {"Editar Incidencia..."} </>)}
 			</Button>
 
 		  	<Button
 			type="submit"
-			className="w-full  bg-yellow-500 hover:bg-yellow-600 text-white " disabled={isLoading} onClick={()=>{handleGetPdf()}}>
-			{!isLoading ? (<>
-				{("Descargar seguimientos")}
-			</>) : (<> <Loader2 className="animate-spin" /> {"Descargando seguimientos..."} </>)}
+			className="w-full  bg-yellow-500 hover:bg-yellow-600 text-white " disabled={isLoading || isFetching} onClick={()=>{handleGetPdf()}}>
+			{isLoading || isFetching ? (<>
+				  <> <Loader2 className="animate-spin" /> {"Descargando seguimientos..."} </>
+			</>) : ("Descargar seguimientos")}
 			</Button>
 
         </div>

@@ -248,12 +248,12 @@ export const PersonasInvolucradasModal: React.FC<IncidenciaModalProps> = ({
 														className="border border-slate-100 rounded-2xl"
 														value={field.value ? formatForMultiselect([field.value]):[]}
 														options={formatForMultiselect([
-															"Infancia (0 a 11)",
-															"Adolescencia (12 a 17)",
-															"Juventud (18 a 29)",
-															"Adultez temprana (30 a 44)",
-															"Adultez media (45 a 59)",
-															"Adultez mayor (60+)"
+															"Infancia",
+															"Adolescencia",
+															"Juventud",
+															"Adultez temprana",
+															"Adultez media",
+															"Adultez mayor"
 														  ])} 
 														onChange={(selectedOption:any) => {
 															field.onChange(selectedOption ? selectedOption.value :"");

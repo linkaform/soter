@@ -32,6 +32,7 @@ import LoadImage from "../upload-Image";
 import LoadFile from "../upload-file";
 import { toast } from "sonner";
 import { useSeguimientoIncidencia } from "@/hooks/Incidencias/useSeguimientoIncidencia";
+import { Loader2 } from "lucide-react";
 
 interface IncidenciaModalProps {
 	title: string;
@@ -171,10 +172,8 @@ console.log(enviarSeguimiento)
 				}else{
 					setSeguimientos((prev: any) => [...prev, formatData]);
 				}
-				
-                toast.success("Seguimiento agregado correctamente.")
             }
-            setIsSuccess(false)
+            // setIsSuccess(false)
 		} else {
 			form.setError("fecha_inicio_seg", { type: "manual", message: "Fecha es un campo requerido." });
 		}
@@ -303,7 +302,8 @@ console.log(enviarSeguimiento)
 						onClick={form.handleSubmit(onSubmit)} 
 						className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={isLoading}
 					>
-						{editarSeguimiento? ("Editar"):(("Agregar"))}
+						{editarSeguimiento? ("Editar"):( !isLoading ? ("Agregar"):
+						(<> <Loader2 className="animate-spin"/> {"Creando seguimiento..."} </>)  )}
 					</Button>
 				</div>
 			</DialogContent>

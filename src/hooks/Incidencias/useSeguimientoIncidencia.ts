@@ -9,12 +9,11 @@ export const useSeguimientoIncidencia = () => {
     const { setLoading } = useShiftStore();
   
     return useMutation({
-        mutationFn: async ({ seguimientos_incidencia, folio, cerrar_falla }: { seguimientos_incidencia: any, folio: string, cerrar_falla?:string }) => {
-            const response = await crearSeguimientoIncidencia(seguimientos_incidencia, folio, cerrar_falla);
-            const hasError = response.response.data.status_code
-    
-            if (hasError == 400 || hasError == 401) {
-                const textMsj = errorMsj(response.response.data)
+        mutationFn: async ({ seguimientos_incidencia, folio }: { seguimientos_incidencia: any, folio: string}) => {
+            const response = await crearSeguimientoIncidencia(seguimientos_incidencia, folio);
+            const hasError = (!response?.success) || (response?.response?.data?.status_code === 400 )
+            if (hasError) {
+                const textMsj = errorMsj(response)
                 throw new Error(`Error al crear seguimiento, Error: ${textMsj?.text}`);
             } else {
                 return response.response?.data
@@ -29,8 +28,13 @@ export const useSeguimientoIncidencia = () => {
             toast.success("Seguimiento creado correctamente.");
         },
         onError: (err) => {
-            console.error("Error al crear seguimiento:", err);
-            toast.error(err.message || "Hubo un error al crear el seguimiento.");
+            toast.error(err.message || "Hubo un error al crear el seguimiento." ,{
+                style: {
+                    background: "#dc2626",
+                    color: "#fff",
+                    border: 'none'
+                },
+            })
         },
         onSettled: () => {
             setLoading(false);

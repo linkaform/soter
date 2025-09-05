@@ -221,11 +221,12 @@ export const crearIncidencia = async (data_incidence: InputIncidencia | null)=> 
     return data;
   };
 
-export const crearSeguimientoIncidencia = async (seguimientos_incidencia: [], folio: string, cerrar_falla?:string) => {
+export const crearSeguimientoIncidencia = async (seguimientos_incidencia: [], folio: string) => {
+    console.log("seguimiento_incidencia PRUEBAS", seguimientos_incidencia)
     const payload = {
         seguimientos_incidencia,
         folio,
-        cerrar_falla:cerrar_falla,
+        // cerrar_falla:cerrar_falla,
         option: "update_incidence_seguimiento",
         script_name: "incidencias.py",
     };

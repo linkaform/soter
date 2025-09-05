@@ -188,7 +188,9 @@ export function errorMsj(data:any, title = "Error", type="warning"){
         errores.push(data.json.error);
       }else{
         for(const err in data.json){
+            console.log("Que pasa", data.json[err], err)
              if(data.json[err].hasOwnProperty('label')){
+                
                 errores.push(data.json[err].label+': '+data.json[err].msg[0]+" ")
             }else {
                  const subData = data.json[err];

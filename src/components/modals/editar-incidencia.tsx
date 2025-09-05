@@ -29,14 +29,14 @@ import { format } from 'date-fns';
 import DateTime from "../dateTime";
 import LoadFile from "../upload-file";
 import { CircleAlert, Edit, Loader2, Trash2 } from "lucide-react";
-import { AccionesTomadas, AfectacionPatrimonial, Depositos, getCatIncidencias, PersonasInvolucradas } from "@/lib/incidencias";
+import { AccionesTomadas, AfectacionPatrimonial, Depositos, PersonasInvolucradas } from "@/lib/incidencias";
 import { useShiftStore } from "@/store/useShiftStore";
 import { useInciencias } from "@/hooks/Incidencias/useIncidencias";
 import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
 import { PersonaExtraviadaFields } from "./persona-extraviada";
 import { RoboDeCableado } from "./robo-de-cableado";
 import { RoboDeVehiculo } from "./robo-de-vehiculo";
-import { categoriasConIconos, subCategoriasConIconos } from "./add-incidencia";
+import { categoriasConIconos } from "./add-incidencia";
 import { useCatalogoInciencias } from "@/hooks/useCatalogoIncidencias";
 import { Slider } from "../slider";
 import { Switch } from "@/components/ui/switch"
@@ -50,7 +50,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import Image from "next/image";
 import { SeguimientoIncidenciaLista } from "./add-seguimientos";
 import { AfectacionPatrimonialModal } from "./add-afectacion-patrimonial";
-import { convertirDateToISO, formatCurrency, formatForMultiselect, formatToValueLabel } from "@/lib/utils";
+import { convertirDateToISO, formatCurrency, formatForMultiselect } from "@/lib/utils";
 import { SeccionDepositos } from "../depositos-section";
 import Select from 'react-select';
 
@@ -90,7 +90,7 @@ const formSchema = z.object({
 	notificacion_incidencia: z.string().min(1, { message: "Este campo es requerido" }),
 	prioridad_incidencia: z.string().min(1, { message: "Este campo es requerido" }),
 	dano_incidencia: z.string().optional(),
-	tipo_dano_incidencia: z.string().optional(),
+	// tipo_dano_incidencia: z.string().optional(),
 	comentario_incidencia: z.string().min(1, { message: "Este campo es requerido" }),
 	incidencia: z.string().min(1, { message: "La ubicación es obligatoria" }),
 	tags: z.array(z.string()).optional(),
@@ -154,12 +154,12 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 	const [openModal, setOpenModal] = useState(false)
 
 	const [search, setSearch]= useState("")
-	const [catSubCategorias, setSubCatCategorias] = useState<any>([])
-	const [catSubIncidences, setCatSubIncidences] = useState<any>([])
+	// const [catSubCategorias, setSubCatCategorias] = useState<any>([])
+	// const [catSubIncidences, setCatSubIncidences] = useState<any>([])
 	const [subCategoria, setSubCategoria]= useState("")
 	const [categoria, setCategoria]= useState(data.categoria)
 	const [selectedIncidencia, setSelectedIncidencia]= useState("")
-	const [catCategorias, setCatCategorias] = useState<any[]>([])
+	// const [catCategorias, setCatCategorias] = useState<any[]>([])
 	const [loadingCatalogos, setLoadingCatalogos]= useState(false)
 
 	const { catIncidencias } = useCatalogoInciencias(modalEditarAbierto, categoria, subCategoria);
@@ -175,6 +175,8 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 	const [afectacionPatrimonial,setAfectacionPatrimonial] = useState<AfectacionPatrimonial []>(data.afectacion_patrimonial_incidencia)
 	const [openAfectacionPatrimonialModal,setOpenAfectacionPatrimonialModal] = useState(false)
 	const [editarAfectacionPatrimonial, setEditarAfectacionPatrimonial] = useState(false)
+
+	console.log("informacion", data)
 
 	const getNivelNumber = (val:string) => {
 		if (val =="Critica") return 100
@@ -205,7 +207,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 			area_incidencia:  data.area_incidencia||"",
 			incidencia: data.incidencia||"",
 			comentario_incidencia: data.comentario_incidencia||"",
-			tipo_dano_incidencia: data.tipo_dano_incidencia ||"",
+			// tipo_dano_incidencia: data.tipo_dano_incidencia ||"",
 			dano_incidencia: data.dano_incidencia||"",
 			evidencia_incidencia: evidencia,
 			documento_incidencia:documento,
@@ -264,12 +266,12 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 		setSubCategoria("")
 		setCategoria("")
 		setSelectedIncidencia("")
-		const catIncidenciasIcons = categoriasConIconos?.filter((cat) =>
-			catIncidencias?.includes(cat.nombre)
-			);
-		setCatCategorias(catIncidenciasIcons)
-		setCatSubIncidences([])
-		setSubCatCategorias([])
+		// const catIncidenciasIcons = categoriasConIconos?.filter((cat) =>
+		// 	catIncidencias?.includes(cat.nombre)
+		// 	);
+		// setCatCategorias(catIncidenciasIcons)
+		// setCatSubIncidences([])
+		// setSubCatCategorias([])
 		setDepositos([])
 
 		setEditarSeguimiento(false)
@@ -295,25 +297,25 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 					);
 				if(catIncidenciasIcons.length>0){
 					console.log("catIncidenciasIcons",catIncidenciasIcons)
-					setCatCategorias(catIncidenciasIcons)
+					// setCatCategorias(catIncidenciasIcons)
 				}
 			}else if(search=="cat" || search=="subCat"){
 					if(catIncidencias.type=="incidence"){
-						const formattedSubIncidentes = catIncidencias.data.map((nombre:string) => ({
-							id: nombre,
-							nombre,
-							icono: ""
-						}));
+						// const formattedSubIncidentes = catIncidencias.data.map((nombre:string) => ({
+						// 	id: nombre,
+						// 	nombre,
+						// 	icono: ""
+						// }));
 						setSearch("subCat")
 						if(categoria && !subCategoria){
-							setSubCatCategorias([])
+							// setSubCatCategorias([])
 						}
-						setCatSubIncidences(formattedSubIncidentes)
+						// setCatSubIncidences(formattedSubIncidentes)
 					} else if (catIncidencias.type=="sub_catalog"){
-						const subCatIncidenciasIcons = subCategoriasConIconos.filter((cat) =>
-							catIncidencias.data.includes(cat.nombre)
-						);
-						setSubCatCategorias(subCatIncidenciasIcons)
+						// const subCatIncidenciasIcons = subCategoriasConIconos.filter((cat) =>
+						// 	catIncidencias.data.includes(cat.nombre)
+						// );
+						// setSubCatCategorias(subCatIncidenciasIcons)
 					}
 			}
 		}
@@ -337,58 +339,58 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 
 	const handleOpenModal = async () =>{
 		setLoadingCatalogos(true)
-		const {catSubIncidenciasIcons, subCategories}= await LoadCategories()
-		if (catSubIncidenciasIcons.length>0) {
+		// const {catSubIncidenciasIcons, subCategories}= await LoadCategories()
+		// if (catSubIncidenciasIcons.length>0) {
 			//Si me regresa el mismo catalogo de categorias, entonces rellenamos directo el cat Incidencias
-			const subCatSubIncidenciasIcons = subCategoriasConIconos.filter((cat) =>
-				subCategories.response.data.data.includes(cat.nombre)
-			);
-			setCatSubIncidences(subCatSubIncidenciasIcons)
-		} else {
+			// const subCatSubIncidenciasIcons = subCategoriasConIconos.filter((cat) =>
+			// 	subCategories.response.data.data.includes(cat.nombre)
+			// );
+			// setCatSubIncidences(subCatSubIncidenciasIcons)
+		// } else {
 			//Si en caso de ser diferentes, reviso en las sub categorias, si existen las muestro y si no, muestro las lista de incidencias de esa sub categoria
-			const subCatIcons = subCategoriasConIconos.filter((cat) =>
-				subCategories.response.data.data.includes(cat.nombre)
-			);
-			if(subCatIcons.length > 0){
-				setSubCatCategorias(subCatIcons)
-			}
-			await LoadIncidences();
-		}
+			// const subCatIcons = subCategoriasConIconos.filter((cat) =>
+			// 	subCategories.response.data.data.includes(cat.nombre)
+			// );
+			// if(subCatIcons.length > 0){
+			// 	setSubCatCategorias(subCatIcons)
+			// }
+			// await LoadIncidences();
+		// }
 		setLoadingCatalogos(false)
 	}
 
-	const LoadCategories = async ()=>{
-		try{
-			const incidenciasRes = await getCatIncidencias("", "");
-			const catIncidenciasIcons = categoriasConIconos.filter((cat) =>
-				incidenciasRes.response.data.data.includes(cat.nombre)
-			);
-			setCatCategorias(catIncidenciasIcons);
-			const subCategories = await getCatIncidencias(data.categoria,"");
-			const catSubIncidenciasIcons = categoriasConIconos.filter((cat) =>
-				subCategories.response.data.data.includes(cat.nombre)
-			);
-			return { catSubIncidenciasIcons, subCategories }
-		}  catch {
-			toast.error("Error al cargar catálogo de categorias, intenta de nuevo.");
-			return { catSubIncidenciasIcons: [], subCategories: [] }
-		}
-	}
+	// const LoadCategories = async ()=>{
+	// 	try{
+	// 		// const incidenciasRes = await getCatIncidencias("", "");
+	// 		// const catIncidenciasIcons = categoriasConIconos.filter((cat) =>
+	// 		// 	incidenciasRes.response.data.data.includes(cat.nombre)
+	// 		// );
+	// 		// setCatCategorias(catIncidenciasIcons);
+	// 		const subCategories = await getCatIncidencias(data.categoria,"");
+	// 		const catSubIncidenciasIcons = categoriasConIconos.filter((cat) =>
+	// 			subCategories.response.data.data.includes(cat.nombre)
+	// 		);
+	// 		return { catSubIncidenciasIcons, subCategories }
+	// 	}  catch {
+	// 		toast.error("Error al cargar catálogo de categorias, intenta de nuevo.");
+	// 		return { catSubIncidenciasIcons: [], subCategories: [] }
+	// 	}
+	// }
 
-	const LoadIncidences = async ()=>{
-		try{
-			const subIncidentes = await getCatIncidencias(data.categoria,data.sub_categoria);
-			const formattedSubIncidentes = subIncidentes.response.data.data.map((nombre:string) => ({
-				id: nombre,
-				nombre,
-				icono: ""
-			  }));
-			setCatSubIncidences(formattedSubIncidentes)
-		}  catch {
-			toast.error("Error al cargar catálogo de incidencias, intenta de nuevo.");
-			setCatSubIncidences([])
-		}
-	}
+	// const LoadIncidences = async ()=>{
+	// 	try{
+	// 		// const subIncidentes = await getCatIncidencias(data.categoria,data.sub_categoria);
+	// 		// const formattedSubIncidentes = subIncidentes.response.data.data.map((nombre:string) => ({
+	// 		// 	id: nombre,
+	// 		// 	nombre,
+	// 		// 	icono: ""
+	// 		//   }));
+	// 		// setCatSubIncidences(formattedSubIncidentes)
+	// 	}  catch {
+	// 		toast.error("Error al cargar catálogo de incidencias, intenta de nuevo.");
+	// 		// setCatSubIncidences([])
+	// 	}
+	// }
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		let formattedDate=""
@@ -401,7 +403,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 					area_incidencia: values.area_incidencia||"",
 					incidencia: selectedIncidencia ||"",
 					comentario_incidencia: values.comentario_incidencia||"",
-					tipo_dano_incidencia: values.tipo_dano_incidencia||"",
+					// tipo_dano_incidencia: values.tipo_dano_incidencia||"",
 					dano_incidencia:values.dano_incidencia||"",
 					evidencia_incidencia:evidencia||[],
 					documento_incidencia:documento||[],
@@ -457,6 +459,11 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 		}
 	}
 
+	useEffect(()=>{
+		if(form.formState.errors){
+			console.log("ERROR", form.formState.errors)
+		}
+	},[form.formState.errors]);	
 
 	const handleEdit = (item: any, index: number) => {
 		setEditarSeguimiento(true)
@@ -534,7 +541,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 								<Form {...form} >
 									<form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-									<FormField
+									{/* <FormField
 										control={form.control}
 										name="categoria"
 										render={({ field }:any) => (
@@ -546,7 +553,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 													inputId="select-categorias"
   													name="categoria"
 													aria-labelledby="aria-label"
-													value={ formatForMultiselect([categoria]) }
+													value ={categoria ? formatForMultiselect([categoria]):[]}
 													options={catCategorias && catCategorias.length>0 ? formatToValueLabel( catCategorias):[]} 
 													onChange={(selectedOption) => {
 														field.onChange(selectedOption?.value ??"");
@@ -561,37 +568,13 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 													}}
 												/>
 												</FormControl>
-												
-												
-												{/* <FormControl>
-												<Select {...field} className="input"
-													onValueChange={(value:string) => {
-														field.onChange(value); 
-														setSearch("cat")
-														setCategoria(value)
-														setSubCategoria("")
-													}}
-													value={categoria} 
-													disabled={catCategorias.length==0}
-												>
-													<SelectTrigger className="w-full">
-													<SelectValue placeholder="Selecciona una opcion" />
-													</SelectTrigger>
-													<SelectContent>
-													{catCategorias?.map((cat:any) => (
-														<SelectItem key={cat.id} value={cat.nombre}>
-															{cat.nombre}
-														</SelectItem>
-													))}
-													</SelectContent>
-												</Select>
-													</FormControl> */}
+											
 												<FormMessage />
 											</FormItem>
 										)}
-									/>	
+									/>	 */}
 										<>
-											<FormField
+											{/* <FormField
 												control={form.control}
 												name="sub_categoria"
 												render={({ field }:any) => (
@@ -618,92 +601,48 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 															isDisabled={catSubCategorias.length==0}
 														/>
 														</FormControl>
-														
-														{/* <FormControl>
-														<Select {...field} className="input"
-															onValueChange={(value:string) => {
-															field.onChange(value); 
-															setSubCategoria(value)
-														}}
-														value={subCategoria} 
-														disabled={catSubCategorias.length==0}
-													>
-														<SelectTrigger className="w-full">
-															<SelectValue placeholder="Selecciona una opcion" />
-														</SelectTrigger>
-														<SelectContent>
-														{catSubCategorias?.map((cat:any) => (
-															<SelectItem key={cat.id} value={cat.nombre}>
-																{cat.nombre}
-															</SelectItem>
-														))}
-														</SelectContent>
-													</Select>
-														</FormControl> */}
 														<FormMessage />
 													</FormItem>
 												)}
-											/>	
+											/>	 */}
 										</>
-									{catSubIncidences.length > 0 ? (
+									{/* {catSubIncidences.length > 0 ? (
 										<>
 											<FormField
 											control={form.control}
 											name="incidente"
-											render={() => (
+											render={({field}:any) => (
 												<FormItem className="w-full">
 													<FormLabel>Incidente: *</FormLabel>
 													<FormControl>
 
-													{/* <Select
-														aria-labelledby="aria-label"
-														inputId="select-categorias"
-														name="incidente"
-														options={catSubIncidences && catSubIncidences.length>0 ?formatForMultiselect( catSubIncidences):[]}
-														onChange={(selectedOption:any) =>{
-															field.onChange(selectedOption ? selectedOption.value :"");
-															setSearch("subCat")
-															setSelectedIncidencia(selectedOption ? selectedOption.value :"")
-														}}
-														value={ formatValueLabel(catSubIncidences).find(opt => opt.value === selectedIncidencia) || ""} 
-														isDisabled={catSubIncidences.length==0}
-														isClearable
-														menuPortalTarget={document.body}
-														styles={{
-															menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
-														}}
-													/> */}
 
+													<Select
+															placeholder={"incidente"}
+															inputId="select-incidente"
+															name="incidente"
+															aria-labelledby="aria-label"
+															value={formatForMultiselect([selectedIncidencia])}
+															options={catSubIncidences && catSubIncidences.length>0 ? formatToValueLabel( catSubIncidences):[]} 
+															onChange={(selectedOption:any) => {
+																field.onChange(selectedOption ? selectedOption.value :""); 
+																setSearch("subCat")
+																setSelectedIncidencia(selectedOption ? selectedOption.value :"")
+															}}
+															isClearable
+															styles={{
+																menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
+																menu: (base) => ({...base, overflowY: "auto", }),
+															}}
+															isDisabled={catSubIncidences.length==0}
+														/>
 													</FormControl>
-												
-													{/* <FormControl>
-													<Select {...field} className="input"
-														onValueChange={(value:string) => {
-														field.onChange(value);
-														setSearch("subCat")
-														setSelectedIncidencia(value)
-													}}
-													value={selectedIncidencia} 
-													disabled={catSubIncidences.length==0}
-												>
-													<SelectTrigger className="w-full">
-														<SelectValue placeholder="Selecciona una opcion" />
-													</SelectTrigger>
-													<SelectContent>
-													{catSubIncidences?.map((cat:any) => (
-														<SelectItem key={cat.id} value={cat.nombre}>
-															{cat.nombre}
-														</SelectItem>
-													))}
-													</SelectContent>
-												</Select>
-													</FormControl> */}
 													<FormMessage />
 												</FormItem>
 											)}
 											/>	
 										</>
-									):null}
+									):null} */}
 
 										<FormField
 										control={form.control}
@@ -1057,10 +996,9 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 							</div>
 
 
-							<div >
-							
-								<table className="min-w-full table-auto mb-5 border">
-									<thead>
+							<div className="max-h-[600px] overflow-y-auto border">
+								<table className="min-w-full table-auto border-collapse">
+									<thead className="sticky top-0 bg-gray-100 z-10">
 									<tr className="bg-gray-100">
 										<th className="px-4 py-2 text-left border-b border-gray-300">Fecha y hora</th>
 										<th className="px-4 py-2 text-left border-b border-gray-300">Tiempo transcurrido</th>
@@ -1128,7 +1066,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 											) : ( <div className="text-center">-</div> )}
 										</td>
 
-										<td className="flex items-center justify-center gap-2 mt-4 pr-2">
+										<td className="flex items-center justify-center gap-2 mt-5 pr-2">
 											<div
 											title="Editar"
 											className="hover:cursor-pointer text-blue-500 hover:text-blue-600"

@@ -1166,6 +1166,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 										<thead>
 										<tr className="bg-gray-100">
 											<th className="px-4 py-2 text-left border-b border-gray-300">Tipo de Afectación</th>
+											<th className="px-4 py-2 text-left border-b border-gray-300">Descripción de la afectación</th>
 											<th className="px-4 py-2 text-left border-b border-gray-300">Monto Estimado de Daño ($)</th>
 											<th className="px-4 py-2 text-left border-b border-gray-300">Duración Estimada Afectación</th>
 											<th className="px-4 py-2 text-left border-b border-gray-300"></th>
@@ -1176,9 +1177,10 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 											afectacionPatrimonial.map((item: any, index: number) => (
 												<tr key={index} className="border-t border-gray-200">
 												<td className="px-4 py-2">{item?.tipo_afectacion || "N/A"}</td>
+												<td className="px-4 py-2 max-w-[200px] truncate" title={item?.descripcion || "N/A"}> {item?.descripcion || "N/A"} </td>
 												<td className="px-4 py-2 text-right">{formatCurrency(item?.monto_estimado) || "N/A"}</td>
 												<td className="px-4 py-2">{item?.duracion_estimada || "N/A"}</td>
-												<td className="flex items-center justify-center gap-2 mt-2">
+												<td className="flex items-center justify-center gap-2 mt-4">
 													<div
 													title="Editar"
 													className="hover:cursor-pointer text-blue-500 hover:text-blue-600"

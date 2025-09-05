@@ -1,10 +1,11 @@
-export const getPdfIncidencias = async (qr_code:string, template_id:number|null, account_id:number) => {
+export const getPdfIncidencias = async (qr_code:string, template_id:number|null, account_id:number, name_pdf?:string) => {
     const payload = {
       script_name: "pase_de_acceso_use_api.py",
       option: "get_pdf",
       qr_code:qr_code,
       template_id,
-      account_id
+      account_id,
+      name_pdf
     };
   
     const response = await fetch(`https://app.linkaform.com/api/infosync/scripts/run/`, {

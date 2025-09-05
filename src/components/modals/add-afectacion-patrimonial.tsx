@@ -78,6 +78,7 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
 
 	useEffect(() => {
         if (openAfectacionPatrimonialModal){
+            setInputValue("")
             reset({
                 tipo_afectacion:"",
                 descripcion:"",
@@ -87,7 +88,6 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
         }
 
 		if (editarAfectacionPatrimonial && afectacionPatrimonialSeleccionada) {
-            console.log("monto", afectacionPatrimonialSeleccionada)
             setInputValue(afectacionPatrimonialSeleccionada.monto_estimado)
 			reset({
                 tipo_afectacion:afectacionPatrimonialSeleccionada.tipo_afectacion,
@@ -180,9 +180,9 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
 								name="descripcion"
 								render={({ field }: any) => (
 									<FormItem>
-										<FormLabel>Descripcion de la afectación: *</FormLabel>
+										<FormLabel>Descripción de la afectación: *</FormLabel>
 										<FormControl>
-											<Textarea placeholder="Acciones Tomadas..." {...field}
+											<Textarea placeholder="Descripcion de la afectación..." {...field}
 												onChange={(e) => {
 													field.onChange(e);
 												}}
@@ -210,8 +210,9 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
                                                 setInputValue(numeric);
                                                 field.onChange(numeric);
                                                 if (debounceRef.current) clearTimeout(debounceRef.current);
+                                                
                                                 debounceRef.current = setTimeout(() => {
-                                                setInputValue(formatCurrencyString(numeric));
+                                                    setInputValue(formatCurrencyString(numeric));
                                                 }, 500);
                                             }}
                                             onBlur={field.onBlur}
@@ -233,7 +234,7 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
                                                     onChange={(e) => {
                                                         field.onChange(e);
                                                     }}
-                                                    value={field.value || ""}
+                                                    value={field.value}
                                                 />
                                             </FormControl>
                                             <FormMessage />
