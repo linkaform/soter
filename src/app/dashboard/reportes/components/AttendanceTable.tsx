@@ -29,6 +29,7 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
     timeframe = 'mes'
 }) => {
     const [selectedWeek, setSelectedWeek] = React.useState(0);
+    const [search, setSearch] = React.useState("");
 
     // Get days in month and start day of week
     const daysInMonth = React.useMemo(() => {
@@ -204,6 +205,31 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
         });
     }, [month, year, selectedWeek, timeframe, daysInMonth, getWeekDays]);
 
+    // Filtrado para empleados agrupados por ubicación
+    const filteredEmployeesByLocation = useMemo(() => {
+        if (!organizedData.groupEmployeesByLocation || !organizedData.employeesByLocation) return [];
+        if (!search) return organizedData.employeesByLocation;
+        return organizedData.employeesByLocation
+            .map(group => ({
+                ...group,
+                employees: group.employees.filter(emp =>
+                    emp.name.toLowerCase().includes(search.toLowerCase())
+                )
+            }))
+            .filter(group => group.employees.length > 0);
+    }, [organizedData, search]);
+
+    // Filtrado para empleados sin agrupación
+    const filteredData = useMemo(() => {
+        if (organizedData.groupedByLocation || organizedData.groupEmployeesByLocation) return [];
+        if (!search) return organizedData.data;
+        return organizedData.data
+            .filter((row): row is EmployeeAttendance => row.type === 'employee')
+            .filter(emp =>
+                emp.name.toLowerCase().includes(search.toLowerCase())
+            );
+    }, [organizedData, search]);
+
     return (
         <div className="w-full overflow-x-auto">
             {/* Navegación por semanas (solo para el modo de semana) */}
@@ -252,12 +278,30 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
                                     <div className="min-w-[120px]">Ubicación</div>
                                 </th>
                                 <th className="p-2 border-b-2 border-gray-300 text-left bg-white sticky left-[120px] z-10">
-                                    <div className="min-w-[180px]">Empleado</div>
+                                    <div className="min-w-[180px] flex flex-col gap-1">
+                                        <span>Empleado</span>
+                                        <input
+                                            type="text"
+                                            className="border rounded px-2 py-1 w-full text-sm"
+                                            placeholder="Buscar empleado..."
+                                            value={search}
+                                            onChange={e => setSearch(e.target.value)}
+                                        />
+                                    </div>
                                 </th>
                             </>
                         ) : (
                             <th className="p-2 border-b-2 border-gray-300 text-left bg-white sticky left-0 z-10">
-                                <div className="min-w-[180px]">Empleado</div>
+                                <div className="min-w-[180px] flex flex-col gap-1">
+                                    <span>Empleado</span>
+                                    <input
+                                        type="text"
+                                        className="border rounded px-2 py-1 w-full text-sm"
+                                        placeholder="Buscar empleado..."
+                                        value={search}
+                                        onChange={e => setSearch(e.target.value)}
+                                    />
+                                </div>
                             </th>
                         )}
 
@@ -288,7 +332,7 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
                 <tbody>
                     {/* Renderizado para empleados (modo employees) con agrupación por ubicación */}
                     {!organizedData.groupedByLocation && organizedData.groupEmployeesByLocation &&
-                        organizedData.employeesByLocation?.map((locationGroup, locationIndex) => {
+                        filteredEmployeesByLocation.map((locationGroup, locationIndex) => {
                             const isEvenLocation = locationIndex % 2 === 0;
                             const baseRowClass = isEvenLocation ? 'hover:bg-gray-50' : 'bg-gray-50 hover:bg-gray-100';
 
@@ -345,7 +389,7 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
 
                     {/* Renderizado para empleados (modo employees) sin agrupación */}
                     {!organizedData.groupedByLocation && !organizedData.groupEmployeesByLocation &&
-                        organizedData.data
+                        filteredData
                             .filter((row): row is EmployeeAttendance => row.type === 'employee')
                             .map((row, rowIndex) => (
                                 <tr key={row.id} className={rowIndex % 2 === 0 ? 'hover:bg-gray-50' : 'bg-gray-50 hover:bg-gray-100'}>
