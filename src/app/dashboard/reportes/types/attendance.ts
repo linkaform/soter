@@ -3,6 +3,7 @@ export type AttendanceStatus =
     | 'late'         // Retardo (⚠️ naranja)
     | 'absent'       // Falta (✗ rojo)
     | 'absentTimeOff'       // Falta (✗ rojo)
+    | 'dayOff'       // Falta (✗ rojo)
     | 'noRecord'     // Sin registro (⚪ gris)
     | 'halfDay'      // Medio día (otro ícono)
     | 'notApplicable'      // No aplicable (otro ícono)

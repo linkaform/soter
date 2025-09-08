@@ -359,6 +359,37 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
 
                                     {/* Celdas de asistencia */}
                                     {days.map((day) => {
+                                        // Determinar si este día es un día libre para el empleado
+                                        const employeeDiasLibres = (employee as any).dias_libres || [];
+                                        const dayNamesMap: Record<number, string> = {
+                                            0: "domingo",
+                                            1: "lunes",
+                                            2: "martes",
+                                            3: "miercoles",
+                                            4: "jueves",
+                                            5: "viernes",
+                                            6: "sabado"
+                                        };
+                                        const dateObj = new Date(year, month - 1, day.day);
+                                        const dayName = dayNamesMap[dateObj.getDay()];
+                                        const isDayOff = employeeDiasLibres.map((d: string) => d.toLowerCase()).includes(dayName);
+
+                                        // Si es día libre, mostrar el icono de dayOff
+                                        if (isDayOff) {
+                                            return (
+                                                <td
+                                                    key={`${employee.id}-${day.day}`}
+                                                    className={`border-b border-gray-200 text-center ${day.isWeekend ? 'bg-blue-50' : ''}`}
+                                                >
+                                                    <AttendanceCell
+                                                        status="dayOff"
+                                                        isWeekend={day.isWeekend}
+                                                    />
+                                                </td>
+                                            );
+                                        }
+
+                                        // Si no, mostrar el status normal
                                         const attendance = employee.attendance[day.day] || { status: 'noRecord', date: '' };
                                         return (
                                             <td
@@ -400,6 +431,35 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
 
                                     {/* Attendance cells */}
                                     {days.map((day) => {
+                                        // Lógica para días libres
+                                        const employeeDiasLibres = (row as any).dias_libres || [];
+                                        const dayNamesMap: Record<number, string> = {
+                                            0: "domingo",
+                                            1: "lunes",
+                                            2: "martes",
+                                            3: "miercoles",
+                                            4: "jueves",
+                                            5: "viernes",
+                                            6: "sabado"
+                                        };
+                                        const dateObj = new Date(year, month - 1, day.day);
+                                        const dayName = dayNamesMap[dateObj.getDay()];
+                                        const isDayOff = employeeDiasLibres.map((d: string) => d.toLowerCase()).includes(dayName);
+
+                                        if (isDayOff) {
+                                            return (
+                                                <td
+                                                    key={`${row.id}-${day.day}`}
+                                                    className={`border-b border-gray-200 text-center ${day.isWeekend ? 'bg-blue-50' : ''}`}
+                                                >
+                                                    <AttendanceCell
+                                                        status="dayOff"
+                                                        isWeekend={day.isWeekend}
+                                                    />
+                                                </td>
+                                            );
+                                        }
+
                                         const attendance = row.attendance[day.day] || { status: 'noRecord', date: '' };
                                         return (
                                             <td
@@ -530,8 +590,9 @@ const transformNewDataFormat = (data: any, month: number, year: number, grouping
                     totalPresent: employee.summary.present || 0,
                     totalLate: employee.summary.late || 0,
                     totalAbsent: employee.summary.absent || 0
-                }
-            } as EmployeeAttendance;
+                },
+                dias_libres: employee.dias_libres || []
+            } as EmployeeAttendance & { dias_libres?: string[] };
         });
     }
 
