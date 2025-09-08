@@ -1,4 +1,4 @@
-export const descargarPdfPase = async (url_pase:string) => {
+export const descargarPdfPase = async (url_pase:string, title?:string ) => {
     await fetch(url_pase)
         .then(response => {
             if (!response.ok) {
@@ -10,7 +10,7 @@ export const descargarPdfPase = async (url_pase:string) => {
             const url = URL.createObjectURL(blob); 
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'PASE_DE_ENTRADA.pdf'; 
+            a.download = title ?? "Pase_de_entrada.pdf"; 
             document.body.appendChild(a);
             a.click(); 
 
@@ -21,3 +21,4 @@ export const descargarPdfPase = async (url_pase:string) => {
             console.error('Error al descargar el PDF:', error);
         });
 }
+

@@ -37,9 +37,12 @@ export const ViewFalla: React.FC<ViewFallaModalProps> = ({
   isSuccess,
   setModalEditarAbierto,
 }) => {
-  	const seguimientos = data.falla_grupo_seguimiento_formated || []
+  	// const seguimientos = data.falla_grupo_seguimiento_formated || []
 	//const [fallaSeleccionada, setFallaSeleccionada] = useState(data)
-  	const [openModal, setOpenModal] = useState(false)
+  	const [openModal, setOpenModal] = useState(false);
+	const [editarSeguimiento, setEditarSeguimiento] = useState(false);
+	const [seguimientos, setSeguimientos] = useState<any>(data.falla_grupo_seguimiento_formated )
+
   return (
     <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
       <DialogTrigger asChild>{children}</DialogTrigger>
@@ -176,11 +179,19 @@ export const ViewFalla: React.FC<ViewFallaModalProps> = ({
 				</div>
 			</div>
 			<SeguimientoFallaModal
-					title="Seguimiento Falla"
-					data={data} 
-					isSuccess={openModal}
-					setIsSuccess={setOpenModal}
-					>
+				title="Seguimiento Falla"
+				isSuccess={openModal}
+				setIsSuccess={setOpenModal}
+				setSeguimientos={setSeguimientos}
+				indice={0}
+				editarSeguimiento={editarSeguimiento}
+				setEditarSeguimiento={setEditarSeguimiento}
+				seguimientoSeleccionado={null}
+				dateIncidencia={""}
+				enviarSeguimiento={true}
+				folioIncidencia={data.folio}
+				>
+				<div></div>
 			</SeguimientoFallaModal>
 			{seguimientos.length > 0 ? (
 			<div className="">

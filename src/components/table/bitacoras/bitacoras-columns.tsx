@@ -107,17 +107,17 @@ const OptionsCell: React.FC<{ row: any , onReturnGafete: (bitacora: Bitacora_rec
 					</div>
 			</ViewListBitacoraModal>
 			
-			{ bitacora.status_visita.toLowerCase() !="salida" &&
+			{ bitacora.status_visita?.toLowerCase() !="salida" &&
 			<VehicleLocalPassModal title={"Agregar vehículo"} vehicles={vehiculos} setVehiculos={setVehiculos} isAccesos={false} id={bitacora._id} fetch={true}>
 				<div className="cursor-pointer" title="Agregar vehículo"><Car/></div>
 			</VehicleLocalPassModal>}
 
-			{ bitacora.status_visita.toLowerCase() !="salida" &&	
+			{ bitacora.status_visita?.toLowerCase() !="salida" &&	
 			<EqipmentLocalPassModal title="Agregar equipo" id={bitacora._id} equipos={equipos} setEquipos={setEquipos} isAccesos={false}> 
 				<div className="cursor-pointer" title="Agregar equipo"><Hammer/></div>
 			</EqipmentLocalPassModal>} 
 					
-			{ bitacora?.status_visita.toLowerCase() =="entrada" && bitacora?.status_gafete.toLowerCase()=="asignado" ? (
+			{ bitacora?.status_visita?.toLowerCase() =="entrada" && bitacora?.status_gafete?.toLowerCase()=="asignado" ? (
 				<div
 				className="cursor-pointer"
 				title="Regresar gafete"
@@ -269,7 +269,7 @@ export const getBitacorasColumns = (onReturnGafete: (bitacora: Bitacora_record) 
 		accessorKey: "id_gafet",
 		header: "Gafete",
 		cell: ({ row }) => {
-			const statusGafete = row.original?.status_gafete !== "" ? row.original?.status_gafete.toLowerCase() : "";
+			const statusGafete = row.original?.status_gafete !== "" ? row.original?.status_gafete?.toLowerCase() : "";
 			const isEntregado = statusGafete === "entregado";
 			const isAsignado = statusGafete === "asignado";
 			const textColorClass = isEntregado ? "text-red-500" : isAsignado ? "text-green-500" : "";
@@ -285,7 +285,7 @@ export const getBitacorasColumns = (onReturnGafete: (bitacora: Bitacora_record) 
 		accessorKey: "id_locker",
 		header: "Locker",
 		cell: ({ row }) => {
-			const statusLocker = row.original?.status_gafete !== "" ? row.original?.status_gafete.toLowerCase() : "";
+			const statusLocker = row.original?.status_gafete !== "" ? row.original?.status_gafete?.toLowerCase() : "";
 			const isLockerEntregado = statusLocker === "entregado";
 			const isLockerAsignado = statusLocker === "asignado";
 			const lockerColorClass = isLockerEntregado ? "text-red-500" : isLockerAsignado ? "text-green-500" : "";

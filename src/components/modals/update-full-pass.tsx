@@ -884,18 +884,18 @@ return (
 										"Domingo"
 									].map((dia) => {
 										return (
-											<FormItem key={dia.toLowerCase()} className="flex items-center space-x-3">
+											<FormItem key={dia?.toLowerCase()} className="flex items-center space-x-3">
 												<FormControl>
 													<Button
 														type="button"
-														onClick={() => toggleDia(dia.toLocaleLowerCase())}
+														onClick={() => toggleDia(dia?.toLocaleLowerCase())}
 														className={`m-2 px-4 py-2 rounded-md transition-all duration-300 
-														${config_dias_acceso.includes(dia.toLowerCase()) ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-white"}
+														${config_dias_acceso.includes(dia?.toLowerCase()) ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-white"}
 														hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
 													>
 
 														<div className="flex flex-wrap">
-															{config_dias_acceso.includes(dia.toLowerCase()) ? (
+															{config_dias_acceso.includes(dia?.toLowerCase()) ? (
 																<><div className="">{dia}</div></>
 															) : (
 																<><div className="text-blue-600">{dia}</div></>

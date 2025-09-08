@@ -110,7 +110,7 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
 // },[responseSendSMS])
 
 function onEnviarCorreo(){
-  if(data?.status_pase.toLowerCase()=='activo'){
+  if(data?.status_pase?.toLowerCase()=='activo'){
       if(data?.email!==""){
         const data_for_msj = {
             email_to: data.email,
@@ -133,7 +133,7 @@ function onEnviarCorreo(){
 }
 
 function onEnviarSMS(){
-  if(data?.status_pase.toLowerCase()=='activo'){
+  if(data?.status_pase?.toLowerCase()=='activo'){
     if(data?.telefono!==""){
       const data_for_msj = {
         email_to: data.email,

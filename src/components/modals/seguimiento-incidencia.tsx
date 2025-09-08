@@ -78,8 +78,8 @@ export const SeguimientoIncidenciaModal: React.FC<IncidenciaModalProps> = ({
 	const { isLoading, setLoading } = useShiftStore();
 
 	const seguimientoIncidenciaMutation = useMutation({
-		mutationFn: async ({ incidencia_grupo_seguimiento, folio }: { incidencia_grupo_seguimiento: any, folio: string }) => {
-			const response = await crearSeguimientoIncidencia(incidencia_grupo_seguimiento, folio);
+		mutationFn: async ({ seguimientos_incidencia, folio }: { seguimientos_incidencia: any, folio: string }) => {
+			const response = await crearSeguimientoIncidencia(seguimientos_incidencia, folio);
 			const hasError = response.response.data.status_code
 
 			if (hasError == 400 || hasError == 401) {
@@ -143,7 +143,7 @@ export const SeguimientoIncidenciaModal: React.FC<IncidenciaModalProps> = ({
 				incidencia_documento_solucion: documento,
 				incidencia_evidencia_solucion: evidencia
 			}
-			seguimientoIncidenciaMutation.mutate({ incidencia_grupo_seguimiento: formatData, folio: folio });
+			seguimientoIncidenciaMutation.mutate({ seguimientos_incidencia: formatData, folio: folio });
 		} else {
 			form.setError("fechaInicioIncidenciaCompleta", { type: "manual", message: "Fecha es un campo requerido." });
 		}

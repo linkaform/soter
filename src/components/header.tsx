@@ -137,6 +137,22 @@ export const Header = () => {
                       </>
                       ) : null
                     }
+
+                    { labels.includes("reportes")? (
+                      <>
+                          <Link href="/dashboard/reportes">
+                          <Button
+                            className={`${currentPath === "/dashboard/reportes"
+                                ? "bg-button-primary hover:text-white hover:bg-button-primary text-white"
+                                : "hover:text-white hover:bg-button-primary"}`}
+                            variant="ghost"
+                          >
+                            Reportes
+                          </Button>
+                        </Link>
+                      </>
+                      ) : null
+                    }
     
                     { labels.includes("rondines")? (
                       <>

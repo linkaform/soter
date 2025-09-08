@@ -14,7 +14,8 @@ export function capitalizeFirstLetter(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
 };
 
-export function capitalizeOnlyFirstLetter(text:string) {
+export function capitalizeOnlyFirstLetter(text: string | null | undefined) {
+  if (!text) return "";
   return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
 }
 
@@ -67,15 +68,17 @@ export function fileToBase64(file:File):Promise<string | null>{
   });
 }
 
-export function quitarAcentosYMinusculasYEspacios(str: string) {
-  const noAcentos = str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  const lower = noAcentos.toLowerCase();
-  const sinEspacios = lower.replace(/\s+/g, '_');
-  return sinEspacios;
-}
+export function quitarAcentosYMinusculasYEspacios(str: string | null | undefined) {
+	if (!str) return ""; 
+	const noAcentos = str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+	const lower = noAcentos.toLowerCase();
+	const sinEspacios = lower.replace(/\s+/g, '_');
+	return sinEspacios;
+  }
 
-export function reemplazarGuionMinuscula(str:string) {
-  return str.replace(/_/g, ' ').toLowerCase();
+export function reemplazarGuionMinuscula(str: string | null | undefined) {
+	if (!str) return ""; 
+	return str.replace(/_/g, ' ').toLowerCase();
 }
 
 export const formatDateToString = (date: Date): string => {
@@ -88,8 +91,10 @@ export const formatDateToString = (date: Date): string => {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 };
 
-export function capitalizeOnlyFirstLetterDelete_(text: string) {
+export function capitalizeOnlyFirstLetterDelete_(text: string | null | undefined) {
+  if (!text) return ""; 
   const textWithSpaces = text.replace(/_/g, ' ');
+  if (textWithSpaces.length === 0) return ""; 
   return textWithSpaces.charAt(0).toUpperCase() + textWithSpaces.slice(1).toLowerCase();
 }
 
@@ -183,7 +188,9 @@ export function errorMsj(data:any, title = "Error", type="warning"){
         errores.push(data.json.error);
       }else{
         for(const err in data.json){
+            console.log("Que pasa", data.json[err], err)
              if(data.json[err].hasOwnProperty('label')){
+                
                 errores.push(data.json[err].label+': '+data.json[err].msg[0]+" ")
             }else {
                  const subData = data.json[err];
@@ -510,4 +517,20 @@ export function formatCurrencyString(value: string) {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
+}
+
+export function formatForMultiselect(array?: string[]) {
+  if (!array) return [];
+  return array.map(item => ({ value: item, label: item }));
+}
+
+export function formatForSelectString(value: string) {
+  return { value: value , label:value};
+}	
+
+export function formatToValueLabel (array:any[]) {
+  return array.map((val: any) => ({
+    value: val.nombre, 
+    label: val.nombre
+  }));
 }

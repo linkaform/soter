@@ -176,7 +176,7 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
                     {showArray && imgArray.length<limit ?(
                         <>
                         <Input 
-                        className="mt-2"
+                        className="mt-1"
                         type="file" 
                         accept="image/*"
                         onChange={handleFileChange}

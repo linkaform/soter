@@ -25,8 +25,8 @@ export function ScanBarcodeModal({
             setCameras(devices);
             const backCam = devices.find(
                 (d) =>
-                    d.label.toLowerCase().includes("back") ||
-                    d.label.toLowerCase().includes("rear")
+                    d?.label?.toLowerCase().includes("back") ||
+                    d?.label?.toLowerCase().includes("rear")
             );
             setSelectedCamera(backCam ? backCam.id : devices[0]?.id || null);
         });

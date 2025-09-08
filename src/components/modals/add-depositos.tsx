@@ -121,7 +121,7 @@ export const DepositosModal: React.FC<IncidenciaModalProps> = ({
 		<Dialog onOpenChange={setIsSuccess} open={isSuccess}>
 			<DialogTrigger>{children}</DialogTrigger>
 
-			<DialogContent className="max-w-lg overflow-y-auto flex flex-col overflow-hidden" aria-describedby="">
+			<DialogContent className="max-w-lg overflow-y-auto flex flex-col overflow-hidden" aria-describedby="" onInteractOutside={(e) => e.preventDefault()} >
 				<DialogHeader>
 					<DialogTitle className="text-2xl text-center font-bold">
 						{title}

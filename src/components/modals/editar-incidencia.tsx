@@ -20,9 +20,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Textarea } from "../ui/textarea";
-import SelectReact from 'react-select'
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { Select ,SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+// import { Select ,SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import LoadImage from "../upload-Image";
 import { Imagen } from "@/lib/update-pass";
 import { useCatalogoAreaEmpleado } from "@/hooks/useCatalogoAreaEmpleado";
@@ -30,14 +29,14 @@ import { format } from 'date-fns';
 import DateTime from "../dateTime";
 import LoadFile from "../upload-file";
 import { CircleAlert, Edit, Loader2, Trash2 } from "lucide-react";
-import { AccionesTomadas, AfectacionPatrimonial, Depositos, getCatIncidencias, PersonasInvolucradas } from "@/lib/incidencias";
+import { AccionesTomadas, AfectacionPatrimonial, Depositos, PersonasInvolucradas } from "@/lib/incidencias";
 import { useShiftStore } from "@/store/useShiftStore";
 import { useInciencias } from "@/hooks/Incidencias/useIncidencias";
 import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
 import { PersonaExtraviadaFields } from "./persona-extraviada";
 import { RoboDeCableado } from "./robo-de-cableado";
 import { RoboDeVehiculo } from "./robo-de-vehiculo";
-import { categoriasConIconos, subCategoriasConIconos } from "./add-incidencia";
+import { categoriasConIconos } from "./add-incidencia";
 import { useCatalogoInciencias } from "@/hooks/useCatalogoIncidencias";
 import { Slider } from "../slider";
 import { Switch } from "@/components/ui/switch"
@@ -51,8 +50,9 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import Image from "next/image";
 import { SeguimientoIncidenciaLista } from "./add-seguimientos";
 import { AfectacionPatrimonialModal } from "./add-afectacion-patrimonial";
-import { convertirDateToISO, formatCurrency } from "@/lib/utils";
+import { convertirDateToISO, formatCurrency, formatForMultiselect } from "@/lib/utils";
 import { SeccionDepositos } from "../depositos-section";
+import Select from 'react-select';
 
 interface EditarIncidenciaModalProps {
   	title: string;
@@ -90,7 +90,7 @@ const formSchema = z.object({
 	notificacion_incidencia: z.string().min(1, { message: "Este campo es requerido" }),
 	prioridad_incidencia: z.string().min(1, { message: "Este campo es requerido" }),
 	dano_incidencia: z.string().optional(),
-	tipo_dano_incidencia: z.string().optional(),
+	// tipo_dano_incidencia: z.string().optional(),
 	comentario_incidencia: z.string().min(1, { message: "Este campo es requerido" }),
 	incidencia: z.string().min(1, { message: "La ubicación es obligatoria" }),
 	tags: z.array(z.string()).optional(),
@@ -143,23 +143,23 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 	const [documento , setDocumento] = useState<Imagen[]>([]);
 	const [date, setDate] = useState<Date|"">("");
 	const [ubicacionSeleccionada, setUbicacionSeleccionada ] = useState(data.ubicacion_incidencia);
-	const { dataAreas:areas, dataLocations:ubicaciones,isLoadingAreas:loadingAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, modalEditarAbierto,  location?true:false);
+	const { dataAreas:areas, dataLocations:ubicaciones,} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, modalEditarAbierto,  location?true:false);
 	// const { dataAreas:areas} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true,  ubicacionSeleccionada?true:false);
 
 	const [personasInvolucradas, setPersonasInvolucradas] = useState<PersonasInvolucradas[]>(data.personas_involucradas_incidencia)
 	const [accionesTomadas, setAccionesTomadas] = useState<AccionesTomadas[]>(data.acciones_tomadas_incidencia)
 	const [depositos, setDepositos] = useState<Depositos[]>([])
-	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado } = useCatalogoAreaEmpleado(modalEditarAbierto, location, "Incidencias" );
+	const { data:dataAreaEmpleado} = useCatalogoAreaEmpleado(modalEditarAbierto, location, "Incidencias" );
 	const { editarIncidenciaMutation} = useInciencias("", "",[], "", "", "");
 	const [openModal, setOpenModal] = useState(false)
 
 	const [search, setSearch]= useState("")
-	const [catSubCategorias, setSubCatCategorias] = useState<any>([])
-	const [catSubIncidences, setCatSubIncidences] = useState<any>([])
+	// const [catSubCategorias, setSubCatCategorias] = useState<any>([])
+	// const [catSubIncidences, setCatSubIncidences] = useState<any>([])
 	const [subCategoria, setSubCategoria]= useState("")
 	const [categoria, setCategoria]= useState(data.categoria)
 	const [selectedIncidencia, setSelectedIncidencia]= useState("")
-	const [catCategorias, setCatCategorias] = useState<any[]>([])
+	// const [catCategorias, setCatCategorias] = useState<any[]>([])
 	const [loadingCatalogos, setLoadingCatalogos]= useState(false)
 
 	const { catIncidencias } = useCatalogoInciencias(modalEditarAbierto, categoria, subCategoria);
@@ -176,6 +176,8 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 	const [openAfectacionPatrimonialModal,setOpenAfectacionPatrimonialModal] = useState(false)
 	const [editarAfectacionPatrimonial, setEditarAfectacionPatrimonial] = useState(false)
 
+	console.log("informacion", data)
+
 	const getNivelNumber = (val:string) => {
 		if (val =="Critica") return 100
 		if (val =="Moderada") return 50
@@ -184,14 +186,6 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 
 	const [value, setValue] = useState<number[]>([getNivelNumber(data.prioridad_incidencia) ?? 0]);
 	const [inputTag, setInputTag] = useState('');
-
-	const formatValueLabel = (array:any[])=>{
-		return array.map((val: any) => ({
-			value: val.nombre, 
-			label: val.nombre
-		}));
-	}
-
 
 	const getNivel = (val: number) => {
 		if (val < 35) return "Leve"
@@ -213,7 +207,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 			area_incidencia:  data.area_incidencia||"",
 			incidencia: data.incidencia||"",
 			comentario_incidencia: data.comentario_incidencia||"",
-			tipo_dano_incidencia: data.tipo_dano_incidencia ||"",
+			// tipo_dano_incidencia: data.tipo_dano_incidencia ||"",
 			dano_incidencia: data.dano_incidencia||"",
 			evidencia_incidencia: evidencia,
 			documento_incidencia:documento,
@@ -272,12 +266,12 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 		setSubCategoria("")
 		setCategoria("")
 		setSelectedIncidencia("")
-		const catIncidenciasIcons = categoriasConIconos?.filter((cat) =>
-			catIncidencias?.includes(cat.nombre)
-			);
-		setCatCategorias(catIncidenciasIcons)
-		setCatSubIncidences([])
-		setSubCatCategorias([])
+		// const catIncidenciasIcons = categoriasConIconos?.filter((cat) =>
+		// 	catIncidencias?.includes(cat.nombre)
+		// 	);
+		// setCatCategorias(catIncidenciasIcons)
+		// setCatSubIncidences([])
+		// setSubCatCategorias([])
 		setDepositos([])
 
 		setEditarSeguimiento(false)
@@ -302,25 +296,26 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 					catIncidencias.data.includes(cat.nombre)
 					);
 				if(catIncidenciasIcons.length>0){
-					setCatCategorias(catIncidenciasIcons)
+					console.log("catIncidenciasIcons",catIncidenciasIcons)
+					// setCatCategorias(catIncidenciasIcons)
 				}
 			}else if(search=="cat" || search=="subCat"){
 					if(catIncidencias.type=="incidence"){
-						const formattedSubIncidentes = catIncidencias.data.map((nombre:string) => ({
-							id: nombre,
-							nombre,
-							icono: ""
-						}));
+						// const formattedSubIncidentes = catIncidencias.data.map((nombre:string) => ({
+						// 	id: nombre,
+						// 	nombre,
+						// 	icono: ""
+						// }));
 						setSearch("subCat")
 						if(categoria && !subCategoria){
-							setSubCatCategorias([])
+							// setSubCatCategorias([])
 						}
-						setCatSubIncidences(formattedSubIncidentes)
+						// setCatSubIncidences(formattedSubIncidentes)
 					} else if (catIncidencias.type=="sub_catalog"){
-						const subCatIncidenciasIcons = subCategoriasConIconos.filter((cat) =>
-							catIncidencias.data.includes(cat.nombre)
-						);
-						setSubCatCategorias(subCatIncidenciasIcons)
+						// const subCatIncidenciasIcons = subCategoriasConIconos.filter((cat) =>
+						// 	catIncidencias.data.includes(cat.nombre)
+						// );
+						// setSubCatCategorias(subCatIncidenciasIcons)
 					}
 			}
 		}
@@ -332,6 +327,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 			setEvidencia(data.evidencia_incidencia)
 			setDocumento(data.evidencia_incidencia)
 			setDate(new Date(data.fecha_hora_incidencia))
+			console.log("data.categoria", data.categoria)
 			setCategoria(data.categoria)
 			setSubCategoria(data.sub_categoria)
 			setSelectedIncidencia(data.incidente)
@@ -343,58 +339,58 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 
 	const handleOpenModal = async () =>{
 		setLoadingCatalogos(true)
-		const {catSubIncidenciasIcons, subCategories}= await LoadCategories()
-		if (catSubIncidenciasIcons.length>0) {
+		// const {catSubIncidenciasIcons, subCategories}= await LoadCategories()
+		// if (catSubIncidenciasIcons.length>0) {
 			//Si me regresa el mismo catalogo de categorias, entonces rellenamos directo el cat Incidencias
-			const subCatSubIncidenciasIcons = subCategoriasConIconos.filter((cat) =>
-				subCategories.response.data.data.includes(cat.nombre)
-			);
-			setCatSubIncidences(subCatSubIncidenciasIcons)
-		} else {
+			// const subCatSubIncidenciasIcons = subCategoriasConIconos.filter((cat) =>
+			// 	subCategories.response.data.data.includes(cat.nombre)
+			// );
+			// setCatSubIncidences(subCatSubIncidenciasIcons)
+		// } else {
 			//Si en caso de ser diferentes, reviso en las sub categorias, si existen las muestro y si no, muestro las lista de incidencias de esa sub categoria
-			const subCatIcons = subCategoriasConIconos.filter((cat) =>
-				subCategories.response.data.data.includes(cat.nombre)
-			);
-			if(subCatIcons.length > 0){
-				setSubCatCategorias(subCatIcons)
-			}
-			await LoadIncidences();
-		}
+			// const subCatIcons = subCategoriasConIconos.filter((cat) =>
+			// 	subCategories.response.data.data.includes(cat.nombre)
+			// );
+			// if(subCatIcons.length > 0){
+			// 	setSubCatCategorias(subCatIcons)
+			// }
+			// await LoadIncidences();
+		// }
 		setLoadingCatalogos(false)
 	}
 
-	const LoadCategories = async ()=>{
-		try{
-			const incidenciasRes = await getCatIncidencias("", "");
-			const catIncidenciasIcons = categoriasConIconos.filter((cat) =>
-				incidenciasRes.response.data.data.includes(cat.nombre)
-			);
-			setCatCategorias(catIncidenciasIcons);
-			const subCategories = await getCatIncidencias(data.categoria,"");
-			const catSubIncidenciasIcons = categoriasConIconos.filter((cat) =>
-				subCategories.response.data.data.includes(cat.nombre)
-			);
-			return { catSubIncidenciasIcons, subCategories }
-		}  catch {
-			toast.error("Error al cargar catálogo de categorias, intenta de nuevo.");
-			return { catSubIncidenciasIcons: [], subCategories: [] }
-		}
-	}
+	// const LoadCategories = async ()=>{
+	// 	try{
+	// 		// const incidenciasRes = await getCatIncidencias("", "");
+	// 		// const catIncidenciasIcons = categoriasConIconos.filter((cat) =>
+	// 		// 	incidenciasRes.response.data.data.includes(cat.nombre)
+	// 		// );
+	// 		// setCatCategorias(catIncidenciasIcons);
+	// 		const subCategories = await getCatIncidencias(data.categoria,"");
+	// 		const catSubIncidenciasIcons = categoriasConIconos.filter((cat) =>
+	// 			subCategories.response.data.data.includes(cat.nombre)
+	// 		);
+	// 		return { catSubIncidenciasIcons, subCategories }
+	// 	}  catch {
+	// 		toast.error("Error al cargar catálogo de categorias, intenta de nuevo.");
+	// 		return { catSubIncidenciasIcons: [], subCategories: [] }
+	// 	}
+	// }
 
-	const LoadIncidences = async ()=>{
-		try{
-			const subIncidentes = await getCatIncidencias(data.categoria,data.sub_categoria);
-			const formattedSubIncidentes = subIncidentes.response.data.data.map((nombre:string) => ({
-				id: nombre,
-				nombre,
-				icono: ""
-			  }));
-			setCatSubIncidences(formattedSubIncidentes)
-		}  catch {
-			toast.error("Error al cargar catálogo de incidencias, intenta de nuevo.");
-			setCatSubIncidences([])
-		}
-	}
+	// const LoadIncidences = async ()=>{
+	// 	try{
+	// 		// const subIncidentes = await getCatIncidencias(data.categoria,data.sub_categoria);
+	// 		// const formattedSubIncidentes = subIncidentes.response.data.data.map((nombre:string) => ({
+	// 		// 	id: nombre,
+	// 		// 	nombre,
+	// 		// 	icono: ""
+	// 		//   }));
+	// 		// setCatSubIncidences(formattedSubIncidentes)
+	// 	}  catch {
+	// 		toast.error("Error al cargar catálogo de incidencias, intenta de nuevo.");
+	// 		// setCatSubIncidences([])
+	// 	}
+	// }
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		let formattedDate=""
@@ -407,7 +403,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 					area_incidencia: values.area_incidencia||"",
 					incidencia: selectedIncidencia ||"",
 					comentario_incidencia: values.comentario_incidencia||"",
-					tipo_dano_incidencia: values.tipo_dano_incidencia||"",
+					// tipo_dano_incidencia: values.tipo_dano_incidencia||"",
 					dano_incidencia:values.dano_incidencia||"",
 					evidencia_incidencia:evidencia||[],
 					documento_incidencia:documento||[],
@@ -463,6 +459,11 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 		}
 	}
 
+	useEffect(()=>{
+		if(form.formState.errors){
+			console.log("ERROR", form.formState.errors)
+		}
+	},[form.formState.errors]);	
 
 	const handleEdit = (item: any, index: number) => {
 		setEditarSeguimiento(true)
@@ -540,159 +541,108 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 								<Form {...form} >
 									<form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-2 gap-5">
 
-									<FormField
+									{/* <FormField
 										control={form.control}
 										name="categoria"
 										render={({ field }:any) => (
 											<FormItem className="w-full">
-												<FormLabel>Categoria: * </FormLabel>
-												<FormControl>
-												<SelectReact
+												<FormLabel>Categoría: * </FormLabel>
+												 <FormControl>
+												 <Select
+												 	placeholder={"Categoría"}
 													inputId="select-categorias"
   													name="categoria"
 													aria-labelledby="aria-label"
-													// inputId="aria-example-input"
-													// name="aria-live-color"
-													options={formatValueLabel(catCategorias)}
-													onChange={(value:any) =>{
-														field.onChange(value.value); 
+													value ={categoria ? formatForMultiselect([categoria]):[]}
+													options={catCategorias && catCategorias.length>0 ? formatToValueLabel( catCategorias):[]} 
+													onChange={(selectedOption) => {
+														field.onChange(selectedOption?.value ??"");
 														setSearch("cat")
-														setCategoria(value.value)
+														setCategoria(selectedOption?.value ??"")
 														setSubCategoria("")
 													}}
-													value={formatValueLabel(catCategorias).find(opt => opt.value === categoria) || null} 
-													isDisabled={catCategorias.length==0}
+													isClearable
+													styles={{
+													  menuPortal: (base) => ({...base, zIndex: 9999, pointerEvents: "auto" }),
+													  menu: (base) => ({...base, overflowY: "auto"}),
+													}}
 												/>
 												</FormControl>
-												
-												
-												{/* <FormControl>
-												<Select {...field} className="input"
-													onValueChange={(value:string) => {
-														field.onChange(value); 
-														setSearch("cat")
-														setCategoria(value)
-														setSubCategoria("")
-													}}
-													value={categoria} 
-													disabled={catCategorias.length==0}
-												>
-													<SelectTrigger className="w-full">
-													<SelectValue placeholder="Selecciona una opcion" />
-													</SelectTrigger>
-													<SelectContent>
-													{catCategorias?.map((cat:any) => (
-														<SelectItem key={cat.id} value={cat.nombre}>
-															{cat.nombre}
-														</SelectItem>
-													))}
-													</SelectContent>
-												</Select>
-													</FormControl> */}
+											
 												<FormMessage />
 											</FormItem>
 										)}
-									/>	
+									/>	 */}
 										<>
-											<FormField
+											{/* <FormField
 												control={form.control}
 												name="sub_categoria"
 												render={({ field }:any) => (
 													<FormItem className="w-full">
 														<FormLabel>Sub categoria: *</FormLabel>
 														<FormControl>
-														<SelectReact
-															aria-labelledby="aria-label"
+
+														<Select
+															placeholder={"Categoría"}
 															inputId="select-categorias"
-  															name="categoria"
-															options={formatValueLabel(catSubCategorias)}
-															onChange={(value:any) =>{
-																field.onChange(value.value); 
-																setSubCategoria(value.value)
+															name="sub_categoria"
+															aria-labelledby="aria-label"
+															value={formatForMultiselect([subCategoria])}
+															options={catSubCategorias && catSubCategorias.length>0 ? formatToValueLabel( catSubCategorias):[]} 
+															onChange={(selectedOption:any) => {
+																field.onChange(selectedOption ? selectedOption.value :""); 
+																setSubCategoria(selectedOption ? selectedOption.value :"");
 															}}
-															value={formatValueLabel(catSubCategorias).find(opt => opt.value === subCategoria) || null} 
+															isClearable
+															styles={{
+																menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
+																menu: (base) => ({...base, overflowY: "auto", }),
+															}}
 															isDisabled={catSubCategorias.length==0}
 														/>
 														</FormControl>
-														
-														{/* <FormControl>
-														<Select {...field} className="input"
-															onValueChange={(value:string) => {
-															field.onChange(value); 
-															setSubCategoria(value)
-														}}
-														value={subCategoria} 
-														disabled={catSubCategorias.length==0}
-													>
-														<SelectTrigger className="w-full">
-															<SelectValue placeholder="Selecciona una opcion" />
-														</SelectTrigger>
-														<SelectContent>
-														{catSubCategorias?.map((cat:any) => (
-															<SelectItem key={cat.id} value={cat.nombre}>
-																{cat.nombre}
-															</SelectItem>
-														))}
-														</SelectContent>
-													</Select>
-														</FormControl> */}
 														<FormMessage />
 													</FormItem>
 												)}
-											/>	
+											/>	 */}
 										</>
-									{catSubIncidences.length > 0 ? (
+									{/* {catSubIncidences.length > 0 ? (
 										<>
 											<FormField
 											control={form.control}
 											name="incidente"
-											render={({ field }:any) => (
+											render={({field}:any) => (
 												<FormItem className="w-full">
 													<FormLabel>Incidente: *</FormLabel>
 													<FormControl>
-													<SelectReact
+
+
+													<Select
+															placeholder={"incidente"}
+															inputId="select-incidente"
+															name="incidente"
 															aria-labelledby="aria-label"
-															inputId="select-categorias"
-  															name="categoria"
-															options={formatValueLabel(catSubIncidences)}
-															onChange={(value:any) =>{
-																field.onChange(value.value);
+															value={formatForMultiselect([selectedIncidencia])}
+															options={catSubIncidences && catSubIncidences.length>0 ? formatToValueLabel( catSubIncidences):[]} 
+															onChange={(selectedOption:any) => {
+																field.onChange(selectedOption ? selectedOption.value :""); 
 																setSearch("subCat")
-																setSelectedIncidencia(value.value)
+																setSelectedIncidencia(selectedOption ? selectedOption.value :"")
 															}}
-															value={formatValueLabel(catSubIncidences).find(opt => opt.value === selectedIncidencia) || null} 
+															isClearable
+															styles={{
+																menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
+																menu: (base) => ({...base, overflowY: "auto", }),
+															}}
 															isDisabled={catSubIncidences.length==0}
 														/>
 													</FormControl>
-												
-													{/* <FormControl>
-													<Select {...field} className="input"
-														onValueChange={(value:string) => {
-														field.onChange(value);
-														setSearch("subCat")
-														setSelectedIncidencia(value)
-													}}
-													value={selectedIncidencia} 
-													disabled={catSubIncidences.length==0}
-												>
-													<SelectTrigger className="w-full">
-														<SelectValue placeholder="Selecciona una opcion" />
-													</SelectTrigger>
-													<SelectContent>
-													{catSubIncidences?.map((cat:any) => (
-														<SelectItem key={cat.id} value={cat.nombre}>
-															{cat.nombre}
-														</SelectItem>
-													))}
-													</SelectContent>
-												</Select>
-													</FormControl> */}
 													<FormMessage />
 												</FormItem>
 											)}
 											/>	
 										</>
-									):null}
+									):null} */}
 
 										<FormField
 										control={form.control}
@@ -717,27 +667,57 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 												<FormItem className="w-full">
 													<FormLabel>Reporta:</FormLabel>
 													<FormControl>
-													<Select {...field} className="input"
-														onValueChange={(value:string) => {
-														field.onChange(value); 
-													}}
-													value={field.value} 
-												>
-													<SelectTrigger className="w-full">
-													{loadingAreaEmpleado?(<>
-															<SelectValue placeholder="Cargando opciones..." />
-														</>):(<>
-															<SelectValue placeholder="Selecciona una opcion" />
-														</>)}
-													</SelectTrigger>
-													<SelectContent>
-													{dataAreaEmpleado?.map((vehiculo:string, index:number) => (
-														<SelectItem key={index} value={vehiculo}>
-															{vehiculo}
-														</SelectItem>
-													))}
-													</SelectContent>
-												</Select>
+														{/* <Select
+															aria-labelledby="aria-label"
+															inputId="select-categorias"
+  															name="reporta_incidencia"
+															options={formatValueLabel(dataAreaEmpleado)}
+															onChange={(value:any) =>{
+																field.onChange(value.value);
+																setSearch("subCat")
+																setSelectedIncidencia(value.value)
+															}}
+															value={formatValueLabel(catSubIncidences).find(opt => opt.value === selectedIncidencia) || null} 
+														/> */}
+
+															<Select
+																placeholder={"Reporta"}
+																inputId="select-categorias"
+																name="reporta_incidencia"
+																aria-labelledby="aria-label"
+																value= {formatForMultiselect(dataAreaEmpleado).find(opt => opt.value === field.value) || ""} 
+																options={dataAreaEmpleado && dataAreaEmpleado.length>0 ? formatForMultiselect( dataAreaEmpleado):[]} 
+																onChange={(selectedOption:any) => {
+																	field.onChange(selectedOption ? selectedOption.value :""); 
+																}}
+																isClearable
+																styles={{
+																	menuPortal: (base) => ({...base, zIndex: 9999, pointerEvents: "auto" }),
+																	menu: (base) => ({...base, overflowY: "auto"}),
+																}}
+																// isDisabled={dataAreaEmpleado.length==0}
+															/>
+														{/* <Select {...field} className="input"
+															onValueChange={(value:string) => {
+															field.onChange(value); 
+														}}
+														value={field.value} 
+													>
+														<SelectTrigger className="w-full">
+														{loadingAreaEmpleado?(<>
+																<SelectValue placeholder="Cargando opciones..." />
+															</>):(<>
+																<SelectValue placeholder="Selecciona una opcion" />
+															</>)}
+														</SelectTrigger>
+														<SelectContent>
+														{dataAreaEmpleado?.map((vehiculo:string, index:number) => (
+															<SelectItem key={index} value={vehiculo}>
+																{vehiculo}
+															</SelectItem>
+														))}
+														</SelectContent>
+													</Select> */}
 													</FormControl>
 													<FormMessage />
 												</FormItem>
@@ -748,8 +728,27 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 											name="ubicacion_incidencia"
 											render={({ field }:any) => (
 												<FormItem>
-													<FormLabel>Ubicacion:</FormLabel>
-													<FormControl>
+													<FormLabel>Ubicación:</FormLabel>
+
+													<Select 
+														placeholder="Ubicación"
+														name="ubicacion_incidencia"
+														aria-labelledby="aria-label"
+														className="border border-slate-100 rounded-2xl"
+														options={ ubicaciones && ubicaciones.length > 0 ? formatForMultiselect(ubicaciones):[]} 
+														value={formatForMultiselect([ubicacionSeleccionada])}
+														onChange={(selectedOption:any) => {
+															field.onChange(selectedOption?.value ?? ""); 
+															setUbicacionSeleccionada(selectedOption?.value ?? ""); 
+														}}
+														isClearable
+														styles={{
+															menuPortal: (base) => ({...base, zIndex: 9999, pointerEvents: "auto" }),
+															menu: (base) => ({...base, overflowY: "auto"}),
+														}}
+													/>
+
+													{/* <FormControl>
 													<Select {...field} className="input"
 														onValueChange={(value:string) => {
 														field.onChange(value); 
@@ -769,7 +768,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 													))}
 													</SelectContent>
 												</Select>
-													</FormControl>
+													</FormControl> */}
 													<FormMessage />
 												</FormItem>
 											)}
@@ -779,8 +778,26 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 											name="area_incidencia"
 											render={({ field }:any) => (
 												<FormItem className="w-full">
-													<FormLabel>Area de la incidencia: *</FormLabel>
-													<FormControl>
+													<FormLabel>Área de la incidencia: *</FormLabel>
+													<Select
+														placeholder={"Reporta"}
+														inputId="select-categorias"
+														name="reporta_incidencia"
+														aria-labelledby="aria-label"
+														value= {formatForMultiselect(areas).find(opt => opt.value === field.value) || ""} 
+														options={areas && areas.length>0 ? formatForMultiselect( areas):[]} 
+														onChange={(selectedOption:any) => {
+															field.onChange(selectedOption ? selectedOption.value :""); 
+														}}
+														isClearable
+														styles={{
+															menuPortal: (base) => ({...base, zIndex: 9999, pointerEvents: "auto" }),
+															menu: (base) => ({...base, overflowY: "auto"}),
+														}}
+													/>
+
+													
+													{/* <FormControl>
 													<Select {...field} className="input"
 														onValueChange={(value:string) => {
 														field.onChange(value); 
@@ -813,7 +830,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 													
 													</SelectContent>
 												</Select>
-													</FormControl>
+													</FormControl> */}
 													<FormMessage />
 												</FormItem>
 											)}
@@ -979,10 +996,9 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 							</div>
 
 
-							<div >
-							
-								<table className="min-w-full table-auto mb-5 border">
-									<thead>
+							<div className="max-h-[600px] overflow-y-auto border">
+								<table className="min-w-full table-auto border-collapse">
+									<thead className="sticky top-0 bg-gray-100 z-10">
 									<tr className="bg-gray-100">
 										<th className="px-4 py-2 text-left border-b border-gray-300">Fecha y hora</th>
 										<th className="px-4 py-2 text-left border-b border-gray-300">Tiempo transcurrido</th>
@@ -1050,7 +1066,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 											) : ( <div className="text-center">-</div> )}
 										</td>
 
-										<td className="flex items-center justify-center gap-2 mt-4 pr-2">
+										<td className="flex items-center justify-center gap-2 mt-5 pr-2">
 											<div
 											title="Editar"
 											className="hover:cursor-pointer text-blue-500 hover:text-blue-600"
@@ -1176,16 +1192,16 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 			)}
 
 			<SeguimientoIncidenciaLista
-				title="Seguimiento Incidencia"
-				isSuccess={openModal}
-				setIsSuccess={setOpenModal}
-				seguimientoSeleccionado={seguimientoSeleccionado}
-				setSeguimientos={setSeguimientos}
-				setEditarSeguimiento={setEditarSeguimiento}
-				editarSeguimiento={editarSeguimiento}
-				indice={indiceSeleccionado}
-				dateIncidencia={ date ? convertirDateToISO(date):""}
-				>
+					title="Seguimiento Incidencia"
+					isSuccess={openModal}
+					setIsSuccess={setOpenModal}
+					seguimientoSeleccionado={seguimientoSeleccionado}
+					setSeguimientos={setSeguimientos}
+					setEditarSeguimiento={setEditarSeguimiento}
+					editarSeguimiento={editarSeguimiento}
+					indice={indiceSeleccionado}
+					dateIncidencia={date ? convertirDateToISO(date) : ""} 
+					folioIncidencia={""}					>
 				<div></div>
 			</SeguimientoIncidenciaLista>
 

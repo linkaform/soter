@@ -47,7 +47,7 @@ import {
     });
   
     const filteredTemporaryPasses = temporaryPasses?.filter((item: any) =>
-      item.nombre?.toLowerCase().includes(searchText.toLowerCase())
+      item?.nombre?.toLowerCase().includes(searchText?.toLowerCase())
     );
   
     return (

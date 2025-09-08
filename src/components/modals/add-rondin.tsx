@@ -187,7 +187,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
     <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
       <DialogTrigger asChild>{children}</DialogTrigger>
 
-	  <DialogContent className="max-w-xl flex flex-col w-full "  aria-describedby="">
+	  <DialogContent className="max-w-xl flex flex-col w-full "  aria-describedby="" onInteractOutside={(e) => e.preventDefault()} >
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center font-bold">
             {title}

@@ -39,9 +39,9 @@ import { useShiftStore } from "@/store/useShiftStore";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import { Card, CardContent } from "../ui/card";
-import { SeguimientoIncidenciaLista } from "./add-seguimientos";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
-import { convertirDateToISO } from "@/lib/utils";
+import { SeguimientoFallaModal } from "./add-seguimiento-falla";
+// import { convertirDateToISO } from "@/lib/utils";
 
 interface EditarFallaModalProps {
   	title: string;
@@ -102,7 +102,7 @@ export const EditarFallaModal: React.FC<EditarFallaModalProps> = ({
 	const [seguimientos, setSeguimientos] = useState<any>(data.falla_grupo_seguimiento_formated);
 	const [indiceSeleccionado, setIndiceSeleccionado] = useState<number | null>(null);
 	const [editarSeguimiento, setEditarSeguimiento] = useState(false);
-	const [seguimientoSeleccionado, setSeguimientoSeleccionado] = useState(null);
+	const [seguimientoSeleccionado, setSeguimientoSeleccionado] = useState(data);
 	const [openModal, setOpenModal] = useState(false)
 	const [selectedFalla, setSelectedFalla] = useState("")
 
@@ -673,19 +673,20 @@ export const EditarFallaModal: React.FC<EditarFallaModalProps> = ({
 			</>
 		)}
 
-			<SeguimientoIncidenciaLista
+			<SeguimientoFallaModal
 				title="Seguimiento Incidencia"
 				isSuccess={openModal}
 				setIsSuccess={setOpenModal}
-				seguimientoSeleccionado={seguimientoSeleccionado}
 				setSeguimientos={setSeguimientos}
-				setEditarSeguimiento={setEditarSeguimiento}
-				editarSeguimiento={editarSeguimiento}
 				indice={indiceSeleccionado}
-				dateIncidencia={date ? convertirDateToISO(date):""}
-				>
+				editarSeguimiento={editarSeguimiento}
+				setEditarSeguimiento={setEditarSeguimiento}
+				seguimientoSeleccionado={seguimientoSeleccionado}
+				dateIncidencia={""}
+				enviarSeguimiento={true}
+				folioIncidencia={data.folio}>
 				<div></div>
-			</SeguimientoIncidenciaLista>
+			</SeguimientoFallaModal>
 
 		</DialogContent>
 	</Dialog>

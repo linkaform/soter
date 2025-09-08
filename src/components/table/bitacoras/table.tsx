@@ -171,11 +171,11 @@ const BitacorasTable:React.FC<ListProps> = ({ data, isLoading, setDate1, setDate
 					title={"Recibir Gafete"} 
 					id_bitacora={bitacoraSeleccionada._id}
 					ubicacion={bitacoraSeleccionada.ubicacion} 
-					area={bitacoraSeleccionada.status_visita.toLowerCase() == "entrada" ? bitacoraSeleccionada.caseta_entrada : bitacoraSeleccionada.caseta_salida || ""} 
+					area={bitacoraSeleccionada?.status_visita?.toLowerCase() == "entrada" ? bitacoraSeleccionada.caseta_entrada : bitacoraSeleccionada.caseta_salida || ""} 
 					fecha_salida={bitacoraSeleccionada.fecha_salida} 
 					gafete={bitacoraSeleccionada.id_gafet} 
 					locker={bitacoraSeleccionada.id_locker||""} 
-					tipo_movimiento={bitacoraSeleccionada.status_visita.toLowerCase()}
+					tipo_movimiento={bitacoraSeleccionada?.status_visita?.toLowerCase()}
 					modalRegresarGafeteAbierto={modalRegresarGafeteAbierto}
 					setModalRegresarGafeteAbierto={setModalRegresarGafeteAbierto}
 					/> 
@@ -188,7 +188,7 @@ const BitacorasTable:React.FC<ListProps> = ({ data, isLoading, setDate1, setDate
 					id_bitacora= {bitacoraSeleccionada._id}
 					tipo_movimiento={bitacoraSeleccionada.status_visita} 
 					ubicacion={bitacoraSeleccionada.ubicacion} 
-					area={bitacoraSeleccionada.status_visita.toLowerCase()=="entrada" ? bitacoraSeleccionada.caseta_entrada: bitacoraSeleccionada.caseta_salida||""}
+					area={bitacoraSeleccionada?.status_visita?.toLowerCase()=="entrada" ? bitacoraSeleccionada.caseta_entrada: bitacoraSeleccionada.caseta_salida||""}
 					modalAgregarBadgeAbierto={modalAgregarBadgeAbierto}
 					setModalAgregarBadgeAbierto={setModalAgregarBadgeAbierto}
 					/>
@@ -198,7 +198,7 @@ const BitacorasTable:React.FC<ListProps> = ({ data, isLoading, setDate1, setDate
 				<DoOutModal 
 					title={"Registar Salida"} 
 					id_bitacora={bitacoraSeleccionada.codigo_qr} ubicacion={bitacoraSeleccionada.ubicacion} 
-					area={bitacoraSeleccionada.status_visita.toLowerCase() == "entrada" ? bitacoraSeleccionada.caseta_entrada : bitacoraSeleccionada.caseta_salida || ""} 
+					area={bitacoraSeleccionada?.status_visita?.toLowerCase() == "entrada" ? bitacoraSeleccionada.caseta_entrada : bitacoraSeleccionada.caseta_salida || ""} 
 					fecha_salida={bitacoraSeleccionada.fecha_salida}
 					modalSalidaAbierto={modalSalidaAbierto}
 					setModalSalidaAbierto={setModalSalidaAbierto}

@@ -44,6 +44,7 @@ import {
 	CircleAlert,
 	Edit,
 	Trash2,
+	List,
   } from "lucide-react";
 import Image from "next/image";
 import { z } from "zod";
@@ -51,7 +52,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Textarea } from "../ui/textarea";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import LoadImage from "../upload-Image";
 import { Imagen } from "@/lib/update-pass";
 import { useCatalogoAreaEmpleado } from "@/hooks/useCatalogoAreaEmpleado";
@@ -77,8 +77,9 @@ import { toast } from "sonner";
 import SeccionPersonasInvolucradas from "../personas-involucradas";
 import SeccionAccionesTomadas from "../acciones-tomadas";
 import { AfectacionPatrimonialModal } from "./add-afectacion-patrimonial";
-import { convertirDateToISO, formatCurrency } from "@/lib/utils";
+import { convertirDateToISO, formatCurrency, formatForMultiselect } from "@/lib/utils";
 import { SeccionDepositos } from "../depositos-section";
+import Select from 'react-select';
 
 interface AddIncidenciaModalProps {
   	title: string;
@@ -150,6 +151,11 @@ export const categoriasConIconos = [
 	}
   ];
 export const subCategoriasConIconos = [
+	{
+		nombre: "General",
+		icon: <List />,
+		id: 2
+	},
 	{
 	  nombre: "Vandalismo",
 	  icon: <SprayCan />,
@@ -284,7 +290,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const [date, setDate] = useState<Date|"">("");
 
 	const[ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location)
-	const { dataAreas:areas, dataLocations:ubicaciones,isLoadingAreas:loadingAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, isSuccess,  location?true:false);
+	const { dataAreas:areas, dataLocations:ubicaciones} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, isSuccess,  location?true:false);
 	const [personasInvolucradas, setPersonasInvolucradas] = useState<PersonasInvolucradas[]>([])
 	const [accionesTomadas, setAccionesTomadas] = useState<AccionesTomadas[]>([])
 	const [depositos, setDepositos] = useState<Depositos[]>([])
@@ -293,7 +299,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const [openModal, setOpenModal] = useState(false);
 
 
-	const { data:dataAreaEmpleado, isLoading:loadingAreaEmpleado } = useCatalogoAreaEmpleado(isSuccess, location, "Incidencias");
+	const { data:dataAreaEmpleado } = useCatalogoAreaEmpleado(isSuccess, location, "Incidencias");
 	const { createIncidenciaMutation , loading} = useInciencias("","",[], "", "", "");
 	
 	const [search, setSearch]= useState("")
@@ -730,32 +736,47 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 											name="reporta_incidencia"
 											render={({ field }:any) => (
 												<FormItem className="w-full">
-													<FormLabel>Reporta:</FormLabel>
-													<FormControl>
-													<Select {...field} className="input"
-														onValueChange={(value:string) => {
-														field.onChange(value); 
-													}}
-													value={field.value} 
-												>
-													<SelectTrigger className="w-full">
-													{loadingAreaEmpleado?(<>
-															<SelectValue placeholder="Cargando opciones..." />
-														</>):(<>
-															<SelectValue placeholder="Selecciona una opcion" />
-														</>)}
-													</SelectTrigger>
-													<SelectContent>
-													{dataAreaEmpleado?.map((vehiculo:string, index:number) => (
-														<SelectItem key={index} value={vehiculo}>
-															{vehiculo}
-														</SelectItem>
-													))}
-													</SelectContent>
-												</Select>
-													</FormControl>
-													<FormMessage />
+												 	<FormLabel>Reporta:</FormLabel>
+													<Select 
+														placeholder="Reporta"
+														className="border border-slate-100 rounded-2xl"
+														options={ dataAreaEmpleado && dataAreaEmpleado.length>0? formatForMultiselect(dataAreaEmpleado):[] } 
+														onChange={(selectedOption) => {
+															field.onChange(selectedOption ? selectedOption.value :"");
+														  }}
+														isClearable
+														styles={{
+															menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
+														}}
+													/>
 												</FormItem>
+												// <FormItem className="w-full">
+												// 	<FormLabel>Reporta:</FormLabel>
+												// 	<FormControl>
+												// 	<Select {...field} className="input"
+												// 		onValueChange={(value:string) => {
+												// 		field.onChange(value); 
+												// 	}}
+												// 	value={field.value} 
+												// >
+												// 	<SelectTrigger className="w-full">
+												// 	{loadingAreaEmpleado?(<>
+												// 			<SelectValue placeholder="Cargando opciones..." />
+												// 		</>):(<>
+												// 			<SelectValue placeholder="Selecciona una opcion" />
+												// 		</>)}
+												// 	</SelectTrigger>
+												// 	<SelectContent>
+												// 	{dataAreaEmpleado?.map((vehiculo:string, index:number) => (
+												// 		<SelectItem key={index} value={vehiculo}>
+												// 			{vehiculo}
+												// 		</SelectItem>
+												// 	))}
+												// 	</SelectContent>
+												// </Select>
+												// 	</FormControl>
+												// 	<FormMessage />
+												// </FormItem>
 											)}
 										/>	
 										<FormField
@@ -763,29 +784,36 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 											name="ubicacion_incidencia"
 											render={({ field }:any) => (
 												<FormItem>
-													<FormLabel>Ubicacion:</FormLabel>
-													<FormControl>
-													<Select {...field} className="input"
-														onValueChange={(value:string) => {
-														field.onChange(value); 
-														setUbicacionSeleccionada(value); 
-													}}
-													value={ubicacionSeleccionada} 
-												>
-													<SelectTrigger className="w-full">
-														{loadingUbicaciones?
-														<SelectValue placeholder="Cargando ubicaciones..." />:<SelectValue placeholder="Selecciona una ubicación" />}
-													</SelectTrigger>
-													<SelectContent>
-													{ubicaciones?.map((vehiculo:string, index:number) => (
-														<SelectItem key={index} value={vehiculo}>
-															{vehiculo}
-														</SelectItem>
-													))}
-													</SelectContent>
-												</Select>
-													</FormControl>
-													<FormMessage />
+													<FormLabel>Ubicación:</FormLabel>
+													<Select 
+														placeholder="Reporta"
+														className="border border-slate-100 rounded-2xl"
+														options={ formatForMultiselect(ubicaciones)} 
+														onChange={(selectedOption) => {
+															field.onChange(selectedOption ? selectedOption.value :"");
+															setUbicacionSeleccionada(selectedOption?.value ?? ""); 
+														  }}
+														isClearable
+														styles={{
+															menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
+														}}
+													/>
+													
+													{/* <Select 
+														placeholder="Ubicación"
+														className=" border border-slate-100 rounded-2xl"
+														options={ubicaciones && ubicaciones.length>0 ? formatForMultiselect(ubicaciones):[] }  
+														value={ubicacionSeleccionada}
+														onChange={(selectedOption) => {
+															field.onChange(selectedOption?.value ?? "");
+															setUbicacionSeleccionada(selectedOption?.value ?? ""); 
+														  }}
+														isClearable
+														menuPortalTarget={document.body}
+														styles={{
+															menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
+														}}
+														/> */}
 												</FormItem>
 											)}
 										/>
@@ -793,44 +821,60 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 											control={form.control}
 											name="area_incidencia"
 											render={({ field }:any) => (
-												<FormItem className="w-full">
-													<FormLabel>Area de la incidencia: *</FormLabel>
-													<FormControl>
-													<Select {...field} className="input"
-														onValueChange={(value:string) => {
-														field.onChange(value); 
-													}}
-													value={field.value} 
-												>
-													<SelectTrigger className="w-full">
-														{loadingAreas ? (
-															<SelectValue placeholder="Cargando áreas..." />
-														):(
-															<SelectValue placeholder="Selecciona una opción" />
-														)}
-													</SelectTrigger>
-													<SelectContent>
-													{areas? (
-														<>
-														{areas?.map((vehiculo:string, index:number) => (
-															<SelectItem key={index} value={vehiculo}>
-																{vehiculo}
-															</SelectItem>
-														))}
-														</>
-													):(
-														<>
-														<SelectItem key={0} value={"0"} disabled>
-															No hay opciones disponibles
-														</SelectItem>
-														</>
-													)}
-													
-													</SelectContent>
-												</Select>
-													</FormControl>
-													<FormMessage />
+												<FormItem>
+													<FormLabel>Área de la incidencia: *
+													</FormLabel>
+													<Select 
+														placeholder="Área de la incidencia"
+														className="border border-slate-100 rounded-2xl"
+														options={ areas && areas.length>0 ? formatForMultiselect(areas):[]} 
+														onChange={(selectedOption: any) => {
+															field.onChange(selectedOption ? selectedOption.value :"");
+														}}
+														isClearable
+														styles={{
+															menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
+														}}
+														/>
 												</FormItem>
+												// <FormItem className="w-full">
+												// 	<FormLabel>Area de la incidencia: *</FormLabel>
+												// 	<FormControl>
+												// 	<Select {...field} className="input"
+												// 		onValueChange={(value:string) => {
+												// 		field.onChange(value); 
+												// 	}}
+												// 	value={field.value} 
+												// >
+												// 	<SelectTrigger className="w-full">
+												// 		{loadingAreas ? (
+												// 			<SelectValue placeholder="Cargando áreas..." />
+												// 		):(
+												// 			<SelectValue placeholder="Selecciona una opción" />
+												// 		)}
+												// 	</SelectTrigger>
+												// 	<SelectContent>
+												// 	{areas? (
+												// 		<>
+												// 		{areas?.map((vehiculo:string, index:number) => (
+												// 			<SelectItem key={index} value={vehiculo}>
+												// 				{vehiculo}
+												// 			</SelectItem>
+												// 		))}
+												// 		</>
+												// 	):(
+												// 		<>
+												// 		<SelectItem key={0} value={"0"} disabled>
+												// 			No hay opciones disponibles
+												// 		</SelectItem>
+												// 		</>
+												// 	)}
+													
+												// 	</SelectContent>
+												// </Select>
+												// 	</FormControl>
+												// 	<FormMessage />
+												// </FormItem>
 											)}
 										/>
 
@@ -1122,6 +1166,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 										<thead>
 										<tr className="bg-gray-100">
 											<th className="px-4 py-2 text-left border-b border-gray-300">Tipo de Afectación</th>
+											<th className="px-4 py-2 text-left border-b border-gray-300">Descripción de la afectación</th>
 											<th className="px-4 py-2 text-left border-b border-gray-300">Monto Estimado de Daño ($)</th>
 											<th className="px-4 py-2 text-left border-b border-gray-300">Duración Estimada Afectación</th>
 											<th className="px-4 py-2 text-left border-b border-gray-300"></th>
@@ -1132,9 +1177,10 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 											afectacionPatrimonial.map((item: any, index: number) => (
 												<tr key={index} className="border-t border-gray-200">
 												<td className="px-4 py-2">{item?.tipo_afectacion || "N/A"}</td>
+												<td className="px-4 py-2 max-w-[200px] truncate" title={item?.descripcion || "N/A"}> {item?.descripcion || "N/A"} </td>
 												<td className="px-4 py-2 text-right">{formatCurrency(item?.monto_estimado) || "N/A"}</td>
 												<td className="px-4 py-2">{item?.duracion_estimada || "N/A"}</td>
-												<td className="flex items-center justify-center gap-2 mt-2">
+												<td className="flex items-center justify-center gap-2 mt-4">
 													<div
 													title="Editar"
 													className="hover:cursor-pointer text-blue-500 hover:text-blue-600"
@@ -1198,7 +1244,9 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 				setEditarSeguimiento={setEditarSeguimiento}
 				editarSeguimiento={editarSeguimiento}
 				indice={indiceSeleccionado}
-				dateIncidencia={date ? convertirDateToISO(date):""}
+				dateIncidencia={date ? convertirDateToISO(date) : ""}
+				enviarSeguimiento={false}
+				folioIncidencia={""}
 				>
 				<div></div>
 			</SeguimientoIncidenciaLista>

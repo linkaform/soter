@@ -195,11 +195,11 @@ export const EntryPassModalUpdate: React.FC<EntryPassModalUpdateProps> = ({
               <p className="font-bold flex-shrink-0">Estatus : </p>
 			  <Badge
 					className={`text-white text-sm ${
-						dataPass?.status_pase.toLowerCase() == "vencido"
+						dataPass?.status_pase?.toLowerCase() == "vencido"
 						? "bg-red-600 hover:bg-red-600"
-						: dataPass?.status_pase.toLowerCase() == "activo"
+						: dataPass?.status_pase?.toLowerCase() == "activo"
 						? "bg-green-600 hover:bg-green-600"
-						: dataPass?.status_pase.toLowerCase() == "proceso"
+						: dataPass?.status_pase?.toLowerCase() == "proceso"
 						? "bg-blue-600 hover:bg-blue-600"
 						: "bg-gray-400"
 					}`}
