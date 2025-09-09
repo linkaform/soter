@@ -44,13 +44,13 @@ interface IncidenciaModalProps {
 }
 
 const formSchema = z.object({
-	nombre_completo: z.string().min(1, { message: "Este campo es oblicatorio" }),
+	nombre_completo: z.string().min(1, { message: "Este campo es obligatorio" }),
 	rol: z.string().min(1, { message: "Este campo es oblicatorio" }),
-	sexo: z.string().min(1, { message: "Este campo es oblicatorio" }),
-	grupo_etario: z.string().min(1, { message: "Este campo es oblicatorio" }),
-	atencion_medica: z.string().min(1, { message: "Este campo es oblicatorio" }),
-    retenido: z.string().min(1, { message: "Este campo es oblicatorio" }),
-    comentarios: z.string().min(1, { message: "Este campo es oblicatorio" }),
+	sexo: z.string().optional(),
+	grupo_etario: z.string().optional(),
+	atencion_medica: z.string().optional(),
+    retenido: z.string().optional(),
+    comentarios: z.string().optional(),
 });
 
 export const PersonasInvolucradasModal: React.FC<IncidenciaModalProps> = ({
@@ -82,24 +82,28 @@ export const PersonasInvolucradasModal: React.FC<IncidenciaModalProps> = ({
 
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
+		const ensureString = (value: string | string[] | undefined): string =>
+			Array.isArray(value) ? value[0] || '' : value || '';
+
         const formatData = {
-            nombre_completo: values.nombre_completo,
-            rol: values.rol,
-            sexo: values.sexo,
-            grupo_etario: values.grupo_etario,
-            atencion_medica: values.atencion_medica,
-            retenido: values.retenido,
-            comentarios: values.comentarios,
+            nombre_completo: ensureString(values.nombre_completo),
+            rol: ensureString(values.rol) ,
+            sexo:ensureString(values.sexo) ,
+            grupo_etario: ensureString(values.grupo_etario) ,
+            atencion_medica:ensureString(values.atencion_medica),
+            retenido:ensureString(values.retenido) ,
+            comentarios:ensureString(values.comentarios) ,
         }
         if(editarPersonasInvolucradas){
             setEditarPersonasInvolucradas(false)
             setPersonasInvolucradas((prev: any[]) =>
                 prev.map((item, i) => (i === indice ? formatData : item))
                 );
-            toast.success("Seguimiento editado correctamente.")
+            toast.success("Registro editado correctamente.")
         }else{
             setPersonasInvolucradas((prev: any) => [...prev, formatData]);
-            toast.success("Seguimiento agregado correctamente.")
+			console.log("formatData",formatData)
+            toast.success("Registro agregado correctamente.")
         }
         setIsSuccess(false)
 	}
@@ -133,7 +137,6 @@ export const PersonasInvolucradasModal: React.FC<IncidenciaModalProps> = ({
         }
 
 		if (editarPersonasInvolucradas && personasInvolucradasSeleccion) {
-			console.log("peronsas", personasInvolucradasSeleccion)
 			reset({
                 nombre_completo: personasInvolucradasSeleccion.nombre_completo,
                 rol: personasInvolucradasSeleccion.rol,
@@ -150,7 +153,7 @@ export const PersonasInvolucradasModal: React.FC<IncidenciaModalProps> = ({
 		<Dialog onOpenChange={setIsSuccess} open={isSuccess}>
 			<DialogTrigger>{children}</DialogTrigger>
 
-			<DialogContent className="max-w-lg overflow-y-auto max-h-[80vh] min-h-auto  flex flex-col overflow-hidden"  aria-describedby="">
+			<DialogContent className="max-w-lg overflow-y-auto max-h-[80vh] min-h-auto  flex flex-col overflow-hidden" onInteractOutside={(e) => e.preventDefault()} aria-describedby="">
 				<DialogHeader>
 					<DialogTitle className="text-2xl text-center font-bold">
 						{title}
@@ -189,7 +192,16 @@ export const PersonasInvolucradasModal: React.FC<IncidenciaModalProps> = ({
 														inputId="select-rol"
 														name="rol"
 														aria-labelledby="aria-label"
-														value ={field.value ? formatForMultiselect([field.value]):[]}
+														value={
+															formatForMultiselect([
+																"Testigo",
+																"Afectado",
+																"Agresor",
+																"Sospechoso",
+																"Responsable",
+																"Otro"
+															]).find(option => option.value === field.value) || null
+														  }
 														options={formatForMultiselect([
 															"Testigo",
 															"Afectado",
@@ -221,7 +233,12 @@ export const PersonasInvolucradasModal: React.FC<IncidenciaModalProps> = ({
 													name="sexo"
 													aria-labelledby="aria-label"
 													className="border border-slate-100 rounded-2xl"
-													value={field.value ? formatForMultiselect([field.value]):[]}
+													value={
+														formatForMultiselect([
+															"Masculino",
+															"Femenino",
+														]).find(option => option.value === field.value) || null
+													  }
 													options={formatForMultiselect([
 														"Masculino",
 														"Femenino",
@@ -246,7 +263,16 @@ export const PersonasInvolucradasModal: React.FC<IncidenciaModalProps> = ({
 													<Select 
 														placeholder={"Grupo Etario"}
 														className="border border-slate-100 rounded-2xl"
-														value={field.value ? formatForMultiselect([field.value]):[]}
+														value={
+															formatForMultiselect([
+															 	"Infancia",
+																"Adolescencia",
+																"Juventud",
+																"Adultez temprana",
+																"Adultez media",
+																"Adultez mayor"
+															]).find(option => option.value === field.value) || null
+														  }
 														options={formatForMultiselect([
 															"Infancia",
 															"Adolescencia",

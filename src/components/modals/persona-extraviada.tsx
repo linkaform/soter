@@ -33,7 +33,7 @@ export function PersonaExtraviadaFields({ control }: Props) {
 							onChange={(e) => {
 								const value = e.target.value;
 								if (/^\d*\.?\d*$/.test(value)) {
-								field.onChange(e); 
+								field.onChange(Number(value)); 
 								}
 							}}
 						 /></FormControl>
@@ -59,12 +59,12 @@ export function PersonaExtraviadaFields({ control }: Props) {
 									</SelectTrigger>
 									<SelectContent>
 										<SelectItem key={"Muy clara"} value={"Muy clara"}>Muy clara</SelectItem>
-										<SelectItem key={"Claro"} value={"Claro"}>Claro</SelectItem>
-										<SelectItem key={"Trigueña clara (Latina clara, mestiza clara)"} value={"Trigueña clara (Latina clara, mestiza clara)"}>Trigueña clara (Latina clara, mestiza clara)</SelectItem>
-										<SelectItem key={"Trigueña (Morena clara, tono oliva)"} value={"Trigueña (Morena clara, tono oliva)"}>Trigueña (Morena clara, tono oliva)</SelectItem>
-										<SelectItem key={"Morena (Morena oscura, tono bronceado)"} value={"Morena (Morena oscura, tono bronceado)"}>Morena (Morena oscura, tono bronceado)</SelectItem>
-										<SelectItem key={"Oscura (Negra clara)"} value={"Oscura (Negra clara)"}>Oscura (Negra clara)</SelectItem>
-										<SelectItem key={"Muy oscura (Negra profunda)"} value={"Muy oscura (Negra profunda)"}>Muy oscura (Negra profunda)</SelectItem>
+										<SelectItem key={"Clara"} value={"Clara"}>Clara</SelectItem>
+										<SelectItem key={"Trigueña clara"} value={"Trigueña clara"}>Trigueña clara</SelectItem>
+										<SelectItem key={"Trigueña"} value={"Trigueña"}>Trigueña</SelectItem>
+										<SelectItem key={"Morena"} value={"Morena"}>Morena</SelectItem>
+										<SelectItem key={"Oscura"} value={"Oscura"}>Oscura</SelectItem>
+										<SelectItem key={"Muy oscura"} value={"Muy oscura"}>Muy oscura</SelectItem>
 									</SelectContent>
 								</Select>
 							</FormControl>
@@ -94,7 +94,9 @@ export function PersonaExtraviadaFields({ control }: Props) {
 							 onChange={(e) => {
 								const value = e.target.value;
 								if (/^\d*\.?\d*$/.test(value)) {
-								field.onChange(e); 
+									const numericValue = value !== '' && !value.endsWith('.') ? parseFloat(value) : value;
+
+									field.onChange(numericValue);
 								}
 							}}
 							/>
@@ -200,13 +202,13 @@ export function PersonaExtraviadaFields({ control }: Props) {
 					name="responsable_que_entrega"
 					render={({ field }) => (
 						<FormItem>
-						<FormLabel>Responsable que entrega</FormLabel>
+						<FormLabel>Responsable que reporta</FormLabel>
 						<FormControl><Input {...field}  /></FormControl>
 						<FormMessage />
 						</FormItem>
 					)}
 					/>
-					<FormField
+					{/* <FormField
 					control={control}
 					name="responsable_que_recibe"
 					render={({ field }) => (
@@ -216,7 +218,7 @@ export function PersonaExtraviadaFields({ control }: Props) {
 						<FormMessage />
 						</FormItem>
 					)}
-					/>
+					/> */}
 			</div>
       	</div>
     );

@@ -111,10 +111,10 @@ export const AccionesTomadasModal: React.FC<IncidenciaModalProps> = ({
             setAccionesTomadas((prev: any[]) =>
                 prev.map((item, i) => (i === indice ? formatData : item))
                 );
-            toast.success("Seguimiento editado correctamente.")
+            toast.success("Acción editada correctamente.")
         }else{
             setAccionesTomadas((prev: any) => [...prev, formatData]);
-            toast.success("Seguimiento agregado correctamente.")
+            toast.success("Acción agregada correctamente.")
         }
         setIsSuccess(false)
 	}
@@ -140,7 +140,7 @@ export const AccionesTomadasModal: React.FC<IncidenciaModalProps> = ({
 		<Dialog onOpenChange={setIsSuccess} open={isSuccess} modal>
 			<DialogTrigger>{children}</DialogTrigger>
             
-            <DialogContent className="max-w-lg max-h-[80vh] min-h-auto flex flex-col overflow-auto"  aria-describedby="" >
+            <DialogContent className="max-w-lg max-h-[80vh] min-h-auto flex flex-col overflow-auto" onInteractOutside={(e) => e.preventDefault()} aria-describedby="" >
             <DialogHeader>
                 <DialogTitle className="text-2xl text-center font-bold">
                 {title}

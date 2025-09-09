@@ -131,7 +131,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 						<div >
 							<div className="flex gap-2 mb-4">
 								<CircleAlert />
-								Incidente: <span className="font-bold"> {data.incidencia}</span>
+								Incidente: <span className="font-bold">{data.categoria} / {data.sub_categoria} / {data.incidencia}</span>
 							</div>
 
 							<div className="overflow-y-auto ">
@@ -158,7 +158,13 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 								
 								<div className="w-full flex gap-2">
 									<p className="font-bold ">Prioridad: </p>
-									<p className="text-red-500">{data?.prioridad_incidencia} </p>
+									<p className={`
+										${data?.prioridad_incidencia === 'Leve' ? 'text-green-500 font-bold' : ''}
+										${data?.prioridad_incidencia === 'Grave' ? 'text-yellow-500 font-bold' : ''}
+										${data?.prioridad_incidencia === 'Crítica' ? 'text-red-500 font-bold' : ''}
+									`}>
+										{data?.prioridad_incidencia}
+									</p>
 								</div>
 								{data?.dano_incidencia ??
 								<div className="w-full flex gap-2">
@@ -190,7 +196,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 
 							<div className="w-full flex gap-2">
 								<p className="font-bold ">Comentarios:</p>
-								<p className="">{data?.comentario_incidencia} </p>
+								<p title={data?.comentario_incidencia || "-"} className="max-w-[300px] truncate">{data?.comentario_incidencia} </p>
 							</div>
 						</div>
 								
@@ -221,8 +227,8 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 												</CarouselItem>
 												))}
 											</CarouselContent>
-											<CarouselPrevious />
-											<CarouselNext />
+											{ data.evidencia_incidencia.length > 1 && 
+											<><CarouselPrevious /><CarouselNext /></> }
 										</Carousel>
 									</div>
 								):(
@@ -274,8 +280,8 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 										{data.datos_deposito_incidencia.length > 0 ? (
 											data.datos_deposito_incidencia.map((item, index) => (
 												<tr key={index} className="border-t border-gray-200">
-													<td className="px-4 py-2">{item.tipo_deposito}</td>
-													<td className="px-4 py-2">{item.origen}</td>
+													<td className="px-4 py-2">{item.tipo_deposito ||"-" }</td>
+													<td className="px-4 py-2">{item.origen ||"-"}</td>
 													<td className="px-4 py-2 text-right">{formatCurrency(item.cantidad) ?? 0}</td>
 												</tr>
 											))
@@ -316,8 +322,8 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 													<tbody>
 													{data.datos_deposito_incidencia.map((item:Depositos, index: number) => (
 														<tr key={index}>
-														<td className="px-4 py-2 text-right"><p>{formatCurrency(item.cantidad) || "N/A"}</p></td>
-														<td className="px-4 py-2"><p>{capitalizeFirstLetter(item.tipo_deposito) || "N/A"}</p></td>
+														<td className="px-4 py-2 text-right"><p>{formatCurrency(item.cantidad) || "-"}</p></td>
+														<td className="px-4 py-2"><p>{capitalizeFirstLetter(item.tipo_deposito) || "-"}</p></td>
 														</tr>
 													))}
 													</tbody>
@@ -347,27 +353,27 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 														<tbody>
 															<tr>
 																<td className="px-4 py-2 font-bold"><p>Nombre completo</p></td>
-																<td className="px-4 py-2"><p>{data.nombre_completo_persona_extraviada || "N/A"}</p></td>
+																<td className="px-4 py-2"><p>{data.nombre_completo_persona_extraviada || "-"}</p></td>
 															</tr>
 															<tr>
 																<td className="px-4 py-2 font-bold"><p>Edad</p></td>
-																<td className="px-4 py-2"><p>{data.edad || "N/A"}</p></td>
+																<td className="px-4 py-2"><p>{data.edad || "-"}</p></td>
 															</tr>
 															<tr>
 																<td className="px-4 py-2 font-bold"><p>Color de piel</p></td>
-																<td className="px-4 py-2"><p>{data.color_piel || "N/A"}</p></td>
+																<td className="px-4 py-2"><p>{data.color_piel || "-"}</p></td>
 															</tr>
 															<tr>
 																<td className="px-4 py-2 font-bold"><p>Color de cabello</p></td>
-																<td className="px-4 py-2"><p>{data.color_cabello || "N/A"}</p></td>
+																<td className="px-4 py-2"><p>{data.color_cabello || "-"}</p></td>
 															</tr>
 															<tr>
 																<td className="px-4 py-2 font-bold"><p>Estatura aproximada</p></td>
-																<td className="px-4 py-2"><p>{data.estatura_aproximada || "N/A"}</p></td>
+																<td className="px-4 py-2"><p>{data.estatura_aproximada || "-"}</p></td>
 															</tr>
 															<tr>
 																<td className="px-4 py-2 font-bold"><p>Descripcion física y vestimenta</p></td>
-																<td className="px-4 py-2"><p>{data.descripcion_fisica_vestimenta || "N/A"}</p></td>
+																<td className="px-4 py-2"><p>{data.descripcion_fisica_vestimenta || "-"}</p></td>
 															</tr>
 															<tr>
 																<td className="px-4 py-2"><p>Información del responsable (reporta)</p></td>
@@ -375,31 +381,31 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 															</tr>
 															<tr>
 																<td className="px-4 py-2 font-bold"><p>Nombre completo</p></td>
-																<td className="px-4 py-2"><p>{data.nombre_completo_responsable || "N/A"}</p></td>
+																<td className="px-4 py-2"><p>{data.nombre_completo_responsable || "-"}</p></td>
 															</tr>
 															<tr>
 																<td className="px-4 py-2 font-bold"><p>Parentesco</p></td>
-																<td className="px-4 py-2"><p>{data.parentesco || "N/A"}</p></td>
+																<td className="px-4 py-2"><p>{data.parentesco || "-"}</p></td>
 															</tr>
 															<tr>
 																<td className="px-4 py-2 font-bold"><p>Número de documento de identidad</p></td>
-																<td className="px-4 py-2"><p>{data.num_doc_identidad || "N/A"}</p></td>
+																<td className="px-4 py-2"><p>{data.num_doc_identidad || "-"}</p></td>
 															</tr>
 															<tr>
 																<td className="px-4 py-2 font-bold"><p>Teléfono</p></td>
-																<td className="px-4 py-2"><p>{data.telefono || "N/A"}</p></td>
+																<td className="px-4 py-2"><p>{data.telefono || "-"}</p></td>
 															</tr>
 															<tr>
 																<td className="px-4 py-2 font-bold"><p>¿La información facilitada coincide con los videos?</p></td>
-																<td className="px-4 py-2"><p>{data.info_coincide_con_videos || "N/A"}</p></td>
+																<td className="px-4 py-2"><p>{data.info_coincide_con_videos || "-"}</p></td>
 															</tr>
 															<tr>
 																<td className="px-4 py-2 font-bold"><p>Responsable que entraga</p></td>
-																<td className="px-4 py-2"><p>{data.responsable_que_entrega || "N/A"}</p></td>
+																<td className="px-4 py-2"><p>{data.responsable_que_entrega || "-"}</p></td>
 															</tr>
 															<tr>
 																<td className="px-4 py-2 font-bold"><p>Responsable que recibe</p></td>
-																<td className="px-4 py-2"><p>{data.responsable_que_recibe || "N/A"}</p></td>
+																<td className="px-4 py-2"><p>{data.responsable_que_recibe || "-"}</p></td>
 															</tr>
 														</tbody>
 													</table>
@@ -421,23 +427,23 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 														<tbody>
 															<tr>
 																<td className="px-4 py-2 font-bold"><p>Placas</p></td>
-																<td className="px-4 py-2"><p>{ data.placas|| "N/A"}</p></td>
+																<td className="px-4 py-2"><p>{ data.placas|| "-"}</p></td>
 															</tr>
 															<tr>
 																<td className="px-4 py-2 font-bold"><p>Tipo</p></td>
-																<td className="px-4 py-2"><p>{data.tipo || "N/A"}</p></td>
+																<td className="px-4 py-2"><p>{data.tipo || "-"}</p></td>
 															</tr>
 															<tr>
 																<td className="px-4 py-2 font-bold"><p>Marca</p></td>
-																<td className="px-4 py-2"><p>{data.marca || "N/A"}</p></td>
+																<td className="px-4 py-2"><p>{data.marca || "-"}</p></td>
 															</tr>
 															<tr>
 																<td className="px-4 py-2 font-bold"><p>Modelo</p></td>
-																<td className="px-4 py-2"><p>{data.modelo || "N/A"}</p></td>
+																<td className="px-4 py-2"><p>{data.modelo || "-"}</p></td>
 															</tr>
 															<tr>
 																<td className="px-4 py-2 font-bold"><p>Color</p></td>
-																<td className="px-4 py-2"><p>{data.color || "N/A"}</p></td>
+																<td className="px-4 py-2"><p>{data.color || "-"}</p></td>
 															</tr>
 														</tbody>
 													</table>
@@ -475,7 +481,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 											<td className="px-4 py-2">{item.grupo_etario}</td>
 											<td className="px-4 py-2">{item.atencion_medica}</td>
 											<td className="px-4 py-2">{item.retenido}</td>
-											<td className="px-4 py-2 capitalize">{item.comentarios || "N/A"}</td>
+											<td className="px-4 py-2 max-w-[200px] truncate" title={item?.comentarios || "-"}> {item?.comentarios || "-"} </td>
 											</tr>
 										)): 
 										<tr>
@@ -507,7 +513,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 									{data.acciones_tomadas_incidencia.length > 0 ?
 										data.acciones_tomadas_incidencia.map((item, index) => (
 											<tr key={index} className="border-t border-gray-200">
-											<td className="px-4 py-2">{item.acciones_tomadas}</td>
+											<td className="px-4 py-2 max-w-[200px] truncate" title={item?.acciones_tomadas || "-"}> {item?.acciones_tomadas || "-"} </td>
 											<td className="px-4 py-2">{item.llamo_a_policia}</td>
 											<td className="px-4 py-2">{item.autoridad}</td>
 											<td className="px-4 py-2">{item.numero_folio_referencia}</td>
@@ -531,7 +537,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 						<div className="flex gap-2 mb-4">
 							<div className="w-full flex gap-2">
 								<CircleAlert />
-								Incidente: <span className="font-bold"> {data.incidencia}</span>
+								Incidente: <span className="font-bold">{data.categoria} / {data.sub_categoria} / {data.incidencia}</span>
 							</div>
 						</div>
 					</div>
@@ -554,10 +560,10 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 							{data.seguimientos_incidencia && data.seguimientos_incidencia.length > 0 ? (
 								data.seguimientos_incidencia.map((item: any, index: number) => (
 								<tr key={index} className="border-t border-gray-200">
-								<td className="px-4 py-2">{item?.fecha_inicio_seg || "N/A"}</td>
+								<td className="px-4 py-2">{item?.fecha_inicio_seg || "-"}</td>
 								<td className="px-4 py-2">{item?.tiempo_transcurrido}</td>
-								<td className="px-4 py-2">{item?.accion_correctiva_incidencia || "N/A"}</td>
-								<td className="px-4 py-2">{item?.incidencia_personas_involucradas || "N/A"}</td>
+								<td className="px-4 py-2 max-w-[200px] truncate" title={item?.accion_correctiva_incidencia || "-"}> {item?.accion_correctiva_incidencia || "-"} </td>
+								<td className="px-4 py-2">{item?.incidencia_personas_involucradas || "-"}</td>
 
 								<td className="px-4 py-2">
 									{item?.incidencia_evidencia_solucion?.length > 0 ? (
@@ -630,7 +636,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 						<div className="flex gap-2 mb-4">
 							<div className="w-full flex gap-2">
 								<CircleAlert />
-								Incidente: <span className="font-bold"> {data.incidencia}</span>
+								Incidente: <span className="font-bold">{data.categoria} / {data.sub_categoria} / {data.incidencia}</span>
 							</div>
 						</div>
 					</div>
@@ -641,6 +647,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 								<thead>
 								<tr className="bg-gray-100"> 
 									<th className="px-4 py-2 text-left border-b">Tipo de Afectación</th>
+									{/* <th className="px-4 py-2 text-left border-b">Descripción de la Afectación</th> */}
 									<th className="px-4 py-2 text-left border-b">Monto Estimado de Daño ($)</th>
 									<th className="px-4 py-2 text-left border-b">Duración Estimada Afectación</th>
 								</tr>
@@ -649,9 +656,10 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 								{data.afectacion_patrimonial_incidencia && data.afectacion_patrimonial_incidencia.length > 0 ? (
 								data.afectacion_patrimonial_incidencia.map((item: any, index: number) => (
 									<tr key={index} className="border-t border-gray-200">
-									<td className="px-4 py-2">{item?.tipo_afectacion || "N/A"}</td>
-									<td className="px-4 py-2">{formatCurrency(item?.monto_estimado) || "N/A"}</td>
-									<td className="px-4 py-2">{item?.duracion_estimada || "N/A"}</td>
+									<td className="px-4 py-2">{item?.tipo_afectacion || "-"}</td>
+									{/* <td className="px-4 py-2 max-w-[200px] truncate" title={item?.descripcion_afectacion || "-"}> {item?.descripcion_afectacion || "-"} </td> */}
+									<td className="px-4 py-2">{formatCurrency(item?.monto_estimado) || "-"}</td>
+									<td className="px-4 py-2">{item?.duracion_estimada || "-"}</td>
 									</tr>
 								))) : (
 									<tr>

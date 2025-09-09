@@ -145,7 +145,6 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 	const [ubicacionSeleccionada, setUbicacionSeleccionada ] = useState(data.ubicacion_incidencia);
 	const { dataAreas:areas, dataLocations:ubicaciones,} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, modalEditarAbierto,  location?true:false);
 	// const { dataAreas:areas} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, true,  ubicacionSeleccionada?true:false);
-
 	const [personasInvolucradas, setPersonasInvolucradas] = useState<PersonasInvolucradas[]>(data.personas_involucradas_incidencia)
 	const [accionesTomadas, setAccionesTomadas] = useState<AccionesTomadas[]>(data.acciones_tomadas_incidencia)
 	const [depositos, setDepositos] = useState<Depositos[]>([])
@@ -176,7 +175,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 	const [openAfectacionPatrimonialModal,setOpenAfectacionPatrimonialModal] = useState(false)
 	const [editarAfectacionPatrimonial, setEditarAfectacionPatrimonial] = useState(false)
 
-	console.log("informacion", data)
+
 
 	const getNivelNumber = (val:string) => {
 		if (val =="Critica") return 100
@@ -337,6 +336,10 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 	},[modalEditarAbierto])
 
 
+	useEffect(()=>{
+		console.log("personasInvolucradas", personasInvolucradas)
+	},[personasInvolucradas])
+
 	const handleOpenModal = async () =>{
 		setLoadingCatalogos(true)
 		// const {catSubIncidenciasIcons, subCategories}= await LoadCategories()
@@ -428,7 +431,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 					telefono: values.telefono,
 					info_coincide_con_videos: values.info_coincide_con_videos,
 					responsable_que_entrega: values.responsable_que_entrega,
-					responsable_que_recibe: values.responsable_que_recibe,
+					// responsable_que_recibe: values.responsable_que_recibe,
 				
 					//Grupos repetitivos
 					afectacion_patrimonial_incidencia:afectacionPatrimonial||[],
@@ -446,6 +449,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 					modelo: values.modelo,
 					color: values.color,
 				}
+				console.log("incidencias update", formatData)
 				editarIncidenciaMutation.mutate({ data_incidencia: formatData, folio: data.folio }, {
 					onSuccess: () => {
 						setModalEditarAbierto(false)
@@ -510,7 +514,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 
 	return (
     <Dialog open={modalEditarAbierto} onOpenChange={setModalEditarAbierto} modal>
-  <DialogContent className="max-w-4xl overflow-y-auto max-h-[80vh] min-h-[80vh]  flex flex-col overflow-hidden" onInteractOutside={(e) => e.preventDefault()} aria-describedby="">
+  <DialogContent className="max-w-5xl overflow-y-auto max-h-[80vh] min-h-[80vh]  flex flex-col overflow-hidden" onInteractOutside={(e) => e.preventDefault()} aria-describedby="">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center font-bold">
             {title}
@@ -535,7 +539,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 							<div >
 								<div className="flex gap-2 mb-4">
 									<CircleAlert />
-									Incidente: <span className="font-bold"> {selectedIncidencia}</span>
+									Incidente:  <span className="font-bold">{categoria} / {subCategoria} / {selectedIncidencia} </span> 
 								</div>
 								
 								<Form {...form} >
@@ -983,7 +987,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 								<div className="flex gap-2 mb-4">
 									<div className="w-full flex gap-2">
 										<CircleAlert />
-										Incidente: <span className="font-bold"> {selectedIncidencia}</span>
+										Incidente: <span className="font-bold">{categoria} / {subCategoria} / {selectedIncidencia} </span> 
 									</div>
 
 									<div className="flex justify-end items-center w-full">
@@ -1015,7 +1019,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 										<tr key={index} className="border-t border-gray-200">
 										<td className="px-4 py-2">{item?.fecha_inicio_seg ||"-"}</td>
 										<td className="px-4 py-2">{item?.tiempo_transcurrido || "-"}</td>
-										<td className="px-4 py-2">{item?.accion_correctiva_incidencia ||"-"}</td>
+										<td className="px-4 py-2 max-w-[200px] truncate" title={item?.accion_correctiva_incidencia || "-"}> {item?.accion_correctiva_incidencia || "-"} </td>
 										<td className="px-4 py-2">{item?.incidencia_personas_involucradas ||"-"}</td>
 
 										<td className="px-4 py-2">
@@ -1104,7 +1108,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 								<div className="flex gap-2 mb-4">
 									<div className="w-full flex gap-2">
 										<CircleAlert />
-										Incidente: <span className="font-bold"> {selectedIncidencia}</span>
+										Incidente: <span className="font-bold">{categoria} / {subCategoria} / {selectedIncidencia} </span> 
 									</div>
 
 									<div className="flex justify-end items-center w-full">
@@ -1122,6 +1126,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 										<thead>
 										<tr className="bg-gray-100">
 											<th className="px-4 py-2 text-left border-b border-gray-300">Tipo de Afectación</th>
+											{/* <th className="px-4 py-2 text-left border-b border-gray-300">Descripción de la Afectación</th> */}
 											<th className="px-4 py-2 text-left border-b border-gray-300">Monto Estimado de Daño ($)</th>
 											<th className="px-4 py-2 text-left border-b border-gray-300">Duración Estimada Afectación</th>
 											<th className="px-4 py-2 text-left border-b border-gray-300"></th>
@@ -1131,9 +1136,10 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 										{afectacionPatrimonial && afectacionPatrimonial.length > 0 ? (
 										afectacionPatrimonial.map((item: any, index: number) => (
 											<tr key={index} className="border-t border-gray-200">
-											<td className="px-4 py-2">{item?.tipo_afectacion || "N/A"}</td>
-											<td className="px-4 py-2">{formatCurrency(item?.monto_estimado) || "N/A"}</td>
-											<td className="px-4 py-2">{item?.duracion_estimada || "N/A"}</td>
+											<td className="px-4 py-2">{item?.tipo_afectacion || "-"}</td>
+											{/* <td className="px-4 py-2 max-w-[200px] truncate" title={item?.descripcion_afectacion || "-"}> {item?.descripcion_afectacion || "-"} </td> */}
+											<td className="px-4 py-2">{formatCurrency(item?.monto_estimado) || "-"}</td>
+											<td className="px-4 py-2">{item?.duracion_estimada || "-"}</td>
 											<td className="flex items-center justify-center gap-2 mt-2 ">
 												<div
 												title="Editar"

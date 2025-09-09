@@ -16,7 +16,6 @@ const SeccionPersonasInvolucradas:React.FC<PersonasInvolucradasListProps> = ({ p
 	const [editarPersonasInvolucradas, setEditarPersonasInvolucradas] = useState(false)
 	const [indiceSeleccionado, setIndiceSeleccionado]= useState<number | null>(null)
 
-
 	const handleEditPersonasInvolucradas = (item: any, index: number) => {
 		console.log(item, index)
 		setPersonasInvolucradasSeleccion(item);
@@ -81,7 +80,7 @@ const SeccionPersonasInvolucradas:React.FC<PersonasInvolucradasListProps> = ({ p
 							<td className="px-4 py-2">{item.grupo_etario||"-"}</td>
 							<td className="px-4 py-2">{item.atencion_medica||"-"}</td>
 							<td className="px-4 py-2">{item.retenido||"-"}</td>
-							<td className="px-4 py-2">{item.comentarios||"-"}</td>
+							<td className="px-4 py-2 max-w-[200px] truncate" title={item?.comentarios || "-"}> {item?.comentarios || "-"} </td>
 							<td className="px-4 py-2">
 							<div className="flex items-center justify-center gap-2">
 								<div

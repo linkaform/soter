@@ -47,7 +47,13 @@ export const useFallas = (location:string, area:string,status:string, enableList
         },
         onError: (err) => {
           console.error("Error al crear falla:", err);
-          toast.error(err.message || "Hubo un error al crear la falla.");
+          toast.error(err.message || "Hubo un error al crear la falla.",{
+            style: {
+                background: "#dc2626",
+                color: "#fff",
+                border: 'none'
+            },
+        })
     
         },
         onSettled: () => {
@@ -78,7 +84,13 @@ export const useFallas = (location:string, area:string,status:string, enableList
         },
         onError: (err) => {
           console.error("Error al editar falla:", err);
-          toast.error(err.message || "Hubo un error al editar la falla.");
+          toast.error(err.message || "Hubo un error al editar la falla.",{
+            style: {
+                background: "#dc2626",
+                color: "#fff",
+                border: 'none'
+            },
+        })
     
         },
         onSettled: () => {
@@ -111,7 +123,13 @@ export const useFallas = (location:string, area:string,status:string, enableList
         },
         onError: (err) => {
           console.error("Error al crear seguimiento:", err);
-          toast.error(err.message || "Hubo un error al crear el seguimiento.");
+          toast.error(err.message || "Hubo un error al crear el seguimiento.",{
+            style: {
+                background: "#dc2626",
+                color: "#fff",
+                border: 'none'
+            },
+        })
     
         },
         onSettled: () => {

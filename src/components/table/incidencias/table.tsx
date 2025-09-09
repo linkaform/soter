@@ -164,12 +164,20 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 			  enableSorting: true,
 			},
 			{
-			  accessorKey: "incidencia",
-			  header: "Incidencia",
-			  cell: ({ row }:{row: Row <Incidencia_record> }) => (
-			  <div className="capitalize">{row.getValue("incidencia")}</div>
-			  ),
-			  enableSorting: true,
+				id: "incidencia",
+				header: "Incidencia",
+				accessorFn: (row: Incidencia_record) => {
+					return `${row.categoria} / ${row.sub_categoria} / ${row.incidencia}`;
+				},
+				cell: ({ row }: { row: Row<Incidencia_record> }) => {
+					const { categoria, sub_categoria, incidencia } = row.original;
+					return (
+					<div className="capitalize">
+						{`${categoria} / ${sub_categoria} / ${incidencia}`}
+					</div>
+					);
+				},
+				enableSorting: true,
 			},
 			{
 			  accessorKey: "evidencia_incidencia",
@@ -363,7 +371,7 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 
 				{modalVerAbierto && incidenciaSeleccionada && (
 					<ViewIncidencia 
-					title="Información De La Incidencia"
+					title="Información de la Incidencia"
 					data={incidenciaSeleccionada} isSuccess={modalVerAbierto}
 								setIsSuccess={setModalVerAbierto} setModalEditarAbierto={setModalEditarAbierto }>
 						<div className="cursor-pointer" title="Ver Incidencia">

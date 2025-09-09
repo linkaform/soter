@@ -77,7 +77,7 @@ import { toast } from "sonner";
 import SeccionPersonasInvolucradas from "../personas-involucradas";
 import SeccionAccionesTomadas from "../acciones-tomadas";
 import { AfectacionPatrimonialModal } from "./add-afectacion-patrimonial";
-import { convertirDateToISO, formatCurrency, formatForMultiselect } from "@/lib/utils";
+import { convertirDateToISO, formatCurrency, formatForMultiselect, formatForSelectString } from "@/lib/utils";
 import { SeccionDepositos } from "../depositos-section";
 import Select from 'react-select';
 
@@ -512,7 +512,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 					edad: values.edad,
 					color_piel: values.color_piel,
 					color_cabello: values.color_cabello,
-					estatura_aproximada: values.estatura_aproximada,
+					estatura_aproximada: values.estatura_aproximada ? undefined : Number(values.estatura_aproximada),
 					descripcion_fisica_vestimenta: values.descripcion_fisica_vestimenta,
 					nombre_completo_responsable: values.nombre_completo_responsable,
 					parentesco: values.parentesco,
@@ -520,7 +520,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 					telefono: values.telefono,
 					info_coincide_con_videos: values.info_coincide_con_videos,
 					responsable_que_entrega: values.responsable_que_entrega,
-					responsable_que_recibe: values.responsable_que_recibe,
+					// responsable_que_recibe: values.responsable_que_recibe,
 				
 					//Robo de cableado
 					valor_estimado: values.valor_estimado,
@@ -709,7 +709,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 							<div >
 								<div className="flex gap-2 mb-4">
 									<CircleAlert />
-									Incidente: <span className="font-bold"> {selectedIncidencia}</span>
+									Incidente: <span className="font-bold">{categoria} / {subCategoria} / {selectedIncidencia} </span> 
 								</div>
 								
 								<Form {...form} >
@@ -741,10 +741,18 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 														placeholder="Reporta"
 														className="border border-slate-100 rounded-2xl"
 														options={ dataAreaEmpleado && dataAreaEmpleado.length>0? formatForMultiselect(dataAreaEmpleado):[] } 
+														value = {
+															formatForMultiselect(dataAreaEmpleado).find(option => option.value === field.value) || ""
+														  }
 														onChange={(selectedOption) => {
-															field.onChange(selectedOption ? selectedOption.value :"");
+															if (selectedOption && typeof selectedOption === 'object' && 'value' in selectedOption) {
+																field.onChange(selectedOption.value);
+															  } else {
+																field.onChange('');
+															  }
 														  }}
 														isClearable
+														// value={field.value} 
 														styles={{
 															menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
 														}}
@@ -788,6 +796,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 													<Select 
 														placeholder="Reporta"
 														className="border border-slate-100 rounded-2xl"
+														value={formatForSelectString(ubicacionSeleccionada)}
 														options={ formatForMultiselect(ubicaciones)} 
 														onChange={(selectedOption) => {
 															field.onChange(selectedOption ? selectedOption.value :"");
@@ -829,9 +838,13 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 														className="border border-slate-100 rounded-2xl"
 														options={ areas && areas.length>0 ? formatForMultiselect(areas):[]} 
 														onChange={(selectedOption: any) => {
+															console.log("valor", selectedOption.value)
 															field.onChange(selectedOption ? selectedOption.value :"");
 														}}
 														isClearable
+														value={
+															formatForMultiselect(areas).find(option => option.value === field.value) || ""
+														  }
 														styles={{
 															menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
 														}}
@@ -1027,7 +1040,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 								<div className="flex gap-2 mb-4">
 									<div className="w-full flex gap-2">
 										<CircleAlert />
-										Incidente: <span className="font-bold"> {selectedIncidencia}</span>
+										Incidente: <span className="font-bold">{categoria} / {subCategoria} / {selectedIncidencia} </span> 
 									</div>
 
 									<div className="flex justify-end items-center w-full">
@@ -1054,10 +1067,10 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 									{seguimientos && seguimientos.length > 0 ? (
 										seguimientos.map((item: any, index: number) => (
 											<tr key={index} className="border-t border-gray-200">
-											<td className="px-4 py-2">{item?.fecha_inicio_seg || "N/A"}</td>
+											<td className="px-4 py-2">{item?.fecha_inicio_seg || "-"}</td>
 											<td className="px-4 py-2">{item?.tiempo_transcurrido == "La fecha es anterior a la fecha de la incidencia." ? ( <div className="text-red-500"> {item?.tiempo_transcurrido }</div> ): item?.tiempo_transcurrido}</td>
-											<td className="px-4 py-2">{item?.accion_correctiva_incidencia || "N/A"}</td>
-											<td className="px-4 py-2">{item?.incidencia_personas_involucradas || "N/A"}</td>
+											<td className="px-4 py-2 max-w-[200px] truncate" title={item?.accion_correctiva_incidencia || "-"}> {item?.accion_correctiva_incidencia || "-"} </td>
+											<td className="px-4 py-2">{item?.incidencia_personas_involucradas || "-"}</td>
 
 											<td className="px-4 py-2 min-w-[150px] ">
 												{item?.incidencia_evidencia_solucion?.length > 0 ? (
@@ -1148,7 +1161,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 								<div className="flex gap-2 mb-4">
 									<div className="w-full flex gap-2">
 										<CircleAlert />
-										Incidente: <span className="font-bold"> {selectedIncidencia}</span>
+										Incidente: <span className="font-bold">{categoria} / {subCategoria} / {selectedIncidencia} </span> 
 									</div>
 
 									<div className="flex justify-end items-center w-full">
@@ -1166,7 +1179,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 										<thead>
 										<tr className="bg-gray-100">
 											<th className="px-4 py-2 text-left border-b border-gray-300">Tipo de Afectación</th>
-											<th className="px-4 py-2 text-left border-b border-gray-300">Descripción de la afectación</th>
+											{/* <th className="px-4 py-2 text-left border-b border-gray-300">Descripción de la afectación</th> */}
 											<th className="px-4 py-2 text-left border-b border-gray-300">Monto Estimado de Daño ($)</th>
 											<th className="px-4 py-2 text-left border-b border-gray-300">Duración Estimada Afectación</th>
 											<th className="px-4 py-2 text-left border-b border-gray-300"></th>
@@ -1176,10 +1189,10 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 										{afectacionPatrimonial && afectacionPatrimonial.length > 0 ? (
 											afectacionPatrimonial.map((item: any, index: number) => (
 												<tr key={index} className="border-t border-gray-200">
-												<td className="px-4 py-2">{item?.tipo_afectacion || "N/A"}</td>
-												<td className="px-4 py-2 max-w-[200px] truncate" title={item?.descripcion || "N/A"}> {item?.descripcion || "N/A"} </td>
-												<td className="px-4 py-2 text-right">{formatCurrency(item?.monto_estimado) || "N/A"}</td>
-												<td className="px-4 py-2">{item?.duracion_estimada || "N/A"}</td>
+												<td className="px-4 py-2">{item?.tipo_afectacion || "-"}</td>
+												{/* <td className="px-4 py-2 max-w-[200px] truncate" title={item?.descripcion_afectacion || "-"}> {item?.descripcion_afectacion || "-"} </td> */}
+												<td className="px-4 py-2 text-right">{formatCurrency(item?.monto_estimado) || "-"}</td>
+												<td className="px-4 py-2">{item?.duracion_estimada || "-"}</td>
 												<td className="flex items-center justify-center gap-2 mt-4">
 													<div
 													title="Editar"

@@ -28,7 +28,13 @@ export const useEliminarFalla = () => {
     },
     onError: (err: any) => {
       console.error("Error al eliminar falla:", err);
-      toast.error(err.message || "Hubo un error al eliminar la falla.");
+      toast.error(err.message || "Hubo un error al eliminar la falla.",{
+        style: {
+            background: "#dc2626",
+            color: "#fff",
+            border: 'none'
+        },
+    })
     },
     onSettled: () => setLoading(false),
   });
