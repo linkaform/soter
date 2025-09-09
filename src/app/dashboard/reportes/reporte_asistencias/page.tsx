@@ -32,6 +32,7 @@ import AttendanceTable from "../components/AttendanceTable";
 import { AttendanceRow, GroupingMode } from "../types/attendance";
 import { useReportAsistencias, useReportLocations } from "../hooks/useAsistenciasReport";
 import { asistenciasReport } from "../types/report";
+import AttendanceIcon from "../components/AttendanceIcon";
 
 const ReportsPage = () => {
 	const [month, setMonth] = useState<number>(0);
@@ -266,14 +267,42 @@ const ReportsPage = () => {
 						<p className="text-sm text-gray-400">Haz clic en &quot;Ejecutar&quot; para obtener datos</p>
 					</div>
 				) : (
-					<AttendanceTable
-						data={data}
-						month={month}
-						year={year}
-						groupingMode={appliedGroupingMode}
-						groupByLocation={groupByLocation}
-						timeframe={timeframe}
-					/>
+					<>
+						<div className="flex flex-wrap gap-4 items-center mb-6">
+							<div className="flex items-center gap-2">
+								<AttendanceIcon status="present" />
+								<span className="text-sm text-gray-700">Asistencia</span>
+							</div>
+							<div className="flex items-center gap-2">
+								<AttendanceIcon status="halfDay" />
+								<span className="text-sm text-gray-700">Retardo</span>
+							</div>
+							<div className="flex items-center gap-2">
+								<AttendanceIcon status="absentTimeOff" />
+								<span className="text-sm text-gray-700">Retardo maximo excedido</span>
+							</div>
+							<div className="flex items-center gap-2">
+								<AttendanceIcon status="absent" />
+								<span className="text-sm text-gray-700">Falta</span>
+							</div>
+							<div className="flex items-center gap-2">
+								<AttendanceIcon status="dayOff" />
+								<span className="text-sm text-gray-700">Día libre</span>
+							</div>
+							<div className="flex items-center gap-2">
+								<AttendanceIcon status="noRecord" />
+								<span className="text-sm text-gray-700">Sin registro</span>
+							</div>
+						</div>
+						<AttendanceTable
+							data={data}
+							month={month}
+							year={year}
+							groupingMode={appliedGroupingMode}
+							groupByLocation={groupByLocation}
+							timeframe={timeframe}
+						/>
+					</>
 				)}
 			</div>
 		</div>

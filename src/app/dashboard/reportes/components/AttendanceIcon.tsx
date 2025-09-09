@@ -48,6 +48,12 @@ const AttendanceIcon: React.FC<AttendanceIconProps> = ({ status }) => {
                     <CircleMinus className="h-3.5 w-3.5 text-white" strokeWidth={2.5} />
                 </div>
             );
+        case 'dayOff':
+            return (
+                <div className="w-6 h-6 rounded-full bg-gray-800 flex items-center justify-center">
+                    <CircleMinus className="h-3.5 w-3.5 text-white" strokeWidth={2.5} />
+                </div>
+            );
         default:
             return (
                 <div className="w-6 h-6 rounded-full bg-gray-200 border-2 border-gray-300"></div>
