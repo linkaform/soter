@@ -171,6 +171,18 @@ export function errorMsj(data:any, title = "Error", type="warning"){
 	if (data.hasOwnProperty("error")){
 		let res=undefined
 			const error= data.error
+
+      if (error.hasOwnProperty("exception") && error.exception.msg) {
+        const ex = error.exception;
+        const text = Array.isArray(ex.msg) ? ex.msg.join(", ") : ex.msg;
+        return {
+          title: ex.title || title,
+          text,
+          type: ex.type || type,
+          icon: ex.icon || undefined
+        };
+      }
+
 			if(error.hasOwnProperty('msg')){
 				if(typeof error.msg ==='string'){
 					res= {title: title, text: error.msg, type}

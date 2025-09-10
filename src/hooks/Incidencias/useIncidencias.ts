@@ -1,5 +1,6 @@
 import { getStats } from "@/lib/get-stats";
 import { crearIncidencia, editarIncidencia, getListIncidencias, InputIncidencia } from "@/lib/incidencias";
+import { errorMsj } from "@/lib/utils";
 import { useShiftStore } from "@/store/useShiftStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -22,10 +23,11 @@ export const useInciencias = (location:string, area:string, prioridades:string[]
     const createIncidenciaMutation = useMutation({
         mutationFn: async ({ data_incidencia} : { data_incidencia: InputIncidencia }) => {
             const response = await crearIncidencia(data_incidencia);
-            if(response.success === false){
-                // const textMsj = errorMsj(response.error)
-                throw new Error(`Error al crear incidencia, Error: ${response.error}`);
-            }else{
+            const hasError = (!response?.success) || (response?.response?.data?.status_code === 400 )
+            if (hasError) {
+                const textMsj = errorMsj(response)
+                throw new Error(`Error al crear seguimiento, Error: ${textMsj?.text}`);
+            } else {
                 return response.response?.data
             }
         },
@@ -38,8 +40,13 @@ export const useInciencias = (location:string, area:string, prioridades:string[]
           toast.success("Incidencia creada correctamente.");
         },
         onError: (err) => {
-          console.error("Error al crear incidencia:", err);
-          toast.error(err.message || "Hubo un error al crear la incidencia.");
+          toast.error(err.message || "Hubo un error al crear la incidencia.",{
+            style: {
+                background: "#dc2626",
+                color: "#fff",
+                border: 'none'
+            },
+        })
     
         },
         onSettled: () => {
@@ -51,11 +58,11 @@ export const useInciencias = (location:string, area:string, prioridades:string[]
     const editarIncidenciaMutation = useMutation({
         mutationFn: async ({ data_incidencia, folio }: { data_incidencia: InputIncidencia, folio: string }) => {
             const response = await editarIncidencia(data_incidencia, folio);
-            const hasError= response.response.data.status_code
-
-            if(hasError == 400 || hasError == 401|| hasError == 500){
-                throw new Error(`Error al editar incidencia, Error: ${response?.response.data.json.error}`);
-            }else{
+            const hasError = (!response?.success) || (response?.response?.data?.status_code === 400 )
+            if (hasError) {
+                const textMsj = errorMsj(response)
+                throw new Error(`Error al crear seguimiento, Error: ${textMsj?.text}`);
+            } else {
                 return response.response?.data
             }
         },
@@ -69,7 +76,13 @@ export const useInciencias = (location:string, area:string, prioridades:string[]
         },
         onError: (err) => {
           console.error("Error al editar incidencia:", err);
-          toast.error(err.message || "Hubo un error al editar la incidencia.");
+          toast.error(err.message || "Hubo un error al editar la incidencia.",{
+            style: {
+                background: "#dc2626",
+                color: "#fff",
+                border: 'none'
+            },
+        })
     
         },
         onSettled: () => {

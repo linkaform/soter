@@ -112,7 +112,7 @@ console.log(enviarSeguimiento)
                 incidencia_personas_involucradas:  "",
 				tiempo_transcurrido:""
               });
-			setDate("")
+			setDate(new Date())
 			setEvidencia([])
 			setDocumento([])
         }
@@ -146,6 +146,7 @@ console.log(enviarSeguimiento)
                     prev.map((item, i) => (i === indice ? formatData : item))
                   );
                 toast.success("Seguimiento editado correctamente.")
+				handleClose()
             }else{
 				const fecha2 = convertirDateToISO(date)
 				const formatData = {
@@ -165,12 +166,13 @@ console.log(enviarSeguimiento)
 							},
 							onError: (error) => {
 							  console.error("❌ Error en la mutación:", error);
-							  handleClose()
+							//   handleClose()
 							}
 						  }
 					);
 				}else{
 					setSeguimientos((prev: any) => [...prev, formatData]);
+					handleClose()
 				}
             }
             // setIsSuccess(false)

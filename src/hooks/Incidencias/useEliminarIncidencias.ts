@@ -11,12 +11,11 @@ export const useEliminarIncidencia = () => {
     return useMutation({
         mutationFn: async ({ folio }: { folio: string[] }) => {
             const response = await deleteIncidencias(folio);
-            const hasError= response.response.data.status_code
-
-            if(hasError == 400 || hasError == 401){
-                const textMsj = errorMsj(response.response.data) 
-                throw new Error(`Error al eliminar incidencia, Error: ${textMsj?.text}`);
-            }else{
+            const hasError = (!response?.success) || (response?.response?.data?.status_code === 400 )
+            if (hasError) {
+                const textMsj = errorMsj(response)
+                throw new Error(`Error al crear seguimiento, Error: ${textMsj?.text}`);
+            } else {
                 return response.response?.data
             }
         },
@@ -29,8 +28,13 @@ export const useEliminarIncidencia = () => {
             toast.success("Incidencia eliminada correctamente.");
         },
         onError: (err) => {
-            console.error("Error al eliminar incidencia:", err);
-            toast.error(err.message || "Hubo un error al eliminar la incidencia.");
+            toast.error(err.message || "Hubo un error al eliminar la incidencia.",{
+                style: {
+                    background: "#dc2626",
+                    color: "#fff",
+                    border: 'none'
+                },
+            })
 
         },
         onSettled: () => {

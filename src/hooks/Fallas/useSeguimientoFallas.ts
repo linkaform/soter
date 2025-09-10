@@ -30,7 +30,13 @@ export const useSeguimientoFallas = () => {
         },
         onError: (err) => {
             console.error("Error al crear seguimiento:", err);
-            toast.error(err.message || "Hubo un error al crear el seguimiento.");
+            toast.error(err.message || "Hubo un error al crear el seguimiento.",{
+                style: {
+                    background: "#dc2626",
+                    color: "#fff",
+                    border: 'none'
+                },
+            })
         },
         onSettled: () => {
             setLoading(false);

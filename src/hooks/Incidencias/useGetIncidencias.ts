@@ -10,10 +10,10 @@ export const useGetIncidencias = (location:string, area:string, prioridades:stri
         return data.response?.data; 
     },
    
-    refetchOnWindowFocus: true, 
-    refetchInterval: 60000,
-    refetchOnReconnect: true, 
-    staleTime: 1000 * 60 * 5, 
+    // refetchOnWindowFocus: true, 
+    // refetchInterval: 60000,
+    // refetchOnReconnect: true, 
+    // staleTime: 1000 * 60 * 5, 
   });
 
   return {

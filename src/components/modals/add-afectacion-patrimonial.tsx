@@ -28,7 +28,6 @@ import { toast } from "sonner";
 // import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { formatCurrencyString, formatForMultiselect } from "@/lib/utils";
 import Select from "react-select";
-import { Textarea } from "../ui/textarea";
 
 interface IncidenciaModalProps {
 	title: string;
@@ -43,9 +42,9 @@ interface IncidenciaModalProps {
 }
 
 const formSchema = z.object({
-	tipo_afectacion: z.string().min(1, { message: "Este campo es oblicatorio" }),
-    descripcion: z.string().min(1, { message: "Este campo es oblicatorio" }),
-	monto_estimado: z.string().min(1, { message: "Este campo es oblicatorio" }),
+	tipo_afectacion: z.string().min(1, { message: "Este campo es obligatorio" }),
+    // descripcion_afectacion: z.string().min(1, { message: "Este campo es obligatorio" }),
+	monto_estimado: z.string().min(1, { message: "Este campo es obligatorio" }),
 	duracion_estimada: z.string().optional(),
 });
 
@@ -68,7 +67,7 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
             tipo_afectacion:"",
-            descripcion:"",
+            // descripcion_afectacion:"",
             monto_estimado:"",
             duracion_estimada:""
 		},
@@ -81,7 +80,7 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
             setInputValue("")
             reset({
                 tipo_afectacion:"",
-                descripcion:"",
+                // descripcion_afectacion:"",
                 monto_estimado:"",
                 duracion_estimada:""
               });
@@ -91,7 +90,7 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
             setInputValue(afectacionPatrimonialSeleccionada.monto_estimado)
 			reset({
                 tipo_afectacion:afectacionPatrimonialSeleccionada.tipo_afectacion,
-                descripcion:afectacionPatrimonialSeleccionada.descripcion,
+                // descripcion_afectacion:afectacionPatrimonialSeleccionada.descripcion_afectacion,
                 monto_estimado:afectacionPatrimonialSeleccionada.monto_estimado,
                 duracion_estimada:afectacionPatrimonialSeleccionada.duracion_estimada
               });
@@ -101,7 +100,7 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
 	function onSubmit(values: z.infer<typeof formSchema>) {
         const formatData = {
             tipo_afectacion: values.tipo_afectacion,
-            descripcion:values.descripcion,
+            // descripcion_afectacion:values.descripcion_afectacion,
             monto_estimado: values.monto_estimado,
             duracion_estimada: values.duracion_estimada,
         }
@@ -110,11 +109,11 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
             setAfectacionPatrimonial((prev: any[]) =>
                 prev.map((item, i) => (i === indice ? formatData : item))
                 );
-            toast.success("Seguimiento editado correctamente.")
+            toast.success("Afectación editada correctamente.")
         }else{
             setAfectacionPatrimonial((prev: any) => [...prev, formatData]);
             console.log("format data", formatData)
-            toast.success("Seguimiento agregado correctamente.")
+            toast.success("Afectación agregada correctamente.")
         }
         setOpenAfectacionPatrimonialModal(false)
 	}
@@ -134,7 +133,7 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
 		<Dialog onOpenChange={setOpenAfectacionPatrimonialModal} open={openAfectacionPatrimonialModal}>
 			<DialogTrigger>{children}</DialogTrigger>
 
-			<DialogContent className="max-w-lg overflow-y-auto max-h-[60vh] min-h-auto flex flex-col overflow-hidden" aria-describedby="">
+			<DialogContent className="max-w-lg overflow-y-auto max-h-[60vh] min-h-auto flex flex-col overflow-hidden" onInteractOutside={(e) => e.preventDefault()} aria-describedby="">
 				<DialogHeader>
 					<DialogTitle className="text-2xl text-center font-bold">
 						{title}
@@ -175,14 +174,14 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
 										</FormItem>
                                     )}
                                 />
-                            <FormField
+                            {/* <FormField
 								control={form.control}
-								name="descripcion"
+								name="descripcion_afectacion"
 								render={({ field }: any) => (
 									<FormItem>
 										<FormLabel>Descripción de la afectación: *</FormLabel>
 										<FormControl>
-											<Textarea placeholder="Descripcion de la afectación..." {...field}
+											<Textarea placeholder="Descripción de la afectación..." {...field}
 												onChange={(e) => {
 													field.onChange(e);
 												}}
@@ -192,7 +191,7 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
 										<FormMessage />
 									</FormItem>
 								)}
-							/>
+							/> */}
 
                                 <FormField
                                     control={form.control}
