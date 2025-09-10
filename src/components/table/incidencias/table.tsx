@@ -156,6 +156,26 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 			  enableSorting: true,
 			},
 			{
+				accessorKey: "estatus",
+				header: "Estatus",
+				cell: ({ row }: { row: Row<Incidencia_record> }) => {
+				  const estatus = row.getValue("estatus") as string;
+				  const colorClass =
+					estatus.toLowerCase() === "abierto"
+					  ? "text-green-600"
+					  : estatus.toLowerCase() === "cerrado"
+					  ? "text-red-600"
+					  : "text-gray-600"; // por si viene otro estatus
+			  
+				  return (
+					<div className={`capitalize font-bold ${colorClass}`}>
+					  {estatus}
+					</div>
+				  );
+				},
+				enableSorting: true,
+			  },
+			{
 			  accessorKey: "area_incidencia",
 			  header: "Lugar del incidente",
 			  cell: ({ row }:{row: Row <Incidencia_record> }) => (

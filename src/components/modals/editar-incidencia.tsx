@@ -1138,7 +1138,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 											<tr key={index} className="border-t border-gray-200">
 											<td className="px-4 py-2">{item?.tipo_afectacion || "-"}</td>
 											{/* <td className="px-4 py-2 max-w-[200px] truncate" title={item?.descripcion_afectacion || "-"}> {item?.descripcion_afectacion || "-"} </td> */}
-											<td className="px-4 py-2">{formatCurrency(item?.monto_estimado) || "-"}</td>
+											<td className="px-4 py-2 text-right">{formatCurrency(item?.monto_estimado) || "-"}</td>
 											<td className="px-4 py-2">{item?.duracion_estimada || "-"}</td>
 											<td className="flex items-center justify-center gap-2 mt-2 ">
 												<div

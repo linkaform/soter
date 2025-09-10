@@ -400,13 +400,13 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 																<td className="px-4 py-2"><p>{data.info_coincide_con_videos || "-"}</p></td>
 															</tr>
 															<tr>
-																<td className="px-4 py-2 font-bold"><p>Responsable que entraga</p></td>
+																<td className="px-4 py-2 font-bold"><p>Responsable que reporta</p></td>
 																<td className="px-4 py-2"><p>{data.responsable_que_entrega || "-"}</p></td>
 															</tr>
-															<tr>
+															{/* <tr>
 																<td className="px-4 py-2 font-bold"><p>Responsable que recibe</p></td>
 																<td className="px-4 py-2"><p>{data.responsable_que_recibe || "-"}</p></td>
-															</tr>
+															</tr> */}
 														</tbody>
 													</table>
 												</AccordionContent>
@@ -475,12 +475,12 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 										{data.personas_involucradas_incidencia.length > 0 ?
 										 data.personas_involucradas_incidencia.map((item, index) => (
 											<tr key={index} className="border-t border-gray-200">
-											<td className="px-4 py-2">{item.nombre_completo}</td>
-											<td className="px-4 py-2">{item.rol}</td>
-											<td className="px-4 py-2">{item.sexo}</td>
-											<td className="px-4 py-2">{item.grupo_etario}</td>
-											<td className="px-4 py-2">{item.atencion_medica}</td>
-											<td className="px-4 py-2">{item.retenido}</td>
+											<td className="px-4 py-2">{item.nombre_completo  || "-"}</td>
+											<td className="px-4 py-2">{item.rol  || "-"}</td>
+											<td className="px-4 py-2">{item.sexo  || "-"}</td>
+											<td className="px-4 py-2">{item.grupo_etario  || "-"}</td>
+											<td className="px-4 py-2">{item.atencion_medica  || "-"}</td>
+											<td className="px-4 py-2">{item.retenido  || "-"}</td>
 											<td className="px-4 py-2 max-w-[200px] truncate" title={item?.comentarios || "-"}> {item?.comentarios || "-"} </td>
 											</tr>
 										)): 
@@ -514,10 +514,10 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 										data.acciones_tomadas_incidencia.map((item, index) => (
 											<tr key={index} className="border-t border-gray-200">
 											<td className="px-4 py-2 max-w-[200px] truncate" title={item?.acciones_tomadas || "-"}> {item?.acciones_tomadas || "-"} </td>
-											<td className="px-4 py-2">{item.llamo_a_policia}</td>
-											<td className="px-4 py-2">{item.autoridad}</td>
-											<td className="px-4 py-2">{item.numero_folio_referencia}</td>
-											<td className="px-4 py-2">{item.responsable}</td>
+											<td className="px-4 py-2">{item.llamo_a_policia || "-"}</td>
+											<td className="px-4 py-2">{item.autoridad || "-"}</td>
+											<td className="px-4 py-2">{item.numero_folio_referencia || "-"}</td>
+											<td className="px-4 py-2">{item.responsable || "-"}</td>
 											</tr>
 										)): <tr>
 										<td colSpan={6} className="text-center text-gray-500 py-4">
@@ -561,7 +561,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 								data.seguimientos_incidencia.map((item: any, index: number) => (
 								<tr key={index} className="border-t border-gray-200">
 								<td className="px-4 py-2">{item?.fecha_inicio_seg || "-"}</td>
-								<td className="px-4 py-2">{item?.tiempo_transcurrido}</td>
+								<td className="px-4 py-2">{item?.tiempo_transcurrido || "-"}</td>
 								<td className="px-4 py-2 max-w-[200px] truncate" title={item?.accion_correctiva_incidencia || "-"}> {item?.accion_correctiva_incidencia || "-"} </td>
 								<td className="px-4 py-2">{item?.incidencia_personas_involucradas || "-"}</td>
 
@@ -658,7 +658,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 									<tr key={index} className="border-t border-gray-200">
 									<td className="px-4 py-2">{item?.tipo_afectacion || "-"}</td>
 									{/* <td className="px-4 py-2 max-w-[200px] truncate" title={item?.descripcion_afectacion || "-"}> {item?.descripcion_afectacion || "-"} </td> */}
-									<td className="px-4 py-2">{formatCurrency(item?.monto_estimado) || "-"}</td>
+									<td className="px-4 py-2 text-right">{formatCurrency(item?.monto_estimado) || "-"}</td>
 									<td className="px-4 py-2">{item?.duracion_estimada || "-"}</td>
 									</tr>
 								))) : (

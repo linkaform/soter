@@ -512,7 +512,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 					edad: values.edad,
 					color_piel: values.color_piel,
 					color_cabello: values.color_cabello,
-					estatura_aproximada: values.estatura_aproximada ? undefined : Number(values.estatura_aproximada),
+					estatura_aproximada: values.estatura_aproximada,
 					descripcion_fisica_vestimenta: values.descripcion_fisica_vestimenta,
 					nombre_completo_responsable: values.nombre_completo_responsable,
 					parentesco: values.parentesco,

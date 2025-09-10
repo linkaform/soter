@@ -95,7 +95,7 @@ export function PersonaExtraviadaFields({ control }: Props) {
 								const value = e.target.value;
 								if (/^\d*\.?\d*$/.test(value)) {
 									const numericValue = value !== '' && !value.endsWith('.') ? parseFloat(value) : value;
-
+									console.log("valor", numericValue)
 									field.onChange(numericValue);
 								}
 							}}

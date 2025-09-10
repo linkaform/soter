@@ -166,7 +166,7 @@ console.log(enviarSeguimiento)
 							},
 							onError: (error) => {
 							  console.error("❌ Error en la mutación:", error);
-							  handleClose()
+							//   handleClose()
 							}
 						  }
 					);
