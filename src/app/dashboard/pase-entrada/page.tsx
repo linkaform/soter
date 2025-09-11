@@ -155,8 +155,10 @@ import DateTime from "@/components/dateTime";
 	  }
 	}, []);
 
-	const ubicacionesFormatted = ubicaciones?.map((u: any) => ({ id: u, name: u }));
-
+	const ubicacionesFormatted = (ubicaciones || [])
+	.filter((u: any) => u !== null && u !== undefined)
+	.map((u: any) => ({ id: u, name: u }));
+	
 	const [userIdSoter] = useState<number|null>(()=>{
 		return Number(typeof window !== "undefined"? window?.localStorage.getItem("userId_soter"):0) 
 	});
