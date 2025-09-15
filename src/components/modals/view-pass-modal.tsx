@@ -24,6 +24,7 @@ import { AddEmailModal } from "./add-mail";
 import { AddSmsModal } from "./add-sms";
 import { capitalizeFirstLetter } from "@/lib/utils";
 import { Equipo } from "@/lib/update-pass-full";
+import ModalDescargarPase from "./download-pase-options"; // Ajusta la ruta según tu estructura
 
 type Vehiculo_custom={
     tipo_vehiculo:string,
@@ -88,6 +89,7 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
 
   const [openAddMail, setOpenAddMail]= useState(false)
   const [openAddPhone, setOpenAddPhone]= useState(false)
+  const [modalOpen, setModalOpen] = useState(false);
 
 	function onEnviarCorreo(){
 		if(data?.status_pase?.toLowerCase()!='vencido'){
@@ -154,6 +156,10 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
 	}
 
   async function downloadPassPng(downloadURL: string){
+    if (!downloadURL) {
+      toast.error("No hay un pdf disponible para descargar.");
+      return;
+    }
     setLoadingPassUrl(true);
     try {
 			const response = await fetch(downloadURL);
@@ -177,6 +183,15 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
     }
   }
 
+  const handleDescargarImagen = () => {
+    downloadPassPng(data?.pdf_to_img[0]?.file_url);
+    setModalOpen(false);
+  };
+
+  const handleDescargarPDF = () => {
+    setEnablePdf(true);
+    setModalOpen(false);
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen} modal>
@@ -454,10 +469,16 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
                 )
               }
               </Button>
-              <Button className="w-full  bg-yellow-500 hover:bg-yellow-600 text-white"  onClick={()=>{downloadPassPng(data?.pdf_to_img?.[0].file_url)}} disabled={loadingPassUrl}>
+              <Button className="w-full  bg-yellow-500 hover:bg-yellow-600 text-white"  onClick={() => setModalOpen(true)} disabled={loadingPassUrl}>
               {!loadingPassUrl ? ("Descargar Pase"):(<><Loader2 className="animate-spin"/>Descargando Pase...</>)}
               </Button>
         </div>
+        <ModalDescargarPase
+          open={modalOpen}
+          onClose={() => setModalOpen(false)}
+          onDescargarImagen={handleDescargarImagen}
+          onDescargarPDF={handleDescargarPDF}
+        />
       </DialogContent>
     </Dialog>
   );
