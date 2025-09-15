@@ -322,7 +322,7 @@ import DateTime from "@/components/dateTime";
 			empresa:data.empresa,
 			email: data.email,
 			telefono: data.telefono,
-			ubicacion: ubicacionesSeleccionadas[0].id ,
+			ubicacion: ubicacionesSeleccionadas[0]?.id || "",
 			ubicaciones:ubicacionesSeleccionadas.map(u => u.id),
 			tema_cita: data.tema_cita,
 			descripcion: data.descripcion,
