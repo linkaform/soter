@@ -36,6 +36,7 @@ export interface PassSelected {
   foto?: Foto[]
   identificacion?: Foto[]
   google_wallet_pass_url: string
+  pdf_to_img: Foto[]
 }
 
 export interface VisitaA {

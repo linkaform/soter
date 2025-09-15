@@ -108,7 +108,7 @@ const PaseUpdate = () =>{
 	const [modalData, setModalData] = useState<any>(null);
 	const [identificacion, setIdentificacion] = useState<Imagen[]>([])
 	const downloadUrl=responsePdf?.response?.data?.data?.download_url
-	const downloadImgUrl = dataCatalogos?.pass_selected?.qr_pase[0]?.file_url;
+	const downloadImgUrl = dataCatalogos?.pass_selected?.pdf_to_img[0]?.file_url;
 	
 	const [errorFotografia, setErrorFotografia] = useState("")
 	const [errorIdentificacion, setErrorIdentificacion] = useState("")
