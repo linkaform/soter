@@ -215,7 +215,7 @@ export const subCategoriasConIconos = [
   
 export const formSchema = z.object({
 	reporta_incidencia: z.string().optional(),
-	fecha_hora_incidencia: z.string().min(1, { message: "Este campo es requerido" }),
+	fecha_hora_incidencia: z.string().optional(),
 	ubicacion_incidencia: z.string().min(1, { message: "Este campo es requerido" }),
 	area_incidencia: z.string().min(1, { message: "Este campo es requerido" }),
 	evidencia_incidencia: z.array(
