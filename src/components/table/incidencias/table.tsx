@@ -445,7 +445,7 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 					dateIncidencia={incidenciaSeleccionada.fecha_hora_incidencia ? convertirDateToISO(new Date(incidenciaSeleccionada.fecha_hora_incidencia)):""}
 					enviarSeguimiento={true}
 					folioIncidencia={incidenciaSeleccionada.folio}
-
+					estatusIncidencia={incidenciaSeleccionada.estatus}
 					>
 					<div></div>
 				</SeguimientoIncidenciaLista>

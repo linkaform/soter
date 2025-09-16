@@ -215,9 +215,9 @@ export const subCategoriasConIconos = [
   
 export const formSchema = z.object({
 	reporta_incidencia: z.string().optional(),
-	fecha_hora_incidencia: z.string().optional(),
-	ubicacion_incidencia: z.string().optional(),
-	area_incidencia: z.string().min(1, { message: "Comentario es obligatorio" }), 
+	fecha_hora_incidencia: z.string().min(1, { message: "Este campo es requerido" }),
+	ubicacion_incidencia: z.string().min(1, { message: "Este campo es requerido" }),
+	area_incidencia: z.string().min(1, { message: "Este campo es requerido" }),
 	evidencia_incidencia: z.array(
 	  z.object({
 		file_url: z.string().optional(),
@@ -237,7 +237,7 @@ export const formSchema = z.object({
 		})
 	  ).optional(),
 	notificacion_incidencia: z.string().optional(),
-	prioridad_incidencia: z.string().optional(),
+	prioridad_incidencia: z.string().min(1, { message: "Este campo es requerido" }),
 	dano_incidencia: z.string().optional(),
 	tipo_dano_incidencia: z.string().optional(),
 	comentario_incidencia: z.string().min(1, { message: "Este campo es requerido" }),
@@ -757,6 +757,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 															menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
 														}}
 													/>
+													<FormMessage />
 												</FormItem>
 												// <FormItem className="w-full">
 												// 	<FormLabel>Reporta:</FormLabel>
@@ -823,6 +824,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 															menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
 														}}
 														/> */}
+													<FormMessage />
 												</FormItem>
 											)}
 										/>
@@ -849,6 +851,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 															menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
 														}}
 														/>
+													<FormMessage />
 												</FormItem>
 												// <FormItem className="w-full">
 												// 	<FormLabel>Area de la incidencia: *</FormLabel>
@@ -928,7 +931,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 										name="comentario_incidencia"
 										render={({ field }:any) => (
 											<FormItem className="col-span-1 md:col-span-2">
-											<FormLabel>Comentarios: *</FormLabel>
+											<FormLabel>Descripción: *</FormLabel>
 											<FormControl className="w-full">
 												<Textarea
 												placeholder="Texto"
@@ -1228,7 +1231,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 
 				<div className="flex gap-2">
 					<DialogClose asChild>
-						<Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 sm:w-2/3 md:w-1/2 lg:w-1/2 mb-2" onClick={handleClose}>
+						<Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 sm:w-2/3 md:w-1/2 lg:w-1/2 " onClick={handleClose}>
 						Cancelar
 						</Button>
 					</DialogClose>
@@ -1237,7 +1240,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 					<Button
 						type="submit"
 						onClick={form.handleSubmit(onSubmit)}
-						className="w-full bg-blue-500 hover:bg-blue-600 text-white sm:w-2/3 md:w-1/2 lg:w-1/2 mb-2" disabled={isLoading}
+						className="w-full bg-blue-500 hover:bg-blue-600 text-white sm:w-2/3 md:w-1/2 lg:w-1/2" disabled={isLoading}
 					>
 						{isLoading? (
 						<>
@@ -1246,7 +1249,14 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 					):("Crear incidencia")}
 					</Button>
 				</div>
+
+				{Object.keys(form.formState.errors).length > 0 && (
+					<div className=" w-full text-red-600 text-sm">
+						Completa todos los campos requeridos antes de continuar.
+					</div>
+				)}
 				</>
+				
 			)}
 			<SeguimientoIncidenciaLista
 				title="Seguimiento Incidencia"
@@ -1260,6 +1270,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 				dateIncidencia={date ? convertirDateToISO(date) : ""}
 				enviarSeguimiento={false}
 				folioIncidencia={""}
+				estatusIncidencia=""
 				>
 				<div></div>
 			</SeguimientoIncidenciaLista>

@@ -94,6 +94,7 @@ const formSchema = z.object({
 	comentario_incidencia: z.string().min(1, { message: "Este campo es requerido" }),
 	incidencia: z.string().min(1, { message: "La ubicación es obligatoria" }),
 	tags: z.array(z.string()).optional(),
+	estatus: z.string().optional(),
 
 	categoria:z.string().optional(),
 	sub_categoria:z.string().optional(),
@@ -213,7 +214,8 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 			prioridad_incidencia:getNivel(value[0])||"",
 			notificacion_incidencia: selectedNotificacion? "sí":"no",
 			datos_deposito_incidencia: depositos,
-
+			tags:tagsSeleccionados,
+			estatus: data.estatus,
 			//Categoria
 			categoria:data.categoria||"",
 			sub_categoria:data.sub_categoria||"",
@@ -324,7 +326,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 	useEffect(()=>{
 		if(modalEditarAbierto){
 			setEvidencia(data.evidencia_incidencia)
-			setDocumento(data.evidencia_incidencia)
+			setDocumento(data.documento_incidencia)
 			setDate(new Date(data.fecha_hora_incidencia))
 			console.log("data.categoria", data.categoria)
 			setCategoria(data.categoria)
@@ -414,6 +416,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 					notificacion_incidencia:selectedNotificacion ? "sí": "no",
 					datos_deposito_incidencia: depositos||[],
 					tags:tagsSeleccionados,
+					estatus: values.estatus,
 
 					categoria: categoria,
 					sub_categoria: subCategoria,
@@ -862,6 +865,43 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 												</FormItem>
 											)}
 										/>	
+
+										<FormField
+											control={form.control}
+											name="estatus"
+											render={({ field }) => (
+												<FormItem>
+													<FormLabel>Estatus de la incidencia: *</FormLabel>
+													<FormControl>
+														<div className="flex gap-2">
+															<button
+																type="button"
+																onClick={() => field.onChange("Abierto")}
+																className={`px-6 py-2 rounded ${
+																	(field.value ?? data.estatus) === "Abierto"
+																		? "bg-blue-600 text-white"
+																		: "bg-white text-blue-600 border border-blue-500"
+																}`}
+															>
+																Abierto
+															</button>
+															<button
+																type="button"
+																onClick={() => field.onChange("Cerrado")}
+																className={`px-6 py-2 rounded ${
+																	(field.value ?? data.estatus) === "Cerrado"
+																		? "bg-blue-600 text-white"
+																		: "bg-white text-blue-600 border border-blue-500"
+																}`}
+															>
+																Cerrado
+															</button>
+														</div>
+													</FormControl>
+													<FormMessage />
+												</FormItem>
+											)}
+										/>
 										
 										<FormField
 										control={form.control}
@@ -1207,7 +1247,8 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 					editarSeguimiento={editarSeguimiento}
 					indice={indiceSeleccionado}
 					dateIncidencia={date ? convertirDateToISO(date) : ""} 
-					folioIncidencia={""}					>
+					folioIncidencia={""}	
+					estatusIncidencia = { data.estatus} >
 				<div></div>
 			</SeguimientoIncidenciaLista>
 

@@ -43,7 +43,7 @@ export type Incidencia = {
     tipo_dano_incidencia?: string[]
     grupo_seguimiento_incidencia: []
     tags:string[]
-    
+    estatus:string
     //Categoria
     categoria:string
     sub_categoria:string
@@ -106,23 +106,34 @@ export type Incidencia = {
         
         <LoadingModal isOpen={showLoadingModal} text="Cargando..."/>
         
-        <div
-          className="cursor-pointer"
-          onClick={() => onEditarClick(incidencia)}
-          title="Editar Incidencia"
-        >
-        	<Edit />
-        </div>
-    
+        {incidencia.estatus=="Abierto" ?
+          <div
+            className="cursor-pointer"
+            onClick={() => onEditarClick(incidencia)}
+            title="Editar Incidencia"
+          >
+            <Edit />
+          </div>: 
+          <div title="Cerrar Falla">
+            <Edit  className="text-gray-300"/>
+          </div>
+        }
+
+
+        {incidencia.estatus=="Abierto" ?
         <div
           className="cursor-pointer"
           onClick={() => onSeguimientoClick(incidencia)}
           title="Seguimiento Incidencia"
         >
         	<Check />
-        </div>
+        </div>:
+          <div title="Cerrar Falla">
+            <Check  className="text-gray-300"/>
+          </div>
+        }
 
-      
+          
         <div
           className="cursor-pointer"
           title="Eliminar Incidencia"
