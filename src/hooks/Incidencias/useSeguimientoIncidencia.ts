@@ -9,8 +9,8 @@ export const useSeguimientoIncidencia = () => {
     const { setLoading } = useShiftStore();
   
     return useMutation({
-        mutationFn: async ({ seguimientos_incidencia, folio }: { seguimientos_incidencia: any, folio: string}) => {
-            const response = await crearSeguimientoIncidencia(seguimientos_incidencia, folio);
+        mutationFn: async ({ seguimientos_incidencia, folio, estatus }: { seguimientos_incidencia: any, folio: string,estatus:string}) => {
+            const response = await crearSeguimientoIncidencia(seguimientos_incidencia, folio, estatus);
             const hasError = (!response?.success) || (response?.response?.data?.status_code === 400 )
             if (hasError) {
                 const textMsj = errorMsj(response)

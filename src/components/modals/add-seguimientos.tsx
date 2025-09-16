@@ -47,6 +47,7 @@ interface IncidenciaModalProps {
 	dateIncidencia:string;
 	enviarSeguimiento?:boolean;
 	folioIncidencia:string;
+	estatusIncidencia:string;
 }
 
 const formSchema = z.object({
@@ -66,7 +67,8 @@ const formSchema = z.object({
 			file_name: z.string(),
 		})
 	).optional(),
-	tiempo_transcurrido: z.string().optional()
+	tiempo_transcurrido: z.string().optional(),
+	estatus:z.string().optional()
 });
 
 export const SeguimientoIncidenciaLista: React.FC<IncidenciaModalProps> = ({
@@ -81,7 +83,8 @@ export const SeguimientoIncidenciaLista: React.FC<IncidenciaModalProps> = ({
     seguimientoSeleccionado,
 	dateIncidencia,
 	enviarSeguimiento = false,
-	folioIncidencia
+	folioIncidencia,
+	estatusIncidencia
 }) => {
 	// const [isSuccess, setIsSuccess] = useState(false)
 	const [evidencia, setEvidencia] = useState<Imagen[]>([]);
@@ -89,7 +92,9 @@ export const SeguimientoIncidenciaLista: React.FC<IncidenciaModalProps> = ({
 	const [date, setDate] = useState<Date | "">("");
 	const { isLoading} = useShiftStore();
 	const seguimientoIncidenciaMutation = useSeguimientoIncidencia()
-console.log(enviarSeguimiento)
+
+	console.log("estatusIncidencia",estatusIncidencia)
+
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -98,7 +103,8 @@ console.log(enviarSeguimiento)
 			fecha_inicio_seg: "",
 			incidencia_documento_solucion: [],
 			incidencia_evidencia_solucion: [],
-			tiempo_transcurrido:""
+			tiempo_transcurrido:"",
+			estatus:estatusIncidencia
 		},
 	});
 
@@ -110,7 +116,8 @@ console.log(enviarSeguimiento)
             reset({
                 accion_correctiva_incidencia: "",
                 incidencia_personas_involucradas:  "",
-				tiempo_transcurrido:""
+				tiempo_transcurrido:"",
+				estatus:estatusIncidencia
               });
 			setDate(new Date())
 			setEvidencia([])
@@ -159,7 +166,7 @@ console.log(enviarSeguimiento)
 				}
 
 				if(enviarSeguimiento){
-					seguimientoIncidenciaMutation.mutate({ seguimientos_incidencia: formatData, folio: folioIncidencia },
+					seguimientoIncidenciaMutation.mutate({ seguimientos_incidencia: formatData, folio: folioIncidencia, estatus: values.estatus ? values.estatus : estatusIncidencia },
 						{
 							onSuccess: () => {
 								handleClose()
@@ -206,6 +213,45 @@ console.log(enviarSeguimiento)
 				<Form {...form}>
 					<form onSubmit={form.handleSubmit(onSubmit)} >
 						<div className="grid grid-cols-1 gap-5 mb-6">
+						{enviarSeguimiento && (
+							<FormField
+								control={form.control}
+								name="estatus"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Estatus de la incidencia: *</FormLabel>
+										<FormControl>
+											<div className="flex gap-2">
+												<button
+													type="button"
+													onClick={() => field.onChange("Abierto")}
+													className={`px-6 py-2 rounded ${
+														(field.value ?? estatusIncidencia) === "Abierto"
+															? "bg-blue-600 text-white"
+															: "bg-white text-blue-600 border border-blue-500"
+													}`}
+												>
+													Abierto
+												</button>
+												<button
+													type="button"
+													onClick={() => field.onChange("Cerrado")}
+													className={`px-6 py-2 rounded ${
+														(field.value ?? estatusIncidencia) === "Cerrado"
+															? "bg-blue-600 text-white"
+															: "bg-white text-blue-600 border border-blue-500"
+													}`}
+												>
+													Cerrado
+												</button>
+											</div>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						)}
+
 							<FormField
 									control={form.control}
 									name="fecha_inicio_seg"

@@ -160,10 +160,19 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 									<p className="font-bold ">Prioridad: </p>
 									<p className={`
 										${data?.prioridad_incidencia === 'Leve' ? 'text-green-500 font-bold' : ''}
-										${data?.prioridad_incidencia === 'Grave' ? 'text-yellow-500 font-bold' : ''}
+										${data?.prioridad_incidencia === 'Moderada' ? 'text-yellow-500 font-bold' : ''}
 										${data?.prioridad_incidencia === 'Crítica' ? 'text-red-500 font-bold' : ''}
 									`}>
 										{data?.prioridad_incidencia}
+									</p>
+								</div>
+								<div className="w-full flex gap-2">
+									<p className="font-bold ">Estatus: </p>
+									<p className={`
+										${data?.estatus === 'Abierto' ? 'text-green-600 font-bold' : ''}
+										${data?.estatus === 'Cerrado' ? 'text-red-500 font-bold' : ''}
+									`}>
+										{data?.estatus}
 									</p>
 								</div>
 								{data?.dano_incidencia ??
@@ -200,36 +209,38 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 							</div>
 						</div>
 								
-						<div className="grid grid-cols-2 justify-around mt-2">
+						<div className="grid grid-cols-2 justify-around mt-2 ">
 							<div >
 								{data.evidencia_incidencia && data.evidencia_incidencia.length>0?(
-									<div>
-										<p className="font-bold ">Evidencia: </p>
-										<Carousel className="w-36 max-w-xs">
-											<CarouselContent>
-												{data.evidencia_incidencia.map((a, index) => (
-												<CarouselItem key={index}>
-													<div className="p-1">
-													<Card className="border-none">
-														<CardContent className="flex aspect-square items-center justify-center p-0 ">
-														{/* <span className="text-4xl font-semibold"> */}
-															<Image
-																width={280}
-																height={280}
-																src= {a.file_url || "/nouser.svg"}
-																alt="Imagen"
-																className="w-42 h-42 object-contain bg-gray-200 rounded-lg" 
-															/>
-														{/* </span> */}
-														</CardContent>
-													</Card>
-													</div>
-												</CarouselItem>
-												))}
-											</CarouselContent>
-											{ data.evidencia_incidencia.length > 1 && 
-											<><CarouselPrevious /><CarouselNext /></> }
-										</Carousel>
+									<div className="flex flex-col">
+										<div><p className="font-bold ">Evidencia: </p></div>
+										<div className="flex ml-20">
+											<Carousel className="flex w-36 max-w-xs">
+												<CarouselContent>
+													{data.evidencia_incidencia.map((a, index) => (
+													<CarouselItem key={index}>
+														<div className="p-1">
+														<Card className="border-none">
+															<CardContent className="flex aspect-square items-center justify-center p-0 ">
+															{/* <span className="text-4xl font-semibold"> */}
+																<Image
+																	width={280}
+																	height={280}
+																	src= {a.file_url || "/nouser.svg"}
+																	alt="Imagen"
+																	className="w-42 h-42 object-contain bg-gray-200 rounded-lg" 
+																/>
+															{/* </span> */}
+															</CardContent>
+														</Card>
+														</div>
+													</CarouselItem>
+													))}
+												</CarouselContent>
+												{ data.evidencia_incidencia.length > 1 && 
+												<><CarouselPrevious /><CarouselNext /></> }
+											</Carousel>
+										</div>
 									</div>
 								):(
 									<>
