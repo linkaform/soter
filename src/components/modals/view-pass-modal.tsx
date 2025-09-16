@@ -211,7 +211,6 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
           title={"Agregar Teléfono"} open={openAddPhone} setOpen={setOpenAddPhone} id={data._id} setOpenPadre={setOpen}/>
 
 
-        {/* Sobre la visita */}
           <div className="w-full flex mb-3 gap-1">
             <p className="font-bold ">Nombre completo: </p>
             <p> {data?.nombre} </p>
@@ -224,7 +223,6 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
 						<div className="flex justify-between flex-col sm:flex-row  sm:space-x-5 space-y-5 sm:space-y-0 ">
 							<div className="w-full flex gap-2 ">
 							<p className="font-bold flex-shrink-0">Tipo de pase: </p>
-							<p >Visita General</p>
 							</div>
 
               <div className="w-full flex gap-2">
@@ -247,19 +245,20 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
 
 						<div className="flex justify-between flex-col sm:flex-row  sm:space-x-5 space-y-5 sm:space-y-0">
 							<div className="w-full flex gap-2 ">
-							<p className="font-bold flex-shrink-0">Email: </p>
+							<p className="font-bold flex-shrink-0">Email : </p>
 							<p className="w-full break-words">{data?.email}</p>
 							</div>
 
 							<div className="w-full flex gap-2">
-							<p className="font-bold flex-shrink-0">Teléfono: </p>
+							<p className="font-bold flex-shrink-0">Teléfono : </p>
 							<p className="text-sm">{data?.telefono}</p>
 							</div>
 						</div>
 
             <div className="flex justify-between flex-col sm:flex-row  sm:space-x-5 space-y-5 sm:space-y-0">
               <div className="w-full flex gap-2  ">
-                <p className="font-bold flex-shrink-0">Tema cita: </p>
+                <p className="font-bold flex-shrink-0">Tema cita : </p>
+
                 <p className="w-full break-words">{data?.tema_cita}</p>
               </div>
 
@@ -310,41 +309,6 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
 
           {data?.grupo_equipos.length>0 || data?.grupo_vehiculos.length>0&&
           <Separator className="my-4" />}
-
-          {/* {data?.grupo_equipos.length>0 && (
-          <div className="">
-            <p className="text-lg font-bold mb-2">Equipos</p>
-            <Accordion type="single" collapsible>
-              {data?.grupo_equipos.map((equipo, index) => (
-                <AccordionItem key={index} value={`equipo-${index}`}>
-                  <AccordionTrigger>{`${equipo.tipo_equipo}`}</AccordionTrigger>
-                  <AccordionContent>
-                    <p className="font-medium mb-1">
-                      Tipo: <span className="">{equipo.tipo_equipo || "N/A"}</span>
-                    </p>
-                    <p className="font-medium mb-1">
-                      Equipo: <span className="">{equipo.nombre_articulo || "N/A"}</span>
-                    </p>
-                    <p className="font-medium mb-1">
-                      Marca: <span className="">{equipo.marca_articulo || "N/A"}</span>
-                    </p>
-                    <p className="font-medium mb-1">
-                      Modelo: <span className="">{equipo.modelo_articulo || "N/A"}</span>
-                    </p>
-                    <p className="font-medium mb-1">
-                      Número de Serie:{" "}
-                      <span className="">{equipo.numero_serie || "N/A"}</span>
-                    </p>
-                    <p className="font-medium mb-1">
-                      Color: <span className="">{equipo.color_articulo || "N/A"}</span>
-                    </p>
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </div>
-          )} */}
-
 
             <div className="flex justify-between w-full h-full mb-2">
 							{data?.grupo_equipos.length > 0 ? (

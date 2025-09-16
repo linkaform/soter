@@ -106,10 +106,6 @@ export const usePaseEntrada = (locationConfSeguridad:string[]) => {
             return data.response?.data || []; 
         },
        
-        refetchOnWindowFocus: true, 
-        refetchInterval: 60000,
-        refetchOnReconnect: true, 
-        staleTime: 1000 * 60 * 5, 
       });
 
     const queryClient = useQueryClient();
