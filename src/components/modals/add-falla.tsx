@@ -729,7 +729,8 @@ export const AddFallaModal: React.FC<AddFallaModalProps> = ({
 				editarSeguimiento={editarSeguimiento}
 				indice={indiceSeleccionado}
 				dateIncidencia={date ? convertirDateToISO(date) : ""}
-				folioIncidencia={""}>
+				folioIncidencia={""}
+				estatusIncidencia="">
 			<div></div>
 		</SeguimientoIncidenciaLista>
 
