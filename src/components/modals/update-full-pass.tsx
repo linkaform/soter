@@ -165,7 +165,7 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
 	const userEmailSoter = localStorage.getItem("userEmail_soter")||"";
 	const userIdSoter = parseInt(localStorage.getItem("userId_soter") || "0", 10);
 
-	const { data: dataConfigLocation, isLoading: loadingConfigLocation } = useGetConfSeguridad(ubicacionesSeleccionadas)
+	const { data: dataConfigLocation, isLoading: loadingConfigLocation } = useGetConfSeguridad(ubicacionesSeleccionadas[0]?.id?? '')
 	const ubicacionesFormatted = ubicaciones?.map((u: any) => ({ id: u, name: u }));
 
 	const [formatedDocs, setFormatedDocs] = useState<string[]>([])

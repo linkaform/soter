@@ -331,6 +331,7 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 					render={({ field }) => (
 						<FormItem>
 						<FormLabel>Modelo</FormLabel>
+
 						<Select
 							aria-labelledby="aria-label"
 							// ariaLiveMessages={{
@@ -368,7 +369,6 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 					render={({ field }) => (
 						<FormItem>
 						<FormLabel> Estado</FormLabel>
-
 						<Select
 							aria-labelledby="aria-label"
 							// ariaLiveMessages={{
@@ -425,7 +425,7 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 					name="color"
 					render={({ field }) => (
 						<FormItem>
-						<FormLabel> Color</FormLabel>
+						<FormLabel>* Color</FormLabel>
 						<Select
 							aria-labelledby="aria-label"
 							// ariaLiveMessages={{
@@ -437,7 +437,6 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 							// onMenuClose={onMenuClose}
 							options={catColores}
 							onChange={(value:any) => field.onChange([value.value])}
-							
 						/>
 
 						{/* <Select onValueChange={(value) => field.onChange([value])}>

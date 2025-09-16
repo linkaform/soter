@@ -79,7 +79,7 @@ export const SeguimientoIncidenciaModal: React.FC<IncidenciaModalProps> = ({
 
 	const seguimientoIncidenciaMutation = useMutation({
 		mutationFn: async ({ seguimientos_incidencia, folio }: { seguimientos_incidencia: any, folio: string }) => {
-			const response = await crearSeguimientoIncidencia(seguimientos_incidencia, folio);
+			const response = await crearSeguimientoIncidencia(seguimientos_incidencia, folio, "");
 			const hasError = response.response.data.status_code
 
 			if (hasError == 400 || hasError == 401) {
