@@ -31,7 +31,6 @@ import { Input } from "../ui/input";
 import LoadImage from "../upload-Image";
 import LoadFile from "../upload-file";
 import { toast } from "sonner";
-import { useSeguimientoIncidencia } from "@/hooks/Incidencias/useSeguimientoIncidencia";
 
 interface IncidenciaModalProps {
 	title: string;
@@ -82,12 +81,13 @@ export const SeguimientoFallaModal: React.FC<IncidenciaModalProps> = ({
 	enviarSeguimiento = false,
 	folioIncidencia
 }) => {
+	console.log(folioIncidencia)
 	// const [isSuccess, setIsSuccess] = useState(false)
 	const [evidencia, setEvidencia] = useState<Imagen[]>([]);
 	const [documento, setDocumento] = useState<Imagen[]>([]);
 	const [date, setDate] = useState<Date | "">("");
 	const { isLoading} = useShiftStore();
-	const seguimientoIncidenciaMutation = useSeguimientoIncidencia()
+	// const seguimientoIncidenciaMutation = useSeguimientoIncidencia()
 console.log(enviarSeguimiento)
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -157,17 +157,20 @@ console.log(enviarSeguimiento)
 				}
 
 				if(enviarSeguimiento){
-					seguimientoIncidenciaMutation.mutate({ seguimientos_incidencia: formatData, folio: folioIncidencia },
-						{
-							onSuccess: () => {
-								handleClose()
-							},
-							onError: (error) => {
-							  console.error("❌ Error en la mutación:", error);
-							  handleClose()
-							}
-						  }
-					);
+					// seguimientoIncidenciaMutation.mutate({
+					// 	seguimientos_incidencia: formatData, folio: folioIncidencia,
+					// 	estatus: ""
+					// },
+					// 	{
+					// 		onSuccess: () => {
+					// 			handleClose()
+					// 		},
+					// 		onError: (error) => {
+					// 		  console.error("❌ Error en la mutación:", error);
+					// 		  handleClose()
+					// 		}
+					// 	  }
+					// );
 				}else{
 					setSeguimientos((prev: any) => [...prev, formatData]);
 				}
