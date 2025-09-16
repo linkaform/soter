@@ -237,7 +237,7 @@ export const formSchema = z.object({
 		})
 	  ).optional(),
 	notificacion_incidencia: z.string().optional(),
-	prioridad_incidencia: z.string().min(1, { message: "Este campo es requerido" }),
+	prioridad_incidencia: z.string().optional(),
 	dano_incidencia: z.string().optional(),
 	tipo_dano_incidencia: z.string().optional(),
 	comentario_incidencia: z.string().min(1, { message: "Este campo es requerido" }),
