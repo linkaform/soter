@@ -58,7 +58,9 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 	const [enablePdf, setEnablePdf] = useState(false)
 	const [smsSent, setSmsSent] = useState(false);
 	const [emailSent, setEmailSent] = useState(false);
-	const downloadImgUrl = updateResponse?.json?.pdf_to_img?.[0].file_url
+	const downloadImgUrl = Array.isArray(updateResponse?.json?.pdf_to_img) && updateResponse?.json?.pdf_to_img.length > 0
+		? updateResponse?.json?.pdf_to_img[0]?.file_url
+		: "";
 
 	const handleClickSendPass = async (folio: string, envio: string[]) => {
 		if (envio.includes("enviar_correo")) {
