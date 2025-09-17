@@ -5,12 +5,9 @@ import { startShift } from "@/lib/start-shift";
 import { toast } from "sonner"; // Importar Sonner
 import { useShiftStore } from "@/store/useShiftStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import useAuthStore from "@/store/useAuthStore";
 
 export const useGetShift = (enableShift:boolean) => {
   const queryClient = useQueryClient();
-
-  const { userNameSoter } = useAuthStore();
 
   const {
     area,
@@ -31,22 +28,14 @@ export const useGetShift = (enableShift:boolean) => {
     isFetching,
     refetch,
   } = useQuery<any>({
-    queryKey: ["getShift"],
+    queryKey: ["getShift", area, location],
+    refetchOnWindowFocus: false,
     enabled: enableShift,
     queryFn: async () => {
-      	const data = await getShift({ area, location });
-		if(!data.success){
-			throw new Error(data.error?.exception?.msg[0] || "Hubo un error al obtener load shift");
-		}else{
-			const filteredGuards = data.response?.data?.support_guards?.filter((guard: any) => {
-				return guard.name !== userNameSoter; });
-			setArea(data.response?.data?.location?.area ?? "")
-			setLocation(data.response?.data?.location?.name ?? "")
-			setTurno(data?.response.data?.guard?.status_turn=="Turno Abierto" ? true:false)
-			return {...data.response?.data,support_guards: filteredGuards,}
-		}
-    },
-  });
+      const data = await getShift({ area, location });
+      if(!data.success) throw new Error(data.error?.exception?.msg[0] || "Hubo un error al obtener load shift");
+      return data.response?.data;
+		}});
 
   const startShiftMutation = useMutation({
     mutationFn: async ({

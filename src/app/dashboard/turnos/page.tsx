@@ -14,14 +14,17 @@ import { useEffect } from "react";
 
 export default function Home() {
   const { isLoading, loading, shift} = useGetShift(true)
-  const { setCheckin_id } = useShiftStore()
+  const {
+    location,
+    area,
+    setCheckin_id,
+  } = useShiftStore()
 
 	useEffect(() => {
-		if ( shift?.guard?.status_turn !== "Turno Cerrado") {  
+		if ( shift?.guard?.status_turn !== "Turno Cerrado") {
 			setCheckin_id(shift?.booth_status?.checkin_id);
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [shift]);
+  }, [shift, setCheckin_id]);
 
     if (isLoading || loading) {
       return (
@@ -30,23 +33,21 @@ export default function Home() {
         </div>
       );
     }
-  
+
   return (
      <>
      <link rel="icon" href="/turnos.svg" type="image/svg+xml" /><div className="flex flex-col lg:flex-row">
           <div className="w-full lg:w-1/4 h-full px-6 py-6 border border-[#F0F2F5]">
-              <Sidebar />
+              <Sidebar key={shift?.location?.name} shift={shift} />
           </div>
           <div className="w-full lg:w-3/4 p-8 flex flex-col">
-              <TurnStatus />
+              <TurnStatus shift={shift} location={location} area={area} />
               <div className="flex flex-col sm:flex-row justify-between">
                   <ActivitySummary booth_stats={shift?.booth_stats}/>
                   <div className="w-full">
                       <GuardiasApoyoTable />
                   </div>
               </div>
-
-              {/* Notas Table */}
               <div className="w-full">
                   <NotasTable data={shift?.notes?.records} />
               </div>

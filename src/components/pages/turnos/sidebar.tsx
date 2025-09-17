@@ -4,15 +4,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useGetShift } from "@/hooks/useGetShift";
 import { changeUserPhoto, changeUserPhotoPatch } from "@/lib/change-user-photo";
 import { capitalizeOnlyFirstLetter } from "@/lib/utils";
 import useAuthStore from "@/store/useAuthStore";
-import React , { useRef } from "react";
+import React , { useEffect, useRef } from "react";
 import { toast } from "sonner";
 
-const Sidebar = () => {
-  const { shift } = useGetShift(false);
+const Sidebar = ({shift}: any) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { userEmailSoter, userNameSoter, userPhoto, userIdSoter , setUserPhoto} = useAuthStore();
 
@@ -24,6 +22,10 @@ const Sidebar = () => {
       .join("")
       .toUpperCase(); 
   };
+
+  useEffect(() => {
+    console.log('===========', shift);
+  }, [shift]);
 
     const handleButtonClick = () => {
         fileInputRef.current?.click();

@@ -2,14 +2,10 @@ import { CloseShiftModal } from "@/components/modals/close-shift-modal";
 import { StartShiftModal } from "@/components/modals/start-shift-modal";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useGetShift } from "@/hooks/useGetShift";
 import { capitalizeOnlyFirstLetter } from "@/lib/utils";
-import { useShiftStore } from "@/store/useShiftStore";
 import React, { useEffect, useState } from "react";
 
-const TurnStatus = () => {
-  const { shift } = useGetShift( false);
-  const { area } = useShiftStore();
+const TurnStatus = ({shift, location, area}: {shift: any, location: string, area:string }) => {
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
   const turno =  capitalizeOnlyFirstLetter(shift?.guard.status_turn?? "")
   useEffect(() => {
@@ -72,7 +68,7 @@ const TurnStatus = () => {
         )}
       </StartShiftModal>
        
-     	  <CloseShiftModal title="Confirmación">
+     	  <CloseShiftModal title="Confirmación" shift={shift} area={area} location={location}>
           {shift?.guard?.status_turn !== "Turno Cerrado" && (
             <Button className="w-[520px] md:w-[300px] bg-red-600 hover:bg-red-700" disabled ={area==""?true:false}>
             Cerrar Turno

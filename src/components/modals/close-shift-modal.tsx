@@ -9,25 +9,30 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { useShiftStore } from "@/store/useShiftStore";
 import { useGetShift } from "@/hooks/useGetShift";
 
 interface CloseShiftModalProps {
   title: string;
   children: React.ReactNode;
+  shift: any;
+  area: string;
+  location: string;
 }
 
 export const CloseShiftModal: React.FC<CloseShiftModalProps> = ({
   title,
   children,
+  shift,
+  area,
+  location
 }) => {
-  const { shift, closeShiftMutation } = useGetShift( false);
-
-  const { area, location } = useShiftStore();
-
-  const guardNames = shift?.support_guards
-    ?.map((guardia: { name: string }) => guardia.name)
-    .join(", ");
+  const { closeShiftMutation } = useGetShift( false);
+  const guardNames = Array.isArray(shift?.support_guards) && shift.support_guards.length > 0
+    ? shift.support_guards
+        .filter((guardia: { name: string }) => guardia && guardia.name && guardia.name.trim() !== "")
+        .map((guardia: { name: string }) => guardia.name)
+        .join(", ")
+    : "";
 
   return (
     <Dialog>
