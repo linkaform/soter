@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getCatalogosPaseNoJwt } from "@/lib/get-catalogos_pase_no_jwt";
+import { errorMsj } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 
 
@@ -65,8 +66,15 @@ export const useGetCatalogoPaseNoJwt = (account_id:number|null, qr_code:string, 
     enabled:enable,
     queryFn: async () => {
         const data = await getCatalogosPaseNoJwt(account_id, qr_code); 
-        return data.response?.data ?? {};
-          },
+        const hasError = (!data?.success) || (data?.response?.data?.status_code === 400 )
+        if (hasError) {
+          const textMsj = errorMsj(data)
+          throw new Error(`Error al obtener pase, Error: ${textMsj?.text}`);
+        } else {
+            return data.response?.data
+        }
+    },
+          
   });
 
   return {

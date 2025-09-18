@@ -88,6 +88,8 @@ export interface AfectacionPatrimonial{
     tipo_afectacion:string
     monto_estimado:string
     duracion_estimada:string
+    evidencia:Imagen[]
+    documento:Imagen[]
 }
 
 export interface InputIncidencia {

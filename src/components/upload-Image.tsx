@@ -20,10 +20,11 @@ interface CalendarDaysProps {
   imgArray:Imagen[];
   showArray:boolean;
   limit:number;
+  showTakePhoto?:boolean
 }
 
 
-const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOption, facingMode, imgArray, showArray, limit})=> {
+const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOption, facingMode, imgArray, showArray, limit, showTakePhoto=false })=> {
     const [loadingWebcam, setloadingWebcam] = useState(false);
     const [hideWebcam, setHideWebcam] = useState(true)
     const [hideButtonWebcam, setHideButtonWebcam] = useState(false)
@@ -57,6 +58,18 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
         setHideButtonWebcam(false)
     }
 
+    function removeImage(indexToRemove: number) {
+        const newArray = imgArray.filter((_, index) => index !== indexToRemove);
+        setImg(newArray);
+        if (newArray.length === 0) {
+            cleanPhoto();
+        }
+    }
+
+    // useEffect(()=>{
+    //    
+    // },[imgArray])
+
     function takeAndSavePhoto(){
         const imageSrc = webcamRef.current?.getScreenshot() || "";
         const base64 =base64ToFile(imageSrc, quitarAcentosYMinusculasYEspacios(id));
@@ -65,8 +78,14 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
         const nuevoNombre = `${quitarAcentosYMinusculasYEspacios(id)}.${extension}`;
         const nuevoArchivo = new File([base64], nuevoNombre, { type: base64.type });
         uploadImageMutation.mutate({img:nuevoArchivo})
-        setHideWebcam(true)
-        setHideButtonWebcam(true)
+
+        if(showTakePhoto && imgArray.length<limit ){
+            setHideWebcam(true)
+            setHideButtonWebcam(false)
+        }else{
+            setHideWebcam(true)
+            setHideButtonWebcam(true)
+        }
     }
 
     useEffect(()=>{
@@ -94,7 +113,7 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
                     </Button>
                     {showWebcamOption && !hideButtonWebcam ? (<>
                         {hideWebcam && 
-                            <Button className=" rounded bg-blue-600 hover:bg-blue-600 w-8 h-8" type="button"
+                            <Button className="rounded bg-blue-600 hover:bg-blue-600 w-8 h-8" type="button"
                             onClick={() => {
                                 setloadingWebcam(true)
                                 setHideWebcam(false); 
@@ -154,7 +173,7 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
                                     <CarouselContent>
                                         {imgArray.map((a:Imagen, index:number) => (
                                         <CarouselItem key={index}>
-                                            <div className="p-1">
+                                            <div className="p-1 relative">
                                                 <Image
                                                     height={160} 
                                                     width={160} 
@@ -162,12 +181,20 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
                                                     alt="Imagen"
                                                     className="w-full h-40 object-cover rounded-lg" 
                                                 />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeImage(index)}
+                                                    className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white rounded px-1.5"
+                                                    title="Eliminar imagen"
+                                                >
+                                                    x
+                                                </button>
                                             </div>
                                     </CarouselItem>
                                     ))}
                                     </CarouselContent>
                                         {imgArray.length>1 ?
-                                        <><CarouselPrevious /><CarouselNext /></>
+                                        <><CarouselPrevious  type="button" /><CarouselNext  type="button"/></>
                                         :null}
                                     </Carousel>
                                 </div>

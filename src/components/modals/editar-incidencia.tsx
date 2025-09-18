@@ -929,7 +929,9 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 											facingMode="environment"
 											imgArray={evidencia}
 											showArray={true}
-											limit={10}/>
+											limit={10}
+											showTakePhoto={true}
+											/>
 
 										<LoadFile
 											id="documento"
@@ -1169,6 +1171,8 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 											{/* <th className="px-4 py-2 text-left border-b border-gray-300">Descripción de la Afectación</th> */}
 											<th className="px-4 py-2 text-left border-b border-gray-300">Monto Estimado de Daño ($)</th>
 											<th className="px-4 py-2 text-left border-b border-gray-300">Duración Estimada Afectación</th>
+											<th className="px-4 py-2 text-left border-b border-gray-300">Evidencia</th>
+											<th className="px-4 py-2 text-left border-b border-gray-300">Documento</th>
 											<th className="px-4 py-2 text-left border-b border-gray-300"></th>
 										</tr>
 										</thead>
@@ -1180,6 +1184,56 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 											{/* <td className="px-4 py-2 max-w-[200px] truncate" title={item?.descripcion_afectacion || "-"}> {item?.descripcion_afectacion || "-"} </td> */}
 											<td className="px-4 py-2 text-right">{formatCurrency(item?.monto_estimado) || "-"}</td>
 											<td className="px-4 py-2">{item?.duracion_estimada || "-"}</td>
+											<td className="px-4 py-2">
+												{item?.evidencia?.length > 0 ? (
+												<div className="w-full flex justify-center">
+													<Carousel className="w-16">
+													<CarouselContent>
+														{item.evidencia.map((a: any, i: number) => (
+														<CarouselItem key={i}>
+															<Card>
+															<CardContent className="flex aspect-square items-center justify-center p-0">
+																<Image
+																width={280}
+																height={280}
+																src={a?.file_url || "/nouser.svg"}
+																alt="Imagen"
+																className="w-42 h-42 object-contain bg-gray-200 rounded-lg"
+																/>
+															</CardContent>
+															</Card>
+														</CarouselItem>
+														))}
+													</CarouselContent>
+													<CarouselPrevious />
+													<CarouselNext />
+													</Carousel>
+												</div>
+												) : (
+													<div className="flex justify-center">-</div>
+												)}
+											</td>
+
+											<td className="px-4 py-2">
+												{item?.documento?.length > 0 ? (
+												<ul className="ms-2">
+													{item.documento.map((file: any, i: number) => (
+													<li key={i}>
+														<a
+														href={file?.file_url}
+														target="_blank"
+														rel="noopener noreferrer"
+														className="text-blue-600 hover:underline"
+														>
+														<p>{file.file_name}</p>
+														</a>
+													</li>
+													))}
+												</ul>
+												) : (
+													<div className="flex justify-center">-</div>
+													)}
+											</td>
 											<td className="flex items-center justify-center gap-2 mt-2 ">
 												<div
 												title="Editar"

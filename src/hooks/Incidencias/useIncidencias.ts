@@ -45,8 +45,8 @@ export const useInciencias = (location:string, area:string, prioridades:string[]
                 background: "#dc2626",
                 color: "#fff",
                 border: 'none'
-            },
-        })
+              },
+          })
     
         },
         onSettled: () => {
