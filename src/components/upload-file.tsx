@@ -39,6 +39,11 @@ const LoadFile: React.FC<CalendarDaysProps>= ({id, titulo, setDocs, docArray, li
         }
     }, [response])
 
+    function removeFile(indexToRemove: number) {
+        setDocs((prevDocs) => prevDocs.filter((_, index) => index !== indexToRemove));
+    }
+
+    
   return (
     <>
         <div className="flex flex-col gap-3 w-full">
@@ -71,7 +76,7 @@ const LoadFile: React.FC<CalendarDaysProps>= ({id, titulo, setDocs, docArray, li
                     onChange={handleFileChange}
                     />
                     </> ): null}
-                <ul className="ms-2">
+                <ul className="ms-2 flex flex-col gap-1">
                     {docArray.map((file, index) => (
                         <li key={index}>
                         <a
@@ -82,6 +87,15 @@ const LoadFile: React.FC<CalendarDaysProps>= ({id, titulo, setDocs, docArray, li
                         >
                             {file.file_name}
                         </a>
+
+                        <button
+                            type="button"
+                            onClick={() => removeFile(index)}
+                            className="bg-red-600 hover:bg-red-700 text-white rounded px-1.5 ml-2"
+                            title="Eliminar archivo"
+                        >
+                            x
+                        </button>
                         </li>
 
                     ))}

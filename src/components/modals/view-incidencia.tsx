@@ -18,10 +18,11 @@ import { Depositos } from "@/lib/incidencias";
 
 import { CircleAlert, Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { useGetPdfIncidencias } from "@/hooks/Incidencias/usePdfIncidencias";
 import { descargarPdfPase } from "@/lib/download-pdf";
 import { toast } from "sonner";
+import useAuthStore from "@/store/useAuthStore";
 
 interface ViewFallaModalProps {
   title: string;
@@ -40,15 +41,9 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
   isSuccess,
   setModalEditarAbierto,
 }) => {
-	const {refetch, isLoading, data:pdfSeguimientos ,isFetching} = useGetPdfIncidencias(data._id, 592, 17780, `Seguimiento_de_Incidente_145636-${data.folio}`)
-	const downloadUrl = pdfSeguimientos?.response?.data?.json?.download_url
 
-	useEffect(()=>{
-		if(downloadUrl){
-			onDescargarPDF(downloadUrl)
-		}
-	},[downloadUrl])
-
+	const { userIdSoter } = useAuthStore()
+	const {refetch, isLoading, isFetching} = useGetPdfIncidencias(data._id, 592, userIdSoter, `Seguimiento_de_Incidente_145636-${data.folio}`)
 
 	const handleGetPdf = async () => {
 		try {
@@ -161,7 +156,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 									<p className={`
 										${data?.prioridad_incidencia === 'Leve' ? 'text-green-500 font-bold' : ''}
 										${data?.prioridad_incidencia === 'Moderada' ? 'text-yellow-500 font-bold' : ''}
-										${data?.prioridad_incidencia === 'Crítica' ? 'text-red-500 font-bold' : ''}
+										${data?.prioridad_incidencia === 'Critica' ? 'text-red-500 font-bold' : ''}
 									`}>
 										{data?.prioridad_incidencia}
 									</p>
@@ -496,7 +491,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 											</tr>
 										)): 
 										<tr>
-											<td colSpan={6} className="text-center text-gray-500 py-4">
+											<td colSpan={7} className="text-center text-gray-500 py-4">
 												No se han agregado personas involucradas.
 											</td>
 										</tr>
@@ -660,7 +655,9 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 									<th className="px-4 py-2 text-left border-b">Tipo de Afectación</th>
 									{/* <th className="px-4 py-2 text-left border-b">Descripción de la Afectación</th> */}
 									<th className="px-4 py-2 text-left border-b">Monto Estimado de Daño ($)</th>
-									<th className="px-4 py-2 text-left border-b">Duración Estimada Afectación</th>
+									<th className="text-left border-b">Duración Estimada Afectación</th>
+									<th className="px-4 py-2 text-left border-b">Evidencia</th>
+									<th className="px-4 py-2 text-left border-b">Documento</th>
 								</tr>
 								</thead>
 								<tbody>
@@ -671,6 +668,58 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 									{/* <td className="px-4 py-2 max-w-[200px] truncate" title={item?.descripcion_afectacion || "-"}> {item?.descripcion_afectacion || "-"} </td> */}
 									<td className="px-4 py-2 text-right">{formatCurrency(item?.monto_estimado) || "-"}</td>
 									<td className="px-4 py-2">{item?.duracion_estimada || "-"}</td>
+
+									<td className="px-4 py-2">
+										{item?.evidencia?.length > 0 ? (
+										<div className="w-full flex justify-center">
+											<Carousel className="w-16">
+											<CarouselContent>
+												{item.evidencia.map((a: any, i: number) => (
+												<CarouselItem key={i}>
+													<Card>
+													<CardContent className="flex aspect-square items-center justify-center p-0">
+														<Image
+														width={280}
+														height={280}
+														src={a?.file_url || "/nouser.svg"}
+														alt="Imagen"
+														className="w-42 h-42 object-contain bg-gray-200 rounded-lg"
+														/>
+													</CardContent>
+													</Card>
+												</CarouselItem>
+												))}
+											</CarouselContent>
+											<CarouselPrevious />
+											<CarouselNext />
+											</Carousel>
+										</div>
+										) : (
+											<div className="flex justify-center">-</div>
+										)}
+									</td>
+
+									<td className="px-4 py-2">
+										{item?.documento?.length > 0 ? (
+										<ul className="ms-2">
+											{item.documento.map((file: any, i: number) => (
+											<li key={i}>
+												<a
+												href={file?.file_url}
+												target="_blank"
+												rel="noopener noreferrer"
+												className="text-blue-600 hover:underline"
+												>
+												<p>{file.file_name}</p>
+												</a>
+											</li>
+											))}
+										</ul>
+										) : (
+											<div className="flex justify-center">-</div>
+											)}
+									</td>
+
 									</tr>
 								))) : (
 									<tr>
