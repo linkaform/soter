@@ -70,7 +70,7 @@ export const UpdatedPassModal: React.FC<updatedPassModalProps> = ({
 			setSmsSent(true);
 		}
 		try {
-			await sendSmsOrEmail(folio, envio);
+			await sendSmsOrEmail(folio, envio, account_id);
 		} catch (err) {
 			console.error("Error:", err);
 			if (envio.includes("enviar_correo")) {
