@@ -28,6 +28,9 @@ import { toast } from "sonner";
 // import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { formatCurrencyString, formatForMultiselect } from "@/lib/utils";
 import Select from "react-select";
+import LoadImage from "../upload-Image";
+import LoadFile from "../upload-file";
+import { Imagen } from "@/lib/update-pass-full";
 
 interface IncidenciaModalProps {
 	title: string;
@@ -46,6 +49,18 @@ const formSchema = z.object({
     // descripcion_afectacion: z.string().min(1, { message: "Este campo es obligatorio" }),
 	monto_estimado: z.string().min(1, { message: "Este campo es obligatorio" }),
 	duracion_estimada: z.string().optional(),
+    evidencia:z.array(
+        z.object({
+          file_url: z.string(),
+          file_name: z.string(),
+        })
+      ).optional(),
+    documento:z.array(
+        z.object({
+          file_url: z.string(),
+          file_name: z.string(),
+        })
+      ).optional()
 });
 
 export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
@@ -62,14 +77,18 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
 	const { isLoading} = useShiftStore();
     const [inputValue, setInputValue] = useState(""); // texto visible
     const debounceRef = useRef<NodeJS.Timeout | null>(null);
-    
+    const [evidencia , setEvidencia] = useState<Imagen[]>([]);
+	const [documento , setDocumento] = useState<Imagen[]>([]);
+
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
             tipo_afectacion:"",
             // descripcion_afectacion:"",
             monto_estimado:"",
-            duracion_estimada:""
+            duracion_estimada:"",
+            evidencia:[],
+            documento:[]
 		},
 	});
 
@@ -82,7 +101,9 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
                 tipo_afectacion:"",
                 // descripcion_afectacion:"",
                 monto_estimado:"",
-                duracion_estimada:""
+                duracion_estimada:"",
+                evidencia:[],
+                documento:[]
               });
         }
 
@@ -90,19 +111,21 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
             setInputValue(afectacionPatrimonialSeleccionada.monto_estimado)
 			reset({
                 tipo_afectacion:afectacionPatrimonialSeleccionada.tipo_afectacion,
-                // descripcion_afectacion:afectacionPatrimonialSeleccionada.descripcion_afectacion,
                 monto_estimado:afectacionPatrimonialSeleccionada.monto_estimado,
-                duracion_estimada:afectacionPatrimonialSeleccionada.duracion_estimada
+                duracion_estimada:afectacionPatrimonialSeleccionada.duracion_estimada,
               });
+              setEvidencia(afectacionPatrimonialSeleccionada.evidencia)
+              setDocumento(afectacionPatrimonialSeleccionada.documento)
 		}
 	}, [openAfectacionPatrimonialModal, reset])
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
         const formatData = {
             tipo_afectacion: values.tipo_afectacion,
-            // descripcion_afectacion:values.descripcion_afectacion,
             monto_estimado: values.monto_estimado,
             duracion_estimada: values.duracion_estimada,
+            evidencia:evidencia,
+            documento:documento
         }
         if(editarAfectacionPatrimonial){
             setEditarAfectacionPatrimonial(false)
@@ -112,7 +135,6 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
             toast.success("Afectación editada correctamente.")
         }else{
             setAfectacionPatrimonial((prev: any) => [...prev, formatData]);
-            console.log("format data", formatData)
             toast.success("Afectación agregada correctamente.")
         }
         setOpenAfectacionPatrimonialModal(false)
@@ -128,6 +150,7 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
             console.log("Errores:", form.formState.errors)
         }
     }, [form.formState.errors])
+
 
 	return (
 		<Dialog onOpenChange={setOpenAfectacionPatrimonialModal} open={openAfectacionPatrimonialModal}>
@@ -241,10 +264,26 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
                                     )}
                                 />
 
-                            </div>
-                            
+                                <LoadImage
+                                    id="evidencia" 
+                                    titulo={"Evidencia"} 
+                                    setImg={setEvidencia}
+                                    showWebcamOption={true}
+                                    facingMode="environment"
+                                    imgArray={evidencia}
+                                    showArray={true}
+                                    limit={10}
+                                    showTakePhoto={true}
+                                    />
 
-                           
+                                <LoadFile
+                                    id="documento"
+                                    titulo={"Documento"}
+                                    setDocs={setDocumento}
+                                    docArray={documento}
+                                    limit={10}
+                                    />
+                            </div>
                         </form>
                     </Form>
                 </div>

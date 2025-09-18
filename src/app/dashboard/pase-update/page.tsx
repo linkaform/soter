@@ -101,7 +101,7 @@ const PaseUpdate = () =>{
 	const [enablePdf, setEnablePdf] = useState(false)
 	const [enableInfo, setEnableInfo] = useState(false)
 	const { data: responsePdf, isLoading: loadingPdf} = useGetPdf(account_id, id, enablePdf);
-	const { data: dataCatalogos, isLoading: loadingDataCatalogos} = useGetCatalogoPaseNoJwt(account_id, id, enableInfo );
+	const { data: dataCatalogos, isLoading: loadingDataCatalogos, error} = useGetCatalogoPaseNoJwt(account_id, id, enableInfo );
 	const [agregarEquiposActive, setAgregarEquiposActive] = useState(false);
 	const [agregarVehiculosActive, setAgregarVehiculosActive] = useState(false);
 	const [isSuccess, setIsSuccess] = useState(false);
@@ -143,6 +143,18 @@ const PaseUpdate = () =>{
 			toast.error("Error al descargar la imagen: " + error);
 		}
 	};
+
+	useEffect(() => {
+		if (error) {
+		  toast.error(error.message,{
+            style: {
+                background: "#dc2626",
+                color: "#fff",
+                border: 'none'
+            },
+        }) 
+		}
+	  }, [error]);
 
 	const handleClickGoogleButton = () => {
 		const url = dataCatalogos?.pass_selected?.google_wallet_pass_url;
