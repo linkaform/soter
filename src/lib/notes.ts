@@ -148,7 +148,7 @@ export const cerrarNota = async (close_note: CloseNote | null) => {
 };
 
 
-export const sendSmsOrEmail = async (folio: string, envio: string[]) => {
+export const sendSmsOrEmail = async (folio: string, envio: string[], account_id?: number) => {
   toast.loading("Enviando pase...", {
     style: {
       background: "#000",
@@ -163,6 +163,7 @@ export const sendSmsOrEmail = async (folio: string, envio: string[]) => {
       script_name: "pase_de_acceso_use_api.py",
       folio,
       envio,
+      account_id
     };
 
     const userJwt = localStorage.getItem("access_token");
