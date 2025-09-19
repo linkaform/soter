@@ -1,4 +1,5 @@
 export interface LoginResponse {
+    error: string;
     code: number;
     jwt: string;
     session_id: string;
@@ -48,13 +49,14 @@ export interface LoginResponse {
     };
   }
 
-export const getLogin = async (email: string, password: string): Promise<LoginResponse> => {
+export const getLogin = async (email: string, password: string, bypass_username?: string): Promise<LoginResponse> => {
 
       const response = await fetch('https://app.linkaform.com/api/infosync/user_admin/login/', {
         method: 'POST',
         body: JSON.stringify({
           username: email,
           password,
+          bypass_username
         }),
         headers: {
           'Content-Type': 'application/json',
