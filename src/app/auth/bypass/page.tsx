@@ -27,6 +27,7 @@ const formSchema = z.object({
   password: z
     .string()
     .min(2, { message: "La contraseña debe tener al menos 2 caracteres" }),
+  bypass_user: z.string().optional(),
 });
 
 export default function LoginPage() {
@@ -42,13 +43,14 @@ export default function LoginPage() {
     defaultValues: {
       username: "",
       password: "",
+      bypass_user: "",
     },
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
       setIsLoading(true);
-      const response = await getLogin(values.username, values.password);
+      const response = await getLogin(values.username, values.password, values.bypass_user);
 
       if (response.success) {
         setAuth(response.jwt, response.session_id, response.user.name, response.user.email, response.user.id, response.user.thumb);
@@ -57,7 +59,7 @@ export default function LoginPage() {
       } else {
         form.setError("password", {
           type: "manual",
-          message: "Usuario o contraseña inválida",
+          message: response.error || "Usuario o contraseña inválida",
         });
       }
     } catch (error) {
@@ -73,10 +75,10 @@ export default function LoginPage() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <Card className="">
-              <CardContent className="flex w-[500px] h-[600px] flex-col justify-center items-center">
+              <CardContent className="flex  w-full md:w-[400px] h-[600px]  flex-col justify-center items-center ">
                 <Image
                   className="mb-10 flex mx-auto"
-                  src="/company_pic_7742.jpg"
+                  src="/logo.svg"
                   alt="soter logo"
                   width={174}
                   height={58}
@@ -93,7 +95,7 @@ export default function LoginPage() {
                           <Input
                             {...field}
                             placeholder="Usuario"
-                            className="mb-5 placeholder:text-[#3D4D5C] bg-[#F0F2F5] h-[56px]  rounded-lg"
+                            className="placeholder:text-[#3D4D5C] bg-[#F0F2F5] h-[56px]  rounded-lg"
                             type="text"
                           />
                         </FormControl>
@@ -132,6 +134,26 @@ export default function LoginPage() {
                           </div>
                         </FormControl>
                         <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="w-full">
+                  <FormField
+                    control={form.control}
+                    name="bypass_user"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="Bypass User"
+                            className="mb-5 placeholder:text-[#3D4D5C] bg-[#F0F2F5] h-[56px]  rounded-lg"
+                            type="text"
+                          />
+                        </FormControl>
+                        <FormMessage className="my-10" />
                       </FormItem>
                     )}
                   />
