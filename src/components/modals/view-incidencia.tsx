@@ -16,13 +16,14 @@ import {  formatCurrency, formatDateToText } from "@/lib/utils";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import { Depositos } from "@/lib/incidencias";
 
-import { CircleAlert, Loader2 } from "lucide-react";
+import { CircleAlert, Eye, Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { useGetPdfIncidencias } from "@/hooks/Incidencias/usePdfIncidencias";
 import { descargarPdfPase } from "@/lib/download-pdf";
 import { toast } from "sonner";
 import useAuthStore from "@/store/useAuthStore";
+import { ViewSeg } from "./view-seguimiento";
 
 interface ViewFallaModalProps {
   title: string;
@@ -44,7 +45,13 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 
 	const { userIdSoter } = useAuthStore()
 	const {refetch, isLoading, isFetching} = useGetPdfIncidencias(data._id, 592, userIdSoter, `Seguimiento_de_Incidente_145636-${data.folio}`)
+	const [ openVerSeg, setOpenVerSeg] = useState(false)
+	const [seguimientoSeleccionado ,setSeguimientoSeleccionado]= useState()
 
+	const seguimientosOrdenados = [...data.seguimientos_incidencia].sort((a, b) => {
+		return new Date(a.fecha_inicio_seg).getTime() - new Date(b.fecha_inicio_seg).getTime();
+	  });
+	
 	const handleGetPdf = async () => {
 		try {
 			const result = await refetch();
@@ -102,6 +109,13 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 		const sumaTotal = item.reduce((total: any, item: { cantidad: number; }) => total + item.cantidad, 0);
 		return formatCurrency(sumaTotal)
 	}
+
+	const handleEdit = (item: any) => {
+		setSeguimientoSeleccionado(item)
+		setOpenVerSeg(true);
+	};
+	
+
 
   return (
     <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
@@ -557,21 +571,22 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 								<th className="px-4 py-2 text-left border-b">Fecha y hora</th>
 								<th className="px-4 py-2 text-left border-b">Tiempo transcurrido</th>
 								<th className="px-4 py-2 text-left border-b">Acción realizada</th>
-								<th className="px-4 py-2 text-left border-b">Personas involucradas</th>
+								{/* <th className="px-4 py-2 text-left border-b">Personas involucradas</th>
 								<th className="px-4 py-2 text-left border-b">Evidencia</th>
-								<th className="px-4 py-2 text-left border-b">Documentos</th>
+								<th className="px-4 py-2 text-left border-b">Documentos</th> */}
+								<th className="px-4 py-2 text-left border-b"> </th>
 							</tr>
 							</thead>
 							<tbody>
-							{data.seguimientos_incidencia && data.seguimientos_incidencia.length > 0 ? (
-								data.seguimientos_incidencia.map((item: any, index: number) => (
+							{seguimientosOrdenados && seguimientosOrdenados.length > 0 ? (
+								seguimientosOrdenados.map((item: any, index: number) => (
 								<tr key={index} className="border-t border-gray-200">
 								<td className="px-4 py-2">{item?.fecha_inicio_seg || "-"}</td>
 								<td className="px-4 py-2">{item?.tiempo_transcurrido || "-"}</td>
-								<td className="px-4 py-2 max-w-[200px] truncate" title={item?.accion_correctiva_incidencia || "-"}> {item?.accion_correctiva_incidencia || "-"} </td>
-								<td className="px-4 py-2">{item?.incidencia_personas_involucradas || "-"}</td>
+								<td className="px-4 py-2 max-w-[500px] truncate" title={item?.accion_correctiva_incidencia || "-"}> {item?.accion_correctiva_incidencia || "-"} </td>
+								{/* <td className="px-4 py-2">{item?.incidencia_personas_involucradas || "-"}</td> */}
 
-								<td className="px-4 py-2">
+								{/* <td className="px-4 py-2">
 									{item?.incidencia_evidencia_solucion?.length > 0 ? (
 									<div className="w-full flex justify-center">
 										<Carousel className="w-16">
@@ -620,7 +635,18 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 									) : (
 										<div className="flex justify-center">-</div>
 										)}
+								</td> */}
+
+								<td className="flex items-center justify-center gap-2 mt-2 px-2">
+									<div
+									title="Editar"
+									className="hover:cursor-pointer text-blue-500 hover:text-blue-600"
+									onClick={() => handleEdit(item)}
+									>
+										<Eye/>
+									</div>
 								</td>
+
 								</tr>
 							))) : (
 								<tr>
@@ -719,7 +745,6 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 											<div className="flex justify-center">-</div>
 											)}
 									</td>
-
 									</tr>
 								))) : (
 									<tr>
@@ -737,6 +762,14 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 			</Tabs>
 		</div>
 
+		<ViewSeg
+			title="Ver Seguimiento"
+			data={seguimientoSeleccionado}
+			isSuccess={openVerSeg}
+			setIsSuccess={setOpenVerSeg}
+			>
+			<div></div>
+		</ViewSeg>
 
         
         <div className="flex gap-1 my-5 col-span-2">

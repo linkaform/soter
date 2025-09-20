@@ -28,7 +28,7 @@ import { useCatalogoAreaEmpleado } from "@/hooks/useCatalogoAreaEmpleado";
 import { format } from 'date-fns';
 import DateTime from "../dateTime";
 import LoadFile from "../upload-file";
-import { CircleAlert, Edit, Loader2, Trash2 } from "lucide-react";
+import { CircleAlert, Edit, Eye, Loader2, Trash2 } from "lucide-react";
 import { AccionesTomadas, AfectacionPatrimonial, Depositos, PersonasInvolucradas } from "@/lib/incidencias";
 import { useShiftStore } from "@/store/useShiftStore";
 import { useInciencias } from "@/hooks/Incidencias/useIncidencias";
@@ -53,6 +53,7 @@ import { AfectacionPatrimonialModal } from "./add-afectacion-patrimonial";
 import { convertirDateToISO, formatCurrency, formatForMultiselect } from "@/lib/utils";
 import { SeccionDepositos } from "../depositos-section";
 import Select from 'react-select';
+import { ViewSeg } from "./view-seguimiento";
 
 interface EditarIncidenciaModalProps {
   	title: string;
@@ -175,7 +176,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 	const [afectacionPatrimonial,setAfectacionPatrimonial] = useState<AfectacionPatrimonial []>(data.afectacion_patrimonial_incidencia)
 	const [openAfectacionPatrimonialModal,setOpenAfectacionPatrimonialModal] = useState(false)
 	const [editarAfectacionPatrimonial, setEditarAfectacionPatrimonial] = useState(false)
-
+	const [ openVerSeg, setOpenVerSeg] = useState(false)
 
 
 	const getNivelNumber = (val:string) => {
@@ -514,6 +515,12 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 	const quitarTag = (tag: string) => {
 		setTagsSeleccionados(tagsSeleccionados.filter((t) => t !== tag));
 	};
+
+	const handleVerSeg = (item: any) => {
+		setSeguimientoSeleccionado(item)
+		setOpenVerSeg(true);
+	};
+	
 
 	return (
     <Dialog open={modalEditarAbierto} onOpenChange={setModalEditarAbierto} modal>
@@ -1049,9 +1056,9 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 										<th className="px-4 py-2 text-left border-b border-gray-300">Fecha y hora</th>
 										<th className="px-4 py-2 text-left border-b border-gray-300">Tiempo transcurrido</th>
 										<th className="px-4 py-2 text-left border-b border-gray-300">Acción realizada</th>
-										<th className="px-4 py-2 text-left border-b border-gray-300">Personas involucradas</th>
+										{/* <th className="px-4 py-2 text-left border-b border-gray-300">Personas involucradas</th>
 										<th className="px-4 py-2 text-left border-b border-gray-300">Evidencia</th>
-										<th className="px-4 py-2 text-left border-b border-gray-300">Documentos</th>
+										<th className="px-4 py-2 text-left border-b border-gray-300">Documentos</th> */}
 										<th className="px-4 py-2 text-left border-b border-gray-300"></th>
 									</tr>
 									</thead>
@@ -1061,10 +1068,10 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 										<tr key={index} className="border-t border-gray-200">
 										<td className="px-4 py-2">{item?.fecha_inicio_seg ||"-"}</td>
 										<td className="px-4 py-2">{item?.tiempo_transcurrido || "-"}</td>
-										<td className="px-4 py-2 max-w-[200px] truncate" title={item?.accion_correctiva_incidencia || "-"}> {item?.accion_correctiva_incidencia || "-"} </td>
-										<td className="px-4 py-2">{item?.incidencia_personas_involucradas ||"-"}</td>
+										<td className="px-4 py-2 max-w-[400px] truncate" title={item?.accion_correctiva_incidencia || "-"}> {item?.accion_correctiva_incidencia || "-"} </td>
+										{/* <td className="px-4 py-2">{item?.incidencia_personas_involucradas ||"-"}</td> */}
 
-										<td className="px-4 py-2">
+										{/* <td className="px-4 py-2">
 											{item?.incidencia_evidencia_solucion?.length > 0 ? (
 											<div className="w-full flex justify-center">
 												<Carousel className="w-16">
@@ -1110,9 +1117,16 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 												))}
 											</ul>
 											) : ( <div className="text-center">-</div> )}
-										</td>
+										</td> */}
 
-										<td className="flex items-center justify-center gap-2 mt-5 pr-2">
+										<td className="flex items-center justify-center gap-2 mt-2 pr-2">
+											<div
+											title="Editar"
+											className="hover:cursor-pointer text-blue-500 hover:text-blue-600"
+											onClick={() => handleVerSeg(item)}
+											>
+												<Eye/>
+											</div>
 											<div
 											title="Editar"
 											className="hover:cursor-pointer text-blue-500 hover:text-blue-600"
@@ -1268,6 +1282,14 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 				</div>
 
 
+				<ViewSeg
+					title="Ver Seguimiento"
+					data={seguimientoSeleccionado}
+					isSuccess={openVerSeg}
+					setIsSuccess={setOpenVerSeg}
+					>
+					<div></div>
+				</ViewSeg>
 
 					<div className="flex gap-2">
 						<DialogClose asChild>

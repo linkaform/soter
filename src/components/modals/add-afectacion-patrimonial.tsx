@@ -105,6 +105,8 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
                 evidencia:[],
                 documento:[]
               });
+              setEvidencia([])
+              setDocumento([])
         }
 
 		if (editarAfectacionPatrimonial && afectacionPatrimonialSeleccionada) {
