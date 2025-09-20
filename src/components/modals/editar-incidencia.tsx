@@ -1059,7 +1059,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 										{/* <th className="px-4 py-2 text-left border-b border-gray-300">Personas involucradas</th>
 										<th className="px-4 py-2 text-left border-b border-gray-300">Evidencia</th>
 										<th className="px-4 py-2 text-left border-b border-gray-300">Documentos</th> */}
-										{/* <th className="px-4 py-2 text-left border-b border-gray-300"></th> */}
+										<th className="px-4 py-2 text-left border-b border-gray-300"></th>
 									</tr>
 									</thead>
 									<tbody>
@@ -1068,7 +1068,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 										<tr key={index} className="border-t border-gray-200">
 										<td className="px-4 py-2">{item?.fecha_inicio_seg ||"-"}</td>
 										<td className="px-4 py-2">{item?.tiempo_transcurrido || "-"}</td>
-										<td className="px-4 py-2 max-w-[200px] truncate" title={item?.accion_correctiva_incidencia || "-"}> {item?.accion_correctiva_incidencia || "-"} </td>
+										<td className="px-4 py-2 max-w-[400px] truncate" title={item?.accion_correctiva_incidencia || "-"}> {item?.accion_correctiva_incidencia || "-"} </td>
 										{/* <td className="px-4 py-2">{item?.incidencia_personas_involucradas ||"-"}</td> */}
 
 										{/* <td className="px-4 py-2">
@@ -1119,7 +1119,7 @@ export const EditarIncidenciaModal: React.FC<EditarIncidenciaModalProps> = ({
 											) : ( <div className="text-center">-</div> )}
 										</td> */}
 
-										<td className="flex items-center justify-center gap-2 mt-5 pr-2">
+										<td className="flex items-center justify-center gap-2 mt-2 pr-2">
 											<div
 											title="Editar"
 											className="hover:cursor-pointer text-blue-500 hover:text-blue-600"
