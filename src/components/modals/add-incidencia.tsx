@@ -45,6 +45,7 @@ import {
 	Edit,
 	Trash2,
 	List,
+	Eye,
   } from "lucide-react";
 import Image from "next/image";
 import { z } from "zod";
@@ -80,6 +81,7 @@ import { AfectacionPatrimonialModal } from "./add-afectacion-patrimonial";
 import { convertirDateToISO, formatCurrency, formatForMultiselect, formatForSelectString } from "@/lib/utils";
 import { SeccionDepositos } from "../depositos-section";
 import Select from 'react-select';
+import { ViewSeg } from "./view-seguimiento";
 
 interface AddIncidenciaModalProps {
   	title: string;
@@ -216,7 +218,7 @@ export const subCategoriasConIconos = [
 export const formSchema = z.object({
 	reporta_incidencia: z.string().optional(),
 	fecha_hora_incidencia: z.string().optional(),
-	ubicacion_incidencia: z.string().min(1, { message: "Este campo es requerido" }),
+	ubicacion_incidencia: z.string().optional(),
 	area_incidencia: z.string().min(1, { message: "Este campo es requerido" }),
 	evidencia_incidencia: z.array(
 	  z.object({
@@ -328,6 +330,8 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const [afectacionPatrimonial,setAfectacionPatrimonial] = useState<AfectacionPatrimonial []>([])
 	const [openAfectacionPatrimonialModal,setOpenAfectacionPatrimonialModal] = useState(false)
 	const [editarAfectacionPatrimonial, setEditarAfectacionPatrimonial] = useState(false)
+	
+	const [ openVerSeg, setOpenVerSeg] = useState(false)
 
 	const resetStates = ()=>{
 		setSearch("")
@@ -482,9 +486,20 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	},[loading])
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
-		let formattedDate=""
-		if(date){
-			formattedDate = format( new Date(date), 'yyyy-MM-dd HH:mm:ss');
+		let formattedDate = "";
+
+		if (!date) {
+			form.setError("fecha_hora_incidencia", {
+				type: "manual",
+				message: "Fecha es un campo requerido.",
+			});
+		} else if (!ubicacionSeleccionada) {
+			form.setError("ubicacion_incidencia", {
+				type: "manual",
+				message: "Ubicación es un campo requerido.",
+			});
+		} else {
+			formattedDate = format(new Date(date), "yyyy-MM-dd HH:mm:ss");
 			const formatData ={
 					reporta_incidencia: values.reporta_incidencia||"",
 					fecha_hora_incidencia:formattedDate||"",
@@ -536,8 +551,6 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 					color: values.color,
 				}
 				createIncidenciaMutation.mutate({ data_incidencia: formatData });
-		}else{
-			form.setError("fecha_hora_incidencia", { type: "manual", message: "Fecha es un campo requerido." });
 		}
 	}
 
@@ -585,7 +598,12 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 		setAfectacionPatrimonial(nuevoAP);
 		toast.success("Afectación patrimonial eliminada correctamente.")
 	  };
-
+	
+	const handleVerSeg = (item: any) => {
+		setSeguimientoSeleccionado(item)
+		setOpenVerSeg(true);
+	};
+	
   return (
     <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
       <DialogContent className="max-w-5xl overflow-y-auto max-h-[80vh] min-h-[80vh]  flex flex-col overflow-hidden"  onInteractOutside={(e) => e.preventDefault()}  aria-describedby="">
@@ -1065,9 +1083,9 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 										<th className="px-4 py-2 text-left border-b border-gray-300">Fecha y hora</th>
 										<th className="px-4 py-2 text-left border-b border-gray-300">Tiempo transcurrido</th>
 										<th className="px-4 py-2 text-left border-b border-gray-300">Acción realizada</th>
-										<th className="px-4 py-2 text-left border-b border-gray-300">Personas involucradas</th>
+										{/* <th className="px-4 py-2 text-left border-b border-gray-300">Personas involucradas</th>
 										<th className="px-4 py-2 text-left border-b border-gray-300">Evidencia</th>
-										<th className="px-4 py-2 text-left border-b border-gray-300">Documentos</th>
+										<th className="px-4 py-2 text-left border-b border-gray-300">Documentos</th> */}
 										<th className="px-4 py-2 text-left border-b border-gray-300"></th> 
 									</tr>
 									</thead>
@@ -1077,10 +1095,10 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 											<tr key={index} className="border-t border-gray-200">
 											<td className="px-4 py-2">{item?.fecha_inicio_seg || "-"}</td>
 											<td className="px-4 py-2">{item?.tiempo_transcurrido == "La fecha es anterior a la fecha de la incidencia." ? ( <div className="text-red-500"> {item?.tiempo_transcurrido }</div> ): item?.tiempo_transcurrido}</td>
-											<td className="px-4 py-2 max-w-[200px] truncate" title={item?.accion_correctiva_incidencia || "-"}> {item?.accion_correctiva_incidencia || "-"} </td>
-											<td className="px-4 py-2">{item?.incidencia_personas_involucradas || "-"}</td>
+											<td className="px-4 py-2 max-w-[400px] truncate" title={item?.accion_correctiva_incidencia || "-"}> {item?.accion_correctiva_incidencia || "-"} </td>
+											{/* <td className="px-4 py-2">{item?.incidencia_personas_involucradas || "-"}</td> */}
 
-											<td className="px-4 py-2 min-w-[150px] ">
+											{/* <td className="px-4 py-2 min-w-[150px] ">
 												{item?.incidencia_evidencia_solucion?.length > 0 ? (
 												<div className="w-full flex justify-center">
 													<Carousel className="w-16">
@@ -1129,9 +1147,16 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 												) : (
 													<div className="flex justify-center">-</div>
 													)}
-											</td>
+											</td> */}
 
 											<td className="flex items-center justify-center gap-2 mt-2 px-2">
+												<div
+												title="Editar"
+												className="hover:cursor-pointer text-blue-500 hover:text-blue-600"
+												onClick={() => handleVerSeg(item)}
+												>
+													<Eye/>
+												</div>
 												<div
 												title="Editar"
 												className="hover:cursor-pointer text-blue-500 hover:text-blue-600"
@@ -1287,6 +1312,15 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 						</TabsContent>
 					</Tabs>
 				</div>
+
+				<ViewSeg
+					title="Ver Seguimiento"
+					data={seguimientoSeleccionado}
+					isSuccess={openVerSeg}
+					setIsSuccess={setOpenVerSeg}
+					>
+					<div></div>
+				</ViewSeg>
 
 				<div className="flex gap-2">
 					<DialogClose asChild>

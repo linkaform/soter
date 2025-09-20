@@ -1,11 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { Dispatch, SetStateAction, useEffect } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Imagen } from "@/lib/update-pass";
 import { useUploadImage } from "@/hooks/useUploadImage";
 import { Button } from "./ui/button";
-import { Trash } from "lucide-react";
+import { Trash, UploadCloud } from "lucide-react";
 import {quitarAcentosYMinusculasYEspacios, reemplazarGuionMinuscula } from "@/lib/utils";
 
 interface CalendarDaysProps {
@@ -18,6 +18,7 @@ interface CalendarDaysProps {
 
 const LoadFile: React.FC<CalendarDaysProps>= ({id, titulo, setDocs, docArray, limit})=> {
     const { uploadImageMutation, response, isLoading} = useUploadImage();
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     async function handleFileChange(event:any){
         const file = event.target.files ? event.target.files[0] : null;
@@ -43,6 +44,9 @@ const LoadFile: React.FC<CalendarDaysProps>= ({id, titulo, setDocs, docArray, li
         setDocs((prevDocs) => prevDocs.filter((_, index) => index !== indexToRemove));
     }
 
+    const handleButtonClick = () => {
+    fileInputRef.current?.click(); // dispara el input oculto
+    };
     
   return (
     <>
@@ -54,6 +58,23 @@ const LoadFile: React.FC<CalendarDaysProps>= ({id, titulo, setDocs, docArray, li
                         onClick={cleanPhoto}>
                         <Trash  size={24} className="p-0 " />
                     </Button>
+                    {docArray.length<limit ?(
+                        <>
+                        <Input
+                        type="file"
+                        accept="*/*"
+                        ref={fileInputRef}
+                        onChange={handleFileChange}
+                        className="hidden"
+                        />
+                    
+                        <button
+                        onClick={handleButtonClick}
+                        className="bg-violet-500 rounded hover:bg-violet-600 w-8 h-8 pl-1.5" type="button"
+                        >
+                        <UploadCloud size={20} className="p-0 text-white" />
+                        </button>
+                    </>): null}
                 </div>
             </div>
 
@@ -67,15 +88,9 @@ const LoadFile: React.FC<CalendarDaysProps>= ({id, titulo, setDocs, docArray, li
                 </div>
 
             </>): (<>
-                {docArray.length<limit ?(
-                    <>
-                    <Input 
-                    className="mt-1"
-                    type="file" 
-                    accept="*/*"
-                    onChange={handleFileChange}
-                    />
-                    </> ): null}
+               
+
+
                 <ul className="ms-2 flex flex-col gap-1">
                     {docArray.map((file, index) => (
                         <li key={index}>

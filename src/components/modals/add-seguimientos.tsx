@@ -318,6 +318,7 @@ export const SeguimientoIncidenciaLista: React.FC<IncidenciaModalProps> = ({
 									imgArray={evidencia}
 									showArray={true}
 									limit={10}
+									showTakePhoto={true}
 								/>
 							</div>
 

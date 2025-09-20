@@ -5,7 +5,7 @@ import { Input } from "./ui/input";
 import { Imagen } from "@/lib/update-pass";
 import { useUploadImage } from "@/hooks/useUploadImage";
 import { Button } from "./ui/button";
-import { Camera, Trash } from "lucide-react";
+import { Camera, Trash, UploadCloud } from "lucide-react";
 import Webcam from "react-webcam";
 import { base64ToFile, quitarAcentosYMinusculasYEspacios } from "@/lib/utils";
 import Image from "next/image";
@@ -29,7 +29,9 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
     const [hideWebcam, setHideWebcam] = useState(true)
     const [hideButtonWebcam, setHideButtonWebcam] = useState(false)
     const { uploadImageMutation, response, isLoading} = useUploadImage();
-
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [showTakePhotoButton, setShowTakePhotoButton] = useState(false);
+    
     const webcamRef = useRef<Webcam | null>(null);
     const videoConstraints = {
         width: 720,
@@ -46,7 +48,7 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
             const nuevoArchivo = new File([file], nuevoNombre, { type: file.type });
             uploadImageMutation.mutate({img:nuevoArchivo})
             setHideWebcam(true)
-            setHideButtonWebcam(true)
+            setHideButtonWebcam(false)
         }else{
             console.log("No file", file, event)
         }
@@ -99,6 +101,10 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
     const handleUserMedia = () => {
         setloadingWebcam(false); 
       };
+    
+      const handleButtonClick = () => {
+        fileInputRef.current?.click(); // dispara el input oculto
+    };
 
   return (
     <>
@@ -115,12 +121,18 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
                         {hideWebcam && 
                             <Button className="rounded bg-blue-600 hover:bg-blue-600 w-8 h-8" type="button"
                             onClick={() => {
-                                setloadingWebcam(true)
-                                setHideWebcam(false); 
+                                    setloadingWebcam(true)
+                                    setHideWebcam(false)
+
+                                    setShowTakePhotoButton(false);
+                                    setTimeout(() => {
+                                    setloadingWebcam(false);
+                                    setShowTakePhotoButton(true);
+                                    }, 2500);
                             }}>
                                 <Camera  size={24} className="p-0" />
                             </Button>}
-                        {!hideWebcam && !loadingWebcam?(
+                        {!hideWebcam && !loadingWebcam && showTakePhotoButton ?(
                             <>
                             <Button className="bg-green-600 rounded hover:bg-green-700 h-8" type="button"
                                 onClick={takeAndSavePhoto}>
@@ -129,6 +141,24 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
                             </>
                         ):null}
                     </>):null}
+                    {showArray && imgArray.length<limit ?(
+                        <>
+                            <Input
+                            type="file"
+                            accept="*/*"
+                            ref={fileInputRef}
+                            onChange={handleFileChange}
+                            className="hidden"
+                            />
+                        </>
+                    ):null}
+                
+                    <button
+                    onClick={handleButtonClick}
+                    className="bg-violet-500 rounded hover:bg-violet-600 w-8 h-8 pl-1.5" type="button"
+                    >
+                    <UploadCloud size={20} className="p-0 text-white" />
+                    </button>
                 </div>
             </div>
             <div className="w-full flex flex-col">
@@ -166,7 +196,7 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
                             
                         </div>
                     ):null}
-                        {imgArray?.length>0 ? (
+                        {hideWebcam && imgArray?.length>0 ? (
                             <>
                                 <div className="w-full flex justify-center">
                                     <Carousel className="w-52">
@@ -200,7 +230,7 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
                                 </div>
                             </>
                         ):null}
-                    {showArray && imgArray.length<limit ?(
+                    {/* {showArray && imgArray.length<limit ?(
                         <>
                         <Input 
                         className="mt-1"
@@ -208,7 +238,7 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
                         accept="image/*"
                         onChange={handleFileChange}
                         />
-                    </> ): null}
+                    </> ): null} */}
                 </>)}
             </div>
             

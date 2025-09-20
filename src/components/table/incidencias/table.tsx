@@ -200,6 +200,17 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 				enableSorting: true,
 			},
 			{
+				accessorKey: "comentario_incidencia",
+				header: "Descripción",
+				cell: ({ row }:{row: Row <Incidencia_record>}) => {
+				return (
+				  <span  className="px-4 py-2 block max-w-xs truncate"
+				 title={row.getValue("comentario_incidencia") || "-"} >{row.getValue("comentario_incidencia")}</span>
+				);
+				},
+				enableSorting: true,
+			  },
+			{
 			  accessorKey: "evidencia_incidencia",
 			  header: "Evidencia",
 			  cell: ({ row }:{row: Row <Incidencia_record> }) => {
@@ -244,16 +255,7 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 				},
 				enableSorting: true,
 			},			  
-			{
-			  accessorKey: "comentario_incidencia",
-			  header: "Comentarios",
-			  cell: ({ row }:{row: Row <Incidencia_record>}) => {
-			  return (
-				<span>{row.getValue("comentario_incidencia")}</span>
-			  );
-			  },
-			  enableSorting: true,
-			},
+			
 			{
 			  accessorKey: "reporta_incidencia",
 			  header: "Reporta",
