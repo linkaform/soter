@@ -166,22 +166,22 @@ const ReportsPage = () => {
 
 		{
 			icon: <Trophy className="text-sky-600" />,
-			value: (cards?.grade_max * 100).toString(),
+			value: ((cards?.grade_max * 100).toFixed(2)).toString(),
 			label: 'Calificacion maxima'
 		},
 		{
 			icon: <Flag className="text-orange-600" />,
-			value: (cards?.grade_min * 100).toString(),
+			value: ((cards?.grade_min * 100).toFixed(2)).toString(),
 			label: 'Calificacion minima'
 		},
 		{
 			icon: <ChartLine className="text-black" />,
-			value: (cards?.grade_avg * 100).toString(),
+			value: ((cards?.grade_avg * 100).toFixed(2)).toString(),
 			label: 'Calificacion promedio'
 		},
 		{
 			icon: <Star className="text-yellow-500" />,
-			value: (cards?.grade_avg * 100).toString(),
+			value: ((cards?.grade_avg * 100).toFixed(2)).toString(),
 			label:
 				selectedHoteles && selectedHoteles.length > 1
 					? 'Calificacion de los hoteles'
