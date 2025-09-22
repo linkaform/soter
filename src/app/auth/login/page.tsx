@@ -57,7 +57,7 @@ export default function LoginPage() {
       } else {
         form.setError("password", {
           type: "manual",
-          message: response.error || "Usuario o contraseña inválida",
+          message: "Usuario o contraseña inválida",
         });
       }
     } catch (error) {
@@ -76,7 +76,7 @@ export default function LoginPage() {
               <CardContent className="flex  w-full md:w-[400px] h-[600px]  flex-col justify-center items-center ">
                 <Image
                   className="mb-10 flex mx-auto"
-                  src="/logo.svg"
+                  src="/company_pic_7742.jpg"
                   alt="soter logo"
                   width={174}
                   height={58}
