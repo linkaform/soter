@@ -371,7 +371,7 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
 										</tr>
 									</thead>
 									<tbody>
-										{data?.grupo_vehiculos.map((item: Vehiculo, index: number) => (
+										{data?.grupo_vehiculos.map((item: any, index: number) => (
 										<tr key={index}>
 											<td className="px-4 py-2"><small>{capitalizeFirstLetter(item.tipo) || ""}</small></td>
 											<td className="px-4 py-2"><small>{capitalizeFirstLetter(item.marca) || ""}</small></td>
