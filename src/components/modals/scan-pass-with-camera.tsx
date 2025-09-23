@@ -22,6 +22,7 @@ export const ScanPassWithCameraModal: React.FC<ScanPassWithCameraModalProps> = (
 }) => {
   const { setPassCode } = useAccessStore()
   const scannerRef = useRef<Html5Qrcode | null>(null)
+  const scannerStartedRef = useRef(false)
   const cameraContainerId = 'qr-reader'
 
   const handleSetPassCode = useCallback(
@@ -37,50 +38,49 @@ export const ScanPassWithCameraModal: React.FC<ScanPassWithCameraModalProps> = (
     let html5QrCode: Html5Qrcode | null = null
 
     if (open) {
+      scannerStartedRef.current = false
       timeout = setTimeout(() => {
         const element = document.getElementById(cameraContainerId)
-        if (element) {
-          html5QrCode = new Html5Qrcode(cameraContainerId)
-          scannerRef.current = html5QrCode
+        if (!element) return
+        html5QrCode = new Html5Qrcode(cameraContainerId)
+        scannerRef.current = html5QrCode
 
-          Html5Qrcode.getCameras()
-            .then((devices) => {
-              if (devices && devices.length > 0) {
-                const cameraId = devices[0].id
-                html5QrCode!.start(
-                  cameraId,
-                  {
-                    fps: 10,
-                    qrbox: { width: 250, height: 250 },
-                  },
-                  (decodedText) => {
-                    handleSetPassCode(decodedText)
-                  },
-                  (errorMessage) => {
-                    if (!errorMessage.includes('NotFoundException')) {
-                      console.log('QR scanner error:', errorMessage)
-                    }
-                  }
-                )
-              }
-            })
-            .catch((err) => {
-              console.log('Error getting cameras:', err)
-            })
-        }
+        Html5Qrcode.getCameras()
+          .then((devices) => {
+            if (devices && devices.length > 0) {
+              html5QrCode!.start(
+                { facingMode: 'environment' },
+                {
+                  fps: 10,
+                  qrbox: { width: 250, height: 250 },
+                },
+                (decodedText) => {
+                  handleSetPassCode(decodedText)
+                },
+                () => {}
+              ).then(() => {
+                scannerStartedRef.current = true
+              })
+            }
+          })
+          .catch((err) => {
+            console.log('Error getting cameras:', err)
+          })
       }, 300)
 
       return () => {
         if (timeout) clearTimeout(timeout)
-        if (scannerRef.current) {
+        if (scannerRef.current && scannerStartedRef.current) {
           scannerRef.current
             .stop()
             .then(() => scannerRef.current?.clear())
             .catch((err) => {
               if (!String(err).includes('scanner is not running')) {
-                console.log('Error stopping scanner:', err)
+                console.error('Error stopping scanner:', err)
               }
             })
+        } else if (scannerRef.current) {
+          scannerRef.current.clear()
         }
       }
     }
