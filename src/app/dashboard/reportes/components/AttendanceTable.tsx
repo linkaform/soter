@@ -342,15 +342,21 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
                         )}
 
                         {/* Days of month */}
-                        {days.map((day) => (
-                            <th
-                                key={day.day}
-                                className={`p-1 border-b-2 border-gray-300 text-center min-w-[30px] ${day.isWeekend ? 'bg-blue-50' : 'bg-white'}`}
-                            >
-                                <div className="text-sm font-bold">{day.day.toString().padStart(2, '0')}</div>
-                                <div className="text-xs">{day.dayName}</div>
-                            </th>
-                        ))}
+                        {days.map((day) => {
+                            const isToday = currentDay === day.day;
+                            return (
+                                <th
+                                    key={day.day}
+                                    className={`p-1 border-b-2 border-gray-300 text-center min-w-[30px] 
+                                        ${day.isWeekend ? 'bg-blue-50' : 'bg-white'}
+                                        ${selectedStatus && selectedStatus.length > 0 && isToday ? 'bg-yellow-300' : ''}
+                                    `}
+                                >
+                                    <div className="text-sm font-bold">{day.day.toString().padStart(2, '0')}</div>
+                                    <div className="text-xs">{day.dayName}</div>
+                                </th>
+                            );
+                        })}
 
                         {/* Summary columns */}
                         <th className="p-2 border-b-2 border-gray-300 text-center bg-white">
@@ -433,7 +439,7 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
                                                 key={`${employee.id}-${day.day}`}
                                                 className={`border-b border-gray-200 text-center
                                                     ${day.isWeekend ? 'bg-blue-50' : ''}
-                                                    ${selectedStatus && selectedStatus.length > 0 && isToday ? 'bg-yellow-200' : ''}
+                                                    ${selectedStatus && selectedStatus.length > 0 && isToday ? 'bg-yellow-300' : ''}
                                                 `}
                                             >
                                                 <AttendanceCell
@@ -508,7 +514,7 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
                                                 key={`${row.id}-${day.day}`}
                                                 className={`border-b border-gray-200 text-center 
                                                     ${day.isWeekend ? 'bg-blue-50' : ''} 
-                                                    ${selectedStatus && selectedStatus.length > 0 && isToday ? 'bg-yellow-200' : ''}
+                                                    ${selectedStatus && selectedStatus.length > 0 && isToday ? 'bg-yellow-300' : ''}
                                                 `}
                                             >
                                                 <AttendanceCell
