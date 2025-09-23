@@ -31,20 +31,15 @@ import Exit from "@/components/icon/exit";
 import { ExitGuardModal } from "@/components/modals/exit-guard-modal";
 import { Plus } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useGetShift } from "@/hooks/useGetShift";
 import { useGetSupportGuards } from "@/hooks/useGetSupportGuards";
-import { useShiftStore } from "@/store/useShiftStore";
 import { useGuardSelectionStore } from "@/store/useGuardStore";
 
-export function GuardiasApoyoTable() {
+export function GuardiasApoyoTable({ shift, location, area }: { shift: any; location: string; area: string }) {
   const { checkoutSupportGuardsMutation } = useGetSupportGuards(false);
+  const { toggleGuardSelection, clearSelectedGuards } = useGuardSelectionStore();
 
-    const { shift } = useGetShift(false);
-    const { location, area } = useShiftStore();
-    const {toggleGuardSelection, clearSelectedGuards} =   useGuardSelectionStore()
-  
-    React.useEffect(() => {
-      clearSelectedGuards(); // 🔥 Reinicia la selección de guardias
+  React.useEffect(() => {
+    clearSelectedGuards(); // 🔥 Reinicia la selección de guardias
     }, [clearSelectedGuards]);
 
   const handleConfirmCheckout = (guardia: any) => {

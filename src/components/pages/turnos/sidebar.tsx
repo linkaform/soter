@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { changeUserPhoto, changeUserPhotoPatch } from "@/lib/change-user-photo";
 import { capitalizeOnlyFirstLetter } from "@/lib/utils";
 import useAuthStore from "@/store/useAuthStore";
-import React , { useEffect, useRef } from "react";
+import React , { useRef } from "react";
 import { toast } from "sonner";
 
 const Sidebar = ({shift}: any) => {
@@ -22,10 +22,6 @@ const Sidebar = ({shift}: any) => {
       .join("")
       .toUpperCase(); 
   };
-
-  useEffect(() => {
-    console.log('===========', shift);
-  }, [shift]);
 
     const handleButtonClick = () => {
         fileInputRef.current?.click();

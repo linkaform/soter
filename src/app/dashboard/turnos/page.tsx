@@ -45,7 +45,7 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row justify-between">
                   <ActivitySummary booth_stats={shift?.booth_stats}/>
                   <div className="w-full">
-                      <GuardiasApoyoTable />
+                      <GuardiasApoyoTable shift={shift} location={location} area={area} />
                   </div>
               </div>
               <div className="w-full">
