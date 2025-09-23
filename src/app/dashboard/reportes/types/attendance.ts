@@ -57,3 +57,25 @@ export type AttendanceRow = EmployeeAttendance | LocationAttendance;
 
 // Tipo de agrupación para el componente
 export type GroupingMode = 'employees' | 'locations';
+
+export interface ShiftAttendanceDay {
+  day: number;
+  status: string;
+  user_names:  string[] | null;
+  fecha_inicio_turno: string | null;
+  fecha_cierre_turno: string | null;
+  location: string;
+  turno_id: string;
+}
+
+export interface ShiftAttendance {
+    turno_id: string;
+    turno_name: string;
+    location: string;
+    attendance: ShiftAttendanceDay[];
+    summary?: {
+        present: number;
+        halfDay: number;
+        absent: number;
+    };
+}

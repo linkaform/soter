@@ -32,7 +32,8 @@ import AttendanceTable from "../components/AttendanceTable";
 import { AttendanceRow, GroupingMode } from "../types/attendance";
 import { useReportAsistencias, useReportLocations } from "../hooks/useAsistenciasReport";
 import { asistenciasReport } from "../types/report";
-import AttendanceIcon from "../components/AttendanceIcon";
+import AttendanceSymbologic from "../components/AttendanceSymbologic";
+import LocationShiftAttendanceTable from "../components/LocationShiftAttendanceTable";
 
 const ReportsPage = () => {
 	const [month, setMonth] = useState<number>(0);
@@ -72,7 +73,6 @@ const ReportsPage = () => {
 			setIsManualLoading(false);
 
 			if (reportAsistencias) {
-				console.log("Datos de asistencias cargados:", reportAsistencias);
 				setData(reportAsistencias);
 				setAppliedGroupingMode(filters.groupBy as GroupingMode);
 			}
@@ -83,8 +83,11 @@ const ReportsPage = () => {
 		setTimeframe(value as "mes" | "semana");
 	};
 
+	const [showReport, setShowReport] = useState(false);
+
 	const handleGroupingChange = (value: string) => {
 		setGroupingMode(value as GroupingMode);
+		setShowReport(false); // Oculta el reporte al cambiar agrupación
 	};
 
 	const handleLocationChange = (values: string[]) => {
@@ -92,19 +95,15 @@ const ReportsPage = () => {
 	};
 
 	const handleExecute = () => {
-		// Activa el loading manual
 		setIsManualLoading(true);
-
 		const newFilters = {
 			enabled: true,
 			dateRange: timeframe,
 			locations: [...selectedLocations],
 			groupBy: groupingMode
 		};
-
 		setFilters(newFilters);
-
-		// Asegúrate de refetchear después
+		setShowReport(true); // Muestra el reporte solo al ejecutar
 		setTimeout(() => {
 			refetchReportAsistencias();
 		}, 10);
@@ -127,6 +126,7 @@ const ReportsPage = () => {
 			locations: [],
 			groupBy: 'employees'
 		});
+		setShowReport(false); // Oculta el reporte al limpiar
 	};
 
 	const handleExport = () => {
@@ -139,19 +139,15 @@ const ReportsPage = () => {
 		setGroupByLocation(prev => !prev);
 	};
 
+	const [selectedStatus, setSelectedStatus] = useState<string[]>([
+		"present", "halfDay", "absentTimeOff", "absent", "dayOff", "noRecord"
+	]);
+
 	return (
 		<div className="min-h-screen pb-10">
 			<div className="flex justify-between w-11/12 m-auto mt-2 gap-4">
 				<div className="grid grid-cols-3 items-center w-full mx-auto mt-8 px-4">
-					<div className="justify-self-start">
-						{/* <Image
-							width={160}
-							height={80}
-							src="/company_pic_17780.png"
-							alt="Logo de la empresa"
-							className="w-32 h-20 sm:w-40 sm:h-24 object-contain"
-						/> */}
-					</div>
+					<div className="justify-self-start"></div>
 					<div className="justify-self-center">
 						<h1 className="text-2xl sm:text-3xl font-semibold text-gray-800">
 							Reporte de Asistencias
@@ -261,6 +257,11 @@ const ReportsPage = () => {
 							Reintentar
 						</Button>
 					</div>
+				) : !showReport ? (
+					<div className="text-center p-8">
+						<p className="text-gray-500 mb-2">Sin datos disponibles</p>
+						<p className="text-sm text-gray-400">Haz clic en &quot;Ejecutar&quot; para obtener datos</p>
+					</div>
 				) : !hasData ? (
 					<div className="text-center p-8">
 						<p className="text-gray-500 mb-2">Sin datos disponibles</p>
@@ -268,40 +269,37 @@ const ReportsPage = () => {
 					</div>
 				) : (
 					<>
-						<div className="flex flex-wrap gap-4 items-center mb-6">
-							<div className="flex items-center gap-2">
-								<AttendanceIcon status="present" />
-								<span className="text-sm text-gray-700">Asistencia</span>
+						{groupingMode === "employees" && (
+							<div>
+								<AttendanceSymbologic
+									selectedStatus={selectedStatus}
+									onChange={setSelectedStatus}
+									/>
+								<AttendanceTable
+									data={data}
+									month={month}
+									year={year}
+									groupingMode={appliedGroupingMode}
+									groupByLocation={groupByLocation}
+									timeframe={timeframe}
+									selectedStatus={selectedStatus}
+									/>
 							</div>
-							<div className="flex items-center gap-2">
-								<AttendanceIcon status="halfDay" />
-								<span className="text-sm text-gray-700">Retardo</span>
+						)}
+						{groupingMode === "locations" && (
+							<div>
+								<LocationShiftAttendanceTable
+									data={data.map((row: any) => ({
+										turno_id: row.turno_id,
+										turno_name: row.turno_name,
+										location: row.location,
+										...row
+									}))}
+									month={month}
+									year={year}
+								/>
 							</div>
-							<div className="flex items-center gap-2">
-								<AttendanceIcon status="absentTimeOff" />
-								<span className="text-sm text-gray-700">Retardo maximo excedido</span>
-							</div>
-							<div className="flex items-center gap-2">
-								<AttendanceIcon status="absent" />
-								<span className="text-sm text-gray-700">Falta</span>
-							</div>
-							<div className="flex items-center gap-2">
-								<AttendanceIcon status="dayOff" />
-								<span className="text-sm text-gray-700">Día libre</span>
-							</div>
-							<div className="flex items-center gap-2">
-								<AttendanceIcon status="noRecord" />
-								<span className="text-sm text-gray-700">Sin registro</span>
-							</div>
-						</div>
-						<AttendanceTable
-							data={data}
-							month={month}
-							year={year}
-							groupingMode={appliedGroupingMode}
-							groupByLocation={groupByLocation}
-							timeframe={timeframe}
-						/>
+						)}
 					</>
 				)}
 			</div>

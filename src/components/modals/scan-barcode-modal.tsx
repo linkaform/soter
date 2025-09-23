@@ -77,15 +77,7 @@ export function ScanBarcodeModal({
                     onScan(decodedText);
                     setOpen(false);
                 },
-                (errorMessage: string) => {
-                    if (
-                        errorMessage &&
-                        !errorMessage.includes("NotFoundException") &&
-                        !errorMessage.includes("No MultiFormat Readers were able to detect the code")
-                    ) {
-                        console.error("QR scanner error:", errorMessage);
-                    }
-                }
+                () => {}
             )
             .catch((err) => {
                 console.error("Error starting scanner:", err);

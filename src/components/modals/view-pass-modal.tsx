@@ -94,6 +94,12 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
 	function onEnviarCorreo(){
 		if(data?.status_pase?.toLowerCase()!='vencido'){
 			if(data?.email!==""){
+        let tipo_envio = ""
+        if (data?.status_pase?.toLowerCase() === 'activo') {
+          tipo_envio = "enviar_correo"
+        } else if (data?.status_pase?.toLowerCase() === 'proceso') {
+          tipo_envio = "enviar_correo_pre_registro"
+        }
 				const data_for_msj = {
 				email_to: data.email,
 				asunto: data.tema_cita,
@@ -104,7 +110,7 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
 				fecha: {desde: data.fecha_desde_visita, hasta: data.fecha_desde_hasta},
 				descripcion: data.descripcion,
 				}
-				createSendCorreoSms.mutate({account_id, envio: ["enviar_correo_pre_registro"], data_for_msj , folio:data._id} )
+				createSendCorreoSms.mutate({account_id, envio: [tipo_envio], data_for_msj , folio:data._id} )
 			}else{  
           setOpenAddMail(true)
           // toast.error("Ingresa un correo valido.")
@@ -117,7 +123,12 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
 	function onEnviarSMS(){
 		if(data?.status_pase?.toLowerCase()!='vencido'){
 			if(data?.telefono!==""){
-
+        let tipo_envio = ""
+        if (data?.status_pase?.toLowerCase() === 'activo') {
+          tipo_envio = "enviar_sms"
+        } else if (data?.status_pase?.toLowerCase() === 'proceso') {
+          tipo_envio = "enviar_sms_pre_registro"
+        }
         const data_for_msj = {
           email_to: data.email,
           asunto: data.tema_cita,
@@ -128,7 +139,7 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
           fecha: {desde: data.fecha_desde_visita, hasta: data.fecha_desde_hasta},
           descripcion: data.descripcion,
           }
-				createSendSms.mutate({account_id, envio: ["enviar_sms_pre_registro"], data_for_msj: data_for_msj , folio:data._id} )
+				createSendSms.mutate({account_id, envio: [tipo_envio], data_for_msj: data_for_msj , folio:data._id} )
 			}else{
         setOpenAddPhone(true)
 				// toast.error("Ingresa un teléfono valido.")
@@ -350,46 +361,48 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
 							):(<div className="text-slate-500">No se agregaron equipos.</div>)}
 						</div>
 
-          {data?.grupo_vehiculos.length>0 ? (
-          <div className="">
-            <p className="text-lg font-bold mb-2">Vehículos</p>
-            <Accordion type="single" collapsible>
-              {data?.grupo_vehiculos.map((vehiculo, index) => (
-                <AccordionItem key={index} value={`vehiculo-${index}`}>
-                  <AccordionTrigger>{`${vehiculo.tipo_vehiculo}`}</AccordionTrigger>
-                  <AccordionContent>
-                    <p className="font-medium mb-1">
-                      Tipo de vehículo:{" "}
-                      <span className="">{vehiculo.tipo_vehiculo || "N/A"}</span>
-                    </p>
-                    <p className="font-medium mb-1">
-                      Marca:{" "}
-                      <span className="">{vehiculo.marca_vehiculo || "N/A"}</span>
-                    </p>
-                    <p className="font-medium mb-1">
-                      Modelo:{" "}
-                      <span className="">{vehiculo.modelo_vehiculo || "N/A"}</span>
-                    </p>
-                    <p className="font-medium mb-1">
-                      Estado:{" "}
-                      <span className="">{vehiculo.state|| "N/A"}</span>
-                    </p>
-                    <p className="font-medium mb-1">
-                      Placas:{" "}
-                      <span className="">{vehiculo.placas_vehiculo || "N/A"}</span>
-                    </p>
-                    <p className="font-medium mb-1">
-                      Color:{" "}
-                      <span className="">{vehiculo.color_vehiculo || "N/A"}</span>
-                    </p>
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </div>
-          ): 
-          <div className="text-slate-500">No se agregaron vehículos.</div>
-          }
+
+
+						<div className="flex justify-between w-full h-full mb-2 mt-2">
+							{data?.grupo_vehiculos.length > 0 ? (
+								<Accordion type="single" collapsible className="w-full">
+								<AccordionItem key={"1"} value={"1"}>
+								<AccordionTrigger>{"Lista de vehículos"}</AccordionTrigger>
+								<AccordionContent className="mb-0 pb-0">
+								{data?.grupo_vehiculos.length > 0 ? (
+									<table className="min-w-full table-auto border-separate border-spacing-2">
+									<thead>
+										<tr>
+										<th className="px-4 py-2 text-left border-b">Tipo</th>
+										<th className="px-4 py-2 text-left border-b">Marca</th>
+										<th className="px-4 py-2 text-left border-b">Modelo</th>
+										<th className="px-4 py-2 text-left border-b">Estado</th>
+										<th className="px-4 py-2 text-left border-b">Placas</th>
+										<th className="px-4 py-2 text-left border-b">Color</th>
+										</tr>
+									</thead>
+									<tbody>
+										{data?.grupo_vehiculos.map((item: any, index: number) => (
+										<tr key={index}>
+											<td className="px-4 py-2"><small>{capitalizeFirstLetter(item.tipo) || ""}</small></td>
+											<td className="px-4 py-2"><small>{capitalizeFirstLetter(item.marca) || ""}</small></td>
+											<td className="px-4 py-2"><small>{capitalizeFirstLetter(item.modelo) || ""}</small></td>
+											<td className="px-4 py-2"><small>{capitalizeFirstLetter(item.estado) || ""}</small></td>
+											<td className="px-4 py-2"><small>{capitalizeFirstLetter(item.placas) || ""}</small></td>
+											<td className="px-4 py-2"><small>{capitalizeFirstLetter(item.color) || ""}</small></td>
+										</tr>
+										))}
+									</tbody>
+									</table>
+								) : (
+										<div>No se agregaron vehiculos.</div>
+								)}
+								</AccordionContent>
+								</AccordionItem>
+								</Accordion>
+							):(<div>No se agregaron vehiculos.</div>)}
+						</div>
+
 
           {data?.limitado_a_dias!== undefined && data?.limitado_a_dias.length > 0 ? (
             <div className="flex flex-col space-y-5">

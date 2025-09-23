@@ -18,6 +18,7 @@ interface AttendanceTableProps {
     groupingMode: GroupingMode;
     groupByLocation?: boolean;
     timeframe?: 'mes' | 'semana';
+    selectedStatus?: string[];
 }
 
 const AttendanceTable: React.FC<AttendanceTableProps> = ({
@@ -26,7 +27,8 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
     year = new Date().getFullYear(),
     groupingMode = 'employees',
     groupByLocation = true,
-    timeframe = 'mes'
+    timeframe = 'mes',
+    selectedStatus
 }) => {
     const [selectedWeek, setSelectedWeek] = React.useState(0);
     const [search, setSearch] = React.useState("");
@@ -66,7 +68,6 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
 
     // Transformar los datos al formato esperado por el componente
     const transformedData = useMemo(() => {
-        console.log("Datos recibidos:", data);
         return transformNewDataFormat(data, month, year, groupingMode);
     }, [data, month, year, groupingMode]);
 
@@ -391,15 +392,19 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
 
                                         // Si no, mostrar el status normal
                                         const attendance = employee.attendance[day.day] || { status: 'noRecord', date: '' };
+                                        const showCell = !selectedStatus || selectedStatus.includes(attendance.status);
+
                                         return (
                                             <td
                                                 key={`${employee.id}-${day.day}`}
-                                                className={`border-b border-gray-200 text-center ${day.isWeekend ? 'bg-blue-50' : ''}`}
+                                                className={`border-b border-gray-200 text-center ${day.isWeekend ? 'bg-blue-50' : ''} ${!showCell ? 'bg-gray-100' : ''}`}
                                             >
-                                                <AttendanceCell
-                                                    status={attendance.status}
-                                                    isWeekend={day.isWeekend}
-                                                />
+                                                {showCell ? (
+                                                    <AttendanceCell
+                                                        status={attendance.status}
+                                                        isWeekend={day.isWeekend}
+                                                    />
+                                                ) : null}
                                             </td>
                                         );
                                     })}
@@ -461,15 +466,19 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
                                         }
 
                                         const attendance = row.attendance[day.day] || { status: 'noRecord', date: '' };
+                                        const showCell = !selectedStatus || selectedStatus.includes(attendance.status);
+
                                         return (
                                             <td
                                                 key={`${row.id}-${day.day}`}
-                                                className={`border-b border-gray-200 text-center ${day.isWeekend ? 'bg-blue-50' : ''}`}
+                                                className={`border-b border-gray-200 text-center ${day.isWeekend ? 'bg-blue-50' : ''} ${!showCell ? 'bg-gray-100' : ''}`}
                                             >
-                                                <AttendanceCell
-                                                    status={attendance.status}
-                                                    isWeekend={day.isWeekend}
-                                                />
+                                                {showCell ? (
+                                                    <AttendanceCell
+                                                        status={attendance.status}
+                                                        isWeekend={day.isWeekend}
+                                                    />
+                                                ) : null}
                                             </td>
                                         );
                                     })}
