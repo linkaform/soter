@@ -24,6 +24,7 @@ export const ScanPassWithCameraModal: React.FC<ScanPassWithCameraModalProps> = (
   const scannerRef = useRef<Html5Qrcode | null>(null)
   const scannerStartedRef = useRef(false)
   const cameraContainerId = 'qr-reader'
+  const isMounted = useRef(true)
 
   const handleSetPassCode = useCallback(
     (newPassCode: string) => {
@@ -34,12 +35,14 @@ export const ScanPassWithCameraModal: React.FC<ScanPassWithCameraModalProps> = (
   )
 
   useEffect(() => {
+    isMounted.current = true
     let timeout: NodeJS.Timeout | null = null
     let html5QrCode: Html5Qrcode | null = null
 
     if (open) {
       scannerStartedRef.current = false
       timeout = setTimeout(() => {
+        if (!isMounted.current) return
         const element = document.getElementById(cameraContainerId)
         if (!element) return
         html5QrCode = new Html5Qrcode(cameraContainerId)
@@ -69,6 +72,7 @@ export const ScanPassWithCameraModal: React.FC<ScanPassWithCameraModalProps> = (
       }, 300)
 
       return () => {
+        isMounted.current = false
         if (timeout) clearTimeout(timeout)
         if (scannerRef.current && scannerStartedRef.current) {
           scannerRef.current
