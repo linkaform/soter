@@ -94,6 +94,12 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
 	function onEnviarCorreo(){
 		if(data?.status_pase?.toLowerCase()!='vencido'){
 			if(data?.email!==""){
+        let tipo_envio = ""
+        if (data?.status_pase?.toLowerCase() === 'activo') {
+          tipo_envio = "enviar_correo"
+        } else if (data?.status_pase?.toLowerCase() === 'proceso') {
+          tipo_envio = "enviar_correo_pre_registro"
+        }
 				const data_for_msj = {
 				email_to: data.email,
 				asunto: data.tema_cita,
@@ -104,7 +110,7 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
 				fecha: {desde: data.fecha_desde_visita, hasta: data.fecha_desde_hasta},
 				descripcion: data.descripcion,
 				}
-				createSendCorreoSms.mutate({account_id, envio: ["enviar_correo_pre_registro"], data_for_msj , folio:data._id} )
+				createSendCorreoSms.mutate({account_id, envio: [tipo_envio], data_for_msj , folio:data._id} )
 			}else{  
           setOpenAddMail(true)
           // toast.error("Ingresa un correo valido.")
@@ -117,7 +123,12 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
 	function onEnviarSMS(){
 		if(data?.status_pase?.toLowerCase()!='vencido'){
 			if(data?.telefono!==""){
-
+        let tipo_envio = ""
+        if (data?.status_pase?.toLowerCase() === 'activo') {
+          tipo_envio = "enviar_sms"
+        } else if (data?.status_pase?.toLowerCase() === 'proceso') {
+          tipo_envio = "enviar_sms_pre_registro"
+        }
         const data_for_msj = {
           email_to: data.email,
           asunto: data.tema_cita,
@@ -128,7 +139,7 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
           fecha: {desde: data.fecha_desde_visita, hasta: data.fecha_desde_hasta},
           descripcion: data.descripcion,
           }
-				createSendSms.mutate({account_id, envio: ["enviar_sms_pre_registro"], data_for_msj: data_for_msj , folio:data._id} )
+				createSendSms.mutate({account_id, envio: [tipo_envio], data_for_msj: data_for_msj , folio:data._id} )
 			}else{
         setOpenAddPhone(true)
 				// toast.error("Ingresa un teléfono valido.")
