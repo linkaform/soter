@@ -33,6 +33,7 @@ import { AttendanceRow, GroupingMode } from "../types/attendance";
 import { useReportAsistencias, useReportLocations } from "../hooks/useAsistenciasReport";
 import { asistenciasReport } from "../types/report";
 import AttendanceSymbologic from "../components/AttendanceSymbologic";
+import LocationShiftAttendanceTable from "../components/LocationShiftAttendanceTable";
 
 const ReportsPage = () => {
 	const [month, setMonth] = useState<number>(0);
@@ -72,7 +73,6 @@ const ReportsPage = () => {
 			setIsManualLoading(false);
 
 			if (reportAsistencias) {
-				console.log("Datos de asistencias cargados:", reportAsistencias);
 				setData(reportAsistencias);
 				setAppliedGroupingMode(filters.groupBy as GroupingMode);
 			}
@@ -83,8 +83,11 @@ const ReportsPage = () => {
 		setTimeframe(value as "mes" | "semana");
 	};
 
+	const [showReport, setShowReport] = useState(false);
+
 	const handleGroupingChange = (value: string) => {
 		setGroupingMode(value as GroupingMode);
+		setShowReport(false); // Oculta el reporte al cambiar agrupación
 	};
 
 	const handleLocationChange = (values: string[]) => {
@@ -92,19 +95,15 @@ const ReportsPage = () => {
 	};
 
 	const handleExecute = () => {
-		// Activa el loading manual
 		setIsManualLoading(true);
-
 		const newFilters = {
 			enabled: true,
 			dateRange: timeframe,
 			locations: [...selectedLocations],
 			groupBy: groupingMode
 		};
-
 		setFilters(newFilters);
-
-		// Asegúrate de refetchear después
+		setShowReport(true); // Muestra el reporte solo al ejecutar
 		setTimeout(() => {
 			refetchReportAsistencias();
 		}, 10);
@@ -127,6 +126,7 @@ const ReportsPage = () => {
 			locations: [],
 			groupBy: 'employees'
 		});
+		setShowReport(false); // Oculta el reporte al limpiar
 	};
 
 	const handleExport = () => {
@@ -257,6 +257,11 @@ const ReportsPage = () => {
 							Reintentar
 						</Button>
 					</div>
+				) : !showReport ? (
+					<div className="text-center p-8">
+						<p className="text-gray-500 mb-2">Sin datos disponibles</p>
+						<p className="text-sm text-gray-400">Haz clic en &quot;Ejecutar&quot; para obtener datos</p>
+					</div>
 				) : !hasData ? (
 					<div className="text-center p-8">
 						<p className="text-gray-500 mb-2">Sin datos disponibles</p>
@@ -265,20 +270,36 @@ const ReportsPage = () => {
 				) : (
 					<>
 						{groupingMode === "employees" && (
-							<AttendanceSymbologic
-								selectedStatus={selectedStatus}
-								onChange={setSelectedStatus}
-							/>
+							<div>
+								<AttendanceSymbologic
+									selectedStatus={selectedStatus}
+									onChange={setSelectedStatus}
+									/>
+								<AttendanceTable
+									data={data}
+									month={month}
+									year={year}
+									groupingMode={appliedGroupingMode}
+									groupByLocation={groupByLocation}
+									timeframe={timeframe}
+									selectedStatus={selectedStatus}
+									/>
+							</div>
 						)}
-						<AttendanceTable
-							data={data}
-							month={month}
-							year={year}
-							groupingMode={appliedGroupingMode}
-							groupByLocation={groupByLocation}
-							timeframe={timeframe}
-							selectedStatus={selectedStatus}
-						/>
+						{groupingMode === "locations" && (
+							<div>
+								<LocationShiftAttendanceTable
+									data={data.map((row: any) => ({
+										turno_id: row.turno_id,
+										turno_name: row.turno_name,
+										location: row.location,
+										...row
+									}))}
+									month={month}
+									year={year}
+								/>
+							</div>
+						)}
 					</>
 				)}
 			</div>
