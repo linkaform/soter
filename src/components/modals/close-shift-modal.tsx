@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
+import { Imagen } from "@/lib/update-pass-full";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -17,6 +18,7 @@ interface CloseShiftModalProps {
   shift: any;
   area: string;
   location: string;
+  identificacion: Imagen[];
 }
 
 export const CloseShiftModal: React.FC<CloseShiftModalProps> = ({
@@ -24,9 +26,11 @@ export const CloseShiftModal: React.FC<CloseShiftModalProps> = ({
   children,
   shift,
   area,
-  location
+  location,
+  identificacion
 }) => {
   const { closeShiftMutation } = useGetShift( false);
+  
   const guardNames = Array.isArray(shift?.support_guards) && shift.support_guards.length > 0
     ? shift.support_guards
         .filter((guardia: { name: string }) => guardia && guardia.name && guardia.name.trim() !== "")
@@ -70,7 +74,7 @@ export const CloseShiftModal: React.FC<CloseShiftModalProps> = ({
 
           <Button
             className="w-full  bg-blue-500 hover:bg-blue-600 text-white"
-            onClick={() => closeShiftMutation.mutate()}
+            onClick={() => closeShiftMutation.mutate({fotografia:identificacion})}
           >
             Confirmar
           </Button>

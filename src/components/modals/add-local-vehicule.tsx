@@ -192,19 +192,19 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 
 
   return (
-    <Dialog open={open} onOpenChange={setOpen} modal>
-      <DialogTrigger asChild onClick={() => setOpen(true)}>
+    <Dialog open={open} onOpenChange={setOpen} >
+    <DialogTrigger asChild onClick={() => setOpen(true)}>
         {children}
       </DialogTrigger>
-
-      <DialogContent className="max-w-xl max-h-[90vh] flex flex-col" onInteractOutside={(e) => e.preventDefault()} aria-describedby="" >
+      <DialogContent className="max-w-xl max-h-[90vh] flex flex-col" onInteractOutside={(e) => e.preventDefault()} aria-describedby=""
+      > 
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center font-bold">
             {title}
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex-grow overflow-y-auto px-3"> 
+        <div className="flex-grow overflow-y-auto px-4"> 
 			<Form {...form}>
 				<form  className="space-y-8 ">
 					<FormField
@@ -230,6 +230,11 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 								setTipoVehiculoState(value.value);
 								setMarcaState("")
 								setMarcasCat([])
+							}}
+							isClearable
+							menuPortalTarget={document.body}
+							styles={{
+								menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
 							}}
 						/>
 
@@ -290,6 +295,11 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 								setModelosCat([])
 								setCatalogSearch("modelos")
 							}}
+							isClearable
+							menuPortalTarget={document.body}
+							styles={{
+								menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
+							}}
 						/>
 
 						{/* <Select
@@ -343,6 +353,11 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 							// onMenuClose={onMenuClose}
 							options={modelosCat}
 							onChange={(value:any) => field.onChange([value.value])}
+							isClearable
+							menuPortalTarget={document.body}
+							styles={{
+								menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
+							}}
 						/>
 						{/* <Select onValueChange={(value) => field.onChange([value])}>
 							<FormControl>
@@ -380,6 +395,11 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 							// onMenuClose={onMenuClose}
 							options={catEstados}
 							onChange={(value:any) => field.onChange([value.value])}
+							isClearable
+							menuPortalTarget={document.body}
+							styles={{
+								menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
+							}}
 						/>
 
 						{/* <Select onValueChange={(value) => field.onChange([value])}>
@@ -420,44 +440,31 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 					)}
 					/>
 
-					<FormField
+
+				<FormField
 					control={form.control}
 					name="color"
 					render={({ field }) => (
-						<FormItem>
-						<FormLabel>* Color</FormLabel>
+					<FormItem>
+						<FormLabel> Color</FormLabel>
 						<Select
 							aria-labelledby="aria-label"
-							// ariaLiveMessages={{
-							// onFocus,
-							// }}
 							inputId="aria-example-input"
 							name="aria-live-color"
-							// onMenuOpen={onMenuOpen}
-							// onMenuClose={onMenuClose}
 							options={catColores}
-							onChange={(value:any) => field.onChange([value.value])}
+							onChange={(selectedOption) => {
+							field.onChange(selectedOption ? selectedOption.value : "");
+							}}
+							isClearable
+							menuPortalTarget={document.body}
+							styles={{
+								menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
+							}}
 						/>
-
-						{/* <Select onValueChange={(value) => field.onChange([value])}>
-							<FormControl>
-							<SelectTrigger>
-								<SelectValue placeholder="Seleccione una opción" />
-							</SelectTrigger>
-							</FormControl>
-							<SelectContent>
-							{catalogoColores().map((color) => (
-								<SelectItem key={color} value={color}>
-								{color}
-								</SelectItem>
-							))}
-							</SelectContent>
-						</Select> */}
 						<FormMessage />
-						</FormItem>
+					</FormItem>
 					)}
-					/>
-				
+				/>
 				</form>
 			</Form>
       	</div>

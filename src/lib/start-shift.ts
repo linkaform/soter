@@ -1,14 +1,17 @@
+import { Imagen } from "./update-pass-full";
 
 interface GetShiftParams {
   area?: string;
   location?: string;
   employee_list?: { user_id: number; name: string }[]; 
+  fotografia?:Imagen[];
 }
 
   export const startShift = async ({
     area = "Caseta Principal",
     location = "Planta Monterrey",
     employee_list = [],
+    fotografia= []
 
   }: GetShiftParams = {}) => {
     const payload = {
@@ -17,7 +20,7 @@ interface GetShiftParams {
       option: "checkin",
       script_name: "script_turnos.py",
       employee_list: employee_list ?? [],
-
+      fotografia
     };
   
     const userJwt = localStorage.getItem("access_token"); 

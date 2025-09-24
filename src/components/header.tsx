@@ -180,7 +180,7 @@ export const Header = () => {
                 <DropdownMenuTrigger asChild>
                   <Avatar className="shadow-[0_0_3px_rgba(0,0,0,0.4)] rounded-full overflow-hidden">
                     <AvatarImage src={userPhoto??undefined} alt="Avatar" className="object-contain"/>
-                    <AvatarFallback>CN</AvatarFallback>
+                    <AvatarFallback></AvatarFallback>
                   </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>

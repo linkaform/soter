@@ -14,6 +14,7 @@ export const useCatalogoPaseAreaLocationUseApi = (location:string, enableLocatio
   const { data: dataAreas, isLoading:isLoadingAreas, error:errorAreas, isFetching:isFetchingAreas, refetch:refetchAreas } = useQuery<any>({
     queryKey: ["getCatalogoPasesAreaNoApi", location], 
     enabled:enableArea,
+    refetchOnWindowFocus: false,
     queryFn: async () => {
         const data = await getCatalogoPasesAreaNoApi(location); 
         const textMsj = errorMsj(data) 
@@ -25,15 +26,16 @@ export const useCatalogoPaseAreaLocationUseApi = (location:string, enableLocatio
         }
     },
    
-    refetchOnWindowFocus: true, 
+    // refetchOnWindowFocus: true, 
     // refetchInterval: 60000,
-    refetchOnReconnect: true, 
+    // refetchOnReconnect: true, 
     // staleTime: 1000 * 60 * 5, 
   });
 
   const { data: dataLocations, isLoading:isLoadingLocations, error:errorLocations, isFetching:isFetchingLocations, refetch:refetchLocations } = useQuery<any>({
     queryKey: ["getCatalogoPasesLocationNoApi"], 
     enabled:enableLocation,
+     refetchOnWindowFocus: false,
     queryFn: async () => {
         const data = await getCatalogoPasesLocationNoApi(); 
 
@@ -46,10 +48,6 @@ export const useCatalogoPaseAreaLocationUseApi = (location:string, enableLocatio
         }
     },
    
-    refetchOnWindowFocus: true, 
-    // refetchInterval: 60000,
-    refetchOnReconnect: true, 
-    // staleTime: 1000 * 60 * 5, 
   });
 
   return {
