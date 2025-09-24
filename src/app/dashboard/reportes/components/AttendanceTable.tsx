@@ -30,11 +30,21 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
     timeframe = 'mes',
     selectedStatus
 }) => {
-    const [selectedWeek, setSelectedWeek] = React.useState(0);
-    const [search, setSearch] = React.useState("");
     const today = new Date();
     const isCurrentMonth = month === today.getMonth() + 1 && year === today.getFullYear();
     const currentDay = isCurrentMonth ? today.getDate() : null;
+
+    // Calcula el índice de la semana actual
+    const getCurrentWeekIndex = () => {
+        if (!isCurrentMonth || !currentDay) return 0;
+        const firstDay = new Date(year, month - 1, 1).getDay() || 7; // Lunes=1, Domingo=7
+        return Math.floor((currentDay + firstDay - 2) / 7);
+    };
+
+    const [selectedWeek, setSelectedWeek] = React.useState(
+        timeframe === "semana" ? getCurrentWeekIndex() : 0
+    );
+    const [search, setSearch] = React.useState("");
 
     // Get days in month and start day of week
     const daysInMonth = React.useMemo(() => {
