@@ -1,7 +1,6 @@
 import { CloseShiftModal } from "@/components/modals/close-shift-modal";
 import { StartShiftModal } from "@/components/modals/start-shift-modal";
 import TakePhotoGuard from "@/components/modals/take-photo-guard";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Imagen } from "@/lib/update-pass-full";

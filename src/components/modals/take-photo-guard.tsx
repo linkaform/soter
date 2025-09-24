@@ -1,7 +1,7 @@
 import { Dialog, DialogContent, DialogTitle, DialogHeader, DialogClose, DialogTrigger } from "@/components/ui/dialog";
 import { Imagen } from '@/lib/update-pass-full';
 import LoadImage from '../upload-Image';
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { Button } from "../ui/button";
 
 interface TakeModalProps {
