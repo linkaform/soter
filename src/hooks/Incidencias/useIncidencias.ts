@@ -13,6 +13,7 @@ export const useInciencias = (location:string, area:string, prioridades:string[]
     const {data: listIncidencias, isLoading:isLoadingListIncidencias, error:errorListIncidencias, refetch:refetchTableIncidencias } = useQuery<any>({
         queryKey: ["getListIncidencias",location, area, prioridades, dateFrom, dateTo, filterDate],
         enabled: location!=="",
+        refetchOnWindowFocus: false,
         queryFn: async () => {
             const data = await getListIncidencias(location, area, prioridades, dateFrom, dateTo, filterDate);
             return Array.isArray( data.response?.data) ?  data.response?.data: []; 
@@ -96,6 +97,7 @@ export const useInciencias = (location:string, area:string, prioridades:string[]
     } = useQuery<any>({
     queryKey: ["getStatsIncidencias", area, location],
     enabled:location!=="",
+    refetchOnWindowFocus: false,
     queryFn: async () => {
       const data = await getStats( location, area, "Incidencias" );
       const responseData = data.response?.data || {};

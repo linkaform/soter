@@ -5,6 +5,7 @@ import { startShift } from "@/lib/start-shift";
 import { toast } from "sonner"; // Importar Sonner
 import { useShiftStore } from "@/store/useShiftStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Imagen } from "@/lib/update-pass-full";
 
 export const useGetShift = (enableShift:boolean) => {
   const queryClient = useQueryClient();
@@ -39,14 +40,15 @@ export const useGetShift = (enableShift:boolean) => {
 
   const startShiftMutation = useMutation({
     mutationFn: async ({
-      employee_list,
+      employee_list, fotografia
     }: {
-      employee_list?: { user_id: number; name: string }[];
+      employee_list?: { user_id: number; name: string }[], fotografia:Imagen[]
     }) => {
       const response = await startShift({
         area,
         location,
         employee_list,
+        fotografia
       });
 
       if (!response.success) {
@@ -83,8 +85,12 @@ export const useGetShift = (enableShift:boolean) => {
   });
 
   const closeShiftMutation = useMutation({
-    mutationFn: async () => {
-      const response = await closeShift({ area, location, checkin_id });
+    mutationFn: async ({
+      fotografia
+    }: {
+      fotografia:Imagen[]
+    }) => {
+      const response = await closeShift({ area, location, checkin_id , fotografia});
   
       if (!response.success) {
         throw new Error(

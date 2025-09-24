@@ -139,9 +139,7 @@ const ReportsPage = () => {
 		setGroupByLocation(prev => !prev);
 	};
 
-	const [selectedStatus, setSelectedStatus] = useState<string[]>([
-		"present", "halfDay", "absentTimeOff", "absent", "dayOff", "noRecord"
-	]);
+	const [selectedStatus, setSelectedStatus] = useState<string[]>([]);
 
 	return (
 		<div className="min-h-screen pb-10">

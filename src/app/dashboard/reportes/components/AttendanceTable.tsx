@@ -32,6 +32,9 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
 }) => {
     const [selectedWeek, setSelectedWeek] = React.useState(0);
     const [search, setSearch] = React.useState("");
+    const today = new Date();
+    const isCurrentMonth = month === today.getMonth() + 1 && year === today.getFullYear();
+    const currentDay = isCurrentMonth ? today.getDate() : null;
 
     // Get days in month and start day of week
     const daysInMonth = React.useMemo(() => {
@@ -206,30 +209,62 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
         });
     }, [month, year, selectedWeek, timeframe, daysInMonth, getWeekDays]);
 
+    // Siempre incluye "noRecord" en el arreglo de status seleccionados para el filtrado
+    const effectiveSelectedStatus = selectedStatus && selectedStatus.length > 0
+        ? Array.from(new Set([...selectedStatus, "noRecord"]))
+        : selectedStatus;
+
     // Filtrado para empleados agrupados por ubicación
     const filteredEmployeesByLocation = useMemo(() => {
         if (!organizedData.groupEmployeesByLocation || !organizedData.employeesByLocation) return [];
-        if (!search) return organizedData.employeesByLocation;
-        return organizedData.employeesByLocation
-            .map(group => ({
+        let filtered = organizedData.employeesByLocation;
+        if (search) {
+            filtered = filtered
+                .map(group => ({
+                    ...group,
+                    employees: group.employees.filter(emp =>
+                        emp.name.toLowerCase().includes(search.toLowerCase())
+                    )
+                }))
+                .filter(group => group.employees.length > 0);
+        }
+        if (effectiveSelectedStatus && effectiveSelectedStatus.length > 0 && currentDay) {
+            filtered = filtered.map(group => ({
                 ...group,
-                employees: group.employees.filter(emp =>
-                    emp.name.toLowerCase().includes(search.toLowerCase())
-                )
-            }))
-            .filter(group => group.employees.length > 0);
-    }, [organizedData, search]);
+                employees: group.employees.filter(emp => {
+                    const att = emp.attendance[currentDay];
+                    // Si no hay registro, considerarlo como "noRecord"
+                    const status = att ? att.status : "noRecord";
+                    return effectiveSelectedStatus.includes(status);
+                })
+            })).filter(group => group.employees.length > 0);
+        }
+        return filtered;
+    }, [organizedData, search, effectiveSelectedStatus, currentDay]);
 
     // Filtrado para empleados sin agrupación
     const filteredData = useMemo(() => {
         if (organizedData.groupedByLocation || organizedData.groupEmployeesByLocation) return [];
-        if (!search) return organizedData.data;
-        return organizedData.data
-            .filter((row): row is EmployeeAttendance => row.type === 'employee')
-            .filter(emp =>
+        let filtered = organizedData.data
+            .filter((row): row is EmployeeAttendance => row.type === 'employee');
+
+        if (search) {
+            filtered = filtered.filter(emp =>
                 emp.name.toLowerCase().includes(search.toLowerCase())
             );
-    }, [organizedData, search]);
+        }
+
+        // AJUSTE: Considera "noRecord" si no hay registro
+        if (effectiveSelectedStatus && effectiveSelectedStatus.length > 0 && currentDay) {
+            filtered = filtered.filter(emp => {
+                const att = emp.attendance[currentDay];
+                const status = att ? att.status : "noRecord";
+                return effectiveSelectedStatus.includes(status);
+            });
+        }
+
+        return filtered;
+    }, [organizedData, search, effectiveSelectedStatus, currentDay]);
 
     return (
         <div className="w-full overflow-x-auto">
@@ -307,15 +342,21 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
                         )}
 
                         {/* Days of month */}
-                        {days.map((day) => (
-                            <th
-                                key={day.day}
-                                className={`p-1 border-b-2 border-gray-300 text-center min-w-[30px] ${day.isWeekend ? 'bg-blue-50' : 'bg-white'}`}
-                            >
-                                <div className="text-sm font-bold">{day.day.toString().padStart(2, '0')}</div>
-                                <div className="text-xs">{day.dayName}</div>
-                            </th>
-                        ))}
+                        {days.map((day) => {
+                            const isToday = currentDay === day.day;
+                            return (
+                                <th
+                                    key={day.day}
+                                    className={`p-1 border-b-2 border-gray-300 text-center min-w-[30px] 
+                                        ${day.isWeekend ? 'bg-blue-50' : 'bg-white'}
+                                        ${selectedStatus && selectedStatus.length > 0 && isToday ? 'bg-yellow-300' : ''}
+                                    `}
+                                >
+                                    <div className="text-sm font-bold">{day.day.toString().padStart(2, '0')}</div>
+                                    <div className="text-xs">{day.dayName}</div>
+                                </th>
+                            );
+                        })}
 
                         {/* Summary columns */}
                         <th className="p-2 border-b-2 border-gray-300 text-center bg-white">
@@ -392,19 +433,19 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
 
                                         // Si no, mostrar el status normal
                                         const attendance = employee.attendance[day.day] || { status: 'noRecord', date: '' };
-                                        const showCell = !selectedStatus || selectedStatus.includes(attendance.status);
-
+                                        const isToday = currentDay === day.day;
                                         return (
                                             <td
                                                 key={`${employee.id}-${day.day}`}
-                                                className={`border-b border-gray-200 text-center ${day.isWeekend ? 'bg-blue-50' : ''} ${!showCell ? 'bg-gray-100' : ''}`}
+                                                className={`border-b border-gray-200 text-center
+                                                    ${day.isWeekend ? 'bg-blue-50' : ''}
+                                                    ${selectedStatus && selectedStatus.length > 0 && isToday ? 'bg-yellow-300' : ''}
+                                                `}
                                             >
-                                                {showCell ? (
-                                                    <AttendanceCell
-                                                        status={attendance.status}
-                                                        isWeekend={day.isWeekend}
-                                                    />
-                                                ) : null}
+                                                <AttendanceCell
+                                                    status={attendance.status}
+                                                    isWeekend={day.isWeekend}
+                                                />
                                             </td>
                                         );
                                     })}
@@ -466,19 +507,20 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
                                         }
 
                                         const attendance = row.attendance[day.day] || { status: 'noRecord', date: '' };
-                                        const showCell = !selectedStatus || selectedStatus.includes(attendance.status);
+                                        const isToday = currentDay === day.day;
 
                                         return (
                                             <td
                                                 key={`${row.id}-${day.day}`}
-                                                className={`border-b border-gray-200 text-center ${day.isWeekend ? 'bg-blue-50' : ''} ${!showCell ? 'bg-gray-100' : ''}`}
+                                                className={`border-b border-gray-200 text-center 
+                                                    ${day.isWeekend ? 'bg-blue-50' : ''} 
+                                                    ${selectedStatus && selectedStatus.length > 0 && isToday ? 'bg-yellow-300' : ''}
+                                                `}
                                             >
-                                                {showCell ? (
-                                                    <AttendanceCell
-                                                        status={attendance.status}
-                                                        isWeekend={day.isWeekend}
-                                                    />
-                                                ) : null}
+                                                <AttendanceCell
+                                                    status={attendance.status}
+                                                    isWeekend={day.isWeekend}
+                                                />
                                             </td>
                                         );
                                     })}

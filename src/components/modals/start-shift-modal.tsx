@@ -12,15 +12,18 @@ import {
 import { useShiftStore } from "@/store/useShiftStore";
 import { useGuardSelectionStore } from "@/store/useGuardStore";
 import { useGetShift } from "@/hooks/useGetShift";
+import { Imagen } from "@/lib/update-pass-full";
 
 interface StartShiftModalProps {
   title: string;
   children: React.ReactNode;
+  evidencia: Imagen[]
 }
 
 export const StartShiftModal: React.FC<StartShiftModalProps> = ({
   title,
   children,
+  evidencia, 
 }) => {
   const { area, location } = useShiftStore();
 
@@ -77,7 +80,7 @@ export const StartShiftModal: React.FC<StartShiftModalProps> = ({
                   })
                 );
 
-                startShiftMutation.mutate({ employee_list: formattedGuards });
+                startShiftMutation.mutate({ employee_list: formattedGuards ,fotografia:evidencia});
               }}
             >
               Confirmar

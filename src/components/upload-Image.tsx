@@ -93,7 +93,7 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
     useEffect(()=>{
         if(response){
             if (response?.file_name?.includes(quitarAcentosYMinusculasYEspacios(id)) ) {
-                setImg((prevDocs) => [...prevDocs, ...(Array.isArray(response) ? response : [response])]);
+                setImg((prevDocs) => [...(prevDocs || []), ...(Array.isArray(response) ? response : [response])]);
             }
         }
     }, [response])
@@ -141,7 +141,7 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
                             </>
                         ):null}
                     </>):null}
-                    {showArray && imgArray.length<limit ?(
+                    {showArray && (imgArray?.length ?? 0) <limit ?(
                         <>
                             <Input
                             type="file"

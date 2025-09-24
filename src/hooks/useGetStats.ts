@@ -5,6 +5,7 @@ export const useGetStats = (enable:boolean, location:string, area:string, page:s
   const { data, isLoading, error, isFetching, refetch } = useQuery<any>({
     queryKey: ["getStats", location, area, page], 
     enabled:enable,
+    refetchOnWindowFocus: false,
     queryFn: async () => {
         const data = await getStats(location, area, page); 
         return data.response?.data;

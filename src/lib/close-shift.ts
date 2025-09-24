@@ -1,21 +1,24 @@
+import { Imagen } from "./update-pass-full";
 
 
 interface Props {
     area?: string;
     location?: string;
     checkin_id?: string
-
+    fotografia?:Imagen[]
   }
   
   export const closeShift = async ({
     area = "Caseta Principal",
     location = "Planta Monterrey",
     checkin_id,
+    fotografia
   }: Props) => {
     const payload = {
       area,
       location,
       checkin_id, 
+      fotografia,
       option: "checkout",
       script_name: "script_turnos.py",
     };

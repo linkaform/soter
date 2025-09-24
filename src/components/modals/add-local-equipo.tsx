@@ -21,10 +21,10 @@ import {
 
 import { Input } from "../ui/input";
 
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { catalogoColores, catalogoTipoEquipos } from "@/lib/utils";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Equipo } from "@/lib/update-pass-full";
 import { useAccessStore } from "@/store/useAccessStore";
@@ -153,8 +153,22 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
         
     }, [open]);
 
+	const tipoValue = useWatch({
+		control: form.control,
+		name: "tipo",
+	  });
 
-
+	  const nombreInputRef = useRef<HTMLInputElement>(null);
+	
+	  // Mueve el foco al input si se selecciona "otros"
+	  useEffect(() => {
+		if (tipoValue === "otros") {
+		  setTimeout(() => {
+			nombreInputRef.current?.focus();
+		  }, 100); // Espera a que el input esté montado
+		}
+	  }, [tipoValue]);
+	  
   return (
     <Dialog open={open} onOpenChange={setOpen} >
     <DialogTrigger asChild onClick={() => setOpen(true)}>
@@ -168,47 +182,55 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex-grow overflow-y-auto px-4">
+        <div className="">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          <FormField
-              control={form.control}
-              name="nombre"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel> Nombre del equipo</FormLabel>
-                  <FormControl>
-                    <Input  placeholder="Nombre del equipo"  maxLength={20} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
             <FormField
-              control={form.control}
-              name="tipo"
-              render={({ field }) => (
-                <FormItem>
-                  	<FormLabel>* Tipo</FormLabel>
-                    <Select
-                    options={catTiposEquipos}
-                    aria-labelledby="tipo-label"
-                    inputId="tipo-input"
-                    name="tipo"
-                    onChange={(selectedOption) => {
-                      field.onChange(selectedOption ? selectedOption.value :"");
-                      }}
-                    isClearable
-                    menuPortalTarget={document.body}
-                    styles={{
-                      menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
-                    }}
-                  />
-                  <FormMessage /> 
-                </FormItem>
-              )}
+				control={form.control}
+				name="tipo"
+				render={({ field }) => (
+					<FormItem>
+						<FormLabel>* Tipo</FormLabel>
+						<Select
+						options={catTiposEquipos}
+						aria-labelledby="tipo-label"
+						inputId="tipo-input"
+						name="tipo"
+						onChange={(selectedOption) => {
+							field.onChange(selectedOption ? selectedOption.value : "");
+							if (selectedOption?.value === "otros") {
+							  setTimeout(() => {
+								nombreInputRef.current?.focus();
+							  }, 0); // esperar a que el input se monte
+							}
+						  }}
+						isClearable
+					/>
+					<FormMessage /> 
+					</FormItem>
+				)}
             />
+
+			{tipoValue === "Otra" && (
+				<FormField
+					control={form.control}
+					name="nombre" 
+					render={({ field }) => (
+					<FormItem>
+						<FormLabel>Nombre del equipo</FormLabel>
+						<FormControl>
+						<Input  
+							placeholder="Nombre del equipo"
+							maxLength={20}
+							{...field}
+						/>
+						</FormControl>
+						<FormMessage />
+					</FormItem>
+					)}
+				/>
+			)}
 
             <div className="grid md:grid-cols-2 gap-x-4 gap-y-8 pl-2">
               <FormField
@@ -218,7 +240,8 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
                   <FormItem>
                     <FormLabel> Marca</FormLabel>
                     <FormControl>
-                      <Input placeholder="Marca" maxLength={20} {...field} />
+                      <Input placeholder="Marca" maxLength={20} {...field} 
+					  />
                     </FormControl>
 
                     <FormMessage />
@@ -233,7 +256,7 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
                   <FormItem >
                     <FormLabel> Modelo</FormLabel>
                     <FormControl >
-                      <Input placeholder="Modelo" maxLength={20} {...field} />
+                      <Input placeholder="Modelo" maxLength={20} {...field}  />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -290,10 +313,11 @@ export const EqipmentLocalPassModal: React.FC<Props> = ({ title, children , equi
 						field.onChange(selectedOption ? selectedOption.value : "");
 						}}
 						isClearable
-						menuPortalTarget={document.body}
+						menuPosition="absolute"
 						styles={{
-							menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
+							menuPortal: (base) => ({ ...base, zIndex: 50 ,pointerEvents: "auto",}),
 						}}
+						tabSelectsValue={false}
                     />
                     <FormMessage />
                   </FormItem>

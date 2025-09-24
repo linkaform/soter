@@ -8,7 +8,6 @@ const STATUS_OPTIONS = [
   { key: "halfDay", label: "Retardo" },
   { key: "absentTimeOff", label: "Retardo máximo excedido" },
   { key: "absent", label: "Falta" },
-  { key: "noRecord", label: "Sin registro" },
 ];
 
 interface AttendanceSymbologicProps {

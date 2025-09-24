@@ -106,33 +106,23 @@ export type Incidencia = {
         
         <LoadingModal isOpen={showLoadingModal} text="Cargando..."/>
         
-        {incidencia.estatus=="Abierto" ?
           <div
             className="cursor-pointer"
             onClick={() => onEditarClick(incidencia)}
             title="Editar Incidencia"
           >
             <Edit />
-          </div>: 
-          <div title="Cerrar Falla">
-            <Edit  className="text-gray-300"/>
           </div>
-        }
 
 
-        {incidencia.estatus=="Abierto" ?
+    
         <div
           className="cursor-pointer"
           onClick={() => onSeguimientoClick(incidencia)}
           title="Seguimiento Incidencia"
         >
         	<Check />
-        </div>:
-          <div title="Cerrar Falla">
-            <Check  className="text-gray-300"/>
-          </div>
-        }
-
+        </div>
           
         <div
           className="cursor-pointer"
