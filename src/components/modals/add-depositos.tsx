@@ -21,11 +21,12 @@ import {
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { useShiftStore } from "@/store/useShiftStore";
 import { Input } from "../ui/input";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import { formatCurrencyString } from "@/lib/utils";
 
 interface IncidenciaModalProps {
 	title: string;
@@ -42,7 +43,7 @@ interface IncidenciaModalProps {
 const formSchema = z.object({
 	tipo_deposito: z.string().min(1, { message: "Este campo es oblicatorio" }),
 	origen: z.string().min(1, { message: "Este campo es oblicatorio" }),
-	cantidad: z.number().min(1, { message: "Este campo es oblicatorio" }),
+	cantidad: z.string().min(1, { message: "Este campo es oblicatorio" }),
 });
 
 export const DepositosModal: React.FC<IncidenciaModalProps> = ({
@@ -57,13 +58,15 @@ export const DepositosModal: React.FC<IncidenciaModalProps> = ({
     depositosSeleccion
 }) => {
 	const { isLoading} = useShiftStore();
+    const [inputValue, setInputValue] = useState(""); 
+    const debounceRef = useRef<NodeJS.Timeout | null>(null);
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			tipo_deposito: "",
             origen: "",
-			cantidad: 0,
+			cantidad: "",
 		},
 	});
 
@@ -71,18 +74,20 @@ export const DepositosModal: React.FC<IncidenciaModalProps> = ({
 
 	useEffect(() => {
         if (isSuccess){
+            setInputValue("")
             reset({
                 tipo_deposito: "",
                 origen: "",
-                cantidad: 0,
+                cantidad: "",
               });
         }
 
 		if (editarDepositos && depositosSeleccion) {
+            setInputValue(depositosSeleccion.cantidad)
 			reset({
                 tipo_deposito: depositosSeleccion.tipo_deposito,
                 origen: depositosSeleccion.origen,
-                cantidad: depositosSeleccion.cantidad,
+                // cantidad: depositosSeleccion.cantidad,
               });
 		}
 	}, [isSuccess, reset])
@@ -184,12 +189,19 @@ export const DepositosModal: React.FC<IncidenciaModalProps> = ({
                                     <FormLabel>Cantidad:</FormLabel>
                                     <FormControl>
                                         <Input placeholder="Cantidad..." {...field} 
+                                        value={inputValue}
                                         onChange={(e) => {
-                                            const value = e.target.value;
-                                            if (value === "" || !isNaN(Number(value))) {
-                                                field.onChange(value === "" ? "" : Number(value)); // Si es vacío, lo mantiene vacío
-                                            }
+                                            const rawInput = e.target.value;
+                                            const numeric = rawInput.replace(/[^\d.]/g, "").replace(/(\..*)\./g, "$1");
+                                            setInputValue(numeric);
+                                            field.onChange(numeric);
+                                            if (debounceRef.current) clearTimeout(debounceRef.current);
+                                            
+                                            debounceRef.current = setTimeout(() => {
+                                                setInputValue(formatCurrencyString(numeric));
+                                            }, 500);
                                         }}
+                                        onBlur={field.onBlur}
                                         />
                                     </FormControl>
                                     <FormMessage />

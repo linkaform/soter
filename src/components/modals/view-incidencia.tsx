@@ -16,14 +16,16 @@ import {  formatCurrency, formatDateToText } from "@/lib/utils";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 import { Depositos } from "@/lib/incidencias";
 
-import { CircleAlert, Eye, Loader2 } from "lucide-react";
+import { CircleAlert, Download, Eye, Loader2 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useGetPdfIncidencias } from "@/hooks/Incidencias/usePdfIncidencias";
 import { descargarPdfPase } from "@/lib/download-pdf";
 import { toast } from "sonner";
 import useAuthStore from "@/store/useAuthStore";
 import { ViewSeg } from "./view-seguimiento";
+import { Imagen } from "@/lib/update-pass-full";
+import EvidenciaCarousel from "../view-images-videos";
 
 interface ViewFallaModalProps {
   title: string;
@@ -32,6 +34,8 @@ interface ViewFallaModalProps {
   setIsSuccess:Dispatch<SetStateAction<boolean>>
   isSuccess: boolean;
   setModalEditarAbierto: Dispatch<SetStateAction<boolean>>;
+  tab:string;
+  setTab:Dispatch<SetStateAction<string>>;
 }
 
 export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
@@ -41,17 +45,24 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
   setIsSuccess,
   isSuccess,
   setModalEditarAbierto,
+  tab,
+  setTab
 }) => {
 
 	const { userIdSoter } = useAuthStore()
 	const {refetch, isLoading, isFetching} = useGetPdfIncidencias(data._id, 592, userIdSoter, `Seguimiento_de_Incidente_145636-${data.folio}`)
 	const [ openVerSeg, setOpenVerSeg] = useState(false)
 	const [seguimientoSeleccionado ,setSeguimientoSeleccionado]= useState()
-
+	const [activeIndex, setActiveIndex] = useState(0);
 	const seguimientosOrdenados = [...data.seguimientos_incidencia].sort((a, b) => {
 		return new Date(a.fecha_inicio_seg).getTime() - new Date(b.fecha_inicio_seg).getTime();
 	  });
 	
+	useEffect(()=>{
+		if(isSuccess){
+			setTab("datos")
+		}
+	},[isSuccess])
 	const handleGetPdf = async () => {
 		try {
 			const result = await refetch();
@@ -115,12 +126,15 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 		setOpenVerSeg(true);
 	};
 	
-
+	const handleOpenVerSeguimiento = (index: number) => {
+		setActiveIndex(index);
+		setOpenVerSeg(true);
+	};
 
   return (
     <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="max-w-5xl overflow-y-auto max-h-[80vh] flex flex-col" onInteractOutside={(e) => e.preventDefault()} aria-describedby="">
+      <DialogContent className="max-w-7xl overflow-y-auto max-h-[80vh] flex flex-col" onInteractOutside={(e) => e.preventDefault()} aria-describedby="">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center font-bold">
             {title}
@@ -128,7 +142,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
         </DialogHeader>
 
 		<div className="flex-grow overflow-y-auto ">
-		<Tabs defaultValue="datos" >
+		<Tabs defaultValue="datos" value={tab} onValueChange={setTab}>
 			<TabsList>
 				<TabsTrigger value="datos">Datos</TabsTrigger>
 				<TabsTrigger value="afectacion">Afectación Patrimonial</TabsTrigger>
@@ -212,9 +226,9 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 								:null}
 							</div>
 
-							<div className="w-full flex gap-2">
+							<div className="w-full flex gap-2 col-span-2 ">
 								<p className="font-bold ">Comentarios:</p>
-								<p title={data?.comentario_incidencia || "-"} className="max-w-[300px] truncate">{data?.comentario_incidencia} </p>
+								<p title={data?.comentario_incidencia || "-"} className=" line-clamp-3 overflow-hidden text-ellipsis whitespace-normal break-words">{data?.comentario_incidencia} </p>
 							</div>
 						</div>
 								
@@ -263,7 +277,8 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 							<div>
 								<p className="font-bold">Documentos:</p>
 								{data?.documento_incidencia && data.documento_incidencia.length > 0 ? (
-										<ul>
+									<div className="mt-5 border border-gray-200 rounded-md p-2 mb-5">
+									<ul className="space-y-2 max-h-40 overflow-y-auto pr-2">
 										{data.documento_incidencia.map((documento, index) => (
 										<li key={index}>
 										<a
@@ -277,6 +292,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 										</li>
 										))}
 										</ul>
+									</div>
 									) : (
 									<p>No hay documentos disponibles</p>
 									)}
@@ -367,7 +383,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 										<>
 										<Accordion type="single" collapsible className="w-full">
 											<AccordionItem key={"1"} value={"1"}>
-												<AccordionTrigger><h1 className="font-bold text-xl">Persona extraviada </h1></AccordionTrigger>
+												<AccordionTrigger><h1 className="font-bold text-lg">Persona extraviada </h1></AccordionTrigger>
 												<AccordionContent className="mb-0 pb-0">
 													<table className="min-w-full table-auto border-separate border-spacing-2">
 														<tbody>
@@ -419,10 +435,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 																<td className="px-4 py-2 font-bold"><p>¿La información facilitada coincide con los videos?</p></td>
 																<td className="px-4 py-2"><p>{data.info_coincide_con_videos || "-"}</p></td>
 															</tr>
-															<tr>
-																<td className="px-4 py-2 font-bold"><p>Responsable que reporta</p></td>
-																<td className="px-4 py-2"><p>{data.responsable_que_entrega || "-"}</p></td>
-															</tr>
+															
 															{/* <tr>
 																<td className="px-4 py-2 font-bold"><p>Responsable que recibe</p></td>
 																<td className="px-4 py-2"><p>{data.responsable_que_recibe || "-"}</p></td>
@@ -486,7 +499,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 											<th className="px-4 py-2 text-left border-b">Sexo </th>
 											<th className="px-4 py-2 text-left border-b">Grupo Etario</th>
 											<th className="px-4 py-2 text-left border-b">Atención Médica</th>
-											<th className="px-4 py-2 text-left border-b">Retenido</th>
+											<th className="px-4 py-2 text-left border-b">Detenido</th>
 											<th className="px-4 py-2 text-left border-b">Comentarios/ Observaciones</th>
 											<th className="px-4 py-2 text-left border-b"></th>
 										</tr>
@@ -583,7 +596,13 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 								<tr key={index} className="border-t border-gray-200">
 								<td className="px-4 py-2">{item?.fecha_inicio_seg || "-"}</td>
 								<td className="px-4 py-2">{item?.tiempo_transcurrido || "-"}</td>
-								<td className="px-4 py-2 max-w-[500px] truncate" title={item?.accion_correctiva_incidencia || "-"}> {item?.accion_correctiva_incidencia || "-"} </td>
+								<td className="px-4 py-2 max-w-[600px]" title={item?.accion_correctiva_incidencia || "-"}>
+								<div className="line-clamp-3 overflow-hidden text-ellipsis whitespace-normal break-words">
+									{item?.accion_correctiva_incidencia || "-"}
+								</div>
+								</td>
+
+								
 								{/* <td className="px-4 py-2">{item?.incidencia_personas_involucradas || "-"}</td> */}
 
 								{/* <td className="px-4 py-2">
@@ -641,7 +660,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 									<div
 									title="Editar"
 									className="hover:cursor-pointer text-blue-500 hover:text-blue-600"
-									onClick={() => handleEdit(item)}
+									onClick={() =>{ handleEdit(item); setActiveIndex(index);}}
 									>
 										<Eye/>
 									</div>
@@ -678,10 +697,11 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 							<table className="min-w-full table-auto mb-5 border">
 								<thead>
 								<tr className="bg-gray-100"> 
-									<th className="px-4 py-2 text-left border-b">Tipo de Afectación</th>
-									{/* <th className="px-4 py-2 text-left border-b">Descripción de la Afectación</th> */}
-									<th className="px-4 py-2 text-left border-b">Monto Estimado de Daño ($)</th>
-									<th className="text-left border-b">Duración Estimada Afectación</th>
+									<th className="px-4 py-2 text-left border-b border-gray-300">Tipo de Afectación</th>
+									<th className="px-4 py-2 text-left border-b border-gray-300">Descripción</th>
+									<th className="px-4 py-2 text-left border-b border-gray-300">Monto Estimado de Daño ($)</th>
+									<th className="px-4 py-2 text-left border-b border-gray-300">Estatus</th>
+									<th className="px-4 py-2 text-left border-b border-gray-300">Duración Estimada Afectación</th>
 									<th className="px-4 py-2 text-left border-b">Evidencia</th>
 									<th className="px-4 py-2 text-left border-b">Documento</th>
 								</tr>
@@ -691,34 +711,26 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 								data.afectacion_patrimonial_incidencia.map((item: any, index: number) => (
 									<tr key={index} className="border-t border-gray-200">
 									<td className="px-4 py-2">{item?.tipo_afectacion || "-"}</td>
-									{/* <td className="px-4 py-2 max-w-[200px] truncate" title={item?.descripcion_afectacion || "-"}> {item?.descripcion_afectacion || "-"} </td> */}
+									<td className="px-4 py-2 max-w-[200px] truncate" title={item?.descripcion_afectacion || "-"}> {item?.descripcion_afectacion || "-"} </td>
 									<td className="px-4 py-2 text-right">{formatCurrency(item?.monto_estimado) || "-"}</td>
+									<td
+										className={`px-4 py-2 font-semibold ${
+										item?.estatus_afectacion === "Perdido"
+											? "text-red-600"
+											: item?.estatus_afectacion === "Recuperación total"
+											? "text-green-600"
+											: item?.estatus_afectacion === "Recuperación parcial"
+											? "text-yellow-600"
+											: ""
+										}`}
+									>
+										{item?.estatus_afectacion || "-"}
+									</td>
 									<td className="px-4 py-2">{item?.duracion_estimada || "-"}</td>
-
 									<td className="px-4 py-2">
 										{item?.evidencia?.length > 0 ? (
 										<div className="w-full flex justify-center">
-											<Carousel className="w-16">
-											<CarouselContent>
-												{item.evidencia.map((a: any, i: number) => (
-												<CarouselItem key={i}>
-													<Card>
-													<CardContent className="flex aspect-square items-center justify-center p-0">
-														<Image
-														width={280}
-														height={280}
-														src={a?.file_url || "/nouser.svg"}
-														alt="Imagen"
-														className="w-42 h-42 object-contain bg-gray-200 rounded-lg"
-														/>
-													</CardContent>
-													</Card>
-												</CarouselItem>
-												))}
-											</CarouselContent>
-											<CarouselPrevious />
-											<CarouselNext />
-											</Carousel>
+											<EvidenciaCarousel evidencia={item?.evidencia || []} w={"w-24"} h={"h-20"}/>
 										</div>
 										) : (
 											<div className="flex justify-center">-</div>
@@ -762,16 +774,21 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 			</Tabs>
 		</div>
 
+		{openVerSeg && (
 		<ViewSeg
 			title="Ver Seguimiento"
-			data={seguimientoSeleccionado}
+			data={seguimientosOrdenados[activeIndex]}
 			isSuccess={openVerSeg}
 			setIsSuccess={setOpenVerSeg}
-			>
+			onNext={() => setActiveIndex((prev) => prev + 1)}
+			onPrev={() => setActiveIndex((prev) => prev - 1)}
+			disableNext={activeIndex === seguimientosOrdenados.length - 1}
+			disablePrev={activeIndex === 0}
+		>
 			<div></div>
 		</ViewSeg>
+		)}
 
-        
         <div className="flex gap-1 my-5 col-span-2">
           	<DialogClose asChild>
             <Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700">
@@ -792,8 +809,8 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 			type="submit"
 			className="w-full  bg-yellow-500 hover:bg-yellow-600 text-white " disabled={isLoading || isFetching} onClick={()=>{handleGetPdf()}}>
 			{isLoading || isFetching ? (<>
-				  <> <Loader2 className="animate-spin" /> {"Descargando seguimientos..."} </>
-			</>) : ("Descargar seguimientos")}
+				  <> <Loader2 className="animate-spin" /> {"Descargando Reporte..."} </>
+			</>) : (<><Download /> Descargar Reporte</>)}
 			</Button>
 
         </div>

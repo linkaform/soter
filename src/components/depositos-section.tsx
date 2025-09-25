@@ -48,7 +48,7 @@ export const SeccionDepositos: React.FC<IncidenciaModalProps> = ({
 	return (
 	<div >
 		<div className="mt-3 flex justify-between">
-			<div className="text-lg font-bold">Acciones Tomadas</div>
+			<div className="text-lg font-bold">Depósitos</div>
 			<div className="cursor-pointer  bg-blue-500 hover:bg-blue-600 text-white mr-5 rounded-md p-2 px-4 text-center text-sm" onClick={()=>{setOpenDepositosModal(!openDepositosModal);
 				// handleEditDepositos(false)
 			}}>

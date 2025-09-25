@@ -42,6 +42,8 @@ const DateTime:React.FC<DateTimeListProps> = ({date, setDate , disablePastDates 
 				newDate.setHours(parseInt(value));
 			} else if (type === "minute") {
 				newDate.setMinutes(parseInt(value));
+
+
 			}
 			// if (newDate.getTime() <= now) {
 			// 	toast.error("Por favor, seleccione una hora futura.")
@@ -88,7 +90,7 @@ const DateTime:React.FC<DateTimeListProps> = ({date, setDate , disablePastDates 
         )}
       >
         {date ? (
-          format(date, "MM/dd/yyyy hh:mm")
+          format(date, "MM/dd/yyyy HH:mm")
         ) : (
           <span>mm / dd / aaaa ,  hh:mm</span>
         )}
@@ -123,7 +125,7 @@ const DateTime:React.FC<DateTimeListProps> = ({date, setDate , disablePastDates 
           </ScrollArea>
           <ScrollArea className="w-64 sm:w-auto">
             <div className="flex sm:flex-col p-2">
-              {Array.from({ length: 12 }, (_, i) => i * 5).map((minute) => (
+              {Array.from({ length: 60 }, (_, i) => i * 1).map((minute) => (
                 <Button
                   key={minute}
                   size="icon"

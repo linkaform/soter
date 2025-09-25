@@ -82,6 +82,7 @@ import { convertirDateToISO, formatCurrency, formatForMultiselect, formatForSele
 import { SeccionDepositos } from "../depositos-section";
 import Select from 'react-select';
 import { ViewSeg } from "./view-seguimiento";
+import EvidenciaCarousel from "../view-images-videos";
 
 interface AddIncidenciaModalProps {
   	title: string;
@@ -261,8 +262,8 @@ export const formSchema = z.object({
 	num_doc_identidad: z.string().optional(),
 	telefono: z.string().optional(),
 	info_coincide_con_videos: z.string().optional(),
-	responsable_que_entrega: z.string().optional(),
-	responsable_que_recibe: z.string().optional(),
+	// responsable_que_entrega: z.string().optional(),
+	// responsable_que_recibe: z.string().optional(),
 
 	//Robo de cableado
 	valor_estimado: z.string().optional(),
@@ -332,6 +333,10 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	const [editarAfectacionPatrimonial, setEditarAfectacionPatrimonial] = useState(false)
 	
 	const [ openVerSeg, setOpenVerSeg] = useState(false)
+
+	const seguimientosOrdenados = [...seguimientos].sort((a, b) => {
+		return new Date(a.fecha_inicio_seg).getTime() - new Date(b.fecha_inicio_seg).getTime();
+	  });
 
 	const resetStates = ()=>{
 		setSearch("")
@@ -436,8 +441,8 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 			num_doc_identidad:"",
 			telefono:"",
 			info_coincide_con_videos:"",
-			responsable_que_entrega:"",
-			responsable_que_recibe:"",
+			// responsable_que_entrega:"",
+			// responsable_que_recibe:"",
 		
 			//Grupos repetitivos
 			afectacion_patrimonial_incidencia:[],
@@ -536,8 +541,8 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 					parentesco: values.parentesco,
 					num_doc_identidad: values.num_doc_identidad,
 					telefono: values.telefono,
-					info_coincide_con_videos: values.info_coincide_con_videos,
-					responsable_que_entrega: values.responsable_que_entrega,
+					// info_coincide_con_videos: values.info_coincide_con_videos,
+					// responsable_que_entrega: values.responsable_que_entrega,
 					// responsable_que_recibe: values.responsable_que_recibe,
 				
 					//Robo de cableado
@@ -606,7 +611,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 	
   return (
     <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
-      <DialogContent className="max-w-5xl overflow-y-auto max-h-[80vh] min-h-[80vh]  flex flex-col overflow-hidden"  onInteractOutside={(e) => e.preventDefault()}  aria-describedby="">
+      <DialogContent className="max-w-7xl overflow-y-auto max-h-[80vh] min-h-[80vh]  flex flex-col overflow-hidden"  onInteractOutside={(e) => e.preventDefault()}  aria-describedby="">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center font-bold">
             {title}
@@ -744,7 +749,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 											<FormLabel>Fecha: *</FormLabel>
 											<FormControl>
 												{/* <Input type="datetime-local" placeholder="Fecha" {...field} /> */}
-												<DateTime date={date} setDate={setDate} />
+												<DateTime date={date} setDate={setDate}  disablePastDates={false}/>
 											</FormControl>
 
 											<FormMessage />
@@ -1090,12 +1095,17 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 									</tr>
 									</thead>
 									<tbody>
-									{seguimientos && seguimientos.length > 0 ? (
-										seguimientos.map((item: any, index: number) => (
+									{seguimientosOrdenados && seguimientosOrdenados.length > 0 ? (
+										seguimientosOrdenados.map((item: any, index: number) => (
 											<tr key={index} className="border-t border-gray-200">
 											<td className="px-4 py-2">{item?.fecha_inicio_seg || "-"}</td>
 											<td className="px-4 py-2">{item?.tiempo_transcurrido == "La fecha es anterior a la fecha de la incidencia." ? ( <div className="text-red-500"> {item?.tiempo_transcurrido }</div> ): item?.tiempo_transcurrido}</td>
-											<td className="px-4 py-2 max-w-[400px] truncate" title={item?.accion_correctiva_incidencia || "-"}> {item?.accion_correctiva_incidencia || "-"} </td>
+											<td className="px-4 py-2 max-w-[600px]" title={item?.accion_correctiva_incidencia || "-"}>
+											<div className="line-clamp-3 overflow-hidden text-ellipsis whitespace-normal break-words">
+												{item?.accion_correctiva_incidencia || "-"}
+											</div>
+											</td>
+											{/* <td className="px-4 py-2 max-w-[400px] truncate" title={item?.accion_correctiva_incidencia || "-"}> {item?.accion_correctiva_incidencia || "-"} </td> */}
 											{/* <td className="px-4 py-2">{item?.incidencia_personas_involucradas || "-"}</td> */}
 
 											{/* <td className="px-4 py-2 min-w-[150px] ">
@@ -1212,8 +1222,9 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 										<thead>
 										<tr className="bg-gray-100">
 											<th className="px-4 py-2 text-left border-b border-gray-300">Tipo de Afectación</th>
-											{/* <th className="px-4 py-2 text-left border-b border-gray-300">Descripción de la afectación</th> */}
+											<th className="px-4 py-2 text-left border-b border-gray-300">Descripción</th>
 											<th className="px-4 py-2 text-left border-b border-gray-300">Monto Estimado de Daño ($)</th>
+											<th className="px-4 py-2 text-left border-b border-gray-300">Estatus</th>
 											<th className="px-4 py-2 text-left border-b border-gray-300">Duración Estimada Afectación</th>
 											<th className="px-4 py-2 text-left border-b border-gray-300">Evidencia</th>
 											<th className="px-4 py-2 text-left border-b border-gray-300">Documento</th>
@@ -1226,33 +1237,26 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 											afectacionPatrimonial.map((item: any, index: number) => (
 												<tr key={index} className="border-t border-gray-200">
 												<td className="px-4 py-2">{item?.tipo_afectacion || "-"}</td>
-												{/* <td className="px-4 py-2 max-w-[200px] truncate" title={item?.descripcion_afectacion || "-"}> {item?.descripcion_afectacion || "-"} </td> */}
+												<td className="px-4 py-2 max-w-[200px] truncate" title={item?.descripcion_afectacion || "-"}> {item?.descripcion_afectacion || "-"} </td>
 												<td className="px-4 py-2 text-right">{formatCurrency(item?.monto_estimado) || "-"}</td>
+												<td
+													className={`px-4 py-2 font-semibold ${
+													item?.estatus_afectacion === "Perdido"
+														? "text-red-600"
+														: item?.estatus_afectacion === "Recuperación total"
+														? "text-green-600"
+														: item?.estatus_afectacion === "Recuperación parcial"
+														? "text-yellow-600"
+														: ""
+													}`}
+												>
+													{item?.estatus_afectacion || "-"}
+												</td>
 												<td className="px-4 py-2">{item?.duracion_estimada || "-"}</td>
 												<td className="px-4 py-2">
 												{item?.evidencia?.length > 0 ? (
 													<div className="w-full flex justify-center">
-														<Carousel className="w-16">
-														<CarouselContent>
-															{item.evidencia.map((a: any, i: number) => (
-															<CarouselItem key={i}>
-																<Card>
-																<CardContent className="flex aspect-square items-center justify-center p-0">
-																	<Image
-																	width={280}
-																	height={280}
-																	src={a?.file_url || "/nouser.svg"}
-																	alt="Imagen"
-																	className="w-42 h-42 object-contain bg-gray-200 rounded-lg"
-																	/>
-																</CardContent>
-																</Card>
-															</CarouselItem>
-															))}
-														</CarouselContent>
-														<CarouselPrevious />
-														<CarouselNext />
-														</Carousel>
+														<EvidenciaCarousel evidencia={item?.evidencia || []}  w={"w-24"} h={"h-20"}/>
 													</div>
 													) : (
 														<div className="flex justify-center">-</div>
@@ -1280,7 +1284,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 														)}
 												</td>
 
-												<td className="flex items-center justify-center gap-2 mt-4">
+												<td className="flex items-center justify-center gap-2 mt-3">
 													<div
 													title="Editar"
 													className="hover:cursor-pointer text-blue-500 hover:text-blue-600"

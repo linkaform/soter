@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { Dispatch, SetStateAction, useEffect } from "react";
 import { useShiftStore } from "@/store/useShiftStore";
 import { Textarea } from "../ui/textarea";
@@ -44,7 +44,7 @@ interface IncidenciaModalProps {
 }
 
 const formSchema = z.object({
-	nombre_completo: z.string().min(1, { message: "Este campo es obligatorio" }),
+	nombre_completo: z.string().optional(),
 	rol: z.string().min(1, { message: "Este campo es oblicatorio" }),
 	sexo: z.string().optional(),
 	grupo_etario: z.string().optional(),
@@ -148,6 +148,11 @@ export const PersonasInvolucradasModal: React.FC<IncidenciaModalProps> = ({
               });
 		}
 	}, [isSuccess, reset])
+
+	const rol = useWatch({
+		control: form.control,
+		name: "rol",
+	  });
 
 	return (
 		<Dialog onOpenChange={setIsSuccess} open={isSuccess}>
@@ -254,6 +259,8 @@ export const PersonasInvolucradasModal: React.FC<IncidenciaModalProps> = ({
 											</FormItem>
 										)}
 									/>
+
+									{rol === "Sospechoso" && (
 									<FormField
 										control={form.control}
 										name="grupo_etario"
@@ -291,32 +298,10 @@ export const PersonasInvolucradasModal: React.FC<IncidenciaModalProps> = ({
 														}}
 														/>
 											</FormItem>
-											// <FormItem>
-											// 	<FormLabel>Grupo etario:</FormLabel>
-											// 	<FormControl>
-											// 		<Select {...field} className="input"t
-											// 			onValueChange={(value:string) => {
-											// 			field.onChange(value); 
-											// 			}}
-											// 			value={field.value}
-											// 		>
-											// 			<SelectTrigger className="w-full">
-											// 				<SelectValue placeholder="Selecciona una opcion" />
-											// 			</SelectTrigger>
-											// 			<SelectContent>
-											// 				<SelectItem key={"infancia"} value={"infancia"}>Infancia</SelectItem>
-											// 				<SelectItem key={"adolescencia"} value={"adolescencia"}>Adolescencia</SelectItem>
-											// 				<SelectItem key={"juventud"} value={"juventud"}>Juventud</SelectItem>
-											// 				<SelectItem key={"adultez temprana"} value={"adultez temprana"}>Adultez temprana</SelectItem>
-											// 				<SelectItem key={"adultez media"} value={"adultez media"}>Adultez media</SelectItem>
-											// 				<SelectItem key={"adultez mayor"} value={"adultez mayor"}>Adultez mayor</SelectItem>
-											// 			</SelectContent>
-											// 		</Select>
-											// 	</FormControl>
-											// 	<FormMessage />
-											// </FormItem>
 										)}
-									/>
+									/>)}
+
+
 									<FormField
 										control={form.control}
 										name="atencion_medica"
@@ -358,7 +343,7 @@ export const PersonasInvolucradasModal: React.FC<IncidenciaModalProps> = ({
 									name="retenido"
 									render={({ field }: any) => (
 										<FormItem>
-											<FormLabel>¿Persona retenida?: *</FormLabel>
+											<FormLabel>¿Persona detenida?: *</FormLabel>
 											<FormControl>
 											<div className="flex gap-2 ">
 													<button

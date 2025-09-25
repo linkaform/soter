@@ -31,6 +31,7 @@ import Select from "react-select";
 import LoadImage from "../upload-Image";
 import LoadFile from "../upload-file";
 import { Imagen } from "@/lib/update-pass-full";
+import { Textarea } from "../ui/textarea";
 
 interface IncidenciaModalProps {
 	title: string;
@@ -46,7 +47,8 @@ interface IncidenciaModalProps {
 
 const formSchema = z.object({
 	tipo_afectacion: z.string().min(1, { message: "Este campo es obligatorio" }),
-    // descripcion_afectacion: z.string().min(1, { message: "Este campo es obligatorio" }),
+    descripcion_afectacion: z.string().optional(),
+    estatus_afectacion: z.string().optional(),
 	monto_estimado: z.string().min(1, { message: "Este campo es obligatorio" }),
 	duracion_estimada: z.string().optional(),
     evidencia:z.array(
@@ -84,7 +86,8 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
             tipo_afectacion:"",
-            // descripcion_afectacion:"",
+            descripcion_afectacion:"",
+            estatus_afectacion:"",
             monto_estimado:"",
             duracion_estimada:"",
             evidencia:[],
@@ -99,7 +102,8 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
             setInputValue("")
             reset({
                 tipo_afectacion:"",
-                // descripcion_afectacion:"",
+                descripcion_afectacion:"",
+                estatus_afectacion:"",
                 monto_estimado:"",
                 duracion_estimada:"",
                 evidencia:[],
@@ -110,10 +114,13 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
         }
 
 		if (editarAfectacionPatrimonial && afectacionPatrimonialSeleccionada) {
-            setInputValue(afectacionPatrimonialSeleccionada.monto_estimado)
+            const numeric = afectacionPatrimonialSeleccionada.monto_estimado.replace(/[^\d.]/g, "").replace(/(\..*)\./g, "$1");
+            setInputValue(numeric)
 			reset({
                 tipo_afectacion:afectacionPatrimonialSeleccionada.tipo_afectacion,
                 monto_estimado:afectacionPatrimonialSeleccionada.monto_estimado,
+                descripcion_afectacion:afectacionPatrimonialSeleccionada.descripcion_afectacion,
+                estatus_afectacion:afectacionPatrimonialSeleccionada.estatus_afectacion,
                 duracion_estimada:afectacionPatrimonialSeleccionada.duracion_estimada,
               });
               setEvidencia(afectacionPatrimonialSeleccionada.evidencia)
@@ -125,6 +132,8 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
         const formatData = {
             tipo_afectacion: values.tipo_afectacion,
             monto_estimado: values.monto_estimado,
+            descripcion_afectacion: values.descripcion_afectacion,
+            estatus_afectacion:values.estatus_afectacion,
             duracion_estimada: values.duracion_estimada,
             evidencia:evidencia,
             documento:documento
@@ -158,7 +167,7 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
 		<Dialog onOpenChange={setOpenAfectacionPatrimonialModal} open={openAfectacionPatrimonialModal}>
 			<DialogTrigger>{children}</DialogTrigger>
 
-			<DialogContent className="max-w-lg overflow-y-auto max-h-[60vh] min-h-auto flex flex-col overflow-hidden" onInteractOutside={(e) => e.preventDefault()} aria-describedby="">
+			<DialogContent className="max-w-lg overflow-y-auto max-h-[75vh] min-h-auto flex flex-col overflow-hidden" onInteractOutside={(e) => e.preventDefault()} aria-describedby="">
 				<DialogHeader>
 					<DialogTitle className="text-2xl text-center font-bold">
 						{title}
@@ -199,24 +208,53 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
 										</FormItem>
                                     )}
                                 />
-                            {/* <FormField
-								control={form.control}
-								name="descripcion_afectacion"
-								render={({ field }: any) => (
-									<FormItem>
-										<FormLabel>Descripción de la afectación: *</FormLabel>
-										<FormControl>
-											<Textarea placeholder="Descripción de la afectación..." {...field}
-												onChange={(e) => {
-													field.onChange(e);
-												}}
-												value={field.value || ""}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/> */}
+                                <FormField
+                                    control={form.control}
+                                    name="descripcion_afectacion"
+                                    render={({ field }: any) => (
+                                        <FormItem>
+                                            <FormLabel>Descripción de la afectación: *</FormLabel>
+                                            <FormControl>
+                                                <Textarea placeholder="Descripción de la afectación..." {...field}
+                                                    onChange={(e) => {
+                                                        field.onChange(e);
+                                                    }}
+                                                    value={field.value || ""}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name="estatus_afectacion"
+                                    render={({ field }: any) => (
+                                        <FormItem className="w-full">
+                                            <FormLabel>Estatus de la afectacion: *</FormLabel>
+                                                <Select 
+                                                    placeholder={"Tipo de afectación"}
+                                                    inputId="select-rol"
+                                                    name="rol"
+                                                    aria-labelledby="aria-label"
+                                                    value ={field.value ? formatForMultiselect([field.value]):[]}
+                                                    options={formatForMultiselect([
+                                                        "Perdido",
+                                                        "Recuperación parcial",
+                                                        "Recuperación total",
+                                                        ])} 
+                                                    onChange={(selectedOption:any) => {
+                                                        field.onChange(selectedOption ? selectedOption.value :"");
+                                                    }}
+                                                    isClearable
+                                                    styles={{
+                                                        menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
+                                                    }}
+                                                />
+										</FormItem>
+                                    )}
+                                />      
 
                                 <FormField
                                     control={form.control}
@@ -302,7 +340,7 @@ export const AfectacionPatrimonialModal: React.FC<IncidenciaModalProps> = ({
                         onClick={form.handleSubmit(onSubmit)}
                         className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={isLoading}
                     >
-                        {editarAfectacionPatrimonial? ("Editar"):(("Agregar"))}
+                        {editarAfectacionPatrimonial? ("Guardar"):(("Agregar"))}
                     </Button>
                 </div>
 			</DialogContent>
