@@ -61,7 +61,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 		if(isSuccess){
 			setTab("datos")
 		}
-	},[isSuccess])
+	},[isSuccess, setTab])
 	const handleGetPdf = async () => {
 		try {
 			const result = await refetch();
