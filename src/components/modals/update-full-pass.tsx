@@ -389,13 +389,13 @@ return (
 		<DialogTrigger asChild>{children}</DialogTrigger>
 		<DialogContent className="max-w-3xl max-h-[90vh] overflow-scroll">
 			<DialogHeader>
-				<DialogTitle className="text-2xl text-center  font-bold my-5">
+				<DialogTitle className="text-2xl text-center  font-bold">
 					Editar pase
 				</DialogTitle>
 			</DialogHeader>
 
 
-			<div className="p-8">
+			<div className="p-8 pt-0">
 			<EntryPassModalUpdate
 				title={"Confirmación"}
 				dataPass={modalData}

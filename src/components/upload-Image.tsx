@@ -145,7 +145,7 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
                         <>
                             <Input
                             type="file"
-                            accept="*/*"
+                            accept="image/*,video/*"
                             ref={fileInputRef}
                             onChange={handleFileChange}
                             className="hidden"
@@ -196,40 +196,58 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
                             
                         </div>
                     ):null}
-                        {hideWebcam && imgArray?.length>0 ? (
-                            <>
-                                <div className="w-full flex justify-center">
-                                    <Carousel className="w-52">
-                                    <CarouselContent>
-                                        {imgArray.map((a:Imagen, index:number) => (
+                      {hideWebcam && imgArray?.length > 0 ? (
+                            <div className="w-full flex justify-center">
+                                <Carousel className="w-52">
+                                <CarouselContent>
+                                    {imgArray.map((a: Imagen, index: number) => {
+                                    const isVideo = a.file_url?.match(/\.(mp4|webm|ogg|mov|avi)$/i);
+
+                                    return (
                                         <CarouselItem key={index}>
-                                            <div className="p-1 relative">
-                                                <Image
-                                                    height={160} 
-                                                    width={160} 
-                                                    src= {a.file_url || "/nouser.svg"}
-                                                    alt="Imagen"
-                                                    className="w-full h-40 object-cover rounded-lg" 
-                                                />
-                                                <button
-                                                    type="button"
-                                                    onClick={() => removeImage(index)}
-                                                    className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white rounded px-1.5"
-                                                    title="Eliminar imagen"
-                                                >
-                                                    x
-                                                </button>
-                                            </div>
-                                    </CarouselItem>
-                                    ))}
-                                    </CarouselContent>
-                                        {imgArray.length>1 ?
-                                        <><CarouselPrevious  type="button" /><CarouselNext  type="button"/></>
-                                        :null}
-                                    </Carousel>
-                                </div>
-                            </>
-                        ):null}
+                                        <div className="p-1 relative">
+                                            {isVideo ? (
+                                            <video
+                                                controls
+                                                className="w-full h-40 object-cover rounded-lg"
+                                            >
+                                                <source src={a.file_url} type="video/mp4" />
+                                                Tu navegador no soporta la reproducción de video.
+                                            </video>
+                                            ) : (
+                                            <Image
+                                                height={160}
+                                                width={160}
+                                                src={a.file_url || "/nouser.svg"}
+                                                alt="Imagen"
+                                                className="w-full h-40 object-cover rounded-lg"
+                                            />
+                                            )}
+
+                                            <button
+                                            type="button"
+                                            onClick={() => removeImage(index)}
+                                            className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white rounded px-1.5"
+                                            title="Eliminar archivo"
+                                            >
+                                            x
+                                            </button>
+                                        </div>
+                                        </CarouselItem>
+                                    );
+                                    })}
+                                </CarouselContent>
+
+                                {imgArray.length > 1 ? (
+                                    <>
+                                    <CarouselPrevious type="button" />
+                                    <CarouselNext type="button" />
+                                    </>
+                                ) : null}
+                                </Carousel>
+                            </div>
+                            ) : null}
+
                     {/* {showArray && imgArray.length<limit ?(
                         <>
                         <Input 

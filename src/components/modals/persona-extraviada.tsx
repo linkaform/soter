@@ -197,28 +197,7 @@ export function PersonaExtraviadaFields({ control }: Props) {
 						</FormItem>
 					)}
 					/>
-					<FormField
-					control={control}
-					name="responsable_que_entrega"
-					render={({ field }) => (
-						<FormItem>
-						<FormLabel>Responsable que reporta</FormLabel>
-						<FormControl><Input {...field}  /></FormControl>
-						<FormMessage />
-						</FormItem>
-					)}
-					/>
-					{/* <FormField
-					control={control}
-					name="responsable_que_recibe"
-					render={({ field }) => (
-						<FormItem>
-						<FormLabel>Responsable que recibe</FormLabel>
-						<FormControl><Input {...field}  /></FormControl>
-						<FormMessage />
-						</FormItem>
-					)}
-					/> */}
+		
 			</div>
       	</div>
     );

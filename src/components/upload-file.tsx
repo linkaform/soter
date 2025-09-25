@@ -62,7 +62,20 @@ const LoadFile: React.FC<CalendarDaysProps>= ({id, titulo, setDocs, docArray, li
                         <>
                         <Input
                         type="file"
-                        accept="*/*"
+                        accept={`
+                          application/pdf,
+                          application/msword,
+                          application/vnd.openxmlformats-officedocument.wordprocessingml.document,
+                          application/vnd.ms-excel,
+                          application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
+                          text/plain,
+                          text/csv,
+                          application/zip,
+                          application/json,
+                          application/xml,
+                          application/vnd.oasis.opendocument.text,
+                          application/vnd.oasis.opendocument.spreadsheet
+                        `}
                         ref={fileInputRef}
                         onChange={handleFileChange}
                         className="hidden"
@@ -89,32 +102,34 @@ const LoadFile: React.FC<CalendarDaysProps>= ({id, titulo, setDocs, docArray, li
 
             </>): (<>
                
+                {docArray && docArray.length > 0 && (
+                    <div className="mt-5 border border-gray-200 rounded-md p-2">
+                    <ul className="space-y-2 max-h-40 overflow-y-auto pr-2">
+                        {docArray.map((file, index) => (
+                            <li key={index}>
+                            <a
+                                href={file.file_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:underline"
+                            >
+                                {file.file_name}
+                            </a>
 
+                            <button
+                                type="button"
+                                onClick={() => removeFile(index)}
+                                className="bg-red-600 hover:bg-red-700 text-white rounded px-1.5 ml-2"
+                                title="Eliminar archivo"
+                            >
+                                x
+                            </button>
+                            </li>
 
-                <ul className="ms-2 flex flex-col gap-1">
-                    {docArray.map((file, index) => (
-                        <li key={index}>
-                        <a
-                            href={file.file_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 hover:underline"
-                        >
-                            {file.file_name}
-                        </a>
-
-                        <button
-                            type="button"
-                            onClick={() => removeFile(index)}
-                            className="bg-red-600 hover:bg-red-700 text-white rounded px-1.5 ml-2"
-                            title="Eliminar archivo"
-                        >
-                            x
-                        </button>
-                        </li>
-
-                    ))}
-                </ul>
+                        ))}
+                    </ul>
+                    </div>
+                )}
                
             </>)}
         </div>

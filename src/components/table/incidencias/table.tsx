@@ -78,6 +78,7 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
   );
 
 	const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
+	const [tabSelected, setTabSelected] = useState("datos")
 	const [modalVerAbierto, setModalVerAbierto] = useState(false);
 	const [modalSeguimientoAbierto, setModalSeguimientoAbierto] = useState(false);
 	const [modalEliminarAbierto, setModalEliminarAbierto] = useState(false);
@@ -393,9 +394,11 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 
 				{modalVerAbierto && incidenciaSeleccionada && (
 					<ViewIncidencia 
-					title="Información de la Incidencia"
-					data={incidenciaSeleccionada} isSuccess={modalVerAbierto}
-								setIsSuccess={setModalVerAbierto} setModalEditarAbierto={setModalEditarAbierto }>
+						title="Información de la Incidencia"
+						data={incidenciaSeleccionada} isSuccess={modalVerAbierto}
+						tab={tabSelected}
+						setTab={setTabSelected}
+						setIsSuccess={setModalVerAbierto} setModalEditarAbierto={setModalEditarAbierto }>
 						<div className="cursor-pointer" title="Ver Incidencia">
 						<Eye /> 
 						</div>
@@ -410,6 +413,8 @@ const IncidenciasTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSe
 					modalEditarAbierto={modalEditarAbierto}
 					setModalEditarAbierto={setModalEditarAbierto}
 					onClose={() => setModalEditarAbierto(false)}
+					tab={tabSelected}
+					setTab={setTabSelected}
 					/>
 				)}
 

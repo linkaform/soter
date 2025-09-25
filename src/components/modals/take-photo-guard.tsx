@@ -5,14 +5,16 @@ import { Dispatch, SetStateAction } from "react";
 import { Button } from "../ui/button";
 
 interface TakeModalProps {
-    title:string
-    evidencia: any;
+    title:string;
+	descripcion:string;
+    evidencia: Imagen[];
     setEvidencia: Dispatch<SetStateAction<Imagen[]>>;
 	children: React.ReactNode;
   }
   
   export const TakePhotoGuard: React.FC<TakeModalProps> = ({
     title,
+	descripcion,
     setEvidencia,
     evidencia,
 	children
@@ -22,7 +24,7 @@ interface TakeModalProps {
   return (
     <Dialog  modal>
 		<DialogTrigger asChild>{children}</DialogTrigger>
-		<DialogContent className="max-w-md overflow-y-auto max-h-[80vh] min-h-[70vh] flex flex-col" onInteractOutside={(e) => e.preventDefault()} aria-describedby="">
+		<DialogContent className="max-w-md overflow-y-auto max-h-[80vh] min-h-[50vh] flex flex-col" onInteractOutside={(e) => e.preventDefault()} aria-describedby="">
 			<DialogHeader className="flex-shrink-0">
 				<DialogTitle className="text-2xl text-center font-bold">
 					{title}
@@ -30,7 +32,7 @@ interface TakeModalProps {
 			</DialogHeader>
 		<DialogTitle></DialogTitle>
 		<div>
-		Capture una fotografía de su uniforme completo antes de cerrar su turno.
+		{descripcion}
 		</div>
 		<div className="flex flex-col ">
 			<LoadImage

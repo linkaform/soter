@@ -65,7 +65,7 @@ const SeccionPersonasInvolucradas:React.FC<PersonasInvolucradasListProps> = ({ p
 					<th className="px-4 py-2 text-left border-b border-gray-300">Sexo</th>
 					<th className="px-4 py-2 text-left border-b border-gray-300">Grupo Etario</th>
 					<th className="px-4 py-2 text-left border-b border-gray-300">Atención Médica</th>
-					<th className="px-4 py-2 text-left border-b border-gray-300">Retenido</th>
+					<th className="px-4 py-2 text-left border-b border-gray-300">Detenido</th>
 					<th className="px-4 py-2 text-left border-b border-gray-300">Comentarios / Observaciones</th>
 					<th className="px-4 py-2 text-left border-b border-gray-300"></th>
 				</tr>

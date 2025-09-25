@@ -30,8 +30,18 @@ export default function Home() {
       setEvidencia(shift?.booth_status?.fotografia_cierre_turno)
 		}else if (shift?.guard?.status_turn !== "Turno Abierto") {
       setEvidencia(shift?.booth_status?.fotografia_inicio_turno)
+
 		}
   }, [shift, setCheckin_id]);
+
+  useEffect(() => {
+    if(shift){
+      console.log("FOTO",shift?.booth_status?.fotografia_inicio_turno)
+      setEvidencia(shift?.booth_status?.fotografia_inicio_turno)
+      setIdentificacion(shift?.booth_status?.fotografia_cierre_turno)
+    }
+    }, [shift]);
+    
 
     if (isLoading || loading) {
       return (

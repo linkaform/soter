@@ -26,6 +26,9 @@ const TurnStatus = ({shift, location, area, evidencia, setEvidencia, identificac
 
   }, []);
 
+
+
+
   const formattedDate = currentDateTime.toLocaleDateString("es-MX", {
     year: "numeric",
     month: "2-digit",
@@ -44,7 +47,7 @@ const TurnStatus = ({shift, location, area, evidencia, setEvidencia, identificac
 			<p className="font-bold text-2xl">Detalles del turno</p>
 			<div className="flex flex-col sm:flex-row gap-10 mt-2">
 
-				<TakePhotoGuard title="Tomar Fotografía" evidencia={evidencia} setEvidencia={setEvidencia}>
+				<TakePhotoGuard title="Tomar Fotografía" descripcion="Capture una fotografía de su uniforme completo antes de iniciar su turno." evidencia={evidencia} setEvidencia={setEvidencia}>
 					<div className="relative w-32 h-32 mx-auto flex flex-col items-center justify-center border-2 border-dashed border-gray-400 shadow-[0_2px_8px_rgba(0,0,0,0.2)] cursor-pointer">
 
 							{Array.isArray(evidencia) && evidencia.length > 0 && (
@@ -71,7 +74,7 @@ const TurnStatus = ({shift, location, area, evidencia, setEvidencia, identificac
 						</div>
 				</TakePhotoGuard>
 
-				<TakePhotoGuard title="Tomar Fotografía" evidencia={identificacion} setEvidencia={setIdentificacion} >
+				<TakePhotoGuard title="Tomar Fotografía" descripcion="Capture una fotografía de su uniforme completo antes de cerrar su turno." evidencia={identificacion} setEvidencia={setIdentificacion} >
 					<div>
 						<div className="relative w-32 h-32 mx-auto flex flex-col items-center justify-center border-2 border-dashed border-gray-400 shadow-[0_2px_8px_rgba(0,0,0,0.2)] cursor-pointer">
 

@@ -453,7 +453,7 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 							name="aria-live-color"
 							options={catColores}
 							onChange={(selectedOption) => {
-							field.onChange(selectedOption ? selectedOption.value : "");
+							field.onChange(selectedOption ? [selectedOption.value] : "");
 							}}
 							isClearable
 							menuPortalTarget={document.body}
