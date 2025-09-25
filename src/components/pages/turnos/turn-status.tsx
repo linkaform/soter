@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Imagen } from "@/lib/update-pass-full";
 import { capitalizeOnlyFirstLetter } from "@/lib/utils";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
+import Image from "next/image";
 
 const TurnStatus = ({shift, location, area, evidencia, setEvidencia, identificacion, setIdentificacion}: {shift: any, location: string, area:string ,
 	evidencia:Imagen[], setEvidencia:Dispatch<SetStateAction<Imagen[]>>, identificacion:Imagen[], setIdentificacion:Dispatch<SetStateAction<Imagen[]>>
@@ -15,8 +16,10 @@ const TurnStatus = ({shift, location, area, evidencia, setEvidencia, identificac
 
 
   useEffect(() => {
-	setEvidencia(shift?.booth_status?.fotografia_inicio_turno)
-	setIdentificacion(shift?.booth_status?.fotografia_cierre_turno)
+	if(shift?.booth_status?.fotografia_inicio_turno)
+		setEvidencia(shift?.booth_status?.fotografia_inicio_turno)
+	if(shift?.booth_status?.fotografia_cierre_turno)
+		setIdentificacion(shift?.booth_status?.fotografia_cierre_turno)
 
     const interval = setInterval(() => {
       setCurrentDateTime(new Date());
@@ -24,7 +27,7 @@ const TurnStatus = ({shift, location, area, evidencia, setEvidencia, identificac
 
     return () => clearInterval(interval); 
 
-  }, []);
+  }, [setEvidencia, setIdentificacion, shift?.booth_status?.fotografia_inicio_turno, shift?.booth_status?.fotografia_cierre_turno]);
 
 
 
@@ -63,7 +66,9 @@ const TurnStatus = ({shift, location, area, evidencia, setEvidencia, identificac
 								</button>
 							)}
 
-							<img
+							<Image
+							width={112}
+							height={96}
 							className="w-28 h-24 object-contain"
 							src={evidencia?.[0]?.file_url || "/nouser.svg"}
 							alt="Inicio de turno"
@@ -91,7 +96,9 @@ const TurnStatus = ({shift, location, area, evidencia, setEvidencia, identificac
 								</button>
 							)}
 
-							<img
+							<Image
+							width={112}
+							height={96}
 							className="w-28 h-24 object-contain"
 							src={identificacion?.[0]?.file_url || "/nouser.svg"}
 							alt="Cierre de turno"

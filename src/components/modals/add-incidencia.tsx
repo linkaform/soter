@@ -47,7 +47,6 @@ import {
 	List,
 	Eye,
   } from "lucide-react";
-import Image from "next/image";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -71,8 +70,7 @@ import { PersonaExtraviadaFields } from "./persona-extraviada";
 import { RoboDeCableado } from "./robo-de-cableado";
 import { RoboDeVehiculo } from "./robo-de-vehiculo";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { Card, CardContent} from "../ui/card";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
+import { Card} from "../ui/card";
 import { SeguimientoIncidenciaLista } from "./add-seguimientos";
 import { toast } from "sonner";
 import SeccionPersonasInvolucradas from "../personas-involucradas";

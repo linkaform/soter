@@ -42,12 +42,10 @@ import { Slider } from "../slider";
 import { Switch } from "@/components/ui/switch"
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import { Card, CardContent } from "../ui/card";
+import { Card } from "../ui/card";
 import { Input } from "../ui/input";
 import SeccionPersonasInvolucradas from "../personas-involucradas";
 import SeccionAccionesTomadas from "../acciones-tomadas";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
-import Image from "next/image";
 import { SeguimientoIncidenciaLista } from "./add-seguimientos";
 import { AfectacionPatrimonialModal } from "./add-afectacion-patrimonial";
 import { convertirDateToISO, formatCurrency, formatForMultiselect } from "@/lib/utils";

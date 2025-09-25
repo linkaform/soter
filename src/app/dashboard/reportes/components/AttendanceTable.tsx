@@ -30,15 +30,6 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
     timeframe = 'mes',
     selectedStatus
 }) => {
-<<<<<<< Updated upstream
-=======
-    const [selectedWeek, setSelectedWeek] = React.useState(0);
-    const [search, setSearch] = React.useState("");
-    const today = new Date();
-    const isCurrentMonth = month === today.getMonth() + 1 && year === today.getFullYear();
-    const currentDay = isCurrentMonth ? today.getDate() : null;
-
->>>>>>> Stashed changes
     // Get days in month and start day of week
     const daysInMonth = React.useMemo(() => {
         return new Date(year, month, 0).getDate();
@@ -299,7 +290,6 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
 
         return filtered;
     }, [organizedData, search, effectiveSelectedStatus, currentDay]);
-<<<<<<< Updated upstream
 
     React.useEffect(() => {
         if (timeframe === "semana") {
@@ -312,8 +302,6 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
             setSelectedWeek(idx >= 0 ? idx : 0);
         }
     }, [month, year, timeframe, allWeeks]);
-=======
->>>>>>> Stashed changes
 
     return (
         <div className="w-full overflow-x-auto">

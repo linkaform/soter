@@ -24,7 +24,6 @@ import { descargarPdfPase } from "@/lib/download-pdf";
 import { toast } from "sonner";
 import useAuthStore from "@/store/useAuthStore";
 import { ViewSeg } from "./view-seguimiento";
-import { Imagen } from "@/lib/update-pass-full";
 import EvidenciaCarousel from "../view-images-videos";
 
 interface ViewFallaModalProps {
@@ -52,7 +51,6 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 	const { userIdSoter } = useAuthStore()
 	const {refetch, isLoading, isFetching} = useGetPdfIncidencias(data._id, 592, userIdSoter, `Seguimiento_de_Incidente_145636-${data.folio}`)
 	const [ openVerSeg, setOpenVerSeg] = useState(false)
-	const [seguimientoSeleccionado ,setSeguimientoSeleccionado]= useState()
 	const [activeIndex, setActiveIndex] = useState(0);
 	const seguimientosOrdenados = [...data.seguimientos_incidencia].sort((a, b) => {
 		return new Date(a.fecha_inicio_seg).getTime() - new Date(b.fecha_inicio_seg).getTime();
@@ -62,7 +60,8 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 		if(isSuccess){
 			setTab("datos")
 		}
-	},[isSuccess])
+	},[isSuccess, setTab])
+
 	const handleGetPdf = async () => {
 		try {
 			const result = await refetch();
@@ -121,15 +120,10 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 		return formatCurrency(sumaTotal)
 	}
 
-	const handleEdit = (item: any) => {
-		setSeguimientoSeleccionado(item)
+	const handleEdit = () => {
 		setOpenVerSeg(true);
 	};
 	
-	const handleOpenVerSeguimiento = (index: number) => {
-		setActiveIndex(index);
-		setOpenVerSeg(true);
-	};
 
   return (
     <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
@@ -660,7 +654,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 									<div
 									title="Editar"
 									className="hover:cursor-pointer text-blue-500 hover:text-blue-600"
-									onClick={() =>{ handleEdit(item); setActiveIndex(index);}}
+									onClick={() =>{ handleEdit(); setActiveIndex(index);}}
 									>
 										<Eye/>
 									</div>

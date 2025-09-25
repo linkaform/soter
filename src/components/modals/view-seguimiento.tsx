@@ -7,9 +7,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import Image from "next/image";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
-import { Card, CardContent } from "../ui/card";
 import { formatDateToText } from "@/lib/utils";
 import { Dispatch, SetStateAction } from "react";
 import EvidenciaCarousel from "../view-images-videos";
