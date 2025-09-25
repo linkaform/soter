@@ -24,7 +24,6 @@ import { descargarPdfPase } from "@/lib/download-pdf";
 import { toast } from "sonner";
 import useAuthStore from "@/store/useAuthStore";
 import { ViewSeg } from "./view-seguimiento";
-import { Imagen } from "@/lib/update-pass-full";
 import EvidenciaCarousel from "../view-images-videos";
 
 interface ViewFallaModalProps {
