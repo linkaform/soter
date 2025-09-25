@@ -30,32 +30,10 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
     timeframe = 'mes',
     selectedStatus
 }) => {
-    const today = new Date();
-    const isCurrentMonth = month === today.getMonth() + 1 && year === today.getFullYear();
-    const currentDay = isCurrentMonth ? today.getDate() : null;
-
-    // Calcula el índice de la semana actual
-    const getCurrentWeekIndex = () => {
-        if (!isCurrentMonth || !currentDay) return 0;
-        const firstDay = new Date(year, month - 1, 1).getDay() || 7; // Lunes=1, Domingo=7
-        return Math.floor((currentDay + firstDay - 2) / 7);
-    };
-
-    const [selectedWeek, setSelectedWeek] = React.useState(
-        timeframe === "semana" ? getCurrentWeekIndex() : 0
-    );
-    const [search, setSearch] = React.useState("");
-
     // Get days in month and start day of week
     const daysInMonth = React.useMemo(() => {
         return new Date(year, month, 0).getDate();
     }, [month, year]);
-
-    // Calcula el número de semanas en el mes
-    const weeksInMonth = React.useMemo(() => {
-        const firstDay = new Date(year, month - 1, 1).getDay() || 7; // Lunes=1, Domingo=7
-        return Math.ceil((daysInMonth + firstDay - 1) / 7);
-    }, [daysInMonth, month, year]);
 
     // Utilidad para obtener los días de la semana seleccionada
     const getWeekDays = React.useCallback((year: number, month: number, weekIndex: number) => {
@@ -78,6 +56,43 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
         }
         return weekDays;
     }, [daysInMonth]);
+
+    // Genera todas las semanas del mes
+    const allWeeks = useMemo(() => {
+        const weeks: { day: number, dayName: string, isWeekend: boolean }[][] = [];
+        let weekIndex = 0;
+        while (true) {
+            const weekDays = getWeekDays(year, month, weekIndex);
+            if (weekDays.length === 0) break;
+            weeks.push(weekDays);
+            if (weekDays[weekDays.length - 1].day === daysInMonth) break;
+            weekIndex++;
+        }
+        return weeks;
+    }, [year, month, daysInMonth, getWeekDays]);
+
+    // Encuentra el índice de la semana actual
+    const today = new Date();
+    const isCurrentMonth = month === today.getMonth() + 1 && year === today.getFullYear();
+    const currentDay = isCurrentMonth ? today.getDate() : null;
+
+    const getCurrentWeekIndex = () => {
+        if (!isCurrentMonth || !currentDay) return 0;
+        return allWeeks.findIndex(week =>
+            week.some(dayObj => dayObj.day === currentDay)
+        );
+    };
+
+    const [selectedWeek, setSelectedWeek] = React.useState(
+        timeframe === "semana" ? getCurrentWeekIndex() : 0
+    );
+    const [search, setSearch] = React.useState("");
+
+    // Calcula el número de semanas en el mes
+    const weeksInMonth = React.useMemo(() => {
+        const firstDay = new Date(year, month - 1, 1).getDay() || 7; // Lunes=1, Domingo=7
+        return Math.ceil((daysInMonth + firstDay - 1) / 7);
+    }, [daysInMonth, month, year]);
 
     // Transformar los datos al formato esperado por el componente
     const transformedData = useMemo(() => {
@@ -275,6 +290,18 @@ const AttendanceTable: React.FC<AttendanceTableProps> = ({
 
         return filtered;
     }, [organizedData, search, effectiveSelectedStatus, currentDay]);
+
+    React.useEffect(() => {
+        if (timeframe === "semana") {
+            const today = new Date();
+            const isCurrentMonth = month === today.getMonth() + 1 && year === today.getFullYear();
+            const currentDay = isCurrentMonth ? today.getDate() : null;
+            const idx = isCurrentMonth && currentDay
+                ? allWeeks.findIndex(week => week.some(dayObj => dayObj.day === currentDay))
+                : 0;
+            setSelectedWeek(idx >= 0 ? idx : 0);
+        }
+    }, [month, year, timeframe, allWeeks]);
 
     return (
         <div className="w-full overflow-x-auto">
