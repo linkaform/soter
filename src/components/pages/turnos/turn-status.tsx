@@ -16,8 +16,10 @@ const TurnStatus = ({shift, location, area, evidencia, setEvidencia, identificac
 
 
   useEffect(() => {
-	setEvidencia(shift?.booth_status?.fotografia_inicio_turno)
-	setIdentificacion(shift?.booth_status?.fotografia_cierre_turno)
+	if(shift?.booth_status?.fotografia_inicio_turno)
+		setEvidencia(shift?.booth_status?.fotografia_inicio_turno)
+	if(shift?.booth_status?.fotografia_cierre_turno)
+		setIdentificacion(shift?.booth_status?.fotografia_cierre_turno)
 
     const interval = setInterval(() => {
       setCurrentDateTime(new Date());
