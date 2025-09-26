@@ -474,7 +474,12 @@ const ReportsPage = () => {
 
 	if (isLoadingReportFallas || isLoadingHotelesFallas) {
 		return (
-			<div className="flex items-center justify-center h-screen">
+			<div className="flex flex-col items-center justify-center h-screen">
+				<div className="flex space-x-2 mb-4">
+					<div className="w-4 h-4 bg-blue-600 rounded-full animate-bounce"></div>
+					<div className="w-4 h-4 bg-blue-400 rounded-full animate-bounce delay-150"></div>
+					<div className="w-4 h-4 bg-blue-300 rounded-full animate-bounce delay-300"></div>
+				</div>
 				<div className="text-2xl text-gray-500">Cargando Reporte Fallas...</div>
 			</div>
 		);
@@ -831,7 +836,7 @@ const ReportsPage = () => {
 														</div>
 														<div>
 															<div className="bg-gray-200 p-4 rounded-full">
-																{maxGrade * 100}%
+																{(maxGrade * 100).toFixed(2)}%
 															</div>
 														</div>
 													</div>
@@ -851,7 +856,7 @@ const ReportsPage = () => {
 														</div>
 														<div>
 															<div className="bg-gray-200 p-4 rounded-full">
-																{peorGrade * 100}%
+																{(peorGrade * 100).toFixed(2)}%
 															</div>
 														</div>
 													</div>
