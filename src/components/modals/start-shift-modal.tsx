@@ -18,6 +18,7 @@ interface StartShiftModalProps {
   title: string;
   children: React.ReactNode;
   evidencia: Imagen[]
+  
 }
 
 export const StartShiftModal: React.FC<StartShiftModalProps> = ({

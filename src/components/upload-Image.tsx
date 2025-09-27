@@ -128,7 +128,7 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
                                     setTimeout(() => {
                                     setloadingWebcam(false);
                                     setShowTakePhotoButton(true);
-                                    }, 2500);
+                                    }, 500);
                             }}>
                                 <Camera  size={24} className="p-0" />
                             </Button>}
@@ -192,7 +192,9 @@ const LoadImage: React.FC<CalendarDaysProps>= ({id, titulo, setImg, showWebcamOp
                             mirrored={facingMode == "user" ? true : false} 
                             videoConstraints={videoConstraints}
                             onUserMediaError={handleUserMedia}
-                            onUserMedia={handleUserMedia}/>
+                            onUserMedia={handleUserMedia}
+                            
+                            />
                             
                         </div>
                     ):null}

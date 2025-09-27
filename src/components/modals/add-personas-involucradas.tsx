@@ -45,6 +45,7 @@ interface IncidenciaModalProps {
 
 const formSchema = z.object({
 	nombre_completo: z.string().optional(),
+	puesto: z.string().optional(),
 	rol: z.string().min(1, { message: "Este campo es oblicatorio" }),
 	sexo: z.string().optional(),
 	grupo_etario: z.string().optional(),
@@ -71,6 +72,7 @@ export const PersonasInvolucradasModal: React.FC<IncidenciaModalProps> = ({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
 			nombre_completo: personasInvolucradasSeleccion.nombre_completo,
+			puesto:personasInvolucradasSeleccion.puesto,
 			rol: personasInvolucradasSeleccion.rol,
 			sexo: personasInvolucradasSeleccion.sexo,
 			grupo_etario: personasInvolucradasSeleccion.grupo_etario,
@@ -87,6 +89,7 @@ export const PersonasInvolucradasModal: React.FC<IncidenciaModalProps> = ({
 
         const formatData = {
             nombre_completo: ensureString(values.nombre_completo),
+			puesto: ensureString(values.puesto),
             rol: ensureString(values.rol) ,
             sexo:ensureString(values.sexo) ,
             grupo_etario: ensureString(values.grupo_etario) ,
@@ -127,6 +130,7 @@ export const PersonasInvolucradasModal: React.FC<IncidenciaModalProps> = ({
         if (isSuccess){
             reset({
                 nombre_completo: "",
+				puesto:"",
                 rol: "",
                 sexo: "",
                 grupo_etario: "",
@@ -139,6 +143,7 @@ export const PersonasInvolucradasModal: React.FC<IncidenciaModalProps> = ({
 		if (editarPersonasInvolucradas && personasInvolucradasSeleccion) {
 			reset({
                 nombre_completo: personasInvolucradasSeleccion.nombre_completo,
+				puesto: personasInvolucradasSeleccion.puesto,
                 rol: personasInvolucradasSeleccion.rol,
                 sexo: personasInvolucradasSeleccion.sexo,
                 grupo_etario: personasInvolucradasSeleccion.grupo_etario,
@@ -177,7 +182,7 @@ export const PersonasInvolucradasModal: React.FC<IncidenciaModalProps> = ({
 												<FormControl>
 													<Input placeholder="Nombre completo..." {...field}
 														onChange={(e) => {
-															field.onChange(e); // Actualiza el valor en react-hook-form
+															field.onChange(e); 
 														}}
 														value={field.value || ""}
 													/>
@@ -186,6 +191,25 @@ export const PersonasInvolucradasModal: React.FC<IncidenciaModalProps> = ({
 											</FormItem>
 										)}
 									/>
+									<FormField
+										control={form.control}
+										name="puesto"
+										render={({ field }: any) => (
+											<FormItem>
+												<FormLabel>Puesto:</FormLabel>
+												<FormControl>
+													<Input placeholder="Puesto..." {...field}
+														onChange={(e) => {
+															field.onChange(e);
+														}}
+														value={field.value || ""}
+													/>
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+
 									<FormField
 										control={form.control}
 										name="rol"

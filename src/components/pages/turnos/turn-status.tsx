@@ -142,7 +142,7 @@ const TurnStatus = ({shift, location, area, evidencia, setEvidencia, identificac
 	  <div className="flex flex-col items-end">
 		<StartShiftModal title="Confirmación" evidencia={evidencia} >
 			{shift?.guard?.status_turn === "Turno Cerrado" && (
-			<Button className="w-[520px] md:w-[300px] bg-blue-500 hover:bg-blue-600" disabled ={area==""?true:false ||  shift?.booth_status?.status=="No Disponible" || (evidencia?.length ?? 0) === 0
+			<Button className="w-[520px] md:w-[300px] bg-blue-500 hover:bg-blue-600" disabled ={area==""?true:false ||  shift?.booth_status?.status=="No Disponible" 
 			}>
 			Iniciar Turno
 			</Button>
@@ -152,7 +152,7 @@ const TurnStatus = ({shift, location, area, evidencia, setEvidencia, identificac
        
      	  <CloseShiftModal title="Confirmación" shift={shift} area={area} location={location} identificacion={identificacion}>
           {shift?.guard?.status_turn !== "Turno Cerrado" && (
-            <Button className="w-[520px] md:w-[300px] bg-red-600 hover:bg-red-700" disabled ={area==""?true:false  ||  (identificacion?.length ?? 0) === 0}>
+            <Button className="w-[520px] md:w-[300px] bg-red-600 hover:bg-red-700" disabled ={area==""?true:false  }>
             Cerrar Turno
             </Button>
           )}

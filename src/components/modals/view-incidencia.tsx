@@ -489,6 +489,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 										<thead>
 										<tr className="bg-gray-100">
 											<th className="px-4 py-2 text-left border-b">Nombre completo</th>
+											<th className="px-4 py-2 text-left border-b">Puesto</th>
 											<th className="px-4 py-2 text-left border-b">Rol </th>
 											<th className="px-4 py-2 text-left border-b">Sexo </th>
 											<th className="px-4 py-2 text-left border-b">Grupo Etario</th>
@@ -503,6 +504,7 @@ export const ViewIncidencia: React.FC<ViewFallaModalProps> = ({
 										 data.personas_involucradas_incidencia.map((item, index) => (
 											<tr key={index} className="border-t border-gray-200">
 											<td className="px-4 py-2">{item.nombre_completo  || "-"}</td>
+											<td className="px-4 py-2">{item.puesto  || "-"}</td>
 											<td className="px-4 py-2">{item.rol  || "-"}</td>
 											<td className="px-4 py-2">{item.sexo  || "-"}</td>
 											<td className="px-4 py-2">{item.grupo_etario  || "-"}</td>

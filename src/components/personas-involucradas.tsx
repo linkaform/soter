@@ -61,6 +61,7 @@ const SeccionPersonasInvolucradas:React.FC<PersonasInvolucradasListProps> = ({ p
 				<thead>
 				<tr className="bg-gray-100">
 					<th className="px-4 py-2 text-left border-b border-gray-300">Nombre completo</th>
+					<th className="px-4 py-2 text-left border-b border-gray-300">Puesto</th>
 					<th className="px-4 py-2 text-left border-b border-gray-300">Rol</th>
 					<th className="px-4 py-2 text-left border-b border-gray-300">Sexo</th>
 					<th className="px-4 py-2 text-left border-b border-gray-300">Grupo Etario</th>
@@ -75,6 +76,7 @@ const SeccionPersonasInvolucradas:React.FC<PersonasInvolucradasListProps> = ({ p
 						personasInvolucradas.map((item, index) => (
 						<tr key={index} className="border-t border-gray-200">
 							<td className="px-4 py-2">{item.nombre_completo||"-"}</td>
+							<td className="px-4 py-2">{item.puesto  || "-"}</td>
 							<td className="px-4 py-2">{item.rol||"-"}</td>
 							<td className="px-4 py-2">{item.sexo||"-"}</td>
 							<td className="px-4 py-2">{item.grupo_etario||"-"}</td>

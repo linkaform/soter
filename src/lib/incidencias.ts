@@ -67,6 +67,7 @@ export interface AccionesTomadas {
     responsable:string
 }
 export interface PersonasInvolucradas {
+	puesto: string;
     nombre_completo:string,
     rol:string,
     sexo:string,
