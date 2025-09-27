@@ -4,7 +4,7 @@ import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
 import { useUploadImage } from "@/hooks/useUploadImage";
 import Webcam from "react-webcam";
-import { Camera, Download, Loader2 } from "lucide-react";
+import { Camera, Loader2 } from "lucide-react";
 import { base64ToFile, quitarAcentosYMinusculasYEspacios } from "@/lib/utils";
 
 
