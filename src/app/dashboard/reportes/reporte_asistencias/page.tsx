@@ -28,21 +28,21 @@ import {
 	MultiSelectTrigger,
 	MultiSelectValue,
 } from "@/components/ui/multi-select";
-import AttendanceTable from "../components/AttendanceTable";
 import { AttendanceRow, GroupingMode } from "../types/attendance";
 import { useReportAsistencias, useReportLocations } from "../hooks/useAsistenciasReport";
 import { asistenciasReport } from "../types/report";
-import AttendanceSymbologic from "../components/AttendanceSymbologic";
 import LocationShiftAttendanceTable from "../components/LocationShiftAttendanceTable";
+import { SimpleAttendanceTable } from "../components/SimpleAttendanceTable";
+import AttendanceTableSymbology from "../components/AttendanceTableSymbology";
+
 
 const ReportsPage = () => {
 	const [month, setMonth] = useState<number>(0);
 	const [year, setYear] = useState<number>(0);
+	const daysInMonth = new Date(year, month, 0).getDate();
 	const [groupingMode, setGroupingMode] = useState<GroupingMode>("employees");
 	const [timeframe, setTimeframe] = useState<"mes" | "semana">("mes");
 	const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
-
-	const [appliedGroupingMode, setAppliedGroupingMode] = useState<GroupingMode>("employees");
 
 	const [data, setData] = useState<AttendanceRow[]>([]);
 	const isInitializing = month === 0 || year === 0;
@@ -74,7 +74,6 @@ const ReportsPage = () => {
 
 			if (reportAsistencias) {
 				setData(reportAsistencias);
-				setAppliedGroupingMode(filters.groupBy as GroupingMode);
 			}
 		}
 	}, [reportAsistencias, isLoadingReportAsistencias]);
@@ -117,8 +116,6 @@ const ReportsPage = () => {
 		setGroupingMode("employees");
 		setSelectedLocations([]);
 		setData([]);
-
-		setAppliedGroupingMode("employees");
 
 		setFilters({
 			enabled: false,
@@ -269,32 +266,28 @@ const ReportsPage = () => {
 					<>
 						{groupingMode === "employees" && (
 							<div>
-								<AttendanceSymbologic
+								<AttendanceTableSymbology
 									selectedStatus={selectedStatus}
 									onChange={setSelectedStatus}
-									/>
-								<AttendanceTable
-									data={data}
-									month={month}
-									year={year}
-									groupingMode={appliedGroupingMode}
+								/>
+								<SimpleAttendanceTable
+									data={reportAsistencias}
+									daysInMonth={daysInMonth}
 									groupByLocation={groupByLocation}
 									timeframe={timeframe}
+									month={month}
+									year={year}
 									selectedStatus={selectedStatus}
-									/>
+								/>
 							</div>
 						)}
 						{groupingMode === "locations" && (
 							<div>
 								<LocationShiftAttendanceTable
-									data={data.map((row: any) => ({
-										turno_id: row.turno_id,
-										turno_name: row.turno_name,
-										location: row.location,
-										...row
-									}))}
+									data={reportAsistencias}
 									month={month}
 									year={year}
+									timeframe={timeframe}
 								/>
 							</div>
 						)}
