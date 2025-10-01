@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import AttendanceDetailModal from "./AttendanceDetailModal";
 
 const statusColors: Record<string, string> = {
-  asistencia: "bg-green-500 text-white",
+  presente: "bg-green-500 text-white",
   retardo: "bg-blue-400 text-white",
   falta: "bg-red-500 text-white",
   falta_por_retardo: "bg-yellow-500 text-white",

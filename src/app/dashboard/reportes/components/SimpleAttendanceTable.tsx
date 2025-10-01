@@ -1,10 +1,10 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { CheckCircle, XCircle, Clock, MinusCircle, CalendarOff, ChevronLeft, ChevronRight } from "lucide-react";
 
-type StatusType = "asistencia" | "retardo" | "falta" | "falta_por_retardo" | "dia_libre" | "sin_registro";
+type StatusType = "presente" | "retardo" | "falta" | "falta_por_retardo" | "dia_libre" | "sin_registro";
 
 const statusConfig: Record<StatusType, { color: string; icon: JSX.Element; label: string }> = {
-  asistencia: {
+  presente: {
     color: "bg-green-500 text-white",
     icon: <CheckCircle className="w-4 h-4" />,
     label: "Asistencia",
@@ -78,7 +78,7 @@ function getWeeks(daysInMonth: number, month: number, year: number) {
 }
 
 const statusPriority: Record<StatusType, number> = {
-  asistencia: 6,
+  presente: 6,
   retardo: 5,
   dia_libre: 4,
   falta_por_retardo: 3,
@@ -178,7 +178,7 @@ export const SimpleAttendanceTable: React.FC<SimpleAttendanceTableProps> = ({
       // --- Recalcula el resumen aquí ---
       let asistencias = 0, retardos = 0, faltas = 0;
       emp.asistencia_mes.forEach(d => {
-        if (d.status === "asistencia") asistencias++;
+        if (d.status === "presente") asistencias++;
         else if (d.status === "retardo") retardos++;
         else if (d.status === "falta" || d.status === "falta_por_retardo") faltas++;
       });

@@ -2,7 +2,7 @@ import React from "react";
 import { CheckCircle, XCircle, Clock } from "lucide-react";
 
 const STATUS_OPTIONS = [
-  { key: "asistencia", label: "Asistencia", icon: <CheckCircle className="w-4 h-4 text-green-500" /> },
+  { key: "presente", label: "Asistencia", icon: <CheckCircle className="w-4 h-4 text-green-500" /> },
   { key: "retardo", label: "Retardo", icon: <Clock className="w-4 h-4 text-blue-500" /> },
   { key: "falta", label: "Falta", icon: <XCircle className="w-4 h-4 text-red-500" /> },
   { key: "falta_por_retardo", label: "Falta por retardo", icon: <XCircle className="w-4 h-4 text-yellow-500" /> },
