@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
     Dialog,
     DialogContent,
@@ -45,12 +45,21 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
     selectedDay,
     ubicacion,
 }) => {
+    const [currentDay, setCurrentDay] = React.useState<number>(selectedDay);
     const { attendanceDetail, isLoadingAttendanceDetail, errorAttendanceDetail } = useAttendanceDetail({
         enabled: open,
         names,
-        selectedDay,
+        selectedDay: currentDay,
         location: ubicacion,
     });
+
+    const handleCircleClick = (dia: number) => {
+        setCurrentDay(dia);
+    };
+
+    useEffect(() => {
+        if (open) setCurrentDay(selectedDay);
+    }, [open, selectedDay]);
 
     return (
         <Dialog open={open} onOpenChange={(open) => (!open ? onClose() : undefined)}>
@@ -68,7 +77,7 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
                                         <div className="text-xs text-gray-500 flex items-center gap-1">
                                             {attendanceDetail?.guardia_generales?.tipo_guardia
                                                 ?.replace(/_/g, " ")
-                                                .replace(/\b\w/g, (l: string) => l.toUpperCase()) || "Tipo no disponible"
+                                                .replace(/\b\w/g, (l: string) => l.toUpperCase()) || "Guardia Regular"
                                             } • {attendanceDetail?.guardia_generales?.incidente_location}
                                         </div>
                                         <div className="text-xs text-gray-700 mt-1">
@@ -96,7 +105,7 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
                                         <div className="text-xs text-gray-500 flex items-center gap-1">
                                             {attendanceDetail?.guardia_generales?.tipo_guardia
                                                 ?.replace(/_/g, " ")
-                                                .replace(/\b\w/g, (l: string) => l.toUpperCase()) || "Tipo no disponible"
+                                                .replace(/\b\w/g, (l: string) => l.toUpperCase()) || "Guardia Regular"
                                             } • {attendanceDetail?.guardia_generales?.incidente_location}
                                         </div>
                                         <div className="text-xs text-gray-700 mt-1">
@@ -108,6 +117,71 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
                         </DialogHeader>
                         <div className="flex items-center justify-center h-64">
                             <span className="text-red-500">Error al cargar los detalles de asistencia.</span>
+                        </div>
+                    </>
+                ) : Object.keys(attendanceDetail?.guardia_generales || {}).length === 0 ? (
+                    <>
+                        <DialogHeader>
+                            <DialogTitle className="text-lg font-bold">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-14 h-14 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+                                        <span className="text-3xl">🧑‍✈️</span>
+                                    </div>
+                                    <div>
+                                        <div className="text-lg font-semibold">{names[0] ?? "Nombre no disponible"}</div>
+                                        <div className="text-xs text-gray-500 flex items-center gap-1">
+                                            {attendanceDetail?.guardia_generales?.tipo_guardia
+                                                ?.replace(/_/g, " ")
+                                                .replace(/\b\w/g, (l: string) => l.toUpperCase()) || "Guardia Regular"
+                                            } • {attendanceDetail?.guardia_generales?.incidente_location}
+                                        </div>
+                                        <div className="text-xs text-gray-700 mt-1">
+                                            Estado laboral: <span className="font-semibold text-green-600">● Activo</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </DialogTitle>
+                        </DialogHeader>
+                        {/* Días de asistencia en carrousel */}
+                        <div className="flex justify-center mt-4 mb-2">
+                            <Carousel
+                                opts={{
+                                    align: "start",
+                                    slidesToScroll: 5,
+                                }}
+                                className="w-full max-w-[420px] mx-auto"
+                            >
+                                <CarouselContent className="px-6 py-2">
+                                    {attendanceDetail?.asistencia_mes?.map(({ status, dia }: { status: string; dia: number }) => {
+                                        const date = new Date(2025, 8, dia);
+                                        const dayOfWeek = date.getDay();
+                                        return (
+                                            <CarouselItem key={dia} className="basis-auto px-1">
+                                                <div className="flex flex-col items-center min-w-[30px]">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleCircleClick(dia)}
+                                                        className={`flex items-center justify-center rounded-full h-8 w-8 font-bold text-xs 
+                                                            ${statusColors[status] || statusColors["sin_registro"]} border border-white shadow 
+                                                            focus:outline-none focus:ring-2 focus:ring-blue-400
+                                                            ${currentDay === dia ? "ring-2 ring-blue-500 border-blue-500" : ""}
+                                                        `}
+                                                        title={status}
+                                                    >
+                                                        {dia}
+                                                    </button>
+                                                    <span className="text-[11px] text-gray-500">{dayNames[dayOfWeek]}</span>
+                                                </div>
+                                            </CarouselItem>
+                                        );
+                                    })}
+                                </CarouselContent>
+                                <CarouselPrevious />
+                                <CarouselNext />
+                            </Carousel>
+                        </div>
+                        <div className="flex items-center justify-center h-64">
+                            <span className="text-gray-400">No hay detalles de asistencia disponibles.</span>
                         </div>
                     </>
                 ) : (
@@ -142,19 +216,25 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
                                 }}
                                 className="w-full max-w-[420px] mx-auto"
                             >
-                                <CarouselContent className="px-6">
+                                <CarouselContent className="px-6 py-2">
                                     {attendanceDetail?.asistencia_mes?.map(({ status, dia }: { status: string; dia: number }) => {
                                         const date = new Date(2025, 8, dia);
                                         const dayOfWeek = date.getDay();
                                         return (
                                             <CarouselItem key={dia} className="basis-auto px-1">
                                                 <div className="flex flex-col items-center min-w-[30px]">
-                                                    <span
-                                                        className={`flex items-center justify-center rounded-full h-8 w-8 font-bold text-xs ${statusColors[status] || statusColors["sin_registro"]} border border-white shadow`}
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleCircleClick(dia)}
+                                                        className={`flex items-center justify-center rounded-full h-8 w-8 font-bold text-xs 
+                                                            ${statusColors[status] || statusColors["sin_registro"]} border border-white shadow 
+                                                            focus:outline-none focus:ring-2 focus:ring-blue-400
+                                                            ${currentDay === dia ? "ring-2 ring-blue-500 border-blue-500" : ""}
+                                                        `}
                                                         title={status}
                                                     >
                                                         {dia}
-                                                    </span>
+                                                    </button>
                                                     <span className="text-[11px] text-gray-500">{dayNames[dayOfWeek]}</span>
                                                 </div>
                                             </CarouselItem>
@@ -275,7 +355,7 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
                                         </div>
                                     </div>
                                     {/* Indicadores de septiembre */}
-                                    <div className="bg-white rounded-xl p-4">
+                                    <div className="bg-gray-50 rounded-xl p-4">
                                         <div className="text-gray-500 text-sm font-medium mb-3">
                                             Indicadores: <span className="text-gray-700 font-semibold">{new Date().toLocaleString("es-MX", { month: "long" }).charAt(0).toUpperCase() +
                                                 new Date().toLocaleString("es-MX", { month: "long" }).slice(1)}</span>
@@ -319,7 +399,7 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
                             <TabsContent value="actividades">
                                 <div className="relative">
                                     <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/80 backdrop-blur-0 rounded-xl">
-                                        <span className="text-lg font-bold text-gray-700 mb-2">🚧 Working in progress</span>
+                                        <span className="text-lg font-bold text-gray-700 mb-2">🚧 Work in progress</span>
                                         <span className="text-sm text-gray-500">Esta sección estará disponible pronto.</span>
                                     </div>
                                     <ScrollArea className="h-[460px] pr-2">

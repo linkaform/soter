@@ -63,7 +63,7 @@ export const useAttendanceDetail = ({ enabled = false, names, selectedDay, locat
         error: errorAttendanceDetail,
         refetch: refetchAttendanceDetail,
     } = useQuery<any>({
-        queryKey: ["getAttendanceDetail"],
+        queryKey: ["getAttendanceDetail", { names, selectedDay, location }],
         enabled,
         queryFn: async () => {
             const data = await getAttendanceDetail(names, selectedDay, location);
