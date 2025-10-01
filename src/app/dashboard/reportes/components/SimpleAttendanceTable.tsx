@@ -239,9 +239,13 @@ export const SimpleAttendanceTable: React.FC<SimpleAttendanceTableProps> = ({
         <thead>
           <tr>
             {groupByLocation && (
-              <th className="sticky left-0 bg-white z-10 p-2 border-b text-left">Ubicación</th>
+              <th className="sticky left-0 bg-white z-10 p-2 border-b text-left">
+                Ubicación
+              </th>
             )}
-            <th className={`sticky ${groupByLocation ? "left-[120px]" : "left-0"} bg-white z-10 p-2 border-b text-left`}>
+            <th
+              className={`sticky ${groupByLocation ? "left-[120px]" : "left-0"} bg-white z-10 p-2 border-b text-left min-w-[180px] w-[200px]`}
+            >
               <div>
                 <span>Empleado</span>
                 <input
@@ -274,7 +278,9 @@ export const SimpleAttendanceTable: React.FC<SimpleAttendanceTableProps> = ({
                         {ubicacion}
                       </td>
                     )}
-                    <td className={`sticky left-[120px] bg-white z-10 p-2 border-b font-medium align-top`}>
+                    <td
+                      className={`sticky left-[120px] bg-white z-10 p-2 border-b font-medium align-top min-w-[180px] w-[200px]`}
+                    >
                       {emp.nombre}
                     </td>
                     {daysToShow.map((day, i) => {
@@ -303,7 +309,9 @@ export const SimpleAttendanceTable: React.FC<SimpleAttendanceTableProps> = ({
               )
             : mergedData.map((emp, empIdx) => (
                 <tr key={emp.employee_id} className={empIdx % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                  <td className="sticky left-0 bg-white z-10 p-2 border-b font-medium align-top">
+                  <td
+                    className="sticky left-0 bg-white z-10 p-2 border-b font-medium align-top min-w-[180px] w-[200px]"
+                  >
                     {emp.nombre}
                   </td>
                   {daysToShow.map((day, i) => {
