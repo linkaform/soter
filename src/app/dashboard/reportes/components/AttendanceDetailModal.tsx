@@ -315,11 +315,105 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
                                         </div> */}
                                     </div>
                                 </ScrollArea>
-
                             </TabsContent>
                             <TabsContent value="actividades">
-                                <div className="p-4 text-sm text-gray-700">
-                                    Actividades de prueba...
+                                <div className="relative">
+                                    <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/80 backdrop-blur-0 rounded-xl">
+                                        <span className="text-lg font-bold text-gray-700 mb-2">🚧 Working in progress</span>
+                                        <span className="text-sm text-gray-500">Esta sección estará disponible pronto.</span>
+                                    </div>
+                                    <ScrollArea className="h-[460px] pr-2">
+                                        {/* Indicadores */}
+                                        <div className="bg-gray-50 rounded-xl p-4 mb-6">
+                                            <div className="text-gray-500 text-sm font-medium mb-3">
+                                                Indicadores: <span className="text-gray-700 font-semibold">{new Date().toLocaleString("es-MX", { month: "long" }).charAt(0).toUpperCase() +
+                                                    new Date().toLocaleString("es-MX", { month: "long" }).slice(1)}</span>
+                                            </div>
+                                            <div className="grid grid-cols-3 gap-4 mb-4">
+                                                <div className="border rounded-lg p-3 flex items-center gap-3">
+                                                    <span className="text-green-500 text-2xl">🛂</span>
+                                                    <div>
+                                                        <div className="font-bold text-lg text-gray-800">953</div>
+                                                        <div className="text-xs text-gray-500">Accesos autorizados</div>
+                                                    </div>
+                                                </div>
+                                                <div className="border rounded-lg p-3 flex items-center gap-3">
+                                                    <span className="text-blue-500 text-2xl">🛡️</span>
+                                                    <div>
+                                                        <div className="font-bold text-lg text-gray-800">49</div>
+                                                        <div className="text-xs text-gray-500">Rondines realizados</div>
+                                                    </div>
+                                                </div>
+                                                <div className="border rounded-lg p-3 flex items-center gap-3">
+                                                    <span className="text-yellow-500 text-2xl">⚠️</span>
+                                                    <div>
+                                                        <div className="font-bold text-lg text-gray-800">232</div>
+                                                        <div className="text-xs text-gray-500">Incidencias reportadas</div>
+                                                    </div>
+                                                </div>
+                                                <div className="border rounded-lg p-3 flex items-center gap-3">
+                                                    <span className="text-red-500 text-2xl">❗</span>
+                                                    <div>
+                                                        <div className="font-bold text-lg text-gray-800">141</div>
+                                                        <div className="text-xs text-gray-500">Fallas reportadas</div>
+                                                    </div>
+                                                </div>
+                                                <div className="border rounded-lg p-3 flex items-center gap-3">
+                                                    <span className="text-pink-500 text-2xl">👜</span>
+                                                    <div>
+                                                        <div className="font-bold text-lg text-gray-800">135</div>
+                                                        <div className="text-xs text-gray-500">Objetos reportados</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {/* Últimas actividades */}
+                                            <div className="mt-6">
+                                                <div className="text-gray-700 font-semibold mb-3 text-base">Últimas actividades</div>
+                                                <div className="flex flex-col gap-4">
+                                                    <div className="flex items-start gap-3">
+                                                        <span className="text-green-500 text-xl mt-1">🛂</span>
+                                                        <div className="flex-1">
+                                                            <div className="font-semibold text-gray-800">Acceso autorizado</div>
+                                                            <div className="text-xs text-gray-500">Roberto Gómez López - visita general</div>
+                                                        </div>
+                                                        <div className="text-xs text-gray-400 whitespace-nowrap mt-1">2025-09-10&nbsp;09:24:55</div>
+                                                    </div>
+                                                    <div className="flex items-start gap-3">
+                                                        <span className="text-blue-500 text-xl mt-1">🛡️</span>
+                                                        <div className="flex-1">
+                                                            <div className="font-semibold text-gray-800">Rondin completado</div>
+                                                            <div className="text-xs text-gray-500">Recorrido completo en estacionamiento subterráneo.</div>
+                                                        </div>
+                                                        <div className="text-xs text-gray-400 whitespace-nowrap mt-1">2025-09-09&nbsp;21:10:12</div>
+                                                    </div>
+                                                    <div className="flex items-start gap-3">
+                                                        <span className="text-yellow-500 text-xl mt-1">⚠️</span>
+                                                        <div className="flex-1">
+                                                            <div className="font-semibold text-gray-800">Falla reportada</div>
+                                                            <div className="text-xs text-gray-500">Luz de la caseta no enciende.</div>
+                                                        </div>
+                                                        <div className="text-xs text-gray-400 whitespace-nowrap mt-1">2025-09-09&nbsp;18:00:23</div>
+                                                    </div>
+                                                    <div className="flex items-start gap-3">
+                                                        <span className="text-red-500 text-xl mt-1">❗</span>
+                                                        <div className="flex-1">
+                                                            <div className="font-semibold text-gray-800">Incidencia registrada</div>
+                                                            <div className="text-xs text-gray-500">Reporte por puerta dañada en acceso norte.</div>
+                                                        </div>
+                                                        <div className="text-xs text-gray-400 whitespace-nowrap mt-1">2025-09-08&nbsp;17:45:47</div>
+                                                    </div>
+                                                    <div className="flex items-start gap-3">
+                                                        <span className="text-pink-500 text-xl mt-1">👜</span>
+                                                        <div className="flex-1">
+                                                            <div className="font-semibold text-gray-800">Objeto perdido</div>
+                                                            <div className="text-xs text-gray-500">Se encontró cartera negra en pasillo central.</div>
+                                                        </div>
+                                                        <div className="text-xs text-gray-400 whitespace-nowrap mt-1">2025-09-08&nbsp;10:15:45</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ScrollArea>
                                 </div>
                             </TabsContent>
                         </Tabs>
