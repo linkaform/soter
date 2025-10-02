@@ -58,7 +58,9 @@ const ReportsPage = () => {
 	const { reportAsistencias, isLoadingReportAsistencias, errorReportAsistencias, refetchReportAsistencias } = useReportAsistencias(filters);
 	const { reportLocations } = useReportLocations({ enabled: true });
 
-	const [isManualLoading, setIsManualLoading] = useState(false);
+	const [showReport, setShowReport] = useState(false);
+	const [groupByLocation, setGroupByLocation] = useState(false);
+	const [selectedStatus, setSelectedStatus] = useState<string[]>([]);
 
 	useEffect(() => {
 		const currentDate = new Date();
@@ -67,11 +69,7 @@ const ReportsPage = () => {
 	}, []);
 
 	useEffect(() => {
-		// Cuando la carga termina (ya sea con éxito o error)
 		if (!isLoadingReportAsistencias) {
-			// Desactiva el loading manual
-			setIsManualLoading(false);
-
 			if (reportAsistencias) {
 				setData(reportAsistencias);
 			}
@@ -81,8 +79,6 @@ const ReportsPage = () => {
 	const handleTimeframeChange = (value: string) => {
 		setTimeframe(value as "mes" | "semana");
 	};
-
-	const [showReport, setShowReport] = useState(false);
 
 	const handleGroupingChange = (value: string) => {
 		setGroupingMode(value as GroupingMode);
@@ -94,7 +90,6 @@ const ReportsPage = () => {
 	};
 
 	const handleExecute = () => {
-		setIsManualLoading(true);
 		const newFilters = {
 			enabled: true,
 			dateRange: timeframe,
@@ -102,10 +97,7 @@ const ReportsPage = () => {
 			groupBy: groupingMode
 		};
 		setFilters(newFilters);
-		setShowReport(true); // Muestra el reporte solo al ejecutar
-		setTimeout(() => {
-			refetchReportAsistencias();
-		}, 10);
+		setShowReport(true);
 	};
 
 	const handleClear = () => {
@@ -123,20 +115,16 @@ const ReportsPage = () => {
 			locations: [],
 			groupBy: 'employees'
 		});
-		setShowReport(false); // Oculta el reporte al limpiar
+		setShowReport(false);
 	};
 
 	const handleExport = () => {
 		alert("Función de exportación no implementada aún");
 	};
 
-	const [groupByLocation, setGroupByLocation] = useState(false);
-
 	const handleGroupByLocationToggle = () => {
 		setGroupByLocation(prev => !prev);
 	};
-
-	const [selectedStatus, setSelectedStatus] = useState<string[]>([]);
 
 	return (
 		<div className="min-h-screen pb-10">
@@ -220,9 +208,9 @@ const ReportsPage = () => {
 					<Button
 						className="bg-blue-600"
 						onClick={handleExecute}
-						disabled={isLoadingReportAsistencias || isManualLoading || isInitializing}
+						disabled={isLoadingReportAsistencias || isInitializing}
 					>
-						{isLoadingReportAsistencias || isManualLoading ? (
+						{isLoadingReportAsistencias ? (
 							<>
 								<div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
 								Cargando...
@@ -241,7 +229,7 @@ const ReportsPage = () => {
 					<div className="flex justify-center items-center p-12">
 						<div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
 					</div>
-				) : isLoadingReportAsistencias || isManualLoading ? (
+				) : isLoadingReportAsistencias ? (
 					<div className="flex justify-center items-center p-12">
 						<div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
 					</div>

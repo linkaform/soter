@@ -9,7 +9,7 @@ export const useReportAsistencias = ({ enabled = false, dateRange, locations, gr
         error: errorReportAsistencias,
         refetch: refetchReportAsistencias,
     } = useQuery<any>({
-        queryKey: ["getReportAsistencias"],
+        queryKey: ["getReportAsistencias", { dateRange, locations, groupBy }],
         enabled,
         queryFn: async () => {
             const data = await getReportAsistencias({
