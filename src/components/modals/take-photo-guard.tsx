@@ -1,4 +1,4 @@
-import { Dialog, DialogContent, DialogTitle, DialogHeader, DialogClose, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogHeader, DialogClose } from "@/components/ui/dialog";
 import { Imagen } from '@/lib/update-pass-full';
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
@@ -6,6 +6,7 @@ import { useUploadImage } from "@/hooks/useUploadImage";
 import Webcam from "react-webcam";
 import { Camera, Loader2 } from "lucide-react";
 import { base64ToFile, quitarAcentosYMinusculasYEspacios } from "@/lib/utils";
+import Image from "next/image";
 
 
 interface TakeModalProps {
@@ -13,7 +14,9 @@ interface TakeModalProps {
 	descripcion:string;
     evidencia: Imagen[];
     setEvidencia: Dispatch<SetStateAction<Imagen[]>>;
-	children: React.ReactNode;
+	open: boolean;
+	setOpen: Dispatch<SetStateAction<boolean>>;
+	// children: React.ReactNode;
   }
   
   export const TakePhotoGuard: React.FC<TakeModalProps> = ({
@@ -21,12 +24,14 @@ interface TakeModalProps {
 	descripcion,
     setEvidencia,
     evidencia,
-	children
+	open,
+	setOpen
+	// children
   }) => {
 	const [loadingWebcam, setloadingWebcam] = useState(false);
     const [hideWebcam, setHideWebcam] = useState(false)
     const { uploadImageMutation, response, isLoading} = useUploadImage();
-	const [open, setOpen]=useState(false)
+	// const [open, setOpen] = useState(false)
 
     const webcamRef = useRef<Webcam | null>(null);
     const videoConstraints = {
@@ -41,7 +46,7 @@ interface TakeModalProps {
 			setHideWebcam(false);
 			setEvidencia([]);
 		}
-	}, [open]);
+	}, [open, setEvidencia]);
 
 	const handleUserMedia = () => {
 	setloadingWebcam(false); 
@@ -72,13 +77,13 @@ interface TakeModalProps {
 				setHideWebcam(true)
 				setloadingWebcam(false);
 				setOpen(false)
-			}, 500);
+			}, 2000);
 		}
-	},[response])
+	},[response, setOpen, setEvidencia])
 	
   return (
     <Dialog open={open} onOpenChange={setOpen} modal>
-		<DialogTrigger asChild>{children}</DialogTrigger>
+		{/* <DialogTrigger asChild>{children}</DialogTrigger> */}
 		<DialogContent className="max-w-md min-h-[600px] max-h-[90vh] flex flex-col overflow-hidden justify-between" onInteractOutside={(e) => e.preventDefault()} aria-describedby="">
 			<DialogHeader className="flex-shrink-0">
 				<DialogTitle className="text-2xl text-center font-bold">
@@ -115,7 +120,7 @@ interface TakeModalProps {
 
 			{evidencia?.length > 0 && (
 			<div className="flex justify-center items-center h-[350px]">
-				<img
+				<Image width={300} height={300} alt=""
 				src={evidencia[0]?.file_url}
 				className="rounded-lg w-[300px] h-[300px] object-cover"
 				/>

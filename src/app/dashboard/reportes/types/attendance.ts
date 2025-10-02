@@ -59,13 +59,14 @@ export type AttendanceRow = EmployeeAttendance | LocationAttendance;
 export type GroupingMode = 'employees' | 'locations';
 
 export interface ShiftAttendanceDay {
-  day: number;
-  status: string;
-  user_names:  string[] | null;
-  fecha_inicio_turno: string | null;
-  fecha_cierre_turno: string | null;
-  location: string;
-  turno_id: string;
+    day: number;
+    status: string;
+    user_names:  string[] | null;
+    fecha_inicio_turno: string | null;
+    fecha_cierre_turno: string | null;
+    location: string;
+    turno_id: string;
+    attendance_data?: any[];
 }
 
 export interface ShiftAttendance {
