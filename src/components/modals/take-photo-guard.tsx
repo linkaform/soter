@@ -13,7 +13,9 @@ interface TakeModalProps {
 	descripcion:string;
     evidencia: Imagen[];
     setEvidencia: Dispatch<SetStateAction<Imagen[]>>;
-	children: React.ReactNode;
+	open: boolean;
+	setOpen: Dispatch<SetStateAction<boolean>>;
+	// children: React.ReactNode;
   }
   
   export const TakePhotoGuard: React.FC<TakeModalProps> = ({
@@ -21,12 +23,14 @@ interface TakeModalProps {
 	descripcion,
     setEvidencia,
     evidencia,
-	children
+	open,
+	setOpen
+	// children
   }) => {
 	const [loadingWebcam, setloadingWebcam] = useState(false);
     const [hideWebcam, setHideWebcam] = useState(false)
     const { uploadImageMutation, response, isLoading} = useUploadImage();
-	const [open, setOpen]=useState(false)
+	// const [open, setOpen] = useState(false)
 
     const webcamRef = useRef<Webcam | null>(null);
     const videoConstraints = {
@@ -72,13 +76,13 @@ interface TakeModalProps {
 				setHideWebcam(true)
 				setloadingWebcam(false);
 				setOpen(false)
-			}, 500);
+			}, 2000);
 		}
 	},[response])
 	
   return (
     <Dialog open={open} onOpenChange={setOpen} modal>
-		<DialogTrigger asChild>{children}</DialogTrigger>
+		{/* <DialogTrigger asChild>{children}</DialogTrigger> */}
 		<DialogContent className="max-w-md min-h-[600px] max-h-[90vh] flex flex-col overflow-hidden justify-between" onInteractOutside={(e) => e.preventDefault()} aria-describedby="">
 			<DialogHeader className="flex-shrink-0">
 				<DialogTitle className="text-2xl text-center font-bold">

@@ -7,24 +7,27 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "../ui/dialog";
 import { useShiftStore } from "@/store/useShiftStore";
 import { useGuardSelectionStore } from "@/store/useGuardStore";
 import { useGetShift } from "@/hooks/useGetShift";
 import { Imagen } from "@/lib/update-pass-full";
+import { Dispatch, SetStateAction } from "react";
 
 interface StartShiftModalProps {
   title: string;
-  children: React.ReactNode;
+  // children: React.ReactNode;
   evidencia: Imagen[]
-  
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 export const StartShiftModal: React.FC<StartShiftModalProps> = ({
   title,
-  children,
+  // children,
   evidencia, 
+  open,
+  setOpen
 }) => {
   const { area, location } = useShiftStore();
 
@@ -37,8 +40,8 @@ export const StartShiftModal: React.FC<StartShiftModalProps> = ({
     .join(", ");
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+    <Dialog open={open} onOpenChange={setOpen}>
+      {/* <DialogTrigger asChild>{children}</DialogTrigger> */}
 
       <DialogContent className="max-w-xl">
         <DialogHeader>
@@ -81,7 +84,7 @@ export const StartShiftModal: React.FC<StartShiftModalProps> = ({
                   })
                 );
 
-                startShiftMutation.mutate({ employee_list: formattedGuards ,fotografia:evidencia});
+                startShiftMutation.mutate({ employee_list: formattedGuards ,fotografia:evidencia})
               }}
             >
               Confirmar

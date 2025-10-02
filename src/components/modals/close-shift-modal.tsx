@@ -8,26 +8,31 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  // DialogTrigger,
 } from "../ui/dialog";
 import { useGetShift } from "@/hooks/useGetShift";
+import { Dispatch, SetStateAction } from "react";
 
 interface CloseShiftModalProps {
   title: string;
-  children: React.ReactNode;
+  // children: React.ReactNode;
   shift: any;
   area: string;
   location: string;
   identificacion: Imagen[];
+  open:boolean
+  setOpen: Dispatch<SetStateAction<boolean>>
 }
 
 export const CloseShiftModal: React.FC<CloseShiftModalProps> = ({
   title,
-  children,
+  // children,
   shift,
   area,
   location,
-  identificacion
+  identificacion,
+  open,
+  setOpen
 }) => {
   const { closeShiftMutation } = useGetShift( false);
   
@@ -39,8 +44,8 @@ export const CloseShiftModal: React.FC<CloseShiftModalProps> = ({
     : "";
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>{children}</DialogTrigger>
+    <Dialog open={open} onOpenChange={setOpen} modal>
+      {/* <DialogTrigger asChild>{children}</DialogTrigger> */}
 
       <DialogContent className="max-w-xl">
         <DialogHeader>

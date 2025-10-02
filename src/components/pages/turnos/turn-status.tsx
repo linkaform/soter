@@ -11,12 +11,20 @@ import Image from "next/image";
 const TurnStatus = ({shift, location, area, evidencia, setEvidencia, identificacion, setIdentificacion}: {shift: any, location: string, area:string ,
 	evidencia:Imagen[], setEvidencia:Dispatch<SetStateAction<Imagen[]>>, identificacion:Imagen[], setIdentificacion:Dispatch<SetStateAction<Imagen[]>>
 }) => {
-  const [currentDateTime, setCurrentDateTime] = useState(new Date());
-  const turno =  capitalizeOnlyFirstLetter(shift?.guard.status_turn?? "")
+  	const [currentDateTime, setCurrentDateTime] = useState(new Date());
+  	const turno =  capitalizeOnlyFirstLetter(shift?.guard.status_turn?? "")
 
+	console.log("TURNO", turno)
+
+	const [openStartShift, setOpenStartShift] = useState(false)
+	const [openCloseShift, setOpenCloseShift] = useState(false);
+
+	const [openClosePhotoModal, setOpenClosePhotoModal] = useState(false);
+	const [openStartPhotoModal, setOpenStartPhotoModal] = useState(false);
 
   useEffect(() => {
 	if(shift?.booth_status?.fotografia_inicio_turno)
+		console.log("FOTO DE TURNO", shift?.booth_status?.fotografia_inicio_turno)
 		setEvidencia(shift?.booth_status?.fotografia_inicio_turno)
 	if(shift?.booth_status?.fotografia_cierre_turno)
 		setIdentificacion(shift?.booth_status?.fotografia_cierre_turno)
@@ -30,8 +38,6 @@ const TurnStatus = ({shift, location, area, evidencia, setEvidencia, identificac
   }, [setEvidencia, setIdentificacion, shift?.booth_status?.fotografia_inicio_turno, shift?.booth_status?.fotografia_cierre_turno]);
 
 
-
-
   const formattedDate = currentDateTime.toLocaleDateString("es-MX", {
     year: "numeric",
     month: "2-digit",
@@ -43,6 +49,21 @@ const TurnStatus = ({shift, location, area, evidencia, setEvidencia, identificac
     minute: "2-digit",
   }); 
 
+	useEffect(() => {
+	if (openClosePhotoModal === true && identificacion && identificacion.length > 0) {
+		console.log("cerradoooo")
+		setOpenCloseShift(true);
+	}
+	}, [openClosePhotoModal, identificacion]);
+
+	useEffect(() => {
+		if (openStartPhotoModal === true && evidencia && evidencia.length > 0) {
+			console.log("ABIERTO DE NUEVO")
+			setOpenStartShift(true);
+		}
+	}, [openStartPhotoModal, evidencia]);
+
+
   return (
     <div className="flex items-center flex-col md:flex-row justify-between md:mb-3">
       <div className="flex mb-3 lg:mb-0">
@@ -50,64 +71,82 @@ const TurnStatus = ({shift, location, area, evidencia, setEvidencia, identificac
 			<p className="font-bold text-2xl">Detalles del turno</p>
 			<div className="flex flex-col sm:flex-row gap-10 mt-2">
 
-				<TakePhotoGuard title="Tomar Fotografía" descripcion="Capture una fotografía de su uniforme completo antes de iniciar su turno." evidencia={evidencia} setEvidencia={setEvidencia}>
-					<div className="relative w-32 h-32 mx-auto flex flex-col items-center justify-center border-2 border-dashed border-gray-400 shadow-[0_2px_8px_rgba(0,0,0,0.2)] cursor-pointer">
+				<div
+					className={`
+						relative w-32 h-32 mx-auto flex flex-col items-center justify-center border-2 border-dashed
+						${turno=="Turno abierto" ? "border-gray-300 bg-gray-100 cursor-not-allowed shadow-none opacity-50" : "border-gray-400 cursor-pointer shadow-[0_2px_8px_rgba(0,0,0,0.2)]"}
+					`}
+					onClick={() => {
+						if (turno=="Turno cerrado") {
+							setOpenStartPhotoModal(true);
+						}
+					}}
+					>
+					{Array.isArray(evidencia) && evidencia.length > 0 && turno=="Turno cerrado" && (
+						<button
+							onClick={(e) => {
+							e.stopPropagation(); // Evita que abra el modal
+							setEvidencia([]);
+							}}
+							className="absolute top-1 right-1 bg-red-600 text-white rounded-sm px-1.5 shadow hover:bg-red-600"
+							title="Eliminar imagen"
+						>
+						x
+						</button>
+					)}
 
-							{Array.isArray(evidencia) && evidencia.length > 0 && (
-								<button
-									onClick={(e) => {
-									e.stopPropagation(); // Evita que abra el modal
-									setEvidencia([]);
-									}}
-									className="absolute top-1 right-1 bg-red-600 text-white rounded-sm px-1.5 shadow hover:bg-red-600"
-									title="Eliminar imagen"
-								>
-								x
-								</button>
-							)}
+					<Image
+					width={112}
+					height={96}
+					className="w-28 h-24 object-contain"
+					src={evidencia?.[0]?.file_url || shift?.booth_status?.fotografia_inicio_turno?.[0]?.file_url || "/nouser.svg"}
+					alt="Inicio de turno"
+					/>
+					<span className="text-xs text-center text-gray-600">
+					Inicio de turno
+					</span>
+				</div>
 
-							<Image
-							width={112}
-							height={96}
-							className="w-28 h-24 object-contain"
-							src={evidencia?.[0]?.file_url || "/nouser.svg"}
-							alt="Inicio de turno"
-							/>
-							<span className="text-xs text-center text-gray-600">
-							Inicio de turno
-							</span>
-						</div>
+				<TakePhotoGuard title="Tomar Fotografía" descripcion="Capture una fotografía de su uniforme completo antes de iniciar su turno." evidencia={evidencia} setEvidencia={setEvidencia} open={openStartPhotoModal} setOpen={setOpenStartPhotoModal}>
 				</TakePhotoGuard>
+				
+				<div
+					className={`
+						relative w-32 h-32 mx-auto flex flex-col items-center justify-center border-2 border-dashed
+						${turno=="Turno abierto" ? "border-gray-400 cursor-pointer shadow-[0_2px_8px_rgba(0,0,0,0.2)]" : "border-gray-300 bg-gray-100 cursor-not-allowed shadow-none opacity-50"}
+					`}
+					onClick={() => {
+						if (turno=="Turno abierto") {
+						setOpenClosePhotoModal(true);
+						}
+					}}
+					>
+					{Array.isArray(identificacion) && identificacion.length > 0 && turno=="Turno abierto" && (
+						<button
+						onClick={(e) => {
+							e.stopPropagation();
+							setIdentificacion([]);
+						}}
+						className="absolute top-1 right-1 bg-red-600 text-white rounded-sm px-1.5 shadow hover:bg-red-600"
+						title="Eliminar imagen"
+						>
+						x
+						</button>
+					)}
 
-				<TakePhotoGuard title="Tomar Fotografía" descripcion="Capture una fotografía de su uniforme completo antes de cerrar su turno." evidencia={identificacion} setEvidencia={setIdentificacion} >
-					<div>
-						<div className="relative w-32 h-32 mx-auto flex flex-col items-center justify-center border-2 border-dashed border-gray-400 shadow-[0_2px_8px_rgba(0,0,0,0.2)] cursor-pointer">
+					<Image
+						width={112}
+						height={96}
+						className="w-28 h-24 object-contain"
+						src={identificacion?.[0]?.file_url  || shift?.booth_status?.fotografia_cierre_turno?.[0]?.file_url || "/nouser.svg"}
+						alt="Cierre de turno"
+					/>
+					<span className="text-xs text-center text-gray-600">
+						Cierre de turno
+					</span>
+				</div>
 
-							{Array.isArray(identificacion) && identificacion.length > 0 && (
-								<button
-									onClick={(e) => {
-									e.stopPropagation(); // Evita que abra el modal
-									setIdentificacion([]);
-									}}
-									className="absolute top-1 right-1 bg-red-600 text-white rounded-sm px-1.5 shadow hover:bg-red-600"
-									title="Eliminar imagen"
-								>
-								x
-								</button>
-							)}
-
-							<Image
-							width={112}
-							height={96}
-							className="w-28 h-24 object-contain"
-							src={identificacion?.[0]?.file_url || "/nouser.svg"}
-							alt="Cierre de turno"
-							/>
-							<span className="text-xs text-center text-gray-600">
-							Cierre de turno
-							</span>
-						</div>
-					</div>
+				<TakePhotoGuard title="Tomar Fotografía" descripcion="Capture una fotografía de su uniforme completo antes de cerrar su turno." evidencia={identificacion} setEvidencia={setIdentificacion} open={openClosePhotoModal} setOpen={setOpenClosePhotoModal} >
 				</TakePhotoGuard>
 
 				<div className="flex flex-col sm:flex-row justify-between sm:gap-10 sm:gap-y-10 items-center">
@@ -140,22 +179,39 @@ const TurnStatus = ({shift, location, area, evidencia, setEvidencia, identificac
       </div>
 
 	  <div className="flex flex-col items-end">
-		<StartShiftModal title="Confirmación" evidencia={evidencia} >
-			{shift?.guard?.status_turn === "Turno Cerrado" && (
-			<Button className="w-[520px] md:w-[300px] bg-blue-500 hover:bg-blue-600" disabled ={area==""?true:false ||  shift?.booth_status?.status=="No Disponible" 
-			}>
-			Iniciar Turno
+	  	{shift?.guard?.status_turn !== "Turno Abierto" && (
+			<Button
+				className="w-[520px] md:w-[300px] bg-blue-600 hover:bg-blue-700"
+				disabled={area === ""}
+				onClick={() => {
+				if (!evidencia || evidencia.length === 0) {
+					setOpenStartPhotoModal(true); // Foto de inicio faltante
+				} else {
+					setOpenStartShift(true); // Abrir modal de iniciar turno
+				}
+				}}
+			>
+				Iniciar Turno
 			</Button>
-			
-			)}
+		)}
+
+		<StartShiftModal title="Confirmación" evidencia={evidencia} open= {openStartShift} setOpen={setOpenStartShift}>
 		</StartShiftModal>
        
-     	  <CloseShiftModal title="Confirmación" shift={shift} area={area} location={location} identificacion={identificacion}>
-          {shift?.guard?.status_turn !== "Turno Cerrado" && (
-            <Button className="w-[520px] md:w-[300px] bg-red-600 hover:bg-red-700" disabled ={area==""?true:false  }>
+		{shift?.guard?.status_turn !== "Turno Cerrado" && (
+            <Button className="w-[520px] md:w-[300px] bg-red-600 hover:bg-red-700" disabled ={area==""?true:false  }
+			onClick={() => {
+				if (!identificacion || identificacion.length === 0) {
+					setOpenClosePhotoModal(true);
+				} else {
+					setOpenCloseShift(true);
+				}
+				}}>
             Cerrar Turno
             </Button>
-          )}
+        )}
+
+     	<CloseShiftModal title="Confirmación" shift={shift} area={area} location={location} identificacion={identificacion} open={openCloseShift} setOpen={setOpenCloseShift}>
       	</CloseShiftModal>
 
 		<>
