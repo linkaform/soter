@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
     Dialog,
     DialogContent,
@@ -18,6 +18,7 @@ import {
 import Image from "next/image";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAttendanceDetail } from "../hooks/useAsistenciasReport";
+import ImagePreviewModal from "./ImagePreviewModal";
 
 const statusColors: Record<string, string> = {
     presente: "bg-green-500 text-white",
@@ -45,7 +46,9 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
     selectedDay,
     ubicacion,
 }) => {
-    const [currentDay, setCurrentDay] = React.useState<number>(selectedDay);
+    const [modalOpen, setModalOpen] = useState(false);
+    const [selectedImg, setSelectedImg] = useState<string>("");
+    const [currentDay, setCurrentDay] = useState<number>(selectedDay);
     const { attendanceDetail, isLoadingAttendanceDetail, errorAttendanceDetail } = useAttendanceDetail({
         enabled: open,
         names,
@@ -285,12 +288,24 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
                                             <div className="flex gap-2">
                                                 <div className="w-24 h-16 rounded-lg overflow-hidden bg-gray-200">
                                                     {attendanceDetail?.guardia_generales?.foto_inicio_turno?.[0] ? (
-                                                        <Image
-                                                            src={attendanceDetail.guardia_generales.foto_inicio_turno[0]?.file_url}
-                                                            alt="Guardia inicio"
-                                                            width={96}
-                                                            height={64}
-                                                        />
+                                                        <>
+                                                            <Image
+                                                                src={attendanceDetail.guardia_generales.foto_inicio_turno[0]?.file_url}
+                                                                alt="Guardia inicio"
+                                                                width={96}
+                                                                height={64}
+                                                                className="cursor-pointer"
+                                                                onClick={()=>{
+                                                                    setSelectedImg(attendanceDetail.guardia_generales.foto_inicio_turno[0]?.file_url || "");
+                                                                    setModalOpen(true);
+                                                                }}
+                                                            />
+                                                            <ImagePreviewModal
+                                                                open={modalOpen}
+                                                                onClose={() => setModalOpen(false)}
+                                                                src={selectedImg}
+                                                            />
+                                                        </>
                                                     ) : (
                                                         <Image
                                                             src="https://f001.backblazeb2.com/file/app-linkaform/public-client-126/68600/6076166dfd84fa7ea446b917/2025-09-17T15:12:50.png"
@@ -303,12 +318,24 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
                                                 </div>
                                                 <div className="w-24 h-16 rounded-lg overflow-hidden bg-gray-200">
                                                     {attendanceDetail?.guardia_generales?.foto_cierre_turno?.[0] ? (
-                                                        <Image
-                                                            src={attendanceDetail.guardia_generales.foto_cierre_turno[0]?.file_url}
-                                                            alt="Guardia cierre"
-                                                            width={96}
-                                                            height={64}
-                                                        />
+                                                        <>
+                                                            <Image
+                                                                src={attendanceDetail.guardia_generales.foto_cierre_turno[0]?.file_url}
+                                                                alt="Guardia cierre"
+                                                                width={96}
+                                                                height={64}
+                                                                className="cursor-pointer"
+                                                                onClick={()=>{
+                                                                    setSelectedImg(attendanceDetail.guardia_generales.foto_cierre_turno[0]?.file_url || "");
+                                                                    setModalOpen(true);
+                                                                }}
+                                                            />
+                                                            <ImagePreviewModal
+                                                                open={modalOpen}
+                                                                onClose={() => setModalOpen(false)}
+                                                                src={selectedImg}
+                                                            />
+                                                        </>
                                                     ) : (
                                                         <Image
                                                             src="https://f001.backblazeb2.com/file/app-linkaform/public-client-126/68600/6076166dfd84fa7ea446b917/2025-09-17T15:12:50.png"
