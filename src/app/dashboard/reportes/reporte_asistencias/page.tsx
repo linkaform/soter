@@ -35,6 +35,7 @@ import LocationShiftAttendanceTable from "../components/LocationShiftAttendanceT
 import { SimpleAttendanceTable } from "../components/SimpleAttendanceTable";
 import AttendanceTableSymbology from "../components/AttendanceTableSymbology";
 
+const areFiltersEqual = (a: any, b: any) => JSON.stringify(a) === JSON.stringify(b);
 
 const ReportsPage = () => {
 	const [month, setMonth] = useState<number>(0);
@@ -60,6 +61,7 @@ const ReportsPage = () => {
 
 	const [showReport, setShowReport] = useState(false);
 	const [groupByLocation, setGroupByLocation] = useState(false);
+	const [isExecuted, setIsExecuted] = useState(false);
 	const [selectedStatus, setSelectedStatus] = useState<string[]>([]);
 
 	useEffect(() => {
@@ -96,8 +98,13 @@ const ReportsPage = () => {
 			locations: [...selectedLocations],
 			groupBy: groupingMode
 		};
+		if (isExecuted && areFiltersEqual(filters, newFilters)) {
+			refetchReportAsistencias();
+			return;
+		}
 		setFilters(newFilters);
 		setShowReport(true);
+		setIsExecuted(true);
 	};
 
 	const handleClear = () => {
@@ -204,7 +211,7 @@ const ReportsPage = () => {
 				</div>
 				<div className="flex gap-2 mt-3 md:mt-0">
 					<Button variant="outline" onClick={handleClear}><Eraser className="mr-1" />Limpiar</Button>
-					<Button variant="outline" onClick={handleExport}><Download className="mr-1" />Exportar</Button>
+					<Button disabled variant="outline" onClick={handleExport}><Download className="mr-1" />Exportar</Button>
 					<Button
 						className="bg-blue-600"
 						onClick={handleExecute}
