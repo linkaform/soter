@@ -17,6 +17,7 @@ import { useMenuStore } from "@/store/useGetMenuStore";
 
 export const Header = () => {
   const currentPath = usePathname();
+  const email = useAuthStore((state) => state.userEmailSoter);
   const userPhoto = useAuthStore((state) => state.userPhoto);
   const { logout } = useAuthStore();
   const { labels } = useMenuStore();
@@ -176,14 +177,16 @@ export const Header = () => {
                   ): null}
               </nav>
               {/* Avatar */}
+              
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Avatar className="shadow-[0_0_3px_rgba(0,0,0,0.4)] rounded-full overflow-hidden">
-                    <AvatarImage src={userPhoto??undefined} alt="Avatar" className="object-contain"/>
-                    <AvatarFallback></AvatarFallback>
-                  </Avatar>
+					<Avatar className="shadow-[0_0_3px_rgba(0,0,0,0.4)] rounded-full overflow-hidden">
+						<AvatarImage src={userPhoto??undefined} alt="Avatar" className="object-contain"/>
+						<AvatarFallback></AvatarFallback>
+					</Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
+					<div>{email}</div>
                   <DropdownMenuSeparator />
                   { currentPath !== "/" ? (
                     <>

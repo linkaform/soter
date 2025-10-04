@@ -77,7 +77,7 @@ interface TakeModalProps {
 				setHideWebcam(true)
 				setloadingWebcam(false);
 				setOpen(false)
-			}, 2000);
+			}, 700);
 		}
 	},[response, setOpen, setEvidencia])
 	
