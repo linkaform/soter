@@ -7,6 +7,8 @@ import { Imagen } from "@/lib/update-pass-full";
 import { capitalizeOnlyFirstLetter } from "@/lib/utils";
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Image from "next/image";
+import { ViewPhotoGuard } from "@/components/modals/view-photo-guard";
+import DeletePhotoGuard from "@/components/modals/eliminar-photo-guard";
 
 const TurnStatus = ({shift, location, area, evidencia, setEvidencia, identificacion, setIdentificacion}: {shift: any, location: string, area:string ,
 	evidencia:Imagen[], setEvidencia:Dispatch<SetStateAction<Imagen[]>>, identificacion:Imagen[], setIdentificacion:Dispatch<SetStateAction<Imagen[]>>
@@ -22,20 +24,20 @@ const TurnStatus = ({shift, location, area, evidencia, setEvidencia, identificac
 	const [openClosePhotoModal, setOpenClosePhotoModal] = useState(false);
 	const [openStartPhotoModal, setOpenStartPhotoModal] = useState(false);
 
-  useEffect(() => {
-	if(shift?.booth_status?.fotografia_inicio_turno)
-		console.log("FOTO DE TURNO", shift?.booth_status?.fotografia_inicio_turno)
-		setEvidencia(shift?.booth_status?.fotografia_inicio_turno)
-	if(shift?.booth_status?.fotografia_cierre_turno)
-		setIdentificacion(shift?.booth_status?.fotografia_cierre_turno)
+	const [openStartView, setOpenStartView] = useState(false);
+	const [openCloseView, setOpenCloseView] = useState(false);
 
+	const [openDeletePhoto, setOpenDeletePhoto] = useState(false);
+
+  useEffect(() => {
+	
     const interval = setInterval(() => {
       setCurrentDateTime(new Date());
     }, 60000); // 🔥 Se actualiza cada 60,000ms (1 minuto)
 
     return () => clearInterval(interval); 
 
-  }, [setEvidencia, setIdentificacion, shift?.booth_status?.fotografia_inicio_turno, shift?.booth_status?.fotografia_cierre_turno]);
+  }, [setEvidencia, setIdentificacion, shift?.booth_status?.fotografia_inicio_turno, ]);
 
 
   const formattedDate = currentDateTime.toLocaleDateString("es-MX", {
@@ -51,18 +53,28 @@ const TurnStatus = ({shift, location, area, evidencia, setEvidencia, identificac
 
 	useEffect(() => {
 	if (openClosePhotoModal === true && identificacion && identificacion.length > 0) {
-		console.log("cerradoooo")
-		setOpenCloseShift(true);
+		setTimeout(() => {
+			setOpenCloseShift(true);
+		}, 800);
 	}
 	}, [openClosePhotoModal, identificacion]);
 
 	useEffect(() => {
 		if (openStartPhotoModal === true && evidencia && evidencia.length > 0) {
-			console.log("ABIERTO DE NUEVO")
-			setOpenStartShift(true);
+			setTimeout(() => {
+				setOpenStartShift(true);
+			}, 800);
 		}
 	}, [openStartPhotoModal, evidencia]);
 
+
+	useEffect(()=>{
+		if(shift?.booth_status?.fotografia_inicio_turno.length>0)
+			setEvidencia(shift?.booth_status?.fotografia_inicio_turno)
+		if(shift?.booth_status?.fotografia_cierre_turno)
+			setIdentificacion(shift?.booth_status?.fotografia_cierre_turno.length)
+	
+	},[shift?.booth_status?.fotografia_inicio_turno,shift?.booth_status?.fotografia_cierre_turno , setEvidencia, setIdentificacion])
 
   return (
     <div className="flex items-center flex-col md:flex-row justify-between md:mb-3">
@@ -77,16 +89,20 @@ const TurnStatus = ({shift, location, area, evidencia, setEvidencia, identificac
 						${turno=="Turno abierto" ? "border-gray-300 bg-gray-100 cursor-not-allowed shadow-none opacity-50" : "border-gray-400 cursor-pointer shadow-[0_2px_8px_rgba(0,0,0,0.2)]"}
 					`}
 					onClick={() => {
-						if (turno=="Turno cerrado") {
-							setOpenStartPhotoModal(true);
+						if(evidencia.length>0 || shift?.booth_status?.fotografia_inicio_turno?.[0]?.file_url ){
+							setOpenStartView(true);
+						}else {
+							if (turno=="Turno cerrado"){
+								setOpenStartPhotoModal(true);
+							}
 						}
 					}}
 					>
 					{Array.isArray(evidencia) && evidencia.length > 0 && turno=="Turno cerrado" && (
 						<button
 							onClick={(e) => {
-							e.stopPropagation(); // Evita que abra el modal
-							setEvidencia([]);
+								e.stopPropagation(); // Evita que abra el modal
+								setOpenDeletePhoto(true)
 							}}
 							className="absolute top-1 right-1 bg-red-600 text-white rounded-sm px-1.5 shadow hover:bg-red-600"
 							title="Eliminar imagen"
@@ -107,8 +123,17 @@ const TurnStatus = ({shift, location, area, evidencia, setEvidencia, identificac
 					</span>
 				</div>
 
+				<DeletePhotoGuard setEvidencia={setEvidencia} open={openDeletePhoto} setOpen={setOpenDeletePhoto}>
+				</DeletePhotoGuard>
+
 				<TakePhotoGuard title="Tomar Fotografía" descripcion="Capture una fotografía de su uniforme completo antes de iniciar su turno." evidencia={evidencia} setEvidencia={setEvidencia} open={openStartPhotoModal} setOpen={setOpenStartPhotoModal}>
 				</TakePhotoGuard>
+
+				<ViewPhotoGuard  evidencia={evidencia} open={openStartView} setOpen={setOpenStartView}>
+				</ViewPhotoGuard>
+
+				<ViewPhotoGuard evidencia={identificacion}  open={openCloseView} setOpen={setOpenCloseView}>
+				</ViewPhotoGuard>
 				
 				<div
 					className={`
@@ -116,8 +141,12 @@ const TurnStatus = ({shift, location, area, evidencia, setEvidencia, identificac
 						${turno=="Turno abierto" ? "border-gray-400 cursor-pointer shadow-[0_2px_8px_rgba(0,0,0,0.2)]" : "border-gray-300 bg-gray-100 cursor-not-allowed shadow-none opacity-50"}
 					`}
 					onClick={() => {
-						if (turno=="Turno abierto") {
-						setOpenClosePhotoModal(true);
+						if(identificacion.length>0){
+							setOpenCloseView(true);
+						}else{
+							if (turno=="Turno abierto"){
+								setOpenClosePhotoModal(true);
+							}
 						}
 					}}
 					>
