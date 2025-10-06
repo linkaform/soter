@@ -55,6 +55,8 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
         selectedDay: currentDay,
         location: ubicacion,
     });
+    const statusTurn = attendanceDetail?.guardia_generales?.status_turn || "sin_registro";
+    const tagColor = statusColors[statusTurn] || statusColors["sin_registro"];
 
     const handleCircleClick = (dia: number) => {
         setCurrentDay(dia);
@@ -280,7 +282,7 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
                                                     <span className="text-gray-500 ml-4">Cierre:</span>
                                                     <span className="font-semibold ml-1">
                                                         {attendanceDetail?.guardia_generales?.fecha_inicio_turno
-                                                            ? attendanceDetail.guardia_generales.fecha_cierre_turno.slice(11, 16)
+                                                            ? attendanceDetail.guardia_generales?.fecha_cierre_turno?.slice(11, 16)
                                                             : ""}
                                                     </span>
                                                 </div>
@@ -348,9 +350,8 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
                                                 </div>
                                             </div>
                                             <div>
-                                                <span className="inline-block bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-lg">
-                                                    {attendanceDetail?.guardia_generales?.status_turn?.replace(/_/g, " ")
-                                                        .replace(/\b\w/g, (l: string) => l.toUpperCase()) || "Sin registro"}
+                                                <span className={`inline-block ${tagColor} text-xs font-semibold px-3 py-1 rounded-lg`}>
+                                                  {statusTurn.replace(/_/g, " ").replace(/\b\w/g, (l: string) => l.toUpperCase()) || "Sin registro"}
                                                 </span>
                                             </div>
                                         </div>
