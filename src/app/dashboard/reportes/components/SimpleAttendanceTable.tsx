@@ -15,12 +15,12 @@ const statusConfig: Record<StatusType, { color: string; icon: JSX.Element; label
     label: "Retardo",
   },
   falta: {
-    color: "bg-red-500 text-white",
+    color: "bg-red-600 text-white",
     icon: <XCircle className="w-4 h-4" />,
     label: "Falta",
   },
   falta_por_retardo: {
-    color: "bg-yellow-500 text-white",
+    color: "bg-yellow-400 text-white",
     icon: <XCircle className="w-4 h-4" />,
     label: "Falta por retardo",
   },

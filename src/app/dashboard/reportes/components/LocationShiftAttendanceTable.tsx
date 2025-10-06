@@ -5,8 +5,8 @@ import AttendanceDetailModal from "./AttendanceDetailModal";
 const statusColors: Record<string, string> = {
   presente: "bg-green-500 text-white",
   retardo: "bg-blue-400 text-white",
-  falta: "bg-red-500 text-white",
-  falta_por_retardo: "bg-yellow-500 text-white",
+  falta: "bg-red-600 text-white",
+  falta_por_retardo: "bg-yellow-400 text-white",
   dia_libre: "bg-gray-300 text-gray-600",
   sin_registro: "bg-gray-100 text-gray-400",
 };
