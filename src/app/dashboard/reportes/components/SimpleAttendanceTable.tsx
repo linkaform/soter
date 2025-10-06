@@ -97,14 +97,23 @@ export const SimpleAttendanceTable: React.FC<SimpleAttendanceTableProps> = ({
 }) => {
   const [search, setSearch] = useState("");
   const [selectedWeek, setSelectedWeek] = useState(0);
+  const [searchUbicacion, setSearchUbicacion] = useState("");
 
   // Filtra empleados por nombre
   const filteredData = useMemo(() => {
-    if (!search.trim()) return data;
-    return data.filter(emp =>
-      emp.nombre.toLowerCase().includes(search.trim().toLowerCase())
-    );
-  }, [data, search]);
+    let result = data;
+    if (search.trim()) {
+      result = result.filter(emp =>
+        emp.nombre.toLowerCase().includes(search.trim().toLowerCase())
+      );
+    }
+    if (searchUbicacion.trim()) {
+      result = result.filter(emp =>
+        emp.ubicacion.toLowerCase().includes(searchUbicacion.trim().toLowerCase())
+      );
+    }
+    return result;
+  }, [data, search, searchUbicacion]);
 
   // Ejemplo dentro de SimpleAttendanceTable
   const today = new Date();
@@ -239,8 +248,17 @@ export const SimpleAttendanceTable: React.FC<SimpleAttendanceTableProps> = ({
         <thead>
           <tr>
             {groupByLocation && (
-              <th className="sticky left-0 bg-white z-10 p-2 border-b text-left">
-                Ubicación
+              <th className="sticky left-0 bg-white z-10 p-2 border-b text-left min-w-[120px] w-[140px]">
+                <div>
+                  <span>Ubicación</span>
+                  <input
+                    type="text"
+                    placeholder=""
+                    value={searchUbicacion}
+                    onChange={e => setSearchUbicacion(e.target.value)}
+                    className="mt-2 w-full px-2 py-1 border rounded text-sm focus:outline-none focus:ring focus:border-blue-300"
+                  />
+                </div>
               </th>
             )}
             <th
@@ -250,7 +268,7 @@ export const SimpleAttendanceTable: React.FC<SimpleAttendanceTableProps> = ({
                 <span>Empleado</span>
                 <input
                   type="text"
-                  placeholder="Buscar empleado..."
+                  placeholder=""
                   value={search}
                   onChange={e => setSearch(e.target.value)}
                   className="mt-2 w-full px-2 py-1 border rounded text-sm focus:outline-none focus:ring focus:border-blue-300"
