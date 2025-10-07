@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { CheckCircle, XCircle, Clock, MinusCircle, CalendarOff, ChevronLeft, ChevronRight } from "lucide-react";
+import AttendanceDetailModal from "./AttendanceDetailModal";
 
 type StatusType = "presente" | "retardo" | "falta" | "falta_por_retardo" | "dia_libre" | "sin_registro";
 
@@ -98,6 +99,10 @@ export const SimpleAttendanceTable: React.FC<SimpleAttendanceTableProps> = ({
   const [search, setSearch] = useState("");
   const [selectedWeek, setSelectedWeek] = useState(0);
   const [searchUbicacion, setSearchUbicacion] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedNames, setSelectedNames] = useState<string[]>([]);
+  const [selectedDay, setSelectedDay] = useState<number | null>(null);
+  const [selectedUbicacion, setSelectedUbicacion] = useState<string>("");
 
   // Filtra empleados por nombre
   const filteredData = useMemo(() => {
@@ -310,12 +315,19 @@ export const SimpleAttendanceTable: React.FC<SimpleAttendanceTableProps> = ({
                       const config = statusConfig[status] || statusConfig["sin_registro"];
                       return (
                         <td key={i} className="p-1 border-b text-center">
-                          <span
+                          <button
+                            type="button"
                             className={`inline-flex items-center justify-center rounded-full w-7 h-7 ${config.color}`}
                             title={config.label}
+                            onClick={() => {
+                              setSelectedNames([emp.nombre]);
+                              setSelectedDay(day);
+                              setSelectedUbicacion(emp.ubicacion);
+                              setModalOpen(true);
+                            }}
                           >
                             {config.icon}
-                          </span>
+                          </button>
                         </td>
                       );
                     })}
@@ -345,12 +357,19 @@ export const SimpleAttendanceTable: React.FC<SimpleAttendanceTableProps> = ({
                         key={i}
                         className={`p-1 border-b text-center ${isTodayCol ? "bg-yellow-300" : ""}`}
                       >
-                        <span
+                        <button
+                          type="button"
                           className={`inline-flex items-center justify-center rounded-full w-7 h-7 ${config.color}`}
                           title={config.label}
+                          onClick={() => {
+                            setSelectedNames([emp.nombre]);
+                            setSelectedDay(day);
+                            setSelectedUbicacion(emp.ubicacion);
+                            setModalOpen(true);
+                          }}
                         >
                           {config.icon}
-                        </span>
+                        </button>
                       </td>
                     );
                   })}
@@ -361,6 +380,13 @@ export const SimpleAttendanceTable: React.FC<SimpleAttendanceTableProps> = ({
               ))}
         </tbody>
       </table>
+      <AttendanceDetailModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        names={selectedNames}
+        selectedDay={selectedDay ?? 1}
+        ubicacion={selectedUbicacion}
+      />
     </div>
   );
 };
