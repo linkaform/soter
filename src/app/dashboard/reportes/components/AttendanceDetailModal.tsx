@@ -98,7 +98,7 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
                                             } • {attendanceDetail?.guardia_generales?.incidente_location}
                                         </div>
                                         <div className="text-xs text-gray-700 mt-1">
-                                            Estado laboral: <span className="font-semibold text-green-600">● Activo</span>
+                                            Estado laboral: <span className="font-semibold text-green-600">{attendanceDetail?.actual_guard_status || "Desconocido"}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -409,7 +409,7 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
                                             <div className="border rounded-lg p-3 flex items-center gap-3">
                                                 <span className="text-yellow-500 text-2xl">⏰</span>
                                                 <div>
-                                                    <div className="font-bold text-lg text-gray-800">{attendanceDetail?.indicadores_generales?.retardos || 0}%</div>
+                                                    <div className="font-bold text-lg text-gray-800">{attendanceDetail?.indicadores_generales?.retardos || 0}</div>
                                                     <div className="text-xs text-gray-500">Retardos</div>
                                                 </div>
                                             </div>
