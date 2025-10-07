@@ -47,7 +47,6 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
     ubicacion,
 }) => {
     const [modalOpen, setModalOpen] = useState(false);
-    const [selectedImg, setSelectedImg] = useState<string>("");
     const [currentDay, setCurrentDay] = useState<number>(selectedDay);
     const { attendanceDetail, isLoadingAttendanceDetail, errorAttendanceDetail } = useAttendanceDetail({
         enabled: open,
@@ -55,6 +54,19 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
         selectedDay: currentDay,
         location: ubicacion,
     });
+    const images = [
+        {
+            src: attendanceDetail?.guardia_generales?.foto_inicio_turno?.[0]?.file_url,
+            alt: "Foto inicio de turno",
+            order: 1,
+        },
+        {
+            src: attendanceDetail?.guardia_generales?.foto_cierre_turno?.[0]?.file_url,
+            alt: "Foto cierre de turno",
+            order: 2,
+        },
+    ];
+    
     const statusTurn = attendanceDetail?.guardia_generales?.status_turn || "sin_registro";
     const tagColor = statusColors[statusTurn] || statusColors["sin_registro"];
 
@@ -288,7 +300,7 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
                                                 </div>
                                             </div>
                                             <div className="flex gap-2">
-                                                <div className="w-24 h-16 rounded-lg overflow-hidden bg-gray-200">
+                                                <div className="w-24 h-32 rounded-lg overflow-hidden bg-gray-200">
                                                     {attendanceDetail?.guardia_generales?.foto_inicio_turno?.[0] ? (
                                                         <>
                                                             <Image
@@ -298,14 +310,13 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
                                                                 height={64}
                                                                 className="cursor-pointer"
                                                                 onClick={()=>{
-                                                                    setSelectedImg(attendanceDetail.guardia_generales.foto_inicio_turno[0]?.file_url || "");
                                                                     setModalOpen(true);
                                                                 }}
                                                             />
                                                             <ImagePreviewModal
                                                                 open={modalOpen}
                                                                 onClose={() => setModalOpen(false)}
-                                                                src={selectedImg}
+                                                                images={images}
                                                             />
                                                         </>
                                                     ) : (
@@ -318,7 +329,7 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
                                                         />
                                                     )}
                                                 </div>
-                                                <div className="w-24 h-16 rounded-lg overflow-hidden bg-gray-200">
+                                                <div className="w-24 h-32 rounded-lg overflow-hidden bg-gray-200">
                                                     {attendanceDetail?.guardia_generales?.foto_cierre_turno?.[0] ? (
                                                         <>
                                                             <Image
@@ -328,14 +339,13 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
                                                                 height={64}
                                                                 className="cursor-pointer"
                                                                 onClick={()=>{
-                                                                    setSelectedImg(attendanceDetail.guardia_generales.foto_cierre_turno[0]?.file_url || "");
                                                                     setModalOpen(true);
                                                                 }}
                                                             />
                                                             <ImagePreviewModal
                                                                 open={modalOpen}
                                                                 onClose={() => setModalOpen(false)}
-                                                                src={selectedImg}
+                                                                images={images}
                                                             />
                                                         </>
                                                     ) : (
@@ -349,12 +359,12 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
                                                     )}
                                                 </div>
                                             </div>
-                                            <div>
+                                        </div>
+                                            <div className="mt-3">
                                                 <span className={`inline-block ${tagColor} text-xs font-semibold px-3 py-1 rounded-lg`}>
                                                   {statusTurn.replace(/_/g, " ").replace(/\b\w/g, (l: string) => l.toUpperCase()) || "Sin registro"}
                                                 </span>
                                             </div>
-                                        </div>
                                         <div className="mt-4">
                                             <div className="mb-2">
                                                 <div className="text-xs text-gray-500 mb-1">Comentarios inicio</div>
