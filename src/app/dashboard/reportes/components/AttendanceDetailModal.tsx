@@ -47,7 +47,6 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
     ubicacion,
 }) => {
     const [modalOpen, setModalOpen] = useState(false);
-    const [selectedImg, setSelectedImg] = useState<string>("");
     const [currentDay, setCurrentDay] = useState<number>(selectedDay);
     const { attendanceDetail, isLoadingAttendanceDetail, errorAttendanceDetail } = useAttendanceDetail({
         enabled: open,
@@ -55,6 +54,21 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
         selectedDay: currentDay,
         location: ubicacion,
     });
+    const images = [
+        {
+            src: attendanceDetail?.guardia_generales?.foto_inicio_turno?.[0]?.file_url,
+            alt: "Foto inicio de turno",
+            order: 1,
+        },
+        {
+            src: attendanceDetail?.guardia_generales?.foto_cierre_turno?.[0]?.file_url,
+            alt: "Foto cierre de turno",
+            order: 2,
+        },
+    ];
+    
+    const statusTurn = attendanceDetail?.guardia_generales?.status_turn || "sin_registro";
+    const tagColor = statusColors[statusTurn] || statusColors["sin_registro"];
 
     const handleCircleClick = (dia: number) => {
         setCurrentDay(dia);
@@ -84,7 +98,7 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
                                             } • {attendanceDetail?.guardia_generales?.incidente_location}
                                         </div>
                                         <div className="text-xs text-gray-700 mt-1">
-                                            Estado laboral: <span className="font-semibold text-green-600">● Activo</span>
+                                            Estado laboral: <span className="font-semibold text-green-600">{attendanceDetail?.actual_guard_status || "Desconocido"}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -280,13 +294,13 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
                                                     <span className="text-gray-500 ml-4">Cierre:</span>
                                                     <span className="font-semibold ml-1">
                                                         {attendanceDetail?.guardia_generales?.fecha_inicio_turno
-                                                            ? attendanceDetail.guardia_generales.fecha_cierre_turno.slice(11, 16)
+                                                            ? attendanceDetail.guardia_generales?.fecha_cierre_turno?.slice(11, 16)
                                                             : ""}
                                                     </span>
                                                 </div>
                                             </div>
                                             <div className="flex gap-2">
-                                                <div className="w-24 h-16 rounded-lg overflow-hidden bg-gray-200">
+                                                <div className="w-24 h-32 rounded-lg overflow-hidden bg-gray-200">
                                                     {attendanceDetail?.guardia_generales?.foto_inicio_turno?.[0] ? (
                                                         <>
                                                             <Image
@@ -296,14 +310,13 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
                                                                 height={64}
                                                                 className="cursor-pointer"
                                                                 onClick={()=>{
-                                                                    setSelectedImg(attendanceDetail.guardia_generales.foto_inicio_turno[0]?.file_url || "");
                                                                     setModalOpen(true);
                                                                 }}
                                                             />
                                                             <ImagePreviewModal
                                                                 open={modalOpen}
                                                                 onClose={() => setModalOpen(false)}
-                                                                src={selectedImg}
+                                                                images={images}
                                                             />
                                                         </>
                                                     ) : (
@@ -316,7 +329,7 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
                                                         />
                                                     )}
                                                 </div>
-                                                <div className="w-24 h-16 rounded-lg overflow-hidden bg-gray-200">
+                                                <div className="w-24 h-32 rounded-lg overflow-hidden bg-gray-200">
                                                     {attendanceDetail?.guardia_generales?.foto_cierre_turno?.[0] ? (
                                                         <>
                                                             <Image
@@ -326,14 +339,13 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
                                                                 height={64}
                                                                 className="cursor-pointer"
                                                                 onClick={()=>{
-                                                                    setSelectedImg(attendanceDetail.guardia_generales.foto_cierre_turno[0]?.file_url || "");
                                                                     setModalOpen(true);
                                                                 }}
                                                             />
                                                             <ImagePreviewModal
                                                                 open={modalOpen}
                                                                 onClose={() => setModalOpen(false)}
-                                                                src={selectedImg}
+                                                                images={images}
                                                             />
                                                         </>
                                                     ) : (
@@ -347,13 +359,12 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
                                                     )}
                                                 </div>
                                             </div>
-                                            <div>
-                                                <span className="inline-block bg-green-100 text-green-700 text-xs font-semibold px-3 py-1 rounded-lg">
-                                                    {attendanceDetail?.guardia_generales?.status_turn?.replace(/_/g, " ")
-                                                        .replace(/\b\w/g, (l: string) => l.toUpperCase()) || "Sin registro"}
+                                        </div>
+                                            <div className="mt-3">
+                                                <span className={`inline-block ${tagColor} text-xs font-semibold px-3 py-1 rounded-lg`}>
+                                                  {statusTurn.replace(/_/g, " ").replace(/\b\w/g, (l: string) => l.toUpperCase()) || "Sin registro"}
                                                 </span>
                                             </div>
-                                        </div>
                                         <div className="mt-4">
                                             <div className="mb-2">
                                                 <div className="text-xs text-gray-500 mb-1">Comentarios inicio</div>
@@ -398,7 +409,7 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
                                             <div className="border rounded-lg p-3 flex items-center gap-3">
                                                 <span className="text-yellow-500 text-2xl">⏰</span>
                                                 <div>
-                                                    <div className="font-bold text-lg text-gray-800">{attendanceDetail?.indicadores_generales?.retardos || 0}%</div>
+                                                    <div className="font-bold text-lg text-gray-800">{attendanceDetail?.indicadores_generales?.retardos || 0}</div>
                                                     <div className="text-xs text-gray-500">Retardos</div>
                                                 </div>
                                             </div>

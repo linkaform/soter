@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { CheckCircle, XCircle, Clock, MinusCircle, CalendarOff, ChevronLeft, ChevronRight } from "lucide-react";
+import AttendanceDetailModal from "./AttendanceDetailModal";
 
 type StatusType = "presente" | "retardo" | "falta" | "falta_por_retardo" | "dia_libre" | "sin_registro";
 
@@ -15,12 +16,12 @@ const statusConfig: Record<StatusType, { color: string; icon: JSX.Element; label
     label: "Retardo",
   },
   falta: {
-    color: "bg-red-500 text-white",
+    color: "bg-red-600 text-white",
     icon: <XCircle className="w-4 h-4" />,
     label: "Falta",
   },
   falta_por_retardo: {
-    color: "bg-yellow-500 text-white",
+    color: "bg-yellow-400 text-white",
     icon: <XCircle className="w-4 h-4" />,
     label: "Falta por retardo",
   },
@@ -97,14 +98,27 @@ export const SimpleAttendanceTable: React.FC<SimpleAttendanceTableProps> = ({
 }) => {
   const [search, setSearch] = useState("");
   const [selectedWeek, setSelectedWeek] = useState(0);
+  const [searchUbicacion, setSearchUbicacion] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedNames, setSelectedNames] = useState<string[]>([]);
+  const [selectedDay, setSelectedDay] = useState<number | null>(null);
+  const [selectedUbicacion, setSelectedUbicacion] = useState<string>("");
 
   // Filtra empleados por nombre
   const filteredData = useMemo(() => {
-    if (!search.trim()) return data;
-    return data.filter(emp =>
-      emp.nombre.toLowerCase().includes(search.trim().toLowerCase())
-    );
-  }, [data, search]);
+    let result = data;
+    if (search.trim()) {
+      result = result.filter(emp =>
+        emp.nombre.toLowerCase().includes(search.trim().toLowerCase())
+      );
+    }
+    if (searchUbicacion.trim()) {
+      result = result.filter(emp =>
+        emp.ubicacion.toLowerCase().includes(searchUbicacion.trim().toLowerCase())
+      );
+    }
+    return result;
+  }, [data, search, searchUbicacion]);
 
   // Ejemplo dentro de SimpleAttendanceTable
   const today = new Date();
@@ -239,8 +253,17 @@ export const SimpleAttendanceTable: React.FC<SimpleAttendanceTableProps> = ({
         <thead>
           <tr>
             {groupByLocation && (
-              <th className="sticky left-0 bg-white z-10 p-2 border-b text-left">
-                Ubicación
+              <th className="sticky left-0 bg-white z-10 p-2 border-b text-left min-w-[120px] w-[140px]">
+                <div>
+                  <span>Ubicación</span>
+                  <input
+                    type="text"
+                    placeholder=""
+                    value={searchUbicacion}
+                    onChange={e => setSearchUbicacion(e.target.value)}
+                    className="mt-2 w-full px-2 py-1 border rounded text-sm focus:outline-none focus:ring focus:border-blue-300"
+                  />
+                </div>
               </th>
             )}
             <th
@@ -250,7 +273,7 @@ export const SimpleAttendanceTable: React.FC<SimpleAttendanceTableProps> = ({
                 <span>Empleado</span>
                 <input
                   type="text"
-                  placeholder="Buscar empleado..."
+                  placeholder=""
                   value={search}
                   onChange={e => setSearch(e.target.value)}
                   className="mt-2 w-full px-2 py-1 border rounded text-sm focus:outline-none focus:ring focus:border-blue-300"
@@ -292,12 +315,19 @@ export const SimpleAttendanceTable: React.FC<SimpleAttendanceTableProps> = ({
                       const config = statusConfig[status] || statusConfig["sin_registro"];
                       return (
                         <td key={i} className="p-1 border-b text-center">
-                          <span
+                          <button
+                            type="button"
                             className={`inline-flex items-center justify-center rounded-full w-7 h-7 ${config.color}`}
                             title={config.label}
+                            onClick={() => {
+                              setSelectedNames([emp.nombre]);
+                              setSelectedDay(day);
+                              setSelectedUbicacion(emp.ubicacion);
+                              setModalOpen(true);
+                            }}
                           >
                             {config.icon}
-                          </span>
+                          </button>
                         </td>
                       );
                     })}
@@ -327,12 +357,19 @@ export const SimpleAttendanceTable: React.FC<SimpleAttendanceTableProps> = ({
                         key={i}
                         className={`p-1 border-b text-center ${isTodayCol ? "bg-yellow-300" : ""}`}
                       >
-                        <span
+                        <button
+                          type="button"
                           className={`inline-flex items-center justify-center rounded-full w-7 h-7 ${config.color}`}
                           title={config.label}
+                          onClick={() => {
+                            setSelectedNames([emp.nombre]);
+                            setSelectedDay(day);
+                            setSelectedUbicacion(emp.ubicacion);
+                            setModalOpen(true);
+                          }}
                         >
                           {config.icon}
-                        </span>
+                        </button>
                       </td>
                     );
                   })}
@@ -343,6 +380,13 @@ export const SimpleAttendanceTable: React.FC<SimpleAttendanceTableProps> = ({
               ))}
         </tbody>
       </table>
+      <AttendanceDetailModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        names={selectedNames}
+        selectedDay={selectedDay ?? 1}
+        ubicacion={selectedUbicacion}
+      />
     </div>
   );
 };
