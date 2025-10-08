@@ -19,6 +19,7 @@ import Image from "next/image";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useAttendanceDetail } from "../hooks/useAsistenciasReport";
 import ImagePreviewModal from "./ImagePreviewModal";
+import { ExternalLink } from "lucide-react";
 
 const statusColors: Record<string, string> = {
     presente: "bg-green-500 text-white",
@@ -274,7 +275,19 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
                                     <div className="bg-gray-50 rounded-xl p-4 mb-4">
                                         <div className="flex flex-wrap items-center justify-between gap-4">
                                             <div>
-                                                <div className="text-gray-500 text-sm font-medium mb-1">Detalle del turno:</div>
+                                                <div className="text-gray-500 text-sm font-medium mb-1 flex justify-between">
+                                                    Detalle del turno: 
+                                                    <div className="text-gray-700">
+                                                        <button
+                                                            onClick={() => {
+                                                                window.open(`https://app.linkaform.com/#/records/detail/${attendanceDetail?.guardia_generales?._id}`, "_blank");
+                                                            }}
+                                                            title="Ver detalle"
+                                                        >
+                                                            <ExternalLink />
+                                                        </button>
+                                                    </div>
+                                                </div>
                                                 <div className="text-lg font-bold mb-2">{attendanceDetail?.guardia_generales?.fecha_inicio_turno}</div>
                                                 <div className="text-sm mb-1">
                                                     <span className="text-gray-500">Turno:</span>
