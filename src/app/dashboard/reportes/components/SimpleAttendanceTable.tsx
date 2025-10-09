@@ -132,8 +132,7 @@ export const SimpleAttendanceTable: React.FC<SimpleAttendanceTableProps> = ({
       const dayObj = emp.asistencia_mes.find(d => d.dia === currentDay);
       return (
         (dayObj && selectedStatus.includes(dayObj.status)) ||
-        !dayObj ||
-        dayObj.status === "sin_registro"
+        !dayObj
       );
     });
   }, [filteredData, selectedStatus, currentDay]);
