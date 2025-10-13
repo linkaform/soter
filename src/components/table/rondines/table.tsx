@@ -38,6 +38,8 @@ import { EliminarRondinModal } from "@/components/modals/delete-rondin-modal";
 import { EditarRondinModal } from "@/components/modals/editar-rondin";
 import { useGetRondinById } from "@/hooks/Rondines/useGetRondinById";
 import { AreasModal } from "@/components/modals/add-area-rondin";
+import { RondinesBitacoraTable } from "./bitacoras-table";
+// import { BitacoraTable } from "./bitacoras-table";
 
 
 interface ListProps {
@@ -52,8 +54,10 @@ interface ListProps {
 	date1:Date| ""
 	date2:Date| ""
 	dateFilter: string;
-	setDateFilter :React.Dispatch<React.SetStateAction<string>>;
+	setDateFilter: React.Dispatch<React.SetStateAction<string>>;
 	Filter:() => void;
+	setActiveTab: React.Dispatch<React.SetStateAction<string>>;
+	activeTab:string;
 }
 
 
@@ -77,12 +81,12 @@ interface ListProps {
 
 
 // const areas = ["Entrada principal", "Zona de carga", "Patio trasero","Entrada principal", "Zona de carga", "Patio trasero","Entrada principal", "Zona de carga", "Patio trasero"];
-const dias = ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom","Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom","Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom", "Lun", "Mar","Mié", "Jue", "Vie",];
+// const dias = ["Lu", "Ma", "Mi", "Ju", "Vi", "Sá", "Do","Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do","Lu", "Ma", "Mi", "Ju", "Vi", "Sa", "Do", "Lu", "Ma","Mi", "Ju", "Vi",];
 
 const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,selectedRondin,
-	setDate1, setDate2, date1, date2, dateFilter, setDateFilter,Filter, resetTableFilters
+	setDate1, setDate2, date1, date2, dateFilter, setDateFilter,Filter, resetTableFilters, setActiveTab, activeTab
  })=> {
-	console.log(setSelectedRondin, selectedRondin)
+	console.log("Tabla rondines",setSelectedRondin, selectedRondin, activeTab)
 	// const [ selectedRow, setSelectedRondin] = React.useState<any | null>(null);
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -102,9 +106,11 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 		setModalEliminarAbierto(true);
 	};
 
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const handleVerRondin= (rondin:Recorrido)=>{
 		setRondinSeleccionado(rondin); 
 		setVerRondin(true);
+		setActiveTab("Vista");
 	}
 
 	const handleEditarRondin= (rondin:Recorrido)=>{
@@ -125,7 +131,7 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
   const columns = useMemo(() => {
 	if (isLoading) return [];
 	return getRondinesColumns(handleEliminar,handleVerRondin, handleEditarRondin);
-}, [isLoading]);
+}, [handleVerRondin, isLoading]);
 
 	const memoizedData = useMemo(() => data || [], [data]);
 
@@ -153,6 +159,1085 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
     },
   });
 
+
+//   const dias = Array.from({ length: 31 }, (_, i) => {
+// 	const fecha = new Date(new Date().getFullYear(), new Date().getMonth(), i + 1);
+// 	return fecha.toLocaleDateString("es-MX", { weekday: "short" });
+//   });
+
+//   const dataRondin = [
+//     {
+//       "hora": "08:00",
+//       "areas": [
+//         {
+//           	"nombre": "Caseta de vigilancia planta 1",
+// 			"estados_por_dia": {
+// 				"1": "ok",
+// 				"2": "alert",
+// 				"3": "ok",
+// 				"4": "alert",
+// 				"5": "ok",
+// 				"6": "alert",
+// 				"7": "ok",
+// 				"8": "alert",
+// 				"9": "alert",
+// 				"10": "cancel",
+// 				"11": "cancel",
+// 				"12": "cancel",
+// 				"13": "none",
+// 				"14": "none",
+// 				"15": "none",
+// 				"16": "none",
+// 				"17": "none",
+// 				"18": "none",
+// 				"19": "none",
+// 				"20": "none",
+// 				"21": "none",
+// 				"22": "none",
+// 				"23": "none",
+// 				"24": "none",
+// 				"25": "none",
+// 				"26": "none",
+// 				"27": "none",
+// 				"28": "none",
+// 				"29": "none",
+// 				"30": "none",
+// 				"31": "none"
+// 			}
+//         },
+//         {
+//           	"nombre": "Área de rampa 24",
+//           	"estados_por_dia": {
+// 				"1": "ok",
+// 				"2": "alert",
+// 				"3": "ok",
+// 				"4": "ok",
+// 				"5": "ok",
+// 				"6": "ok",
+// 				"7": "cancel",
+// 				"8": "cancel",
+// 				"9": "cancel",
+// 				"10": "alert",
+// 				"11": "none",
+// 				"12": "none",
+// 				"13": "cancel",
+// 				"14": "none",
+// 				"15": "none",
+// 				"16": "cancel",
+// 				"17": "none",
+// 				"18": "none",
+// 				"19": "none",
+// 				"20": "none",
+// 				"21": "none",
+// 				"22": "none",
+// 				"23": "none",
+// 				"24": "none",
+// 				"25": "none",
+// 				"26": "none",
+// 				"27": "none",
+// 				"28": "none",
+// 				"29": "none",
+// 				"30": "none",
+// 				"31": "none"
+// 			}
+//         },
+// 		{
+// 			"nombre": "Cisterna",
+// 			"estados_por_dia": {
+// 			  "1": "ok",
+// 			  "2": "alert",
+// 			  "3": "ok",
+// 			  "4": "ok",
+// 			  "5": "ok",
+// 			  "6": "ok",
+// 			  "7": "alert",
+// 			  "8": "alert",
+// 			  "9": "alert",
+// 			  "10": "cancel",
+// 			  "11": "alert",
+// 			  "12": "cancel",
+// 			  "13": "none",
+// 			  "14": "none",
+// 			  "15": "none",
+// 			  "16": "none",
+// 			  "17": "none",
+// 			  "18": "none",
+// 			  "19": "none",
+// 			  "20": "none",
+// 			  "21": "none",
+// 			  "22": "none",
+// 			  "23": "none",
+// 			  "24": "none",
+// 			  "25": "none",
+// 			  "26": "none",
+// 			  "27": "none",
+// 			  "28": "none",
+// 			  "29": "none",
+// 			  "30": "none",
+// 			  "31": "none"
+// 		  }
+// 	  	},
+// 		{
+// 			"nombre": "Sub estación norte planta 3",
+// 			"estados_por_dia": {
+// 			  "1": "ok",
+// 			  "2": "alert",
+// 			  "3": "ok",
+// 			  "4": "ok",
+// 			  "5": "alert",
+// 			  "6": "alert",
+// 			  "7": "ok",
+// 			  "8": "ok",
+// 			  "9": "alert",
+// 			  "10": "ok",
+// 			  "11": "ok",
+// 			  "12": "ok",
+// 			  "13": "none",
+// 			  "14": "none",
+// 			  "15": "none",
+// 			  "16": "none",
+// 			  "17": "none",
+// 			  "18": "none",
+// 			  "19": "none",
+// 			  "20": "none",
+// 			  "21": "none",
+// 			  "22": "none",
+// 			  "23": "none",
+// 			  "24": "none",
+// 			  "25": "none",
+// 			  "26": "none",
+// 			  "27": "none",
+// 			  "28": "none",
+// 			  "29": "none",
+// 			  "30": "none",
+// 			  "31": "none"
+// 		  }
+// 	  	},
+// 		  {
+// 			"nombre": "Sub estación norte planta 3",
+// 			"estados_por_dia": {
+// 			  "1": "ok",
+// 			  "2": "alert",
+// 			  "3": "ok",
+// 			  "4": "ok",
+// 			  "5": "alert",
+// 			  "6": "alert",
+// 			  "7": "ok",
+// 			  "8": "ok",
+// 			  "9": "alert",
+// 			  "10": "ok",
+// 			  "11": "ok",
+// 			  "12": "ok",
+// 			  "13": "none",
+// 			  "14": "none",
+// 			  "15": "none",
+// 			  "16": "none",
+// 			  "17": "none",
+// 			  "18": "none",
+// 			  "19": "none",
+// 			  "20": "none",
+// 			  "21": "none",
+// 			  "22": "none",
+// 			  "23": "none",
+// 			  "24": "none",
+// 			  "25": "none",
+// 			  "26": "none",
+// 			  "27": "none",
+// 			  "28": "none",
+// 			  "29": "none",
+// 			  "30": "none",
+// 			  "31": "none"
+// 		  }
+// 	  	}
+//       ]
+//     },
+//     {
+//       "hora": "10:00",
+//       "areas": [
+//         {
+//           "nombre": "Área 3",
+//           "estados_por_dia": {
+//             "1": "check",
+//             "2": "check",
+//             "...": "...",
+//             "31": "check"
+//           }
+//         }
+//       ]
+//     }
+//   ]
+// 	const dataRondin = [
+// 	{
+// 	  hora: "08:00",
+// 	  areas: [
+// 		{
+// 		  nombre: "Caseta de vigilancia planta 1",
+// 		  estados: [
+// 			{ dia: 1, estado: "ok" },
+// 			{ dia: 2, estado: "alert" },
+// 			{ dia: 3, estado: "ok" },
+// 			{ dia: 4, estado: "alert" },
+// 			{ dia: 5, estado: "ok" },
+// 			{ dia: 6, estado: "alert" },
+// 			{ dia: 7, estado: "ok" },
+// 			{ dia: 8, estado: "alert" },
+// 			{ dia: 9, estado: "alert" },
+// 			{ dia: 10, estado: "cancel" },
+// 			{ dia: 11, estado: "cancel" },
+// 			{ dia: 12, estado: "cancel" },
+// 			{ dia: 13, estado: "none" },
+// 			{ dia: 14, estado: "none" },
+// 			{ dia: 15, estado: "none" },
+// 			{ dia: 16, estado: "none" },
+// 			{ dia: 17, estado: "none" },
+// 			{ dia: 18, estado: "none" },
+// 			{ dia: 19, estado: "none" },
+// 			{ dia: 20, estado: "none" },
+// 			{ dia: 21, estado: "none" },
+// 			{ dia: 22, estado: "none" },
+// 			{ dia: 23, estado: "none" },
+// 			{ dia: 24, estado: "none" },
+// 			{ dia: 25, estado: "none" },
+// 			{ dia: 26, estado: "none" },
+// 			{ dia: 27, estado: "none" },
+// 			{ dia: 28, estado: "none" },
+// 			{ dia: 29, estado: "none" },
+// 			{ dia: 30, estado: "none" },
+// 			{ dia: 31, estado: "none" }
+// 		  ]
+// 		},
+// 		{
+// 		  nombre: "Área de rampa 24",
+// 		  estados: [
+// 			{ dia: 1, estado: "ok" },
+// 			{ dia: 2, estado: "alert" },
+// 			{ dia: 3, estado: "ok" },
+// 			{ dia: 4, estado: "ok" },
+// 			{ dia: 5, estado: "ok" },
+// 			{ dia: 6, estado: "ok" },
+// 			{ dia: 7, estado: "cancel" },
+// 			{ dia: 8, estado: "cancel" },
+// 			{ dia: 9, estado: "cancel" },
+// 			{ dia: 10, estado: "alert" },
+// 			{ dia: 11, estado: "none" },
+// 			{ dia: 12, estado: "none" },
+// 			{ dia: 13, estado: "cancel" },
+// 			{ dia: 14, estado: "none" },
+// 			{ dia: 15, estado: "none" },
+// 			{ dia: 16, estado: "cancel" },
+// 			{ dia: 17, estado: "none" },
+// 			{ dia: 18, estado: "none" },
+// 			{ dia: 19, estado: "none" },
+// 			{ dia: 20, estado: "none" },
+// 			{ dia: 21, estado: "none" },
+// 			{ dia: 22, estado: "none" },
+// 			{ dia: 23, estado: "none" },
+// 			{ dia: 24, estado: "none" },
+// 			{ dia: 25, estado: "none" },
+// 			{ dia: 26, estado: "none" },
+// 			{ dia: 27, estado: "none" },
+// 			{ dia: 28, estado: "none" },
+// 			{ dia: 29, estado: "none" },
+// 			{ dia: 30, estado: "none" },
+// 			{ dia: 31, estado: "none" }
+// 		  ]
+// 		},
+// 		{
+// 		  nombre: "Cisterna",
+// 		  estados: [
+// 			{ dia: 1, estado: "ok" },
+// 			{ dia: 2, estado: "alert" },
+// 			{ dia: 3, estado: "ok" },
+// 			{ dia: 4, estado: "ok" },
+// 			{ dia: 5, estado: "ok" },
+// 			{ dia: 6, estado: "ok" },
+// 			{ dia: 7, estado: "alert" },
+// 			{ dia: 8, estado: "alert" },
+// 			{ dia: 9, estado: "alert" },
+// 			{ dia: 10, estado: "cancel" },
+// 			{ dia: 11, estado: "alert" },
+// 			{ dia: 12, estado: "cancel" },
+// 			{ dia: 13, estado: "none" },
+// 			{ dia: 14, estado: "none" },
+// 			{ dia: 15, estado: "none" },
+// 			{ dia: 16, estado: "none" },
+// 			{ dia: 17, estado: "none" },
+// 			{ dia: 18, estado: "none" },
+// 			{ dia: 19, estado: "none" },
+// 			{ dia: 20, estado: "none" },
+// 			{ dia: 21, estado: "none" },
+// 			{ dia: 22, estado: "none" },
+// 			{ dia: 23, estado: "none" },
+// 			{ dia: 24, estado: "none" },
+// 			{ dia: 25, estado: "none" },
+// 			{ dia: 26, estado: "none" },
+// 			{ dia: 27, estado: "none" },
+// 			{ dia: 28, estado: "none" },
+// 			{ dia: 29, estado: "none" },
+// 			{ dia: 30, estado: "none" },
+// 			{ dia: 31, estado: "none" }
+// 		  ]
+// 		},
+// 		{
+// 		  nombre: "Sub estación norte planta 3",
+// 		  estados: [
+// 			{ dia: 1, estado: "ok" },
+// 			{ dia: 2, estado: "alert" },
+// 			{ dia: 3, estado: "ok" },
+// 			{ dia: 4, estado: "ok" },
+// 			{ dia: 5, estado: "alert" },
+// 			{ dia: 6, estado: "alert" },
+// 			{ dia: 7, estado: "ok" },
+// 			{ dia: 8, estado: "ok" },
+// 			{ dia: 9, estado: "alert" },
+// 			{ dia: 10, estado: "ok" },
+// 			{ dia: 11, estado: "ok" },
+// 			{ dia: 12, estado: "ok" },
+// 			{ dia: 13, estado: "none" },
+// 			{ dia: 14, estado: "none" },
+// 			{ dia: 15, estado: "none" },
+// 			{ dia: 16, estado: "none" },
+// 			{ dia: 17, estado: "none" },
+// 			{ dia: 18, estado: "none" },
+// 			{ dia: 19, estado: "none" },
+// 			{ dia: 20, estado: "none" },
+// 			{ dia: 21, estado: "none" },
+// 			{ dia: 22, estado: "none" },
+// 			{ dia: 23, estado: "none" },
+// 			{ dia: 24, estado: "none" },
+// 			{ dia: 25, estado: "none" },
+// 			{ dia: 26, estado: "none" },
+// 			{ dia: 27, estado: "none" },
+// 			{ dia: 28, estado: "none" },
+// 			{ dia: 29, estado: "none" },
+// 			{ dia: 30, estado: "none" },
+// 			{ dia: 31, estado: "none" }
+// 		  ]
+// 		}
+// 	  ]
+// 	},
+// 	{
+// 		hora: "11:00",
+// 		areas: [
+// 		  {
+// 			nombre: "Caseta de vigilancia planta 1",
+// 			estados: [
+// 			  { dia: 1, estado: "ok" },
+// 			  { dia: 2, estado: "alert" },
+// 			  { dia: 3, estado: "ok" },
+// 			  { dia: 4, estado: "alert" },
+// 			  { dia: 5, estado: "ok" },
+// 			  { dia: 6, estado: "alert" },
+// 			  { dia: 7, estado: "ok" },
+// 			  { dia: 8, estado: "alert" },
+// 			  { dia: 9, estado: "alert" },
+// 			  { dia: 10, estado: "cancel" },
+// 			  { dia: 11, estado: "cancel" },
+// 			  { dia: 12, estado: "cancel" },
+// 			  { dia: 13, estado: "none" },
+// 			  { dia: 14, estado: "none" },
+// 			  { dia: 15, estado: "none" },
+// 			  { dia: 16, estado: "none" },
+// 			  { dia: 17, estado: "none" },
+// 			  { dia: 18, estado: "none" },
+// 			  { dia: 19, estado: "none" },
+// 			  { dia: 20, estado: "none" },
+// 			  { dia: 21, estado: "none" },
+// 			  { dia: 22, estado: "none" },
+// 			  { dia: 23, estado: "none" },
+// 			  { dia: 24, estado: "none" },
+// 			  { dia: 25, estado: "none" },
+// 			  { dia: 26, estado: "none" },
+// 			  { dia: 27, estado: "none" },
+// 			  { dia: 28, estado: "none" },
+// 			  { dia: 29, estado: "none" },
+// 			  { dia: 30, estado: "none" },
+// 			  { dia: 31, estado: "none" }
+// 			]
+// 		  },
+// 		  {
+// 			nombre: "Área de rampa 24",
+// 			estados: [
+// 			  { dia: 1, estado: "ok" },
+// 			  { dia: 2, estado: "alert" },
+// 			  { dia: 3, estado: "ok" },
+// 			  { dia: 4, estado: "ok" },
+// 			  { dia: 5, estado: "ok" },
+// 			  { dia: 6, estado: "ok" },
+// 			  { dia: 7, estado: "cancel" },
+// 			  { dia: 8, estado: "cancel" },
+// 			  { dia: 9, estado: "cancel" },
+// 			  { dia: 10, estado: "alert" },
+// 			  { dia: 11, estado: "none" },
+// 			  { dia: 12, estado: "none" },
+// 			  { dia: 13, estado: "cancel" },
+// 			  { dia: 14, estado: "none" },
+// 			  { dia: 15, estado: "none" },
+// 			  { dia: 16, estado: "cancel" },
+// 			  { dia: 17, estado: "none" },
+// 			  { dia: 18, estado: "none" },
+// 			  { dia: 19, estado: "none" },
+// 			  { dia: 20, estado: "none" },
+// 			  { dia: 21, estado: "none" },
+// 			  { dia: 22, estado: "none" },
+// 			  { dia: 23, estado: "none" },
+// 			  { dia: 24, estado: "none" },
+// 			  { dia: 25, estado: "none" },
+// 			  { dia: 26, estado: "none" },
+// 			  { dia: 27, estado: "none" },
+// 			  { dia: 28, estado: "none" },
+// 			  { dia: 29, estado: "none" },
+// 			  { dia: 30, estado: "none" },
+// 			  { dia: 31, estado: "none" }
+// 			]
+// 		  },
+// 		  {
+// 			nombre: "Cisterna",
+// 			estados: [
+// 			  { dia: 1, estado: "ok" },
+// 			  { dia: 2, estado: "alert" },
+// 			  { dia: 3, estado: "ok" },
+// 			  { dia: 4, estado: "ok" },
+// 			  { dia: 5, estado: "ok" },
+// 			  { dia: 6, estado: "ok" },
+// 			  { dia: 7, estado: "alert" },
+// 			  { dia: 8, estado: "alert" },
+// 			  { dia: 9, estado: "alert" },
+// 			  { dia: 10, estado: "cancel" },
+// 			  { dia: 11, estado: "alert" },
+// 			  { dia: 12, estado: "cancel" },
+// 			  { dia: 13, estado: "none" },
+// 			  { dia: 14, estado: "none" },
+// 			  { dia: 15, estado: "none" },
+// 			  { dia: 16, estado: "none" },
+// 			  { dia: 17, estado: "none" },
+// 			  { dia: 18, estado: "none" },
+// 			  { dia: 19, estado: "none" },
+// 			  { dia: 20, estado: "none" },
+// 			  { dia: 21, estado: "none" },
+// 			  { dia: 22, estado: "none" },
+// 			  { dia: 23, estado: "none" },
+// 			  { dia: 24, estado: "none" },
+// 			  { dia: 25, estado: "none" },
+// 			  { dia: 26, estado: "none" },
+// 			  { dia: 27, estado: "none" },
+// 			  { dia: 28, estado: "none" },
+// 			  { dia: 29, estado: "none" },
+// 			  { dia: 30, estado: "none" },
+// 			  { dia: 31, estado: "none" }
+// 			]
+// 		  },
+// 		  {
+// 			nombre: "Sub estación norte planta 3",
+// 			estados: [
+// 			  { dia: 1, estado: "ok" },
+// 			  { dia: 2, estado: "alert" },
+// 			  { dia: 3, estado: "ok" },
+// 			  { dia: 4, estado: "ok" },
+// 			  { dia: 5, estado: "alert" },
+// 			  { dia: 6, estado: "alert" },
+// 			  { dia: 7, estado: "ok" },
+// 			  { dia: 8, estado: "ok" },
+// 			  { dia: 9, estado: "alert" },
+// 			  { dia: 10, estado: "ok" },
+// 			  { dia: 11, estado: "ok" },
+// 			  { dia: 12, estado: "ok" },
+// 			  { dia: 13, estado: "none" },
+// 			  { dia: 14, estado: "none" },
+// 			  { dia: 15, estado: "none" },
+// 			  { dia: 16, estado: "none" },
+// 			  { dia: 17, estado: "none" },
+// 			  { dia: 18, estado: "none" },
+// 			  { dia: 19, estado: "none" },
+// 			  { dia: 20, estado: "none" },
+// 			  { dia: 21, estado: "none" },
+// 			  { dia: 22, estado: "none" },
+// 			  { dia: 23, estado: "none" },
+// 			  { dia: 24, estado: "none" },
+// 			  { dia: 25, estado: "none" },
+// 			  { dia: 26, estado: "none" },
+// 			  { dia: 27, estado: "none" },
+// 			  { dia: 28, estado: "none" },
+// 			  { dia: 29, estado: "none" },
+// 			  { dia: 30, estado: "none" },
+// 			  { dia: 31, estado: "none" }
+// 			]
+// 		  }
+// 		]
+// 	},
+// 	{
+// 		hora: "12:00",
+// 		areas: [
+// 		  {
+// 			nombre: "Caseta de vigilancia planta 1",
+// 			estados: [
+// 			  { dia: 1, estado: "ok" },
+// 			  { dia: 2, estado: "alert" },
+// 			  { dia: 3, estado: "ok" },
+// 			  { dia: 4, estado: "alert" },
+// 			  { dia: 5, estado: "ok" },
+// 			  { dia: 6, estado: "alert" },
+// 			  { dia: 7, estado: "ok" },
+// 			  { dia: 8, estado: "alert" },
+// 			  { dia: 9, estado: "alert" },
+// 			  { dia: 10, estado: "cancel" },
+// 			  { dia: 11, estado: "cancel" },
+// 			  { dia: 12, estado: "cancel" },
+// 			  { dia: 13, estado: "none" },
+// 			  { dia: 14, estado: "none" },
+// 			  { dia: 15, estado: "none" },
+// 			  { dia: 16, estado: "none" },
+// 			  { dia: 17, estado: "none" },
+// 			  { dia: 18, estado: "none" },
+// 			  { dia: 19, estado: "none" },
+// 			  { dia: 20, estado: "none" },
+// 			  { dia: 21, estado: "none" },
+// 			  { dia: 22, estado: "none" },
+// 			  { dia: 23, estado: "none" },
+// 			  { dia: 24, estado: "none" },
+// 			  { dia: 25, estado: "none" },
+// 			  { dia: 26, estado: "none" },
+// 			  { dia: 27, estado: "none" },
+// 			  { dia: 28, estado: "none" },
+// 			  { dia: 29, estado: "none" },
+// 			  { dia: 30, estado: "none" },
+// 			  { dia: 31, estado: "none" }
+// 			]
+// 		  },
+// 		  {
+// 			nombre: "Área de rampa 24",
+// 			estados: [
+// 			  { dia: 1, estado: "ok" },
+// 			  { dia: 2, estado: "alert" },
+// 			  { dia: 3, estado: "ok" },
+// 			  { dia: 4, estado: "ok" },
+// 			  { dia: 5, estado: "ok" },
+// 			  { dia: 6, estado: "ok" },
+// 			  { dia: 7, estado: "cancel" },
+// 			  { dia: 8, estado: "cancel" },
+// 			  { dia: 9, estado: "cancel" },
+// 			  { dia: 10, estado: "alert" },
+// 			  { dia: 11, estado: "alert" },
+// 			  { dia: 12, estado: "alert" },
+// 			  { dia: 13, estado: "alert" },
+// 			  { dia: 14, estado: "none" },
+// 			  { dia: 15, estado: "none" },
+// 			  { dia: 16, estado: "cancel" },
+// 			  { dia: 17, estado: "none" },
+// 			  { dia: 18, estado: "none" },
+// 			  { dia: 19, estado: "none" },
+// 			  { dia: 20, estado: "none" },
+// 			  { dia: 21, estado: "none" },
+// 			  { dia: 22, estado: "none" },
+// 			  { dia: 23, estado: "none" },
+// 			  { dia: 24, estado: "none" },
+// 			  { dia: 25, estado: "none" },
+// 			  { dia: 26, estado: "none" },
+// 			  { dia: 27, estado: "none" },
+// 			  { dia: 28, estado: "none" },
+// 			  { dia: 29, estado: "none" },
+// 			  { dia: 30, estado: "none" },
+// 			  { dia: 31, estado: "none" }
+// 			]
+// 		  },
+// 		  {
+// 			nombre: "Cisterna",
+// 			estados: [
+// 			  { dia: 1, estado: "ok" },
+// 			  { dia: 2, estado: "alert" },
+// 			  { dia: 3, estado: "ok" },
+// 			  { dia: 4, estado: "ok" },
+// 			  { dia: 5, estado: "alert" },
+// 			  { dia: 6, estado: "alert" },
+// 			  { dia: 7, estado: "ok" },
+// 			  { dia: 8, estado: "ok" },
+// 			  { dia: 9, estado: "alert" },
+// 			  { dia: 10, estado: "ok" },
+// 			  { dia: 11, estado: "alert" },
+// 			  { dia: 12, estado: "cancel" },
+// 			  { dia: 13, estado: "ok" },
+// 			  { dia: 14, estado: "none" },
+// 			  { dia: 15, estado: "none" },
+// 			  { dia: 16, estado: "none" },
+// 			  { dia: 17, estado: "none" },
+// 			  { dia: 18, estado: "none" },
+// 			  { dia: 19, estado: "none" },
+// 			  { dia: 20, estado: "none" },
+// 			  { dia: 21, estado: "none" },
+// 			  { dia: 22, estado: "none" },
+// 			  { dia: 23, estado: "none" },
+// 			  { dia: 24, estado: "none" },
+// 			  { dia: 25, estado: "none" },
+// 			  { dia: 26, estado: "none" },
+// 			  { dia: 27, estado: "none" },
+// 			  { dia: 28, estado: "none" },
+// 			  { dia: 29, estado: "none" },
+// 			  { dia: 30, estado: "none" },
+// 			  { dia: 31, estado: "none" }
+// 			]
+// 		  },
+// 		  {
+// 			nombre: "Sub estación norte planta 3",
+// 			estados: [
+// 			  { dia: 1, estado: "ok" },
+// 			  { dia: 2, estado: "alert" },
+// 			  { dia: 3, estado: "ok" },
+// 			  { dia: 4, estado: "ok" },
+// 			  { dia: 5, estado: "alert" },
+// 			  { dia: 6, estado: "alert" },
+// 			  { dia: 7, estado: "ok" },
+// 			  { dia: 8, estado: "ok" },
+// 			  { dia: 9, estado: "ok" },
+// 			  { dia: 10, estado: "ok" },
+// 			  { dia: 11, estado: "ok" },
+// 			  { dia: 12, estado: "alert" },
+// 			  { dia: 13, estado: "ok" },
+// 			  { dia: 14, estado: "alert" },
+// 			  { dia: 15, estado: "ok" },
+// 			  { dia: 16, estado: "none" },
+// 			  { dia: 17, estado: "none" },
+// 			  { dia: 18, estado: "none" },
+// 			  { dia: 19, estado: "none" },
+// 			  { dia: 20, estado: "none" },
+// 			  { dia: 21, estado: "none" },
+// 			  { dia: 22, estado: "none" },
+// 			  { dia: 23, estado: "none" },
+// 			  { dia: 24, estado: "none" },
+// 			  { dia: 25, estado: "none" },
+// 			  { dia: 26, estado: "none" },
+// 			  { dia: 27, estado: "none" },
+// 			  { dia: 28, estado: "none" },
+// 			  { dia: 29, estado: "none" },
+// 			  { dia: 30, estado: "none" },
+// 			  { dia: 31, estado: "none" }
+// 			]
+// 		  }
+// 		]
+// 	}
+//   ];
+const files = [
+	{
+	  file_name: "file_1",
+	  file_url: "/nouser.svg",
+	},
+	{
+	  file_name: "file_2",
+	  file_url:"/nouser.svg",
+	},
+	{
+	  file_name: "file_3",
+	  file_url: "/nouser.svg",
+	},
+	{
+	  file_name: "file_4",
+	  file_url: "/nouser.svg",
+	},
+  ];
+  
+
+  const dataRondin = [
+	{
+	  hora: "08:00 am",
+	  categorias: [
+		{
+		  titulo: "Inspección Perímetro Exterior",
+		  areas: [
+			{
+			  nombre: "Caseta de vigilancia planta 1",
+			  estados: [
+				{ dia: 1, estado: "ok" },
+				{ dia: 2, estado: "alert" },
+				{ dia: 3, estado: "ok" },
+				{ dia: 4, estado: "ok" },
+				{ dia: 5, estado: "cancel" },
+				{ dia: 6, estado: "alert" },
+				{ dia: 7, estado: "ok" },
+				{ dia: 8, estado: "ok" },
+				{ dia: 9, estado: "check" },
+				{ dia: 10, estado: "ok" },
+				{ dia: 11, estado: "ok" },
+				{ dia: 12, estado: "alert" },
+				{ dia: 13, estado: "ok" },
+				{ dia: 14, estado: "alert" },
+				{ dia: 15, estado: "ok" },
+				{ dia: 16, estado: "check" },
+				{ dia: 17, estado: "check" },
+				{ dia: 18, estado: "check" },
+				{ dia: 19, estado: "check" },
+				{ dia: 20, estado: "none" },
+				{ dia: 21, estado: "none" },
+				{ dia: 22, estado: "none" },
+				{ dia: 23, estado: "none" },
+				{ dia: 24, estado: "none" },
+				{ dia: 25, estado: "none" },
+				{ dia: 26, estado: "none" },
+				{ dia: 27, estado: "none" },
+				{ dia: 28, estado: "none" },
+				{ dia: 29, estado: "none" },
+				{ dia: 30, estado: "none" },
+			  	{ dia: 31, estado: "none" }
+			  ],
+			},
+			{
+			  nombre: "Área de rampa 24",
+			  estados: [
+				{ dia: 1, estado: "ok" },
+				{ dia: 2, estado: "ok" },
+				{ dia: 3, estado: "alert" },
+				{ dia: 4, estado: "ok" },
+				{ dia: 5, estado: "ok" },
+				{ dia: 6, estado: "alert" },
+				{ dia: 7, estado: "ok" },
+				{ dia: 8, estado: "ok" },
+				{ dia: 9, estado: "ok" },
+				{ dia: 10, estado: "ok" },
+				{ dia: 11, estado: "ok" },
+				{ dia: 12, estado: "alert" },
+				{ dia: 13, estado: "ok" },
+				{ dia: 14, estado: "alert" },
+				{ dia: 15, estado: "ok" },
+				{ dia: 16, estado: "check" },
+				{ dia: 17, estado: "check" },
+				{ dia: 18, estado: "check" },
+				{ dia: 19, estado: "check" },
+				{ dia: 20, estado: "check" },
+				{ dia: 21, estado: "check" },
+				{ dia: 22, estado: "none" },
+				{ dia: 23, estado: "none" },
+				{ dia: 24, estado: "none" },
+				{ dia: 25, estado: "none" },
+				{ dia: 26, estado: "none" },
+				{ dia: 27, estado: "none" },
+				{ dia: 28, estado: "none" },
+				{ dia: 29, estado: "none" },
+				{ dia: 30, estado: "none" },
+			  	{ dia: 31, estado: "none" }
+			  ],
+			},
+			{
+			  nombre: "Cisterna",
+			  estados: [
+				{ dia: 1, estado: "alert" },
+				{ dia: 2, estado: "alert" },
+				{ dia: 3, estado: "ok" },
+				{ dia: 4, estado: "ok" },
+				{ dia: 5, estado: "ok" },
+				{ dia: 6, estado: "alert" },
+				{ dia: 7, estado: "ok" },
+				{ dia: 8, estado: "ok" },
+				{ dia: 9, estado: "ok" },
+				{ dia: 10, estado: "ok" },
+				{ dia: 11, estado: "ok" },
+				{ dia: 12, estado: "alert" },
+				{ dia: 13, estado: "ok" },
+				{ dia: 14, estado: "alert" },
+				{ dia: 15, estado: "ok" },
+				{ dia: 16, estado: "check" },
+				{ dia: 17, estado: "check" },
+				{ dia: 18, estado: "check" },
+				{ dia: 19, estado: "none" },
+				{ dia: 20, estado: "none" },
+				{ dia: 21, estado: "none" },
+				{ dia: 22, estado: "none" },
+				{ dia: 23, estado: "none" },
+				{ dia: 24, estado: "none" },
+				{ dia: 25, estado: "none" },
+				{ dia: 26, estado: "none" },
+				{ dia: 27, estado: "none" },
+				{ dia: 28, estado: "none" },
+				{ dia: 29, estado: "none" },
+				{ dia: 30, estado: "none" },
+			  	{ dia: 31, estado: "none" }
+			  ],
+			},
+		  ],
+		},
+		{
+		  titulo: "Rondín de áreas públicas",
+		  areas: [
+			{
+			  nombre: "Planta baja",
+			  estados: [
+				{ dia: 1, estado: "cancel" },
+				{ dia: 2, estado: "cancel" },
+				{ dia: 3, estado: "ok" },
+				{ dia: 4, estado: "ok" },
+				{ dia: 5, estado: "ok" },
+				{ dia: 6, estado: "alert" },
+				{ dia: 7, estado: "ok" },
+				{ dia: 8, estado: "ok" },
+				{ dia: 9, estado: "ok" },
+				{ dia: 10, estado: "ok" },
+				{ dia: 11, estado: "ok" },
+				{ dia: 12, estado: "alert" },
+				{ dia: 13, estado: "ok" },
+				{ dia: 14, estado: "alert" },
+				{ dia: 15, estado: "ok" },
+				{ dia: 16, estado: "check" },
+				{ dia: 17, estado: "none" },
+				{ dia: 18, estado: "none" },
+				{ dia: 19, estado: "none" },
+				{ dia: 20, estado: "none" },
+				{ dia: 21, estado: "none" },
+				{ dia: 22, estado: "none" },
+				{ dia: 23, estado: "none" },
+				{ dia: 24, estado: "none" },
+				{ dia: 25, estado: "none" },
+				{ dia: 26, estado: "none" },
+				{ dia: 27, estado: "none" },
+				{ dia: 28, estado: "none" },
+				{ dia: 29, estado: "none" },
+				{ dia: 30, estado: "none" },
+			  	{ dia: 31, estado: "none" }
+				
+			  ],
+			},
+			{
+			  nombre: "Comedor",
+			  estados: [
+				{ dia: 1, estado: "ok" },
+				{ dia: 2, estado: "alert" },
+				{ dia: 3, estado: "alert" },
+				{ dia: 4, estado: "ok" },
+				{ dia: 5, estado: "ok" },
+				{ dia: 6, estado: "alert" },
+				{ dia: 7, estado: "ok" },
+				{ dia: 8, estado: "ok" },
+				{ dia: 9, estado: "ok" },
+				{ dia: 10, estado: "ok" },
+				{ dia: 11, estado: "ok" },
+				{ dia: 12, estado: "alert" },
+				{ dia: 13, estado: "ok" },
+				{ dia: 14, estado: "alert" },
+				{ dia: 15, estado: "ok" },
+				{ dia: 16, estado: "none" },
+				{ dia: 17, estado: "none" },
+				{ dia: 18, estado: "check" },
+				{ dia: 19, estado: "none" },
+				{ dia: 20, estado: "check" },
+				{ dia: 21, estado: "none" },
+				{ dia: 22, estado: "none" },
+				{ dia: 23, estado: "none" },
+				{ dia: 24, estado: "none" },
+				{ dia: 25, estado: "none" },
+				{ dia: 26, estado: "none" },
+				{ dia: 27, estado: "none" },
+				{ dia: 28, estado: "none" },
+				{ dia: 29, estado: "none" },
+				{ dia: 30, estado: "none" },
+			  	{ dia: 31, estado: "none" }
+			  ],
+			},
+		  ],
+		},
+	  ],
+	},
+	{
+	  hora: "11:00 am",
+	  categorias: [
+		{
+		  titulo: "Inspección matutina",
+		  areas: [
+			{
+			  nombre: "Oficina A",
+			  estados: [
+				{ dia: 1, estado: "ok" },
+				{ dia: 2, estado: "ok" },
+				{ dia: 3, estado: "cancel" },
+				{ dia: 4, estado: "ok" },
+				{ dia: 5, estado: "alert" },
+				{ dia: 6, estado: "alert" },
+				{ dia: 7, estado: "ok" },
+				{ dia: 8, estado: "ok" },
+				{ dia: 9, estado: "ok" },
+				{ dia: 10, estado: "ok" },
+				{ dia: 11, estado: "ok" },
+				{ dia: 12, estado: "alert" },
+				{ dia: 13, estado: "ok" },
+				{ dia: 14, estado: "alert" },
+				{ dia: 15, estado: "ok" },
+				{ dia: 16, estado: "none" },
+				{ dia: 17, estado: "check" },
+				{ dia: 18, estado: "check" },
+				{ dia: 19, estado: "check" },
+				{ dia: 20, estado: "none" },
+				{ dia: 21, estado: "none" },
+				{ dia: 22, estado: "none" },
+				{ dia: 23, estado: "none" },
+				{ dia: 24, estado: "none" },
+				{ dia: 25, estado: "none" },
+				{ dia: 26, estado: "none" },
+				{ dia: 27, estado: "none" },
+				{ dia: 28, estado: "none" },
+				{ dia: 29, estado: "none" },
+				{ dia: 30, estado: "none" },
+			  	{ dia: 31, estado: "none" }
+			  ],
+			},
+			{
+			  nombre: "Oficina B",
+			  estados: [
+				{ dia: 1, estado: "cancel" },
+				{ dia: 2, estado: "cancel" },
+				{ dia: 3, estado: "ok" },
+				{ dia: 4, estado: "ok" },
+				{ dia: 5, estado: "ok" },
+				{ dia: 6, estado: "alert" },
+				{ dia: 7, estado: "ok" },
+				{ dia: 8, estado: "ok" },
+				{ dia: 9, estado: "ok" },
+				{ dia: 10, estado: "ok" },
+				{ dia: 11, estado: "ok" },
+				{ dia: 12, estado: "alert" },
+				{ dia: 13, estado: "ok" },
+				{ dia: 14, estado: "alert" },
+				{ dia: 15, estado: "ok" },
+				{ dia: 16, estado: "check" },
+				{ dia: 17, estado: "none" },
+				{ dia: 18, estado: "none" },
+				{ dia: 19, estado: "none" },
+				{ dia: 20, estado: "none" },
+				{ dia: 21, estado: "none" },
+				{ dia: 22, estado: "none" },
+				{ dia: 23, estado: "none" },
+				{ dia: 24, estado: "none" },
+				{ dia: 25, estado: "none" },
+				{ dia: 26, estado: "none" },
+				{ dia: 27, estado: "none" },
+				{ dia: 28, estado: "none" },
+				{ dia: 29, estado: "none" },
+				{ dia: 30, estado: "none" },
+			  	{ dia: 31, estado: "none" }
+			  ],
+			},
+		  ],
+		},
+	  ],
+	},
+	{
+	  hora: "01:00 pm",
+	  categorias: [
+		{
+		  titulo: "Rondín áreas eléctricas",
+		  areas: [
+			{
+			  nombre: "Subestación norte",
+			  estados: [
+				{ dia: 1, estado: "ok" },
+				{ dia: 2, estado: "ok" },
+				{ dia: 3, estado: "alert" },
+				{ dia: 4, estado: "ok" },
+				{ dia: 5, estado: "ok" },
+				{ dia: 6, estado: "alert" },
+				{ dia: 7, estado: "ok" },
+				{ dia: 8, estado: "ok" },
+				{ dia: 9, estado: "ok" },
+				{ dia: 10, estado: "ok" },
+				{ dia: 11, estado: "ok" },
+				{ dia: 12, estado: "alert" },
+				{ dia: 13, estado: "ok" },
+				{ dia: 14, estado: "alert" },
+				{ dia: 15, estado: "ok" },
+				{ dia: 16, estado: "none" },
+				{ dia: 17, estado: "none" },
+				{ dia: 18, estado: "none" },
+				{ dia: 19, estado: "none" },
+				{ dia: 20, estado: "none" },
+				{ dia: 21, estado: "none" },
+				{ dia: 22, estado: "none" },
+				{ dia: 23, estado: "none" },
+				{ dia: 24, estado: "none" },
+				{ dia: 25, estado: "none" },
+				{ dia: 26, estado: "none" },
+				{ dia: 27, estado: "none" },
+				{ dia: 28, estado: "none" },
+				{ dia: 29, estado: "none" },
+				{ dia: 30, estado: "none" },
+			  	{ dia: 31, estado: "none" }
+			  ],
+			},
+			{
+			  nombre: "Subestación sur",
+			  estados: [
+				{ dia: 1, estado: "alert" },
+				{ dia: 2, estado: "alert" },
+				{ dia: 3, estado: "ok" },
+				{ dia: 4, estado: "ok" },
+				{ dia: 5, estado: "ok" },
+				{ dia: 6, estado: "alert" },
+				{ dia: 7, estado: "ok" },
+				{ dia: 8, estado: "ok" },
+				{ dia: 9, estado: "ok" },
+				{ dia: 10, estado: "ok" },
+				{ dia: 11, estado: "ok" },
+				{ dia: 12, estado: "alert" },
+				{ dia: 13, estado: "ok" },
+				{ dia: 14, estado: "alert" },
+				{ dia: 15, estado: "ok" },
+				{ dia: 16, estado: "none" },
+				{ dia: 17, estado: "none" },
+				{ dia: 18, estado: "none" },
+				{ dia: 19, estado: "none" },
+				{ dia: 20, estado: "none" },
+				{ dia: 21, estado: "none" },
+				{ dia: 22, estado: "none" },
+				{ dia: 23, estado: "none" },
+				{ dia: 24, estado: "none" },
+				{ dia: 25, estado: "none" },
+				{ dia: 26, estado: "none" },
+				{ dia: 27, estado: "none" },
+				{ dia: 28, estado: "none" },
+				{ dia: 29, estado: "none" },
+				{ dia: 30, estado: "none" },
+			  	{ dia: 31, estado: "none" }
+			  ],
+			},
+		  ],
+		},
+	  ],
+	},
+  ];
+  
+//   const renderIcon = (status: string) => {
+// 	switch (status) {
+// 	  case "ok":
+// 		return (
+// 		  <button className="bg-green-100 text-green-600 text-sm rounded-full ">
+// 			<CircleCheck className="text-white bg-green-500 rounded-full w-5 h-5" />
+// 		  </button>
+// 		);
+// 	  case "alerta":
+// 		return (
+// 		  <button className="bg-yellow-100 text-amber-600 text-sm rounded-full ">
+// 			<CircleAlert className="text-white bg-amber-500 rounded-full w-5 h-5" />
+// 		  </button>
+// 		);
+// 	  case "check":
+// 		return (
+// 		  <button className="bg-blue-100 bg-transparent text-sm rounded-full ">
+// 			<CircleCheck className="text-blue-400 rounded-full w-5 h-5" />
+// 		  </button>
+// 		);
+// 	  case "cancel":
+// 		return (
+// 		  <button className="text-sm rounded-full ">
+// 			<Ban className="text-slate-400 rounded-full w-5 h-5" />
+// 		  </button>
+// 		);
+// 		case "none":
+// 		return (
+// 			<button className="text-sm rounded-full bg-slate-200">
+// 			<Circle className="text-slate-300"/>
+// 			</button>
+// 		);
+// 	  default:
+// 		return (
+// 		    <button className="text-sm rounded-full bg-slate-200">
+// 			<Circle className="text-slate-300"/>
+// 			</button>
+// 		);
+// 	}
+//   };
   return (
   	<div className="w-full">
 		<div className="flex justify-between items-center my-2">
@@ -212,12 +1297,15 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 				</div>
 
 				<div className="flex flex-wrap gap-2">
-				<AddRondinModal title={"Crear Rondin"} >
-					<Button className="w-full md:w-auto bg-blue-500 hover:bg-blue-600">
-						<Plus />
-						Crear Rondin
-					</Button>
-				</AddRondinModal>
+				{activeTab !=="Bitacora" && (
+					<AddRondinModal title={"Crear Rondin"} >
+						<Button className="w-full md:w-auto bg-blue-500 hover:bg-blue-600">
+							<Plus />
+							Crear Rondin
+						</Button>
+					</AddRondinModal>
+				)}
+					
 				{/* <Button
 				variant="destructive"
 				onClick={() => setModalEliminarMultiAbierto(true)}
@@ -254,13 +1342,22 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 			</div>
 			</div>
     	</div>
-		{ rondin && verRondin ? (
+		
+
+		{activeTab =="Bitacora" ? (
+			<div className="p-2">
+				<RondinesBitacoraTable data={dataRondin} />
+			</div>
+		): ( 
+			<>
+
+			{ rondin && verRondin ? (
 
 			<div className="flex flex-col h-full">
 				<div className="flex flex-col md:flex-row">
 					<div className=" w-1/2 border rounded-md bg-white shadow-md pl-4 min-h-[550px] ">
 						<div className="mt-4 flex">
-							<Button onClick={() => {setRondinSeleccionado(null); setVerRondin(false)}} className="bg-transparent hover:bg-transparent cursor-pointer">
+							<Button onClick={() => {setRondinSeleccionado(null); setVerRondin(false); setActiveTab("Rondines");}} className="bg-transparent hover:bg-transparent cursor-pointer">
 							<MoveLeft className="text-black w-64"/>
 							</Button>
 							<h2 className="text-xl font-bold mb-4">{rondin.nombre_del_rondin}</h2>
@@ -286,7 +1383,7 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 							<span >
 							{rondin?.recurrencia} 
 							</span>
-							<Button onClick={() => {setRondinSeleccionado(null);setVerRondin(false);}} className="bg-blue-500 hover:bg-blue-600 cursor-pointer p-2">
+							<Button onClick={() => {setRondinSeleccionado(null);setVerRondin(false); setActiveTab("Rondines");}} className="bg-blue-500 hover:bg-blue-600 cursor-pointer p-2">
 								Editar
 							</Button>
 						</div>
@@ -371,8 +1468,8 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 					<div className="w-2/3 ml-4 p-4 border rounded-md bg-white shadow-md">	
 					<div className="mb-2 font-bold">Fotografías de áreas a inspeccionar: </div>
 						<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-						{rondin.areas.map((val:any, idx:any) => {
-							const imageUrl = val?.foto_area?.[0]?.file_url;
+						{files.map((val:any, idx:any) => {
+							const imageUrl = val?.file_url;
 							return imageUrl ? (
 								<div key={idx} className="rounded overflow-hidden shadow-md">
 								<Image
@@ -476,50 +1573,49 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 								</TabsTrigger>
 							</TabsList>
 
-							{/* Tabs content */}
-							<TabsContent value="rondiness">
-								<div className="p-4 border rounded-md bg-white shadow">
+							{/* <TabsContent value="rondiness">
+								<div className="p-2 border rounded-md bg-white shadow">
 								<h3 className="font-semibold text-lg mb-2">Contenido de Rondines</h3>
 								<div >
 									<table className="min-w-max table-auto border-collapse">
 										<thead>
 										<tr>
-											<th className="text-left px-4 py-2 border">Listado de áreas</th>
+											<th className="text-left px-2 py-1 border">Listado de áreas</th>
+											
 											{dias.map((dia, idx) => (
-											<th key={idx} className="px-2 py-2 border text-sm text-center w-16">
+											<th
+												key={idx}
+												className={`px-1 py-1 border text-sm text-center w-10 ${
+												dia === "Do" ? "bg-blue-100" : ""
+												}`}
+											>
 												<div className="flex flex-col">
-													<div>{idx}</div>
-													<div className="text-gray-500 font-normal">{dia}</div>
+												<div>{idx + 1}</div>
+												<div className="text-gray-500 font-normal">{dia}</div>
 												</div>
 											</th>
 											))}
 										</tr>
 										</thead>
 										<tbody>
-										{rondin.areas.map((area:any, rowIdx:string) => (
+										{rondinn.areas.map((area: any, rowIdx: number) => (
 											<tr key={rowIdx} className="border-t">
-											<td className="px-4 py-2 text-left font-medium border">{area.rondin_area}</td>
-											{dias.map((_, colIdx) => (
-												<td key={colIdx} className="px-2 py-1 text-center border">
-												{/* Ejemplo: alternar entre paloma y signo */}
-												{Math.random() > 0.5 ? (
-													<button className="bg-green-100 text-green-600 text-sm rounded-full px-2 py-1">
-													✅
-													</button>
-												) : (
-													<button className="bg-red-100 text-red-600 text-sm rounded-full px-1.5 py-1">
-													❗
-													</button>
-												)}
-												</td>
-											))}
+												<td className="px-4 py-2 text-left font-medium border">{area.rondin_area}</td>
+												{dias.map((_, colIdx) => {
+												const status = area.rondines_dias[colIdx]; 
+												return (
+													<td key={colIdx} className="px-2 py-1 text-center border">
+													{renderIcon(status)}
+													</td>
+												);
+												})}
 											</tr>
-										))}
+											))}
 										</tbody>
 									</table>
 								</div>
 								</div>
-							</TabsContent>
+							</TabsContent> */}
 
 							<TabsContent value="incidentes">
 								<div className="p-4 border rounded-md bg-white shadow">
@@ -544,62 +1640,109 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 					<div className="flex justify-center items-center h-screen">
 						<div className="w-24 h-24 border-8 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
 					</div>
-				):(
+					):(
 					<div>
-					<Table>
-					<TableHeader className="bg-blue-100 hover:bg-blue-100 ">
-					{table.getHeaderGroups().map((headerGroup) => (
-						<TableRow key={headerGroup.id}>
-							{headerGroup.headers.map((header) => {
-							return (
-								<TableHead key={header.id} className="px-1">
-								{header.isPlaceholder
-									? null
-									: flexRender(
-										header.column.columnDef.header,
-										header.getContext()
-									)}
-								</TableHead>
-							);
-							})}
-						</TableRow>
-						))}
-					</TableHeader>
-					<TableBody>
-						{table.getRowModel().rows?.length ? (
-						table.getRowModel().rows.map((row) => (
-							<TableRow
-							// onClick={() =>{ handleVerRondin(row.original)}} 
-							key={row.id}
-							data-state={row.getIsSelected() && "selected"}
-							>
-							{row.getVisibleCells().map((cell) => (
-								<TableCell key={cell.id} className="p-1 pl-1">
-								{flexRender(
-									cell.column.columnDef.cell,
-									cell.getContext()
-								)}
-								</TableCell>
-							))}
+						<Table>
+						<TableHeader className="bg-blue-100 hover:bg-blue-100 ">
+						{table.getHeaderGroups().map((headerGroup) => (
+							<TableRow key={headerGroup.id}>
+								{headerGroup.headers.map((header) => {
+								return (
+									<TableHead key={header.id} className="px-1">
+									{header.isPlaceholder
+										? null
+										: flexRender(
+											header.column.columnDef.header,
+											header.getContext()
+										)}
+									</TableHead>
+								);
+								})}
 							</TableRow>
-						))
-						) : (
-						<TableRow >
-							<TableCell
-							colSpan={table.getVisibleFlatColumns().length}
-							className="h-24 text-center"
-							>
-							{isLoading? (<div className='text-xl font-semibold'>Cargando registros... </div>): 
-									(<div className='text-xl font-semibold'>No hay registros disponibles...</div>)}
-							</TableCell>
-						</TableRow>
-						)}
-					</TableBody>
-					</Table>
+							))}
+						</TableHeader>
+						<TableBody>
+							{table.getRowModel().rows?.length ? (
+							table.getRowModel().rows.map((row) => (
+								<TableRow
+								// onClick={() =>{ handleVerRondin(row.original)}} 
+								key={row.id}
+								data-state={row.getIsSelected() && "selected"}
+								>
+								{row.getVisibleCells().map((cell) => (
+									<TableCell key={cell.id} className="p-1 pl-1">
+									{flexRender(
+										cell.column.columnDef.cell,
+										cell.getContext()
+									)}
+									</TableCell>
+								))}
+								</TableRow>
+							))
+							) : (
+							<TableRow >
+								<TableCell
+								colSpan={table.getVisibleFlatColumns().length}
+								className="h-24 text-center"
+								>
+								{isLoading? (<div className='text-xl font-semibold'>Cargando registros... </div>): 
+										(<div className='text-xl font-semibold'>No hay registros disponibles...</div>)}
+								</TableCell>
+							</TableRow>
+							)}
+						</TableBody>
+						</Table>
 					</div>
 				)}	
+				</>
+			)}
 			</>
 		)}
+		
+
+		
+
+		{/* { activeTab == "Bitacora" && ( */}
+			
+			{/* <TabsContent value="rondiness">
+				<div className="p-4 border rounded-md bg-white shadow">
+				<h3 className="font-semibold text-lg mb-2">Contenido de Rondines</h3>
+				<div >
+					<table className="min-w-max table-auto border-collapse">
+						<thead>
+						<tr>
+							<th className="text-left px-4 py-2 border">Listado de áreas</th>
+							{dias.map((dia, idx) => (
+							<th key={idx} className="px-2 py-2 border text-sm text-center w-16">
+								<div className="flex flex-col">
+									<div>{idx}</div>
+									<div className="text-gray-500 font-normal">{dia}</div>
+								</div>
+							</th>
+							))}
+						</tr>
+						</thead>
+						<tbody>
+						{rondinn.areas.map((area: any, rowIdx: number) => (
+							<tr key={rowIdx} className="border-t">
+								<td className="px-4 py-2 text-left font-medium border">{area.rondin_area}</td>
+								{dias.map((_, colIdx) => {
+								const status = area.rondines_dias[colIdx]; // ← obtenemos el estado real
+								return (
+									<td key={colIdx} className="px-2 py-1 text-center border">
+									{renderIcon(status)}
+									</td>
+								);
+								})}
+							</tr>
+							))}
+
+						</tbody>
+					</table>
+				</div>
+				</div>
+			</TabsContent> */}
+		{/* )} */}
 
 		<div className="flex items-center justify-end space-x-2 py-4">
 			<div className="space-x-2">
@@ -626,3 +1769,6 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
   );
 }
 export default RondinesTable;
+
+
+
