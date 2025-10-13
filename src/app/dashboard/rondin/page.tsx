@@ -14,22 +14,25 @@ import { useGetStats } from "@/hooks/useGetStats";
 import GuardiasRondinesTable from "@/components/table/rondines/guardias/table";
 
 const RondinesPage = () => {
-  const [selectedOption, setSelectedOption] = useState<string[]>([]);
-  const [ubicacionSeleccionada, setUbicacionSeleccionada]= useState<string>("")
-  const [areaSeleccionada, setAreaSeleccionada]= useState<string>("")
-  const { tab, filter} = useShiftStore()
-  const [dateFilter, setDateFilter] = useState<string>(filter)
-  const [selectedTab, setSelectedTab] = useState<string>(tab ? tab: "Rondines"); 
-  const { data: stats } = useGetStats(ubicacionSeleccionada&& areaSeleccionada?true:false,ubicacionSeleccionada, areaSeleccionada=="todas"?"":areaSeleccionada, 'Rondines')
+	const [selectedOption, setSelectedOption] = useState<string[]>([]);
+	const [ubicacionSeleccionada, setUbicacionSeleccionada]= useState<string>("")
+	const [areaSeleccionada, setAreaSeleccionada]= useState<string>("")
+	const { tab, filter} = useShiftStore()
+	const [dateFilter, setDateFilter] = useState<string>(filter)
+	const [selectedTab, setSelectedTab] = useState<string>(tab ? tab: "Rondines"); 
+	const { data: stats } = useGetStats(ubicacionSeleccionada&& areaSeleccionada?true:false,ubicacionSeleccionada, areaSeleccionada=="todas"?"":areaSeleccionada, 'Rondines')
 
-  const [datePrimera, setDatePrimera] = useState<string>("")
-  const [dateSegunda, setDateSegunda] = useState<string>("")
-  const [selectedRondin, setSelectedRondin]= useState<string[]|null>([]);
+	const [datePrimera, setDatePrimera] = useState<string>("")
+	const [dateSegunda, setDateSegunda] = useState<string>("")
+	const [selectedRondin, setSelectedRondin]= useState<string[]|null>([]);
 
-  const [date1, setDate1] = useState<Date|"">("")
-  const [date2, setDate2] = useState<Date|"">("")
+	const [date1, setDate1] = useState<Date|"">("")
+	const [date2, setDate2] = useState<Date|"">("")
 
-  console.log(datePrimera, dateSegunda)
+	const [ activeTab ,setActiveTab] = useState("")
+	console.log("activeTab", activeTab)
+
+	console.log(datePrimera, dateSegunda)
 	const data: any[] = [
 		{
 		folio: 1,
@@ -451,28 +454,28 @@ const RondinesPage = () => {
               <TabsContent value="Fotos">
                 <div >
                   	<RondinesTable data={data} isLoading={false} setSelectedRondin={setSelectedRondin} selectedRondin={selectedRondin}
-						setDate1={setDate1} setDate2={setDate2} date1={date1} date2={date2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters} />
+						setDate1={setDate1} setDate2={setDate2} date1={date1} date2={date2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters} setActiveTab={setActiveTab} activeTab={""}/>
                 </div>
               </TabsContent>
 
               <TabsContent value="Rondines">
                 <div >
 					<RondinesTable data={data} isLoading={false} setSelectedRondin={setSelectedRondin} selectedRondin={selectedRondin}
-						setDate1={setDate1} setDate2={setDate2} date1={date1} date2={date2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters} />
+						setDate1={setDate1} setDate2={setDate2} date1={date1} date2={date2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters} setActiveTab={setActiveTab} activeTab={""}/>
                 </div>
               </TabsContent>
 
               <TabsContent value="Calendario">
                 <div >
 					<RondinesTable data={data} isLoading={false} setSelectedRondin={setSelectedRondin} selectedRondin={selectedRondin}
-						setDate1={setDate1} setDate2={setDate2} date1={date1} date2={date2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters} />
+						setDate1={setDate1} setDate2={setDate2} date1={date1} date2={date2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters} setActiveTab={setActiveTab} activeTab={""}/>
                 </div>
               </TabsContent>
 
               <TabsContent value="Incidencias">
                 <div >
 					<RondinesTable data={data} isLoading={false} setSelectedRondin={setSelectedRondin} selectedRondin={selectedRondin}
-						setDate1={setDate1} setDate2={setDate2} date1={date1} date2={date2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters} />
+						setDate1={setDate1} setDate2={setDate2} date1={date1} date2={date2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters} setActiveTab={setActiveTab} activeTab={""}/>
                 </div>
               </TabsContent>
             </Tabs>

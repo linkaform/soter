@@ -133,6 +133,17 @@ export const vehiculosColumns: ColumnDef<Bitacora_record>[] = [
 		enableSorting: true,
 	},
 	{
+		accessorKey: "tipo",
+		header: "Tipo",
+		cell: ({ row }) => {
+			const veh = row.original.vehiculos[0]
+			return (
+                <div className="capitalize">{veh?.modelo_vehiculo}</div>
+            )
+		},
+		enableSorting: true,
+	},
+	{
 		accessorKey: "fecha_entrada",
 		header: "Fecha de Entrada",
 		cell: ({ row }) => (
