@@ -11,6 +11,7 @@ import {
 	Play,
 	Square,
 	FileSpreadsheet,
+	Construction,
 } from "lucide-react";
 import GaugeChart from "../graphs/GaugeChart";
 import MultiLineChart from "../graphs/MultiLineChart";
@@ -914,7 +915,16 @@ const ReportsPage = () => {
 								<TicketsTable isLoading={false} tickets={misTickets} />
 							</div> */}
 									<div className="flex items-center justify-center h-96">
-										<span className="text-3xl text-gray-400 font-semibold">Módulo no habilitado</span>
+										<div className="flex flex-col items-center justify-center">
+											{/* Usa un icono de Lucide */}
+											<Construction className="w-24 h-24 text-yellow-400 mb-6 animate-bounce" />
+											<span className="text-2xl text-gray-400 font-semibold mb-2">
+												La tabla de acciones correctivas estará disponible próximamente
+											</span>
+											<span className="text-lg text-gray-500">
+												Estamos trabajando en esta funcionalidad.
+											</span>
+										</div>
 									</div>
 								</TabsContent>
 							</Tabs>
