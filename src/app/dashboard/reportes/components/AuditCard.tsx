@@ -388,9 +388,12 @@ const AuditCard = ({ auditData, onDownloadReport, onImageModal }: AuditCardProps
                                 <div className="space-y-1">
                                     {fallas.map((falla, index) => {
                                         const fallaFormateada = fallasFormateadas.find(f => f.id === falla.id);
+                                        const hasDetalle = fallaFormateada && (
+                                            (fallaFormateada.comentario && fallaFormateada.comentario.trim() !== "") ||
+                                            (fallaFormateada.imagenes && fallaFormateada.imagenes.length > 0)
+                                        );
 
-                                        return fallaFormateada ? (
-                                            // Key estable basado en el ID de la falla
+                                        return hasDetalle ? (
                                             <FallaImagesModal
                                                 key={`falla-${falla.id}`}
                                                 falla={fallaFormateada}
