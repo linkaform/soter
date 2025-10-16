@@ -39,7 +39,21 @@ import { EditarRondinModal } from "@/components/modals/editar-rondin";
 import { useGetRondinById } from "@/hooks/Rondines/useGetRondinById";
 import { AreasModal } from "@/components/modals/add-area-rondin";
 import { RondinesBitacoraTable } from "./bitacoras-table";
-// import { BitacoraTable } from "./bitacoras-table";
+import dynamic from 'next/dynamic';
+
+// Importar dinámicamente (evita errores de SSR)
+const MapaRutas = dynamic(() => import('@/components/ui/map'), {
+  ssr: false,
+});
+
+const puntos = [
+	{ lat: 25.6866, lng: -100.3161, nombre: 'Centro (Macroplaza)' },          
+	{ lat: 25.7030, lng: -100.3370, nombre: 'San Pedro Garza García' },    
+	{ lat: 25.7100, lng: -100.2930, nombre: 'Obispado' },                     
+	{ lat: 25.6672, lng: -100.2736, nombre: 'Tecnológico (ITESM)' },        
+	{ lat: 25.6400, lng: -100.3000, nombre: 'Sur (Colonia del Valle)' },     
+	{ lat: 25.6700, lng: -100.3300, nombre: 'Plaza Cumbres (Noroeste)' },   
+  ];
 
 
 interface ListProps {
@@ -1422,7 +1436,7 @@ const files = [
 							<span className="font-semibold min-w-[130px]">Geolocalizacion:</span>
 						</div>
 						<div className="flex">
-							<MapPin/> Ver en mapa
+							<MapPin/> Ver en MapContainer
 						</div>
 
 						<div className="flex">
@@ -1497,12 +1511,8 @@ const files = [
 								</div>
 							</AreasModal>
 
-							{/* <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-							Agregar Área
-							</button> */}
 						</div>
 
-						{/* Buscador */}
 						<div className="relative">
 							<Search className="absolute left-3 top-2.5 text-gray-500" size={20} />
 							<input
@@ -1532,20 +1542,12 @@ const files = [
 							))}
 						</div>
 					</div>
-					<div className="w-2/3 ml-4 p-4 border rounded-md bg-white shadow-md">	
-					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 h-full w-full">
-						{[].map((val, idx) => (
-						<div key={idx} className="rounded overflow-hidden shadow-md min-w-max h-full">
-							<Image
-							width={100}
-							height={100}
-							src={val}
-							alt={`Demo ${idx + 1}`}
-							className="w-full h-full object-cover"
-							/>
+					<div className="w-2/3 ml-4 p-4 border rounded-md bg-white shadow-md" style={{
+					zIndex: 0,
+				}}>	
+						<div> 
+							<MapaRutas puntos={puntos} />
 						</div>
-						))}
-					</div>	
 					</div>
 				</div>
 
@@ -1573,49 +1575,11 @@ const files = [
 								</TabsTrigger>
 							</TabsList>
 
-							{/* <TabsContent value="rondiness">
-								<div className="p-2 border rounded-md bg-white shadow">
-								<h3 className="font-semibold text-lg mb-2">Contenido de Rondines</h3>
-								<div >
-									<table className="min-w-max table-auto border-collapse">
-										<thead>
-										<tr>
-											<th className="text-left px-2 py-1 border">Listado de áreas</th>
-											
-											{dias.map((dia, idx) => (
-											<th
-												key={idx}
-												className={`px-1 py-1 border text-sm text-center w-10 ${
-												dia === "Do" ? "bg-blue-100" : ""
-												}`}
-											>
-												<div className="flex flex-col">
-												<div>{idx + 1}</div>
-												<div className="text-gray-500 font-normal">{dia}</div>
-												</div>
-											</th>
-											))}
-										</tr>
-										</thead>
-										<tbody>
-										{rondinn.areas.map((area: any, rowIdx: number) => (
-											<tr key={rowIdx} className="border-t">
-												<td className="px-4 py-2 text-left font-medium border">{area.rondin_area}</td>
-												{dias.map((_, colIdx) => {
-												const status = area.rondines_dias[colIdx]; 
-												return (
-													<td key={colIdx} className="px-2 py-1 text-center border">
-													{renderIcon(status)}
-													</td>
-												);
-												})}
-											</tr>
-											))}
-										</tbody>
-									</table>
+							<TabsContent value="rondiness">
+								<div className="p-2">
+									<RondinesBitacoraTable data={dataRondin} />
 								</div>
-								</div>
-							</TabsContent> */}
+							</TabsContent>
 
 							<TabsContent value="incidentes">
 								<div className="p-4 border rounded-md bg-white shadow">

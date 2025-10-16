@@ -6,6 +6,7 @@ import { toast } from "sonner"; // Importar Sonner
 import { useShiftStore } from "@/store/useShiftStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Imagen } from "@/lib/update-pass-full";
+import { errorMsj } from "@/lib/utils";
 
 export const useGetShift = (enableShift:boolean) => {
   const queryClient = useQueryClient();
@@ -34,8 +35,13 @@ export const useGetShift = (enableShift:boolean) => {
     enabled: enableShift,
     queryFn: async () => {
       const data = await getShift({ area, location });
-      if(!data.success) throw new Error(data.error?.exception?.msg[0] || "Hubo un error al obtener load shift");
-      return data.response?.data;
+      const hasError = (!data?.success) || (data?.response?.data?.status_code === 400 )
+      if (hasError) {
+          const textMsj = errorMsj(data)
+          toast.error(`Error al obtener load shift, Error: ${textMsj?.text}`);
+      } else {
+          return data.response?.data
+      }
 		}});
 
   const startShiftMutation = useMutation({

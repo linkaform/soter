@@ -4,18 +4,18 @@ import React, { useState } from "react";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 
 import RondinesTable from "@/components/table/rondines/table";
-import RondinesCalendar from "@/components/pages/rondines/calendar";
 import PageTitle from "@/components/page-title";
 import ChangeLocation from "@/components/changeLocation";
 import { useShiftStore } from "@/store/useShiftStore";
 import { arraysIguales, dateToString } from "@/lib/utils";
-import { CalendarClock } from "lucide-react";
+import { Ban, BookCheck, CalendarClock, CheckCircle, Flag, Play, Search, Sun } from "lucide-react";
 import { useGetStats } from "@/hooks/useGetStats";
 import { useGetListRondines } from "@/hooks/Rondines/useGetListRondines";
-import GuardiasRondinesTable from "@/components/table/rondines/guardias/table";
 import { Gallery } from "@/components/modals/gallery";
 import IncidenciasRondinesTable from "@/components/table/incidencias-rondines/table";
 import { Incidencia_record } from "@/components/table/incidencias/incidencias-columns";
+import RondinesCalendar from "@/components/calendar";
+
 
 const RondinesPage = () => {
   const [selectedOption, setSelectedOption] = useState<string[]>([]);
@@ -37,6 +37,7 @@ const RondinesPage = () => {
   const [date2, setDate2] = useState<Date|"">("")
   const [activeTab, setActiveTab] = useState("Rondines");
 
+ 
 
   const [selectedIncidencias, setSelectedIncidencias] = useState<string[]>([])
   const listaIncidencias : Incidencia_record[] = [
@@ -282,6 +283,8 @@ const RondinesPage = () => {
     },
   ];
 
+
+	  
   return (
     <div className="">
       <div className="flex flex-col">
@@ -305,7 +308,7 @@ const RondinesPage = () => {
 							dateFilter== "today" && selectedTab === 'Personal' &&  selectedOption[0]=="entrada" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} 
 							onClick={() => {handleTabChange("Personal",["entrada"], "today");}}>
 							<div className="flex gap-6">
-								<CalendarClock className="text-primary w-10 h-10" />
+								<Play className="text-primary w-10 h-10" />
 								<span className="flex items-center font-bold text-4xl">
 								{stats?.visitas_en_dia} 0
 								</span>
@@ -321,7 +324,7 @@ const RondinesPage = () => {
 							dateFilter== "today" && selectedTab === 'Personal' &&  selectedOption[0]=="entrada" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} 
 							onClick={() => {handleTabChange("Personal",["entrada"], "today");}}>
 							<div className="flex gap-6">
-								<CalendarClock className="text-primary w-10 h-10" />
+								<Flag className="text-primary w-10 h-10" />
 								<span className="flex items-center font-bold text-4xl">
 								{stats?.visitas_en_dia} 0
 								</span>
@@ -337,7 +340,7 @@ const RondinesPage = () => {
 							dateFilter== "today" && selectedTab === 'Personal' &&  selectedOption[0]=="entrada" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} 
 							onClick={() => {handleTabChange("Personal",["entrada"], "today");}}>
 							<div className="flex gap-6">
-								<CalendarClock className="text-primary w-10 h-10" />
+								<BookCheck className="text-primary w-10 h-10" />
 								<span className="flex items-center font-bold text-4xl">
 								{stats?.visitas_en_dia} 0
 								</span>
@@ -406,7 +409,7 @@ const RondinesPage = () => {
 							dateFilter== "today" && selectedTab === 'Personal' &&  selectedOption[0]=="entrada" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} 
 							onClick={() => {handleTabChange("Personal",["entrada"], "today");}}>
 							<div className="flex gap-6">
-								<CalendarClock className="text-primary w-10 h-10" />
+								<Sun className="text-primary w-10 h-10" />
 								<span className="flex items-center font-bold text-4xl">
 								{stats?.visitas_en_dia} 0
 								</span>
@@ -421,7 +424,7 @@ const RondinesPage = () => {
 							dateFilter== "today" && selectedTab === 'Personal' &&  selectedOption[0]=="entrada" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} 
 							onClick={() => {handleTabChange("Personal",["entrada"], "today");}}>
 							<div className="flex gap-6">
-								<CalendarClock className="text-primary w-10 h-10" />
+								<Search className="text-primary w-10 h-10" />
 								<span className="flex items-center font-bold text-4xl">
 								{stats?.visitas_en_dia} 0
 								</span>
@@ -490,7 +493,7 @@ const RondinesPage = () => {
 							dateFilter== "today" && selectedTab === 'Personal' &&  selectedOption[0]=="entrada" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} 
 							onClick={() => {handleTabChange("Personal",["entrada"], "today");}}>
 							<div className="flex gap-6">
-								<CalendarClock className="text-primary w-10 h-10" />
+								<Sun className="text-primary w-10 h-10" />
 								<span className="flex items-center font-bold text-4xl">
 								{stats?.visitas_en_dia} 0
 								</span>
@@ -539,7 +542,7 @@ const RondinesPage = () => {
 							dateFilter== "today" && selectedTab === 'Personal' &&  selectedOption[0]=="entrada" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} 
 							onClick={() => {handleTabChange("Personal",["entrada"], "today");}}>
 							<div className="flex gap-6">
-								<CalendarClock className="text-primary w-10 h-10" />
+								<CheckCircle className="text-primary w-10 h-10" />
 								<span className="flex items-center font-bold text-4xl">
 								{stats?.visitas_en_dia} 0
 								</span>
@@ -554,7 +557,7 @@ const RondinesPage = () => {
 							dateFilter== "today" && selectedTab === 'Personal' &&  selectedOption[0]=="entrada" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} 
 							onClick={() => {handleTabChange("Personal",["entrada"], "today");}}>
 							<div className="flex gap-6">
-								<CalendarClock className="text-primary w-10 h-10" />
+								<Ban className="text-primary w-10 h-10" />
 								<span className="flex items-center font-bold text-4xl">
 								{stats?.visitas_en_dia} 0
 								</span>
@@ -605,16 +608,17 @@ const RondinesPage = () => {
 					</TabsContent>
 
 					<TabsContent value="Calendario">
-						<div className="flex">
-						<div className="w-1/4 mr-5">
-							<div className="space-y-1">
-							<GuardiasRondinesTable setSelectedRondin={setSelectedRondin} rest={()=>{setSelectedRondin(null); setSelectedTab("Rondines");}}/>
-							</div>
-						</div>
-
-						<div className="w-3/4">
+						<div >
 							<RondinesCalendar />
-						</div>
+							{/* <div className="w-1/4 mr-5">
+								<div className="space-y-1">
+								<GuardiasRondinesTable setSelectedRondin={setSelectedRondin} rest={()=>{setSelectedRondin(null); setSelectedTab("Rondines");}}/>
+								</div>
+
+							</div>
+							<div className="w-3/4">
+								<RondinesCalendar />
+							</div> */}
 						</div>
 					</TabsContent>
 				</Tabs>

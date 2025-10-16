@@ -75,3 +75,39 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+.map-wrapper {
+  width: 100%;
+  max-width: 500px;
+  height: 300px;
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 0 10px rgba(0,0,0,0.15);
+}
+
+              
+/* Ocultar el fondo de eventos en vista semana/día */
+.fc-timegrid-event {
+  background: none !important;
+  border: none !important;
+  color: inherit !important; /* o el color que quieras */
+}
+
+/* Quitar estilos específicos de slots horarios */
+.fc-timegrid-slot {
+  background: none !important;
+  border: none !important;
+}
+/* Reducir tamaño de botones y texto del header */
+.fc .fc-toolbar-title {
+  font-size: 1rem; /* Título más pequeño */
+  font-weight: 600;
+}
+
+.fc .fc-button {
+  font-size: 0.75rem; /* Texto del botón más pequeño */
+  padding: 2px 6px;    /* Menos padding para hacerlos más compactos */
+  height: auto;
+  line-height: 1.2;
+}
