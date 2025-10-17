@@ -1,0 +1,38 @@
+export const misTickets = [
+    {
+        ticketId: "TCK-001",
+        fallas: "Aire acondicionado no funciona",
+        habitaciones: "201, 202",
+        responsable: "Juan Pérez",
+        fechaLimite: "2025-06-10",
+        estatus: "Activo",
+        tipo: "Individual",
+    },
+    {
+        ticketId: "TCK-002",
+        fallas: "Fugas de agua en los baños",
+        habitaciones: "305, 306, 307",
+        responsable: "María López",
+        fechaLimite: "2025-06-12",
+        estatus: "Vencido",
+        tipo: "Agrupada",
+    },
+    {
+        ticketId: "TCK-003",
+        fallas: "Luces fundidas",
+        habitaciones: "Lobby",
+        responsable: "Carlos Sánchez",
+        fechaLimite: "2025-06-08",
+        estatus: "Completado",
+        tipo: "Individual",
+    },
+    {
+        ticketId: "TCK-004",
+        fallas: "Puertas dañadas",
+        habitaciones: "101, 102",
+        responsable: "Ana Torres",
+        fechaLimite: "2025-06-15",
+        estatus: "Activo",
+        tipo: "Agrupada",
+    },
+];
