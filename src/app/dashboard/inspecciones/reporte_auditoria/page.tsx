@@ -318,7 +318,7 @@ const ReportsPage = () => {
 						<div className="flex gap-4 h-full">
 							<div className="border rounded-lg p-4 w-2/5 flex flex-col gap-4 h-full">
 								<FilterPanel
-									title="Fallas de Auditoría"
+									title="Fallas de Inspecciones"
 									items={reportData?.fallas || []}
 									selectedItems={selectedCategories}
 									searchTerm={searchCategory}
@@ -339,7 +339,7 @@ const ReportsPage = () => {
 									<div>
 										<TabsList>
 											<TabsTrigger value="grafica">Fallas</TabsTrigger>
-											<TabsTrigger value="habitaciones">Auditorias</TabsTrigger>
+											<TabsTrigger value="habitaciones">Inspecciones</TabsTrigger>
 										</TabsList>
 									</div>
 									<TabsContent value="grafica" className="flex-1 min-h-0">
@@ -361,7 +361,7 @@ const ReportsPage = () => {
 													<div className="text-xl mb-2">📈 Sin datos de gráfico</div>
 													<div className="text-sm">
 														{fallasStates.length === 0
-															? "Selecciona estados para ver el gráfico de fallas"
+															? "Selecciona ubicaciones para ver el gráfico de fallas"
 															: "No hay datos disponibles para el gráfico"
 														}
 													</div>
@@ -372,13 +372,13 @@ const ReportsPage = () => {
 									<TabsContent value="habitaciones" className="flex-1 min-h-0">
 										<div className="flex gap-4 flex-col h-full min-h-0">
 											<GridDisplay
-												title="Auditoría de Calidad Diurna"
+												title="Inspecciones Realizadas"
 												items={auditoriasData?.auditorias || []}
 												isLoading={isReportLoading}
 												idField="_id"
 												onItemClick={handleAuditItemClick}
 												selectedItemId={selectedAuditItem}
-												emptyMessage="Selecciona una o mas fallas para ver las auditorías"
+												emptyMessage="Selecciona una o mas fallas para ver las inspecciones relacionadas"
 												getItemStatus={(item) => item.status}
 												getItemTooltip={(item) => `${item.label} - ${item.state} (Último chequeo: ${item.created_at})`}
 												gridConfig={{
@@ -406,7 +406,7 @@ const ReportsPage = () => {
 																		const blobURL = URL.createObjectURL(blob);
 																		const link = document.createElement("a");
 																		link.href = blobURL;
-																		link.download = `Auditoria-${auditoriaSeleccionada?.folio}.pdf`;
+																		link.download = `Inspeccion-${auditoriaSeleccionada?.folio}.pdf`;
 																		document.body.appendChild(link);
 																		link.click();
 																		document.body.removeChild(link);
@@ -447,16 +447,16 @@ const ReportsPage = () => {
 								<TabsContent value="general">
 									<div className="flex justify-between p-4 gap-4">
 										<div className="w-2/5">
-											<h3 className="text-3xl font-bold">Auditorias</h3>
+											<h3 className="text-3xl font-bold">Inspecciones</h3>
 										</div>
 										<div className="w-3/5 flex gap-4">
 											<AuditStatsCard
-												title="Mejor Auditoría"
+												title="Mejor Inspección"
 												type="best"
 												data={reportData?.mejor_peor_auditoria?.mejor_auditoria}
 											/>
 											<AuditStatsCard
-												title="Auditoría con Menor Calificación"
+												title="Inspección con Menor Calificación"
 												type="worst"
 												data={reportData?.mejor_peor_auditoria?.peor_auditoria}
 											/>
@@ -472,7 +472,7 @@ const ReportsPage = () => {
 								<TabsContent value="fotografias">
 									<div className="flex justify-between p-4 gap-4">
 										<div>
-											<h3 className="text-3xl font-bold">Imagenes de las Auditorias</h3>
+											<h3 className="text-3xl font-bold">Imagenes de las Inspecciones</h3>
 										</div>
 									</div>
 									<div className="p-4">
@@ -487,7 +487,7 @@ const ReportsPage = () => {
 								<TabsContent value="comentarios">
 									<div className="flex justify-between p-4 gap-4">
 										<div>
-											<h3 className="text-3xl font-bold">Comentarios de las Auditorias</h3>
+											<h3 className="text-3xl font-bold">Comentarios de las Inspecciones</h3>
 										</div>
 									</div>
 									<div className="p-4">
@@ -518,7 +518,7 @@ const ReportsPage = () => {
 				</>
 			) : (
 				<div className="text-center text-gray-500 text-lg py-12">
-					Por favor selecciona los filtros y haz clic en Ejecutar para ver el reporte de auditorías.
+					Por favor selecciona los filtros y haz clic en Ejecutar para ver el reporte de inspecciones.
 				</div>
 			)}
 
