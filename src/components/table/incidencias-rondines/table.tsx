@@ -39,9 +39,9 @@ import DateTime from "@/components/dateTime";
 import { EditarIncidenciaModal } from "@/components/modals/editar-incidencia";
 import ViewImage from "@/components/modals/view-image";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ViewIncidencia } from "@/components/modals/view-incidencia";
 import { SeguimientoIncidenciaLista } from "@/components/modals/add-seguimientos";
 import { Incidencia_record, OptionsCell } from "./incidencias-rondines-columns";
+import { ViewIncidenciaRondin } from "@/components/modals/view-incidencia-rondin";
 
 interface ListProps {
 	data: Incidencia_record[];
@@ -157,34 +157,34 @@ const IncidenciasRondinesTable:React.FC<ListProps> = ({ data, isLoading, openMod
 			  ),
 			  enableSorting: true,
 			},
-			{
-				accessorKey: "estatus",
-				header: "Estatus",
-				cell: ({ row }: { row: Row<Incidencia_record> }) => {
-				  const estatus = row.getValue("estatus") as string;
-				  const colorClass =
-					estatus.toLowerCase() === "abierto"
-					  ? "text-green-600"
-					  : estatus.toLowerCase() === "cerrado"
-					  ? "text-red-600"
-					  : "text-gray-600"; // por si viene otro estatus
+			// {
+			// 	accessorKey: "estatus",
+			// 	header: "Estatus",
+			// 	cell: ({ row }: { row: Row<Incidencia_record> }) => {
+			// 	  const estatus = row.getValue("estatus") as string;
+			// 	  const colorClass =
+			// 		estatus.toLowerCase() === "abierto"
+			// 		  ? "text-green-600"
+			// 		  : estatus.toLowerCase() === "cerrado"
+			// 		  ? "text-red-600"
+			// 		  : "text-gray-600"; // por si viene otro estatus
 			  
-				  return (
-					<div className={`capitalize font-bold ${colorClass}`}>
-					  {estatus}
-					</div>
-				  );
-				},
-				enableSorting: true,
-			  },
-			{
-			  accessorKey: "area_incidencia",
-			  header: "Lugar del incidente",
-			  cell: ({ row }:{row: Row <Incidencia_record> }) => (
-			  <div className="capitalize">{row.getValue("area_incidencia")}</div>
-			  ),
-			  enableSorting: true,
-			},
+			// 	  return (
+			// 		<div className={`capitalize font-bold ${colorClass}`}>
+			// 		  {estatus}
+			// 		</div>
+			// 	  );
+			// 	},
+			// 	enableSorting: true,
+			//   },
+			// {
+			//   accessorKey: "area_incidencia",
+			//   header: "Lugar del incidente",
+			//   cell: ({ row }:{row: Row <Incidencia_record> }) => (
+			//   <div className="capitalize">{row.getValue("area_incidencia")}</div>
+			//   ),
+			//   enableSorting: true,
+			// },
 			{
 				id: "incidencia",
 				header: "Incidencia",
@@ -212,6 +212,17 @@ const IncidenciasRondinesTable:React.FC<ListProps> = ({ data, isLoading, openMod
 				},
 				enableSorting: true,
 			  },
+			  {
+				accessorKey: "accion_incidencia",
+				header: "Acción",
+				cell: ({ row }:{row: Row <Incidencia_record>}) => {
+				return (
+				  <span  className="px-4 py-2 block max-w-xs truncate"
+				 title={row.getValue("comentario_incidencia") || "-"} >{row.getValue("accion_incidencia")}</span>
+				);
+				},
+				enableSorting: true,
+			  },
 			{
 			  accessorKey: "evidencia_incidencia",
 			  header: "Evidencia",
@@ -221,51 +232,51 @@ const IncidenciasRondinesTable:React.FC<ListProps> = ({ data, isLoading, openMod
 			  return(<ViewImage imageUrl={foto ?? []} /> )},
 			  enableSorting: false,
 		  	},
-			{
-			accessorKey: "fecha_hora_incidencia",
-			header: "Fecha",
-			cell: ({ row }:{row: Row <Incidencia_record> }) => (
-			<div className="capitalize">{row.getValue("fecha_hora_incidencia")}</div>
-			),
-			enableSorting: true,
-			},
-			{
-				id: "tags",
-				header: "Tags",
-				accessorFn: (row: { tags: any[]; }) => {
-				  if (Array.isArray(row.tags)) {
-					return row.tags.join(", ");
-				  }
-				  return "";
-				},
-				cell: ({ getValue }: { getValue: () => string }) => {
-					const value = getValue(); // string "tag1, tag2, tag3"
-					// Separa el string en array
-					const tagsArray = value ? value.split(",").map(tag => tag.trim()) : [];
-					return (
-					  <div className="flex flex-wrap gap-1">
-						{tagsArray.map((tag, idx) => (
-						  <span
-							key={idx}
-							className="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded capitalize"
-						  >
-							{tag}
-						  </span>
-						))}
-					  </div>
-					);
-				},
-				enableSorting: true,
-			},			  
+			// {
+			// accessorKey: "fecha_hora_incidencia",
+			// header: "Fecha",
+			// cell: ({ row }:{row: Row <Incidencia_record> }) => (
+			// <div className="capitalize">{row.getValue("fecha_hora_incidencia")}</div>
+			// ),
+			// enableSorting: true,
+			// },
+			// {
+			// 	id: "tags",
+			// 	header: "Tags",
+			// 	accessorFn: (row: { tags: any[]; }) => {
+			// 	  if (Array.isArray(row.tags)) {
+			// 		return row.tags.join(", ");
+			// 	  }
+			// 	  return "";
+			// 	},
+			// 	cell: ({ getValue }: { getValue: () => string }) => {
+			// 		const value = getValue(); // string "tag1, tag2, tag3"
+			// 		// Separa el string en array
+			// 		const tagsArray = value ? value.split(",").map(tag => tag.trim()) : [];
+			// 		return (
+			// 		  <div className="flex flex-wrap gap-1">
+			// 			{tagsArray.map((tag, idx) => (
+			// 			  <span
+			// 				key={idx}
+			// 				className="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded capitalize"
+			// 			  >
+			// 				{tag}
+			// 			  </span>
+			// 			))}
+			// 		  </div>
+			// 		);
+			// 	},
+			// 	enableSorting: true,
+			// },			  
 			
-			{
-			  accessorKey: "reporta_incidencia",
-			  header: "Reporta",
-			  cell: ({ row }:{row: Row <Incidencia_record> }) => (
-			  <div>{row.getValue("reporta_incidencia")}</div>
-			  ),
-			  enableSorting: true,
-			},
+			// {
+			//   accessorKey: "reporta_incidencia",
+			//   header: "Reporta",
+			//   cell: ({ row }:{row: Row <Incidencia_record> }) => (
+			//   <div>{row.getValue("reporta_incidencia")}</div>
+			//   ),
+			//   enableSorting: true,
+			// },
 		  
 	];
   }, [isLoading, handleEditar]);
@@ -397,7 +408,7 @@ const IncidenciasRondinesTable:React.FC<ListProps> = ({ data, isLoading, openMod
 				</div>
 
 				{modalVerAbierto && incidenciaSeleccionada && (
-					<ViewIncidencia 
+					<ViewIncidenciaRondin 
 						title="Información de la Incidencia"
 						data={incidenciaSeleccionada} isSuccess={modalVerAbierto}
 						tab={tabSelected}
@@ -406,7 +417,7 @@ const IncidenciasRondinesTable:React.FC<ListProps> = ({ data, isLoading, openMod
 						<div className="cursor-pointer" title="Ver Incidencia">
 						<Eye /> 
 						</div>
-					</ViewIncidencia>
+					</ViewIncidenciaRondin>
 				)}
 
 				{modalEditarAbierto && incidenciaSeleccionada && (
