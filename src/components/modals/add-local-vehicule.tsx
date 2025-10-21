@@ -196,7 +196,7 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
     <DialogTrigger asChild onClick={() => setOpen(true)}>
         {children}
       </DialogTrigger>
-      <DialogContent className="max-w-xl max-h-[90vh] flex flex-col" onInteractOutside={(e) => e.preventDefault()} aria-describedby=""
+      <DialogContent className="max-w-xl flex flex-col" onInteractOutside={(e) => e.preventDefault()} aria-describedby=""
       > 
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center font-bold">
@@ -204,7 +204,7 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
           </DialogTitle>
         </DialogHeader>
 
-        <div className="flex-grow overflow-y-auto px-4"> 
+        <div className=" px-4"> 
 			<Form {...form}>
 				<form  className="space-y-8 ">
 					<FormField
@@ -216,13 +216,8 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 
 						<Select
 							aria-labelledby="aria-label"
-							// ariaLiveMessages={{
-							// onFocus,
-							// }}
 							inputId="aria-example-input"
 							name="aria-live-color"
-							// onMenuOpen={onMenuOpen}
-							// onMenuClose={onMenuClose}
 							options={tiposCat}
 							onChange={(value:any) =>{
 								field.onChange([value.value]);
@@ -232,42 +227,11 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 								setMarcasCat([])
 							}}
 							isClearable
-							menuPortalTarget={document.body}
+							// menuPortalTarget={document.body}
 							styles={{
 								menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
 							}}
 						/>
-
-						{/* <Select
-							onValueChange={(value) => {
-							field.onChange([value]);
-							setCatalogSearch("marcas")
-							setTipoVehiculoState(value);
-							setMarcaState("")
-							setMarcasCat([])
-							}}
-						>
-							<FormControl>
-							<SelectTrigger>
-							{loadingCat?(
-							<>
-							<SelectValue placeholder="Cargando tipos de vehiculo..." />
-							</>
-							): (
-							<>
-							<SelectValue placeholder="Selecciona un tipo de vehiculo" />
-							</>
-							)}
-							</SelectTrigger>
-							</FormControl>
-							<SelectContent>
-							{tiposCat?.map((item: string) => (
-								<SelectItem key={item} value={item}>
-								{item}
-								</SelectItem>
-							))}
-							</SelectContent>
-						</Select> */}
 						<FormMessage />
 						</FormItem>
 					)}
@@ -281,13 +245,8 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 						<FormLabel>Marca</FormLabel>
 						<Select
 							aria-labelledby="aria-label"
-							// ariaLiveMessages={{
-							// onFocus,
-							// }}
 							inputId="aria-example-input"
 							name="aria-live-color"
-							// onMenuOpen={onMenuOpen}
-							// onMenuClose={onMenuClose}
 							options={marcasCat}
 							onChange={(value:any) =>{
 								field.onChange([value.value]);
@@ -296,40 +255,11 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 								setCatalogSearch("modelos")
 							}}
 							isClearable
-							menuPortalTarget={document.body}
+							// menuPortalTarget={document.body}
 							styles={{
 								menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
 							}}
 						/>
-
-						{/* <Select
-							onValueChange={(value) => {
-								field.onChange([value]);
-								setMarcaState(value);
-								setModelosCat([])
-								setCatalogSearch("modelos")
-							}}
-						>
-							<FormControl>
-							<SelectTrigger>
-									<SelectValue placeholder="Selecciona una opción" />
-							</SelectTrigger>
-							</FormControl>
-							<SelectContent>
-								{marcasCat.length>0?(
-									<>
-									{marcasCat?.map((item: string) => (
-										<SelectItem key={item} value={item}>
-										{item}
-										</SelectItem>
-									))}
-									</>
-								):(
-									<SelectItem key={0} value={"0"} disabled> Selecciona un tipo para ver las opciones</SelectItem>
-								)}
-							
-							</SelectContent>
-						</Select> */}
 						<FormMessage />
 						</FormItem>
 					)}
@@ -354,7 +284,7 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 							options={modelosCat}
 							onChange={(value:any) => field.onChange([value.value])}
 							isClearable
-							menuPortalTarget={document.body}
+							// menuPortalTarget={document.body}
 							styles={{
 								menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
 							}}
@@ -396,7 +326,6 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 							options={catEstados}
 							onChange={(value:any) => field.onChange([value.value])}
 							isClearable
-							menuPortalTarget={document.body}
 							styles={{
 								menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
 							}}
@@ -456,7 +385,6 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 							field.onChange(selectedOption ? [selectedOption.value] : "");
 							}}
 							isClearable
-							menuPortalTarget={document.body}
 							styles={{
 								menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
 							}}
