@@ -42,11 +42,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { SeguimientoIncidenciaLista } from "@/components/modals/add-seguimientos";
 import { Incidencia_record, OptionsCell } from "./incidencias-rondines-columns";
 import { ViewIncidenciaRondin } from "@/components/modals/view-incidencia-rondin";
+import { AddIncidenciaRondinesModal } from "@/components/modals/add-incidencia-rondines";
 
 interface ListProps {
 	data: Incidencia_record[];
 	isLoading:boolean;
-	openModal: () => void;
+	openModal: boolean;
+	setOpenModal:React.Dispatch<React.SetStateAction<boolean>>;
 	resetTableFilters: () => void;
 	setSelectedIncidencias:React.Dispatch<React.SetStateAction<string[]>>;
 	selectedIncidencias:string[];
@@ -69,7 +71,7 @@ const incidenciasColumnsCSV = [
   { label: 'Reporta', key: 'reporta_incidencia' },
 ];
 
-const IncidenciasRondinesTable:React.FC<ListProps> = ({ data, isLoading, openModal,setSelectedIncidencias,selectedIncidencias,
+const IncidenciasRondinesTable:React.FC<ListProps> = ({ data, isLoading, openModal, setOpenModal,setSelectedIncidencias,selectedIncidencias,
 	setDate1, setDate2, date1, date2, dateFilter, setDateFilter,Filter, resetTableFilters
  })=> {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -77,7 +79,6 @@ const IncidenciasRondinesTable:React.FC<ListProps> = ({ data, isLoading, openMod
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
-
 	const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
 	const [tabSelected, setTabSelected] = useState("datos")
 	const [modalVerAbierto, setModalVerAbierto] = useState(false);
@@ -327,10 +328,10 @@ const IncidenciasRondinesTable:React.FC<ListProps> = ({ data, isLoading, openMod
 			<div className="flex w-1/2 justify-start gap-4 ">
                 <div className="flex justify-center items-center">
 					<TabsList className="bg-blue-500 text-white p-1 rounded-md ">
+						<TabsTrigger value="Rondines">Rondines</TabsTrigger>
 						<TabsTrigger value="Bitacora">Bitácora</TabsTrigger>
 						<TabsTrigger value="Incidencias">Incidencias</TabsTrigger>
 						<TabsTrigger value="Fotos">Fotos</TabsTrigger>
-						<TabsTrigger value="Rondines">Rondines</TabsTrigger>
 						<TabsTrigger value="Calendario">Calendario</TabsTrigger>
 					</TabsList>
 				</div> 
@@ -379,7 +380,7 @@ const IncidenciasRondinesTable:React.FC<ListProps> = ({ data, isLoading, openMod
 
 				<div className="flex flex-wrap gap-2">
 				<div>
-					<Button className="w-full md:w-auto bg-green-500 hover:bg-green-600" onClick={openModal}>
+					<Button className="w-full md:w-auto bg-green-500 hover:bg-green-600" onClick={()=>{setOpenModal(true)}}>
 						<Plus />
 						Nuevo Incidente
 					</Button>
@@ -445,6 +446,10 @@ const IncidenciasRondinesTable:React.FC<ListProps> = ({ data, isLoading, openMod
 						}
 					  }}/>
 				)}
+
+					<AddIncidenciaRondinesModal title="Crear incidencia" isSuccess={false} setIsSuccess={setOpenModal} onClose={()=>{}}>
+						
+					</AddIncidenciaRondinesModal>
 
 				{modalSeguimientoAbierto && incidenciaSeleccionada && (
 					// <SeguimientoIncidenciaModal

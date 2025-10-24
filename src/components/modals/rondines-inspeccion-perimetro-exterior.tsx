@@ -93,7 +93,7 @@ export const ViewRondinesDetallePerimetroExt: React.FC<ViewRondinesDetalleAreaPr
             <div className="flex gap-3">
                 <div className="bg-slate-200 p-3 rounded"><AlarmClock /> </div>
                 <div className="flex flex-col"> 
-                    <p>Duración aproximada</p>
+                    <p>Duración</p>
                     <p className="text-gray-400">1:30hrs</p>
                 </div>
             </div>

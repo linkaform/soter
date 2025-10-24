@@ -52,7 +52,8 @@ interface EntryPassUpdateModalProps {
     config_limitar_acceso: number;
     areas: Areas[];
     comentarios: Comentarios[];
-    enviar_pre_sms: enviar_pre_sms
+    enviar_pre_sms: enviar_pre_sms;
+	todas_las_areas:boolean;
   };
   isSuccess: boolean;
   setIsSuccess: Dispatch<SetStateAction<boolean>>;
@@ -133,6 +134,7 @@ export const EntryPassModal: React.FC<EntryPassUpdateModalProps> = ({
         mensaje: dataPass.enviar_pre_sms.mensaje,
         numero: dataPass.enviar_pre_sms.numero,
       },
+	  todas_las_areas:dataPass.todas_las_areas
     };
     const enviarPreSms : enviar_pre_sms= {
       from: dataPass.enviar_pre_sms.from,

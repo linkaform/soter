@@ -37,7 +37,7 @@ const RondinesPage = () => {
   const [date2, setDate2] = useState<Date|"">("")
   const [activeTab, setActiveTab] = useState("Rondines");
 
- 
+  const [openModal, setOpenModal] = useState(false);
 
   const [selectedIncidencias, setSelectedIncidencias] = useState<string[]>([])
   const listaIncidencias : Incidencia_record[] = [
@@ -586,8 +586,8 @@ const RondinesPage = () => {
 					<TabsContent value="Incidencias">
 						<div>
 						<IncidenciasRondinesTable data={listaIncidencias} 
-							isLoading={false} openModal={()=>{}} setSelectedIncidencias={setSelectedIncidencias} selectedIncidencias={selectedIncidencias} 
-							date1={date1} date2={date2} setDate1={setDate1} setDate2={setDate2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters}
+							isLoading={false}  setSelectedIncidencias={setSelectedIncidencias} selectedIncidencias={selectedIncidencias} 
+							date1={date1} date2={date2} setDate1={setDate1} setDate2={setDate2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters} openModal={openModal} setOpenModal={setOpenModal}
 							/>
 							{/* <RondinesTable data={listRondines} isLoading={false} setSelectedRondin={setSelectedRondin} selectedRondin={selectedRondin} */}
 							{/* setDate1={setDate1} setDate2={setDate2} date1={date1} date2={date2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters} setActiveTab={setActiveTab} activeTab={activeTab}/> */}

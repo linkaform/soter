@@ -8,7 +8,7 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
-import { AlarmClock, Calendar, Repeat2, User } from "lucide-react";
+import { Calendar, Repeat2 } from "lucide-react";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
 import Image from "next/image";
 import { Imagen } from "@/lib/update-pass-full";
@@ -34,7 +34,7 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
     const hoy = new Date();
     const mesActual = hoy.getMonth();
     const añoActual = hoy.getFullYear();
-    const diasSemana = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+    const diasSemana = ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"];
     const dias = Array.from({ length: 31 }, (_, i) => {
       const fecha = new Date(añoActual, mesActual, i + 1);
       return {
@@ -86,8 +86,8 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
                 >
                     {/* NÚMERO del día con círculo azul si está seleccionado */}
                     <div
-                    className={`w-8 h-8 flex items-center justify-center rounded-full text-white text-sm font-bold
-                        ${diaSeleccionado === dia.numero ? "bg-blue-600" : "bg-transparent text-gray-800"}`}
+                    className={`w-5 h-5 flex items-center justify-center rounded-full text-black text-xs font-semibold 
+                        ${diaSeleccionado === dia.numero ? "bg-blue-600 text-white" : "bg-transparent text-black"}`}
                     >
                     {dia.numero}
                     </div>
@@ -167,7 +167,7 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
                 </div>
             </div>
 
-            <div className="flex gap-3">
+            {/* <div className="flex gap-3">
                 <div className="bg-slate-200 p-3 rounded"> <User/> </div>
                 <div className="flex flex-col"> 
                     <p>Incidente</p>
@@ -181,7 +181,7 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
                     <p>Duración aproximada</p>
                     <p className="text-gray-400">1:30hrs</p>
                 </div>
-            </div>
+            </div> */}
 
             <div className="flex gap-3">
                 <div className="bg-slate-200 p-3 rounded"><Repeat2/> </div>
@@ -191,6 +191,12 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
                 </div>
             </div>
         </div>
+        <div className="flex gap-3">
+                <div className=""> 
+                    <p>Comentarios</p>
+                    <p className="text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                </div>
+            </div>
 
         {/* <div className="flex  justify-end">
         <Button
@@ -221,9 +227,9 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
             </div>
 		</div> */}
 
-		 <div className="flex gap-1 my-5 col-span-2">
+		 <div className="flex gap-1 my-2 col-span-2">
           	<DialogClose asChild>
-            <Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700">
+            <Button className="w-full bg-gray-200 hover:bg-gray-200 text-gray-700">
               Cerrar
             </Button>
           	</DialogClose>
