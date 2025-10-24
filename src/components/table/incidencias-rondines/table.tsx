@@ -79,6 +79,11 @@ const IncidenciasRondinesTable:React.FC<ListProps> = ({ data, isLoading, openMod
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
+<<<<<<< Updated upstream
+
+=======
+>>>>>>> Stashed changes
+  	console.log(openModal)
 	const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
 	const [tabSelected, setTabSelected] = useState("datos")
 	const [modalVerAbierto, setModalVerAbierto] = useState(false);
