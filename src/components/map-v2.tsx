@@ -1,3 +1,6 @@
+
+"use client";
+
 import React, { useState, useEffect, useRef } from "react";
 import {
   MapContainer,
@@ -9,14 +12,14 @@ import {
   useMapEvents,
 } from "react-leaflet";
 import L, { latLngBounds } from "leaflet";
-// import _ from "lodash";
 import Link from "next/link";
 import "leaflet/dist/leaflet.css";
 import "../app/map.css"
 import osm from "@/app/map-config";
 import useAuthStore from "@/store/useAuthStore";
 import { Map } from 'leaflet';
-// --- Tipos de datos ---
+
+
 interface RecordData {
   id: number;
   folio: string;
@@ -129,7 +132,10 @@ const MapView = ({ puntos }: MapaRutasProps) => {
 		? { lat: puntos[0].lat, lng: puntos[0].lng }
 		: { lat: 19.4326, lng: -99.1332 },
 		filterId: null,
-		parameters: document.location.search ? new URLSearchParams(document.location.search) : new URLSearchParams('deleted=false&limit=20&offset=0'),
+		// parameters: document.location.search ? new URLSearchParams(document.location.search) : new URLSearchParams('deleted=false&limit=20&offset=0'),
+		parameters: typeof window !== "undefined" && window.location.search
+		? new URLSearchParams(window.location.search)
+		: new URLSearchParams('deleted=false&limit=20&offset=0'),
 		records: [],
 		limit: 20,
 		offset: 0,
@@ -162,19 +168,7 @@ const MapView = ({ puntos }: MapaRutasProps) => {
 		}
 	}, [puntos]);
 
-	// const prevState = useRef<MapViewState | null>(null);
 
-	// const mergeState = (newState: Partial<MapViewState>): MapViewState => ({
-	// 	...state,
-	// 	...newState,
-	// });
-	
-	// const updateState = (newState: Partial<MapViewState>) => {
-	// 	const merged = mergeState(newState);
-	// 	setState(merged);
-	// 	prevState.current = merged;
-	// };
-	
 	const setZoom = (map: any) => {
 		if (state.records.length && state.center) {
 			map.setView({ lng: state.center.lng, lat: state.center.lat }, DEFAULT_ZOOM);
@@ -191,27 +185,6 @@ const MapView = ({ puntos }: MapaRutasProps) => {
 	};
 	
 
-	// const GroupMarkers = (data: RecordData[]) => {
-	// 	const groupDic: Record<string, RecordData[]> = {};
-	// 	const geolocationList: string[] = [];
-
-	// 	data.forEach((item) => {
-	// 	if (item.geolocation) {
-	// 		const key = `${item.geolocation[0]}|${item.geolocation[1]}`;
-	// 		if (!groupDic[key]) groupDic[key] = [];
-	// 		groupDic[key].push(item);
-	// 		if (!geolocationList.includes(key)) geolocationList.push(key);
-	// 	}
-	// 	});
-
-	// 	geolocationList.forEach((key) => {
-	// 	if (groupDic[key].length === 1) delete groupDic[key];
-	// 	});
-
-	// 	return groupDic;
-	// };
-
-  // --- Leaflet icon ---
   const myIcon = L.icon({
     iconUrl:
       "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
