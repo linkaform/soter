@@ -7,11 +7,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { Dispatch, SetStateAction, useRef, useState } from "react";
-import { Calendar, Repeat2 } from "lucide-react";
+import { Dispatch, SetStateAction, useState } from "react";
+import { Building2, Bus, Calendar1, Clock, Route } from "lucide-react";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
 import Image from "next/image";
 import { Imagen } from "@/lib/update-pass-full";
+import DaysCarousel from "../daysCarousel";
 
 interface ViewRondinesDetalleAreaProps {
   title: string;
@@ -19,6 +20,8 @@ interface ViewRondinesDetalleAreaProps {
   isSuccess: boolean;
   setIsSuccess: Dispatch<SetStateAction<boolean>>;
   children: React.ReactNode;
+  diaSelected: number
+  rondin:string
 }
 
 export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
@@ -27,36 +30,25 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
   children,
   setIsSuccess,
   isSuccess,
+  diaSelected,
+  rondin
 }) => {
 
-    console.log(data)
+    console.log("Data", data, title)
     const img=[{file_url:"/nouser.svg", file_name:"Imagen"},{file_url:"/nouser.svg", file_name:"Imagen"}]
-    const hoy = new Date();
-    const mesActual = hoy.getMonth();
-    const añoActual = hoy.getFullYear();
-    const diasSemana = ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"];
-    const dias = Array.from({ length: 31 }, (_, i) => {
-      const fecha = new Date(añoActual, mesActual, i + 1);
-      return {
-        numero: i + 1,
-        diaSemana: diasSemana[fecha.getDay()],
-      };
-    });
+    // const hoy = new Date();
+    // const mesActual = hoy.getMonth();
+    // const añoActual = hoy.getFullYear();
+    // const diasSemana = ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"];
+    // const dias = Array.from({ length: 31 }, (_, i) => {
+    //   const fecha = new Date(añoActual, mesActual, i + 1);
+    //   return {
+    //     numero: i + 1,
+    //     diaSemana: diasSemana[fecha.getDay()],
+    //   };
+    // });
 
-    const [diaSeleccionado, setDiaSeleccionado] = useState<number | null>(null);
-    const scrollRef = useRef<HTMLDivElement | null>(null);
-  
-    const scrollLeft = () => {
-        if (scrollRef.current) {
-          scrollRef.current.scrollBy({ left: -100, behavior: "smooth" });
-        }
-      };
-      
-    const scrollRight = () => {
-    if (scrollRef.current) {
-        scrollRef.current.scrollBy({ left: 100, behavior: "smooth" });
-    }
-    };
+    const [diaSeleccionado, setDiaSeleccionado] = useState<number | null>(diaSelected);
 
     return (
     <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
@@ -65,15 +57,15 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
 
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center font-bold">
-            {title}
+            {data.area.nombre}
           </DialogTitle>
         </DialogHeader>
         
-        <div className="relative w-full flex items-center">
+        {/* <div className="relative w-full flex items-center">
             <button onClick={scrollLeft} className="z-10 px-2 text-xl font-bold text-gray-600 hover:text-black">
                 ‹
             </button>
-            {/* Contenedor scrollable */}
+
             <div
                 ref={scrollRef}
                 className="flex overflow-x-auto  divide-gray-300 space-x-2 px-2"
@@ -84,7 +76,6 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
                     onClick={() => setDiaSeleccionado(dia.numero)}
                     className="w-10 h-14 flex flex-col items-center justify-center cursor-pointer transition hover:bg-gray-100 rounded"
                 >
-                    {/* NÚMERO del día con círculo azul si está seleccionado */}
                     <div
                     className={`w-5 h-5 flex items-center justify-center rounded-full text-black text-xs font-semibold 
                         ${diaSeleccionado === dia.numero ? "bg-blue-600 text-white" : "bg-transparent text-black"}`}
@@ -92,7 +83,6 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
                     {dia.numero}
                     </div>
 
-                    {/* Día de la semana */}
                     <div className="text-xs text-gray-600 capitalize mt-1">
                     {dia.diaSemana}
                     </div>
@@ -100,14 +90,19 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
                 ))}
             </div>
 
-            {/* Flecha derecha */}
             <button
                 onClick={scrollRight}
                 className="z-10 px-2 text-xl font-bold text-gray-600 hover:text-black"
             >
                 ›
             </button>
-            </div>
+        </div> */}
+
+        <DaysCarousel
+                data={data}
+                selectedDay={diaSeleccionado}
+                onDaySelect={setDiaSeleccionado}
+            />
 
         <div className="flex items-center justify-center">
         <Carousel className="w-44">
@@ -130,9 +125,9 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
                         <Image
                             height={160}
                             width={160}
-                            src={a.file_url || "/nouser.svg"}
+                            src={ "/mountain.svg"}
                             alt="Imagen"
-                            className="w-full h-40 object-cover rounded-lg"
+                            className="w-full h-40 object-cover rounded-lg "
                         />
                         )}
                     </div>
@@ -152,42 +147,40 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
 
 		<div className="flex flex-col gap-y-3">
             <div className="flex gap-3">
-                <div className="bg-slate-200 p-3 rounded"><Calendar /> </div>
+                <div className="bg-slate-200 p-3 rounded"><Route /></div>
                 <div className="flex flex-col"> 
                     <p>Rondin</p>
-                    <p className="text-gray-500 text-sm">Abr 12 2025 12:00pm</p>
+                    <p className="text-gray-500 text-sm">{rondin}</p>
                 </div>
             </div>
-
             <div className="flex gap-3">
-                <div className="bg-slate-200 p-3 rounded"><Calendar /> </div>
-                <div className="flex flex-col"> 
-                    <p>Ubicación</p>
-                    <p className="text-gray-500 text-sm">Abr 12 2025 12:00pm</p>
-                </div>
-            </div>
-
-            {/* <div className="flex gap-3">
-                <div className="bg-slate-200 p-3 rounded"> <User/> </div>
-                <div className="flex flex-col"> 
-                    <p>Incidente</p>
-                    <p className="text-gray-400">Roberto Pérez López</p>
-                </div>
-            </div>
-
-            <div className="flex gap-3">
-                <div className="bg-slate-200 p-3 rounded"><AlarmClock /> </div>
-                <div className="flex flex-col"> 
-                    <p>Duración aproximada</p>
-                    <p className="text-gray-400">1:30hrs</p>
-                </div>
-            </div> */}
-
-            <div className="flex gap-3">
-                <div className="bg-slate-200 p-3 rounded"><Repeat2/> </div>
+                <div className="bg-slate-200 p-3 rounded"><Calendar1/> </div>
                 <div className="flex flex-col"> 
                     <p>Fecha y hora de inspección</p>
                     <p className="text-gray-400">Abr 12 2025 12:00pm</p>
+                </div>
+            </div>
+            <div className="flex gap-3">
+                <div className="bg-slate-200 p-3 rounded"><Building2/> </div>
+                <div className="flex flex-col"> 
+                    <p>Ubicación</p>
+                    <p className="text-gray-500 text-sm">{data.area.ubicacion || "Ubicación demo" }</p>
+                </div>
+            </div>
+
+            <div className="flex gap-3">
+                <div className="bg-slate-200 p-3 rounded"> <Clock/> </div>
+                <div className="flex flex-col"> 
+                    <p>Tiempo</p>
+                    <p className="text-gray-400">20 minutos</p>
+                </div>
+            </div>
+
+            <div className="flex gap-3">
+                <div className="bg-slate-200 p-3 rounded"><Bus /> </div>
+                <div className="flex flex-col"> 
+                    <p>Translado</p>
+                    <p className="text-gray-400">{"Demo"}</p>
                 </div>
             </div>
         </div>

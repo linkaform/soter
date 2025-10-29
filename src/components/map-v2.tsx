@@ -146,6 +146,7 @@ const MapView = ({ puntos }: MapaRutasProps) => {
 	const DEFAULT_ZOOM = 20;
 	const mapRef = useRef<Map | null>(null);
 	// const runOnce = useRef(false);
+	const initialized = useRef(false);
 
 	const [state, setState] = useState<MapViewState>(initialState);
 
@@ -200,9 +201,7 @@ const MapView = ({ puntos }: MapaRutasProps) => {
 
   return (
     <article>
-      {/* {loading && <p>Cargando...</p>} */}
-      {/* {!loading && state.center && ( */}
-		
+	  {!initialized.current && (
         <MapContainer
 			center={state.center ?? { lat: 19.4326, lng: -99.1332 }}
 			zoom={DEFAULT_ZOOM}
@@ -257,10 +256,10 @@ const MapView = ({ puntos }: MapaRutasProps) => {
 					</Tooltip>
 					</Marker>
 			))}
-        </MapContainer>
-     {/* )} */}
-    </article>
-  );
+	  </MapContainer>
+	)}
+  </article>
+);
 };
 
 export default MapView;

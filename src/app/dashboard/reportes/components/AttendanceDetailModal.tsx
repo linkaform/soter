@@ -99,7 +99,7 @@ const AttendanceDetailModal: React.FC<AttendanceDetailModalProps> = ({
                                             } • {attendanceDetail?.guardia_generales?.incidente_location}
                                         </div>
                                         <div className="text-xs text-gray-700 mt-1">
-                                            Estado laboral: <span className="font-semibold text-green-600">{attendanceDetail?.actual_guard_status || "Desconocido"}</span>
+                                            Estado laboral: <span className="font-semibold text-green-600">{attendanceDetail?.actual_guard_status || "Desconocido"} sads</span>
                                         </div>
                                     </div>
                                 </div>

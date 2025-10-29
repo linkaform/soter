@@ -229,7 +229,8 @@ const ROWS_PER_PAGE = 2; // Cambia según cuánto quieres mostrar por página
 export const RondinesBitacoraTable = ({ data, dateFilter }: Props) => {
 	const [expandedCategorias, setExpandedCategorias] = useState<string[]>([]);
 	const [page, setPage] = useState(0);
-  
+	const [diaSelected, setDiaSelected] = useState(0)
+
 	useEffect(() => {
 	  const allCategoriaKeys = data.flatMap((rondin) =>
 		rondin.categorias.map((categoria) => `${rondin.hora}-${categoria.titulo}`)
@@ -265,17 +266,9 @@ export const RondinesBitacoraTable = ({ data, dateFilter }: Props) => {
 				<div
 					
 					onClick={() => {
-					if (estadoDia.estado === "finalizado") {
 						setSelectedAreaData({ area, estadoDia });
 						setModalOpenArea(true);
-					} else if (
-						estadoDia.estado === "alert" ||
-						estadoDia.estado === "cancelado" ||
-						estadoDia.estado === "area_incidente"
-					) {
-						setSelectedAreaData({ area, estadoDia });
-						setModalOpenPerimetroExt(true);
-					}
+						setDiaSelected(estadoDia.dia)
 					}}
 				>
 					<EstadoIcono estado={estadoDia.estado} />
@@ -401,7 +394,9 @@ export const RondinesBitacoraTable = ({ data, dateFilter }: Props) => {
 					  <React.Fragment key={catKey}>
 						<tr
 						  className="cursor-pointer font-semibold text-sm bg-green-100 "
-						  onClick={() => toggleExpand(catKey)}
+						  onClick={(e) => {
+							e.stopPropagation();
+							toggleExpand(catKey)}}
 						>
 						  <td className="border text-sm flex p-2">
 							<span className="mr-2 ">
@@ -419,16 +414,24 @@ export const RondinesBitacoraTable = ({ data, dateFilter }: Props) => {
 
 							return (
 								<td
-								key={i}
-								className={`border ${isSunday ? "bg-blue-200/50" : "bg-transparent"}`}
-							  >
-								<div className="flex justify-center items-center">
-								  {estadoDia && <EstadoIcono estado={estadoDia} />}
-								</div>
-							  </td>
-							  
-							  
-							);
+								  key={i}
+								  className={`border ${isSunday ? "bg-blue-200/50" : "bg-transparent"}`}
+								>
+								  <div className="flex justify-center items-center">
+									{estadoDia && (
+									  <div
+										onClick={(e) => {
+										  e.stopPropagation(); 
+										  setModalOpenPerimetroExt(true);
+										}}
+										className="cursor-pointer"
+									  >
+										<EstadoIcono estado={estadoDia} />
+									  </div>
+									)}
+								  </div>
+								</td>
+							  );
 							})}
 						</tr>
   
@@ -480,6 +483,8 @@ export const RondinesBitacoraTable = ({ data, dateFilter }: Props) => {
 			data={selectedAreaData}
 			isSuccess={modalOpenArea}
 			setIsSuccess={setModalOpenArea}
+			diaSelected={diaSelected}
+			rondin={"Rondin demo"}
 		  >
 			<div></div>
 		  </ViewDetalleArea>
