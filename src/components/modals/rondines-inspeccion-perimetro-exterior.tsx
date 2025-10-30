@@ -29,7 +29,7 @@ export const ViewRondinesDetallePerimetroExt: React.FC<ViewRondinesDetalleAreaPr
   isSuccess,
   estatus
 }) => {
-    console.log("estadoDia", data)
+    console.log("estadoDia", data, title)
     const areasInspeccionar=[
         "Caseta de vigilancia planta 1", "Área de rampa 24", "Cisterna", "Sub estación norte planta 3", "Cajas no enrampadas"
     ]
