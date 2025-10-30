@@ -1405,7 +1405,7 @@ const files = [
 
 						{/* Lista */}
 						<div className="space-y-2">
-							{rondin.areas.map((item:any) => (
+							{rondin?.areas?.map((item:any) => (
 							<div
 								key={item.rondin_area}
 								className="flex items-center justify-between border border-gray-200 rounded p-3 bg-white shadow-sm"
