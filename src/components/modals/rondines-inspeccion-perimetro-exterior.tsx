@@ -41,7 +41,7 @@ export const ViewRondinesDetallePerimetroExt: React.FC<ViewRondinesDetalleAreaPr
 
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center font-bold">
-            {title}
+            {data.titulo}
           </DialogTitle>
         </DialogHeader>
 
