@@ -18,6 +18,7 @@ interface ViewRondinesDetalleAreaProps {
   isSuccess: boolean;
   setIsSuccess: Dispatch<SetStateAction<boolean>>;
   children: React.ReactNode;
+  estatus:string
 }
 
 export const ViewRondinesDetallePerimetroExt: React.FC<ViewRondinesDetalleAreaProps> = ({
@@ -26,8 +27,9 @@ export const ViewRondinesDetallePerimetroExt: React.FC<ViewRondinesDetalleAreaPr
   children,
   setIsSuccess,
   isSuccess,
+  estatus
 }) => {
-    console.log("estadoDia", data.estado)
+    console.log("estadoDia", data)
     const areasInspeccionar=[
         "Caseta de vigilancia planta 1", "Área de rampa 24", "Cisterna", "Sub estación norte planta 3", "Cajas no enrampadas"
     ]
@@ -67,16 +69,20 @@ export const ViewRondinesDetallePerimetroExt: React.FC<ViewRondinesDetalleAreaPr
                     <div>
 					<Badge
 					className={`text-white text-sm ${
-						data.estatus == "Vencido"
-						? "bg-red-600 hover:bg-red-600"
-						: data.estatus == "Activo"
-						? "bg-green-600 hover:bg-green-600"
-						: "Programado" == "Programado"
-						? "bg-blue-600 hover:bg-blue-600"
+						estatus == "finalizado"
+						? "bg-green-600"
+						: estatus == "cerrado"
+						? "bg-gray-600"
+						: estatus == "programado"
+						? "bg-purple-600"
+                        : estatus == "en progreso"
+						? "bg-blue-600"
+                        : estatus == "cancelado"
+						? "bg-gray-400"
 						: "bg-gray-400"
 					}`}
 					>
-					{capitalizeFirstLetter("Programado")}
+					{capitalizeFirstLetter(estatus)}
 					</Badge>
 				</div>
                 </div>

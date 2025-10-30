@@ -14,13 +14,13 @@ const EstadoIcono = ({ estado }: { estado: string }) => {
       return <CircleSlash className={`${baseClass} text-white bg-amber-500 rounded-xl`} />;
     case "cancelado":
       return <Ban className={`${baseClass} text-slate-400`} />;
-	case "rondin_progreso":
-		return <CircleDashed className={`${baseClass} text-blue-500  rounded-xl`} />;
+	case "en progreso":
+		return <CircleDashed strokeWidth={2.75} className={`${baseClass} text-blue-500 font-bold rounded-xl`} />; 
 	case "cerrado":
 		return <CircleCheck className={`${baseClass} text-white bg-gray-500  rounded-xl`} />;
-	case "area_incidente":
+	case "incidencias ":
 		return <CircleAlert className={`${baseClass} text-white bg-red-500  rounded-xl`} />;
-	case "rondin_programado":
+	case "programado":
 		return <Calendar className={`${baseClass} text-white bg-purple-500  rounded-xl p-0.5`} />;
     default:
       return <Circle className={`${baseClass} text-slate-300`} />;
@@ -230,6 +230,7 @@ export const RondinesBitacoraTable = ({ data, dateFilter }: Props) => {
 	const [expandedCategorias, setExpandedCategorias] = useState<string[]>([]);
 	const [page, setPage] = useState(0);
 	const [diaSelected, setDiaSelected] = useState(0)
+	const [estatus, setEstatus] = useState("")
 
 	useEffect(() => {
 	  const allCategoriaKeys = data.flatMap((rondin) =>
@@ -269,6 +270,7 @@ export const RondinesBitacoraTable = ({ data, dateFilter }: Props) => {
 						setSelectedAreaData({ area, estadoDia });
 						setModalOpenArea(true);
 						setDiaSelected(estadoDia.dia)
+						setEstatus(estadoDia.estado)
 					}}
 				>
 					<EstadoIcono estado={estadoDia.estado} />
@@ -411,7 +413,7 @@ export const RondinesBitacoraTable = ({ data, dateFilter }: Props) => {
 						  {[...Array(31)].map((_, i) => {
 							const isSunday = sundaysIndexes.includes(i);
 							const estadoDia = categoria.resumen?.[i]; 
-
+							console.log("QUE CONTINENE", categoria)
 							return (
 								<td
 								  key={i}
@@ -421,8 +423,11 @@ export const RondinesBitacoraTable = ({ data, dateFilter }: Props) => {
 									{estadoDia && (
 									  <div
 										onClick={(e) => {
-										  e.stopPropagation(); 
-										  setModalOpenPerimetroExt(true);
+										  e.stopPropagation();
+										  	setSelectedAreaData(categoria);
+											setDiaSelected(i)
+										  	setModalOpenPerimetroExt(true);
+											setEstatus(estadoDia)
 										}}
 										className="cursor-pointer"
 									  >
@@ -472,6 +477,7 @@ export const RondinesBitacoraTable = ({ data, dateFilter }: Props) => {
 			data={selectedAreaData}
 			isSuccess={modalOpenPerimetroExt}
 			setIsSuccess={setModalOpenPerimetroExt}
+			estatus={estatus}
 		  >
 			<div></div>
 		  </ViewRondinesDetallePerimetroExt>
@@ -485,6 +491,7 @@ export const RondinesBitacoraTable = ({ data, dateFilter }: Props) => {
 			setIsSuccess={setModalOpenArea}
 			diaSelected={diaSelected}
 			rondin={"Rondin demo"}
+			estatus={estatus}
 		  >
 			<div></div>
 		  </ViewDetalleArea>

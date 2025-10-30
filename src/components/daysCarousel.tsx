@@ -7,8 +7,7 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@/components/ui/carousel"; // ajusta la ruta según tu proyecto
-
+} from "@/components/ui/carousel"; 
 interface EstadoDia {
   dia: number;
   estado: string;
