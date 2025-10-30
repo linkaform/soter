@@ -11,10 +11,10 @@ import { arraysIguales, dateToString } from "@/lib/utils";
 import { Ban, BookCheck, CalendarClock, CheckCircle, Flag, Play, Search, Sun } from "lucide-react";
 import { useGetStats } from "@/hooks/useGetStats";
 import { useGetListRondines } from "@/hooks/Rondines/useGetListRondines";
-import { Gallery } from "@/components/modals/gallery";
 import IncidenciasRondinesTable from "@/components/table/incidencias-rondines/table";
 import { Incidencia_record } from "@/components/table/incidencias/incidencias-columns";
 import RondinesCalendar from "@/components/calendar";
+import ChecksImagesSection from "@/components/ChecksImagesSection";
 
 
 const RondinesPage = () => {
@@ -248,43 +248,6 @@ const RondinesPage = () => {
 		setSelectedTab(selectedTab);
 	}
 
-  const images = [
-    {
-      file_name: "image1.jpg",
-      file_url: "https://via.placeholder.com/150?text=Image+1",
-    },
-    {
-      file_name: "image2.jpg",
-      file_url: "https://via.placeholder.com/150?text=Image+2",
-    },
-    {
-      file_name: "image3.jpg",
-      file_url: "https://via.placeholder.com/150?text=Image+3",
-    },
-    {
-      file_name: "image4.jpg",
-      file_url: "https://via.placeholder.com/150?text=Image+4",
-    },
-    {
-      file_name: "image5.jpg",
-      file_url: "https://via.placeholder.com/150?text=Image+5",
-    },
-    {
-      file_name: "image6.jpg",
-      file_url: "https://via.placeholder.com/150?text=Image+6",
-    },
-    {
-      file_name: "image7.jpg",
-      file_url: "https://via.placeholder.com/150?text=Image+7",
-    },
-    {
-      file_name: "image8.jpg",
-      file_url: "https://via.placeholder.com/150?text=Image+8",
-    },
-  ];
-
-
-	  
   return (
     <div className="">
       <div className="flex flex-col">
@@ -595,8 +558,11 @@ const RondinesPage = () => {
 					</TabsContent>
 
 					<TabsContent value="Fotos">
-						<div >
-							<Gallery rondin={images}/>
+						<div>
+							<ChecksImagesSection
+								location={ubicacionSeleccionada}
+								area={areaSeleccionada}
+							/>
 						</div>
 					</TabsContent>
 
