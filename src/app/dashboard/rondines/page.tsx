@@ -12,9 +12,10 @@ import { Ban, BookCheck, CalendarClock, CheckCircle, Flag, Play, Search, Sun } f
 import { useGetStats } from "@/hooks/useGetStats";
 import { useGetListRondines } from "@/hooks/Rondines/useGetListRondines";
 import IncidenciasRondinesTable from "@/components/table/incidencias-rondines/table";
-import { Incidencia_record } from "@/components/table/incidencias/incidencias-columns";
+// import { Incidencia_record } from "@/components/table/incidencias/incidencias-columns";
 import RondinesCalendar from "@/components/calendar";
 import ChecksImagesSection from "@/components/ChecksImagesSection";
+import { useIncidenciaRondin } from "@/hooks/Rondines/useRondinIncidencia";
 
 
 const RondinesPage = () => {
@@ -40,179 +41,184 @@ const RondinesPage = () => {
   const [openModal, setOpenModal] = useState(false);
 
   const [selectedIncidencias, setSelectedIncidencias] = useState<string[]>([])
-  const listaIncidencias : Incidencia_record[] = [
-	{
-	  incidencia: "Extravio de objeto",
-	  folio: "INC-001",
-	  reporta_incidencia: "Juan Pérez",
-	  prioridad_incidencia: "Media",
-	  area_incidencia: "Vestíbulo",
-	  fecha_hora_incidencia: "2025-10-10T14:30:00Z",
+
+
+  const {listIncidenciasRondin} = useIncidenciaRondin();
+	console.log("incidencaaa",listIncidenciasRondin)
+
+//   const listaIncidencias : Incidencia_record[] = [
+// 	{
+// 	  incidencia: "Extravio de objeto",
+// 	  folio: "INC-001",
+// 	  reporta_incidencia: "Juan Pérez",
+// 	  prioridad_incidencia: "Media",
+// 	  area_incidencia: "Vestíbulo",
+// 	  fecha_hora_incidencia: "2025-10-10T14:30:00Z",
 	  
-	  seguimientos_incidencia: [],
-	  afectacion_patrimonial_incidencia: [],
-	  acciones_tomadas_incidencia: [],
-	  personas_involucradas_incidencia: [],
+// 	  seguimientos_incidencia: [],
+// 	  afectacion_patrimonial_incidencia: [],
+// 	  acciones_tomadas_incidencia: [],
+// 	  personas_involucradas_incidencia: [],
 	  
-	  notificacion_incidencia: "Notificado a Seguridad",
-	  ubicacion_incidencia: "Piso 1, entrada principal",
-	  comentario_incidencia: "Se encontró una mochila negra sin identificación.",
-	  total_deposito_incidencia: 0,
-	  datos_deposito_incidencia: [],
-	  _id: "abc123",
-	  evidencia_incidencia: [],
-	  documento_incidencia: [],
-	  dano_incidencia: "",
-	  tipo_dano_incidencia: [],
-	  grupo_seguimiento_incidencia: [],
-	  tags: ["extravio", "objeto"],
-	  estatus: "En resguardo",
+// 	  notificacion_incidencia: "Notificado a Seguridad",
+// 	  ubicacion_incidencia: "Piso 1, entrada principal",
+// 	  comentario_incidencia: "Se encontró una mochila negra sin identificación.",
+// 	  total_deposito_incidencia: 0,
+// 	  datos_deposito_incidencia: [],
+// 	  _id: "abc123",
+// 	  evidencia_incidencia: [],
+// 	  documento_incidencia: [],
+// 	  dano_incidencia: "",
+// 	  tipo_dano_incidencia: [],
+// 	  grupo_seguimiento_incidencia: [],
+// 	  tags: ["extravio", "objeto"],
+// 	  estatus: "En resguardo",
   
-	  categoria: "Objetos perdidos",
-	  sub_categoria: "Mochilas",
-	  incidente: "Mochila encontrada",
+// 	  categoria: "Objetos perdidos",
+// 	  sub_categoria: "Mochilas",
+// 	  incidente: "Mochila encontrada",
   
-	  // Persona extraviada
-	  nombre_completo_persona_extraviada: "",
-	  edad: "",
-	  color_piel: "",
-	  color_cabello: "",
-	  estatura_aproximada: "",
-	  descripcion_fisica_vestimenta: "",
-	  nombre_completo_responsable: "",
-	  parentesco: "",
-	  num_doc_identidad: "",
-	  telefono: "",
-	  info_coincide_con_videos: "",
-	  responsable_que_entrega: "",
-	  responsable_que_recibe: "",
+// 	  // Persona extraviada
+// 	  nombre_completo_persona_extraviada: "",
+// 	  edad: "",
+// 	  color_piel: "",
+// 	  color_cabello: "",
+// 	  estatura_aproximada: "",
+// 	  descripcion_fisica_vestimenta: "",
+// 	  nombre_completo_responsable: "",
+// 	  parentesco: "",
+// 	  num_doc_identidad: "",
+// 	  telefono: "",
+// 	  info_coincide_con_videos: "",
+// 	  responsable_que_entrega: "",
+// 	  responsable_que_recibe: "",
   
-	  // Robo de cableado
-	  valor_estimado: "",
-	  pertenencias_sustraidas: "",
+// 	  // Robo de cableado
+// 	  valor_estimado: "",
+// 	  pertenencias_sustraidas: "",
   
-	  // Robo de vehículo
-	  placas: "",
-	  tipo: "",
-	  marca: "",
-	  modelo: "",
-	  color: "Negro"
-	},
-	{
-	  incidencia: "Persona extraviada",
-	  folio: "INC-002",
-	  reporta_incidencia: "Laura Martínez",
-	  prioridad_incidencia: "Alta",
-	  area_incidencia: "Parque infantil",
-	  fecha_hora_incidencia: "2025-10-11T16:45:00Z",
+// 	  // Robo de vehículo
+// 	  placas: "",
+// 	  tipo: "",
+// 	  marca: "",
+// 	  modelo: "",
+// 	  color: "Negro"
+// 	},
+// 	{
+// 	  incidencia: "Persona extraviada",
+// 	  folio: "INC-002",
+// 	  reporta_incidencia: "Laura Martínez",
+// 	  prioridad_incidencia: "Alta",
+// 	  area_incidencia: "Parque infantil",
+// 	  fecha_hora_incidencia: "2025-10-11T16:45:00Z",
 	  
-	  seguimientos_incidencia: [],
-	  afectacion_patrimonial_incidencia: [],
-	  acciones_tomadas_incidencia: [],
-	  personas_involucradas_incidencia: [],
+// 	  seguimientos_incidencia: [],
+// 	  afectacion_patrimonial_incidencia: [],
+// 	  acciones_tomadas_incidencia: [],
+// 	  personas_involucradas_incidencia: [],
 	  
-	  notificacion_incidencia: "Notificado a la policía local",
-	  ubicacion_incidencia: "Zona verde, parque central",
-	  comentario_incidencia: "Niño de 6 años reportado como perdido por su madre.",
-	  total_deposito_incidencia: 0,
-	  datos_deposito_incidencia: [],
-	  _id: "def456",
-	  evidencia_incidencia: [],
-	  documento_incidencia: [],
-	  dano_incidencia: "",
-	  tipo_dano_incidencia: [],
-	  grupo_seguimiento_incidencia: [],
-	  tags: ["persona", "extraviada", "niño"],
-	  estatus: "En búsqueda",
+// 	  notificacion_incidencia: "Notificado a la policía local",
+// 	  ubicacion_incidencia: "Zona verde, parque central",
+// 	  comentario_incidencia: "Niño de 6 años reportado como perdido por su madre.",
+// 	  total_deposito_incidencia: 0,
+// 	  datos_deposito_incidencia: [],
+// 	  _id: "def456",
+// 	  evidencia_incidencia: [],
+// 	  documento_incidencia: [],
+// 	  dano_incidencia: "",
+// 	  tipo_dano_incidencia: [],
+// 	  grupo_seguimiento_incidencia: [],
+// 	  tags: ["persona", "extraviada", "niño"],
+// 	  estatus: "En búsqueda",
   
-	  categoria: "Persona extraviada",
-	  sub_categoria: "Menor de edad",
-	  incidente: "Extraviado en parque",
+// 	  categoria: "Persona extraviada",
+// 	  sub_categoria: "Menor de edad",
+// 	  incidente: "Extraviado en parque",
   
-	  // Persona extraviada
-	  nombre_completo_persona_extraviada: "Luis Fernando Gómez",
-	  edad: "6",
-	  color_piel: "Trigueño",
-	  color_cabello: "Castaño oscuro",
-	  estatura_aproximada: "1.10m",
-	  descripcion_fisica_vestimenta: "Camisa roja, pantalón de mezclilla, tenis azules",
-	  nombre_completo_responsable: "María Gómez",
-	  parentesco: "Madre",
-	  num_doc_identidad: "ID456789",
-	  telefono: "555-123-4567",
-	  info_coincide_con_videos: "Sí, se observó en cámaras entrando al parque.",
-	  responsable_que_entrega: "",
-	  responsable_que_recibe: "",
+// 	  // Persona extraviada
+// 	  nombre_completo_persona_extraviada: "Luis Fernando Gómez",
+// 	  edad: "6",
+// 	  color_piel: "Trigueño",
+// 	  color_cabello: "Castaño oscuro",
+// 	  estatura_aproximada: "1.10m",
+// 	  descripcion_fisica_vestimenta: "Camisa roja, pantalón de mezclilla, tenis azules",
+// 	  nombre_completo_responsable: "María Gómez",
+// 	  parentesco: "Madre",
+// 	  num_doc_identidad: "ID456789",
+// 	  telefono: "555-123-4567",
+// 	  info_coincide_con_videos: "Sí, se observó en cámaras entrando al parque.",
+// 	  responsable_que_entrega: "",
+// 	  responsable_que_recibe: "",
   
-	  // Robo de cableado
-	  valor_estimado: "",
-	  pertenencias_sustraidas: "",
+// 	  // Robo de cableado
+// 	  valor_estimado: "",
+// 	  pertenencias_sustraidas: "",
   
-	  // Robo de vehículo
-	  placas: "",
-	  tipo: "",
-	  marca: "",
-	  modelo: "",
-	  color: ""
-	},
-	{
-	  incidencia: "Robo de cableado",
-	  folio: "INC-003",
-	  reporta_incidencia: "Carlos Ruiz",
-	  prioridad_incidencia: "Alta",
-	  area_incidencia: "Estacionamiento subterráneo",
-	  fecha_hora_incidencia: "2025-10-12T03:15:00Z",
+// 	  // Robo de vehículo
+// 	  placas: "",
+// 	  tipo: "",
+// 	  marca: "",
+// 	  modelo: "",
+// 	  color: ""
+// 	},
+// 	{
+// 	  incidencia: "Robo de cableado",
+// 	  folio: "INC-003",
+// 	  reporta_incidencia: "Carlos Ruiz",
+// 	  prioridad_incidencia: "Alta",
+// 	  area_incidencia: "Estacionamiento subterráneo",
+// 	  fecha_hora_incidencia: "2025-10-12T03:15:00Z",
 	  
-	  seguimientos_incidencia: [],
-	  afectacion_patrimonial_incidencia: [],
-	  acciones_tomadas_incidencia: [],
-	  personas_involucradas_incidencia: [],
+// 	  seguimientos_incidencia: [],
+// 	  afectacion_patrimonial_incidencia: [],
+// 	  acciones_tomadas_incidencia: [],
+// 	  personas_involucradas_incidencia: [],
 	  
-	  notificacion_incidencia: "Reportado al supervisor de mantenimiento",
-	  ubicacion_incidencia: "Zona B2 del sótano",
-	  comentario_incidencia: "Se encontró evidencia de corte de cables eléctricos.",
-	  total_deposito_incidencia: 0,
-	  datos_deposito_incidencia: [],
-	  _id: "ghi789",
-	  evidencia_incidencia: [],
-	  documento_incidencia: [],
-	  dano_incidencia: "Corte de cables eléctricos",
-	  tipo_dano_incidencia: ["Infraestructura"],
-	  grupo_seguimiento_incidencia: [],
-	  tags: ["robo", "cableado", "infraestructura"],
-	  estatus: "Investigación",
+// 	  notificacion_incidencia: "Reportado al supervisor de mantenimiento",
+// 	  ubicacion_incidencia: "Zona B2 del sótano",
+// 	  comentario_incidencia: "Se encontró evidencia de corte de cables eléctricos.",
+// 	  total_deposito_incidencia: 0,
+// 	  datos_deposito_incidencia: [],
+// 	  _id: "ghi789",
+// 	  evidencia_incidencia: [],
+// 	  documento_incidencia: [],
+// 	  dano_incidencia: "Corte de cables eléctricos",
+// 	  tipo_dano_incidencia: ["Infraestructura"],
+// 	  grupo_seguimiento_incidencia: [],
+// 	  tags: ["robo", "cableado", "infraestructura"],
+// 	  estatus: "Investigación",
   
-	  categoria: "Robo",
-	  sub_categoria: "Cableado",
-	  incidente: "Sustracción de materiales eléctricos",
+// 	  categoria: "Robo",
+// 	  sub_categoria: "Cableado",
+// 	  incidente: "Sustracción de materiales eléctricos",
   
-	  // Persona extraviada
-	  nombre_completo_persona_extraviada: "",
-	  edad: "",
-	  color_piel: "",
-	  color_cabello: "",
-	  estatura_aproximada: "",
-	  descripcion_fisica_vestimenta: "",
-	  nombre_completo_responsable: "",
-	  parentesco: "",
-	  num_doc_identidad: "",
-	  telefono: "",
-	  info_coincide_con_videos: "",
-	  responsable_que_entrega: "",
-	  responsable_que_recibe: "",
+// 	  // Persona extraviada
+// 	  nombre_completo_persona_extraviada: "",
+// 	  edad: "",
+// 	  color_piel: "",
+// 	  color_cabello: "",
+// 	  estatura_aproximada: "",
+// 	  descripcion_fisica_vestimenta: "",
+// 	  nombre_completo_responsable: "",
+// 	  parentesco: "",
+// 	  num_doc_identidad: "",
+// 	  telefono: "",
+// 	  info_coincide_con_videos: "",
+// 	  responsable_que_entrega: "",
+// 	  responsable_que_recibe: "",
   
-	  // Robo de cableado
-	  valor_estimado: "$5,000 MXN",
-	  pertenencias_sustraidas: "30 metros de cableado de cobre",
+// 	  // Robo de cableado
+// 	  valor_estimado: "$5,000 MXN",
+// 	  pertenencias_sustraidas: "30 metros de cableado de cobre",
   
-	  // Robo de vehículo
-	  placas: "",
-	  tipo: "",
-	  marca: "",
-	  modelo: "",
-	  color: ""
-	}
-  ];
+// 	  // Robo de vehículo
+// 	  placas: "",
+// 	  tipo: "",
+// 	  marca: "",
+// 	  modelo: "",
+// 	  color: ""
+// 	}
+//   ];
   
   console.log(listRondines ,datePrimera, dateSegunda, isSuccessRondin)
 
@@ -548,7 +554,7 @@ const RondinesPage = () => {
 
 					<TabsContent value="Incidencias">
 						<div>
-						<IncidenciasRondinesTable data={listaIncidencias} 
+						<IncidenciasRondinesTable data={listIncidenciasRondin} 
 							isLoading={false}  setSelectedIncidencias={setSelectedIncidencias} selectedIncidencias={selectedIncidencias} 
 							date1={date1} date2={date2} setDate1={setDate1} setDate2={setDate2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters} openModal={openModal} setOpenModal={setOpenModal}
 							/>

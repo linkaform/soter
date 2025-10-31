@@ -210,11 +210,11 @@ const files = [
 				{ dia: 1, estado: "finalizado" },
 				{ dia: 2, estado: "programado" },
 				{ dia: 3, estado: "finalizado" },
-				{ dia: 4, estado: "incidencias reportadas" },
+				{ dia: 4, estado: "incidencias" },
 				{ dia: 5, estado: "cancelado" },
 				{ dia: 6, estado: "no_inspeccionada" },
 				{ dia: 7, estado: "finalizado" },
-				{ dia: 8, estado: "incidencias reportadas" },
+				{ dia: 8, estado: "incidencias" },
 				{ dia: 9, estado: "cerrado" },
 				{ dia: 10, estado: "finalizado" },
 				{ dia: 11, estado: "finalizado" },
@@ -251,7 +251,7 @@ const files = [
 				{ dia: 6, estado: "no_inspeccionada" },
 				{ dia: 7, estado: "finalizado" },
 				{ dia: 8, estado: "finalizado" },
-				{ dia: 9, estado: "incidencias reportadas" },
+				{ dia: 9, estado: "incidencias" },
 				{ dia: 10, estado: "finalizado" },
 				{ dia: 11, estado: "finalizado" },
 				{ dia: 12, estado: "cerrado" },
@@ -332,10 +332,10 @@ const files = [
 				{ dia: 7, estado: "cancelado" },
 				{ dia: 8, estado: "cancelado" },
 				{ dia: 9, estado: "finalizado" },
-				{ dia: 10, estado: "incidencias reportadas" },
-				{ dia: 11, estado: "incidencias reportadas" },
+				{ dia: 10, estado: "incidencias" },
+				{ dia: 11, estado: "incidencias" },
 				{ dia: 12, estado: "no_inspeccionada" },
-				{ dia: 13, estado: "incidencias reportadas" },
+				{ dia: 13, estado: "incidencias" },
 				{ dia: 14, estado: "no_inspeccionada" },
 				{ dia: 15, estado: "finalizado" },
 				{ dia: 16, estado: "en progreso" },
@@ -369,12 +369,12 @@ const files = [
 				{ dia: 7, estado: "finalizado" },
 				{ dia: 8, estado: "finalizado" },
 				{ dia: 9, estado: "finalizado" },
-				{ dia: 10, estado: "incidencias reportadas" },
-				{ dia: 11, estado: "incidencias reportadas" },
+				{ dia: 10, estado: "incidencias" },
+				{ dia: 11, estado: "incidencias" },
 				{ dia: 12, estado: "no_inspeccionada" },
-				{ dia: 13, estado: "incidencias reportadas" },
+				{ dia: 13, estado: "incidencias" },
 				{ dia: 14, estado: "no_inspeccionada" },
-				{ dia: 15, estado: "incidencias reportadas" },
+				{ dia: 15, estado: "incidencias" },
 				{ dia: 16, estado: "programado" },
 				{ dia: 17, estado: "programado" },
 				{ dia: 18, estado: "en progreso" },
@@ -427,8 +427,8 @@ const files = [
 				{ dia: 16, estado: "none" },
 				{ dia: 17, estado: "en progreso" },
 				{ dia: 18, estado: "en progreso" },
-				{ dia: 19, estado: "incidencias reportadas" },
-				{ dia: 20, estado: "incidencias reportadas" },
+				{ dia: 19, estado: "incidencias" },
+				{ dia: 20, estado: "incidencias" },
 				{ dia: 21, estado: "nonarea_incidentee" },
 				{ dia: 22, estado: "programado" },
 				{ dia: 23, estado: "none" },
@@ -447,12 +447,12 @@ const files = [
 			  estados: [
 				{ dia: 1, estado: "cancelado" },
 				{ dia: 2, estado: "cancelado" },
-				{ dia: 3, estado: "incidencias reportadas" },
+				{ dia: 3, estado: "incidencias" },
 				{ dia: 4, estado: "finalizado" },
 				{ dia: 5, estado: "finalizado" },
 				{ dia: 6, estado: "no_inspeccionada" },
 				{ dia: 7, estado: "finalizado" },
-				{ dia: 8, estado: "incidencias reportadas" },
+				{ dia: 8, estado: "incidencias" },
 				{ dia: 9, estado: "finalizado" },
 				{ dia: 10, estado: "finalizado" },
 				{ dia: 11, estado: "finalizado" },
@@ -490,10 +490,10 @@ const files = [
 				  { dia: 7, estado: "cancelado" },
 				  { dia: 8, estado: "cancelado" },
 				  { dia: 9, estado: "finalizado" },
-				  { dia: 10, estado: "incidencias reportadas" },
-				  { dia: 11, estado: "incidencias reportadas" },
+				  { dia: 10, estado: "incidencias" },
+				  { dia: 11, estado: "incidencias" },
 				  { dia: 12, estado: "no_inspeccionada" },
-				  { dia: 13, estado: "incidencias reportadas" },
+				  { dia: 13, estado: "incidencias" },
 				  { dia: 14, estado: "no_inspeccionada" },
 				  { dia: 15, estado: "finalizado" },
 				  { dia: 16, estado: "en progreso" },
@@ -575,7 +575,7 @@ const files = [
 				{ dia: 6, estado: "cerrado" },
 				{ dia: 7, estado: "cancelado" },
 				{ dia: 8, estado: "cancelado" },
-				{ dia: 9, estado: "incidencias reportadas" },
+				{ dia: 9, estado: "incidencias" },
 				{ dia: 10, estado: "cerrado" },
 				{ dia: 11, estado: "finalizado" },
 				{ dia: 12, estado: "no_inspeccionada" },
@@ -660,7 +660,7 @@ const files = [
 				  { dia: 6, estado: "cerrado" },
 				  { dia: 7, estado: "cancelado" },
 				  { dia: 8, estado: "cancelado" },
-				  { dia: 9, estado: "incidencias reportadas" },
+				  { dia: 9, estado: "incidencias" },
 				  { dia: 10, estado: "cerrado" },
 				  { dia: 11, estado: "finalizado" },
 				  { dia: 12, estado: "no_inspeccionada" },
@@ -704,11 +704,11 @@ const files = [
 				  { dia: 1, estado: "finalizado" },
 				  { dia: 2, estado: "no_inspeccionada" },
 				  { dia: 3, estado: "finalizado" },
-				  { dia: 4, estado: "incidencias reportadas" },
+				  { dia: 4, estado: "incidencias" },
 				  { dia: 5, estado: "cancelado" },
 				  { dia: 6, estado: "no_inspeccionada" },
 				  { dia: 7, estado: "finalizado" },
-				  { dia: 8, estado: "incidencias reportadas" },
+				  { dia: 8, estado: "incidencias" },
 				  { dia: 9, estado: "cancelado" },
 				  { dia: 10, estado: "finalizado" },
 				  { dia: 11, estado: "finalizado" },
@@ -745,7 +745,7 @@ const files = [
 				  { dia: 6, estado: "no_inspeccionada" },
 				  { dia: 7, estado: "finalizado" },
 				  { dia: 8, estado: "finalizado" },
-				  { dia: 9, estado: "incidencias reportadas" },
+				  { dia: 9, estado: "incidencias" },
 				  { dia: 10, estado: "finalizado" },
 				  { dia: 11, estado: "finalizado" },
 				  { dia: 12, estado: "cerrado" },
@@ -826,10 +826,10 @@ const files = [
 				  { dia: 7, estado: "cancelado" },
 				  { dia: 8, estado: "cancelado" },
 				  { dia: 9, estado: "finalizado" },
-				  { dia: 10, estado: "incidencias reportadas" },
-				  { dia: 11, estado: "incidencias reportadas" },
+				  { dia: 10, estado: "incidencias" },
+				  { dia: 11, estado: "incidencias" },
 				  { dia: 12, estado: "no_inspeccionada" },
-				  { dia: 13, estado: "incidencias reportadas" },
+				  { dia: 13, estado: "incidencias" },
 				  { dia: 14, estado: "no_inspeccionada" },
 				  { dia: 15, estado: "finalizado" },
 				  { dia: 16, estado: "en progreso" },
@@ -863,12 +863,12 @@ const files = [
 				  { dia: 7, estado: "finalizado" },
 				  { dia: 8, estado: "finalizado" },
 				  { dia: 9, estado: "finalizado" },
-				  { dia: 10, estado: "incidencias reportadas" },
-				  { dia: 11, estado: "incidencias reportadas" },
+				  { dia: 10, estado: "incidencias" },
+				  { dia: 11, estado: "incidencias" },
 				  { dia: 12, estado: "no_inspeccionada" },
-				  { dia: 13, estado: "incidencias reportadas" },
+				  { dia: 13, estado: "incidencias" },
 				  { dia: 14, estado: "no_inspeccionada" },
-				  { dia: 15, estado: "incidencias reportadas" },
+				  { dia: 15, estado: "incidencias" },
 				  { dia: 16, estado: "programado" },
 				  { dia: 17, estado: "programado" },
 				  { dia: 18, estado: "en progreso" },
@@ -913,16 +913,16 @@ const files = [
 				  { dia: 8, estado: "finalizado" },
 				  { dia: 9, estado: "finalizado" },
 				  { dia: 10, estado: "finalizado" },
-				  { dia: 11, estado: "finalizado" },
+				  { dia: 11, estado: "incidencias" },
 				  { dia: 12, estado: "no_inspeccionada" },
 				  { dia: 13, estado: "finalizado" },
 				  { dia: 14, estado: "no_inspeccionada" },
 				  { dia: 15, estado: "finalizado" },
 				  { dia: 16, estado: "none" },
-				  { dia: 17, estado: "en progreso" },
-				  { dia: 18, estado: "en progreso" },
-				  { dia: 19, estado: "incidencias reportadas" },
-				  { dia: 20, estado: "incidencias reportadas" },
+				  { dia: 17, estado: "incidencias" },
+				  { dia: 18, estado: "incidencias" },
+				  { dia: 19, estado: "incidencias" },
+				  { dia: 20, estado: "incidencias" },
 				  { dia: 21, estado: "nonarea_incidentee" },
 				  { dia: 22, estado: "programado" },
 				  { dia: 23, estado: "none" },
@@ -941,12 +941,12 @@ const files = [
 				estados: [
 				  { dia: 1, estado: "cancelado" },
 				  { dia: 2, estado: "cancelado" },
-				  { dia: 3, estado: "incidencias reportadas" },
+				  { dia: 3, estado: "incidencias" },
 				  { dia: 4, estado: "finalizado" },
 				  { dia: 5, estado: "finalizado" },
 				  { dia: 6, estado: "no_inspeccionada" },
 				  { dia: 7, estado: "finalizado" },
-				  { dia: 8, estado: "incidencias reportadas" },
+				  { dia: 8, estado: "incidencias" },
 				  { dia: 9, estado: "finalizado" },
 				  { dia: 10, estado: "finalizado" },
 				  { dia: 11, estado: "finalizado" },
@@ -1032,7 +1032,7 @@ const files = [
 				  { dia: 6, estado: "cerrado" },
 				  { dia: 7, estado: "cancelado" },
 				  { dia: 8, estado: "cancelado" },
-				  { dia: 9, estado: "incidencias reportadas" },
+				  { dia: 9, estado: "incidencias" },
 				  { dia: 10, estado: "cerrado" },
 				  { dia: 11, estado: "finalizado" },
 				  { dia: 12, estado: "no_inspeccionada" },
@@ -1117,7 +1117,7 @@ const files = [
 					{ dia: 6, estado: "cerrado" },
 					{ dia: 7, estado: "cancelado" },
 					{ dia: 8, estado: "cancelado" },
-					{ dia: 9, estado: "incidencias reportadas" },
+					{ dia: 9, estado: "incidencias" },
 					{ dia: 10, estado: "cerrado" },
 					{ dia: 11, estado: "finalizado" },
 					{ dia: 12, estado: "no_inspeccionada" },
@@ -1151,7 +1151,7 @@ const files = [
 
   return (
   	<div className="w-full">
-		<div className="flex justify-between items-center my-2">
+		<div className="flex justify-between items-center my-2 ">
 			<div className="flex w-full justify-start gap-4 ">
 				<div className="flex justify-center items-center">
 					<TabsList className="bg-blue-500 text-white p-1 rounded-md ">
@@ -1163,6 +1163,7 @@ const files = [
 					</TabsList>
 				</div> 
 				
+				{activeTab !=="Bitacora" ? (
 				<div className="flex w-full max-w-sm items-center space-x-2">
 				<input
 					type="text"
@@ -1173,9 +1174,13 @@ const files = [
 				/>
 					<Search />
 				</div>
+				):null}
 			</div>
+			
+			<div>Octubre</div>
 
 			<div className="flex w-full justify-end gap-3">
+
 				{dateFilter == "range" ?
 				<div className="flex items-center gap-2 mr-14">
 					<DateTime date={date1} setDate={setDate1} disablePastDates={false}/>
@@ -1184,27 +1189,27 @@ const files = [
 					<Button type="button"  className={"bg-blue-500 hover:bg-blue-600"} onClick={()=>{resetTableFilters()}}> 
 						<Eraser/> 
 					</Button>
-				</div>:null}
+				</div>
+				:null}
+
 				<div className="flex items-center w-48 gap-2"> 
-				<Select value={dateFilter}  onValueChange={(value) => { 
-						setDateFilter(value); 
-						}}> 
-					<SelectTrigger className="w-full">
-					<SelectValue placeholder="Selecciona un filtro de fecha" />
-					<CalendarDays />
-					</SelectTrigger>
-					<SelectContent>
-					{catalogoFechas().map((option:any) => {
-						return (
-							<SelectItem key={option.key} value={option.key}> 
-							{option.label}
-							</SelectItem>
-						)
-					})}
-					</SelectContent>
-					
-				</Select>
-				
+					<Select value={dateFilter}  onValueChange={(value) => { 
+							setDateFilter(value); 
+							}}> 
+						<SelectTrigger className="w-full">
+						<SelectValue placeholder="Selecciona un filtro de fecha" />
+						<CalendarDays />
+						</SelectTrigger>
+						<SelectContent>
+						{catalogoFechas().map((option:any) => {
+							return (
+								<SelectItem key={option.key} value={option.key}> 
+								{option.label}
+								</SelectItem>
+							)
+						})}
+						</SelectContent>
+					</Select>
 				</div>
 
 				<div className="flex flex-wrap gap-2">

@@ -45,7 +45,7 @@ import { ViewIncidenciaRondin } from "@/components/modals/view-incidencia-rondin
 import { AddIncidenciaRondinesModal } from "@/components/modals/add-incidencia-rondines";
 
 interface ListProps {
-	data: Incidencia_record[];
+	data: any[];
 	isLoading:boolean;
 	openModal: boolean;
 	setOpenModal:React.Dispatch<React.SetStateAction<boolean>>;
@@ -448,7 +448,7 @@ const IncidenciasRondinesTable:React.FC<ListProps> = ({ data, isLoading, openMod
 					  }}/>
 				)}
 
-					<AddIncidenciaRondinesModal title="Crear incidencia" isSuccess={false} setIsSuccess={setOpenModal} onClose={()=>{}}>
+					<AddIncidenciaRondinesModal title="Crear incidencia" isSuccess={openModal} setIsSuccess={setOpenModal} >
 						
 					</AddIncidenciaRondinesModal>
 

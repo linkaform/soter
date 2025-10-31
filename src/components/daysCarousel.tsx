@@ -34,7 +34,6 @@ const DaysCarousel: React.FC<DaysCarouselProps> = ({
 }) => {
   const { area } = data;
   const carouselRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
     if (!carouselRef.current || selectedDay == null) return;
 

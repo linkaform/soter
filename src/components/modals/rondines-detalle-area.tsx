@@ -16,7 +16,7 @@ import DaysCarousel from "../daysCarousel";
 
 interface ViewRondinesDetalleAreaProps {
   title: string;
-  data:any
+  areaSelected:any
   isSuccess: boolean;
   setIsSuccess: Dispatch<SetStateAction<boolean>>;
   children: React.ReactNode;
@@ -37,7 +37,7 @@ interface Incidente {
 
 export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
   title,
-  data,
+  areaSelected,
   children,
   setIsSuccess,
   isSuccess,
@@ -46,7 +46,7 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
   estatus
 }) => {
 
-    console.log("Data", data, title, estatus)
+    console.log("Data", areaSelected, title, estatus)
     const img=[{file_url:"/nouser.svg", file_name:"Imagen"},{file_url:"/nouser.svg", file_name:"Imagen"}]
     // const hoy = new Date();
     // const mesActual = hoy.getMonth();
@@ -102,12 +102,12 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
           <div>
              <DialogHeader className="flex-shrink-0">
                 <DialogTitle className="text-2xl text-center font-bold">
-                    {data.area.nombre}
+                    {areaSelected.area.nombre}
                 </DialogTitle>
             </DialogHeader>
 
             <DaysCarousel
-                data={data}
+                data={areaSelected}
                 selectedDay={diaSeleccionado}
                 onDaySelect={setDiaSeleccionado}
             />
@@ -172,7 +172,7 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
                     <div className="bg-slate-200 p-3 rounded"><Building2/> </div>
                     <div className="flex flex-col"> 
                         <p>Ubicación</p>
-                        <p className="text-gray-500 text-sm">{data.area.ubicacion || "Ubicación demo" }</p>
+                        <p className="text-gray-500 text-sm">{areaSelected.area.ubicacion || "Ubicación demo" }</p>
                     </div>
                 </div>
 
@@ -199,7 +199,7 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
                 </div>
             </div>
 
-            {estatus=== "area_incidente" && 
+            {estatus=== "incidencias" && 
                 <div className="animate-fadeIn mt-3">
                     <h2 className="text-base font-semibold ">Incidentes en recorrido</h2>
 
@@ -298,7 +298,7 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
                         <div className="bg-slate-200 p-3 rounded"><Building2 /> </div>
                         <div className="flex flex-col">
                             <p>Ubicación</p>
-                            <p className="text-gray-500 text-sm">{data.area.ubicacion || "Ubicación demo"}</p>
+                            <p className="text-gray-500 text-sm">{areaSelected.area.ubicacion || "Ubicación demo"}</p>
                         </div>
                     </div>
                     <div className="flex gap-3">
