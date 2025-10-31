@@ -1,21 +1,36 @@
 import React, { useEffect, useState } from "react";
+import {
+  Circle,
+  CircleCheck,
+  Ban,
+  CircleChevronDown,
+  CircleChevronUp,
+  CircleSlash,
+  CircleAlert,
+  Calendar,
+  CircleDashed,
+} from "lucide-react";
 
-import { Circle, CircleAlert, CircleCheck, Ban, CircleChevronDown, CircleChevronUp } from "lucide-react";
 import { ViewDetalleArea } from "@/components/modals/rondines-detalle-area";
 import { ViewRondinesDetallePerimetroExt } from "@/components/modals/rondines-inspeccion-perimetro-exterior";
 
 const EstadoIcono = ({ estado }: { estado: string }) => {
-  const baseClass = "w-5 h-5"; // Tamaño común
-
+  const baseClass = "w-5 h-5";
   switch (estado) {
-    case "ok":
+    case "finalizado":
       return <CircleCheck className={`${baseClass} text-white bg-green-600 rounded-xl`} />;
-    case "alert":
-      return <CircleAlert className={`${baseClass} text-white bg-amber-500 rounded-xl`} />;
-    case "cancel":
+    case "no_inspeccionada":
+      return <CircleSlash className={`${baseClass} text-white bg-amber-500 rounded-xl`} />;
+    case "cancelado":
       return <Ban className={`${baseClass} text-slate-400`} />;
-	case "check":
-		return <CircleCheck className={`${baseClass} text-blue-500  rounded-xl`} />;
+    case "en progreso":
+      return <CircleDashed strokeWidth={2.75} className={`${baseClass} text-blue-500 font-bold rounded-xl`} />;
+    case "cerrado":
+      return <CircleCheck className={`${baseClass} text-white bg-gray-500 rounded-xl`} />;
+    case "incidencias":
+      return <CircleAlert className={`${baseClass} text-white bg-red-500 rounded-xl`} />;
+    case "programado":
+      return <Calendar className={`${baseClass} text-white bg-purple-500 rounded-xl p-0.5`} />;
     default:
       return <Circle className={`${baseClass} text-slate-300`} />;
   }
@@ -30,6 +45,7 @@ type Area = {
 
 type Categoria = {
   titulo: string;
+  resumen: string[];
   areas: Area[];
 };
 
@@ -40,137 +56,274 @@ type Rondin = {
 
 type Props = {
   data: Rondin[];
+  dateFilter: string;
 };
 
-export const RondinesBitacoraTable = ({ data }: Props) => {
-  const [expandedCategorias, setExpandedCategorias] = useState<string[]>([]);
+export const RondinesBitacoraTable = ({ data, dateFilter }: Props) => {
+	const [expandedCategorias, setExpandedCategorias] = useState<string[]>([]);
+	const [diaSelected, setDiaSelected] = useState(0);
+	const [estatus, setEstatus] = useState("");
+	const [modalOpenPerimetroExt, setModalOpenPerimetroExt] = useState(false);
+	const [modalOpenArea, setModalOpenArea] = useState(false);
+	const [selectedAreaData, setSelectedAreaData] = useState<any>(null);
+	const [selectedRondin,setSelectedRondin] = useState<any>(null)
+	const [dias, setDias] = useState<number>(31);
 
-
-	useEffect(() => {
-	const allCategoriaKeys = data.flatMap((rondin) =>
-		rondin.categorias.map((categoria) => `${rondin.hora}-${categoria.titulo}`)
-	);
-	setExpandedCategorias(allCategoriaKeys);
-	}, [data]);
-
+	function getDaysInMonth(filter: string) {
+		const now = new Date();
+		let targetDate = new Date(now);
+		filter = filter?.toLowerCase() || "";
+		if (filter === "last_week") {
+		  targetDate.setDate(now.getDate() - 7);
+		} else if (filter === "last_fifteen_days") {
+		  targetDate.setDate(now.getDate() - 15);
+		} else if (filter === "last_month") {
+		  targetDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+		}
+		return new Date(targetDate.getFullYear(), targetDate.getMonth() + 1, 0).getDate();
+	  }
+	  
+	  useEffect(() => {
+		const totalDias = getDaysInMonth(dateFilter);
+		setDias(totalDias);
+	  }, [dateFilter]);
+	  
+  useEffect(() => {
+    const allCategoriaKeys = data.flatMap((rondin) =>
+      rondin.categorias.map((categoria) => `${rondin.hora}-${categoria.titulo}`)
+    );
+    setExpandedCategorias(allCategoriaKeys);
+  }, [data]);
 
   const toggleExpand = (key: string) => {
     setExpandedCategorias((prev) =>
       prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
     );
   };
-  const [modalOpenPerimetroExt, setModalOpenPerimetroExt] = React.useState(false);
-  const [modalOpenArea, setModalOpenArea] = React.useState(false);
-  const [selectedAreaData, setSelectedAreaData] = React.useState<any>(null);
+
+  const sundaysIndexes = [...Array(dias)].reduce((acc, _, i) => {
+	const date = new Date();
+	date.setDate(i + 1);
+	if (date.getDay() === 0) acc.push(i);
+	return acc;
+  }, [] as number[]);
   
-  const renderArea = (area: Area, key: string) => {
-	return (
-	  <tr key={key} className="bg-white">
-		<td className="border p-2 pl-8">{area.nombre}</td>
-		{[...Array(31)].map((_, i) => {
-		  const estadoDia = area.estados.find((e) => e.dia === i + 1);
-  
-		  return (
-			<td key={i} className="border pl-3 text-center cursor-pointer">
-			  {estadoDia ? (
-				<div
-				  onClick={() => {
-					if (estadoDia.estado === "ok") {
-					  	setSelectedAreaData({ area, estadoDia });
-					  	setModalOpenArea(true);
-					} else if (estadoDia.estado === "alert"||estadoDia.estado=="cancel" ||estadoDia.estado=="check" ) {
-						setSelectedAreaData({ area, estadoDia });
-					  	setModalOpenPerimetroExt(true);
-					}
-				  }}
-				>
-				  <EstadoIcono estado={estadoDia.estado} />
-				</div>
-			  ) : null}
-			</td>
-		  );
-		})}
-	  </tr>
-	);
-  };
-  
+  const renderArea = (area: Area, key: string, rondin:any) => (
+    <tr key={key} className="bg-transparent">
+      <td className="border p-2 pl-8">{area.nombre}</td>
+      {[...Array(dias)].map((_, i) => {
+        const estadoDia = area.estados.find((e) => e.dia === i + 1);
+        const isSunday = sundaysIndexes.includes(i);
+
+        return (
+          <td
+            key={i}
+            className={`border pl-3 text-center cursor-pointer ${
+              isSunday ? "bg-blue-100" : ""
+            }`}
+          >
+            {estadoDia && (
+              <div
+                onClick={() => {
+                  setSelectedAreaData({ area, estadoDia });
+                  setModalOpenArea(true);
+                  setDiaSelected(estadoDia.dia);
+                  setEstatus(estadoDia.estado);
+				  setSelectedRondin(rondin)
+                }}
+              >
+                <EstadoIcono estado={estadoDia.estado} />
+              </div>
+            )}
+          </td>
+        );
+      })}
+    </tr>
+  );
+
+	// function getMonth(filter: string) {
+	// 	const now = new Date();
+	// 	const monthNames = [
+	// 	"Enero",
+	// 	"Febrero",
+	// 	"Marzo",
+	// 	"Abril",
+	// 	"Mayo",
+	// 	"Junio",
+	// 	"Julio",
+	// 	"Agosto",
+	// 	"Septiembre",
+	// 	"Octubre",
+	// 	"Noviembre",
+	// 	"Diciembre",
+	// 	];
+	// 	const getMonthNameFromDate = (date: Date) => monthNames[date.getMonth()];
+
+	// 	if (!filter) return getMonthNameFromDate(now);
+
+	// 	filter = filter.toLowerCase();
+	// 	if (filter === "last_week") {
+	// 	const d = new Date();
+	// 	d.setDate(now.getDate() - 7);
+	// 	return getMonthNameFromDate(d);
+	// 	} else if (filter === "last_fifteen_days") {
+	// 	const d = new Date();
+	// 	d.setDate(now.getDate() - 15);
+	// 	return getMonthNameFromDate(d);
+	// 	} else if (filter === "last_month") {
+	// 	const d = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+	// 	return getMonthNameFromDate(d);
+	// 	}
+	// 	return getMonthNameFromDate(now);
+	// }
+
   return (
-	<div>
+    <div className="flex flex-col max-h-screen p-1">
+      {/* <div className="text-center font-bold text-2xl">
+        <span>{getMonth(dateFilter)}</span>
+      </div> */}
+
+	  <div className="overflow-auto flex-1 border rounded" style={{ maxHeight: "80vh" }}>
 		<table className="min-w-full border-collapse border">
-		<thead>
-			<tr >
-				<th className="border p-2">Rondines</th>
-				{[...Array(31)].map((_, i) => {
+			<thead className="sticky top-0 z-10 bg-white">
+			<tr>
+				<th className="border p-2 bg-white">Rondines</th>
+				{[...Array(dias)].map((_, i) => {
 				const date = new Date();
 				date.setDate(i + 1);
-				const diaSemana = date.toLocaleDateString("es-MX", {
-					weekday: "short",
-				}).slice(0, 2); // Ej: "lu", "ma", etc.
+				const diaSemana = date
+					.toLocaleDateString("es-MX", { weekday: "short" })
+					.slice(0, 2);
+				const isSunday = date.getDay() === 0;
 
 				return (
-					<th key={`label-${i}`} className="border p-1 text-center">
+					<th
+					key={`label-${i}`}
+					className={`border p-1 text-center ${
+						isSunday ? "bg-blue-100" : "bg-white"
+					}`}
+					>
 					<div className="text-sm">{String(i + 1).padStart(2, "0")}</div>
-					<div className="text-xs font-medium capitalize text-gray-600">{diaSemana}</div>
+					<div className="text-xs font-medium capitalize text-gray-600">
+						{diaSemana}
+					</div>
 					</th>
 				);
 				})}
 			</tr>
-		</thead>
-		<tbody>
-			{data.map(({ hora, categorias }) => (
-			<React.Fragment key={hora}>
-				<tr >
-				<td className="border pl-2 font-bold">{hora}</td>
-				<td className="border" colSpan={31}></td>
-				</tr>
+			</thead>
 
-				{categorias.map((categoria) => {
-				const catKey = `${hora}-${categoria.titulo}`;
-				const isExpanded = expandedCategorias.includes(catKey);
+			<tbody>
+            {data.map(({ hora, categorias }) => (
+              <React.Fragment key={hora}>
+                <tr>
+                  <td className="border pl-2 font-bold">{hora}</td>
+                  {[...Array(dias)].map((_, i) => (
+                    <td
+                      key={i}
+                      className={`border ${sundaysIndexes.includes(i) ? "bg-blue-100" : ""}`}
+                    ></td>
+                  ))}
+                </tr>
 
-				return (
-					<React.Fragment key={catKey}>
-					<tr
-						className="cursor-pointer bg-blue-50 hover:bg-blue-100 font-semibold text-sm"
-						onClick={() => toggleExpand(catKey)}
-						>
-						<td className="border text-sm flex">
-						<span className="mr-2 ">{isExpanded ? <CircleChevronUp size={20}/> :<CircleChevronDown size={20}/> }</span>
-						{categoria.titulo}
-						</td>
-						<td className="border" colSpan={31}></td>
-					</tr>
+                {categorias.map((categoria) => {
+                  const catKey = `${hora}-${categoria.titulo}`;
+                  const isExpanded = expandedCategorias.includes(catKey);
 
-					{isExpanded &&
-						categoria.areas.map((area, idx) => renderArea(area, `${catKey}-area-${idx}`))}
-					</React.Fragment>
-				);
-				})}
-			</React.Fragment>
-			))}
-		</tbody>
-		</table>
+                  return (
+                    <React.Fragment key={catKey}>
+                      <tr
+                        className="cursor-pointer font-semibold text-sm bg-green-100"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleExpand(catKey);
+                        }}
+                      >
+                        <td className="border text-sm flex p-2">
+                          <span className="mr-2">
+                            {isExpanded ? <CircleChevronUp size={20} /> : <CircleChevronDown size={20} />}
+                          </span>
+                          {categoria.titulo}
+                        </td>
+                        {[...Array(dias)].map((_, i) => {
+                          const isSunday = sundaysIndexes.includes(i);
+                          const estadoDia = categoria.resumen?.[i];
 
-		{modalOpenPerimetroExt && (
-		<ViewRondinesDetallePerimetroExt
-			title="Inspección del Perimetro Exterior"
-			data={selectedAreaData}   // O adapta según lo que ViewDetalleArea necesite
-			isSuccess={modalOpenPerimetroExt}
-			setIsSuccess={setModalOpenPerimetroExt}>
-			<div></div>
-		</ViewRondinesDetallePerimetroExt>
-		)}
+						  console.log("rondin categoria", i+1, categoria.areas)
 
+						  const area = categoria.areas.find((a) =>
+							a.estados.some((e) => e.dia === i + 1)
+						  );
 
-		{modalOpenArea && (
-		<ViewDetalleArea
-			title="Detalle del Área"
-			data={selectedAreaData}   // O adapta según lo que ViewDetalleArea necesite
-			isSuccess={modalOpenArea}
-			setIsSuccess={setModalOpenArea}>
-			<div></div>
-		</ViewDetalleArea>
-		)}
-	</div>
+						  
+                          return (
+                            <td
+                              key={i}
+                              className={`border ${isSunday ? "bg-blue-200/50" : "bg-transparent"}`}
+                            >
+                              <div className="flex justify-center items-center">
+                                {estadoDia && (
+                                  <div
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelectedAreaData({ area: area, estadoDia });
+                                      setDiaSelected(i+1);
+                                      setModalOpenPerimetroExt(true);
+                                      setEstatus(estadoDia);
+										setSelectedRondin(categoria)
+                                    }}
+                                    className="cursor-pointer"
+                                  >
+                                    <EstadoIcono estado={estadoDia} />
+                                  </div>
+                                )}
+                              </div>
+                            </td>
+                          );
+                        })}
+                      </tr>
+
+                      {isExpanded &&
+                        categoria.areas.map((area, idx) =>
+                          renderArea(area, `${catKey}-area-${idx}`, categoria)
+                        )}
+                    </React.Fragment>
+                  );
+                })}
+              </React.Fragment>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Modales */}
+      {modalOpenPerimetroExt && (
+        <ViewRondinesDetallePerimetroExt
+          title="Inspección del Perimetro Exterior"
+          isSuccess={modalOpenPerimetroExt}
+          setIsSuccess={setModalOpenPerimetroExt}
+          estatus={estatus}
+          diaSelected={diaSelected}
+		  selectedRondin={selectedRondin}
+		  areaSelected={selectedAreaData}
+        >
+          <div></div>
+        </ViewRondinesDetallePerimetroExt>
+      )}
+
+      {modalOpenArea && (
+        <ViewDetalleArea
+          title="Detalle del Área"
+          areaSelected={selectedAreaData}
+          isSuccess={modalOpenArea}
+          setIsSuccess={setModalOpenArea}
+          diaSelected={diaSelected}
+          rondin={"Rondin demo"}
+          estatus={estatus}
+        >
+          <div></div>
+        </ViewDetalleArea>
+      )}
+    </div>
   );
 };

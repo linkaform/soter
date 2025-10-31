@@ -200,3 +200,31 @@ export const getListRondin  = async (date1:string, date2:string, limit:number, o
     const data = await response.json();
     return data;
   };
+
+export const getRondinesImages  = async (location: string, area: string, dateFrom:string, dateTo:string, limit:number, offset:number ) => {
+    if (area == 'todas') area = '';
+    const payload = {
+        "ubicacion": location,
+        area,
+        "date_from": dateFrom,
+        "date_to": dateTo,
+        limit,
+        offset,
+        option: "get_rondines_images",
+        script_name: "rondines.py",
+    };
+
+    const userJwt = localStorage.getItem("access_token"); 
+
+    const response = await fetch(`https://app.linkaform.com/api/infosync/scripts/run/`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${userJwt}`,
+        },
+        body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+    return data;
+};

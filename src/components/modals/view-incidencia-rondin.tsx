@@ -7,7 +7,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import { Separator } from "../ui/separator";
 import Image from "next/image";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
 import { Card, CardContent } from "../ui/card";
@@ -15,7 +14,7 @@ import { Incidencia_record } from "../table/incidencias/incidencias-columns";
 import {  formatCurrency } from "@/lib/utils";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 
-import { CircleAlert, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
 import { Depositos } from "@/lib/incidencias";
 
@@ -121,10 +120,10 @@ export const ViewIncidenciaRondin: React.FC<ViewFallaModalProps> = ({
 		<div className="flex-grow overflow-y-auto ">
             <Card className="p-3 ">
                 <div >
-                    <div className="flex gap-2 mb-4">
+                    {/* <div className="flex gap-2 mb-4">
                         <CircleAlert />
                         Incidente: <span className="font-bold">{data.categoria} / {data.sub_categoria} / {data.incidencia}</span>
-                    </div>
+                    </div> */}
 
                     <div className="overflow-y-auto ">
                 <div className="flex flex-col gap-5 ">
@@ -256,7 +255,6 @@ export const ViewIncidenciaRondin: React.FC<ViewFallaModalProps> = ({
                 </div>
 
 
-                        <Separator></Separator>
                     {data.datos_deposito_incidencia.length>0 && data.incidente == "Depósitos y retiros de valores" ? 
                         <>	
                         <div className="my-2 font-bold text-lg">Depositos: </div>

@@ -50,7 +50,7 @@ export type Access_pass={
     areas?: Areas[],
     comentarios?: Comentarios[],
     enviar_pre_sms:enviar_pre_sms,
-
+    todas_las_areas?:boolean
 }
 
 export const useCreateAccessPase = (location: string, access_pass: Access_pass|null, enviar_pre_sms: enviar_pre_sms|null) => {

@@ -33,7 +33,7 @@ points
 const [isOpenModal, setOpenModal] = useState(false)
 const { location } = useShiftStore()
 const { data, isLoading} = useCatalogAreasRondin(location, isOpenModal);
-const areasEnUso = points.map((point) => point.rondin_area);
+const areasEnUso = points?.map((point) => point.rondin_area);
 const areasDisponibles = data?.filter(
     (area:any) => !areasEnUso.includes(area.name)
   );

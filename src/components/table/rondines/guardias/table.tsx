@@ -149,10 +149,10 @@ const GuardiasRondinesTable:React.FC<ListProps> =({
 
         <div className="flex justify-start items-center mb-4">
 					<TabsList className="bg-blue-500 text-white p-1 rounded-md ">
+						<TabsTrigger value="Rondines">Rondines</TabsTrigger>
 						<TabsTrigger value="Bitacora">Bitácora</TabsTrigger>
 						<TabsTrigger value="Incidencias">Incidencias</TabsTrigger>
 						<TabsTrigger value="Fotos">Fotos</TabsTrigger>
-						<TabsTrigger value="Rondines">Rondines</TabsTrigger>
 						<TabsTrigger value="Calendario">Calendario</TabsTrigger>
 					</TabsList>
 				</div> 

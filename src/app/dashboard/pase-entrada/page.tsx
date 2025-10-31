@@ -33,6 +33,7 @@ import { usePaseEntrada } from "@/hooks/usePaseEntrada";
 import { useShiftStore } from "@/store/useShiftStore";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import DateTime from "@/components/dateTime";
+import { Switch } from "@/components/ui/switch";
 
 
  const formSchema = z
@@ -97,6 +98,7 @@ import DateTime from "@/components/dateTime";
 		mensaje: z.string().min(1, { message: "El mensaje no puede estar vacío." }),  
 		numero: z.string().optional()
 	}),
+	todas_las_areas: z.boolean().optional()
   }) 
   .refine((data) => {
 		if (data.tipo_visita_pase === 'rango_de_fechas') {
@@ -233,6 +235,7 @@ import DateTime from "@/components/dateTime";
 	const [fechaDesde, setFechaDesde] = useState<string>('');
 	const [selected, setSelected] = useState<Contacto |null>(null);
 	const [isOpenModal, setOpenModal] = useState(false);
+	const [todasAreas,setTodasAreas] = useState(false)
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -254,7 +257,7 @@ import DateTime from "@/components/dateTime";
 				docs : formatedDocs,
 				creado_por_id: userIdSoter || 0,
 				creado_por_email: userEmailSoter ??""
-		},
+			},
 			enviar_correo_pre_registro:enviar_correo_pre_registro??[], 
 			tipo_visita_pase: "fecha_fija",
 			fechaFija: "",
@@ -270,6 +273,7 @@ import DateTime from "@/components/dateTime";
 				mensaje: "SOY UN MENSAJE",
 				numero: "528120084370",
 			},
+			todas_las_areas:todasAreas
 		},
 	});
 
@@ -353,7 +357,8 @@ import DateTime from "@/components/dateTime";
 				from: "enviar_pre_sms",
 				mensaje: "SOY UN MENSAJE",
 				numero: data.telefono,
-		},
+			},
+			todas_las_areas:todasAreas
 		};
 		if(tipoVisita == "fecha_fija" && date == ""){
 			form.setError("fechaFija", { type: "manual", message: "Fecha Fija es requerida cuando el tipo de pase es 'fecha fija'." });
@@ -963,9 +968,10 @@ return (
 					</div>
 
 
-					<div className="flex gap-2 flex-col">
+					<div className="flex gap-2">
 						<div className="flex gap-2 flex-wrap">
 							<Button
+							disabled={todasAreas}
 							type="button"
 							onClick={handleToggleAdvancedOptions}
 							className={`px-4 py-2 rounded-md transition-all duration-300 ${
@@ -981,6 +987,20 @@ return (
 							</div>
 							</Button>
 						</div>
+
+
+						<div className="flex items-center flex-wrap gap-5">
+							<FormLabel>Todas las áreas: {`(no / si)`}:  </FormLabel>
+							<div className="flex items-center flex-wrap gap-5">
+							<Switch
+							className="data-[state=checked]:bg-blue-600"
+								checked={todasAreas}
+								onCheckedChange={(checked) => setTodasAreas(checked)}
+								aria-readonly
+							/>
+						</div>
+						</div>
+
 					</div>
 				</form>
 			</Form>
