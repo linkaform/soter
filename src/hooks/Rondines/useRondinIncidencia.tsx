@@ -3,18 +3,17 @@ import { useShiftStore } from "@/store/useShiftStore";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-export const useIncidenciaRondin = () => {
+export const useIncidenciaRondin = (location:string, area:string) => {
 
     const queryClient = useQueryClient();
     const {isLoading, setLoading} = useShiftStore();
         
     const {data: listIncidenciasRondin, isLoading:isLoadingListIncidencias} = useQuery<any>({
-        queryKey: ["getListIncidencias",],
-        enabled: true,
+        queryKey: ["getListIncidenciasRondin",location, area],
         refetchOnWindowFocus: false,
         queryFn: async () => {
-            const data = await getListIncidenciasRondin("Planta Durango", "Planta Durango");
-            return Array.isArray( data.response?.data) ?  data.response?.data: []; 
+            const data = await getListIncidenciasRondin(location, area);
+            return data?.response?.data; 
         },
     });
 

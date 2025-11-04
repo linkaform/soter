@@ -1,7 +1,7 @@
 
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import {
   MapContainer,
   Marker,
@@ -46,17 +46,26 @@ interface MapViewState {
   dicGroup: Record<string, RecordData[]>;
 }
 
-type Punto = {
+  interface MapItem {
+	nombre_area: string;
+	geolocation_area?: {
+	  latitude: number;
+	  longitude: number;
+	};
+	id: string;
+  }
+  
+  type Punto = {
 	lat: number;
 	lng: number;
 	nombre?: string;
   };
   
   type MapaRutasProps = {
-	puntos: Punto[];
+	map_data: MapItem[];
   };
   
-  
+
 const overlap = (rect1: DOMRect, rect2: DOMRect): boolean => {
   return !(
     rect1.right < rect2.left ||
@@ -123,9 +132,23 @@ const MyComponent: React.FC = () => {
   return null;
 };
 
-const MapView = ({ puntos }: MapaRutasProps) => {
+const MapView = ({ map_data }: MapaRutasProps) => {
 	const user = useAuthStore()
-	console.log("OBJETO USER", user)
+	console.log("OBJETO USER", user, map_data)
+
+	function formatMapData(mapData: MapItem[] = []): Punto[] {
+		return mapData.map((item) => ({
+		  nombre: item.nombre_area,
+		  lat: item.geolocation_area?.latitude ?? 0,
+		  lng: item.geolocation_area?.longitude ?? 0,
+		}));
+	  }
+
+	// const puntos = formatMapData( map_data);
+	const puntos = useMemo(
+		() => formatMapData(map_data ?? []),
+		[map_data]
+	  );
 
 	const initialState: MapViewState = {
 		center: puntos.length
@@ -184,6 +207,7 @@ const MapView = ({ puntos }: MapaRutasProps) => {
 			}
 		}
 	};
+	
 	
 
   const myIcon = L.icon({

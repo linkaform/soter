@@ -7,7 +7,7 @@ import RondinesTable from "@/components/table/rondines/table";
 import PageTitle from "@/components/page-title";
 import ChangeLocation from "@/components/changeLocation";
 import { useShiftStore } from "@/store/useShiftStore";
-import { arraysIguales, dateToString } from "@/lib/utils";
+import { arraysIguales } from "@/lib/utils";
 import { Ban, BookCheck, CalendarClock, CheckCircle, Flag, Play, Search, Sun } from "lucide-react";
 import { useGetStats } from "@/hooks/useGetStats";
 import { useGetListRondines } from "@/hooks/Rondines/useGetListRondines";
@@ -29,9 +29,6 @@ const RondinesPage = () => {
   const { data: stats } = useGetStats(ubicacionSeleccionada&& areaSeleccionada?true:false,ubicacionSeleccionada, areaSeleccionada=="todas"?"":areaSeleccionada, 'Rondines')
   const { listRondines } = useGetListRondines(true ,"","", 100,0 )
 
-  const [datePrimera, setDatePrimera] = useState<string>("")
-  const [dateSegunda, setDateSegunda] = useState<string>("")
-  const [isSuccessRondin] = useState(false);
   const [selectedRondin, setSelectedRondin]= useState<string[]|null>([]);
 
   const [date1, setDate1] = useState<Date|"">("")
@@ -43,8 +40,8 @@ const RondinesPage = () => {
   const [selectedIncidencias, setSelectedIncidencias] = useState<string[]>([])
 
 
-  const {listIncidenciasRondin} = useIncidenciaRondin();
-	console.log("incidencaaa",listIncidenciasRondin)
+  const {listIncidenciasRondin} = useIncidenciaRondin("", "");
+	console.log("INCIDENCIAS",listIncidenciasRondin)
 
 //   const listaIncidencias : Incidencia_record[] = [
 // 	{
@@ -220,7 +217,6 @@ const RondinesPage = () => {
 // 	}
 //   ];
   
-  console.log(listRondines ,datePrimera, dateSegunda, isSuccessRondin)
 
 //   const [isSuccess, setIsSuccess] = useState(true)
   
@@ -238,16 +234,16 @@ const RondinesPage = () => {
   
 
 	const Filter = () => {
-		const f1= dateToString(new Date(date1)) 
-		const f2= dateToString(new Date(date2)) 
-		setDatePrimera(f1)
-		setDateSegunda(f2)
+		// const f1= dateToString(new Date(date1)) 
+		// const f2= dateToString(new Date(date2)) 
+		// setDatePrimera(f1)
+		// setDateSegunda(f2)
 		// setDates([f1,f2])
 	};
 
 	const resetTableFilters = ()=>{
-		setDatePrimera("");
-		setDateSegunda("");
+		// setDatePrimera("");
+		// setDateSegunda("");
 		setDate1("")
 		setDate2("")
 		setDateFilter(""); 

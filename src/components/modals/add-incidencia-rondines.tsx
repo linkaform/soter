@@ -201,7 +201,7 @@ export const AddIncidenciaRondinesModal: React.FC<AddIncidenciaModalProps> = ({
 
 	const[ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location)
 	const { dataAreas:areas, dataLocations:ubicaciones} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, isSuccess,  location?true:false);
-	const { createIncidenciaMutation } = useIncidenciaRondin();
+	const { createIncidenciaMutation } = useIncidenciaRondin("", "");
 
 	console.log(areas, ubicaciones)
 

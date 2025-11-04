@@ -249,7 +249,6 @@ export const RondinesBitacoraTable = ({ data, dateFilter }: Props) => {
                           const isSunday = sundaysIndexes.includes(i);
                           const estadoDia = categoria.resumen?.[i];
 
-						  console.log("rondin categoria", i+1, categoria.areas)
 
 						  const area = categoria.areas.find((a) =>
 							a.estados.some((e) => e.dia === i + 1)

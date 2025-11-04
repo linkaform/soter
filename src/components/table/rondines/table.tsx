@@ -47,18 +47,75 @@ const MapView = dynamic(() => import("@/components/map-v2"), {
   });
   
 
-const puntos = [
-	{ lat: 25.6866, lng: -100.3161, nombre: 'Centro (Macroplaza)' },          
-	{ lat: 25.7030, lng: -100.3370, nombre: 'San Pedro Garza García' },    
-	{ lat: 25.7100, lng: -100.2930, nombre: 'Obispado' },                     
-	{ lat: 25.6672, lng: -100.2736, nombre: 'Tecnológico (ITESM)' },        
-	{ lat: 25.6400, lng: -100.3000, nombre: 'Sur (Colonia del Valle)' },     
-	{ lat: 25.6700, lng: -100.3300, nombre: 'Plaza Cumbres (Noroeste)' },   
-  ];
+// const puntos = [
+// 	{ lat: 25.6866, lng: -100.3161, nombre: 'Centro (Macroplaza)' },          
+// 	{ lat: 25.7030, lng: -100.3370, nombre: 'San Pedro Garza García' },    
+// 	{ lat: 25.7100, lng: -100.2930, nombre: 'Obispado' },                     
+// 	{ lat: 25.6672, lng: -100.2736, nombre: 'Tecnológico (ITESM)' },        
+// 	{ lat: 25.6400, lng: -100.3000, nombre: 'Sur (Colonia del Valle)' },     
+// 	{ lat: 25.6700, lng: -100.3300, nombre: 'Plaza Cumbres (Noroeste)' },   
+//   ];
 
 
+	
+	// [
+	//   { nombre: 'Pluma entrada 1', lat: 23.73876196516611 },
+	//   { nombre: 'Pluma salida 1', lat: 23.753257064033818 }
+	// ]
+	
+	export interface GeoLocation {
+		latitude: number;
+		longitude: number;
+	  }
+	  
+	  export interface GeoLocationSearch extends GeoLocation {
+		search_txt: string;
+	  }
+	  
+	  export interface ImageData {
+		nombre_area: string;
+		id: string;
+		foto_area: string;
+	  }
+	  
+	  export interface MapItem {
+		nombre_area: string;
+		id: string;
+		geolocation_area?: GeoLocation;
+	  }
+	  
+	  export interface FotoArea {
+		file_name: string;
+		file_url: string;
+		name: string;
+	  }
+	  
+	  export interface Area {
+		rondin_area: string;
+		geolocalizacion_area_ubicacion: GeoLocation[];
+		area_tag_id: string[];
+		foto_area: FotoArea[];
+	  }
+	  
+	  export interface RondinResponse {
+		fecha_inicio_rondin: string;
+		cantidad_de_puntos: number;
+		recurrencia: string;
+		asignado_a: string;
+		duracion_promedio: number;
+		images_data: ImageData[];
+		nombre_del_rondin: string;
+		ubicacion: string;
+		map_data: MapItem[];
+		estatus_rondin: string;
+		ubicacion_geolocation: GeoLocationSearch;
+		duracion_esperada_rondin: string;
+		areas: Area[];
+	  }
+
+	  
 interface ListProps {
-	data: any[];
+	data: any;
 	isLoading:boolean;
 	resetTableFilters: () => void;
 	setSelectedRondin:React.Dispatch<React.SetStateAction<string[]|null>>;
@@ -101,7 +158,7 @@ interface ListProps {
 const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,selectedRondin,
 	setDate1, setDate2, date1, date2, dateFilter, setDateFilter,Filter, resetTableFilters, setActiveTab, activeTab
  })=> {
-	console.log("Tabla rondines",setSelectedRondin, selectedRondin, activeTab)
+	console.log("Tabla rondines",data, setSelectedRondin, selectedRondin, activeTab)
 	// const [ selectedRow, setSelectedRondin] = React.useState<any | null>(null);
 
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -133,6 +190,8 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 		setModalEditarAbierto(true); 
 	}
   
+
+	
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
@@ -174,24 +233,24 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
     },
   });
 
-const files = [
-	{
-	  file_name: "file_1",
-	  file_url: "/nouser.svg",
-	},
-	{
-	  file_name: "file_2",
-	  file_url:"/nouser.svg",
-	},
-	{
-	  file_name: "file_3",
-	  file_url: "/nouser.svg",
-	},
-	{
-	  file_name: "file_4",
-	  file_url: "/nouser.svg",
-	},
-  ];
+// const files = [
+// 	{
+// 	  file_name: "file_1",
+// 	  file_url: "/nouser.svg",
+// 	},
+// 	{
+// 	  file_name: "file_2",
+// 	  file_url:"/nouser.svg",
+// 	},
+// 	{
+// 	  file_name: "file_3",
+// 	  file_url: "/nouser.svg",
+// 	},
+// 	{
+// 	  file_name: "file_4",
+// 	  file_url: "/nouser.svg",
+// 	},
+//   ];
   
 
   const dataRondin = [
@@ -1149,6 +1208,7 @@ const files = [
 	  
   ];
 
+
   return (
   	<div className="w-full">
 		<div className="flex justify-between items-center my-2 ">
@@ -1176,8 +1236,10 @@ const files = [
 				</div>
 				):null}
 			</div>
+			{activeTab =="Bitacora" ? (
+				<div className="text-2xl font-semi">Octubre</div>
+			):null}
 			
-			<div>Octubre</div>
 
 			<div className="flex w-full justify-end gap-3">
 
@@ -1288,7 +1350,7 @@ const files = [
 							</Button>
 						</div>
 
-						<div className="flex">
+						{/* <div className="flex">
 							<span className="font-semibold min-w-[130px]">Asignado a:</span>
 							
 						</div>
@@ -1301,7 +1363,7 @@ const files = [
 									value={null} 
 									isDisabled={false}
 								/>
-						</div>
+						</div> */}
 
 						<div className="flex">
 							<span className="font-semibold min-w-[130px]">Ubicacion:</span>
@@ -1328,36 +1390,48 @@ const files = [
 						<div className="flex">
 							<span className="font-semibold min-w-[130px]">Estatus:</span>
 						</div>
-						<span >
-							En proceso
+						<span
+						className={`font-semibold ${
+							rondin?.estatus_rondin === "Corriendo"
+							? "text-green-500"
+							: rondin?.estatus_rondin === "Cancelado"
+							? "text-red-500"
+							: rondin?.estatus_rondin === "Cerrado"
+							? "text-gray-300"
+							: rondin?.estatus_rondin === "Programado"
+							? "text-purple-500"
+							: "text-gray-500"
+						}`}
+						>
+						{rondin?.estatus_rondin}
 						</span>
 
 						<div className="flex">
 							<span className="font-semibold min-w-[130px]">Inicio:</span>
 						</div>
 						<span >
-							15/05/25 1:42:23 hr
+							{rondin.fecha_inicio_rondin}
 						</span>
 
 						<div className="flex">
 							<span className="font-semibold min-w-[130px]">Duracion promedio:</span>
 						</div>
 						<span >
-							63 horas
+							{rondin.duracion_promedio}
 						</span>
 
 						<div className="flex">
 							<span className="font-semibold min-w-[130px]">Duracion esperada:</span>
 						</div>
 						<span >
-							{rondin.duracion_esperada}
+							{rondin.duracion_esperada_rondin}
 						</span>
 
 						<div className="flex">
 							<span className="font-semibold min-w-[130px]">Finalizacion:</span>
 						</div>
 						<span >
-							15/05/25 2:30:45 hrs
+							-
 						</span>
 
 						</div>
@@ -1368,8 +1442,8 @@ const files = [
 					<div className="w-2/3 ml-4 p-4 border rounded-md bg-white shadow-md">	
 					<div className="mb-2 font-bold">Fotografías de áreas a inspeccionar: </div>
 						<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-						{files.map((val:any, idx:any) => {
-							const imageUrl = val?.file_url;
+						{rondin.images_data.map((val:any, idx:any) => {
+							const imageUrl = val?.foto_area;
 							return imageUrl ? (
 								<div key={idx} className="rounded overflow-hidden shadow-md">
 								<Image
@@ -1432,7 +1506,7 @@ const files = [
 					zIndex: 0,
 				}}>	
 						<div> 
-							<MapView puntos={puntos}></MapView>
+							<MapView map_data={rondin.map_data}></MapView>
 						</div>
 					</div>
 				</div>

@@ -10,17 +10,15 @@ import {
 import Image from "next/image";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
 import { Card, CardContent } from "../ui/card";
-import { Incidencia_record } from "../table/incidencias/incidencias-columns";
-import {  formatCurrency } from "@/lib/utils";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../ui/accordion";
 
 import { Loader2 } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
-import { Depositos } from "@/lib/incidencias";
+import { useIncidenciaRondin } from "@/hooks/Rondines/useRondinIncidencia";
 
 interface ViewFallaModalProps {
   title: string;
-  data: Incidencia_record
+  data: any
   children: React.ReactNode;
   setIsSuccess:Dispatch<SetStateAction<boolean>>
   isSuccess: boolean;
@@ -37,75 +35,17 @@ export const ViewIncidenciaRondin: React.FC<ViewFallaModalProps> = ({
   isSuccess,
   setModalEditarAbierto,
 }) => {
-	// const { userIdSoter } = useAuthStore()
-	// const {refetch, isLoading, isFetching} = useGetPdfIncidencias(data._id, 592, userIdSoter, `Seguimiento_de_Incidente_145636-${data.folio}`)
-	// 	return new Date(a.fecha_inicio_seg).getTime() - new Date(b.fecha_inicio_seg).getTime();
-	//   });
-	
+    const { createIncidenciaMutation , isLoading} = useIncidenciaRondin("", "");
 
 
-	// const handleGetPdf = async () => {
-	// 	try {
-	// 		const result = await refetch();
-
-	// 		if (result.error) {
-	// 		  	toast.error(`Error de red: ${result.error}`,{
-	// 			style: {
-	// 				backgroundColor: "#f44336", 
-	// 				color: "#fff",
-	// 				},
-	// 			});
-	// 		  return;
-	// 		}
-		
-	// 		const data = result.data?.response?.data;
-
-	// 		if (!data || data.status_code !== 200) {
-	// 		  const errorMsg = data?.json?.error || result.data?.error|| "Error desconocido del servidor";
-	// 		  toast.error(`Error de red: ${errorMsg}`, {
-	// 			style: {
-	// 				backgroundColor: "#f44336", 
-	// 				color: "#fff",
-	// 				},
-	// 			});
-	// 		  return;
-	// 		}
-			
-	// 		const downloadUrl = data?.json?.download_url;
-	// 		if (downloadUrl) {
-	// 		  onDescargarPDF(downloadUrl);
-	// 		} else {
-	// 		  toast.warning("No se encontró URL de descarga");
-	// 		}
-		
-	// 	  } catch (err) {
-	// 		toast.error(`Error inesperado: ${err}`, {
-	// 			style: {
-	// 				backgroundColor: "#f44336", 
-	// 				color: "#fff",
-	// 				},
-	// 			});
-	// 	  }
-	// };
-
-	// async function onDescargarPDF(download_url: string) {
-	// 	try {
-	// 		await descargarPdfPase(download_url, "Seguimientio_de_incidente.pdf");
-	// 		toast.success("¡PDF descargado correctamente!");
-	// 	} catch (error) {
-	// 		toast.error("Error al descargar el PDF: " + error);
-	// 	}
-	// }
-
-	function sumDepositos(item:Depositos[]){
-		const sumaTotal = item.reduce((total: any, item: { cantidad: number; }) => total + item.cantidad, 0);
-		return formatCurrency(sumaTotal)
-	}
-
-	// const handleEdit = () => {
-	// 	setOpenVerSeg(true);
-	// };
-	
+	function crearNuevaIncidencia(){
+        console.log("NUEVA INCIDENCIA", data)
+        createIncidenciaMutation.mutate({ data_incidencia: data }, {
+            onSuccess: () => {
+              setIsSuccess(false);
+            },
+          });
+    }
 
   return (
     <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
@@ -134,26 +74,26 @@ export const ViewIncidenciaRondin: React.FC<ViewFallaModalProps> = ({
 
                         <div className="w-full flex gap-2">
                             <p className="font-bold">Sub categoria: </p>
-                            <p >{data?.sub_categoria} </p>
+                            <p >{data?.subcategoria} </p>
                         </div>
 
                         <div className="w-full flex gap-2">
                             <p className="font-bold">Tipo de incidente: </p>
-                            <p >{data?.tipo} </p>
+                            <p >{data?.incidente} </p>
                         </div>
 
                         {/* <div className="w-full flex gap-2">
                             <p className="font-bold flex flex-shrink-0">Fecha:</p>
                             <p className="">{formatDateToText(data?.fecha_hora_incidencia.slice(0,-3))} </p>
                         </div> */}
-                        <div className="w-full flex gap-2 col-span-2 ">
+                        <div className="w-full flex flex-col gap-2 col-span-2 ">
                             <p className="font-bold ">Comentarios:</p>
-                            <p title={data?.comentario_incidencia || "-"} className=" line-clamp-3 overflow-hidden text-ellipsis whitespace-normal break-words">{data?.comentario_incidencia} </p>
+                            <p title={data?.comentarios || "-"} className=" line-clamp-3 overflow-hidden text-ellipsis whitespace-normal break-words">{data?.comentarios} </p>
                         </div>
 
-                        <div className="w-full flex gap-2 col-span-2 ">
-                            <p className="font-bold ">Accion:</p>
-                            <p title={data?.comentario_incidencia || "-"} className=" line-clamp-3 overflow-hidden text-ellipsis whitespace-normal break-words">{data?.comentario_incidencia} </p>
+                        <div className="w-full flex flex-col gap-2 col-span-2 ">
+                            <p className="font-bold ">Accion tomada:</p>
+                            <p title={data?.accion_tomada || "-"} className=" line-clamp-3 overflow-hidden text-ellipsis whitespace-normal break-words">{data?.accion_tomada} </p>
                         </div>
 
                         {data?.dano_incidencia ??
@@ -189,13 +129,13 @@ export const ViewIncidenciaRondin: React.FC<ViewFallaModalProps> = ({
                         
                 <div className="grid grid-cols-2 justify-around mt-4 ">
                     <div >
-                        {data.evidencia_incidencia && data.evidencia_incidencia.length>0?(
+                        {data.evidencias && data.evidencias.length>0?(
                             <div className="flex flex-col">
                                 <div><p className="font-bold ">Evidencia: </p></div>
                                 <div className="flex ml-20">
                                     <Carousel className="flex w-36 max-w-xs">
                                         <CarouselContent>
-                                            {data.evidencia_incidencia.map((a, index) => (
+                                            {data.evidencias.map((a:any, index:number) => (
                                             <CarouselItem key={index}>
                                                 <div className="p-1">
                                                 <Card className="border-none">
@@ -215,7 +155,7 @@ export const ViewIncidenciaRondin: React.FC<ViewFallaModalProps> = ({
                                             </CarouselItem>
                                             ))}
                                         </CarouselContent>
-                                        { data.evidencia_incidencia.length > 1 && 
+                                        { data.evidencias.length > 1 && 
                                         <><CarouselPrevious /><CarouselNext /></> }
                                     </Carousel>
                                 </div>
@@ -231,10 +171,10 @@ export const ViewIncidenciaRondin: React.FC<ViewFallaModalProps> = ({
                     </div>
                     <div>
                         <p className="font-bold">Documentos:</p>
-                        {data?.documento_incidencia && data.documento_incidencia.length > 0 ? (
+                        {data?.documentos && data.documentos.length > 0 ? (
                             <div className="mt-5 border border-gray-200 rounded-md p-2 mb-5">
                             <ul className="space-y-2 max-h-40 overflow-y-auto pr-2">
-                                {data.documento_incidencia.map((documento, index) => (
+                                {data.documentos.map((documento:any, index:number) => (
                                 <li key={index}>
                                 <a
                                     href={documento.file_url}
@@ -254,82 +194,6 @@ export const ViewIncidenciaRondin: React.FC<ViewFallaModalProps> = ({
                     </div>
                 </div>
 
-
-                    {data.datos_deposito_incidencia.length>0 && data.incidente == "Depósitos y retiros de valores" ? 
-                        <>	
-                        <div className="my-2 font-bold text-lg">Depositos: </div>
-                        <table className="min-w-full table-auto mb-5 border" >
-                            <thead>
-                                <tr className="bg-gray-100">
-                                    <th className="px-4 py-2 text-left border-b border-gray-300">Tipo deposito</th>
-                                    <th className="px-4 py-2 text-left border-b border-gray-300">Origen</th>
-                                    <th className="px-4 py-2 text-left border-b border-gray-300">Cantidad</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {data.datos_deposito_incidencia.length > 0 ? (
-                                    data.datos_deposito_incidencia.map((item, index) => (
-                                        <tr key={index} className="border-t border-gray-200">
-                                            <td className="px-4 py-2">{item.tipo_deposito ||"-" }</td>
-                                            <td className="px-4 py-2">{item.origen ||"-"}</td>
-                                            <td className="px-4 py-2 text-right">{formatCurrency(item.cantidad) ?? 0}</td>
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan={4} className="text-center text-gray-500 py-4">
-                                            No hay depósitos agregados.
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                        
-                        <div className="flex gap-2 items-center ml-5 mb-3">
-                            <span className="font-bold text-base">Total:</span>
-                            <span className="font-bold text-base">{sumDepositos(data.datos_deposito_incidencia)}</span>
-                        </div>
-                        </> :null}
-                        
-                        {/* {data.datos_deposito_incidencia.length>0 && data.incidente == "Depósitos y retiros de valores" ? 
-                        <>
-                            <div className="flex flex-col mt-2">
-                                <div className=" flex justify-between">
-                                    {data.datos_deposito_incidencia.length > 0 ? (
-                                    <Accordion type="single" collapsible className="w-full">
-                                        <AccordionItem key={"1"} value={"1"}>
-                                        <AccordionTrigger><h1 className="font-bold text-xl">Depósitos: </h1></AccordionTrigger>
-                                        <AccordionContent className="mb-0 pb-0">
-                                        {data.datos_deposito_incidencia.length > 0 ? (
-                                        <>
-                                        <table className="min-w-full table-auto border-separate border-spacing-2">
-                                            <thead>
-                                            <tr>
-                                                <th className="px-4 py-2 text-left border-b">Cantidad</th>
-                                                <th className="px-4 py-2 text-left border-b">Tipo de depósito</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            {data.datos_deposito_incidencia.map((item:Depositos, index: number) => (
-                                                <tr key={index}>
-                                                <td className="px-4 py-2 text-right"><p>{formatCurrency(item.cantidad) || "-"}</p></td>
-                                                <td className="px-4 py-2"><p>{capitalizeFirstLetter(item.tipo_deposito) || "-"}</p></td>
-                                                </tr>
-                                            ))}
-                                            </tbody>
-                                        </table>
-
-                                        
-                                        </>
-                                        ) :null}
-                                        </AccordionContent>
-                                        </AccordionItem>
-                                    </Accordion>
-                                    ):<div>No hay lista de depositos disponibles.</div>}
-                                </div>
-                            </div>
-                        </>
-                        :null} */}
 
 
                         <div className="flex flex-col justify-between w-full h-full">
@@ -480,13 +344,13 @@ export const ViewIncidenciaRondin: React.FC<ViewFallaModalProps> = ({
 			</>) : (<> <Loader2 className="animate-spin" /> {"Editar Incidencia..."} </>)}
 			</Button>
 
-		  	{/* <Button
+		  	<Button
 			type="submit"
-			className="w-full  bg-yellow-500 hover:bg-yellow-600 text-white " disabled={isLoading || isFetching} onClick={()=>{handleGetPdf()}}>
-			{isLoading || isFetching ? (<>
+			className="w-full  bg-yellow-500 hover:bg-yellow-600 text-white " disabled={isLoading} onClick={()=>{crearNuevaIncidencia()}}>
+			{isLoading ? (<>
 				  <> <Loader2 className="animate-spin" /> {"Descargando Reporte..."} </>
-			</>) : (<><Download /> Descargar Reporte</>)}
-			</Button> */}
+			</>) : (<> Crear Incidencia</>)}
+			</Button>
 
         </div>
       </DialogContent>
