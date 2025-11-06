@@ -362,8 +362,8 @@ export const RondinesBitacoraTable = () => {
 					setIsSuccess={setModalOpenPerimetroExt}
 					estatus={estatus}
 					diaSelected={diaSelected}
-				selectedRondin={selectedRondin}
-				areaSelected={selectedAreaData}
+					selectedRondin={selectedRondin}
+					areaSelected={selectedAreaData}
 					>
 					<div></div>
 					</ViewRondinesDetallePerimetroExt>
@@ -376,6 +376,7 @@ export const RondinesBitacoraTable = () => {
 					isSuccess={modalOpenArea}
 					setIsSuccess={setModalOpenArea}
 					diaSelected={diaSelected}
+					selectedRondin={selectedRondin}
 					rondin={"Rondin demo"}
 					estatus={estatus}
 					>

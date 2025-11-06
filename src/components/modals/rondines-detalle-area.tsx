@@ -8,11 +8,12 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import { Dispatch, SetStateAction, useState } from "react";
-import { Building2, Bus, Calendar1, ChevronLeft, ChevronRight, Clock, Route } from "lucide-react";
+import { Building2, Calendar1, ChevronLeft, ChevronRight, Clock, Route } from "lucide-react";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
 import Image from "next/image";
 import { Imagen } from "@/lib/update-pass-full";
 import DaysCarousel from "../daysCarousel";
+import { useCheckById } from "@/hooks/Rondines/useCheckById";
 
 interface ViewRondinesDetalleAreaProps {
   title: string;
@@ -23,6 +24,7 @@ interface ViewRondinesDetalleAreaProps {
   diaSelected: number
   rondin:string
   estatus:string
+  selectedRondin:any
 }
 interface Incidente {
     id: number;
@@ -43,10 +45,14 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
   isSuccess,
   diaSelected,
   rondin,
-  estatus
+  estatus,
+  selectedRondin
 }) => {
 
     console.log("Data", areaSelected, title, estatus)
+    const { data:getCheckById} = useCheckById(areaSelected?.estadoDia?.record_id);
+    console.log("selectedRondin",selectedRondin)
+    console.log("getCheckById",getCheckById)
     const img=[{file_url:"/nouser.svg", file_name:"Imagen"},{file_url:"/nouser.svg", file_name:"Imagen"}]
     // const hoy = new Date();
     // const mesActual = hoy.getMonth();
@@ -102,7 +108,7 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
           <div>
              <DialogHeader className="flex-shrink-0">
                 <DialogTitle className="text-2xl text-center font-bold">
-                    {areaSelected.area.nombre}
+                    {getCheckById?.area}
                 </DialogTitle>
             </DialogHeader>
 
@@ -115,7 +121,7 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
             <div className="flex items-center justify-center">
             <Carousel className="w-44">
                 <CarouselContent>
-                    {img.map((a: Imagen, index: number) => {
+                    {getCheckById?.fotos.map((a: Imagen, index: number) => {
                     const isVideo = a.file_url?.match(/\.(mp4|webm|ogg|mov|avi)$/i);
 
                     return (
@@ -144,7 +150,7 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
                     })}
                     </CarouselContent>
             
-                    {img.length > 1 ? (
+                    {getCheckById?.fotos.length > 1 ? (
                         <>
                         <CarouselPrevious type="button" />
                         <CarouselNext type="button" />
@@ -158,21 +164,21 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
                     <div className="bg-slate-200 p-3 rounded"><Route /></div>
                     <div className="flex flex-col"> 
                         <p>Rondin</p>
-                        <p className="text-gray-500 text-sm">{rondin}</p>
+                        <p className="text-gray-500 text-sm">{selectedRondin?.titulo}</p>
                     </div>
                 </div>
                 <div className="flex gap-3">
                     <div className="bg-slate-200 p-3 rounded"><Calendar1/> </div>
                     <div className="flex flex-col"> 
                         <p>Fecha y hora de inspección</p>
-                        <p className="text-gray-400">Abr 12 2025 12:00pm</p>
+                        <p className="text-gray-400">{getCheckById?.hora_de_check}</p>
                     </div>
                 </div>
                 <div className="flex gap-3">
                     <div className="bg-slate-200 p-3 rounded"><Building2/> </div>
                     <div className="flex flex-col"> 
                         <p>Ubicación</p>
-                        <p className="text-gray-500 text-sm">{areaSelected.area.ubicacion || "Ubicación demo" }</p>
+                        <p className="text-gray-500 text-sm">{getCheckById?.ubicacion || "Ubicación demo" }</p>
                     </div>
                 </div>
 
@@ -180,17 +186,17 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
                     <div className="bg-slate-200 p-3 rounded"> <Clock/> </div>
                     <div className="flex flex-col"> 
                         <p>Tiempo</p>
-                        <p className="text-gray-400">20 minutos</p>
+                        <p className="text-gray-400">{getCheckById?.tiempo_translado}</p>
                     </div>
                 </div>
-
+{/* 
                 <div className="flex gap-3">
                     <div className="bg-slate-200 p-3 rounded"><Bus /> </div>
                     <div className="flex flex-col"> 
                         <p>Translado</p>
                         <p className="text-gray-400">{"Demo"}</p>
                     </div>
-                </div>
+                </div> */}
             </div>
             <div className="flex gap-3 mt-3">
                 <div className=""> 
