@@ -38,6 +38,8 @@ export interface InputCrearRondinCompleto{
     cada_cuantos_meses_se_repite:string,
     la_recurrencia_cuenta_con_fecha_final: string,
     fecha_final_recurrencia:string,
+	accion_recurrencia:string
+
 }
 
 export interface InputEditarRondinCompleto{
@@ -68,6 +70,7 @@ export interface InputEditarRondinCompleto{
     cada_cuantos_meses_se_repite?:string,
     la_recurrencia_cuenta_con_fecha_final?: string,
     fecha_final_recurrencia?:string,
+    accion_recurrencia?:string
 }
 
 export const getListRondin  = async (date1:string, date2:string, limit:number, offset:number ) => {

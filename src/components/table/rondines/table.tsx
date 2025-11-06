@@ -12,7 +12,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { CalendarDays, Eraser, MapPin, Menu, MoveLeft, Plus, Search, Trash2 } from "lucide-react";
+import { CalendarDays, Eraser, Loader2, MapPin, Menu, MoveLeft, Pause, Play, Plus, Search, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -40,6 +40,7 @@ import { useGetRondinById } from "@/hooks/Rondines/useGetRondinById";
 import { AreasModal } from "@/components/modals/add-area-rondin";
 import { RondinesBitacoraTable } from "./bitacoras-table";
 import dynamic from "next/dynamic";
+import { usePlayOrPauseRondin } from "@/hooks/Rondines/usePlayOrPauseROndin";
 // import MapView from "@/components/map-v2";
 
 const MapView = dynamic(() => import("@/components/map-v2"), {
@@ -160,36 +161,37 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
  })=> {
 	console.log("Tabla rondines",data, setSelectedRondin, selectedRondin, activeTab)
 	// const [ selectedRow, setSelectedRondin] = React.useState<any | null>(null);
+	const {playOrPauseRondinMutation, isLoading:isLoadingPlayOrPause }= usePlayOrPauseRondin();
 
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  );
+	const [sorting, setSorting] = React.useState<SortingState>([]);
+	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+		[]
+	);
 
-  const [modalEliminarAbierto, setModalEliminarAbierto] = useState(false);
-  const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
-  const [rondinSeleccionado, setRondinSeleccionado] = useState<Recorrido | null>(null);
-  const [verRondin, setVerRondin] = useState(false);
+	const [modalEliminarAbierto, setModalEliminarAbierto] = useState(false);
+	const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
+	const [rondinSeleccionado, setRondinSeleccionado] = useState<Recorrido | null>(null);
+	const [verRondin, setVerRondin] = useState(false);
 
-  const { data:rondin , isLoadingRondin} = useGetRondinById(rondinSeleccionado?rondinSeleccionado._id: "")
+	const { data:rondin , isLoadingRondin} = useGetRondinById(rondinSeleccionado?rondinSeleccionado._id: "")
 
-  const handleEliminar= (rondin: Recorrido) => {
-		setRondinSeleccionado(rondin);
-		setModalEliminarAbierto(true);
-	};
+	const handleEliminar= (rondin: Recorrido) => {
+			setRondinSeleccionado(rondin);
+			setModalEliminarAbierto(true);
+		};
 
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	const handleVerRondin= (rondin:Recorrido)=>{
-		setRondinSeleccionado(rondin); 
-		setVerRondin(true);
-		setActiveTab("Vista");
-	}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		const handleVerRondin= (rondin:Recorrido)=>{
+			setRondinSeleccionado(rondin); 
+			setVerRondin(true);
+			setActiveTab("Vista");
+		}
 
-	const handleEditarRondin= (rondin:Recorrido)=>{
-		setRondinSeleccionado(rondin); 
-		setModalEditarAbierto(true); 
-	}
-  
+		const handleEditarRondin= (rondin:Recorrido)=>{
+			setRondinSeleccionado(rondin); 
+			setModalEditarAbierto(true); 
+		}
+	
 
 	
   const [columnVisibility, setColumnVisibility] =
@@ -252,961 +254,19 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 // 	},
 //   ];
   
+	const handlePlay = () => {
+		playOrPauseRondinMutation.mutate({
+			record_id: rondinSeleccionado?rondinSeleccionado._id:"",
+			paused: false
+		});
+	};
 
-  const dataRondin = [
-	{
-	  hora: "08:00 am",
-	  categorias: [
-		{
-		  titulo: "Inspección Perímetro Exterior",
-		  resumen: ["finalizado","finalizado","finalizado","finalizado","cancelado","en progreso","finalizado","finalizado","finalizado",
-			"finalizado","cerrado","cerrado","en progreso","en progreso","programado","programado","programado","cancelado","programado","finalizado","finalizado",
-			"finalizado","finalizado","finalizado","cerrado","en progreso","programado","programado","programado","programado","none"],
-		  areas: [
-			{
-			  nombre: "Caseta de vigilancia planta 1",
-			  estados: [
-				{ dia: 1, estado: "finalizado" },
-				{ dia: 2, estado: "programado" },
-				{ dia: 3, estado: "finalizado" },
-				{ dia: 4, estado: "incidencias" },
-				{ dia: 5, estado: "cancelado" },
-				{ dia: 6, estado: "no_inspeccionada" },
-				{ dia: 7, estado: "finalizado" },
-				{ dia: 8, estado: "incidencias" },
-				{ dia: 9, estado: "cerrado" },
-				{ dia: 10, estado: "finalizado" },
-				{ dia: 11, estado: "finalizado" },
-				{ dia: 12, estado: "cerrado" },
-				{ dia: 13, estado: "en progreso" },
-				{ dia: 14, estado: "cerrado" },
-				{ dia: 15, estado: "en progreso" },
-				{ dia: 16, estado: "en progreso" },
-				{ dia: 17, estado: "programado" },
-				{ dia: 18, estado: "programado" },
-				{ dia: 19, estado: "programado" },
-				{ dia: 20, estado: "programado" },
-				{ dia: 21, estado: "programado" },
-				{ dia: 22, estado: "programado" },
-				{ dia: 23, estado: "none" },
-				{ dia: 24, estado: "none" },
-				{ dia: 25, estado: "none" },
-				{ dia: 26, estado: "none" },
-				{ dia: 27, estado: "none" },
-				{ dia: 28, estado: "none" },
-				{ dia: 29, estado: "none" },
-				{ dia: 30, estado: "none" },
-			  	{ dia: 31, estado: "none" }
-			  ],
-			},
-			{
-			  nombre: "Área de rampa 24",
-			  estados: [
-				{ dia: 1, estado: "finalizado" },
-				{ dia: 2, estado: "finalizado" },
-				{ dia: 3, estado: "no_inspeccionada" },
-				{ dia: 4, estado: "finalizado" },
-				{ dia: 5, estado: "cancelado" },
-				{ dia: 6, estado: "no_inspeccionada" },
-				{ dia: 7, estado: "finalizado" },
-				{ dia: 8, estado: "finalizado" },
-				{ dia: 9, estado: "incidencias" },
-				{ dia: 10, estado: "finalizado" },
-				{ dia: 11, estado: "finalizado" },
-				{ dia: 12, estado: "cerrado" },
-				{ dia: 13, estado: "cerrado" },
-				{ dia: 14, estado: "no_inspeccionada" },
-				{ dia: 15, estado: "finalizado" },
-				{ dia: 16, estado: "cancelado" },
-				{ dia: 17, estado: "finalizado" },
-				{ dia: 18, estado: "en progreso" },
-				{ dia: 19, estado: "canrondin_progresocelado" },
-				{ dia: 20, estado: "chrondin_progresoeck" },
-				{ dia: 21, estado: "cancelado" },
-				{ dia: 22, estado: "none" },
-				{ dia: 23, estado: "programado" },
-				{ dia: 24, estado: "none" },
-				{ dia: 25, estado: "none" },
-				{ dia: 26, estado: "none" },
-				{ dia: 27, estado: "none" },
-				{ dia: 28, estado: "none" },
-				{ dia: 29, estado: "none" },
-				{ dia: 30, estado: "none" },
-			  	{ dia: 31, estado: "none" }
-			  ],
-			},
-			{
-			  nombre: "Cisterna",
-			  estados: [
-				{ dia: 1, estado: "no_inspeccionada" },
-				{ dia: 2, estado: "no_inspeccionada" },
-				{ dia: 3, estado: "finalizado" },
-				{ dia: 4, estado: "finalizado" },
-				{ dia: 5, estado: "finalizado" },
-				{ dia: 6, estado: "no_inspeccionada" },
-				{ dia: 7, estado: "cancelado" },
-				{ dia: 8, estado: "finalizado" },
-				{ dia: 9, estado: "finalizado" },
-				{ dia: 10, estado: "finalizado" },
-				{ dia: 11, estado: "finalizado" },
-				{ dia: 12, estado: "no_inspeccionada" },
-				{ dia: 13, estado: "finalizado" },
-				{ dia: 14, estado: "no_inspeccionada" },
-				{ dia: 15, estado: "en progreso" },
-				{ dia: 16, estado: "cerrado" },
-				{ dia: 17, estado: "cerrado" },
-				{ dia: 18, estado: "cerrado" },
-				{ dia: 19, estado: "cancelado" },
-				{ dia: 20, estado: "none" },
-				{ dia: 21, estado: "none" },
-				{ dia: 22, estado: "none" },
-				{ dia: 23, estado: "programado" },
-				{ dia: 24, estado: "none" },
-				{ dia: 25, estado: "none" },
-				{ dia: 26, estado: "none" },
-				{ dia: 27, estado: "none" },
-				{ dia: 28, estado: "none" },
-				{ dia: 29, estado: "none" },
-				{ dia: 30, estado: "none" },
-			  	{ dia: 31, estado: "none" }
-			  ],
-			},
-		  ],
-		},
-		{
-		  titulo: "Rondín de áreas públicas",
-		  resumen: ["finalizado","finalizado","finalizado","finalizado","cancelado","en progreso","finalizado","finalizado","finalizado",
-			"finalizado","cerrado","cerrado","en progreso","en progreso","programado","programado","programado","cancelado","cancelado","finalizado","finalizado",
-			"finalizado","cerrado","cerrado","cerrado","cancelado","cancelado","cancelado","cancelado","programado","none"],
-		  areas: [
-			{
-			  nombre: "Planta baja",
-			  estados: [
-				{ dia: 1, estado: "cancelado" },
-				{ dia: 2, estado: "cancelado" },
-				{ dia: 3, estado: "finalizado" },
-				{ dia: 4, estado: "finalizado" },
-				{ dia: 5, estado: "finalizado" },
-				{ dia: 6, estado: "no_inspeccionada" },
-				{ dia: 7, estado: "cancelado" },
-				{ dia: 8, estado: "cancelado" },
-				{ dia: 9, estado: "finalizado" },
-				{ dia: 10, estado: "incidencias" },
-				{ dia: 11, estado: "incidencias" },
-				{ dia: 12, estado: "no_inspeccionada" },
-				{ dia: 13, estado: "incidencias" },
-				{ dia: 14, estado: "no_inspeccionada" },
-				{ dia: 15, estado: "finalizado" },
-				{ dia: 16, estado: "en progreso" },
-				{ dia: 17, estado: "cancelado" },
-				{ dia: 18, estado: "none" },
-				{ dia: 19, estado: "cancelado" },
-				{ dia: 20, estado: "programado" },
-				{ dia: 21, estado: "none" },
-				{ dia: 22, estado: "none" },
-				{ dia: 23, estado: "none" },
-				{ dia: 24, estado: "none" },
-				{ dia: 25, estado: "none" },
-				{ dia: 26, estado: "none" },
-				{ dia: 27, estado: "none" },
-				{ dia: 28, estado: "none" },
-				{ dia: 29, estado: "none" },
-				{ dia: 30, estado: "none" },
-			  	{ dia: 31, estado: "none" }
-				
-			  ],
-			},
-			{
-			  nombre: "Comedor",
-			  estados: [
-				{ dia: 1, estado: "finalizado" },
-				{ dia: 2, estado: "no_inspeccionada" },
-				{ dia: 3, estado: "no_inspeccionada" },
-				{ dia: 4, estado: "finalizado" },
-				{ dia: 5, estado: "finalizado" },
-				{ dia: 6, estado: "no_inspeccionada" },
-				{ dia: 7, estado: "finalizado" },
-				{ dia: 8, estado: "finalizado" },
-				{ dia: 9, estado: "finalizado" },
-				{ dia: 10, estado: "incidencias" },
-				{ dia: 11, estado: "incidencias" },
-				{ dia: 12, estado: "no_inspeccionada" },
-				{ dia: 13, estado: "incidencias" },
-				{ dia: 14, estado: "no_inspeccionada" },
-				{ dia: 15, estado: "incidencias" },
-				{ dia: 16, estado: "programado" },
-				{ dia: 17, estado: "programado" },
-				{ dia: 18, estado: "en progreso" },
-				{ dia: 19, estado: "cancelado" },
-				{ dia: 20, estado: "en progreso" },
-				{ dia: 21, estado: "programado" },
-				{ dia: 22, estado: "none" },
-				{ dia: 23, estado: "none" },
-				{ dia: 24, estado: "none" },
-				{ dia: 25, estado: "none" },
-				{ dia: 26, estado: "none" },
-				{ dia: 27, estado: "none" },
-				{ dia: 28, estado: "none" },
-				{ dia: 29, estado: "none" },
-				{ dia: 30, estado: "none" },
-			  	{ dia: 31, estado: "none" }
-			  ],
-			},
-		  ],
-		},
-	  ],
-	},
-	{
-	  hora: "11:00 am",
-	  categorias: [
-		{
-		  titulo: "Inspección matutina",
-		  resumen: ["finalizado","finalizado","finalizado","finalizado","cancelado","en progreso","finalizado","finalizado","finalizado",
-			"finalizado","cerrado","cerrado","en progreso","en progreso","programado","programado","programado","cancelado","no_inspeccionada","finalizado","finalizado",
-			"finalizado","finalizado","finalizado","cerrado","cerrado","cerrado","cerrado","cerrado","programado","none"],
-		  areas: [
-			{
-			  nombre: "Oficina A",
-			  estados: [
-				{ dia: 1, estado: "finalizado" },
-				{ dia: 2, estado: "finalizado" },
-				{ dia: 3, estado: "cancelado" },
-				{ dia: 4, estado: "finalizado" },
-				{ dia: 5, estado: "no_inspeccionada" },
-				{ dia: 6, estado: "no_inspeccionada" },
-				{ dia: 7, estado: "finalizado" },
-				{ dia: 8, estado: "finalizado" },
-				{ dia: 9, estado: "finalizado" },
-				{ dia: 10, estado: "finalizado" },
-				{ dia: 11, estado: "finalizado" },
-				{ dia: 12, estado: "no_inspeccionada" },
-				{ dia: 13, estado: "finalizado" },
-				{ dia: 14, estado: "no_inspeccionada" },
-				{ dia: 15, estado: "finalizado" },
-				{ dia: 16, estado: "none" },
-				{ dia: 17, estado: "en progreso" },
-				{ dia: 18, estado: "en progreso" },
-				{ dia: 19, estado: "incidencias" },
-				{ dia: 20, estado: "incidencias" },
-				{ dia: 21, estado: "nonarea_incidentee" },
-				{ dia: 22, estado: "programado" },
-				{ dia: 23, estado: "none" },
-				{ dia: 24, estado: "none" },
-				{ dia: 25, estado: "none" },
-				{ dia: 26, estado: "none" },
-				{ dia: 27, estado: "none" },
-				{ dia: 28, estado: "none" },
-				{ dia: 29, estado: "none" },
-				{ dia: 30, estado: "none" },
-			  	{ dia: 31, estado: "none" }
-			  ],
-			},
-			{
-			  nombre: "Oficina B",
-			  estados: [
-				{ dia: 1, estado: "cancelado" },
-				{ dia: 2, estado: "cancelado" },
-				{ dia: 3, estado: "incidencias" },
-				{ dia: 4, estado: "finalizado" },
-				{ dia: 5, estado: "finalizado" },
-				{ dia: 6, estado: "no_inspeccionada" },
-				{ dia: 7, estado: "finalizado" },
-				{ dia: 8, estado: "incidencias" },
-				{ dia: 9, estado: "finalizado" },
-				{ dia: 10, estado: "finalizado" },
-				{ dia: 11, estado: "finalizado" },
-				{ dia: 12, estado: "no_inspeccionada" },
-				{ dia: 13, estado: "finalizado" },
-				{ dia: 14, estado: "no_inspeccionada" },
-				{ dia: 15, estado: "finalizado" },
-				{ dia: 16, estado: "en progreso" },
-				{ dia: 17, estado: "programado" },
-				{ dia: 18, estado: "programado" },
-				{ dia: 19, estado: "programado" },
-				{ dia: 20, estado: "programado" },
-				{ dia: 21, estado: "programado" },
-				{ dia: 22, estado: "programado" },
-				{ dia: 23, estado: "programado" },
-				{ dia: 24, estado: "none" },
-				{ dia: 25, estado: "none" },
-				{ dia: 26, estado: "none" },
-				{ dia: 27, estado: "none" },
-				{ dia: 28, estado: "none" },
-				{ dia: 29, estado: "none" },
-				{ dia: 30, estado: "none" },
-			  	{ dia: 31, estado: "none" }
-			  ],
-			},
-			{
-				nombre: "Planta baja",
-				estados: [
-				  { dia: 1, estado: "cancelado" },
-				  { dia: 2, estado: "cancelado" },
-				  { dia: 3, estado: "finalizado" },
-				  { dia: 4, estado: "finalizado" },
-				  { dia: 5, estado: "finalizado" },
-				  { dia: 6, estado: "no_inspeccionada" },
-				  { dia: 7, estado: "cancelado" },
-				  { dia: 8, estado: "cancelado" },
-				  { dia: 9, estado: "finalizado" },
-				  { dia: 10, estado: "incidencias" },
-				  { dia: 11, estado: "incidencias" },
-				  { dia: 12, estado: "no_inspeccionada" },
-				  { dia: 13, estado: "incidencias" },
-				  { dia: 14, estado: "no_inspeccionada" },
-				  { dia: 15, estado: "finalizado" },
-				  { dia: 16, estado: "en progreso" },
-				  { dia: 17, estado: "cancelado" },
-				  { dia: 18, estado: "none" },
-				  { dia: 19, estado: "cancelado" },
-				  { dia: 20, estado: "programado" },
-				  { dia: 21, estado: "none" },
-				  { dia: 22, estado: "none" },
-				  { dia: 23, estado: "none" },
-				  { dia: 24, estado: "none" },
-				  { dia: 25, estado: "none" },
-				  { dia: 26, estado: "none" },
-				  { dia: 27, estado: "none" },
-				  { dia: 28, estado: "none" },
-				  { dia: 29, estado: "none" },
-				  { dia: 30, estado: "none" },
-					{ dia: 31, estado: "none" }
-				  
-				],
-			  },
-		  ],
-		},
-	  ],
-	},
-	{
-	  hora: "01:00 pm",
-	  categorias: [
-		{
-		  titulo: "Rondín áreas eléctricas",
-		  resumen: ["finalizado","finalizado","finalizado","finalizado","cancelado","en progreso","finalizado","finalizado","finalizado",
-			"finalizado","cerrado","cerrado","en progreso","en progreso","programado","programado","programado","cancelado","programado","finalizado","finalizado",
-			"finalizado","finalizado","finalizado","cerrado","cerrado","cerrado","cerrado","programado","programado","none"],
-		  areas: [
-			{
-			  nombre: "Subestación norte",
-			  estados: [
-				{ dia: 1, estado: "finalizado" },
-				{ dia: 2, estado: "finalizado" },
-				{ dia: 3, estado: "no_inspeccionada" },
-				{ dia: 4, estado: "finalizado" },
-				{ dia: 5, estado: "finalizado" },
-				{ dia: 6, estado: "no_inspeccionada" },
-				{ dia: 7, estado: "finalizado" },
-				{ dia: 8, estado: "finalizado" },
-				{ dia: 9, estado: "cerrado" },
-				{ dia: 10, estado: "finalizado" },
-				{ dia: 11, estado: "cerrado" },
-				{ dia: 12, estado: "no_inspeccionada" },
-				{ dia: 13, estado: "finalizado" },
-				{ dia: 14, estado: "cerrado" },
-				{ dia: 15, estado: "finalizado" },
-				{ dia: 16, estado: "none" },
-				{ dia: 17, estado: "none" },
-				{ dia: 18, estado: "none" },
-				{ dia: 19, estado: "none" },
-				{ dia: 20, estado: "none" },
-				{ dia: 21, estado: "none" },
-				{ dia: 22, estado: "none" },
-				{ dia: 23, estado: "none" },
-				{ dia: 24, estado: "none" },
-				{ dia: 25, estado: "none" },
-				{ dia: 26, estado: "none" },
-				{ dia: 27, estado: "none" },
-				{ dia: 28, estado: "none" },
-				{ dia: 29, estado: "none" },
-				{ dia: 30, estado: "none" },
-			  	{ dia: 31, estado: "none" }
-			  ],
-			},
-			{
-			  nombre: "Subestación sur",
-			  estados: [
-				{ dia: 1, estado: "no_inspeccionada" },
-				{ dia: 2, estado: "no_inspeccionada" },
-				{ dia: 3, estado: "finalizado" },
-				{ dia: 4, estado: "cancelado" },
-				{ dia: 5, estado: "finalizado" },
-				{ dia: 6, estado: "cerrado" },
-				{ dia: 7, estado: "cancelado" },
-				{ dia: 8, estado: "cancelado" },
-				{ dia: 9, estado: "incidencias" },
-				{ dia: 10, estado: "cerrado" },
-				{ dia: 11, estado: "finalizado" },
-				{ dia: 12, estado: "no_inspeccionada" },
-				{ dia: 13, estado: "cancelado" },
-				{ dia: 14, estado: "cerrado" },
-				{ dia: 15, estado: "finalizado" },
-				{ dia: 16, estado: "none" },
-				{ dia: 17, estado: "none" },
-				{ dia: 18, estado: "none" },
-				{ dia: 19, estado: "programado" },
-				{ dia: 20, estado: "none" },
-				{ dia: 21, estado: "none" },
-				{ dia: 22, estado: "none" },
-				{ dia: 23, estado: "none" },
-				{ dia: 24, estado: "none" },
-				{ dia: 25, estado: "none" },
-				{ dia: 26, estado: "none" },
-				{ dia: 27, estado: "none" },
-				{ dia: 28, estado: "none" },
-				{ dia: 29, estado: "none" },
-				{ dia: 30, estado: "none" },
-			  	{ dia: 31, estado: "none" }
-			  ],
-			},
-		  ],
-		},
-	  ],
-	},
-	{
-		hora: "02:00 pm",
-		categorias: [
-		  {
-			titulo: "Rondín áreas eléctricas",
-			resumen: ["finalizado","finalizado","finalizado","finalizado","cancelado","en progreso","finalizado","finalizado","finalizado",
-				"finalizado","cerrado","cerrado","en progreso","en progreso","programado","programado","programado","cancelado","no_inspeccionada","finalizado","finalizado",
-				"finalizado","finalizado","finalizado","cerrado","en progreso","cerrado","programado","programado","cerrado","none"],
-			areas: [
-			  {
-				nombre: "Subestación norte",
-				estados: [
-				  { dia: 1, estado: "finalizado" },
-				  { dia: 2, estado: "finalizado" },
-				  { dia: 3, estado: "no_inspeccionada" },
-				  { dia: 4, estado: "finalizado" },
-				  { dia: 5, estado: "finalizado" },
-				  { dia: 6, estado: "no_inspeccionada" },
-				  { dia: 7, estado: "finalizado" },
-				  { dia: 8, estado: "finalizado" },
-				  { dia: 9, estado: "cerrado" },
-				  { dia: 10, estado: "finalizado" },
-				  { dia: 11, estado: "cerrado" },
-				  { dia: 12, estado: "no_inspeccionada" },
-				  { dia: 13, estado: "finalizado" },
-				  { dia: 14, estado: "cerrado" },
-				  { dia: 15, estado: "finalizado" },
-				  { dia: 16, estado: "none" },
-				  { dia: 17, estado: "none" },
-				  { dia: 18, estado: "none" },
-				  { dia: 19, estado: "none" },
-				  { dia: 20, estado: "none" },
-				  { dia: 21, estado: "none" },
-				  { dia: 22, estado: "none" },
-				  { dia: 23, estado: "none" },
-				  { dia: 24, estado: "none" },
-				  { dia: 25, estado: "none" },
-				  { dia: 26, estado: "none" },
-				  { dia: 27, estado: "none" },
-				  { dia: 28, estado: "none" },
-				  { dia: 29, estado: "none" },
-				  { dia: 30, estado: "none" },
-					{ dia: 31, estado: "none" }
-				],
-			  },
-			  {
-				nombre: "Subestación sur",
-				estados: [
-				  { dia: 1, estado: "no_inspeccionada" },
-				  { dia: 2, estado: "no_inspeccionada" },
-				  { dia: 3, estado: "finalizado" },
-				  { dia: 4, estado: "cancelado" },
-				  { dia: 5, estado: "finalizado" },
-				  { dia: 6, estado: "cerrado" },
-				  { dia: 7, estado: "cancelado" },
-				  { dia: 8, estado: "cancelado" },
-				  { dia: 9, estado: "incidencias" },
-				  { dia: 10, estado: "cerrado" },
-				  { dia: 11, estado: "finalizado" },
-				  { dia: 12, estado: "no_inspeccionada" },
-				  { dia: 13, estado: "cancelado" },
-				  { dia: 14, estado: "cerrado" },
-				  { dia: 15, estado: "finalizado" },
-				  { dia: 16, estado: "none" },
-				  { dia: 17, estado: "none" },
-				  { dia: 18, estado: "none" },
-				  { dia: 19, estado: "programado" },
-				  { dia: 20, estado: "none" },
-				  { dia: 21, estado: "none" },
-				  { dia: 22, estado: "none" },
-				  { dia: 23, estado: "none" },
-				  { dia: 24, estado: "none" },
-				  { dia: 25, estado: "none" },
-				  { dia: 26, estado: "none" },
-				  { dia: 27, estado: "none" },
-				  { dia: 28, estado: "none" },
-				  { dia: 29, estado: "none" },
-				  { dia: 30, estado: "none" },
-					{ dia: 31, estado: "none" }
-				],
-			  },
-			],
-		  },
-		],
-	  },
-	  {
-		hora: "04:00 am",
-		categorias: [
-		  {
-			titulo: "Inspección Perímetro Exterior",
-			resumen: ["finalizado","finalizado","finalizado","finalizado","cancelado","en progreso","finalizado","finalizado","finalizado",
-				"finalizado","cerrado","cerrado","en progreso","en progreso","programado","programado","programado","cancelado","no_inspeccionada","finalizado","finalizado",
-				"finalizado","finalizado","finalizado","cerrado","en progreso","programado","programado","cerrado","cerrado","none"],
-			areas: [
-			  {
-				nombre: "Caseta de vigilancia planta 1",
-				estados: [
-				  { dia: 1, estado: "finalizado" },
-				  { dia: 2, estado: "no_inspeccionada" },
-				  { dia: 3, estado: "finalizado" },
-				  { dia: 4, estado: "incidencias" },
-				  { dia: 5, estado: "cancelado" },
-				  { dia: 6, estado: "no_inspeccionada" },
-				  { dia: 7, estado: "finalizado" },
-				  { dia: 8, estado: "incidencias" },
-				  { dia: 9, estado: "cancelado" },
-				  { dia: 10, estado: "finalizado" },
-				  { dia: 11, estado: "finalizado" },
-				  { dia: 12, estado: "cerrado" },
-				  { dia: 13, estado: "en progreso" },
-				  { dia: 14, estado: "cerrado" },
-				  { dia: 15, estado: "en progreso" },
-				  { dia: 16, estado: "en progreso" },
-				  { dia: 17, estado: "programado" },
-				  { dia: 18, estado: "programado" },
-				  { dia: 19, estado: "programado" },
-				  { dia: 20, estado: "programado" },
-				  { dia: 21, estado: "programado" },
-				  { dia: 22, estado: "programado" },
-				  { dia: 23, estado: "none" },
-				  { dia: 24, estado: "none" },
-				  { dia: 25, estado: "none" },
-				  { dia: 26, estado: "none" },
-				  { dia: 27, estado: "none" },
-				  { dia: 28, estado: "none" },
-				  { dia: 29, estado: "none" },
-				  { dia: 30, estado: "none" },
-					{ dia: 31, estado: "none" }
-				],
-			  },
-			  {
-				nombre: "Área de rampa 24",
-				estados: [
-				  { dia: 1, estado: "finalizado" },
-				  { dia: 2, estado: "finalizado" },
-				  { dia: 3, estado: "no_inspeccionada" },
-				  { dia: 4, estado: "finalizado" },
-				  { dia: 5, estado: "cancelado" },
-				  { dia: 6, estado: "no_inspeccionada" },
-				  { dia: 7, estado: "finalizado" },
-				  { dia: 8, estado: "finalizado" },
-				  { dia: 9, estado: "incidencias" },
-				  { dia: 10, estado: "finalizado" },
-				  { dia: 11, estado: "finalizado" },
-				  { dia: 12, estado: "cerrado" },
-				  { dia: 13, estado: "cerrado" },
-				  { dia: 14, estado: "no_inspeccionada" },
-				  { dia: 15, estado: "finalizado" },
-				  { dia: 16, estado: "cancelado" },
-				  { dia: 17, estado: "finalizado" },
-				  { dia: 18, estado: "en progreso" },
-				  { dia: 19, estado: "canrondin_progresocelado" },
-				  { dia: 20, estado: "chrondin_progresoeck" },
-				  { dia: 21, estado: "cancelado" },
-				  { dia: 22, estado: "none" },
-				  { dia: 23, estado: "programado" },
-				  { dia: 24, estado: "none" },
-				  { dia: 25, estado: "none" },
-				  { dia: 26, estado: "none" },
-				  { dia: 27, estado: "none" },
-				  { dia: 28, estado: "none" },
-				  { dia: 29, estado: "none" },
-				  { dia: 30, estado: "none" },
-					{ dia: 31, estado: "none" }
-				],
-			  },
-			  {
-				nombre: "Cisterna",
-				estados: [
-				  { dia: 1, estado: "no_inspeccionada" },
-				  { dia: 2, estado: "no_inspeccionada" },
-				  { dia: 3, estado: "finalizado" },
-				  { dia: 4, estado: "finalizado" },
-				  { dia: 5, estado: "finalizado" },
-				  { dia: 6, estado: "no_inspeccionada" },
-				  { dia: 7, estado: "cancelado" },
-				  { dia: 8, estado: "finalizado" },
-				  { dia: 9, estado: "finalizado" },
-				  { dia: 10, estado: "finalizado" },
-				  { dia: 11, estado: "finalizado" },
-				  { dia: 12, estado: "no_inspeccionada" },
-				  { dia: 13, estado: "finalizado" },
-				  { dia: 14, estado: "no_inspeccionada" },
-				  { dia: 15, estado: "en progreso" },
-				  { dia: 16, estado: "cerrado" },
-				  { dia: 17, estado: "cerrado" },
-				  { dia: 18, estado: "cerrado" },
-				  { dia: 19, estado: "cancelado" },
-				  { dia: 20, estado: "none" },
-				  { dia: 21, estado: "none" },
-				  { dia: 22, estado: "none" },
-				  { dia: 23, estado: "programado" },
-				  { dia: 24, estado: "none" },
-				  { dia: 25, estado: "none" },
-				  { dia: 26, estado: "none" },
-				  { dia: 27, estado: "none" },
-				  { dia: 28, estado: "none" },
-				  { dia: 29, estado: "none" },
-				  { dia: 30, estado: "none" },
-					{ dia: 31, estado: "none" }
-				],
-			  },
-			],
-		  },
-		  {
-			titulo: "Rondín de áreas públicas",
-			resumen: ["finalizado","finalizado","finalizado","finalizado","cancelado","en progreso","finalizado","finalizado","finalizado",
-				"finalizado","cerrado","cerrado","en progreso","en progreso","programado","programado","programado","cancelado","no_inspeccionada","finalizado","finalizado",
-				"finalizado","finalizado","finalizado","cerrado","none","programado","programado","cerrado","no_inspeccionada","cerrado"],
-			areas: [
-			  {
-				nombre: "Planta baja",
-				estados: [
-				  { dia: 1, estado: "cancelado" },
-				  { dia: 2, estado: "cancelado" },
-				  { dia: 3, estado: "finalizado" },
-				  { dia: 4, estado: "finalizado" },
-				  { dia: 5, estado: "finalizado" },
-				  { dia: 6, estado: "no_inspeccionada" },
-				  { dia: 7, estado: "cancelado" },
-				  { dia: 8, estado: "cancelado" },
-				  { dia: 9, estado: "finalizado" },
-				  { dia: 10, estado: "incidencias" },
-				  { dia: 11, estado: "incidencias" },
-				  { dia: 12, estado: "no_inspeccionada" },
-				  { dia: 13, estado: "incidencias" },
-				  { dia: 14, estado: "no_inspeccionada" },
-				  { dia: 15, estado: "finalizado" },
-				  { dia: 16, estado: "en progreso" },
-				  { dia: 17, estado: "cancelado" },
-				  { dia: 18, estado: "none" },
-				  { dia: 19, estado: "cancelado" },
-				  { dia: 20, estado: "programado" },
-				  { dia: 21, estado: "none" },
-				  { dia: 22, estado: "none" },
-				  { dia: 23, estado: "none" },
-				  { dia: 24, estado: "none" },
-				  { dia: 25, estado: "none" },
-				  { dia: 26, estado: "none" },
-				  { dia: 27, estado: "none" },
-				  { dia: 28, estado: "none" },
-				  { dia: 29, estado: "none" },
-				  { dia: 30, estado: "none" },
-					{ dia: 31, estado: "none" }
-				  
-				],
-			  },
-			  {
-				nombre: "Comedor",
-				estados: [
-				  { dia: 1, estado: "finalizado" },
-				  { dia: 2, estado: "no_inspeccionada" },
-				  { dia: 3, estado: "no_inspeccionada" },
-				  { dia: 4, estado: "finalizado" },
-				  { dia: 5, estado: "finalizado" },
-				  { dia: 6, estado: "no_inspeccionada" },
-				  { dia: 7, estado: "finalizado" },
-				  { dia: 8, estado: "finalizado" },
-				  { dia: 9, estado: "finalizado" },
-				  { dia: 10, estado: "incidencias" },
-				  { dia: 11, estado: "incidencias" },
-				  { dia: 12, estado: "no_inspeccionada" },
-				  { dia: 13, estado: "incidencias" },
-				  { dia: 14, estado: "no_inspeccionada" },
-				  { dia: 15, estado: "incidencias" },
-				  { dia: 16, estado: "programado" },
-				  { dia: 17, estado: "programado" },
-				  { dia: 18, estado: "en progreso" },
-				  { dia: 19, estado: "cancelado" },
-				  { dia: 20, estado: "en progreso" },
-				  { dia: 21, estado: "programado" },
-				  { dia: 22, estado: "none" },
-				  { dia: 23, estado: "none" },
-				  { dia: 24, estado: "none" },
-				  { dia: 25, estado: "none" },
-				  { dia: 26, estado: "none" },
-				  { dia: 27, estado: "none" },
-				  { dia: 28, estado: "none" },
-				  { dia: 29, estado: "none" },
-				  { dia: 30, estado: "none" },
-					{ dia: 31, estado: "none" }
-				],
-			  },
-			],
-		  },
-		],
-	  },
-	  {
-		hora: "7:00 pm",
-		categorias: [
-		  {
-			titulo: "Inspección matutina",
-			resumen: ["finalizado","finalizado","finalizado","finalizado","cancelado","en progreso","finalizado","finalizado","finalizado",
-				"finalizado","cerrado","cerrado","en progreso","en progreso","programado","programado","programado","cancelado","programado","finalizado","finalizado",
-				"finalizado","finalizado","finalizado","cerrado","en progreso","programado","none","none","none","none"],
-			areas: [
-			  {
-				nombre: "Oficina A",
-				estados: [
-				  { dia: 1, estado: "finalizado" },
-				  { dia: 2, estado: "finalizado" },
-				  { dia: 3, estado: "cancelado" },
-				  { dia: 4, estado: "finalizado" },
-				  { dia: 5, estado: "no_inspeccionada" },
-				  { dia: 6, estado: "no_inspeccionada" },
-				  { dia: 7, estado: "finalizado" },
-				  { dia: 8, estado: "finalizado" },
-				  { dia: 9, estado: "finalizado" },
-				  { dia: 10, estado: "finalizado" },
-				  { dia: 11, estado: "incidencias" },
-				  { dia: 12, estado: "no_inspeccionada" },
-				  { dia: 13, estado: "finalizado" },
-				  { dia: 14, estado: "no_inspeccionada" },
-				  { dia: 15, estado: "finalizado" },
-				  { dia: 16, estado: "none" },
-				  { dia: 17, estado: "incidencias" },
-				  { dia: 18, estado: "incidencias" },
-				  { dia: 19, estado: "incidencias" },
-				  { dia: 20, estado: "incidencias" },
-				  { dia: 21, estado: "nonarea_incidentee" },
-				  { dia: 22, estado: "programado" },
-				  { dia: 23, estado: "none" },
-				  { dia: 24, estado: "none" },
-				  { dia: 25, estado: "none" },
-				  { dia: 26, estado: "none" },
-				  { dia: 27, estado: "none" },
-				  { dia: 28, estado: "none" },
-				  { dia: 29, estado: "none" },
-				  { dia: 30, estado: "none" },
-					{ dia: 31, estado: "none" }
-				],
-			  },
-			  {
-				nombre: "Oficina B",
-				estados: [
-				  { dia: 1, estado: "cancelado" },
-				  { dia: 2, estado: "cancelado" },
-				  { dia: 3, estado: "incidencias" },
-				  { dia: 4, estado: "finalizado" },
-				  { dia: 5, estado: "finalizado" },
-				  { dia: 6, estado: "no_inspeccionada" },
-				  { dia: 7, estado: "finalizado" },
-				  { dia: 8, estado: "incidencias" },
-				  { dia: 9, estado: "finalizado" },
-				  { dia: 10, estado: "finalizado" },
-				  { dia: 11, estado: "finalizado" },
-				  { dia: 12, estado: "no_inspeccionada" },
-				  { dia: 13, estado: "finalizado" },
-				  { dia: 14, estado: "no_inspeccionada" },
-				  { dia: 15, estado: "finalizado" },
-				  { dia: 16, estado: "en progreso" },
-				  { dia: 17, estado: "programado" },
-				  { dia: 18, estado: "programado" },
-				  { dia: 19, estado: "programado" },
-				  { dia: 20, estado: "programado" },
-				  { dia: 21, estado: "programado" },
-				  { dia: 22, estado: "programado" },
-				  { dia: 23, estado: "programado" },
-				  { dia: 24, estado: "none" },
-				  { dia: 25, estado: "none" },
-				  { dia: 26, estado: "none" },
-				  { dia: 27, estado: "none" },
-				  { dia: 28, estado: "none" },
-				  { dia: 29, estado: "none" },
-				  { dia: 30, estado: "none" },
-					{ dia: 31, estado: "none" }
-				],
-			  },
-			],
-		  },
-		],
-	  },
-	  {
-		hora: "010:00 pm",
-		categorias: [
-		  {
-			titulo: "Rondín áreas eléctricas",
-			resumen: ["finalizado","finalizado","finalizado","finalizado","cancelado","en progreso","finalizado","finalizado","finalizado",
-				"finalizado","cerrado","cerrado","en progreso","en progreso","programado","programado","programado","cancelado","programado","finalizado","finalizado",
-				"finalizado","finalizado","finalizado","cerrado","en progreso","programado","none","none","none","none"],
-			areas: [
-			  {
-				nombre: "Subestación norte",
-				estados: [
-				  { dia: 1, estado: "finalizado" },
-				  { dia: 2, estado: "finalizado" },
-				  { dia: 3, estado: "no_inspeccionada" },
-				  { dia: 4, estado: "finalizado" },
-				  { dia: 5, estado: "finalizado" },
-				  { dia: 6, estado: "no_inspeccionada" },
-				  { dia: 7, estado: "finalizado" },
-				  { dia: 8, estado: "finalizado" },
-				  { dia: 9, estado: "cerrado" },
-				  { dia: 10, estado: "finalizado" },
-				  { dia: 11, estado: "cerrado" },
-				  { dia: 12, estado: "no_inspeccionada" },
-				  { dia: 13, estado: "finalizado" },
-				  { dia: 14, estado: "cerrado" },
-				  { dia: 15, estado: "finalizado" },
-				  { dia: 16, estado: "none" },
-				  { dia: 17, estado: "none" },
-				  { dia: 18, estado: "none" },
-				  { dia: 19, estado: "none" },
-				  { dia: 20, estado: "none" },
-				  { dia: 21, estado: "none" },
-				  { dia: 22, estado: "none" },
-				  { dia: 23, estado: "none" },
-				  { dia: 24, estado: "none" },
-				  { dia: 25, estado: "none" },
-				  { dia: 26, estado: "none" },
-				  { dia: 27, estado: "none" },
-				  { dia: 28, estado: "none" },
-				  { dia: 29, estado: "none" },
-				  { dia: 30, estado: "none" },
-					{ dia: 31, estado: "none" }
-				],
-			  },
-			  {
-				nombre: "Subestación sur",
-				estados: [
-				  { dia: 1, estado: "no_inspeccionada" },
-				  { dia: 2, estado: "no_inspeccionada" },
-				  { dia: 3, estado: "finalizado" },
-				  { dia: 4, estado: "cancelado" },
-				  { dia: 5, estado: "finalizado" },
-				  { dia: 6, estado: "cerrado" },
-				  { dia: 7, estado: "cancelado" },
-				  { dia: 8, estado: "cancelado" },
-				  { dia: 9, estado: "incidencias" },
-				  { dia: 10, estado: "cerrado" },
-				  { dia: 11, estado: "finalizado" },
-				  { dia: 12, estado: "no_inspeccionada" },
-				  { dia: 13, estado: "cancelado" },
-				  { dia: 14, estado: "cerrado" },
-				  { dia: 15, estado: "finalizado" },
-				  { dia: 16, estado: "none" },
-				  { dia: 17, estado: "none" },
-				  { dia: 18, estado: "none" },
-				  { dia: 19, estado: "programado" },
-				  { dia: 20, estado: "none" },
-				  { dia: 21, estado: "none" },
-				  { dia: 22, estado: "none" },
-				  { dia: 23, estado: "none" },
-				  { dia: 24, estado: "none" },
-				  { dia: 25, estado: "none" },
-				  { dia: 26, estado: "none" },
-				  { dia: 27, estado: "none" },
-				  { dia: 28, estado: "none" },
-				  { dia: 29, estado: "none" },
-				  { dia: 30, estado: "none" },
-					{ dia: 31, estado: "none" }
-				],
-			  },
-			],
-		  },
-		],
-	  },
-	  {
-		  hora: "11:00 pm",
-		  categorias: [
-			{
-			  titulo: "Rondín áreas eléctricas",
-			  resumen: ["finalizado","finalizado","finalizado","finalizado","cancelado","en progreso","finalizado","finalizado","finalizado",
-				"finalizado","cerrado","cerrado","en progreso","en progreso","programado","programado","programado","cancelado","no_inspeccionada","finalizado","finalizado",
-				"finalizado","finalizado","finalizado","cerrado","en progreso","programado","none","none","none","none"],
-			  areas: [
-				{
-				  nombre: "Subestación norte",
-				  estados: [
-					{ dia: 1, estado: "finalizado" },
-					{ dia: 2, estado: "finalizado" },
-					{ dia: 3, estado: "no_inspeccionada" },
-					{ dia: 4, estado: "finalizado" },
-					{ dia: 5, estado: "finalizado" },
-					{ dia: 6, estado: "no_inspeccionada" },
-					{ dia: 7, estado: "finalizado" },
-					{ dia: 8, estado: "finalizado" },
-					{ dia: 9, estado: "cerrado" },
-					{ dia: 10, estado: "finalizado" },
-					{ dia: 11, estado: "cerrado" },
-					{ dia: 12, estado: "no_inspeccionada" },
-					{ dia: 13, estado: "finalizado" },
-					{ dia: 14, estado: "cerrado" },
-					{ dia: 15, estado: "finalizado" },
-					{ dia: 16, estado: "none" },
-					{ dia: 17, estado: "none" },
-					{ dia: 18, estado: "none" },
-					{ dia: 19, estado: "none" },
-					{ dia: 20, estado: "none" },
-					{ dia: 21, estado: "none" },
-					{ dia: 22, estado: "none" },
-					{ dia: 23, estado: "none" },
-					{ dia: 24, estado: "none" },
-					{ dia: 25, estado: "none" },
-					{ dia: 26, estado: "none" },
-					{ dia: 27, estado: "none" },
-					{ dia: 28, estado: "none" },
-					{ dia: 29, estado: "none" },
-					{ dia: 30, estado: "none" },
-					  { dia: 31, estado: "none" }
-				  ],
-				},
-				{
-				  nombre: "Subestación sur",
-				  estados: [
-					{ dia: 1, estado: "no_inspeccionada" },
-					{ dia: 2, estado: "no_inspeccionada" },
-					{ dia: 3, estado: "finalizado" },
-					{ dia: 4, estado: "cancelado" },
-					{ dia: 5, estado: "finalizado" },
-					{ dia: 6, estado: "cerrado" },
-					{ dia: 7, estado: "cancelado" },
-					{ dia: 8, estado: "cancelado" },
-					{ dia: 9, estado: "incidencias" },
-					{ dia: 10, estado: "cerrado" },
-					{ dia: 11, estado: "finalizado" },
-					{ dia: 12, estado: "no_inspeccionada" },
-					{ dia: 13, estado: "cancelado" },
-					{ dia: 14, estado: "cerrado" },
-					{ dia: 15, estado: "finalizado" },
-					{ dia: 16, estado: "none" },
-					{ dia: 17, estado: "none" },
-					{ dia: 18, estado: "none" },
-					{ dia: 19, estado: "programado" },
-					{ dia: 20, estado: "none" },
-					{ dia: 21, estado: "none" },
-					{ dia: 22, estado: "none" },
-					{ dia: 23, estado: "none" },
-					{ dia: 24, estado: "none" },
-					{ dia: 25, estado: "none" },
-					{ dia: 26, estado: "none" },
-					{ dia: 27, estado: "none" },
-					{ dia: 28, estado: "none" },
-					{ dia: 29, estado: "none" },
-					{ dia: 30, estado: "none" },
-					  { dia: 31, estado: "none" }
-				  ],
-				},
-			  ],
-			},
-		  ],
-		},
-	  
-  ];
+	const handlePause = () => {
+		playOrPauseRondinMutation.mutate({
+			record_id: rondinSeleccionado?rondinSeleccionado._id:"",
+			paused: true,
+		});
+	};
 
 
   return (
@@ -1237,7 +297,7 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 				):null}
 			</div>
 			{activeTab =="Bitacora" ? (
-				<div className="text-2xl font-semi">Octubre</div>
+				<div className="text-2xl font-bold">Octubre</div>
 			):null}
 			
 
@@ -1305,12 +365,10 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 			</div>
     	</div>
 		
-
+{/* 
 		{activeTab =="Bitacora" ? (
-			<div className="p-2">
-				<RondinesBitacoraTable data={dataRondin} dateFilter={dateFilter}/>
-			</div>
-		): ( 
+			
+		): (  */}
 			<>
 
 			{ rondin && verRondin ? (
@@ -1327,8 +385,7 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 				
 						<div className="grid grid-cols-[auto,1fr] gap-4 mb-6">
 						<div className="flex ">
-							<span className="font-semibold min-w-[130px]">Descripcion:</span>
-							
+							{/* <span className="font-semibold min-w-[130px]">Descripcion:</span> */}
 						</div>
 
 						<div>
@@ -1383,15 +440,15 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 						<div className="flex">
 							<span className="font-semibold min-w-[130px]">Geolocalizacion:</span>
 						</div>
-						<div className="flex">
-							<MapPin/> Ver en MapContainer
+						<div className="flex gap-1">
+							<MapPin/>  Ver en Map
 						</div>
 
 						<div className="flex">
 							<span className="font-semibold min-w-[130px]">Estatus:</span>
 						</div>
-						<span
-						className={`font-semibold ${
+						<div
+						className={`flex font-semibold ${
 							rondin?.estatus_rondin === "Corriendo"
 							? "text-green-500"
 							: rondin?.estatus_rondin === "Cancelado"
@@ -1403,8 +460,42 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 							: "text-gray-500"
 						}`}
 						>
+						<div>
 						{rondin?.estatus_rondin}
-						</span>
+						</div>
+						<div>
+							<div className="flex items-center gap-2 ml-4">
+								<Button
+								onClick={() => {handlePause()}}
+								className="rounded-sm bg-blue-500 hover:bg-blue-600 transition p-2 w-auto h-auto inline-flex"
+								title="Pausar Rondín"
+								disabled={rondin?.estatus_rondin !== "Corriendo" || isLoadingPlayOrPause}
+								>
+							 	{isLoadingPlayOrPause && rondin?.estatus_rondin === "Corriendo" ? (
+									<Loader2 size={18} className="animate-spin text-white" />
+								) : (
+									<Pause size={18} className="text-white" />
+								)}
+								
+								</Button>
+
+								<Button
+								onClick={() => {handlePlay()}}
+								className="rounded-sm bg-blue-500 hover:bg-blue-600 transition p-2 w-auto h-auto inline-flex"
+								title="Iniciar Rondín"
+								disabled={rondin?.estatus_rondin === "Corriendo" || isLoadingPlayOrPause}
+								>
+								{isLoadingPlayOrPause && rondin?.estatus_rondin !== "Corriendo" ? (
+									<Loader2 size={18} className="animate-spin text-white" />
+								) : (
+									<Play size={18} className="text-white" />
+								)}
+								</Button>
+
+								
+							</div>
+						</div>
+						</div>
 
 						<div className="flex">
 							<span className="font-semibold min-w-[130px]">Inicio:</span>
@@ -1537,7 +628,7 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 
 							<TabsContent value="rondiness">
 								<div className="p-2">
-									<RondinesBitacoraTable data={dataRondin} dateFilter={dateFilter}/>
+									<RondinesBitacoraTable />
 								</div>
 							</TabsContent>
 
@@ -1621,7 +712,7 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 				</>
 			)}
 			</>
-		)}
+		{/* )} */}
 		
 
 		<div className="flex items-center justify-end space-x-2 py-4">

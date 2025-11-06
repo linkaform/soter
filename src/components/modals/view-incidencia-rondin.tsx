@@ -39,8 +39,23 @@ export const ViewIncidenciaRondin: React.FC<ViewFallaModalProps> = ({
 
 
 	function crearNuevaIncidencia(){
-        console.log("NUEVA INCIDENCIA", data)
-        createIncidenciaMutation.mutate({ data_incidencia: data }, {
+        const formatData ={
+            reporta_incidencia:"",
+            fecha_hora_incidencia: data.fecha_hora_incidente,
+            ubicacion_incidencia:data.ubicacion_incidente,
+            area_incidencia: data.area_incidente,
+            categoria: data.categoria,
+            sub_categoria:data.subcategoria,
+            incidente:data.incidemte,
+            tipo_incidencia: data.incidente,
+            comentario_incidencia: data.comentarios,
+            evidencia_incidencia: data.evidencias,
+            documento_incidencia:data.docuementos,
+            acciones_tomadas_incidencia:[],
+            prioridad_incidencia: "leve",
+            notificacion_incidencia: "no",
+        }
+        createIncidenciaMutation.mutate(formatData, {
             onSuccess: () => {
               setIsSuccess(false);
             },

@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import DateTime from "../dateTime";
 import { Loader2 } from "lucide-react";
@@ -57,13 +57,14 @@ const formSchema = z.object({
     en_que_hora_sucede:z.string().optional(),
     cada_cuantas_horas_se_repite:z.string().optional(),
     que_dias_de_la_semana: z.array(z.string().optional()),
-    en_que_semana_sucede:z.string().optional(),
+    en_que_semana_sucede:z.array(z.string()).optional(),
     que_dia_del_mes:z.string().optional(),
     cada_cuantos_dias_se_repite:z.string().optional(),
-    en_que_mes:z.string().optional(),
+    en_que_mes:z.array(z.string()).optional(),
     cada_cuantos_meses_se_repite:z.string().optional(),
     la_recurrencia_cuenta_con_fecha_final: z.string().optional(),
     fecha_final_recurrencia:z.string().optional(),
+	accion_recurrencia:z.string().optional()
 });
 
 export const AddRondinModal: React.FC<AddRondinModalProps> = ({
@@ -76,7 +77,11 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 	const { createRondinMutation, isLoading} = useRondines()
 	const { data:catalogAreasRondin} = useCatalogAreasRondin(location, isSuccess)
 	const [date, setDate] = useState<Date|"">("");
-	
+	// const [diaSeleccionado, setDiaSeleccionado] = useState<number>()
+	const [que_dias_de_la_semana , set_que_dias_de_la_semana] =useState<string[]>([])
+	const [en_que_semana_sucede, set_en_que_semana_sucede] = useState<string[]>([]);
+	const [en_que_mes, set_en_que_mes] = useState<string[]>([])
+
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -99,15 +104,15 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
             cada_cuantos_minutos_se_repite: '',
             en_que_hora_sucede: '',
             cada_cuantas_horas_se_repite: '',
-            que_dias_de_la_semana: [],
-            en_que_semana_sucede: '',
+            que_dias_de_la_semana: que_dias_de_la_semana,
+            en_que_semana_sucede: en_que_semana_sucede,
             que_dia_del_mes: '',
             cada_cuantos_dias_se_repite: '',
-            en_que_mes: '',
+            en_que_mes: en_que_mes,
             cada_cuantos_meses_se_repite: '',
             la_recurrencia_cuenta_con_fecha_final: '',
             fecha_final_recurrencia: '',
-            
+            accion_recurrencia:'programar'
             // nombre_recorrido:"",
             // ubicacion_recorrido:"",
             // fecha_hora_programada_rondin: "",
@@ -130,9 +135,46 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 		}
 	},[isSuccess])
 
+	const diasSemana = [
+		"Lunes",
+		"Martes",
+		"Miércoles",
+		"Jueves",
+		"Viernes",
+		"Sábado",
+		"Domingo",
+	  ];
 
+	  const semanasDelMes = [
+		{ label: "Primera semana del mes", value: "primera_semana_del_mes" },
+		{ label: "Segunda semana del mes", value: "segunda_semana_del_mes" },
+		{ label: "Tercera semana del mes", value: "tercera_semana_del_mes" },
+		{ label: "Cuarta semana del mes", value: "cuarta_semana_del_mes" },
+		{ label: "Quinta semana del mes", value: "quinta_semana_del_mes" },
+	  ];
 
-
+	//   const posicionesSemana = [
+	// 	{ label: "Primero", value: "primero" },
+	// 	{ label: "Segundo", value: "segundo" },
+	// 	{ label: "Tercero", value: "tercero" },
+	// 	{ label: "Cuarto", value: "cuarto" },
+	// 	{ label: "Quinto", value: "quinto" },
+	//   ];
+	
+	  const mesesDelAño = [
+		"Enero",
+		"Febrero",
+		"Marzo",
+		"Abril",
+		"Mayo",
+		"Junio",
+		"Julio",
+		"Agosto",
+		"Septiembre",
+		"Octubre",
+		"Noviembre",
+		"Diciembre"
+	  ];
 	function onSubmit(values: z.infer<typeof formSchema>) {
 		let formattedDate=""
 		if(date){
@@ -158,14 +200,15 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 				cada_cuantos_minutos_se_repite: '',
 				en_que_hora_sucede: '',
 				cada_cuantas_horas_se_repite: '',
-				que_dias_de_la_semana: [],
-				en_que_semana_sucede: '',
+				que_dias_de_la_semana: que_dias_de_la_semana,
+				en_que_semana_sucede: en_que_semana_sucede,
 				que_dia_del_mes: '',
 				cada_cuantos_dias_se_repite: '',
-				en_que_mes: '',
+				en_que_mes: en_que_mes,
 				cada_cuantos_meses_se_repite: '',
 				la_recurrencia_cuenta_con_fecha_final: 'no',
 				fecha_final_recurrencia: '', 
+				accion_recurrencia:"programar"
 			}
 			createRondinMutation.mutate({rondin_data: formatData},{
 				onSuccess: ()=>{
@@ -181,7 +224,58 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 		setIsSuccess(false); 
 	};
 
+	const recurrencia = useWatch({
+		control:form.control,
+		name: "cada_cuantos_dias_se_repite"
+	})
 
+	const toggleDia = (dia: string) => {
+		set_que_dias_de_la_semana((prev) => {
+		const updatedDias = prev.includes(dia)
+			? prev.filter((d) => d !== dia) 
+			: [...prev, dia]; 
+		return updatedDias;
+		});
+		
+	};
+
+	const toggleTodos = () => {
+		if (que_dias_de_la_semana.length === diasSemana.length) {
+		  set_que_dias_de_la_semana([]);
+		} else {
+		  set_que_dias_de_la_semana(diasSemana.map((d) => d.toLowerCase()));
+		}
+	  };
+
+	  const toggleSemana = (semana: string) => {
+		set_en_que_semana_sucede((prev) =>
+		  prev.includes(semana)
+			? prev.filter((s) => s !== semana) 
+			: [...prev, semana]                
+		);
+	  };
+	  
+	  const toggleTodas = () => {
+		set_en_que_semana_sucede((prev) =>
+		  prev.length === semanasDelMes.length
+			? []
+			: semanasDelMes.map((s) => s.value) 
+		);
+	  };
+	  
+	  const toggleMes = (mes?: string) => {
+		if (mes) {
+		  set_en_que_mes(prev =>
+			prev.includes(mes) ? prev.filter(m => m !== mes) : [...prev, mes]
+		  );
+		} else {
+		  set_en_que_mes(prev =>
+			prev.length === mesesDelAño.length ? [] : [...mesesDelAño]
+		  );
+		}
+	  };
+	  
+	  
 
   return (
     <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
@@ -293,24 +387,19 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 							{/* {catalagoSub.length>0 ? (
 								catalagoSub?.map((item:string, index:number) => {
 									return ( */}
-										<SelectItem value={"No se repite"}>
-                                        No se repite
+										<SelectItem value={"Diario"}>
+                                        Diario
 										</SelectItem>
-                                        <SelectItem value={"Diariamente"}>
-                                        Diariamente
+                                        <SelectItem value={"Semanal"}>
+                                        Semanal
 										</SelectItem>
-                                        <SelectItem value={"Semanalmente los jueves"}>
-                                        Semanalmente los jueves
+                                        <SelectItem value={"Mensual"}>
+                                        Mensual
 										</SelectItem>
-                                        <SelectItem value={"Anualmente el 10 de marzo"}>
-                                        Anualmente el 10 de marzo
+										<SelectItem value={"Configurable"}>
+                                        Configurable
 										</SelectItem>
-										<SelectItem value={"Todos los dias de la semana(Lunes a Viernes)"}>
-                                        Todos los dias de la semana(Lunes a Viernes)
-										</SelectItem>
-										<SelectItem value={"Personalizado "}>
-                                        Personalizado
-										</SelectItem>
+								
 									{/* )
 								})
 							):(
@@ -323,6 +412,254 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 						</FormItem>
 					)}
 				/>	
+
+				{recurrencia === "Diario" && (
+					<div className="mt-2">
+						<FormLabel>Seleccione los días de acceso:</FormLabel>
+							<div className="flex flex-wrap mt-2 mb-5">
+								{[
+								"Lunes",
+								"Martes",
+								"Miércoles",
+								"Jueves",
+								"Viernes",
+								"Sábado",
+								"Domingo"
+								].map((dia) => {
+								return (
+									<FormItem key={dia?.toLowerCase()} className="flex items-center space-x-3">
+										<FormControl>
+											<Button
+											type="button"
+											onClick={() => toggleDia(dia?.toLocaleLowerCase())}
+											className={`m-2 px-4 py-2 rounded-md transition-all duration-300 
+											${que_dias_de_la_semana.includes(dia?.toLowerCase()) ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-white"}
+											hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
+											>
+												<div className="flex flex-wrap">
+													{que_dias_de_la_semana.includes(dia?.toLowerCase()) ? (
+														<><div className="">{dia}</div></>
+													) : (
+														<><div className="text-blue-600">{dia}</div></>
+													)}
+												</div>
+											</Button>
+										</FormControl>
+									</FormItem>
+								);
+								})}
+							</div>
+							<div className="flex items-center gap-2 ml-3">
+							<input
+								type="checkbox"
+								checked={que_dias_de_la_semana.length === diasSemana.length}
+								onChange={toggleTodos}
+							/>
+							<span className="text-sm">Todos los días</span>
+							</div>
+					</div>
+				)}
+				{recurrencia === "Semanal" && (
+					<div className="mt-2">
+						<FormLabel>Seleccione las semanas del mes:</FormLabel>
+
+						<div className="flex flex-wrap mt-2 mb-5">
+							{[
+							"Primera semana del mes",
+							"Segunda semana del mes",
+							"Tercera semana del mes",
+							"Cuarta semana del mes",
+							"Quinta semana del mes",
+							].map((semana) => (
+							<FormItem
+								key={semana.toLowerCase().replace(/\s+/g, "_")}
+								className="flex items-center space-x-3"
+							>
+								<FormControl>
+								<Button
+									type="button"
+									onClick={() =>
+									toggleSemana(semana.toLowerCase().replace(/\s+/g, "_"))
+									}
+									className={`m-2 px-4 py-2 rounded-md transition-all duration-300 
+									${
+										en_que_semana_sucede.includes(
+										semana.toLowerCase().replace(/\s+/g, "_")
+										)
+										? "bg-blue-600 text-white"
+										: "border-2 border-blue-400 bg-white"
+									}
+									hover:bg-transparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
+								>
+									<div className="flex flex-wrap">
+									{en_que_semana_sucede.includes(
+										semana.toLowerCase().replace(/\s+/g, "_")
+									) ? (
+										<div>{semana}</div>
+									) : (
+										<div className="text-blue-600">{semana}</div>
+									)}
+									</div>
+								</Button>
+								</FormControl>
+							</FormItem>
+							))}
+						</div>
+
+						<div className="flex items-center gap-2 ml-3">
+							<input
+							type="checkbox"
+							checked={en_que_semana_sucede.length === semanasDelMes.length}
+							onChange={()=>{toggleTodas()}}
+							/>
+							<span className="text-sm">Todas las semanas</span>
+						</div>
+					</div>
+				)}
+
+				{recurrencia === "Mensual" && (
+					<>
+					<FormField
+						control={form.control}
+						name="en_que_mes"
+						render={({ field }:any) => (
+							<FormItem>
+								<FormLabel>Corriendo cada: *</FormLabel>
+								<FormControl> 
+								<Select {...field} className="input"
+									onValueChange={(value:string) => {
+									field.onChange(value); 
+								}}
+								value={field.value} 
+							>
+								<SelectTrigger className="w-full">
+									<SelectValue placeholder="Selecciona una opción" />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectItem value={"Día del mes"}>
+									Día del mes
+									</SelectItem>
+									<SelectItem value={"Día de la semana"}>
+									Día de la semana
+									</SelectItem>
+								</SelectContent>
+							</Select>
+								</FormControl>
+								<FormMessage />
+								
+								{field.value === "Día del mes" && (
+								<div className="mt-4 flex items-center gap-2">
+								<span className="text-sm">En el día</span>
+								<Select
+									onValueChange={(v) => form.setValue("que_dia_del_mes", v)}
+									value={form.watch("que_dia_del_mes")}
+								>
+									<SelectTrigger className="w-24">
+									<SelectValue placeholder="1" />
+									</SelectTrigger>
+									<SelectContent>
+									{Array.from({ length: 31 }, (_, i) => (
+										<SelectItem key={i + 1} value={String(i + 1)}>
+										{i + 1}
+										</SelectItem>
+									))}
+									</SelectContent>
+								</Select>
+								<span className="text-sm">del mes</span>
+								</div>
+							)}
+
+							{/* {field.value === "Día de la semana" && (
+								<div className="mt-4 flex flex-wrap items-center gap-2">
+								<span className="text-sm">En el</span>
+								<Select
+									onValueChange={(v) => form.setValue("semana_ordinal", v)}
+									value={form.watch("semana_ordinal")}
+								>
+									<SelectTrigger className="w-28">
+									<SelectValue placeholder="Primero" />
+									</SelectTrigger>
+									<SelectContent>
+									{posicionesSemana.map((p) => (
+										<SelectItem key={p.value} value={p.value}>
+										{p.label}
+										</SelectItem>
+									))}
+									</SelectContent>
+								</Select>
+
+								<Select
+									onValueChange={(v) => form.setValue("que_dias_de_la_semana", v)}
+									value={form.watch("que_dias_de_la_semana")}
+								>
+									<SelectTrigger className="w-32">
+									<SelectValue placeholder="Lunes" />
+									</SelectTrigger>
+									<SelectContent>
+									{diasSemana.map((dia) => (
+										<SelectItem
+										key={dia.toLowerCase()}
+										value={dia.toLowerCase()}
+										>
+										{dia}
+										</SelectItem>
+									))}
+									</SelectContent>
+								</Select>
+								<span className="text-sm">del mes</span>
+								</div>
+							)} */}
+							</FormItem>
+						)}
+					/>	
+				<div className="mt-2">
+					<div className="mt-2">
+						<FormLabel>Seleccione los meses de acceso:</FormLabel>
+						<div className="flex flex-wrap mt-2 mb-5">
+						{mesesDelAño.map((mes) => {
+							const mesLower = mes.toLowerCase();
+							return (
+							<FormItem key={mesLower} className="flex items-center space-x-3">
+								<FormControl>
+								<Button
+									type="button"
+									onClick={() => toggleMes(mesLower)}
+									className={`m-2 px-4 py-2 rounded-md transition-all duration-300 
+									${en_que_mes.includes(mesLower) ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-white"}
+									hover:bg-transparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
+								>
+									<div className="flex flex-wrap">
+									<div className={en_que_mes.includes(mesLower) ? "" : "text-blue-600"}>
+										{mes}
+									</div>
+									</div>
+								</Button>
+								</FormControl>
+							</FormItem>
+							);
+						})}
+						</div>
+
+						<div className="flex items-center gap-2 ml-3">
+						<input
+							type="checkbox"
+							checked={en_que_mes.length === en_que_mes.length} 
+							onChange={() => toggleMes()}
+						/>
+						<span className="text-sm">Todos los meses</span>
+						</div>
+					</div>
+					</div>
+
+					</>
+				)}
+				{recurrencia === "Configurable" && (
+					<div className="mt-2">
+
+					</div>
+				)}
+			
+
 				<div className="">
 					<div className="text-sm mb-2">Áreas: </div>
 					<Multiselect

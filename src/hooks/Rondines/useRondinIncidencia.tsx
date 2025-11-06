@@ -18,9 +18,9 @@ export const useIncidenciaRondin = (location:string, area:string) => {
     });
 
 
-     const createIncidenciaMutation = useMutation({
-        mutationFn: async ({ data_incidencia} : { data_incidencia:any }) => {
-            const response = await crearIncidenciaRondin(data_incidencia);
+     const createIncidenciaMutation =useMutation({
+      mutationFn: async (rondin_data: any) => {
+            const response = await crearIncidenciaRondin(rondin_data);
 
             if(response.response.data.status =="error"){
                 throw new Error(`Error al crear rondin Error: ${response.response.data.message }`);
@@ -46,9 +46,39 @@ export const useIncidenciaRondin = (location:string, area:string) => {
         },
       });
 
+      const playOrPauseRondinMutation =useMutation({
+        mutationFn: async (rondin_data: any) => {
+              const response = await crearIncidenciaRondin(rondin_data);
+  
+              if(response.response.data.status =="error"){
+                  throw new Error(`Error al crear iniciar/pausar rondin, Error: ${response.response.data.message }`);
+              }else{
+                  return response.response?.data
+              }
+          },
+          onMutate: () => {
+            setLoading(true);
+          },
+          onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["getListRondines"] });
+            queryClient.invalidateQueries({ queryKey: ["getStatsRondines"] });
+            toast.success("Acción realizada correctamente.");
+          },
+          onError: (err) => {
+            console.error("Error al crear incidencia rondin", err);
+            toast.error(err.message || "Hubo un error al iniciar/pausar rondin.");
+      
+          },
+          onSettled: () => {
+            setLoading(false);
+          },
+        });
+
+        
 
     return{
         createIncidenciaMutation,
+        playOrPauseRondinMutation,
         isLoading,
         isLoadingListIncidencias,
         listIncidenciasRondin
