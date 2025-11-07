@@ -49,6 +49,12 @@ import { Eye, Pencil, Trash } from "lucide-react";
       enableSorting: true,
     },
     {
+      accessorKey: "nombre_del_rondin",
+      header: "Nombre del rondin",
+      cell: ({ row }) => <div>{row.getValue("nombre_del_rondin")}</div>,
+      enableSorting: true,
+    },
+    {
       accessorKey: "recurrencia",
       header: "Recurrencia",
       cell: ({ row }) => (
@@ -70,12 +76,7 @@ import { Eye, Pencil, Trash } from "lucide-react";
       cell: ({ row }) => <div>{row.getValue("checkpoints")}</div>,
       enableSorting: true,
     },
-    {
-      accessorKey: "nombre_del_rondin",
-      header: "Nombre del rondin",
-      cell: ({ row }) => <div>{row.getValue("nombre_del_rondin")}</div>,
-      enableSorting: true,
-    },
+
     {
       accessorKey: "ubicacion",
       header: "Ubicación",

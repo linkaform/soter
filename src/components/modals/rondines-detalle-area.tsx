@@ -26,16 +26,17 @@ interface ViewRondinesDetalleAreaProps {
   estatus:string
   selectedRondin:any
 }
-interface Incidente {
-    id: number;
-    folio: string;
-    incidencia: string;
-    descripcion: string;
-    accion: string;
-    evidencia: string;
-    fecha: string;
-  }
-  
+
+type Incidente = {
+    categoria: string;
+    subcategoria: string;
+    incidente: string;
+    accion_tomada: string;
+    fecha_hora_incidente: string; 
+    evidencias: any[];         
+    documentos: any[];         
+    comentarios: string;
+  };
 
 export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
   title,
@@ -54,47 +55,7 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
     console.log("selectedRondin",selectedRondin)
     console.log("getCheckById",getCheckById)
     const img=[{file_url:"/nouser.svg", file_name:"Imagen"},{file_url:"/nouser.svg", file_name:"Imagen"}]
-    // const hoy = new Date();
-    // const mesActual = hoy.getMonth();
-    // const añoActual = hoy.getFullYear();
-    // const diasSemana = ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"];
-    // const dias = Array.from({ length: 31 }, (_, i) => {
-    //   const fecha = new Date(añoActual, mesActual, i + 1);
-    //   return {
-    //     numero: i + 1,
-    //     diaSemana: diasSemana[fecha.getDay()],
-    //   };
-    // });
-    const [incidenteSeleccionado, setIncidenteSeleccionado] = useState<Incidente | null>(null);
-    const incidentes: Incidente[] = [
-        {
-          id: 1,
-          folio: "INC-001",
-          incidencia: "Falla energía eléctrica",
-          descripcion: "Durante el recorrido se detectó una falla eléctrica en el pasillo principal.",
-          accion: "Se reportó al área de mantenimiento para su atención inmediata.",
-          evidencia: "Foto subida al sistema con el tablero afectado.",
-          fecha: "Abr 04, 2025 12:29:56 hrs",
-        },
-        {
-          id: 2,
-          folio: "INC-002",
-          incidencia: "Puerta sin cerrar",
-          descripcion: "Se encontró una puerta de acceso sin seguro.",
-          accion: "Se cerró la puerta y se notificó al personal de seguridad.",
-          evidencia: "Imagen de la puerta abierta tomada a las 12:35 hrs.",
-          fecha: "Abr 04, 2025 12:36:10 hrs",
-        },
-        {
-          id: 3,
-          folio: "INC-003",
-          incidencia: "Área sin iluminación",
-          descripcion: "El pasillo del segundo piso no tenía iluminación funcional.",
-          accion: "Se levantó reporte para revisión de luminarias.",
-          evidencia: "Video corto mostrando el área sin luz.",
-          fecha: "Abr 04, 2025 12:40:22 hrs",
-        },
-      ];
+    const [incidenteSeleccionado, setIncidenteSeleccionado] = useState<Incidente>();
 
     const [diaSeleccionado, setDiaSeleccionado] = useState<number | null>(diaSelected);
     const [view, setView] = useState<"lista" | "detalle">("lista");
@@ -164,7 +125,7 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
                     <div className="bg-slate-200 p-3 rounded"><Route /></div>
                     <div className="flex flex-col"> 
                         <p>Rondin</p>
-                        <p className="text-gray-500 text-sm">{selectedRondin?.titulo}</p>
+                        <p className="text-gray-400">{selectedRondin?.titulo}</p>
                     </div>
                 </div>
                 <div className="flex gap-3">
@@ -178,7 +139,7 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
                     <div className="bg-slate-200 p-3 rounded"><Building2/> </div>
                     <div className="flex flex-col"> 
                         <p>Ubicación</p>
-                        <p className="text-gray-500 text-sm">{getCheckById?.ubicacion || "Ubicación demo" }</p>
+                        <p className="text-gray-400">{getCheckById?.ubicacion || "Ubicación demo" }</p>
                     </div>
                 </div>
 
@@ -201,7 +162,7 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
             <div className="flex gap-3 mt-3">
                 <div className=""> 
                     <p className="text-base font-semibold">Comentarios</p>
-                    <p className="text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                    <p className="text-gray-400">{getCheckById?.comentarios || "No hay comentarios disponibles."}</p>
                 </div>
             </div>
 
@@ -210,9 +171,9 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
                     <h2 className="text-base font-semibold ">Incidentes en recorrido</h2>
 
                     <div className="divide-y divide-gray-200">
-                        {incidentes.map((i) => (
+                        {getCheckById?.incidencias.map((i:any) => (
                         <div
-                            key={i.id}
+                        key={`${i.id}-${Math.random()}`}
                             className="flex justify-between items-center py-2 cursor-pointer hover:bg-gray-50 rounded-md px-1"
                             onClick={() => {
                             setIncidenteSeleccionado(i);
@@ -220,8 +181,8 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
                             }}
                         >
                             <div>
-                            <p className="text-sm font-medium text-gray-800">{i.incidencia}</p>
-                            <p className="text-xs text-gray-500">{i.fecha}</p>
+                            <p className="text-sm font-medium text-gray-800">{i?.incidente}</p>
+                            <p className="text-xs text-gray-500">{i?.fecha_hora_incidente}</p>
                             </div>
                             <ChevronRight size={18} className="text-gray-500" />
                         </div>
@@ -238,7 +199,7 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
              <>
              <DialogHeader className="flex-shrink-0">
                 <DialogTitle className="text-2xl text-center font-bold">
-                    {incidenteSeleccionado.incidencia}
+                    {incidenteSeleccionado?.incidente}
                 </DialogTitle>
             </DialogHeader>
             <div className="animate-fadeIn">
@@ -297,28 +258,28 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
                         <div className="bg-slate-200 p-3 rounded"><Route /></div>
                         <div className="flex flex-col">
                             <p>Rondin</p>
-                            <p className="text-gray-500 text-sm">{rondin}</p>
+                            <p className="text-gray-400">{rondin}</p>
                         </div>
                     </div>
                     <div className="flex gap-3">
                         <div className="bg-slate-200 p-3 rounded"><Building2 /> </div>
                         <div className="flex flex-col">
                             <p>Ubicación</p>
-                            <p className="text-gray-500 text-sm">{areaSelected.area.ubicacion || "Ubicación demo"}</p>
+                            <p className="text-gray-400 ">{getCheckById?.ubicacion}</p>
                         </div>
                     </div>
                     <div className="flex gap-3">
-                        <div className="bg-slate-200 p-3 rounded"> <Clock /> </div>
+                        <div className="bg-slate-200 p-3 rounded"> <Clock/> </div>
                         <div className="flex flex-col">
                             <p>Area</p>
-                            <p className="text-gray-400">Demo</p>
+                            <p className="text-gray-400">{getCheckById?.area}</p>
                         </div>
                     </div>
                     <div className="flex gap-3">
                         <div className="bg-slate-200 p-3 rounded"><Calendar1 /> </div>
                         <div className="flex flex-col">
                             <p>Fecha y hora de registro</p>
-                            <p className="text-gray-400">Abr 12 2025 12:00pm</p>
+                            <p className="text-gray-400">{incidenteSeleccionado?.fecha_hora_incidente}</p>
                         </div>
                     </div>
                     
@@ -328,7 +289,7 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
                 <div className="flex gap-3 mt-3">
                     <div className="">
                         <p className="text-base font-semibold">Comentarios</p>
-                        <p className="text-gray-400">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                        <p className="text-gray-400">{incidenteSeleccionado?.comentarios || "No hay comentarios disponibles" }</p>
                     </div>
                 </div>
             </div>

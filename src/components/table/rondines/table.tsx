@@ -555,13 +555,21 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 						{/* Header */}
 						<div className="flex items-center justify-between">
 							<h2 className="text-lg font-semibold">Puntos de rondin: {rondin.cantidad_de_puntos} puntos</h2>
-							<AreasModal title={"Agregar Área"} points={rondin.areas}>
-								<div className="flex w-full gap-2 md:w-auto bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-sm p-2 px-3">
-									<Plus className="size-5"/>
-									Agregar Área
-								</div>
-							</AreasModal>
+							<div className="flex justify-around gap-2">
+								<AreasModal title={"Agregar Área"} points={rondin.areas}>
+									<div className="flex w-full gap-2 md:w-auto bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-sm p-2.5 px-3 round-sm">
+										<Plus className="size-5"/>
+										Agregar Área
+									</div>
+								</AreasModal>
 
+								<Button
+								className="size-sm bg-yellow-500 hover:bg-yellow-600 "
+								title="Guardar cambios"
+								>
+									Guardar cambios
+								</Button>
+							</div>
 						</div>
 
 						<div className="relative">

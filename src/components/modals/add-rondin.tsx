@@ -160,7 +160,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 	// 	{ label: "Cuarto", value: "cuarto" },
 	// 	{ label: "Quinto", value: "quinto" },
 	//   ];
-	
+
 	  const mesesDelAño = [
 		"Enero",
 		"Febrero",
@@ -265,16 +265,20 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 	  
 	  const toggleMes = (mes?: string) => {
 		if (mes) {
+		 
 		  set_en_que_mes(prev =>
-			prev.includes(mes) ? prev.filter(m => m !== mes) : [...prev, mes]
+			prev.includes(mes)
+			  ? prev.filter(m => m !== mes)
+			  : [...prev, mes]
 		  );
 		} else {
-		  set_en_que_mes(prev =>
-			prev.length === mesesDelAño.length ? [] : [...mesesDelAño]
-		  );
+	  
+		  set_en_que_mes(prev => {
+			const todosSeleccionados = mesesDelAño.every(m => prev.includes(m));
+			return todosSeleccionados ? [] : [...mesesDelAño];
+		  });
 		}
 	  };
-	  
 	  
 
   return (
@@ -568,47 +572,6 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 								<span className="text-sm">del mes</span>
 								</div>
 							)}
-
-							{/* {field.value === "Día de la semana" && (
-								<div className="mt-4 flex flex-wrap items-center gap-2">
-								<span className="text-sm">En el</span>
-								<Select
-									onValueChange={(v) => form.setValue("semana_ordinal", v)}
-									value={form.watch("semana_ordinal")}
-								>
-									<SelectTrigger className="w-28">
-									<SelectValue placeholder="Primero" />
-									</SelectTrigger>
-									<SelectContent>
-									{posicionesSemana.map((p) => (
-										<SelectItem key={p.value} value={p.value}>
-										{p.label}
-										</SelectItem>
-									))}
-									</SelectContent>
-								</Select>
-
-								<Select
-									onValueChange={(v) => form.setValue("que_dias_de_la_semana", v)}
-									value={form.watch("que_dias_de_la_semana")}
-								>
-									<SelectTrigger className="w-32">
-									<SelectValue placeholder="Lunes" />
-									</SelectTrigger>
-									<SelectContent>
-									{diasSemana.map((dia) => (
-										<SelectItem
-										key={dia.toLowerCase()}
-										value={dia.toLowerCase()}
-										>
-										{dia}
-										</SelectItem>
-									))}
-									</SelectContent>
-								</Select>
-								<span className="text-sm">del mes</span>
-								</div>
-							)} */}
 							</FormItem>
 						)}
 					/>	
@@ -643,7 +606,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 						<div className="flex items-center gap-2 ml-3">
 						<input
 							type="checkbox"
-							checked={en_que_mes.length === en_que_mes.length} 
+							checked={mesesDelAño.every((m) => en_que_mes.includes(m))} 
 							onChange={() => toggleMes()}
 						/>
 						<span className="text-sm">Todos los meses</span>
@@ -654,9 +617,23 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 					</>
 				)}
 				{recurrencia === "Configurable" && (
-					<div className="mt-2">
-
-					</div>
+					<FormField
+						control={form.control}
+						name="nombre_rondin"
+						render={({field}:any) => (
+							<FormItem>
+								<FormLabel>Configurable::</FormLabel>
+								<FormControl>
+									<Input
+									placeholder="Texto"
+									className="resize-none"
+									{...field} 
+									/>
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
 				)}
 			
 

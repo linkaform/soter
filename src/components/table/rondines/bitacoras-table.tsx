@@ -70,7 +70,6 @@ export const RondinesBitacoraTable = () => {
 		isLoadingListBitacoraRondines: boolean;
 	};
 
-	const [expandedCategorias, setExpandedCategorias] = useState<string[]>([]);
 	const [diaSelected, setDiaSelected] = useState(0);
 	const [estatus, setEstatus] = useState("");
 	const [modalOpenPerimetroExt, setModalOpenPerimetroExt] = useState(false);
@@ -78,6 +77,8 @@ export const RondinesBitacoraTable = () => {
 	const [selectedAreaData, setSelectedAreaData] = useState<any>(null);
 	const [selectedRondin,setSelectedRondin] = useState<any>(null)
 	const now = new Date();
+	const [expandedCategorias, setExpandedCategorias] = useState<string[]>([]);
+
 	// const dias = useState<number>(new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate())
 	const [dias, setDias] = useState<number>(0);
 	const nombreMes = now.toLocaleString("es-ES", { month: "long" });
@@ -196,7 +197,17 @@ export const RondinesBitacoraTable = () => {
 	// 	}
 	// 	return getMonthNameFromDate(now);
 	// }
-
+	const toggleExpandAllForHora = (hora: string, categorias: Categoria[]) => {
+		const allKeys = categorias.map(c => `${hora}-${c.titulo}`);
+		const areAllExpanded = allKeys.every(key => expandedCategorias.includes(key));
+	  
+		setExpandedCategorias(prev =>
+		  areAllExpanded
+			? prev.filter(k => !allKeys.includes(k)) // colapsar todas
+			: [...prev, ...allKeys.filter(k => !prev.includes(k))] // expandir todas
+		);
+	  };
+	  
   return (
     <div className="w-full">
 	
@@ -249,26 +260,26 @@ export const RondinesBitacoraTable = () => {
 					<tr>
 						<th className="border p-2 bg-white">Rondines</th>
 						{[...Array(dias)].map((_, i) => {
-						const date = new Date();
-						date.setDate(i + 1);
-						const diaSemana = date
-						.toLocaleDateString("es-MX", { weekday: "short" })
-						.slice(0, 2);
-						const isSunday = date.getDay() === 0;
+							const date = new Date();
+							date.setDate(i + 1);
+							const diaSemana = date
+							.toLocaleDateString("es-MX", { weekday: "short" })
+							.slice(0, 2);
+							const isSunday = date.getDay() === 0;
 
-						return (
-						<th
-						key={`label-${i}`}
-						className={`border p-1 text-center ${
-							isSunday ? "bg-blue-100" : "bg-white"
-						}`}
-						>
-						<div className="text-sm">{String(i + 1).padStart(2, "0")}</div>
-						<div className="text-xs font-medium capitalize text-gray-600">
-							{diaSemana}
-						</div>
-						</th>
-						);
+							return (
+							<th
+							key={`label-${i}`}
+							className={`border p-1 text-center ${
+								isSunday ? "bg-blue-100" : "bg-white"
+							}`}
+							>
+							<div className="text-sm">{String(i + 1).padStart(2, "0")}</div>
+							<div className="text-xs font-medium capitalize text-gray-600">
+								{diaSemana}
+							</div>
+							</th>
+							);
 						})}
 					</tr>
 					</thead>
@@ -277,7 +288,16 @@ export const RondinesBitacoraTable = () => {
 						{data && data?.map(({ hora, categorias }) => (
 						<React.Fragment key={hora}>
 							<tr>
-							<td className="border pl-2 font-bold">{hora}</td>
+							<td className="font-bold flex items-center justify-start gap-2">
+								
+								<button
+								className="ml-1 text-sm px-2 py-.5 bg-blue-500 text-white rounded hover:bg-blue-600"
+								onClick={() => toggleExpandAllForHora(hora, categorias)}
+								>
+								{categorias.every(c => expandedCategorias.includes(`${hora}-${c.titulo}`)) ? "-" : "+"}
+								</button>
+								{hora}
+							</td>
 							{[...Array(dias)].map((_, i) => (
 								<td
 								key={i}
@@ -329,7 +349,7 @@ export const RondinesBitacoraTable = () => {
 												setDiaSelected(i+1);
 												setModalOpenPerimetroExt(true);
 												setEstatus(estadoDia);
-								setSelectedRondin(categoria)
+												setSelectedRondin(categoria)
 												}}
 												className="cursor-pointer"
 											>
