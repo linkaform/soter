@@ -46,9 +46,15 @@ type Area = {
   estados: Estado[];
 };
 
+type Bitacora = {
+	dia: number;
+	estado: string;
+	record_id: string;
+}
+
 type Categoria = {
   titulo: string;
-  resumen?: string[];
+  resumen?: Bitacora[];
   areas: Area[];
 };
 
@@ -350,12 +356,14 @@ export const RondinesBitacoraTable = () => {
 												setSelectedAreaData({ area: area, estadoDia });
 												setDiaSelected(i+1);
 												setModalOpenPerimetroExt(true);
-												setEstatus(estadoDia);
+												// REVISAR SI ESTO FUNCIONA BIEN
+												setEstatus(estadoDia.estado);
 												setSelectedRondin(categoria)
-												}}
-												className="cursor-pointer"
+											}}
+											className="cursor-pointer"
+												// REVISAR SI ESTO FUNCIONA BIEN
 											>
-												<EstadoIcono estado={estadoDia} />
+												<EstadoIcono estado={estadoDia.estado} />
 											</div>
 											)}
 										</div>
