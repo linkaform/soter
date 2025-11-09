@@ -15,6 +15,7 @@ import { ViewDetalleArea } from "@/components/modals/rondines-detalle-area";
 import { ViewRondinesDetallePerimetroExt } from "@/components/modals/rondines-inspeccion-perimetro-exterior";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useGetListBitacoraRondines } from "@/hooks/Rondines/useGetListBitacora";
+import { useShiftStore } from "@/store/useShiftStore";
 
 const EstadoIcono = ({ estado }: { estado: string }) => {
   const baseClass = "w-5 h-5";
@@ -64,8 +65,9 @@ type Rondin = {
 
 export const RondinesBitacoraTable = () => {
 	// const { listBitacoraRondines , isLoadingListBitacoraRondines} = useGetListBitacoraRondines()
+	const { location } = useShiftStore()
 	const { listBitacoraRondines:data, isLoadingListBitacoraRondines: isLoading } =
-	useGetListBitacoraRondines() as {
+	useGetListBitacoraRondines(location) as {
 		listBitacoraRondines?: Rondin[];
 		isLoadingListBitacoraRondines: boolean;
 	};

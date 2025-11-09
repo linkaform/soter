@@ -41,10 +41,11 @@ export const crearIncidenciaRondin = async (rondin_data: any)=> {
     return data;
   };
     
-  export const getListBitacoraRondines = async ()=> {
+  export const getListBitacoraRondines = async (location: string)=> {
     const payload = {
         option: "get_bitacora_rondines",
         script_name: "rondines.py",
+        ubicacion: location,
     };
   
     const userJwt = localStorage.getItem("access_token"); 
