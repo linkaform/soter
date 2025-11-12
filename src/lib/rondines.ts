@@ -231,3 +231,49 @@ export const getRondinesImages  = async (location: string, area: string, dateFro
     const data = await response.json();
     return data;
 };
+
+
+export const editarAreasRondin = async (areas:any[], record_id:string, folio:string)=> {
+    const payload = {
+        areas,
+        record_id,
+        folio,
+        option: "edit_areas_rondin",
+        script_name: "rondines.py",
+    };
+  
+    const userJwt = localStorage.getItem("access_token"); 
+    const response = await fetch(`https://app.linkaform.com/api/infosync/scripts/run/`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${userJwt}`,
+        },
+        body: JSON.stringify(payload),
+    });
+  
+    const data = await response.json();
+    return data;
+  };
+
+
+  export const catalogAreasRondinFormatted= async (ubicacion: string)=> {
+    const payload = {
+        ubicacion,
+        option: "get_catalog_areas_formatted",
+        script_name: "rondines.py",
+    };
+  
+    const userJwt = localStorage.getItem("access_token"); 
+    const response = await fetch(`https://app.linkaform.com/api/infosync/scripts/run/`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${userJwt}`,
+        },
+        body: JSON.stringify(payload),
+    });
+  
+    const data = await response.json();
+    return data;
+  };

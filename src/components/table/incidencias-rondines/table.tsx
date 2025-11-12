@@ -16,7 +16,7 @@ import {
   useReactTable,
   Table as TanstackTable
 } from "@tanstack/react-table";
-import { CalendarDays, Eraser, Eye, FileX2, Plus, Search } from "lucide-react";
+import { CalendarDays, Eraser, Eye, FileX2, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -391,12 +391,12 @@ const IncidenciasRondinesTable:React.FC<ListProps> = ({ data, isLoading, openMod
 				</div>
 
 				<div className="flex flex-wrap gap-2">
-				<div>
+				{/* <div>
 					<Button className="w-full md:w-auto bg-green-500 hover:bg-green-600" onClick={()=>{setOpenModal(true)}}>
 						<Plus />
 						Nuevo Incidente
 					</Button>
-				</div>
+				</div> */}
 
 				<div>
 					<Button className="w-full md:w-auto bg-blue-500 hover:bg-blue-600" onClick={()=>{downloadCSV(selectedIncidencias, incidenciasColumnsCSV, "incidencias.csv")}}>

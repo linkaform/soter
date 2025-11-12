@@ -9,6 +9,9 @@ import {
   CircleAlert,
   Calendar,
   CircleDashed,
+  Search,
+  ChevronRight,
+  ChevronLeft,
 } from "lucide-react";
 
 import { ViewDetalleArea } from "@/components/modals/rondines-detalle-area";
@@ -63,14 +66,7 @@ type Rondin = {
   categorias: Categoria[];
 };
 
-// interface ListProps {
-// 	data: Rondin[];
-// 	isLoading:boolean;
-// }
-
-
 export const RondinesBitacoraTable = () => {
-	// const { listBitacoraRondines , isLoadingListBitacoraRondines} = useGetListBitacoraRondines()
 	const { location } = useShiftStore()
 	const { listBitacoraRondines:data, isLoadingListBitacoraRondines: isLoading } =
 	useGetListBitacoraRondines(location) as {
@@ -84,37 +80,45 @@ export const RondinesBitacoraTable = () => {
 	const [modalOpenArea, setModalOpenArea] = useState(false);
 	const [selectedAreaData, setSelectedAreaData] = useState<any>(null);
 	const [selectedRondin,setSelectedRondin] = useState<any>(null)
-	const now = new Date();
 	const [expandedCategorias, setExpandedCategorias] = useState<string[]>([]);
-
-	// const dias = useState<number>(new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate())
+	const [globalFilter, setGlobalFilter] = React.useState("");
 	const [dias, setDias] = useState<number>(0);
-	const nombreMes = now.toLocaleString("es-ES", { month: "long" });
 
 	useEffect(() => {
 		const now = new Date();
 		const totalDias = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
 		setDias(totalDias);
 	}, []);
-	// function getDaysInMonth(filter: string) {
-	// 	const now = new Date();
-	// 	let targetDate = new Date(now);
-	// 	filter = filter?.toLowerCase() || "";
-	// 	if (filter === "last_week") {
-	// 	  targetDate.setDate(now.getDate() - 7);
-	// 	} else if (filter === "last_fifteen_days") {
-	// 	  targetDate.setDate(now.getDate() - 15);
-	// 	} else if (filter === "last_month") {
-	// 	  targetDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-	// 	}
-	// 	return new Date(targetDate.getFullYear(), targetDate.getMonth() + 1, 0).getDate();
-	//   }
-	  
-	//   useEffect(() => {
-	// 	const totalDias = getDaysInMonth(dateFilter);
-	// 	setDias(totalDias);
-	//   }, [dateFilter]);
-	  
+
+	const [currentDate, setCurrentDate] = useState(new Date());
+	const [nombreMes, setNombreMes] = useState(
+	currentDate.toLocaleString("es-ES", { month: "long" })
+	);
+
+	useEffect(() => {
+	const totalDias = new Date(
+		currentDate.getFullYear(),
+		currentDate.getMonth() + 1,
+		0
+	).getDate();
+	setDias(totalDias);
+	setNombreMes(
+		currentDate.toLocaleString("es-ES", { month: "long" })
+	);
+	}, [currentDate]);
+
+	const handlePrevMonth = () => {
+	setCurrentDate(
+		new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1)
+	);
+	};
+
+	const handleNextMonth = () => {
+	setCurrentDate(
+		new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1)
+	);
+	};
+
 	useEffect(() => {
 		if(data){
 			const allCategoriaKeys = data.flatMap((rondin: { categorias: { titulo: any; }[]; hora: any; }) =>
@@ -170,41 +174,6 @@ export const RondinesBitacoraTable = () => {
     </tr>
   );
 
-	// function getMonth(filter: string) {
-	// 	const now = new Date();
-	// 	const monthNames = [
-	// 	"Enero",
-	// 	"Febrero",
-	// 	"Marzo",
-	// 	"Abril",
-	// 	"Mayo",
-	// 	"Junio",
-	// 	"Julio",
-	// 	"Agosto",
-	// 	"Septiembre",
-	// 	"Octubre",
-	// 	"Noviembre",
-	// 	"Diciembre",
-	// 	];
-	// 	const getMonthNameFromDate = (date: Date) => monthNames[date.getMonth()];
-
-	// 	if (!filter) return getMonthNameFromDate(now);
-
-	// 	filter = filter.toLowerCase();
-	// 	if (filter === "last_week") {
-	// 	const d = new Date();
-	// 	d.setDate(now.getDate() - 7);
-	// 	return getMonthNameFromDate(d);
-	// 	} else if (filter === "last_fifteen_days") {
-	// 	const d = new Date();
-	// 	d.setDate(now.getDate() - 15);
-	// 	return getMonthNameFromDate(d);
-	// 	} else if (filter === "last_month") {
-	// 	const d = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-	// 	return getMonthNameFromDate(d);
-	// 	}
-	// 	return getMonthNameFromDate(now);
-	// }
 	const toggleExpandAllForHora = (hora: string, categorias: Categoria[]) => {
 		const allKeys = categorias.map(c => `${hora}-${c.titulo}`);
 		const areAllExpanded = allKeys.every(key => expandedCategorias.includes(key));
@@ -221,36 +190,49 @@ export const RondinesBitacoraTable = () => {
 	
 			<div className="flex justify-between items-center my-2 ">
 			<div className="flex w-full justify-start gap-4 ">
-			<div className="flex justify-center items-center">
-				<TabsList className="bg-blue-500 text-white p-1 rounded-md ">
-				<TabsTrigger value="Rondines">Rondines</TabsTrigger>
-				<TabsTrigger value="Bitacora">Bitácora</TabsTrigger>
-				<TabsTrigger value="Incidencias">Incidencias</TabsTrigger>
-				<TabsTrigger value="Fotos">Fotos</TabsTrigger>
-				<TabsTrigger value="Calendario">Calendario</TabsTrigger>
-				</TabsList>
-			</div> 
+				<div className="flex justify-center items-center">
+					<TabsList className="bg-blue-500 text-white p-1 rounded-md ">
+					<TabsTrigger value="Rondines">Rondines</TabsTrigger>
+					<TabsTrigger value="Bitacora">Bitácora</TabsTrigger>
+					<TabsTrigger value="Incidencias">Incidencias</TabsTrigger>
+					<TabsTrigger value="Fotos">Fotos</TabsTrigger>
+					<TabsTrigger value="Calendario">Calendario</TabsTrigger>
+					</TabsList>
+				</div> 
+				<div>
+				<div className="flex w-full max-w-sm items-center space-x-2">
+				<input
+					type="text"
+					placeholder="Buscar"
+					value={globalFilter || ''}
+					onChange={(e) => setGlobalFilter(e.target.value)}
+					className="border border-gray-300 rounded-md p-2 placeholder-gray-600 w-full" 
+				/>
+					<Search />
+				</div>
+				</div>
 			</div>
-			<div className="text-2xl font-bold capitalize">{nombreMes}</div>
+			<div className="flex items-center gap-3 text-2xl font-bold capitalize select-none">
+				<button
+					onClick={handlePrevMonth}
+					className="p-1 rounded-full hover:bg-gray-200 transition"
+				>
+					<ChevronLeft size={28} />
+				</button>
+
+				<span className="w-40 text-center">{nombreMes}</span>
+
+				<button
+					onClick={handleNextMonth}
+					className="p-1 rounded-full hover:bg-gray-200 transition"
+				>
+					<ChevronRight size={28} />
+				</button>
+				</div>
+
 			<div className="flex w-full justify-end gap-3">
 			<div className="flex items-center w-48 gap-2"> 
-				{/* <Select value={dateFilter}  onValueChange={(value) => { 
-					setDateFilter(value); 
-					}}> 
-				<SelectTrigger className="w-full">
-				<SelectValue placeholder="Selecciona un filtro de fecha" />
-				<CalendarDays diasDisponibles={""} />
-				</SelectTrigger>
-				<SelectContent>
-				{catalogoFechas().map((option:any) => {
-					return (
-					<SelectItem key={option.key} value={option.key}> 
-					{option.label}
-					</SelectItem>
-					)
-				})}
-				</SelectContent>
-				</Select> */}
+				
 			</div>
 			</div>
 			</div>
@@ -293,63 +275,77 @@ export const RondinesBitacoraTable = () => {
 					</thead>
 
 					<tbody>
-						{data && data?.map(({ hora, categorias }) => (
-						<React.Fragment key={hora}>
-							<tr>
-							<td className="font-bold flex items-center justify-start gap-2">
-								
-								<button
-								className="ml-1 text-sm px-2 py-.5 bg-blue-500 text-white rounded hover:bg-blue-600"
-								onClick={() => toggleExpandAllForHora(hora, categorias)}
-								>
-								{categorias.every(c => expandedCategorias.includes(`${hora}-${c.titulo}`)) ? "-" : "+"}
-								</button>
-								{hora}
-							</td>
-							{[...Array(dias)].map((_, i) => (
-								<td
-								key={i}
-								className={`border ${sundaysIndexes.includes(i) ? "bg-blue-100" : ""}`}
-								></td>
-							))}
-							</tr>
+						{data &&
+							data
+							.map((rondin) => {
+								const matchHora = rondin.hora.toLowerCase().includes(globalFilter.toLowerCase());
 
-							{categorias.map((categoria) => {
-							const catKey = `${hora}-${categoria.titulo}`;
-							const isExpanded = expandedCategorias.includes(catKey);
+								// Filtrar las categorías y áreas dentro del rondín
+								const categoriasFiltradas = rondin.categorias
+								.map((categoria) => {
+									const matchCategoria = categoria.titulo
+									.toLowerCase()
+									.includes(globalFilter.toLowerCase());
 
-							return (
-								<React.Fragment key={catKey}>
-								<tr
-									className="cursor-pointer font-semibold text-sm bg-green-100"
-									onClick={(e) => {
-									e.stopPropagation();
-									toggleExpand(catKey);
-									}}
-								>
-									<td className="border text-sm flex p-2">
-									<span className="mr-2">
-										{isExpanded ? <CircleChevronUp size={20} /> : <CircleChevronDown size={20} />}
-									</span>
-									{categoria.titulo}
+									const areasFiltradas = categoria.areas.filter((area) =>
+									area.nombre.toLowerCase().includes(globalFilter.toLowerCase())
+									);
+
+									if (matchCategoria || areasFiltradas.length > 0) {
+									return { ...categoria, areas: areasFiltradas };
+									}
+
+									return null;
+								})
+								.filter((cat) => cat !== null) as Categoria[];
+
+								if (matchHora || categoriasFiltradas.length > 0) {
+								return { ...rondin, categorias: categoriasFiltradas };
+								}
+
+								return null;
+							})
+							.filter((r) => r !== null)
+							.map(({ hora, categorias }) => (
+								<React.Fragment key={hora}>
+								<tr>
+									<td className="font-bold flex items-center justify-start gap-2">
+									<button
+										className="ml-1 text-sm px-2 py-.5 bg-blue-500 text-white rounded hover:bg-blue-600"
+										onClick={() => toggleExpandAllForHora(hora, categorias)}
+									>
+										{categorias.every((c) =>
+										expandedCategorias.includes(`${hora}-${c.titulo}`)
+										)
+										? "-"
+										: "+"}
+									</button>
+									{hora}
 									</td>
-									{[...Array(dias)].map((_, i) => {
-									const isSunday = sundaysIndexes.includes(i);
-									const estadoDia = categoria.resumen?.[i];
-
-
-						const area = categoria.areas.find((a) =>
-						a.estados.some((e) => e.dia === i + 1)
-						);
-
-						
-									return (
-										<td
+									{[...Array(dias)].map((_, i) => (
+									<td
 										key={i}
-										className={`border ${isSunday ? "bg-blue-200/50" : "bg-transparent"}`}
+										className={`border ${
+										sundaysIndexes.includes(i) ? "bg-blue-100" : ""
+										}`}
+									></td>
+									))}
+								</tr>
+
+								{categorias.map((categoria) => {
+									const catKey = `${hora}-${categoria.titulo}`;
+									const isExpanded = expandedCategorias.includes(catKey);
+
+									return (
+									<React.Fragment key={catKey}>
+										<tr
+										className="cursor-pointer font-semibold text-sm bg-green-100"
+										onClick={(e) => {
+											e.stopPropagation();
+											toggleExpand(catKey);
+										}}
 										>
-										<div className="flex justify-center items-center">
-											{estadoDia && (
+											{/* {estadoDia && (
 											<div
 												onClick={(e) => {
 												e.stopPropagation();
@@ -364,24 +360,64 @@ export const RondinesBitacoraTable = () => {
 												// REVISAR SI ESTO FUNCIONA BIEN
 											>
 												<EstadoIcono estado={estadoDia.estado} />
-											</div>
+											</div> */}
+										<td className="border text-sm flex p-2">
+											<span className="mr-2">
+											{isExpanded ? (
+												<CircleChevronUp size={20} />
+											) : (
+												<CircleChevronDown size={20} />
 											)}
-										</div>
+											</span>
+											{categoria.titulo}
 										</td>
-									);
-									})}
-								</tr>
+										{[...Array(dias)].map((_, i) => {
+											const isSunday = sundaysIndexes.includes(i);
+											const estadoDia = categoria.resumen?.[i];
 
-								{isExpanded &&
-									categoria.areas.map((area, idx) =>
-									renderArea(area, `${catKey}-area-${idx}`, categoria)
-									)}
+											const area = categoria.areas.find((a) =>
+											a.estados.some((e) => e.dia === i + 1)
+											);
+
+											return (
+											<td
+												key={i}
+												className={`border ${
+												isSunday ? "bg-blue-200/50" : "bg-transparent"
+												}`}
+											>
+												<div className="flex justify-center items-center">
+												{estadoDia && (
+													<div
+													onClick={(e) => {
+														e.stopPropagation();
+														setSelectedAreaData({ area: area, estadoDia });
+														setDiaSelected(i + 1);
+														setModalOpenPerimetroExt(true);
+														setEstatus(estadoDia.estado);
+														setSelectedRondin(categoria);
+													}}
+													className="cursor-pointer"
+													>
+													<EstadoIcono estado={estadoDia.estado} />
+													</div>
+												)}
+												</div>
+											</td>
+											);
+										})}
+										</tr>
+
+										{isExpanded &&
+										categoria.areas.map((area, idx) =>
+											renderArea(area, `${catKey}-area-${idx}`, categoria)
+										)}
+									</React.Fragment>
+									);
+								})}
 								</React.Fragment>
-							);
-							})}
-						</React.Fragment>
-						))}
-					</tbody>
+							))}
+						</tbody>
 
 					</table>
 					)}

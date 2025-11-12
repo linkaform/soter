@@ -77,7 +77,6 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 	const { createRondinMutation, isLoading} = useRondines()
 	const { data:catalogAreasRondin} = useCatalogAreasRondin(location, isSuccess)
 	const [date, setDate] = useState<Date|"">("");
-	// const [diaSeleccionado, setDiaSeleccionado] = useState<number>()
 	const [que_dias_de_la_semana , set_que_dias_de_la_semana] =useState<string[]>([])
 	const [en_que_semana_sucede, set_en_que_semana_sucede] = useState<string[]>([]);
 	const [en_que_mes, set_en_que_mes] = useState<string[]>([])
@@ -113,17 +112,6 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
             la_recurrencia_cuenta_con_fecha_final: '',
             fecha_final_recurrencia: '',
             accion_recurrencia:'programar'
-            // nombre_recorrido:"",
-            // ubicacion_recorrido:"",
-            // fecha_hora_programada_rondin: "",
-            // fecha_hora_inicio_rondin: "",
-            // fecha_hora_fin_rondin: "",
-            // estatus_recorrido:"",
-            // recorrido: "",
-            // areas_recorrido:"",
-            // incidencias:"",
-            // duracion_recorrido_minutos: "",
-            // motivo_cancelacion: "",
 		},
 	});
 
@@ -152,14 +140,6 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 		{ label: "Cuarta semana del mes", value: "cuarta_semana_del_mes" },
 		{ label: "Quinta semana del mes", value: "quinta_semana_del_mes" },
 	  ];
-
-	//   const posicionesSemana = [
-	// 	{ label: "Primero", value: "primero" },
-	// 	{ label: "Segundo", value: "segundo" },
-	// 	{ label: "Tercero", value: "tercero" },
-	// 	{ label: "Cuarto", value: "cuarto" },
-	// 	{ label: "Quinto", value: "quinto" },
-	//   ];
 
 	  const mesesDelAño = [
 		"Enero",
@@ -223,7 +203,6 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 	const handleClose = () => {
 		setIsSuccess(false); 
 	};
-
 	const recurrencia = useWatch({
 		control:form.control,
 		name: "cada_cuantos_dias_se_repite"
@@ -357,16 +336,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 					</div>
 					<div className="w-32 flex items-center mt-7">
 						<div className="text-sm">Minutos</div>
-						{/* <Select value={unit} onValueChange={setUnit} >
-						<SelectTrigger id="unit-select">
-							<SelectValue placeholder="Unidad" />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectItem value="segundos">Segundos</SelectItem>
-							<SelectItem value="minutos">Minutos</SelectItem>
-							<SelectItem value="horas">Horas</SelectItem>
-						</SelectContent>
-						</Select> */}
+						
 					</div>
 				</div>
 
@@ -388,9 +358,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 								<SelectValue placeholder="Selecciona una opción" />
 							</SelectTrigger>
 							<SelectContent>
-							{/* {catalagoSub.length>0 ? (
-								catalagoSub?.map((item:string, index:number) => {
-									return ( */}
+							
 										<SelectItem value={"Diario"}>
                                         Diario
 										</SelectItem>
@@ -403,12 +371,6 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 										<SelectItem value={"Configurable"}>
                                         Configurable
 										</SelectItem>
-								
-									{/* )
-								})
-							):(
-								<><SelectItem disabled value={"no opciones"}>No hay opciones disponibles</SelectItem></>
-							)} */}
 							</SelectContent>
 						</Select>
 							</FormControl>
@@ -419,7 +381,17 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 
 				{recurrencia === "Diario" && (
 					<div className="mt-2">
+						<div className="flex justify-between">
 						<FormLabel>Seleccione los días de acceso:</FormLabel>
+						<div className="flex items-center gap-2 ml-3">
+							<input
+								type="checkbox"
+								checked={que_dias_de_la_semana.length === diasSemana.length}
+								onChange={toggleTodos}
+							/>
+							<span className="text-sm">Todos los días</span>
+							</div>
+						</div>
 							<div className="flex flex-wrap mt-2 mb-5">
 								{[
 								"Lunes",
@@ -453,19 +425,22 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 								);
 								})}
 							</div>
-							<div className="flex items-center gap-2 ml-3">
-							<input
-								type="checkbox"
-								checked={que_dias_de_la_semana.length === diasSemana.length}
-								onChange={toggleTodos}
-							/>
-							<span className="text-sm">Todos los días</span>
-							</div>
+							
 					</div>
 				)}
 				{recurrencia === "Semanal" && (
 					<div className="mt-2">
+						<div className="flex justify-between">
 						<FormLabel>Seleccione las semanas del mes:</FormLabel>
+						<div className="flex items-center gap-2 ml-3 ">
+							<input
+							type="checkbox"
+							checked={en_que_semana_sucede.length === semanasDelMes.length}
+							onChange={()=>{toggleTodas()}}
+							/>
+							<span className="text-sm">Todas las semanas</span>
+						</div>
+						</div>
 
 						<div className="flex flex-wrap mt-2 mb-5">
 							{[
@@ -510,14 +485,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 							))}
 						</div>
 
-						<div className="flex items-center gap-2 ml-3">
-							<input
-							type="checkbox"
-							checked={en_que_semana_sucede.length === semanasDelMes.length}
-							onChange={()=>{toggleTodas()}}
-							/>
-							<span className="text-sm">Todas las semanas</span>
-						</div>
+					
 					</div>
 				)}
 
@@ -525,7 +493,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 					<>
 					<FormField
 						control={form.control}
-						name="en_que_mes"
+						name="que_dia_del_mes"
 						render={({ field }:any) => (
 							<FormItem>
 								<FormLabel>Corriendo cada: *</FormLabel>
@@ -555,8 +523,8 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 								<div className="mt-4 flex items-center gap-2">
 								<span className="text-sm">En el día</span>
 								<Select
-									onValueChange={(v) => form.setValue("que_dia_del_mes", v)}
-									value={form.watch("que_dia_del_mes")}
+									onValueChange={(v) => form.setValue("se_repite_cada", v)}
+									value={form.watch("se_repite_cada")}
 								>
 									<SelectTrigger className="w-24">
 									<SelectValue placeholder="1" />
@@ -572,12 +540,65 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 								<span className="text-sm">del mes</span>
 								</div>
 							)}
+							{field.value === "Día de la semana" && (
+								<div className="mt-4 flex items-center gap-2">
+								<span className="text-sm">En el </span>
+								<Select
+									onValueChange={(v) => form.setValue("en_que_hora_sucede", v)}
+									value={form.watch("en_que_hora_sucede")}
+								>
+									<SelectTrigger className="w-24">
+									<SelectValue placeholder="1" />
+									</SelectTrigger>
+									<SelectContent>
+									
+										<SelectItem key={"Primero"} value={"Primero"}> Primero
+										</SelectItem>
+										<SelectItem key={"Segundo"} value={"Segundo"}> Segundo
+										</SelectItem>
+										<SelectItem key={"Tercero"} value={"Tercero"}> Tercero
+										</SelectItem>
+										<SelectItem key={"Cuarto"} value={"Cuarto"}> Cuarto
+										</SelectItem>
+										<SelectItem key={"Quinto"} value={"Quinto"}> Quinto
+										</SelectItem>
+									</SelectContent>
+								</Select>
+								<Select
+								onValueChange={(v) => field.onChange("cada_cuantos_minutos_se_repite",v)}
+								value={field.value || ""}
+								>
+								<SelectTrigger className="w-40">
+									<SelectValue placeholder="Selecciona un día" />
+								</SelectTrigger>
+								<SelectContent>
+									{diasSemana.map((dia: string) => (
+									<SelectItem key={dia} value={dia}>
+										{dia}
+									</SelectItem>
+									))}
+								</SelectContent>
+								</Select>
+								<span className="text-sm">del mes </span>
+								</div>
+							)}
 							</FormItem>
 						)}
 					/>	
-				<div className="mt-2">
+
 					<div className="mt-2">
-						<FormLabel>Seleccione los meses de acceso:</FormLabel>
+					<div className="mt-2">
+						<div className="flex justify-between">
+							<FormLabel>Seleccione los meses de acceso:</FormLabel>
+							<div className="flex items-center gap-2 ml-3">
+							<input
+								type="checkbox"
+								checked={mesesDelAño.every((m) => en_que_mes.includes(m))} 
+								onChange={() => toggleMes()}
+							/>
+							<span className="text-sm">Todos los meses</span>
+							</div>
+						</div>
 						<div className="flex flex-wrap mt-2 mb-5">
 						{mesesDelAño.map((mes) => {
 							const mesLower = mes.toLowerCase();
@@ -603,14 +624,6 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 						})}
 						</div>
 
-						<div className="flex items-center gap-2 ml-3">
-						<input
-							type="checkbox"
-							checked={mesesDelAño.every((m) => en_que_mes.includes(m))} 
-							onChange={() => toggleMes()}
-						/>
-						<span className="text-sm">Todos los meses</span>
-						</div>
 					</div>
 					</div>
 
@@ -622,7 +635,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 						name="nombre_rondin"
 						render={({field}:any) => (
 							<FormItem>
-								<FormLabel>Configurable::</FormLabel>
+								<FormLabel>Configurable:</FormLabel>
 								<FormControl>
 									<Input
 									placeholder="Texto"
@@ -635,13 +648,11 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 						)}
 					/>
 				)}
-			
 
 				<div className="">
 					<div className="text-sm mb-2">Áreas: </div>
 					<Multiselect
 					options={catalogAreasRondin} 
-					// selectedValues={ubicacionesDefaultFormatted}
 					onSelect={(selectedList) => {
 						setAreasSeleccionadas(selectedList);
 					}}
@@ -651,6 +662,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 					displayValue="name"
 					/>
 				</div>
+
 				<div className="flex gap-2 mt-1">
 					<DialogClose asChild>
 						<Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700" onClick={handleClose}>

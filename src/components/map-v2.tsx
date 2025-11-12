@@ -144,7 +144,6 @@ const MapView = ({ map_data }: MapaRutasProps) => {
 		}));
 	  }
 
-	// const puntos = formatMapData( map_data);
 	const puntos = useMemo(
 		() => formatMapData(map_data ?? []),
 		[map_data]
@@ -155,7 +154,6 @@ const MapView = ({ map_data }: MapaRutasProps) => {
 		? { lat: puntos[0].lat, lng: puntos[0].lng }
 		: { lat: 19.4326, lng: -99.1332 },
 		filterId: null,
-		// parameters: document.location.search ? new URLSearchParams(document.location.search) : new URLSearchParams('deleted=false&limit=20&offset=0'),
 		parameters: typeof window !== "undefined" && window.location.search
 		? new URLSearchParams(window.location.search)
 		: new URLSearchParams('deleted=false&limit=20&offset=0'),
@@ -165,10 +163,8 @@ const MapView = ({ map_data }: MapaRutasProps) => {
 		dicGroup: {},
 	  };
 	
-	// const [loading, setLoading] = useState(false);
 	const DEFAULT_ZOOM = 20;
 	const mapRef = useRef<Map | null>(null);
-	// const runOnce = useRef(false);
 	const initialized = useRef(false);
 
 	const [state, setState] = useState<MapViewState>(initialState);
@@ -177,7 +173,7 @@ const MapView = ({ map_data }: MapaRutasProps) => {
 		if (puntos.length) {
 		const records: RecordData[] = puntos.map((p, index) => ({
 			id: index + 1,
-			folio: `P${index + 1}`,
+			folio: p.nombre ?? `Área ${index + 1}`,
 			form_name: p.nombre ?? "", 
 			user_name: "",
 			duration: "",
@@ -260,7 +256,6 @@ const MapView = ({ map_data }: MapaRutasProps) => {
 					<Tooltip permanent className="myTooltip">
 						<div
 						className="tooltip-div"
-						//   singlecolor={obj.bubble_color}
 						id={`tooltip-${obj.id}`}
 						>
 						<p className="toltip-data" id={`toltip-record-${obj.id}`}>
