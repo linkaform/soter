@@ -9,6 +9,8 @@ import {
   CircleAlert,
   Calendar,
   CircleDashed,
+  CircleX,
+  CalendarOff,
   Search,
   ChevronRight,
   ChevronLeft,
@@ -29,7 +31,7 @@ const EstadoIcono = ({ estado }: { estado: string }) => {
       return <CircleSlash className={`${baseClass} text-white bg-amber-500 rounded-xl`} />;
     case "cancelado":
       return <Ban className={`${baseClass} text-slate-400`} />;
-    case "en progreso":
+    case "en_progreso":
       return <CircleDashed strokeWidth={2.75} className={`${baseClass} text-blue-500 font-bold rounded-xl`} />;
     case "cerrado":
       return <CircleCheck className={`${baseClass} text-white bg-gray-500 rounded-xl`} />;
@@ -37,6 +39,10 @@ const EstadoIcono = ({ estado }: { estado: string }) => {
       return <CircleAlert className={`${baseClass} text-white bg-red-500 rounded-xl`} />;
     case "programado":
       return <Calendar className={`${baseClass} text-white bg-purple-500 rounded-xl p-0.5`} />;
+	case "no_aplica":
+      return <CalendarOff className={`${baseClass} text-white bg-gray-300 rounded-xl p-0.5`} />;
+	case "cancelado":
+      return <CircleX className={`${baseClass} text-white bg-gray-300 rounded-xl p-0.5`} />;
     default:
       return <Circle className={`${baseClass} text-slate-300`} />;
   }
