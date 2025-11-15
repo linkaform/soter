@@ -79,7 +79,7 @@ export const RondinesBitacoraTable = () => {
 		listBitacoraRondines?: Rondin[];
 		isLoadingListBitacoraRondines: boolean;
 	};
-
+	console.log("BITACORA",data)
 	const [diaSelected, setDiaSelected] = useState(0);
 	const [estatus, setEstatus] = useState("");
 	const [modalOpenPerimetroExt, setModalOpenPerimetroExt] = useState(false);
@@ -192,33 +192,32 @@ export const RondinesBitacoraTable = () => {
 	  };
 	  
   return (
-    <div className="w-full">
-	
+    <div >
 			<div className="flex justify-between items-center my-2 ">
-			<div className="flex w-full justify-start gap-4 ">
-				<div className="flex justify-center items-center">
-					<TabsList className="bg-blue-500 text-white p-1 rounded-md ">
-					<TabsTrigger value="Rondines">Rondines</TabsTrigger>
-					<TabsTrigger value="Bitacora">Bitácora</TabsTrigger>
-					<TabsTrigger value="Incidencias">Incidencias</TabsTrigger>
-					<TabsTrigger value="Fotos">Fotos</TabsTrigger>
-					<TabsTrigger value="Calendario">Calendario</TabsTrigger>
-					</TabsList>
-				</div> 
-				<div>
-				<div className="flex w-full max-w-sm items-center space-x-2">
-				<input
-					type="text"
-					placeholder="Buscar"
-					value={globalFilter || ''}
-					onChange={(e) => setGlobalFilter(e.target.value)}
-					className="border border-gray-300 rounded-md p-2 placeholder-gray-600 w-full" 
-				/>
-					<Search />
+				<div className="flex w-full justify-start gap-4 ">
+					<div className="flex justify-center items-center">
+						<TabsList className="bg-blue-500 text-white p-1 rounded-md ">
+						<TabsTrigger value="Rondines">Rondines</TabsTrigger>
+						<TabsTrigger value="Bitacora">Bitácora</TabsTrigger>
+						<TabsTrigger value="Incidencias">Incidencias</TabsTrigger>
+						<TabsTrigger value="Fotos">Fotos</TabsTrigger>
+						<TabsTrigger value="Calendario">Calendario</TabsTrigger>
+						</TabsList>
+					</div> 
+					<div>
+					<div className="flex w-full max-w-sm items-center space-x-2">
+					<input
+						type="text"
+						placeholder="Buscar"
+						value={globalFilter || ''}
+						onChange={(e) => setGlobalFilter(e.target.value)}
+						className="border border-gray-300 rounded-md p-2 placeholder-gray-600 w-full" 
+					/>
+						<Search />
+					</div>
+					</div>
 				</div>
-				</div>
-			</div>
-			<div className="flex items-center gap-3 text-2xl font-bold capitalize select-none">
+				<div className="flex items-center gap-3 text-2xl font-bold capitalize select-none">
 				<button
 					onClick={handlePrevMonth}
 					className="p-1 rounded-full hover:bg-gray-200 transition"
@@ -236,19 +235,22 @@ export const RondinesBitacoraTable = () => {
 				</button>
 				</div>
 
-			<div className="flex w-full justify-end gap-3">
-			<div className="flex items-center w-48 gap-2"> 
-				
-			</div>
-			</div>
+				<div className="flex w-full justify-end gap-3">
+					<div className="flex items-center w-48 gap-2"> 
+						
+					</div>
+				</div>
 			</div>
 
-			<div className="overflow-auto flex-1 border rounded" style={{ maxHeight: "80vh" }}>
-
-
+			<div className="overflow-auto  rounded" style={{ maxHeight: "80vh" }}>
 				{isLoading ? (
-					<div className="flex justify-center place-items-center h-screen">
-						<div className="w-24 h-24 border-8 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+					<div>
+						<div className="flex flex-col justify-start place-items-center mt-20">
+							<div className="w-16 h-16 border-8  border-t-blue-500 rounded-full animate-spin"></div>
+							<span className="text-gray-500">
+								Cargando información...
+							</span>
+						</div>
 					</div>
 				) : (
 					<table className="min-w-full border-collapse border">

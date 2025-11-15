@@ -360,7 +360,15 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 							Editar
 						</Button>
 					</div>
+					<div className="flex">
+						<span className="font-semibold min-w-[130px]">Folio:</span>
+					</div>
 
+					<div className="flex justify-start gap-10">
+						<span >
+						{rondin?.folio|| "No disponible" } 
+						</span>
+					</div>
 
 					<div className="flex">
 						<span className="font-semibold min-w-[130px]">Ubicacion:</span>

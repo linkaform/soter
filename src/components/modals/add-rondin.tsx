@@ -35,6 +35,53 @@ interface AddRondinModalProps {
   	title: string;
     children: React.ReactNode;
 }
+  
+  export type RondinPayload = {
+	nombre_rondin: string;
+	duracion_estimada: string;
+	ubicacion: string;
+	areas: any[];
+	grupo_asignado: string;
+	fecha_hora_programada: string;
+	programar_anticipacion: string;
+	cuanto_tiempo_de_anticipacion: string;
+	cuanto_tiempo_de_anticipacion_expresado_en: string;
+	tiempo_para_ejecutar_tarea: number;
+	tiempo_para_ejecutar_tarea_expresado_en: string;
+	la_tarea_es_de: string;
+  
+	se_repite_cada?: string;
+	sucede_recurrencia?: [];
+  
+	en_que_minuto_sucede?: string;
+	cada_cuantos_minutos_se_repite?: string;
+  
+	en_que_hora_sucede?: string;
+	cada_cuantas_horas_se_repite?: string;
+  
+	que_dias_de_la_semana?: string[];
+	en_que_semana_sucede?: string;
+  
+	que_dia_del_mes?: string;
+	cada_cuantos_dias_se_repite?: string;
+  
+	en_que_mes?: string;
+	cada_cuantos_meses_se_repite?: string;
+  
+	la_recurrencia_cuenta_con_fecha_final?: string;
+	fecha_final_recurrencia?: string;
+	cron_config:string;
+	accion_recurrencia: string;
+  };
+  
+  const recurrenciaKeys = {
+	diario: ["que_dias_de_la_semana","se_repite_cada","en_que_semana_sucede","sucede_recurrencia"],
+	semana: ["se_repite_cada","que_dias_de_la_semana","en_que_semana_sucede","sucede_recurrencia"],
+	mes: ["se_repite_cada","que_dia_del_mes","sucede_recurrencia","en_que_mes"],
+	MensualDiaSemana: ["se_repite_cada","que_dias_de_la_semana","sucede_recurrencia","en_que_semana_sucede","en_que_mes"],
+	configurable: ["se_repite_cada", "cron_config"],
+  } as const;
+
 
 const formSchema = z.object({
     nombre_rondin:z.string().optional(),
@@ -44,23 +91,23 @@ const formSchema = z.object({
     grupo_asignado:z.string().optional(),
     fecha_hora_programada: z.string().optional(),
     programar_anticipacion: z.string().optional(),
-    cuanto_tiempo_de_anticipacio:z.string().optional(),
+    cuanto_tiempo_de_anticipacion:z.string().optional(),
     cuanto_tiempo_de_anticipacion_expresado_en:z.string().optional(),
     tiempo_para_ejecutar_tarea:z.number().optional(),
     tiempo_para_ejecutar_tarea_expresado_en:z.string().optional(),
     la_tarea_es_de: z.string().optional(),
     se_repite_cada:z.string().optional(),
     sucede_cada:z.string().optional(),
-    sucede_recurrencia: z.array(z.string().optional()),
+    sucede_recurrencia: z.string().optional(),
     en_que_minuto_sucede:z.string().optional(),
     cada_cuantos_minutos_se_repite:z.string().optional(),
     en_que_hora_sucede:z.string().optional(),
     cada_cuantas_horas_se_repite:z.string().optional(),
     que_dias_de_la_semana: z.array(z.string().optional()),
-    en_que_semana_sucede:z.array(z.string()).optional(),
+    en_que_semana_sucede:z.string().optional(),
     que_dia_del_mes:z.string().optional(),
     cada_cuantos_dias_se_repite:z.string().optional(),
-    en_que_mes:z.array(z.string()).optional(),
+    en_que_mes:z.string().optional(),
     cada_cuantos_meses_se_repite:z.string().optional(),
     la_recurrencia_cuenta_con_fecha_final: z.string().optional(),
     fecha_final_recurrencia:z.string().optional(),
@@ -78,9 +125,10 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 	const { data:catalogAreasRondin} = useCatalogAreasRondin(location, isSuccess)
 	const [date, setDate] = useState<Date|"">("");
 	const [que_dias_de_la_semana , set_que_dias_de_la_semana] =useState<string[]>([])
-	const [en_que_semana_sucede, set_en_que_semana_sucede] = useState<string[]>([]);
-	const [en_que_mes, set_en_que_mes] = useState<string[]>([])
+	const [en_que_semana_sucede, set_en_que_semana_sucede] = useState<string>("");
+	const [en_que_mes, set_en_que_mes] = useState<string>("")
 
+	 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -91,14 +139,14 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
             grupo_asignado: '',
             fecha_hora_programada: '',
             programar_anticipacion: '',
-            cuanto_tiempo_de_anticipacio: '',
+            cuanto_tiempo_de_anticipacion: '',
             cuanto_tiempo_de_anticipacion_expresado_en: '',
             tiempo_para_ejecutar_tarea: 30,
             tiempo_para_ejecutar_tarea_expresado_en: '',
             la_tarea_es_de: '',
             se_repite_cada: '',
             sucede_cada: '',
-            sucede_recurrencia: [],
+            sucede_recurrencia: '',
             en_que_minuto_sucede: '',
             cada_cuantos_minutos_se_repite: '',
             en_que_hora_sucede: '',
@@ -133,14 +181,6 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 		"Domingo",
 	  ];
 
-	  const semanasDelMes = [
-		{ label: "Primera semana del mes", value: "primera_semana_del_mes" },
-		{ label: "Segunda semana del mes", value: "segunda_semana_del_mes" },
-		{ label: "Tercera semana del mes", value: "tercera_semana_del_mes" },
-		{ label: "Cuarta semana del mes", value: "cuarta_semana_del_mes" },
-		{ label: "Quinta semana del mes", value: "quinta_semana_del_mes" },
-	  ];
-
 	  const mesesDelAño = [
 		"Enero",
 		"Febrero",
@@ -153,51 +193,111 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 		"Septiembre",
 		"Octubre",
 		"Noviembre",
-		"Diciembre"
-	  ];
+		"Diciembre"];
+
+		function filtrarPorRecurrencia<T extends Record<string, any>>(
+			data: T,
+			tipoRecurrencia: keyof typeof recurrenciaKeys
+		  ): Partial<{ [K in keyof T]: T[K] | null }> { 
+			const allowedKeys = recurrenciaKeys[tipoRecurrencia];
+			const result: Partial<{ [K in keyof T]: T[K] | null }> = {};
+		  
+			allowedKeys.forEach((k) => {
+			  const key = k as keyof T;
+			  result[key] = data[key] ?? null;
+			});
+		  
+			return result;
+		  }
+	// function onSubmit(values: z.infer<typeof formSchema>) {
+	// 	let formattedDate=""
+	// 	if(date){
+	// 		formattedDate = format( new Date(date), 'yyyy-MM-dd HH:mm:ss');
+	// 		const areas = areasSeleccionadas.map( e => e.id);
+	// 		const formatData ={
+	// 			nombre_rondin: values.nombre_rondin ||"",
+	// 			duracion_estimada: values.duracion_estimada + " minutos",
+	// 			ubicacion: location,
+	// 			areas: areas,
+	// 			grupo_asignado: '',
+	// 			fecha_hora_programada: formattedDate,
+	// 			programar_anticipacion: 'no',
+	// 			cuanto_tiempo_de_anticipacio: '',
+	// 			cuanto_tiempo_de_anticipacion_expresado_en: '',
+	// 			tiempo_para_ejecutar_tarea: 30,
+	// 			tiempo_para_ejecutar_tarea_expresado_en: 'minutos',
+	// 			la_tarea_es_de: '',
+	// 			se_repite_cada: '',
+	// 			sucede_cada: 'igual_que_la_primer_fecha',
+	// 			sucede_recurrencia: [],
+	// 			en_que_minuto_sucede: '',
+	// 			cada_cuantos_minutos_se_repite: '',
+	// 			en_que_hora_sucede: '',
+	// 			cada_cuantas_horas_se_repite: '',
+	// 			que_dias_de_la_semana: que_dias_de_la_semana,
+	// 			en_que_semana_sucede: en_que_semana_sucede,
+	// 			que_dia_del_mes: '',
+	// 			cada_cuantos_dias_se_repite: '',
+	// 			en_que_mes: en_que_mes,
+	// 			cada_cuantos_meses_se_repite: '',
+	// 			la_recurrencia_cuenta_con_fecha_final: 'no',
+	// 			fecha_final_recurrencia: '', 
+	// 			accion_recurrencia:"programar"
+	// 		}
+	// 		createRondinMutation.mutate({rondin_data: formatData},{
+	// 			onSuccess: ()=>{
+	// 				setIsSuccess(false)
+	// 			}
+	// 		})
+	// 	}else{
+	// 		form.setError("fecha_hora_programada", { type: "manual", message: "Fecha es un campo requerido." });
+	// 	}
+	// }
+
+
 	function onSubmit(values: z.infer<typeof formSchema>) {
-		let formattedDate=""
-		if(date){
-			formattedDate = format( new Date(date), 'yyyy-MM-dd HH:mm:ss');
-			const areas = areasSeleccionadas.map( e => e.id);
-			const formatData ={
-				nombre_rondin: values.nombre_rondin ||"",
-				duracion_estimada: values.duracion_estimada + " minutos",
-				ubicacion: location,
-				areas: areas,
-				grupo_asignado: '',
-				fecha_hora_programada: formattedDate,
-				programar_anticipacion: 'no',
-				cuanto_tiempo_de_anticipacio: '',
-				cuanto_tiempo_de_anticipacion_expresado_en: '',
-				tiempo_para_ejecutar_tarea: 30,
-				tiempo_para_ejecutar_tarea_expresado_en: 'minutos',
-				la_tarea_es_de: '',
-				se_repite_cada: '',
-				sucede_cada: 'igual_que_la_primer_fecha',
-				sucede_recurrencia: [],
-				en_que_minuto_sucede: '',
-				cada_cuantos_minutos_se_repite: '',
-				en_que_hora_sucede: '',
-				cada_cuantas_horas_se_repite: '',
-				que_dias_de_la_semana: que_dias_de_la_semana,
-				en_que_semana_sucede: en_que_semana_sucede,
-				que_dia_del_mes: '',
-				cada_cuantos_dias_se_repite: '',
-				en_que_mes: en_que_mes,
-				cada_cuantos_meses_se_repite: '',
-				la_recurrencia_cuenta_con_fecha_final: 'no',
-				fecha_final_recurrencia: '', 
-				accion_recurrencia:"programar"
-			}
-			createRondinMutation.mutate({rondin_data: formatData},{
-				onSuccess: ()=>{
-					setIsSuccess(false)
-				}
-			})
-		}else{
-			form.setError("fecha_hora_programada", { type: "manual", message: "Fecha es un campo requerido." });
+		// REVISAR LA CREACION DE RONDIN!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
+		//HACER PRUEBAS CON EL CODIGO AGREGADO PARA CREA RONDINES
+		if (!date) {
+		  form.setError("fecha_hora_programada", { type: "manual", message: "Fecha es obligatoria" });
+		  return;
 		}
+		const valuesConDias = {
+			...values,
+			que_dias_de_la_semana: que_dias_de_la_semana, 
+		  };
+		  
+		const formattedDate = format(new Date(date), 'yyyy-MM-dd HH:mm:ss');
+		const areas = areasSeleccionadas.map(e => e.id);
+		const tipoRecurrencia = values.se_repite_cada as keyof typeof recurrenciaKeys;
+		const recurrenciaFiltrada = filtrarPorRecurrencia(valuesConDias, tipoRecurrencia);
+		
+	    console.log("RECURRENCIA DIARIA", recurrenciaFiltrada)
+		const payload = {
+			nombre_rondin: values.nombre_rondin,
+			duracion_estimada: values.duracion_estimada + " minutos",
+			ubicacion: location,
+			areas,
+			grupo_asignado: "",
+			fecha_hora_programada: formattedDate,
+			programar_anticipacion: "no",
+			cuanto_tiempo_de_anticipacio: "",
+			cuanto_tiempo_de_anticipacion_expresado_en: "",
+			tiempo_para_ejecutar_tarea: 30,
+			tiempo_para_ejecutar_tarea_expresado_en: "minutos",
+			la_tarea_es_de: "cuenta_con_una_recurrencia",
+			la_recurrencia_cuenta_con_fecha_final: "no",
+			fecha_final_recurrencia: "",
+			accion_recurrencia: "programar",
+			se_repite_cada:values.se_repite_cada,
+		  ...recurrenciaFiltrada
+		};
+		// console.log("RECURRENCIA DIARIA", payload)
+		createRondinMutation.mutate({ rondin_data: payload } ,{
+			onSuccess: () => {
+			  setIsSuccess(false);
+			},
+		  });
 	}
 
 	const handleClose = () => {
@@ -205,19 +305,18 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 	};
 	const recurrencia = useWatch({
 		control:form.control,
-		name: "cada_cuantos_dias_se_repite"
+		name: "se_repite_cada"
 	})
 
-	const toggleDia = (dia: string) => {
-		set_que_dias_de_la_semana((prev) => {
-		const updatedDias = prev.includes(dia)
-			? prev.filter((d) => d !== dia) 
-			: [...prev, dia]; 
-		return updatedDias;
+	function toggleDia(dia: string) {
+		set_que_dias_de_la_semana((prev: string[]) => {
+		  if (prev.includes(dia)) {
+			return prev.filter((d: string) => d !== dia);
+		  } else {
+			return [...prev, dia];
+		  }
 		});
-		
-	};
-
+	  }
 	const toggleTodos = () => {
 		if (que_dias_de_la_semana.length === diasSemana.length) {
 		  set_que_dias_de_la_semana([]);
@@ -226,39 +325,20 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 		}
 	  };
 
+
 	  const toggleSemana = (semana: string) => {
 		set_en_que_semana_sucede((prev) =>
-		  prev.includes(semana)
-			? prev.filter((s) => s !== semana) 
-			: [...prev, semana]                
+		  prev === semana ? "" : semana 
 		);
 	  };
 	  
-	  const toggleTodas = () => {
-		set_en_que_semana_sucede((prev) =>
-		  prev.length === semanasDelMes.length
-			? []
-			: semanasDelMes.map((s) => s.value) 
-		);
+	  const toggleMes = (mes: string) => {
+		set_en_que_mes(prev => prev === mes ? "" : mes);
 	  };
-	  
-	  const toggleMes = (mes?: string) => {
-		if (mes) {
-		 
-		  set_en_que_mes(prev =>
-			prev.includes(mes)
-			  ? prev.filter(m => m !== mes)
-			  : [...prev, mes]
-		  );
-		} else {
-	  
-		  set_en_que_mes(prev => {
-			const todosSeleccionados = mesesDelAño.every(m => prev.includes(m));
-			return todosSeleccionados ? [] : [...mesesDelAño];
-		  });
-		}
-	  };
-	  
+
+	  useEffect(()=>{
+		console.log("que_dias_de_la_semana",que_dias_de_la_semana)
+	  },[que_dias_de_la_semana])
 
   return (
     <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
@@ -343,7 +423,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 
 				<FormField
 					control={form.control}
-					name="cada_cuantos_dias_se_repite"
+					name="se_repite_cada"
 					render={({ field }:any) => (
 						<FormItem>
 							<FormLabel>Recurrencia: *</FormLabel>
@@ -359,16 +439,16 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 							</SelectTrigger>
 							<SelectContent>
 							
-										<SelectItem value={"Diario"}>
+										<SelectItem value={"diario"}>
                                         Diario
 										</SelectItem>
-                                        <SelectItem value={"Semanal"}>
+                                        <SelectItem value={"semana"}>
                                         Semanal
 										</SelectItem>
-                                        <SelectItem value={"Mensual"}>
+                                        <SelectItem value={"mes"}>
                                         Mensual
 										</SelectItem>
-										<SelectItem value={"Configurable"}>
+										<SelectItem value={"configurable"}>
                                         Configurable
 										</SelectItem>
 							</SelectContent>
@@ -379,7 +459,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 					)}
 				/>	
 
-				{recurrencia === "Diario" && (
+				{recurrencia === "diario" && (
 					<div className="mt-2">
 						<div className="flex justify-between">
 						<FormLabel>Seleccione los días de acceso:</FormLabel>
@@ -428,68 +508,55 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 							
 					</div>
 				)}
-				{recurrencia === "Semanal" && (
-					<div className="mt-2">
-						<div className="flex justify-between">
-						<FormLabel>Seleccione las semanas del mes:</FormLabel>
-						<div className="flex items-center gap-2 ml-3 ">
-							<input
-							type="checkbox"
-							checked={en_que_semana_sucede.length === semanasDelMes.length}
-							onChange={()=>{toggleTodas()}}
-							/>
-							<span className="text-sm">Todas las semanas</span>
-						</div>
-						</div>
+		{recurrencia === "semana" && (
+		<div className="mt-2">
+			<FormLabel>Seleccione la semana del mes:</FormLabel>
 
-						<div className="flex flex-wrap mt-2 mb-5">
-							{[
-							"Primera semana del mes",
-							"Segunda semana del mes",
-							"Tercera semana del mes",
-							"Cuarta semana del mes",
-							"Quinta semana del mes",
-							].map((semana) => (
-							<FormItem
-								key={semana.toLowerCase().replace(/\s+/g, "_")}
-								className="flex items-center space-x-3"
-							>
-								<FormControl>
-								<Button
-									type="button"
-									onClick={() =>
-									toggleSemana(semana.toLowerCase().replace(/\s+/g, "_"))
-									}
-									className={`m-2 px-4 py-2 rounded-md transition-all duration-300 
-									${
-										en_que_semana_sucede.includes(
-										semana.toLowerCase().replace(/\s+/g, "_")
-										)
-										? "bg-blue-600 text-white"
-										: "border-2 border-blue-400 bg-white"
-									}
-									hover:bg-transparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
-								>
-									<div className="flex flex-wrap">
-									{en_que_semana_sucede.includes(
-										semana.toLowerCase().replace(/\s+/g, "_")
-									) ? (
-										<div>{semana}</div>
-									) : (
-										<div className="text-blue-600">{semana}</div>
-									)}
-									</div>
-								</Button>
-								</FormControl>
-							</FormItem>
-							))}
+			<div className="flex flex-wrap mt-2 mb-5">
+			{[
+				"Primera semana del mes",
+				"Segunda semana del mes",
+				"Tercera semana del mes",
+				"Cuarta semana del mes",
+				"Quinta semana del mes",
+			].map((semana) => {
+				const value = semana.toLowerCase().replace(/\s+/g, "_");
+
+				return (
+				<FormItem
+					key={value}
+					className="flex items-center space-x-3"
+				>
+					<FormControl>
+					<Button
+						type="button"
+						onClick={() => toggleSemana(value)}
+						className={`m-2 px-4 py-2 rounded-md transition-all duration-300 
+						${
+							en_que_semana_sucede === value
+							? "bg-blue-600 text-white"
+							: "border-2 border-blue-400 bg-white"
+						}
+						hover:bg-transparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]`}
+					>
+						<div className="flex flex-wrap">
+						{en_que_semana_sucede === value ? (
+							<div>{semana}</div>
+						) : (
+							<div className="text-blue-600">{semana}</div>
+						)}
 						</div>
+					</Button>
+					</FormControl>
+				</FormItem>
+				);
+			})}
+			</div>
+		</div>
+		)}
 
-					
-					</div>
-				)}
 
-				{recurrencia === "Mensual" && (
+				{recurrencia === "mes" && (
 					<>
 					<FormField
 						control={form.control}
@@ -594,7 +661,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 							<input
 								type="checkbox"
 								checked={mesesDelAño.every((m) => en_que_mes.includes(m))} 
-								onChange={() => toggleMes()}
+								// onChange={() => toggleMes()}
 							/>
 							<span className="text-sm">Todos los meses</span>
 							</div>
@@ -629,7 +696,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 
 					</>
 				)}
-				{recurrencia === "Configurable" && (
+				{recurrencia === "configurable" && (
 					<FormField
 						control={form.control}
 						name="nombre_rondin"

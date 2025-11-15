@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Flag, Search } from "lucide-react";
+import { Flag, Search, AlertTriangle } from "lucide-react";
 import { Area_rondin } from "./areas-list-draggable";
 
 export const ListaAreas = ({
@@ -34,28 +34,47 @@ export const ListaAreas = ({
           filteredAreas.map((area) => {
             const isChecked = selectedAreas.includes(area?.area_tag_id[0]);
 
+            const geo = area?.geolocalizacion_area_ubicacion;
+            const sinGeo =
+              !geo?.length ||
+              geo[0]?.latitude === 0 ||
+              geo[0]?.longitude === 0 ||
+              geo[0]?.latitude == null ||
+              geo[0]?.longitude == null;
+
             return (
               <div
                 key={area?.area_tag_id[0]}
                 onClick={() => onSelectArea(area?.area_tag_id[0])}
-                className={`flex items-center justify-between border rounded-lg p-3 hover:bg-gray-50 transition cursor-pointer ${
-                  isChecked ? "bg-blue-50 border-blue-400" : ""
-                }`}
+                className={`flex flex-col border rounded-lg p-3 hover:bg-gray-50 transition cursor-pointer ${
+                  isChecked ? "bg-blue-50 border-blue-400" : "border-gray-200"
+                } ${sinGeo ? "border-red-400" : ""}`}
               >
-                <div className="flex items-start gap-3">
-                  <Flag className="text-blue-500 mt-1 w-5 h-5" />
-                  <div>
-                    <div className="font-normal text-gray-800">{area?.rondin_area}</div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-start gap-3">
+                    <Flag className="text-blue-500 mt-1 w-5 h-5" />
+                    <div>
+                      <div className="font-normal text-gray-800">
+                        {area?.rondin_area}
+                      </div>
+                    </div>
                   </div>
+
+                  <input
+                    type="checkbox"
+                    checked={isChecked}
+                    onChange={() => onSelectArea(area?.area_tag_id[0])}
+                    onClick={(e) => e.stopPropagation()}
+                    className="w-5 h-5 accent-blue-600 cursor-pointer"
+                  />
                 </div>
 
-                <input
-                  type="checkbox"
-                  checked={isChecked}
-                  onChange={() => onSelectArea(area?.area_tag_id[0])}
-                  onClick={(e) => e.stopPropagation()}
-                  className="w-5 h-5 accent-blue-600 cursor-pointer"
-                />
+                {sinGeo && (
+                  <div className="flex items-center gap-1 text-xs text-red-500 mt-2">
+                    <AlertTriangle className="w-4 h-4" />
+                    <span>Sin geolocalización disponible</span>
+                  </div>
+                )}
               </div>
             );
           })

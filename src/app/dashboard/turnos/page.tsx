@@ -59,12 +59,12 @@ export default function Home() {
           <div className="w-full lg:w-3/4 p-8 flex flex-col">
               <TurnStatus shift={shift} location={location} area={area} evidencia={evidencia} setEvidencia={setEvidencia} identificacion={identificacion} setIdentificacion={setIdentificacion}/>
               <div className="flex flex-col sm:flex-row justify-between">
-                  <ActivitySummary booth_stats={shift?.booth_stats}/>
                   <div className="w-full">
                       <GuardiasApoyoTable shift={shift} location={location} area={area} />
                   </div>
               </div>
-              <div className="w-full">
+              <div className="flex w-full">
+                  <ActivitySummary booth_stats={shift?.booth_stats}/>
                   <NotasTable data={shift?.notes?.records} />
               </div>
 

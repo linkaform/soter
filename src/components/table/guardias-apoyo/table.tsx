@@ -110,7 +110,28 @@ export function GuardiasApoyoTable({ shift, location, area }: { shift: any; loca
         <div className="capitalize">{row.getValue("name")}</div>
       ),
     },
-
+ 
+    {
+      accessorKey: "rol",
+      header: "Rol",
+      cell: ({ row }) => (
+        <div className="capitalize">{row?.getValue("rol")}</div>
+      ),
+    },
+    {
+      accessorKey: "inicio",
+      header: "Inicio",
+      cell: ({ row }) => (
+        <div className="capitalize">{row?.getValue("inicio")}</div>
+      ),
+    },
+    {
+      accessorKey: "caseta",
+      header: "Caseta",
+      cell: ({ row }) => (
+        <div className="capitalize">{row?.getValue("caseta")}</div>
+      ),
+    },
     {
       id: "actions",
       header: "",
@@ -178,7 +199,7 @@ export function GuardiasApoyoTable({ shift, location, area }: { shift: any; loca
   return (
     <div className="w-full">
       <div className="mb-5">
-        <h1 className="text-2xl font-bold">Guardias De Apoyo</h1>
+        <h1 className="text-2xl font-bold">Guardias en {location}</h1>
       </div>
 
       <div className="flex flex-row justify-between items-center mb-5 gap-2">

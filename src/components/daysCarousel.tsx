@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import {
   Carousel,
   CarouselContent,
@@ -22,7 +22,7 @@ interface DaysCarouselProps {
     estadoDia: EstadoDia;
   };
   selectedDay: number | null;
-  onDaySelect: (day: number) => void;
+  onDaySelect: Dispatch<SetStateAction<number>>
 }
 
 const dayNames = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];

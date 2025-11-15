@@ -14,7 +14,7 @@ export const useEditAreasRondin = () => {
             const hasError = (!response?.success) || (response?.response?.data?.status_code === 400 )
             if (hasError) {
                 const textMsj = errorMsj(response)
-                throw new Error(`Error al crear seguimiento, Error: ${textMsj?.text}`);
+                throw new Error(`Error al intentar editar las areas, Error: ${textMsj?.text}`);
             } else {
                 return response.response?.data
             }
@@ -27,10 +27,21 @@ export const useEditAreasRondin = () => {
             queryClient.invalidateQueries({ queryKey: ["getStatsRondines"] });
             queryClient.invalidateQueries({ queryKey: ["getRondinById"] });
 
-            toast.success(`Areas editadas correctamente.`);
+                      
+            toast.success("Áreas editadas correctamente.", {
+              style: {
+                background: "#16a34a", 
+                color: "#fff",
+              },
+            
+            });
+
           },
           onError: () => {
-            toast.success(`Error al intentar editar las areas.`);
+            toast.success(`Error al intentar editar las areas.`,{ style: {
+              background: "#dc2626", 
+              color: "#fff",
+            },});
           },
           onSettled: () => {
             setLoading(false);

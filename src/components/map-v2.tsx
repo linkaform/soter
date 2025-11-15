@@ -134,7 +134,6 @@ const MyComponent: React.FC = () => {
 
 const MapView = ({ map_data }: MapaRutasProps) => {
 	const user = useAuthStore()
-	console.log("OBJETO USER", user, map_data)
 
 	function formatMapData(mapData: MapItem[] = []): Punto[] {
 		return mapData.map((item) => ({
