@@ -116,6 +116,14 @@ const Sidebar = ({shift}: any) => {
             Cambiar Caseta
           </Button>
         </ChangeBoothModal>
+
+        <Button
+            className="w-full  bg-violet-600 text-white hover:bg-violet-700"
+            disabled={shift?.guard?.status_turn !== "Turno Abierto"}
+          >
+            Ingresar como suplente
+          </Button>
+
       </div>
       <div className="flex  flex-col space-y-5 mb-10">
      

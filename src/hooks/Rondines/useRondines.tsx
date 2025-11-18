@@ -1,4 +1,4 @@
-import { crearRondin, InputCrearRondinCompleto } from "@/lib/rondines";
+import { crearRondin } from "@/lib/rondines";
 import { useShiftStore } from "@/store/useShiftStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -9,7 +9,7 @@ export const useRondines = () => {
 
      //Crear Rondin
      const createRondinMutation = useMutation({
-        mutationFn: async ({ rondin_data} : { rondin_data: InputCrearRondinCompleto }) => {
+        mutationFn: async ({ rondin_data} : { rondin_data: any }) => {
             const response = await crearRondin(rondin_data);
 
             if(response.response.data.status =="error"){

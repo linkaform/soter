@@ -87,7 +87,7 @@ export const EditarRondinModal: React.FC<EditarRondinModalProps> = ({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
             nombre_rondin: data.nombre_del_rondin,
-            duracion_estimada: data.duracion_estimada.split(" ")[0],
+            duracion_estimada: data?.duracion_estimada?.split(" ")[0],
             ubicacion: location,
             areas: [],
             grupo_asignado: '',

@@ -602,7 +602,7 @@ export default function RondinesCalendar() {
                         key={guard.id}
                         className="flex items-center space-x-3 border p-2 rounded shadow-sm cursor-pointer"
                         style={{
-                            backgroundColor: `${color}33`, // fondo suave (20% opacidad)
+                            backgroundColor: `${color}33`, 
                         }}
                         >
                         <input

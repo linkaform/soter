@@ -175,7 +175,7 @@ export const subCategoriasConIconos = [
 
   export const formSchema = z.object({
 	reporta_incidencia: z.string().optional(),
-	fecha_hora_incidencia: z.string().optional(), // se puede llenar automáticamente
+	fecha_hora_incidencia: z.string().optional(), 
 	ubicacion_incidencia: z.string().optional(),
 	area_incidencia: z.string().optional(),
 	categoria: z.string().optional(),
@@ -188,7 +188,10 @@ export const subCategoriasConIconos = [
 	acciones_tomadas_incidencia: z.array(z.any()).optional(),
 	prioridad_incidencia: z.string().optional(),
 	notificacion_incidencia: z.string().optional(),
+	accion_recurrencia:z.string().optional(),
+
   });
+
 
 export const AddIncidenciaRondinesModal: React.FC<AddIncidenciaModalProps> = ({
   	title,
@@ -201,7 +204,7 @@ export const AddIncidenciaRondinesModal: React.FC<AddIncidenciaModalProps> = ({
 
 	const[ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location)
 	const { dataAreas:areas, dataLocations:ubicaciones} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, isSuccess,  location?true:false);
-	const { createIncidenciaMutation } = useIncidenciaRondin();
+	const { createIncidenciaMutation } = useIncidenciaRondin("", "");
 
 	console.log(areas, ubicaciones)
 
@@ -222,6 +225,7 @@ export const AddIncidenciaRondinesModal: React.FC<AddIncidenciaModalProps> = ({
 		  acciones_tomadas_incidencia: [],
 		  prioridad_incidencia: "",
 		  notificacion_incidencia: "",
+		  accion_recurrencia:"programar"
 		},
 	  });
 	  
@@ -244,26 +248,26 @@ export const AddIncidenciaRondinesModal: React.FC<AddIncidenciaModalProps> = ({
 
 
 	function onSubmit(values: z.infer<typeof formSchema>) {
-			console.log("que paso ")
+			console.log("que paso")
 			const formatData ={
-				'reporta_incidencia': "Emiliano Zapata",
-				'fecha_hora_incidencia': "2025-10-24 13:07:16",
-				'ubicacion_incidencia':"Planta Monterrey",
-				'area_incidencia': "Recursos eléctricos",
-				'categoria': "Intrusión y seguridad",
-				'sub_categoria':"Alteración del orden",
-				'incidente':"Drogadicto",
-				"tipo_incidencia": "Otro incidente",
-				'comentario_incidencia': values.comentario_incidencia,
-				'evidencia_incidencia': [],
-				'documento_incidencia':[],
-				'acciones_tomadas_incidencia':[],
-				"prioridad_incidencia": "leve",
-				"notificacion_incidencia": "no",
+				reporta_incidencia:"Emiliano Zapata",
+				fecha_hora_incidencia: "2025-10-24 13:07:16",
+				ubicacion_incidencia:"Planta Monterrey",
+				area_incidencia: "Recursos eléctricos",
+				categoria: "Intrusión y seguridad",
+				sub_categoria:"Alteración del orden",
+				incidente:"Drogadicto",
+				tipo_incidencia: "Otro incidente",
+				comentario_incidencia: values.comentario_incidencia,
+				evidencia_incidencia: [],
+				documento_incidencia:[],
+				acciones_tomadas_incidencia:[],
+				prioridad_incidencia: "leve",
+				notificacion_incidencia: "no",
 			}
 				
-			createIncidenciaMutation.mutate({ data_incidencia: formatData });
-	}
+			createIncidenciaMutation.mutate(formatData);
+		}
 
 	return (
 		<Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
@@ -318,7 +322,7 @@ export const AddIncidenciaRondinesModal: React.FC<AddIncidenciaModalProps> = ({
 												onValueChange={field.onChange}
 												value={field.value}
 												>
-												<SelectTrigger className="w-full border border-slate-200 rounded-2xl">
+												<SelectTrigger className="w-full border border-slate-200 ">
 													<SelectValue placeholder="Selecciona una subcategoría" />
 												</SelectTrigger>
 												<SelectContent>
@@ -339,13 +343,13 @@ export const AddIncidenciaRondinesModal: React.FC<AddIncidenciaModalProps> = ({
 										name="incidente"
 										render={({ field }) => (
 											<FormItem className="w-full">
-											<FormLabel>Ubicación:</FormLabel>
+											<FormLabel>Incidencia:</FormLabel>
 											<FormControl>
 												<Select
 												onValueChange={field.onChange}
 												value={field.value}
 												>
-												<SelectTrigger className="w-full border border-slate-200 rounded-2xl">
+												<SelectTrigger className="w-full border border-slate-200 ">
 													<SelectValue placeholder="Selecciona una ubicación" />
 												</SelectTrigger>
 												<SelectContent>

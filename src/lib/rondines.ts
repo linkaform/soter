@@ -38,6 +38,8 @@ export interface InputCrearRondinCompleto{
     cada_cuantos_meses_se_repite:string,
     la_recurrencia_cuenta_con_fecha_final: string,
     fecha_final_recurrencia:string,
+	accion_recurrencia:string
+
 }
 
 export interface InputEditarRondinCompleto{
@@ -68,6 +70,7 @@ export interface InputEditarRondinCompleto{
     cada_cuantos_meses_se_repite?:string,
     la_recurrencia_cuenta_con_fecha_final?: string,
     fecha_final_recurrencia?:string,
+    accion_recurrencia?:string
 }
 
 export const getListRondin  = async (date1:string, date2:string, limit:number, offset:number ) => {
@@ -228,3 +231,70 @@ export const getRondinesImages  = async (location: string, area: string, dateFro
     const data = await response.json();
     return data;
 };
+
+
+export const editarAreasRondin = async (areas:any[], record_id:string, folio:string)=> {
+    const payload = {
+        areas,
+        record_id,
+        folio,
+        option: "edit_areas_rondin",
+        script_name: "rondines.py",
+    };
+  
+    const userJwt = localStorage.getItem("access_token"); 
+    const response = await fetch(`https://app.linkaform.com/api/infosync/scripts/run/`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${userJwt}`,
+        },
+        body: JSON.stringify(payload),
+    });
+  
+    const data = await response.json();
+    return data;
+  };
+
+
+  export const catalogAreasRondinFormatted= async (ubicacion: string)=> {
+    const payload = {
+        ubicacion,
+        option: "get_catalog_areas_formatted",
+        script_name: "rondines.py",
+    };
+  
+    const userJwt = localStorage.getItem("access_token"); 
+    const response = await fetch(`https://app.linkaform.com/api/infosync/scripts/run/`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${userJwt}`,
+        },
+        body: JSON.stringify(payload),
+    });
+  
+    const data = await response.json();
+    return data;
+  };
+
+  export const getBitacoraById= async (record_id: string)=> {
+    const payload = {
+        record_id,
+        option: "get_bitacora_by_id",
+        script_name: "rondines.py",
+    };
+  
+    const userJwt = localStorage.getItem("access_token"); 
+    const response = await fetch(`https://app.linkaform.com/api/infosync/scripts/run/`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${userJwt}`,
+        },
+        body: JSON.stringify(payload),
+    });
+  
+    const data = await response.json();
+    return data;
+  };

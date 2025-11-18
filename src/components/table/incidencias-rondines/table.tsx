@@ -16,7 +16,7 @@ import {
   useReactTable,
   Table as TanstackTable
 } from "@tanstack/react-table";
-import { CalendarDays, Eraser, Eye, FileX2, Plus, Search, Trash2 } from "lucide-react";
+import { CalendarDays, Eraser, Eye, FileX2, Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -79,7 +79,7 @@ const IncidenciasRondinesTable:React.FC<ListProps> = ({ data, isLoading, openMod
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
-  	console.log(openModal)
+  	console.log("INCIDENCIAS TABLE",openModal,data)
 	const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
 	const [tabSelected, setTabSelected] = useState("datos")
 	const [modalVerAbierto, setModalVerAbierto] = useState(false);
@@ -188,48 +188,59 @@ const IncidenciasRondinesTable:React.FC<ListProps> = ({ data, isLoading, openMod
 			//   enableSorting: true,
 			// },
 			{
-				id: "incidencia",
+				id: "incidente",
 				header: "Incidencia",
-				accessorFn: (row: Incidencia_record) => {
-					return `${row.categoria} / ${row.sub_categoria} / ${row.incidencia}`;
+				accessorFn: (row: any) => {
+					return `${row.categoria} / ${row.subcategoria} / ${row.incidente}`;
 				},
-				cell: ({ row }: { row: Row<Incidencia_record> }) => {
-					const { categoria, sub_categoria, incidencia } = row.original;
+				cell: ({ row }: { row: Row<any> }) => {
+					const { categoria, subcategoria, incidente } = row.original;
 					return (
 					<div className="capitalize">
-						{`${categoria} / ${sub_categoria} / ${incidencia}`}
+						{`${categoria} / ${subcategoria} / ${incidente}`}
 					</div>
 					);
 				},
 				enableSorting: true,
 			},
 			{
-				accessorKey: "comentario_incidencia",
-				header: "Descripción",
-				cell: ({ row }:{row: Row <Incidencia_record>}) => {
+				accessorKey:"nombre_del_recorrido",
+				header: "Recorrido",
+				cell: ({ row }:{row: Row <any>}) => {
 				return (
 				  <span  className="px-4 py-2 block max-w-xs truncate"
-				 title={row.getValue("comentario_incidencia") || "-"} >{row.getValue("comentario_incidencia")}</span>
-				);
-				},
-				enableSorting: true,
-			  },
-			  {
-				accessorKey: "accion_incidencia",
-				header: "Acción",
-				cell: ({ row }:{row: Row <Incidencia_record>}) => {
-				return (
-				  <span  className="px-4 py-2 block max-w-xs truncate"
-				 title={row.getValue("comentario_incidencia") || "-"} >{row.getValue("accion_incidencia")}</span>
+				 title={row.getValue("nombre_del_recorrido") || "-"} >{row.getValue("nombre_del_recorrido")}</span>
 				);
 				},
 				enableSorting: true,
 			  },
 			{
-			  accessorKey: "evidencia_incidencia",
+				accessorKey: "comentarios",
+				header: "Comentarios",
+				cell: ({ row }:{row: Row <any>}) => {
+				return (
+				  <span  className="px-4 py-2 block max-w-xs truncate"
+				 title={row.getValue("comentarios") || "-"} >{row.getValue("comentarios")}</span>
+				);
+				},
+				enableSorting: true,
+			  },
+			  {
+				accessorKey: "accion_tomada",
+				header: "Acción",
+				cell: ({ row }:{row: Row <any>}) => {
+				return (
+				  <span  className="px-4 py-2 block max-w-xs truncate"
+				 title={row.getValue("accion_tomada") || "-"} >{row.getValue("accion_tomada")}</span>
+				);
+				},
+				enableSorting: true,
+			  },
+			{
+			  accessorKey: "evidencias",
 			  header: "Evidencia",
-			  cell: ({ row }:{row: Row <Incidencia_record> }) => {
-			  const foto = row.original.evidencia_incidencia;
+			  cell: ({ row }:{row: Row <any> }) => {
+			  const foto = row.original.evidencias;
 			  // const primeraImagen = foto && foto.length > 0 ? foto[0].file_url : '/nouser.svg';
 			  return(<ViewImage imageUrl={foto ?? []} /> )},
 			  enableSorting: false,
@@ -380,12 +391,12 @@ const IncidenciasRondinesTable:React.FC<ListProps> = ({ data, isLoading, openMod
 				</div>
 
 				<div className="flex flex-wrap gap-2">
-				<div>
+				{/* <div>
 					<Button className="w-full md:w-auto bg-green-500 hover:bg-green-600" onClick={()=>{setOpenModal(true)}}>
 						<Plus />
 						Nuevo Incidente
 					</Button>
-				</div>
+				</div> */}
 
 				<div>
 					<Button className="w-full md:w-auto bg-blue-500 hover:bg-blue-600" onClick={()=>{downloadCSV(selectedIncidencias, incidenciasColumnsCSV, "incidencias.csv")}}>
@@ -394,14 +405,14 @@ const IncidenciasRondinesTable:React.FC<ListProps> = ({ data, isLoading, openMod
 					</Button>
 				</div>
 
-				<Button
+				{/* <Button
 				variant="destructive"
 				onClick={() => setModalEliminarMultiAbierto(true)}
 				disabled={selectedIncidencias.length === 0} 
 				>
 					<Trash2 />  
 					Eliminar
-				</Button>
+				</Button> */}
 
 				<div>
 					<EliminarIncidenciaModal title="Eliminar Incidencias" arrayFolios={selectedIncidencias} 
