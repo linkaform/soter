@@ -24,7 +24,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import SelectReact from 'react-select';
 import {  getRondinesColumns, Recorrido } from "./rondines-columns";
 import { Tabs, TabsTrigger } from "@/components/ui/tabs";
 import { TabsContent, TabsList } from "@radix-ui/react-tabs";
@@ -42,6 +41,7 @@ import dynamic from "next/dynamic";
 import { usePlayOrPauseRondin } from "@/hooks/Rondines/usePlayOrPauseROndin";
 import { AreasList } from "@/components/areas-list-draggable";
 import { useEditAreasRondin } from "@/hooks/Rondines/useEditAreasRondin";
+import { RondinesBitacoraTable } from "./bitacoras-table";
 
 const MapView = dynamic(() => import("@/components/map-v2"), {
 	ssr: false,
@@ -373,8 +373,12 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 					<div className="flex">
 						<span className="font-semibold min-w-[130px]">Ubicacion:</span>
 					</div>
-
-					<div className="w-1/2">
+					<div className="flex justify-start gap-10">
+						<span >
+						{rondin?.ubicacion|| "No disponible" } 
+						</span>
+					</div>
+					{/* <div className="w-1/2">
 							<SelectReact
 								aria-labelledby="aria-label"
 								inputId="select-categorias"
@@ -383,7 +387,7 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 								value={null} 
 								isDisabled={false}
 							/>
-					</div>
+					</div> */}
 
 					<div className="flex">
 						<span className="font-semibold min-w-[130px]">Geolocalizacion:</span>
@@ -573,6 +577,7 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 						<TabsContent value="rondiness">
 							<div className="p-2">
 							</div>
+							<RondinesBitacoraTable/>
 						</TabsContent>
 
 						<TabsContent value="incidentes">
