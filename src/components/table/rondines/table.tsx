@@ -12,7 +12,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { CalendarDays, Eraser, Loader2, MapPin, MoveLeft, Pause, Play, Plus, Search } from "lucide-react";
+import { CalendarDays, Eraser, Loader2, MoveLeft, Pause, Play, Plus, Search, Trash } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
@@ -42,6 +42,10 @@ import { usePlayOrPauseRondin } from "@/hooks/Rondines/usePlayOrPauseROndin";
 import { AreasList } from "@/components/areas-list-draggable";
 import { useEditAreasRondin } from "@/hooks/Rondines/useEditAreasRondin";
 import { RondinesBitacoraTable } from "./bitacoras-table";
+import ChecksImagesSection from "@/components/ChecksImagesSection";
+import { useShiftStore } from "@/store/useShiftStore";
+import IncidenciasRondinesTable from "../incidencias-rondines/table";
+import { useIncidenciaRondin } from "@/hooks/Rondines/useRondinIncidencia";
 
 const MapView = dynamic(() => import("@/components/map-v2"), {
 	ssr: false,
@@ -133,7 +137,10 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 	const [rondinSeleccionado, setRondinSeleccionado] = useState<Recorrido | null>(null);
 	const [verRondin, setVerRondin] = useState(false);
 	const [nuevasAreasSeleccionadas, setNuevasAreasSeleccionadas] = useState<any[]>([]);
-
+	const {location} = useShiftStore()
+	const [selectedIncidencias, setSelectedIncidencias] = useState<string[]>([])
+	const {listIncidenciasRondin} = useIncidenciaRondin("", "");
+	const [openModal, setOpenModal] = useState(false);
 
 	const { data:rondin , isLoadingRondin} = useGetRondinById(rondinSeleccionado?rondinSeleccionado._id: "")
 
@@ -330,11 +337,21 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 		<div className="flex flex-col h-full">
 			<div className="flex flex-col md:flex-row">
 				<div className=" w-1/2 border rounded-md bg-white shadow-md pl-4 min-h-[550px] ">
-					<div className="mt-4 flex">
-						<Button onClick={() => {setRondinSeleccionado(null); setVerRondin(false); setActiveTab("Rondines");}} className="bg-transparent hover:bg-transparent cursor-pointer">
-						<MoveLeft className="text-black w-64"/>
-						</Button>
-						<h2 className="text-xl font-bold mb-4">{rondin.nombre_del_rondin}</h2>
+					<div className="mt-4 flex justify-between mr-5">
+						<div className="flex">
+							<Button onClick={() => {setRondinSeleccionado(null); setVerRondin(false); setActiveTab("Rondines");}} className="bg-transparent hover:bg-transparent cursor-pointer">
+								<MoveLeft className="text-black w-64"/>
+							</Button>
+							<h2 className="text-xl font-bold mb-4">{rondin.nombre_del_rondin}</h2>
+						</div>
+						<div className="flex gap-5">
+							<div className="flex">
+								<span className="text-xl"> <span className="font-bold">Folio:</span> {rondin?.folio|| "No disponible" } </span>
+							</div>
+							<div className="cursor-pointer" title="Eliminar Rondin" onClick={() => { handleEliminar(rondin) }} >
+								<Trash /> 
+							</div>
+						</div>
 					</div>
 			
 					<div className="grid grid-cols-[auto,1fr] gap-4 mb-6">
@@ -349,7 +366,7 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 					</div>
 
 					<div className="flex">
-						<span className="font-semibold min-w-[130px]">Recurrencia:</span>
+						<span className="font-semibold">Recurrencia:</span>
 					</div>
 
 					<div className="flex justify-start gap-10">
@@ -360,16 +377,7 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 							Editar
 						</Button>
 					</div>
-					<div className="flex">
-						<span className="font-semibold min-w-[130px]">Folio:</span>
-					</div>
-
-					<div className="flex justify-start gap-10">
-						<span >
-						{rondin?.folio|| "No disponible" } 
-						</span>
-					</div>
-
+					
 					<div className="flex">
 						<span className="font-semibold min-w-[130px]">Ubicacion:</span>
 					</div>
@@ -389,12 +397,12 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 							/>
 					</div> */}
 
-					<div className="flex">
+					{/* <div className="flex">
 						<span className="font-semibold min-w-[130px]">Geolocalizacion:</span>
 					</div>
 					<div className="flex gap-1">
 						<MapPin/>  Ver en Map
-					</div>
+					</div> */}
 
 					<div className="flex">
 						<span className="font-semibold min-w-[130px]">Estatus:</span>
@@ -471,10 +479,10 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 					</span>
 
 					<div className="flex">
-						<span className="font-semibold min-w-[130px]">Finalizacion:</span>
+						<span className="font-semibold min-w-[130px]">Asignado a :</span>
 					</div>
 					<span >
-						-
+						{rondin.asignado_a || "No disponible"}
 					</span>
 
 					</div>
@@ -507,7 +515,7 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 					<div className="flex items-center justify-between">
 						<h2 className="text-lg font-semibold">Puntos de rondin: {rondin.cantidad_de_puntos} puntos</h2>
 						<div className="flex justify-around gap-2">
-							<AreasModal title={"Agregar Área"} points={areas} setAreas={setAreas} setNuevasAreasSeleccionadas={setNuevasAreasSeleccionadas}>
+							<AreasModal title={"Agregar Área"} points={areas} setAreas={setAreas} areas={areas} setNuevasAreasSeleccionadas={setNuevasAreasSeleccionadas} rondin= {rondinSeleccionado}>
 								<div className="flex w-full gap-2 md:w-auto bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-sm p-2.5 px-3 round-sm">
 									<Plus className="size-5"/>
 									Agregar Área
@@ -577,21 +585,26 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 						<TabsContent value="rondiness">
 							<div className="p-2">
 							</div>
-							<RondinesBitacoraTable/>
+							<RondinesBitacoraTable showTabs={false}/>
 						</TabsContent>
 
 						<TabsContent value="incidentes">
-							<div className="p-4 border rounded-md bg-white shadow">
-							<h3 className="font-semibold text-lg mb-2">Contenido de Incidentes</h3>
-							<p>Información sobre incidentes registrados.</p>
+							<div>
+							<IncidenciasRondinesTable showTabs={false} data={listIncidenciasRondin} 
+								isLoading={false}  setSelectedIncidencias={setSelectedIncidencias} selectedIncidencias={selectedIncidencias} 
+								date1={date1} date2={date2} setDate1={setDate1} setDate2={setDate2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters} openModal={openModal} setOpenModal={setOpenModal}
+								/>
 							</div>
 						</TabsContent>
 
 						<TabsContent value="fotos">
-							<div className="p-4 border rounded-md bg-white shadow">
-							<h3 className="font-semibold text-lg mb-2">Contenido de Fotos</h3>
-							<p>Galería o imágenes del sitio.</p>
-							</div>
+						<div>
+							<ChecksImagesSection
+								location={location}
+								area={""}
+								showTabs={false}
+							/>
+						</div>
 						</TabsContent>
 					</Tabs>
 			</div>

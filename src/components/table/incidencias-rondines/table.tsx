@@ -45,6 +45,7 @@ import { ViewIncidenciaRondin } from "@/components/modals/view-incidencia-rondin
 import { AddIncidenciaRondinesModal } from "@/components/modals/add-incidencia-rondines";
 
 interface ListProps {
+	showTabs:boolean
 	data: any[];
 	isLoading:boolean;
 	openModal: boolean;
@@ -71,7 +72,7 @@ const incidenciasColumnsCSV = [
   { label: 'Reporta', key: 'reporta_incidencia' },
 ];
 
-const IncidenciasRondinesTable:React.FC<ListProps> = ({ data, isLoading, openModal, setOpenModal,setSelectedIncidencias,selectedIncidencias,
+const IncidenciasRondinesTable:React.FC<ListProps> = ({ showTabs, data, isLoading, openModal, setOpenModal,setSelectedIncidencias,selectedIncidencias,
 	setDate1, setDate2, date1, date2, dateFilter, setDateFilter,Filter, resetTableFilters
  })=> {
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -79,7 +80,6 @@ const IncidenciasRondinesTable:React.FC<ListProps> = ({ data, isLoading, openMod
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
-  	console.log("INCIDENCIAS TABLE",openModal,data)
 	const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
 	const [tabSelected, setTabSelected] = useState("datos")
 	const [modalVerAbierto, setModalVerAbierto] = useState(false);
@@ -135,7 +135,7 @@ const IncidenciasRondinesTable:React.FC<ListProps> = ({ data, isLoading, openMod
 					onCheckedChange={(value) => row.toggleSelected(!!value)}
 					aria-label="Select row"
 				/>
-				<OptionsCell row={row} onEditarClick={handleEditar} onEliminarClick={handleEliminar} onSeguimientoClick={handleSeguimiento} onView={()=>{handleVer(row.original)}}/>
+				<OptionsCell row={row} onEliminarClick={handleEliminar} onSeguimientoClick={handleSeguimiento} onView={()=>{handleVer(row.original)}}/>
 				</div>
 			),
 			header: ({ table } : { table: TanstackTable<Incidencia_record> }) => (
@@ -159,34 +159,6 @@ const IncidenciasRondinesTable:React.FC<ListProps> = ({ data, isLoading, openMod
 			  ),
 			  enableSorting: true,
 			},
-			// {
-			// 	accessorKey: "estatus",
-			// 	header: "Estatus",
-			// 	cell: ({ row }: { row: Row<Incidencia_record> }) => {
-			// 	  const estatus = row.getValue("estatus") as string;
-			// 	  const colorClass =
-			// 		estatus.toLowerCase() === "abierto"
-			// 		  ? "text-green-600"
-			// 		  : estatus.toLowerCase() === "cerrado"
-			// 		  ? "text-red-600"
-			// 		  : "text-gray-600"; // por si viene otro estatus
-			  
-			// 	  return (
-			// 		<div className={`capitalize font-bold ${colorClass}`}>
-			// 		  {estatus}
-			// 		</div>
-			// 	  );
-			// 	},
-			// 	enableSorting: true,
-			//   },
-			// {
-			//   accessorKey: "area_incidencia",
-			//   header: "Lugar del incidente",
-			//   cell: ({ row }:{row: Row <Incidencia_record> }) => (
-			//   <div className="capitalize">{row.getValue("area_incidencia")}</div>
-			//   ),
-			//   enableSorting: true,
-			// },
 			{
 				id: "incidente",
 				header: "Incidencia",
@@ -241,56 +213,9 @@ const IncidenciasRondinesTable:React.FC<ListProps> = ({ data, isLoading, openMod
 			  header: "Evidencia",
 			  cell: ({ row }:{row: Row <any> }) => {
 			  const foto = row.original.evidencias;
-			  // const primeraImagen = foto && foto.length > 0 ? foto[0].file_url : '/nouser.svg';
 			  return(<ViewImage imageUrl={foto ?? []} /> )},
 			  enableSorting: false,
 		  	},
-			// {
-			// accessorKey: "fecha_hora_incidencia",
-			// header: "Fecha",
-			// cell: ({ row }:{row: Row <Incidencia_record> }) => (
-			// <div className="capitalize">{row.getValue("fecha_hora_incidencia")}</div>
-			// ),
-			// enableSorting: true,
-			// },
-			// {
-			// 	id: "tags",
-			// 	header: "Tags",
-			// 	accessorFn: (row: { tags: any[]; }) => {
-			// 	  if (Array.isArray(row.tags)) {
-			// 		return row.tags.join(", ");
-			// 	  }
-			// 	  return "";
-			// 	},
-			// 	cell: ({ getValue }: { getValue: () => string }) => {
-			// 		const value = getValue(); // string "tag1, tag2, tag3"
-			// 		// Separa el string en array
-			// 		const tagsArray = value ? value.split(",").map(tag => tag.trim()) : [];
-			// 		return (
-			// 		  <div className="flex flex-wrap gap-1">
-			// 			{tagsArray.map((tag, idx) => (
-			// 			  <span
-			// 				key={idx}
-			// 				className="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded capitalize"
-			// 			  >
-			// 				{tag}
-			// 			  </span>
-			// 			))}
-			// 		  </div>
-			// 		);
-			// 	},
-			// 	enableSorting: true,
-			// },			  
-			
-			// {
-			//   accessorKey: "reporta_incidencia",
-			//   header: "Reporta",
-			//   cell: ({ row }:{row: Row <Incidencia_record> }) => (
-			//   <div>{row.getValue("reporta_incidencia")}</div>
-			//   ),
-			//   enableSorting: true,
-			// },
-		  
 	];
   }, [isLoading, handleEditar]);
 
@@ -338,6 +263,7 @@ const IncidenciasRondinesTable:React.FC<ListProps> = ({ data, isLoading, openMod
     <div className="w-full">
 		<div className="flex justify-between items-center my-2 ">
 			<div className="flex w-1/2 justify-start gap-4 ">
+			{showTabs&&
                 <div className="flex justify-center items-center">
 					<TabsList className="bg-blue-500 text-white p-1 rounded-md ">
 						<TabsTrigger value="Rondines">Rondines</TabsTrigger>
@@ -347,7 +273,7 @@ const IncidenciasRondinesTable:React.FC<ListProps> = ({ data, isLoading, openMod
 						<TabsTrigger value="Calendario">Calendario</TabsTrigger>
 					</TabsList>
 				</div> 
-
+			}
 				<div className="flex w-full max-w-sm items-center space-x-2">
 				<input
 					type="text"
@@ -391,28 +317,12 @@ const IncidenciasRondinesTable:React.FC<ListProps> = ({ data, isLoading, openMod
 				</div>
 
 				<div className="flex flex-wrap gap-2">
-				{/* <div>
-					<Button className="w-full md:w-auto bg-green-500 hover:bg-green-600" onClick={()=>{setOpenModal(true)}}>
-						<Plus />
-						Nuevo Incidente
-					</Button>
-				</div> */}
-
 				<div>
 					<Button className="w-full md:w-auto bg-blue-500 hover:bg-blue-600" onClick={()=>{downloadCSV(selectedIncidencias, incidenciasColumnsCSV, "incidencias.csv")}}>
 						<FileX2 />
 						Descargar
 					</Button>
 				</div>
-
-				{/* <Button
-				variant="destructive"
-				onClick={() => setModalEliminarMultiAbierto(true)}
-				disabled={selectedIncidencias.length === 0} 
-				>
-					<Trash2 />  
-					Eliminar
-				</Button> */}
 
 				<div>
 					<EliminarIncidenciaModal title="Eliminar Incidencias" arrayFolios={selectedIncidencias} 
@@ -426,7 +336,7 @@ const IncidenciasRondinesTable:React.FC<ListProps> = ({ data, isLoading, openMod
 						data={incidenciaSeleccionada} isSuccess={modalVerAbierto}
 						tab={tabSelected}
 						setTab={setTabSelected}
-						setIsSuccess={setModalVerAbierto} setModalEditarAbierto={setModalEditarAbierto }>
+						setIsSuccess={setModalVerAbierto}>
 						<div className="cursor-pointer" title="Ver Incidencia">
 						<Eye /> 
 						</div>
@@ -464,30 +374,22 @@ const IncidenciasRondinesTable:React.FC<ListProps> = ({ data, isLoading, openMod
 					</AddIncidenciaRondinesModal>
 
 				{modalSeguimientoAbierto && incidenciaSeleccionada && (
-					// <SeguimientoIncidenciaModal
-					// 	title="Seguimiento Incidencia"
-					// 	folio={incidenciaSeleccionada?.folio} isSuccess={modalSeguimientoAbierto} setIsSuccess={setModalSeguimientoAbierto}>
-					// 	<div className="cursor-pointer" title="Seguimiento Incidencia">
-					// 		<Check />   
-					// 	</div>
-					// </SeguimientoIncidenciaModal>
-
-				<SeguimientoIncidenciaLista
-					title="Seguimiento Incidencia"
-					isSuccess={modalSeguimientoAbierto}
-					setIsSuccess={setModalSeguimientoAbierto}
-					seguimientoSeleccionado={seguimientoSeleccionado}
-					setSeguimientos={setSeguimientos}
-					setEditarSeguimiento={setEditarSeguimiento}
-					editarSeguimiento={editarSeguimiento}
-					indice={0}
-					dateIncidencia={incidenciaSeleccionada.fecha_hora_incidencia ? convertirDateToISO(new Date(incidenciaSeleccionada.fecha_hora_incidencia)):""}
-					enviarSeguimiento={true}
-					folioIncidencia={incidenciaSeleccionada.folio}
-					estatusIncidencia={incidenciaSeleccionada.estatus}
-					>
-					<div></div>
-				</SeguimientoIncidenciaLista>
+					<SeguimientoIncidenciaLista
+						title="Seguimiento Incidencia"
+						isSuccess={modalSeguimientoAbierto}
+						setIsSuccess={setModalSeguimientoAbierto}
+						seguimientoSeleccionado={seguimientoSeleccionado}
+						setSeguimientos={setSeguimientos}
+						setEditarSeguimiento={setEditarSeguimiento}
+						editarSeguimiento={editarSeguimiento}
+						indice={0}
+						dateIncidencia={incidenciaSeleccionada.fecha_hora_incidencia ? convertirDateToISO(new Date(incidenciaSeleccionada.fecha_hora_incidencia)):""}
+						enviarSeguimiento={true}
+						folioIncidencia={incidenciaSeleccionada.folio}
+						estatusIncidencia={incidenciaSeleccionada.estatus}
+						>
+						<div></div>
+					</SeguimientoIncidenciaLista>
 				)}
 
 			</div>

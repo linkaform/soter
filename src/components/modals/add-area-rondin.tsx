@@ -11,28 +11,34 @@ import {
   import { ListaAreas } from "../areas-list-rondines"
   import { Area_rondin } from "../areas-list-draggable"
 import { useCatalogAreasRondinFormatted } from "@/hooks/Rondines/useCatalogoAreaRondinFormatted"
+import { useEditAreasRondin } from "@/hooks/Rondines/useEditAreasRondin"
+import { Loader2 } from "lucide-react"
   
   interface AreaModalProps {
     title: string
     children: React.ReactNode
     points: Area_rondin[]
+    areas:Area_rondin[]
     setAreas : Dispatch<SetStateAction<Area_rondin[]>>
     setNuevasAreasSeleccionadas : Dispatch<SetStateAction<Area_rondin[]>>
+    rondin:any
   }
   
   export const AreasModal: React.FC<AreaModalProps> = ({
     title,
     children,
     points,
+    areas,
     setAreas,
-    setNuevasAreasSeleccionadas
+    setNuevasAreasSeleccionadas,
+    rondin
   }) => {
     const [isOpenModal, setOpenModal] = useState(false)
     const [selectedAreas, setSelectedAreas] = useState<string[]>([])
     const { location } = useShiftStore()
-  
+  	const { editAreasRodindMutation, isLoading : isLoadingEditAreas} = useEditAreasRondin();
     const { data, isLoading, refetch } = useCatalogAreasRondinFormatted(location, isOpenModal)
-
+    console.log("getron", rondin)
     useEffect(() => {
       if (isOpenModal) {
         refetch?.()
@@ -57,16 +63,29 @@ import { useCatalogAreasRondinFormatted } from "@/hooks/Rondines/useCatalogoArea
         geolocalizacion_area_ubicacion: area?.geolocalizacion_area_ubicacion || [],
         foto_area: area?.foto_area || []
       }));
+      
+      const prevIds = new Set(areas.map((a: any) => a.area_tag_id[0]));
+      const nuevas = areasParaAgregar.filter(
+        (a: { area_tag_id: any[] }) => !prevIds.has(a.area_tag_id[0])
+      );
     
-      setAreas((prev: any) => {
-        const prevIds = new Set(prev.map((a: any) => a.area_tag_id[0]));
-        const nuevas = areasParaAgregar.filter((a: { area_tag_id: unknown[] }) => !prevIds.has(a.area_tag_id[0]));
-        return [...prev, ...nuevas];
-      });
-    
+      const AREAS_FINALES = [...areas, ...nuevas];
+      setAreas(AREAS_FINALES);
       setNuevasAreasSeleccionadas(areasParaAgregar);
-      setOpenModal(false);
       setSelectedAreas([]);
+    
+      editAreasRodindMutation.mutate(
+        {
+          areas: AREAS_FINALES,
+          record_id: rondin ? rondin._id : "",
+          folio: rondin ? rondin.folio : "",
+        },
+        {
+          onSuccess: () => {
+            setOpenModal(false);
+          },
+        }
+      );
     }
     
     return (
@@ -115,7 +134,11 @@ import { useCatalogAreasRondinFormatted } from "@/hooks/Rondines/useCatalogoArea
               disabled={selectedAreas.length === 0}
               className="w-1/2 bg-blue-600 hover:bg-blue-700 text-white"
             >
-              Agregar
+             {isLoadingEditAreas? (
+							<>
+								<Loader2 className="animate-spin"/> {"Agregando area..."}
+							</>
+						):("Agregar area")}
             </Button>
           </div>
         </DialogContent>

@@ -72,14 +72,13 @@ type Rondin = {
   categorias: Categoria[];
 };
 
-export const RondinesBitacoraTable = () => {
+export const RondinesBitacoraTable = ({ showTabs }: { showTabs: boolean }) => {
 	const { location } = useShiftStore()
 	const { listBitacoraRondines:data, isLoadingListBitacoraRondines: isLoading } =
 	useGetListBitacoraRondines(location) as {
 		listBitacoraRondines?: Rondin[];
 		isLoadingListBitacoraRondines: boolean;
 	};
-	console.log("BITACORA",data)
 	const [diaSelected, setDiaSelected] = useState(0);
 	const [estatus, setEstatus] = useState("");
 	const [modalOpenPerimetroExt, setModalOpenPerimetroExt] = useState(false);
@@ -127,10 +126,11 @@ export const RondinesBitacoraTable = () => {
 
 	useEffect(() => {
 		if(data){
-			const allCategoriaKeys = data.flatMap((rondin: { categorias: { titulo: any; }[]; hora: any; }) =>
-			rondin.categorias.map((categoria: { titulo: any; }) => `${rondin.hora}-${categoria.titulo}`)
-			);
-			setExpandedCategorias(allCategoriaKeys);
+			// const allCategoriaKeys = data.flatMap((rondin: { categorias: { titulo: any; }[]; hora: any; }) =>
+			// rondin.categorias.map((categoria: { titulo: any; }) => `${rondin.hora}-${categoria.titulo}`)
+			// );
+			//allCategoriaKeys
+			setExpandedCategorias([]);
 		}
 	}, [data]);
 
@@ -186,8 +186,8 @@ export const RondinesBitacoraTable = () => {
 	  
 		setExpandedCategorias(prev =>
 		  areAllExpanded
-			? prev.filter(k => !allKeys.includes(k)) // colapsar todas
-			: [...prev, ...allKeys.filter(k => !prev.includes(k))] // expandir todas
+			? prev.filter(k => !allKeys.includes(k)) 
+			: [...prev, ...allKeys.filter(k => !prev.includes(k))] 
 		);
 	  };
 	  
@@ -195,15 +195,17 @@ export const RondinesBitacoraTable = () => {
     <div >
 			<div className="flex justify-between items-center my-2 ">
 				<div className="flex w-full justify-start gap-4 ">
-					<div className="flex justify-center items-center">
-						<TabsList className="bg-blue-500 text-white p-1 rounded-md ">
-						<TabsTrigger value="Rondines">Rondines</TabsTrigger>
-						<TabsTrigger value="Bitacora">Bitácora</TabsTrigger>
-						<TabsTrigger value="Incidencias">Incidencias</TabsTrigger>
-						<TabsTrigger value="Fotos">Fotos</TabsTrigger>
-						<TabsTrigger value="Calendario">Calendario</TabsTrigger>
-						</TabsList>
-					</div> 
+					{showTabs &&
+						<div className="flex justify-center items-center">
+							<TabsList className="bg-blue-500 text-white p-1 rounded-md ">
+							<TabsTrigger value="Rondines">Rondines</TabsTrigger>
+							<TabsTrigger value="Bitacora">Bitácora</TabsTrigger>
+							<TabsTrigger value="Incidencias">Incidencias</TabsTrigger>
+							<TabsTrigger value="Fotos">Fotos</TabsTrigger>
+							<TabsTrigger value="Calendario">Calendario</TabsTrigger>
+							</TabsList>
+						</div> 
+					}
 					<div>
 					<div className="flex w-full max-w-sm items-center space-x-2">
 					<input

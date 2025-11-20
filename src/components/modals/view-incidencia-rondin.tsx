@@ -22,7 +22,6 @@ interface ViewFallaModalProps {
   children: React.ReactNode;
   setIsSuccess:Dispatch<SetStateAction<boolean>>
   isSuccess: boolean;
-  setModalEditarAbierto: Dispatch<SetStateAction<boolean>>;
   tab:string;
   setTab:Dispatch<SetStateAction<string>>;
 }
@@ -33,7 +32,6 @@ export const ViewIncidenciaRondin: React.FC<ViewFallaModalProps> = ({
   children,
   setIsSuccess,
   isSuccess,
-  setModalEditarAbierto,
 }) => {
     const { createIncidenciaMutation , isLoading} = useIncidenciaRondin("", "");
 
@@ -116,30 +114,9 @@ export const ViewIncidenciaRondin: React.FC<ViewFallaModalProps> = ({
                             <p className="font-bold">Tipo de daño: </p>
                             <p >{data?.dano_incidencia} </p>
                         </div>}
-                        {/* <div className="w-full flex gap-2">
-                            <p className="font-bold">Notificaciones: </p>
-                            <p >{data?.notificacion_incidencia} </p>
-                        </div> */}
                 </div>
 
                 <div className="flex flex-col gap-2 ">
-                    {/* <div className="w-full flex gap-2">
-                        {data?.tags.length > 0 ?
-                            <div className="flex flex-wrap gap-1 mt-2">
-                            <p className="font-bold">Tags: </p>
-                                {data?.tags.map((tag, idx) => (
-                                <span
-                                    key={idx}
-                                    className="bg-blue-200 text-blue-800 text-xs font-semibold px-2 py-1 h  rounded capitalize"
-                                >
-                                    {tag}
-                                </span>
-                                ))}
-                            </div>
-                        :null}
-                    </div> */}
-
-                   
                 </div>
                         
                 <div className="grid grid-cols-2 justify-around mt-4 ">
@@ -327,22 +304,6 @@ export const ViewIncidenciaRondin: React.FC<ViewFallaModalProps> = ({
                 </div>
             </Card>
 		</div>
-
-		{/* {openVerSeg && (
-		<ViewSeg
-			title="Ver Seguimiento"
-			data={seguimientosOrdenados[activeIndex]}
-			isSuccess={openVerSeg}
-			setIsSuccess={setOpenVerSeg}
-			onNext={() => setActiveIndex((prev) => prev + 1)}
-			onPrev={() => setActiveIndex((prev) => prev - 1)}
-			disableNext={activeIndex === seguimientosOrdenados.length - 1}
-			disablePrev={activeIndex === 0}
-		>
-			<div></div>
-		</ViewSeg>
-		)} */}
-
         <div className="flex gap-1 my-5 col-span-2">
           	<DialogClose asChild>
             <Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700">
@@ -350,21 +311,21 @@ export const ViewIncidenciaRondin: React.FC<ViewFallaModalProps> = ({
             </Button>
           	</DialogClose>
 
-			<Button
+			{/* <Button
 			type="submit"
 			className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={false} onClick={()=>{setIsSuccess(false); setModalEditarAbierto(true)}}
 			>
 			{true ? (<>
 				{("Editar Incidencia")}
 			</>) : (<> <Loader2 className="animate-spin" /> {"Editar Incidencia..."} </>)}
-			</Button>
+			</Button> */}
 
 		  	<Button
 			type="submit"
 			className="w-full  bg-yellow-500 hover:bg-yellow-600 text-white " disabled={isLoading} onClick={()=>{crearNuevaIncidencia()}}>
 			{isLoading ? (<>
-				  <> <Loader2 className="animate-spin" /> {"Descargando Reporte..."} </>
-			</>) : (<> Crear Incidencia</>)}
+				  <> <Loader2 className="animate-spin" /> {"Generando Incidencia..."} </>
+			</>) : (<> Generar Incidencia</>)}
 			</Button>
 
         </div>
