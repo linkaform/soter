@@ -1,7 +1,7 @@
 import { LoadingModal } from "@/components/modals/loading-modal";
 import { AccionesTomadas, AfectacionPatrimonial, Depositos, PersonasInvolucradas } from "@/lib/incidencias";
 
-import { Edit, Eye } from "lucide-react";
+import { Eye } from "lucide-react";
 import { useState } from "react";
 
 export type Incidencia = {
@@ -86,9 +86,9 @@ export type Incidencia = {
     file_url: string
   }
   
-  export const OptionsCell: React.FC<{ row: any , onEditarClick: (incidencia: Incidencia_record) => void, onSeguimientoClick: (seguimiento: Incidencia_record)=> void,
+  export const OptionsCell: React.FC<{ row: any, onSeguimientoClick: (seguimiento: Incidencia_record)=> void,
     onEliminarClick: (incidencia: Incidencia_record) => void, onView: (incidencia: Incidencia_record) => void
-   }> = ({ row, onEditarClick , onView}) => {
+   }> = ({ row , onView}) => {
     const incidencia = row.original;
     const [showLoadingModal] = useState(false);
 
@@ -103,34 +103,8 @@ export type Incidencia = {
         >
         	<Eye /> 
         </div>
-        
+
         <LoadingModal isOpen={showLoadingModal} text="Cargando..."/>
-        
-          <div
-            className="cursor-pointer"
-            onClick={() => onEditarClick(incidencia)}
-            title="Editar Incidencia"
-          >
-            <Edit />
-          </div>
-
-
-    
-        {/* <div
-          className="cursor-pointer"
-          onClick={() => onSeguimientoClick(incidencia)}
-          title="Seguimiento Incidencia"
-        >
-        	<Check />
-        </div> */}
-          
-        {/* <div
-          className="cursor-pointer"
-          title="Eliminar Incidencia"
-          onClick={() => onEliminarClick(incidencia)}
-        >
-        	<Trash2 />
-        </div> */}
 
       </div>
     );

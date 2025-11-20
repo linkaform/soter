@@ -31,6 +31,7 @@ import { useEffect, useState } from "react";
 import { useShiftStore } from "@/store/useShiftStore";
 import { useCatalogAreasRondin } from "@/hooks/Rondines/useCatalogAreasRondin";
 import { capitalizeFirstLetter } from "@/lib/utils";
+import { Switch } from "../ui/switch";
 
 interface AddRondinModalProps {
   	title: string;
@@ -131,7 +132,8 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 	const [todas_las_semanas, set_todas_las_semanas] =useState(false)
 	const [todas_las_meses, set_todas_las_meses] =useState(false)
 	const [esRepetirCada, setEsRepetirCada] = useState<boolean | null>(null);
-	
+	const [mostrarFrecuencia, setMostrarFrecuencia] = useState(false);
+
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -259,6 +261,10 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 		set_en_que_semana_sucede("")
 		set_todas_las_semanas(false)
 		set_en_que_mes([])
+		if (recurrencia === "diario") {
+			form.setValue("que_dias_de_la_semana", diasSemana); 
+			set_que_dias_de_la_semana(diasSemana)
+		}
 	},[recurrencia])
 
 	function toggleDia(dia: string) {
@@ -311,6 +317,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 				se_repite_cada: 'configurable',
 				en_que_semana_sucede:'todas_las_semanas',
 				sucede_recurrencia:['dia_de_la_semana'],
+				cada_cuantas_horas_se_repite:values.cada_cuantas_horas_se_repite
 			};
 	  
 		  case "semana":
@@ -479,7 +486,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 								<SelectContent>
 								
 											<SelectItem value={"diario"}>
-											Diario
+											Por Día
 											</SelectItem>
 											<SelectItem value={"semana"}>
 											Semanal
@@ -511,7 +518,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 								<span className="text-sm">Todos los días</span>
 								</div>
 							</div>
-								<div className="flex flex-wrap mt-2 mb-5">
+								<div className="flex flex-wrap mt-2">
 									{diasSemana.map((dia) => {
 									return (
 										<FormItem key={dia?.toLowerCase()} className="flex items-center space-x-3">
@@ -541,7 +548,41 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 								</div>
 								
 						</div>
-					)}
+						)}
+
+						{recurrencia === "diario" && (
+							<div className="flex gap-10">
+								<div className="mb-2 flex items-center gap-3">
+									<span className="text-sm font-medium">Frecuencia (horas)</span>
+									<Switch
+										checked={mostrarFrecuencia}
+										onCheckedChange={(v) => setMostrarFrecuencia(v)}
+									/>
+								</div>
+								{mostrarFrecuencia && (
+								<div className="flex items-center gap-3">
+									<label className="text-sm font-medium">Cada:</label>
+
+									<input
+									type="number"
+									min={1}
+									max={24}
+									value={form.watch("cada_cuantas_horas_se_repite") ?? 1}
+									onChange={(e) =>
+										form.setValue("cada_cuantas_horas_se_repite", e.target.value, {
+										shouldValidate: true,
+										shouldDirty: true,
+										})
+									}
+									className="w-24 px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+									/>
+
+									<span className="text-sm text-gray-600">hora(s)</span>
+								</div>
+								)}
+							</div>
+						)}
+
 						{recurrencia === "semana" && (
 						<div className="mt-2">
 							<div className="flex justify-between">

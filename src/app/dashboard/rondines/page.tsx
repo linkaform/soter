@@ -370,18 +370,17 @@ const RondinesPage = () => {
 						setDate1={setDate1} setDate2={setDate2} date1={date1} date2={date2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters} setActiveTab={setActiveTab} activeTab={activeTab}/>
 						</div> */}
 						<div className="p-2">
-							<RondinesBitacoraTable />
+							<RondinesBitacoraTable showTabs={true}/>
 						</div>
 						
 					</TabsContent>
 
 					<TabsContent value="Incidencias">
 						<div>
-						<IncidenciasRondinesTable data={listIncidenciasRondin} 
+						<IncidenciasRondinesTable showTabs={true} data={listIncidenciasRondin} 
 							isLoading={false}  setSelectedIncidencias={setSelectedIncidencias} selectedIncidencias={selectedIncidencias} 
 							date1={date1} date2={date2} setDate1={setDate1} setDate2={setDate2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters} openModal={openModal} setOpenModal={setOpenModal}
 							/>
-						
 						</div>
 					</TabsContent>
 
@@ -390,6 +389,7 @@ const RondinesPage = () => {
 							<ChecksImagesSection
 								location={ubicacionSeleccionada}
 								area={areaSeleccionada}
+								showTabs={true}
 							/>
 						</div>
 					</TabsContent>

@@ -32,6 +32,7 @@ interface CheckData {
 interface ChecksImagesSectionProps {
     location: string;
     area: string;
+    showTabs:boolean;
 }
 
 interface UbicacionGroup {
@@ -44,6 +45,7 @@ interface UbicacionGroup {
 const ChecksImagesSection: React.FC<ChecksImagesSectionProps> = ({
     location,
     area,
+    showTabs
 }) => {
     const [visibleItems, setVisibleItems] = useState<{ [ubicacion: string]: number }>({});
     const [loadingMore, setLoadingMore] = useState<{ [ubicacion: string]: boolean }>({});
@@ -129,13 +131,14 @@ const ChecksImagesSection: React.FC<ChecksImagesSectionProps> = ({
     if (isLoadingImages) {
         return (
             <>
+            {showTabs &&
             <TabsList className="bg-blue-500 text-white p-1 rounded-md">
                 <TabsTrigger value="Rondines">Rondines</TabsTrigger>
                 <TabsTrigger value="Bitacora">Bitácora</TabsTrigger>
                 <TabsTrigger value="Incidencias">Incidencias</TabsTrigger>
                 <TabsTrigger value="Fotos">Fotos</TabsTrigger>
                 <TabsTrigger value="Calendario">Calendario</TabsTrigger>
-            </TabsList>
+            </TabsList>}
             <div className="flex justify-center items-center h-64">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                 <span className="ml-3 text-gray-600">Cargando imágenes...</span>
@@ -147,13 +150,14 @@ const ChecksImagesSection: React.FC<ChecksImagesSectionProps> = ({
     if (ubicacionesAgrupadas.length === 0) {
         return (
             <>
+            {showTabs &&
             <TabsList className="bg-blue-500 text-white p-1 rounded-md">
                 <TabsTrigger value="Rondines">Rondines</TabsTrigger>
                 <TabsTrigger value="Bitacora">Bitácora</TabsTrigger>
                 <TabsTrigger value="Incidencias">Incidencias</TabsTrigger>
                 <TabsTrigger value="Fotos">Fotos</TabsTrigger>
                 <TabsTrigger value="Calendario">Calendario</TabsTrigger>
-            </TabsList>
+            </TabsList>}
             <div className="text-center text-gray-500 py-12">
                 <Camera className="w-16 h-16 mx-auto mb-4 text-gray-300" />
                 <div className="text-lg font-medium">No hay imágenes disponibles</div>
@@ -167,6 +171,7 @@ const ChecksImagesSection: React.FC<ChecksImagesSectionProps> = ({
 
     return (
         <div className="space-y-6">
+            {showTabs &&
             <TabsList className="bg-blue-500 text-white p-1 rounded-md">
                 <TabsTrigger value="Rondines">Rondines</TabsTrigger>
                 <TabsTrigger value="Bitacora">Bitácora</TabsTrigger>
@@ -174,6 +179,7 @@ const ChecksImagesSection: React.FC<ChecksImagesSectionProps> = ({
                 <TabsTrigger value="Fotos">Fotos</TabsTrigger>
                 <TabsTrigger value="Calendario">Calendario</TabsTrigger>
             </TabsList>
+            }
             {/* Resumen general */}
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <div className="flex items-center justify-between">
