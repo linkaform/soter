@@ -9,14 +9,35 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Image from "next/image";
 import { ViewPhotoGuard } from "@/components/modals/view-photo-guard";
 import DeletePhotoGuard from "@/components/modals/eliminar-photo-guard";
+import useAuthStore from "@/store/useAuthStore";
 
-const TurnStatus = ({shift, location, area, evidencia, setEvidencia, identificacion, setIdentificacion}: {shift: any, location: string, area:string ,
-	evidencia:Imagen[], setEvidencia:Dispatch<SetStateAction<Imagen[]>>, identificacion:Imagen[], setIdentificacion:Dispatch<SetStateAction<Imagen[]>>
-}) => {
+const TurnStatus = ({
+	shift,
+	location,
+	area,
+	evidencia,
+	setEvidencia,
+	identificacion,
+	setIdentificacion,
+	nombreSuplente,
+	forceOpenStartPhoto,
+	setForceOpenStartPhoto
+  }: {
+	shift: any;
+	location: string;
+	area: string;
+	evidencia: Imagen[];
+	setEvidencia: Dispatch<SetStateAction<Imagen[]>>;
+	identificacion: Imagen[];
+	setIdentificacion: Dispatch<SetStateAction<Imagen[]>>;
+	nombreSuplente: string;
+	forceOpenStartPhoto: boolean;
+	setForceOpenStartPhoto: Dispatch<SetStateAction<boolean>>;
+  }) => {
+  
   	const [currentDateTime, setCurrentDateTime] = useState(new Date());
   	const turno =  capitalizeOnlyFirstLetter(shift?.guard.status_turn?? "")
-
-	console.log("TURNO", turno)
+	const {userNameSoter} = useAuthStore()
 
 	const [openStartShift, setOpenStartShift] = useState(false)
 	const [openCloseShift, setOpenCloseShift] = useState(false);
@@ -33,7 +54,7 @@ const TurnStatus = ({shift, location, area, evidencia, setEvidencia, identificac
 	
     const interval = setInterval(() => {
       setCurrentDateTime(new Date());
-    }, 60000); // 🔥 Se actualiza cada 60,000ms (1 minuto)
+    }, 60000);
 
     return () => clearInterval(interval); 
 
@@ -67,11 +88,18 @@ const TurnStatus = ({shift, location, area, evidencia, setEvidencia, identificac
 		}
 	}, [openStartPhotoModal, evidencia]);
 
-
+	useEffect(() => {
+		if (forceOpenStartPhoto) {
+			setOpenStartPhotoModal(true);  
+			setForceOpenStartPhoto(false);
+		}
+	}, [forceOpenStartPhoto, setForceOpenStartPhoto]);
+	
 	useEffect(()=>{
-		if(shift?.booth_status?.fotografia_inicio_turno.length>0)
+		console.log("userNameSoter",userNameSoter, shift?.booth_status?.guard_on_dutty)
+		if(shift?.booth_status?.fotografia_inicio_turno.length>0 && shift?.booth_status?.guard_on_dutty === userNameSoter)
 			setEvidencia(shift?.booth_status?.fotografia_inicio_turno)
-		if(shift?.booth_status?.fotografia_cierre_turno)
+		if(shift?.booth_status?.fotografia_cierre_turno  && shift?.booth_status?.guard_on_dutty === userNameSoter)
 			setIdentificacion(shift?.booth_status?.fotografia_cierre_turno.length)
 	
 	},[shift?.booth_status?.fotografia_inicio_turno,shift?.booth_status?.fotografia_cierre_turno , setEvidencia, setIdentificacion])
@@ -98,10 +126,10 @@ const TurnStatus = ({shift, location, area, evidencia, setEvidencia, identificac
 						}
 					}}
 					>
-					{Array.isArray(evidencia) && evidencia.length > 0 && turno=="Turno cerrado" && (
+					{Array.isArray(evidencia) && evidencia.length > 0 && turno=="Turno cerrado" && shift?.booth_status?.guard_on_dutty === userNameSoter && (
 						<button
 							onClick={(e) => {
-								e.stopPropagation(); // Evita que abra el modal
+								e.stopPropagation();
 								setOpenDeletePhoto(true)
 							}}
 							className="absolute top-1 right-1 bg-red-600 text-white rounded-sm px-1.5 shadow hover:bg-red-600"
@@ -115,7 +143,7 @@ const TurnStatus = ({shift, location, area, evidencia, setEvidencia, identificac
 					width={112}
 					height={96}
 					className="w-28 h-24 object-contain"
-					src={evidencia?.[0]?.file_url || shift?.booth_status?.fotografia_inicio_turno?.[0]?.file_url || "/nouser.svg"}
+					src={shift?.booth_status?.guard_on_dutty === userNameSoter ? evidencia?.[0]?.file_url || shift?.booth_status?.fotografia_inicio_turno?.[0]?.file_url || "/nouser.svg" : "/nouser.svg"}
 					alt="Inicio de turno"
 					/>
 					<span className="text-xs text-center text-gray-600">
@@ -224,7 +252,7 @@ const TurnStatus = ({shift, location, area, evidencia, setEvidencia, identificac
 			</Button>
 		)}
 
-		<StartShiftModal title="Confirmación" evidencia={evidencia} open= {openStartShift} setOpen={setOpenStartShift}>
+		<StartShiftModal title="Confirmación" evidencia={evidencia} open= {openStartShift} setOpen={setOpenStartShift} nombreSuplente={nombreSuplente}>
 		</StartShiftModal>
        
 		{shift?.guard?.status_turn !== "Turno Cerrado" && (

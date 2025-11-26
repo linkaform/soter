@@ -21,7 +21,7 @@ const Stats = ({ setStatusFilter, ubicacionSeleccionada, areaSeleccionada, setUb
   const handleCardClick = (status: string) => {
     if (selectedStat === status) {
       setSelectedStat(null)
-      setStatusFilter('') // Limpia el filtro
+      setStatusFilter('')
     } else {
       setSelectedStat(status)
       setStatusFilter(status)
@@ -29,7 +29,7 @@ const Stats = ({ setStatusFilter, ubicacionSeleccionada, areaSeleccionada, setUb
   }
 
   return (
-    <section className='grid gap-6 md:grid-cols-[auto_1fr]'>
+    <div className='flex gap-5 justify-end' >
       <div>
         <ChangeLocation
           ubicacionSeleccionada={ubicacionSeleccionada}
@@ -39,7 +39,7 @@ const Stats = ({ setStatusFilter, ubicacionSeleccionada, areaSeleccionada, setUb
         />
       </div>
 
-      <div className='grid gap-4 grid-cols-[repeat(auto-fit,minmax(250px,1fr))]'>
+      <div className='flex justify-end gap-4'>
         <StatCard
           label='Notas Del Día'
           value={stats?.notas_del_dia ?? 0}
@@ -65,7 +65,7 @@ const Stats = ({ setStatusFilter, ubicacionSeleccionada, areaSeleccionada, setUb
           selectable
         />
       </div>
-    </section>
+    </div >
   )
 }
 

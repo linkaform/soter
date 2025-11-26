@@ -16,11 +16,11 @@ import {
   ChevronLeft,
 } from "lucide-react";
 
-import { ViewDetalleArea } from "@/components/modals/rondines-detalle-area";
 import { ViewRondinesDetallePerimetroExt } from "@/components/modals/rondines-inspeccion-perimetro-exterior";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useGetListBitacoraRondines } from "@/hooks/Rondines/useGetListBitacora";
 import { useShiftStore } from "@/store/useShiftStore";
+import { CarruselDetalleArea } from "@/components/carrousel-detalle-area";
 
 const EstadoIcono = ({ estado }: { estado: string }) => {
   const baseClass = "w-5 h-5";
@@ -82,12 +82,14 @@ export const RondinesBitacoraTable = ({ showTabs }: { showTabs: boolean }) => {
 	const [diaSelected, setDiaSelected] = useState(0);
 	const [estatus, setEstatus] = useState("");
 	const [modalOpenPerimetroExt, setModalOpenPerimetroExt] = useState(false);
-	const [modalOpenArea, setModalOpenArea] = useState(false);
+	const [selectedAreaIndex, setSelectedAreaIndex] = useState<number>(0);
 	const [selectedAreaData, setSelectedAreaData] = useState<any>(null);
 	const [selectedRondin,setSelectedRondin] = useState<any>(null)
 	const [expandedCategorias, setExpandedCategorias] = useState<string[]>([]);
 	const [globalFilter, setGlobalFilter] = React.useState("");
 	const [dias, setDias] = useState<number>(0);
+	const [carruselOpen, setCarruselOpen] = useState(false);
+	const abrirCarrusel = () => setCarruselOpen(true);
 
 	useEffect(() => {
 		const now = new Date();
@@ -126,10 +128,6 @@ export const RondinesBitacoraTable = ({ showTabs }: { showTabs: boolean }) => {
 
 	useEffect(() => {
 		if(data){
-			// const allCategoriaKeys = data.flatMap((rondin: { categorias: { titulo: any; }[]; hora: any; }) =>
-			// rondin.categorias.map((categoria: { titulo: any; }) => `${rondin.hora}-${categoria.titulo}`)
-			// );
-			//allCategoriaKeys
 			setExpandedCategorias([]);
 		}
 	}, [data]);
@@ -146,39 +144,41 @@ export const RondinesBitacoraTable = ({ showTabs }: { showTabs: boolean }) => {
 	if (date.getDay() === 0) acc.push(i);
 	return acc;
   }, [] as number[]);
-  
-  const renderArea = (area: Area, key: string, rondin:any) => (
-    <tr key={key} className="bg-transparent">
-      <td className="border p-2 pl-8">{area.nombre}</td>
-      {[...Array(dias)].map((_, i) => {
-        const estadoDia = area.estados.find((e) => e.dia === i + 1);
-        const isSunday = sundaysIndexes.includes(i);
 
-        return (
-          <td
-            key={i}
-            className={`border pl-3 text-center cursor-pointer ${
-              isSunday ? "bg-blue-100" : ""
-            }`}
-          >
-            {estadoDia && (
-              <div
-                onClick={() => {
-                  setSelectedAreaData({ area, estadoDia });
-                  setModalOpenArea(true);
-                  setDiaSelected(estadoDia.dia);
-                  setEstatus(estadoDia.estado);
-				  setSelectedRondin(rondin)
-                }}
-              >
-                <EstadoIcono estado={estadoDia.estado} />
-              </div>
-            )}
-          </td>
-        );
-      })}
-    </tr>
-  );
+	const renderArea = (area: Area, key: string, rondin: any, areaIndex: number) => (
+		<tr key={key} className="bg-transparent">
+		<td className="border p-2 pl-8">{area.nombre}</td>
+		{[...Array(dias)].map((_, i) => {
+			const estadoDia = area.estados.find((e) => e.dia === i + 1);
+			const isSunday = sundaysIndexes.includes(i);
+	
+			return (
+			<td
+				key={i}
+				className={`border pl-3 text-center cursor-pointer ${
+				isSunday ? "bg-blue-100" : ""
+				}`}
+			>
+				{estadoDia && (
+				<div
+					onClick={() => {
+					setSelectedAreaData({ area, estadoDia });
+					abrirCarrusel();
+					setDiaSelected(estadoDia.dia);
+					setEstatus(estadoDia.estado);
+					setSelectedRondin(rondin);
+					setSelectedAreaIndex(areaIndex); 
+					}}
+				>
+					<EstadoIcono estado={estadoDia.estado} />
+				</div>
+				)}
+			</td>
+			);
+		})}
+		</tr>
+	);
+  
 
 	const toggleExpandAllForHora = (hora: string, categorias: Categoria[]) => {
 		const allKeys = categorias.map(c => `${hora}-${c.titulo}`);
@@ -191,6 +191,11 @@ export const RondinesBitacoraTable = ({ showTabs }: { showTabs: boolean }) => {
 		);
 	  };
 	  
+
+	  useEffect(()=>{
+		if(selectedRondin) console.log("selectedRondin",selectedRondin.areas)
+	  },[selectedRondin])
+
   return (
     <div >
 			<div className="flex justify-between items-center my-2 ">
@@ -384,7 +389,7 @@ export const RondinesBitacoraTable = ({ showTabs }: { showTabs: boolean }) => {
 										{[...Array(dias)].map((_, i) => {
 											const isSunday = sundaysIndexes.includes(i);
 											const estadoDia = categoria.resumen?.[i];
-
+											console.log("ESTADODIA", estadoDia)
 											const area = categoria.areas.find((a) =>
 											a.estados.some((e) => e.dia === i + 1)
 											);
@@ -420,7 +425,7 @@ export const RondinesBitacoraTable = ({ showTabs }: { showTabs: boolean }) => {
 
 										{isExpanded &&
 										categoria.areas.map((area, idx) =>
-											renderArea(area, `${catKey}-area-${idx}`, categoria)
+											renderArea(area, `${catKey}-area-${idx}`, categoria, idx)
 										)}
 									</React.Fragment>
 									);
@@ -445,19 +450,29 @@ export const RondinesBitacoraTable = ({ showTabs }: { showTabs: boolean }) => {
 					</ViewRondinesDetallePerimetroExt>
 				)}
 
-				{modalOpenArea && (
+				{/* {modalOpenArea && (
 					<ViewDetalleArea
 					title="Detalle del Área"
 					areaSelected={selectedAreaData}
-					isSuccess={modalOpenArea}
-					setIsSuccess={setModalOpenArea}
 					diaSelected={diaSelected}
 					selectedRondin={selectedRondin}
 					rondin={"Rondin demo"}
 					estatus={estatus}
+					onClose={() => setCarruselOpen(false)}
 					>
 					<div></div>
 					</ViewDetalleArea>
+				)} */}
+				{carruselOpen && (
+					<CarruselDetalleArea
+					areas={selectedRondin?.areas ?? []}
+					startIndex={selectedAreaIndex} 
+					diaSelected={diaSelected}
+					rondin={selectedRondin?.name}
+					estatus={estatus}
+					selectedRondin={selectedRondin}
+					onClose={() => setCarruselOpen(false)}
+					/>
 				)}
 			</div>
 	

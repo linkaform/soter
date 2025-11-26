@@ -1,5 +1,7 @@
 import { ChangeBoothModal } from "@/components/modals/change-booth-modal";
 import { ForceCloseShift } from "@/components/modals/force-close-shift";
+import { NombreSuplenteModal } from "@/components/modals/nombre-suplente";
+import { SuplenteItem } from "@/components/suplente-item";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -7,15 +9,16 @@ import { Input } from "@/components/ui/input";
 import { changeUserPhoto, changeUserPhotoPatch } from "@/lib/change-user-photo";
 import { capitalizeOnlyFirstLetter } from "@/lib/utils";
 import useAuthStore from "@/store/useAuthStore";
-import React , { useRef } from "react";
+import React , { Dispatch, SetStateAction, useRef, useState } from "react";
 import { toast } from "sonner";
 
-const Sidebar = ({shift}: any) => {
+const Sidebar = ({shift, nombreSuplente, setNombreSuplente, onSuplenteConfirmado}: {shift:any, nombreSuplente:string, setNombreSuplente: Dispatch<SetStateAction<string>>, onSuplenteConfirmado:()=>void}) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const { userEmailSoter, userNameSoter, userPhoto, userIdSoter , setUserPhoto} = useAuthStore();
+  const [openNombreSuplenteModal, setOpenNombreSuplenteModal] = useState(false)
 
   const getInitials = (name: string | null) => {
-    if (!name) return "N/A"; // Si no hay nombre, usa "N/A"
+    if (!name) return "N/A";
     return name
       .split(" ") 
       .map((word) => word[0])
@@ -117,12 +120,22 @@ const Sidebar = ({shift}: any) => {
           </Button>
         </ChangeBoothModal>
 
-        <Button
+          <Button
             className="w-full  bg-violet-600 text-white hover:bg-violet-700"
-            disabled={shift?.guard?.status_turn !== "Turno Abierto"}
+            disabled={shift?.guard?.status_turn !== "Turno Cerrado"}
+            onClick={()=>{setOpenNombreSuplenteModal(true)}}
           >
             Ingresar como suplente
           </Button>
+
+          <NombreSuplenteModal title={"Suplente"} nombreSuplente={nombreSuplente} setNombreSuplente={setNombreSuplente} onSuplenteConfirmado={onSuplenteConfirmado} open={openNombreSuplenteModal} setOpen={setOpenNombreSuplenteModal}/>
+
+          {nombreSuplente && shift?.guard?.status_turn !== "Turno Abierto" && (
+            <SuplenteItem
+              nombreSuplente={nombreSuplente}
+              setNombreSuplente={setNombreSuplente}
+            />
+          )}
 
       </div>
       <div className="flex  flex-col space-y-5 mb-10">

@@ -1,30 +1,20 @@
 import { Button } from "../ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../ui/dialog";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { Building2, Calendar1, ChevronLeft, ChevronRight, Clock, Route } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Building2, Calendar1, ChevronLeft, ChevronRight, Clock, Loader2, Route } from "lucide-react";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
 import Image from "next/image";
 import { Imagen } from "@/lib/update-pass-full";
 import DaysCarousel from "../daysCarousel";
 import { useCheckById } from "@/hooks/Rondines/useCheckById";
+import { useIncidenciaRondin } from "@/hooks/Rondines/useRondinIncidencia";
 
 interface ViewRondinesDetalleAreaProps {
-  title: string;
   areaSelected:any
-  isSuccess: boolean;
-  setIsSuccess: Dispatch<SetStateAction<boolean>>;
-  children: React.ReactNode;
   diaSelected: number
   rondin:string
   estatus:string
   selectedRondin:any
+  onClose: ()=>void;
 }
 
 type Incidente = {
@@ -39,22 +29,44 @@ type Incidente = {
   };
 
 export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
-  title,
   areaSelected,
-  children,
-  setIsSuccess,
-  isSuccess,
   diaSelected,
   rondin,
   estatus,
-  selectedRondin
+  selectedRondin,
+  onClose,
 }) => {
 
-    console.log("Data", areaSelected, title, estatus)
+    console.log("AREA", areaSelected)
     const [checkSelected, setCheckSelected] = useState(areaSelected?.estadoDia?.record_id)
     const { data:getCheckById, isLoadingRondin:isLoadingCheckById} = useCheckById(checkSelected);
+    const { createIncidenciaMutation , isLoading} = useIncidenciaRondin("", "");
 
-    // const img=[{file_url:"/nouser.svg", file_name:"Imagen"},{file_url:"/nouser.svg", file_name:"Imagen"}]
+
+	function crearNuevaIncidencia(data:any){
+        const formatData ={
+            reporta_incidencia:"",
+            fecha_hora_incidencia: data.fecha_hora_incidente,
+            ubicacion_incidencia:data.ubicacion_incidente,
+            area_incidencia: data.area_incidente,
+            categoria: data.categoria,
+            sub_categoria:data.subcategoria,
+            incidente:data.incidemte,
+            tipo_incidencia: data.incidente,
+            comentario_incidencia: data.comentarios,
+            evidencia_incidencia: data.evidencias,
+            documento_incidencia:data.docuementos,
+            acciones_tomadas_incidencia:[],
+            prioridad_incidencia: "leve",
+            notificacion_incidencia: "no",
+        }
+        createIncidenciaMutation.mutate(formatData, {
+            onSuccess: () => {
+                if (onClose) onClose();
+            },
+          });
+    }
+
     const [incidenteSeleccionado, setIncidenteSeleccionado] = useState<Incidente>();
 
     const [diaSeleccionado, setDiaSeleccionado] = useState<number>(diaSelected ||0);
@@ -75,18 +87,18 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
       }, [diaSeleccionado, getCheckById]);
 
     return (
-    <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
-      <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="max-w-md overflow-y-auto max-h-[80vh] min-h-[60vh]  flex flex-col" onInteractOutside={(e) => e.preventDefault()} aria-describedby="">
+    // <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
+    //   <DialogTrigger asChild>{children}</DialogTrigger>
+    //   <DialogContent className="max-w-md overflow-y-auto max-h-[80vh] min-h-[60vh]  flex flex-col" onInteractOutside={(e) => e.preventDefault()} aria-describedby="">
 
          <div className="flex-grow overflow-y-auto ">
             {view === "lista" && (
                 <div>
-                    <DialogHeader className="flex-shrink-0">
-                        <DialogTitle className="text-2xl text-center font-bold">
+                    <div className="flex-shrink-0">
+                        <div className="text-2xl text-center font-bold">
                             {getCheckById?.area || areaSelected?.area?.nombre}
-                        </DialogTitle>
-                    </DialogHeader>
+                        </div>
+                    </div>
 
                     <DaysCarousel
                         data={areaSelected}
@@ -229,11 +241,11 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
 
             {view === "detalle" && incidenteSeleccionado && (
                 <>
-                <DialogHeader className="flex-shrink-0">
-                    <DialogTitle className="text-2xl text-center font-bold">
+                <div className="flex-shrink-0">
+                    <div className="text-2xl text-center font-bold">
                         {incidenteSeleccionado?.incidente}
-                    </DialogTitle>
-                </DialogHeader>
+                    </div>
+                </div>
                 <div className="animate-fadeIn mt-2">
                     <div className="flex items-center mb-3">
                         <button
@@ -334,18 +346,29 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
                         </div>
                     </div>
                 </div>
+
+                <Button
+                type="submit"
+                className="w-full  bg-yellow-500 hover:bg-yellow-600 text-white " disabled={isLoading} onClick={()=>{crearNuevaIncidencia(incidenteSeleccionado)}}>
+                {isLoading ? (<>
+                        <> <Loader2 className="animate-spin" /> {"Generando Incidencia..."} </>
+                </>) : (<> Generar Incidencia</>)}
+                </Button>
                 </>
+
+
+		  	
             )}
         </div>
-		 <div className="flex gap-1 my-2 col-span-2">
-          	<DialogClose asChild>
-            <Button className="w-full bg-gray-200 hover:bg-gray-200 text-gray-700">
-              Cerrar
-            </Button>
-          	</DialogClose>
-        </div>
+		//  <div className="flex gap-1 my-2 col-span-2">
+        //   	<DialogClose asChild>
+        //     <Button className="w-full bg-gray-200 hover:bg-gray-200 text-gray-700">
+        //       Cerrar
+        //     </Button>
+        //   	</DialogClose>
+        // </div>
 
-        </DialogContent>
-    </Dialog>
+    //     </DialogContent>
+    // </Dialog>
   );
 };

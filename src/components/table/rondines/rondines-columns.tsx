@@ -1,3 +1,4 @@
+import { AddRondinModal } from "@/components/modals/add-rondin";
 import {
     ColumnDef,   
   } from "@tanstack/react-table";
@@ -19,19 +20,26 @@ import { Eye, Pencil, Trash } from "lucide-react";
   }
 
   // export const rondinesColumns: ColumnDef<Recorrido>[] = [
-  export const getRondinesColumns = ( onEliminarClick: (rondin: Recorrido) => void, handleVerRondin: (rondin: Recorrido) => void, 
-  handleEditarRondin: (rondin: Recorrido) => void): ColumnDef<Recorrido>[] => [
+  export const getRondinesColumns = ( onEliminarClick: (rondin: Recorrido) => void, handleVerRondin: (rondin: Recorrido) => void): ColumnDef<Recorrido>[] => [
     {
       id: "options",
       header: "Opciones",
       cell: ({ row }) => (
+        
         <div className="flex space-x-2">
           <div className="cursor-pointer" onClick={() => { handleVerRondin(row.original) }}  title="Ver Rondin">
             <Eye /> 
           </div>
-          <div className="cursor-pointer" title="Editar Rondin"  onClick={() => { handleEditarRondin(row.original) }}>
-            <Pencil /> 
-          </div>
+          <AddRondinModal
+            title="Editar Rondín"
+            mode="edit"
+            rondinData={ row.original}
+            rondinId={ row.original._id}
+          >
+            <div className="cursor-pointer" title="Editar Rondin">
+              <Pencil />
+            </div>
+          </AddRondinModal>
           <div className="cursor-pointer" title="Eliminar Rondin" onClick={() => { onEliminarClick(row.original) }} >
             <Trash /> 
           </div>

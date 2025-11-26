@@ -1023,7 +1023,6 @@ return (
 				tipo={"Pase"} 
 			/>
 
-			{loadingCatAreas == false && isLoadingConfigLocation == false && loadingUbicaciones == false ? (
 				<><div className="text-center">
 					<Button
 						className="bg-blue-500 hover:bg-blue-600 text-white w-full sm:w-2/3 md:w-1/2 lg:w-1/2"
@@ -1032,11 +1031,11 @@ return (
 						onClick={(e)=>{e.preventDefault()
 							form.handleSubmit(onSubmit)()
 						}}
+						disabled= {loadingCatAreas || isLoadingConfigLocation || loadingUbicaciones  }
 					>
-						Siguiente
+						{loadingCatAreas == false && isLoadingConfigLocation == false && loadingUbicaciones == false  ? ("Siguiente") : ("Cargando...")} 
 					</Button>
 				</div></>
-			):null}
 		</div>
 	</div>
 );

@@ -34,7 +34,6 @@ import Image from "next/image";
 import { AddRondinModal } from "@/components/modals/add-rondin";
 import { useMemo, useState } from "react";
 import { EliminarRondinModal } from "@/components/modals/delete-rondin-modal";
-import { EditarRondinModal } from "@/components/modals/editar-rondin";
 import { useGetRondinById } from "@/hooks/Rondines/useGetRondinById";
 import { AreasModal } from "@/components/modals/add-area-rondin";
 import dynamic from "next/dynamic";
@@ -133,7 +132,6 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 	);
 	const { editAreasRodindMutation, isLoading : isLoadingEditAreas} = useEditAreasRondin();
 	const [modalEliminarAbierto, setModalEliminarAbierto] = useState(false);
-	const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
 	const [rondinSeleccionado, setRondinSeleccionado] = useState<Recorrido | null>(null);
 	const [verRondin, setVerRondin] = useState(false);
 	const [nuevasAreasSeleccionadas, setNuevasAreasSeleccionadas] = useState<any[]>([]);
@@ -155,13 +153,6 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 			setVerRondin(true);
 			setActiveTab("Vista");
 		}
-
-		const handleEditarRondin= (rondin:Recorrido)=>{
-			setRondinSeleccionado(rondin); 
-			setModalEditarAbierto(true); 
-		}
-	
-
 	
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -175,7 +166,7 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
   
   const columns = useMemo(() => {
 	if (isLoading) return [];
-	return getRondinesColumns(handleEliminar,handleVerRondin, handleEditarRondin);
+	return getRondinesColumns(handleEliminar,handleVerRondin);
 }, [handleVerRondin, isLoading]);
 
 	const memoizedData = useMemo(() => data || [], [data]);
@@ -301,26 +292,28 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 				</div>
 
 				<div className="flex flex-wrap gap-2">
-				{activeTab !=="Bitacora" && (
-					<AddRondinModal title={"Crear Rondin"} >
+				{activeTab !== "Bitacora" && (
+					<>
+					<AddRondinModal title="Crear Rondín" mode="create">
 						<Button className="w-full md:w-auto bg-blue-500 hover:bg-blue-600">
-							<Plus />
-							Crear Rondin
+						<Plus />
+						Crear Rondín
 						</Button>
 					</AddRondinModal>
-				)}
-			
-				{modalEditarAbierto && rondinSeleccionado && (
-					<EditarRondinModal
-					title="Editar Rondin"
-					data={rondinSeleccionado}
-					modalEditarAbierto={modalEditarAbierto}
-					setModalEditarAbierto={setModalEditarAbierto}
-					onClose={() => setModalEditarAbierto(false)}
-					/>
+
+					{rondinSeleccionado && (
+						<AddRondinModal
+						title="Editar Rondín"
+						mode="edit"
+						rondinData={rondinSeleccionado}
+						rondinId={rondinSeleccionado._id}
+						>
+						<div />
+						</AddRondinModal>
+					)}
+					</>
 				)}
 
-				
 				 {modalEliminarAbierto && rondinSeleccionado && (
 					<EliminarRondinModal title="Eliminar Rondin" folio={rondinSeleccionado.folio} 
 					modalEliminarAbierto={modalEliminarAbierto}
@@ -368,7 +361,7 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 					<div className="flex">
 						<span className="font-semibold">Recurrencia:</span>
 					</div>
-
+{/* 
 					<div className="flex justify-start gap-10">
 						<span >
 						{rondin?.recurrencia} 
@@ -376,8 +369,25 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 						<Button onClick={() => {setRondinSeleccionado(null);setVerRondin(false); setActiveTab("Rondines");}} className="bg-blue-500 hover:bg-blue-600 cursor-pointer p-2">
 							Editar
 						</Button>
-					</div>
+					</div> */}
 					
+					<div className="flex justify-start gap-10">
+						<span >
+						{rondin?.recurrencia} 
+						</span>
+						<AddRondinModal
+						title="Editar Rondín"
+						mode="edit"
+						rondinData={rondinSeleccionado}
+						rondinId={rondinSeleccionado?rondinSeleccionado._id:""}
+						>
+						<Button className="bg-blue-500 hover:bg-blue-600 cursor-pointer p-2">
+							Editar
+						</Button>
+						</AddRondinModal>
+					</div>
+
+
 					<div className="flex">
 						<span className="font-semibold min-w-[130px]">Ubicacion:</span>
 					</div>

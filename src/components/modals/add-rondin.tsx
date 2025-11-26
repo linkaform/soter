@@ -27,7 +27,7 @@ import { useRondines } from "@/hooks/Rondines/useRondines";
 import { Input } from "../ui/input";
 import { format } from "date-fns";
 import Multiselect from "multiselect-react-dropdown";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useShiftStore } from "@/store/useShiftStore";
 import { useCatalogAreasRondin } from "@/hooks/Rondines/useCatalogAreasRondin";
 import { capitalizeFirstLetter } from "@/lib/utils";
@@ -36,6 +36,9 @@ import { Switch } from "../ui/switch";
 interface AddRondinModalProps {
   	title: string;
     children: React.ReactNode;
+	mode:string;
+	rondinData?: any;
+  	rondinId?: string;
 }
   
   export type RondinPayload = {
@@ -75,15 +78,8 @@ interface AddRondinModalProps {
 	cron_config:string;
 	accion_recurrencia: string;
   };
-  
-//   const recurrenciaKeys = {
-// 	diario: ["que_dias_de_la_semana","se_repite_cada","en_que_semana_sucede","sucede_recurrencia"],
-// 	semana: ["se_repite_cada","que_dias_de_la_semana","en_que_semana_sucede","sucede_recurrencia"],
-// 	mes: ["se_repite_cada","que_dia_del_mes","sucede_recurrencia","en_que_mes"],
-// 	MensualDiaSemana: ["se_repite_cada","que_dias_de_la_semana","sucede_recurrencia","en_que_semana_sucede","en_que_mes"],
-// 	configurable: ["se_repite_cada", "cron_config"],
-//   } as const;
 
+  const cronRegex = /^([\d*/,\-LW#?]+)\s+([\d*/,\-LW#?]+)\s+([\d*/,\-LW#?]+)\s+([\d*/,\-LW#?]+)\s+([\d*/,\-LW#?]+)$/;
 
 const formSchema = z.object({
     nombre_rondin:z.string().optional(),
@@ -113,18 +109,25 @@ const formSchema = z.object({
     cada_cuantos_meses_se_repite:z.number().optional(),
     la_recurrencia_cuenta_con_fecha_final: z.string().optional(),
     fecha_final_recurrencia:z.string().optional(),
-	accion_recurrencia:z.string().optional()
+	accion_recurrencia:z.string().optional(),
+	cron_config: z.string().regex(
+		cronRegex,
+		"Cron inválido. Ejemplo: */5 * * * *"
+	  )
 });
 
 export const AddRondinModal: React.FC<AddRondinModalProps> = ({
   	title,
-    children
+    children,
+	mode="create",
+	rondinData,
+	rondinId
 }) => {
     const [isSuccess, setIsSuccess] = useState(false);
 	const { location } = useShiftStore()
 	const [areasSeleccionadas, setAreasSeleccionadas] = useState<any[]>([]);
-	const { createRondinMutation, isLoading} = useRondines()
-	const { data:catalogAreasRondin} = useCatalogAreasRondin(location, isSuccess)
+	const { createRondinMutation,updateRondinMutation, isLoading} = useRondines()
+	const { data:catalogAreasRondin, isLoading:isLoadingAreas} = useCatalogAreasRondin("Planta Monterrey", isSuccess)
 	const [date, setDate] = useState<Date|"">("");
 	const [que_dias_de_la_semana , set_que_dias_de_la_semana] =useState<string[]>([])
 	const [en_que_semana_sucede, set_en_que_semana_sucede] = useState<string>("");
@@ -133,6 +136,14 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 	const [todas_las_meses, set_todas_las_meses] =useState(false)
 	const [esRepetirCada, setEsRepetirCada] = useState<boolean | null>(null);
 	const [mostrarFrecuencia, setMostrarFrecuencia] = useState(false);
+
+	const [dropdownOffset, setDropdownOffset] = useState({
+		distance: 40,
+		width: "100%",
+		margin:"39px"
+	  });
+	const multiselectRef = useRef<HTMLDivElement>(null);
+
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -164,12 +175,13 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
             cada_cuantos_meses_se_repite: 0,
             la_recurrencia_cuenta_con_fecha_final: '',
             fecha_final_recurrencia: '',
-            accion_recurrencia:'programar'
+            accion_recurrencia:'programar',
+			cron_config:''
 		},
 	});
 	const { reset } = form;
 	
-	console.log(form.formState.errors);
+	// console.log(form.formState.errors);
 
 	useEffect(()=>{
 		if(isSuccess){
@@ -188,13 +200,13 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 	},[esRepetirCada])
 
 	const diasSemana = [
+		"domingo",
 		"lunes",
 		"martes",
 		"miercoles",
 		"jueves",
 		"viernes",
 		"sabado",
-		"domingo",
 	  ];
 
 	  const mesesDelAño = [
@@ -240,14 +252,26 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 			se_repite_cada:values.se_repite_cada,
 		  ...recurrenciaFiltrada
 		};
-		console.log("PAYLOAD", payload)
-		createRondinMutation.mutate({ rondin_data: payload } ,{
-			onSuccess: () => {
-			  setIsSuccess(false);
-			},
-		  });
-	}
-
+		if (mode === "edit" && rondinId) {
+			updateRondinMutation.mutate(
+			  { rondin_id: rondinId, rondin_data: payload },
+			  {
+				onSuccess: () => {
+				  setIsSuccess(false);
+				},
+			  }
+			);
+		  } else {
+			createRondinMutation.mutate(
+			  { rondin_data: payload },
+			  {
+				onSuccess: () => {
+				  setIsSuccess(false);
+				},
+			  }
+			);
+		  }
+		}
 	const handleClose = () => {
 		setIsSuccess(false); 
 	};
@@ -356,8 +380,8 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 			}
 		  	case "configurable":
 			return {
-				meses_del_anio: values.meses_del_anio ?? [],
-				dias_del_mes: values.dias_del_mes ?? [],
+				se_repite_cada: 'configurable',
+				cron_config: values.cron_config ?? "",
 			};
 	  
 		  default:
@@ -367,15 +391,21 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 
 	function opcionesMensuales(fecha: Date): string[] {
 		const diaDelMes = fecha.getDate();
+	  
 		const op1 = `Mensualmente el día ${diaDelMes}`;
+	  
 		const diaSemana = fecha.getDay(); 
 		const nombreDia = diasSemana[diaSemana];
+	  
 		const semanaDelMes = Math.ceil(diaDelMes / 7);
+	  
 		const ordinales = ["", "primer", "segundo", "tercer", "cuarto", "quinto"];
 		const ordinal = ordinales[semanaDelMes];
+	  
 		const op2 = `Mensualmente el ${ordinal} ${nombreDia} del mes`;
+	  
 		return [op1, op2];
-	}
+	  }
 	
 	const opciones = date ? opcionesMensuales(date) : [];
 
@@ -383,6 +413,139 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 		setEsRepetirCada(prev => prev === valor ? null : valor);
 	};
 	  
+
+	useEffect(() => {
+		if (mode === "edit" && rondinData && isSuccess) {
+			
+			if (rondinData.fecha_hora_programada) {
+				setDate(new Date(rondinData.fecha_hora_programada));
+			}
+			if (rondinData.areas && catalogAreasRondin) {
+				const cat = (rondinData?.areas ?? []).map((area:any ) => ({
+					name: area ?? "",
+					id: area ?? "",
+					}));
+				console.log("areas", cat, catalogAreasRondin)
+				setAreasSeleccionadas(cat);
+			}
+			if (rondinData.que_dias_de_la_semana) {
+				set_que_dias_de_la_semana(
+				Array.isArray(rondinData.que_dias_de_la_semana) 
+					? rondinData.que_dias_de_la_semana 
+					: []
+				);
+			}
+			if (rondinData.en_que_semana_sucede) {
+				set_en_que_semana_sucede(rondinData.en_que_semana_sucede);
+				if (rondinData.en_que_semana_sucede !== "todas_las_semanas") {
+				set_todas_las_semanas(false);
+				}
+			}
+			if (rondinData.en_que_mes) {
+				const meses = Array.isArray(rondinData.en_que_mes) 
+				? rondinData.en_que_mes 
+				: [rondinData.en_que_mes];
+				set_en_que_mes(meses);
+				const todosMeses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", 
+								"julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+				set_todas_las_meses(meses.length === 12 && todosMeses.every(m => meses.includes(m)));
+			}
+			if (rondinData.cada_cuantas_horas_se_repite) {
+				setMostrarFrecuencia(true);
+			}
+			if (rondinData.cada_cuantos_meses_se_repite) {
+				setEsRepetirCada(true);
+			} else if (rondinData.en_que_mes && rondinData.en_que_mes.length > 0) {
+				setEsRepetirCada(false);
+			}
+			reset({
+				nombre_rondin: rondinData.nombre_rondin || rondinData.nombre_del_rondin || '',
+				duracion_estimada: rondinData.duracion_estimada?.replace(' minutos', '') || '',
+				se_repite_cada: rondinData.se_repite_cada || rondinData.recurrencia || '',
+				cada_cuantas_horas_se_repite: rondinData.cada_cuantas_horas_se_repite || '',
+				cada_cuantos_meses_se_repite: rondinData.cada_cuantos_meses_se_repite || 0,
+				que_dia_del_mes: rondinData.que_dia_del_mes || '',
+				que_dias_de_la_semana: rondinData.que_dias_de_la_semana || [],
+				en_que_semana_sucede: rondinData.en_que_semana_sucede || '',
+				en_que_mes: rondinData.en_que_mes || [],
+			});
+		}
+	}, [mode, rondinData, isSuccess, catalogAreasRondin, reset]);
+	
+	useEffect(() => {
+		const container = multiselectRef.current;
+		if (!container) return;
+	  
+		const updatePosition = () => {
+		  const inputBox = container.querySelector(".searchWrapper") as HTMLElement | null;
+		  if (!inputBox) return;
+		  
+		  const height = inputBox.offsetHeight || 39;  // Usa la altura real o 39 por defecto
+		  const width =`${container.offsetWidth}px`;
+		  const margin = areasSeleccionadas.length === 0 ? "32px" : "0px";
+		  
+		  setDropdownOffset({ distance: height, width, margin });
+		};
+	  
+		// Actualización inmediata
+		updatePosition();
+		
+		requestAnimationFrame(() => {
+		  updatePosition();
+		});
+		
+		setTimeout(updatePosition, 50);
+		setTimeout(updatePosition, 150);
+		setTimeout(updatePosition, 300);
+	  
+		const resizeObserver = new ResizeObserver(() => {
+		  updatePosition();
+		  setTimeout(updatePosition, 100);
+		});
+		
+		const handleClick = () => {
+		  setTimeout(updatePosition, 10);
+		  setTimeout(updatePosition, 50);
+		  setTimeout(updatePosition, 100);
+		};
+		
+		const targetElement = container.querySelector(".searchWrapper");
+		
+		if (targetElement) {
+		  resizeObserver.observe(targetElement);
+		}
+		
+		container.addEventListener('click', handleClick);
+		container.addEventListener('focus', handleClick, true);
+	  
+		return () => {
+		  resizeObserver.disconnect();
+		  container.removeEventListener('click', handleClick);
+		  container.removeEventListener('focus', handleClick, true);
+		};
+	  }, [areasSeleccionadas]);
+
+	  useEffect(() => {
+		// Si tienes una prop o estado que indica si el modal está abierto
+		const container = multiselectRef.current;
+		if (!container) return;
+	  
+		const updatePosition = () => {
+		  const inputBox = container.querySelector(".searchWrapper") as HTMLElement | null;
+		  if (!inputBox) return;
+		  
+		  const height = inputBox.offsetHeight|| 39;
+		  const width =`${container.offsetWidth}px`;
+		  const margin = areasSeleccionadas.length === 0 ? "32px" : "0px";
+
+		  setDropdownOffset({ distance: height, width , margin});
+		};
+	  
+		setTimeout(updatePosition, 100);
+		setTimeout(updatePosition, 300);
+		setTimeout(updatePosition, 500);
+	  }, []); // Se ejecuta solo al montar el componente
+
 	return (
 		<Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
 		<DialogTrigger asChild>{children}</DialogTrigger>
@@ -395,7 +558,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 			</DialogHeader>
 
 			
-			<div className=" p-3">
+			<div className="overflow-y-auto p-3">
 				<Form {...form}>
 				<form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-1 gap-5 ">
 					<FormField
@@ -464,7 +627,6 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 						</div>
 					</div>
 
-
 					<FormField
 						control={form.control}
 						name="se_repite_cada"
@@ -477,7 +639,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 									field.onChange(value); 
 								}}
 								value={field.value} 
-								disabled={!date}
+								disabled={mode === "create" ? !date: false}
 								
 							>
 								<SelectTrigger className="w-full">
@@ -548,96 +710,95 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 								</div>
 								
 						</div>
-						)}
+					)}
 
-						{recurrencia === "diario" && (
-							<div className="flex gap-10">
-								<div className="mb-2 flex items-center gap-3">
-									<span className="text-sm font-medium">Frecuencia (horas)</span>
-									<Switch
-										checked={mostrarFrecuencia}
-										onCheckedChange={(v) => setMostrarFrecuencia(v)}
-									/>
-								</div>
-								{mostrarFrecuencia && (
-								<div className="flex items-center gap-3">
-									<label className="text-sm font-medium">Cada:</label>
-
-									<input
-									type="number"
-									min={1}
-									max={24}
-									value={form.watch("cada_cuantas_horas_se_repite") ?? 1}
-									onChange={(e) =>
-										form.setValue("cada_cuantas_horas_se_repite", e.target.value, {
-										shouldValidate: true,
-										shouldDirty: true,
-										})
-									}
-									className="w-24 px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
-									/>
-
-									<span className="text-sm text-gray-600">hora(s)</span>
-								</div>
-								)}
+					{recurrencia === "diario" && (
+						<div className="flex gap-10">
+							<div className="mb-2 flex items-center gap-3">
+								<span className="text-sm font-medium">Frecuencia (horas)</span>
+								<Switch
+									checked={mostrarFrecuencia}
+									onCheckedChange={(v) => setMostrarFrecuencia(v)}
+								/>
 							</div>
-						)}
+							{mostrarFrecuencia && (
+							<div className="flex items-center gap-3">
+								<label className="text-sm font-medium">Cada:</label>
 
-						{recurrencia === "semana" && (
-						<div className="mt-2">
-							<div className="flex justify-between">
-								<FormLabel>Seleccione la semana del mes:</FormLabel>
-								<div className="flex items-center gap-2 ml-3">
-									<input
-										type="checkbox"
-										onChange={(e:any) => set_todas_las_semanas(e.target.checked)}
-									/>
-									<span className="text-sm">Todas las semanas</span>
-								</div>
+								<input
+								type="number"
+								min={1}
+								max={24}
+								value={form.watch("cada_cuantas_horas_se_repite") ?? 1}
+								onChange={(e) =>
+									form.setValue("cada_cuantas_horas_se_repite", e.target.value, {
+									shouldValidate: true,
+									shouldDirty: true,
+									})
+								}
+								className="w-24 px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+								/>
+
+								<span className="text-sm text-gray-600">hora(s)</span>
 							</div>
-							<div className="flex flex-wrap mt-2 mb-5">
-							{[
-								"Primera semana del mes",
-								"Segunda semana del mes",
-								"Tercera semana del mes",
-								"Cuarta semana del mes",
-								"Quinta semana del mes",
-							].map((semana) => {
-								const value = semana.toLowerCase().replace(/\s+/g, "_");
+							)}
+						</div>
+					)}
 
-								return (
-								<FormItem
-									key={value}
-									className="flex items-center space-x-3"
-								>
-									<FormControl>
-									<Button
-										type="button"
-										onClick={() => toggleSemana(value)}
-										className={`m-2 px-4 py-2 rounded-md transition-all duration-300 
-										${
-												todas_las_semanas || en_que_semana_sucede === value
-												? "bg-blue-600 text-white hover:bg-blue-600 hover:text-white"
-												: "border-2 border-blue-400 bg-white text-blue-600 hover:bg-transparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]"
-											}
-										`}
-									>
-										<div className="flex flex-wrap">
-										{en_que_semana_sucede === value ? (
-											<div>{semana}</div>
-										) : (
-											<div >{semana}</div>
-										)}
-										</div>
-									</Button>
-									</FormControl>
-								</FormItem>
-								);
-							})}
+					{recurrencia === "semana" && (
+					<div className="mt-2">
+						<div className="flex justify-between">
+							<FormLabel>Seleccione la semana del mes:</FormLabel>
+							<div className="flex items-center gap-2 ml-3">
+								<input
+									type="checkbox"
+									onChange={(e:any) => set_todas_las_semanas(e.target.checked)}
+								/>
+								<span className="text-sm">Todas las semanas</span>
 							</div>
 						</div>
-						)}
+						<div className="flex flex-wrap mt-2 mb-5">
+						{[
+							"Primera semana del mes",
+							"Segunda semana del mes",
+							"Tercera semana del mes",
+							"Cuarta semana del mes",
+							"Quinta semana del mes",
+						].map((semana) => {
+							const value = semana.toLowerCase().replace(/\s+/g, "_");
 
+							return (
+							<FormItem
+								key={value}
+								className="flex items-center space-x-3"
+							>
+								<FormControl>
+								<Button
+									type="button"
+									onClick={() => toggleSemana(value)}
+									className={`m-2 px-4 py-2 rounded-md transition-all duration-300 
+									${
+											todas_las_semanas || en_que_semana_sucede === value
+											? "bg-blue-600 text-white hover:bg-blue-600 hover:text-white"
+											: "border-2 border-blue-400 bg-white text-blue-600 hover:bg-transparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)]"
+										}
+									`}
+								>
+									<div className="flex flex-wrap">
+									{en_que_semana_sucede === value ? (
+										<div>{semana}</div>
+									) : (
+										<div >{semana}</div>
+									)}
+									</div>
+								</Button>
+								</FormControl>
+							</FormItem>
+							);
+						})}
+						</div>
+					</div>
+					)}
 
 					{recurrencia === "mes" && (
 						<>
@@ -790,66 +951,102 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 						}
 						</>
 					)}
+
 					{recurrencia === "configurable" && (
-						<FormField
-							control={form.control}
-							name="nombre_rondin"
-							render={({field}:any) => (
-								<FormItem>
-									<FormLabel>Configurable:</FormLabel>
-									<FormControl>
-										<Input
-										placeholder="Texto"
-										className="resize-none"
-										{...field} 
-										/>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+					<FormField
+						control={form.control}
+						name="cron_config"
+						render={({ field }) => (
+						<FormItem>
+							<FormLabel>Configuración Cron:</FormLabel>
+							<FormControl>
+							<Input
+								placeholder="* * * * *"
+								className="resize-none"
+								value={field.value ?? ""}
+								onChange={(e) => {
+								let v = e.target.value;
+								v = v.replace(/\s+/g, " ");
+								if (v.startsWith(" ")) v = v.trimStart();
+								let parts = v.split(" ");
+								if (parts.length > 5) parts = parts.slice(0, 5);
+								parts = parts.map((p) => p.slice(0, 15));
+								const finalValue = parts.join(" ");
+								field.onChange(finalValue);
+								}}
+							/>
+							</FormControl>
+
+							<small className="text-gray-500">
+							Ingresa 5 valores separados por espacios.  
+							</small>
+							<FormMessage />
+						</FormItem>
+						)}
+					/>
 					)}
 
-					<div className="">
-						<div className="text-sm mb-2">Áreas: </div>
-						<Multiselect
-						options={catalogAreasRondin} 
-						onSelect={(selectedList) => {
-							setAreasSeleccionadas(selectedList);
-						}}
-						onRemove={(selectedList) => {
-							setAreasSeleccionadas(selectedList);
-						}}
+				<div className="relative multiselect-wrapper" ref={multiselectRef}>
+				<div className="text-sm mb-2">Áreas: </div>
+				
+				{isLoadingAreas ? (
+					<div className="border rounded-lg p-3 bg-gray-50 text-gray-500 text-sm">
+					Cargando áreas...
+					</div>
+				) : (
+					<Multiselect
+						options={catalogAreasRondin}
+						onSelect={setAreasSeleccionadas}
+						onRemove={setAreasSeleccionadas}
 						displayValue="name"
-						style={{ zIndex: 9999 }}
+						selectedValues={areasSeleccionadas}
+						disable={isLoading}
+						style={{
+							optionContainer: {
+							position: "absolute",
+							bottom: `${dropdownOffset.distance}px`,
+							left: 0,
+							width: dropdownOffset.width || "100%",
+							zIndex: 999999,
+							backgroundColor: "white",
+							borderRadius: "8px",
+							overflow: "auto",
+							maxHeight: "200px",
+							boxShadow: "0 -4px 10px rgba(0,0,0,0.15)",
+							marginBottom: `${dropdownOffset.margin || 0}px`,  
+							},
+							searchBox: {
+							position: "relative",
+							opacity: isLoading ? 0.5 : 1,
+							}
+						}}
 						/>
-					</div>
-
-					<div className="flex gap-2 mt-1">
-						<DialogClose asChild>
-							<Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700" onClick={handleClose}>
-							Cancelar
-							</Button>
-						</DialogClose>
-
-						
-						<Button
-							type="submit"
-							onClick={form.handleSubmit(onSubmit)}
-							className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={isLoading}
-						>
-							{isLoading? (
-							<>
-								<Loader2 className="animate-spin"/> {"Creando rondin..."}
-							</>
-						):("Crear rondin")}
-						</Button>
-					</div>
+				)}
+				</div>
 					
 				</form>
 				</Form>
 			</div>
-			
+			<div className="flex gap-2 mt-1">
+				<DialogClose asChild>
+					<Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700" onClick={handleClose}>
+					Cancelar
+					</Button>
+				</DialogClose>
+
+				
+				<Button
+					type="submit"
+					onClick={form.handleSubmit(onSubmit)}
+					className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={isLoading}
+				>
+					{isLoading? (
+					<>
+						<Loader2 className="animate-spin"/> {"Creando rondin..."}
+					</>
+				):("Crear rondin")}
+				</Button>
+			</div>
 		</DialogContent>
 		</Dialog>
 	);

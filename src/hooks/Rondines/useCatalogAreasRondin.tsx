@@ -8,6 +8,7 @@ export const useCatalogAreasRondin = (ubicacion:string, isModalOpen:boolean) => 
     enabled:isModalOpen && ubicacion ? true:false,
     queryFn: async () => {
         const data = await catalogAreasRondin(ubicacion); 
+        console.log("data",data)
         const textMsj = errorMsj(data) 
       if(textMsj){
         throw new Error(`Error al obtener catalogo de areas de rondin, Error: ${data.error}`);

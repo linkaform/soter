@@ -274,35 +274,16 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 
 						<Select
 							aria-labelledby="aria-label"
-							// ariaLiveMessages={{
-							// onFocus,
-							// }}
 							inputId="aria-example-input"
 							name="aria-live-color"
-							// onMenuOpen={onMenuOpen}
-							// onMenuClose={onMenuClose}
 							options={modelosCat}
 							onChange={(value:any) => field.onChange([value.value])}
 							isClearable
-							// menuPortalTarget={document.body}
 							styles={{
 								menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
 							}}
 						/>
-						{/* <Select onValueChange={(value) => field.onChange([value])}>
-							<FormControl>
-							<SelectTrigger>
-								<SelectValue placeholder="Selecciona una opción" />
-							</SelectTrigger>
-							</FormControl>
-							<SelectContent>
-							{modelosCat?.map((item: string) => (
-								<SelectItem key={item} value={item}>
-								{item}
-								</SelectItem>
-							))}
-							</SelectContent>
-						</Select> */}
+						
 						<FormMessage />
 						</FormItem>
 					)}
@@ -316,13 +297,8 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 						<FormLabel> Estado</FormLabel>
 						<Select
 							aria-labelledby="aria-label"
-							// ariaLiveMessages={{
-							// onFocus,
-							// }}
 							inputId="aria-example-input"
 							name="aria-live-color"
-							// onMenuOpen={onMenuOpen}
-							// onMenuClose={onMenuClose}
 							options={catEstados}
 							onChange={(value:any) => field.onChange([value.value])}
 							isClearable
@@ -330,21 +306,6 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 								menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
 							}}
 						/>
-
-						{/* <Select onValueChange={(value) => field.onChange([value])}>
-							<FormControl>
-							<SelectTrigger>
-								<SelectValue placeholder="Seleccione una opción" />
-							</SelectTrigger>
-							</FormControl>
-							<SelectContent>
-							{catalogoEstados().map((estado: string) => (
-								<SelectItem key={estado} value={estado}>
-								{estado}
-								</SelectItem>
-							))}
-							</SelectContent>
-						</Select> */}
 						<FormMessage />
 						</FormItem>
 					)}

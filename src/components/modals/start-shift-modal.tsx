@@ -19,12 +19,14 @@ interface StartShiftModalProps {
   // children: React.ReactNode;
   evidencia: Imagen[]
   open: boolean;
+  nombreSuplente:string;
   setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 export const StartShiftModal: React.FC<StartShiftModalProps> = ({
   title,
   // children,
+  nombreSuplente,
   evidencia, 
   open,
   setOpen
@@ -34,6 +36,8 @@ export const StartShiftModal: React.FC<StartShiftModalProps> = ({
   const { selectedGuards } = useGuardSelectionStore();
 
   const { startShiftMutation } = useGetShift(false);
+
+  console.log("nombreSuplente",nombreSuplente)
 
   const guardNames = selectedGuards
     ?.map((guardia: { name: string }) => guardia.name)

@@ -63,7 +63,6 @@ const IncidenciasPage = () => {
 		const f2= dateToString(new Date(date2)) 
 		setDatePrimera(f1)
 		setDateSegunda(f2)
-		// setDates([f1,f2])
 	};
 
 	const handleTabChangeTab = (newTab: any) => {
@@ -128,9 +127,9 @@ const IncidenciasPage = () => {
 						setAreaSeleccionada={setAreaSeleccionada}
 					/>
 				</div>
-				<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
-						dateFilter== "today"&& selectedTab!=="Fallas" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() =>  handleTabChange("Incidencias","today")}>
-					<div className="flex gap-6"><TriangleAlert className="text-primary w-10 h-10" />
+				<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${ dateFilter== "today"&& selectedTab!=="Fallas" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() =>  handleTabChange("Incidencias","today")}>
+					<div className="flex gap-6">
+						<TriangleAlert className="text-primary w-10 h-10" />
 						<span className="flex items-center font-bold text-4xl"> {stats?.incidentes_x_dia}</span>
 					</div>
 					<div className="flex items-center space-x-0">

@@ -23,7 +23,9 @@ export default function Home() {
 
   const [evidencia, setEvidencia]=useState<Imagen[]>([])
   const [identificacion, setIdentificacion]=useState<Imagen[]>([])
-  
+  const [nombreSuplente, setNombreSuplente] = useState("")
+  const [forceOpenStartPhoto, setForceOpenStartPhoto] = useState(false);
+
 	useEffect(() => {
 		if ( shift?.guard?.status_turn !== "Turno Cerrado") {
 			setCheckin_id(shift?.booth_status?.checkin_id);
@@ -34,13 +36,6 @@ export default function Home() {
 		}
   }, [shift, setCheckin_id]);
 
-  // useEffect(() => {
-  //   if(shift){
-  //     setEvidencia(shift?.booth_status?.fotografia_inicio_turno)
-  //     setIdentificacion(shift?.booth_status?.fotografia_cierre_turno)
-  //   }
-  //   }, [shift]);
-    
 
     if (isLoading || loading) {
       return (
@@ -54,10 +49,13 @@ export default function Home() {
      <>
      <link rel="icon" href="/turnos.svg" type="image/svg+xml" /><div className="flex flex-col lg:flex-row">
           <div className="w-full lg:w-1/4 h-full px-6 py-6 border border-[#F0F2F5]">
-              <Sidebar key={shift?.location?.name} shift={shift} />
+              <Sidebar key={shift?.location?.name} shift={shift} nombreSuplente={nombreSuplente} setNombreSuplente={setNombreSuplente} onSuplenteConfirmado={() => setForceOpenStartPhoto(true)}/>
           </div>
           <div className="w-full lg:w-3/4 p-8 flex flex-col">
-              <TurnStatus shift={shift} location={location} area={area} evidencia={evidencia} setEvidencia={setEvidencia} identificacion={identificacion} setIdentificacion={setIdentificacion}/>
+              <TurnStatus shift={shift} location={location} area={area} evidencia={evidencia} setEvidencia={setEvidencia} identificacion={identificacion} setIdentificacion={setIdentificacion} nombreSuplente={nombreSuplente}
+              forceOpenStartPhoto={forceOpenStartPhoto}
+              setForceOpenStartPhoto={setForceOpenStartPhoto}
+              />
               <div className="flex flex-col sm:flex-row justify-between">
                   <div className="w-full">
                       <GuardiasApoyoTable shift={shift} location={location} area={area} />
