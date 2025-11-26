@@ -102,7 +102,7 @@ const TurnStatus = ({
 		if(shift?.booth_status?.fotografia_cierre_turno  && shift?.booth_status?.guard_on_dutty === userNameSoter)
 			setIdentificacion(shift?.booth_status?.fotografia_cierre_turno.length)
 	
-	},[shift?.booth_status?.fotografia_inicio_turno,shift?.booth_status?.fotografia_cierre_turno , setEvidencia, setIdentificacion])
+	},[shift?.booth_status?.fotografia_inicio_turno, shift?.booth_status?.fotografia_cierre_turno, setEvidencia, setIdentificacion, userNameSoter, shift?.booth_status?.guard_on_dutty])
 
   return (
     <div className="flex items-center flex-col md:flex-row justify-between md:mb-3">
