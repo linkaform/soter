@@ -46,15 +46,16 @@ export const useGetShift = (enableShift:boolean) => {
 
   const startShiftMutation = useMutation({
     mutationFn: async ({
-      employee_list, fotografia
+      employee_list, fotografia, nombre_suplente
     }: {
-      employee_list?: { user_id: number; name: string }[], fotografia:Imagen[]
+      employee_list?: { user_id: number; name: string }[], fotografia:Imagen[], nombre_suplente:string
     }) => {
       const response = await startShift({
         area,
         location,
         employee_list,
-        fotografia
+        fotografia,
+        nombre_suplente
       });
 
       if (!response.success) {

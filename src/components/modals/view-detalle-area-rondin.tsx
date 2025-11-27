@@ -6,7 +6,7 @@ import Image from "next/image";
 import { Imagen } from "@/lib/update-pass-full";
 import DaysCarousel from "../daysCarousel";
 import { useCheckById } from "@/hooks/Rondines/useCheckById";
-import { useIncidenciaRondin } from "@/hooks/Rondines/useRondinIncidencia";
+import { useCreateIncidenciaRondin } from "@/hooks/Rondines/useCeateIncidenciaRondin";
 
 interface ViewRondinesDetalleAreaProps {
   areaSelected:any
@@ -40,8 +40,8 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
     console.log("AREA", areaSelected)
     const [checkSelected, setCheckSelected] = useState(areaSelected?.estadoDia?.record_id)
     const { data:getCheckById, isLoadingRondin:isLoadingCheckById} = useCheckById(checkSelected);
-    const { createIncidenciaMutation , isLoading} = useIncidenciaRondin("", "");
-
+    const { createIncidenciaMutation , isLoading} = useCreateIncidenciaRondin();
+ console.log("chek", getCheckById)
 
 	function crearNuevaIncidencia(data:any){
         const formatData ={
@@ -112,7 +112,7 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
                                 <div className="flex items-center justify-center">
                                 <Carousel className="w-44">
                                     <CarouselContent>
-                                            { getCheckById.fotos.map((a: Imagen, index: number) => {
+                                            { getCheckById?.fotos.map((a: Imagen, index: number) => {
                                                 const isVideo = a.file_url?.match(/\.(mp4|webm|ogg|mov|avi)$/i);
 
                                                 return (
@@ -206,7 +206,7 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
                                     <h2 className="text-base font-semibold ">Incidentes en recorrido</h2>
 
                                     <div className="divide-y divide-gray-200">
-                                        {getCheckById?.incidencias.map((i:any) => (
+                                        {getCheckById && getCheckById?.incidencias.map((i:any) => (
                                         <div
                                         key={`${i.id}-${Math.random()}`}
                                             className="flex justify-between items-center py-2 cursor-pointer hover:bg-gray-50 rounded-md px-1"

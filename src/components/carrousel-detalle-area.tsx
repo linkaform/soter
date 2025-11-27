@@ -59,10 +59,10 @@ export const CarruselDetalleArea: React.FC<CarruselDetalleAreaProps> = ({
               position = "opacity-100 scale-100 translate-x-0 rotate-[0deg]";
               zIndex = "z-20";
             } else if (isLeft) {
-              position = "opacity-50 scale-[0.8] -translate-x-[230px] rotate-[-4deg]";
+              position = "opacity-50 scale-[0.8] -translate-x-[230px]";
               zIndex = "z-10";
             } else if (isRight) {
-              position = "opacity-50 scale-[0.8] translate-x-[230px] rotate-[4deg]";
+              position = "opacity-50 scale-[0.8] translate-x-[230px]";
               zIndex = "z-10";
             }
 
@@ -75,6 +75,7 @@ export const CarruselDetalleArea: React.FC<CarruselDetalleAreaProps> = ({
                   ease-[cubic-bezier(.25,.8,.25,1)]
                   ${position} ${zIndex}
                   w-[55%]
+                  h-[600px]
                 `}
               >
                 <div className="relative bg-white rounded-xl shadow-xl p-4 border">
@@ -91,7 +92,7 @@ export const CarruselDetalleArea: React.FC<CarruselDetalleAreaProps> = ({
                   <ViewDetalleArea
                     areaSelected={{
                       area: area,
-                      estadoDia: area.estados[diaSelected],
+                      estadoDia: area.estados?.find((e: { dia: number; }) => e.dia === diaSelected),
                     }}
                     diaSelected={diaSelected}
                     rondin={rondin}

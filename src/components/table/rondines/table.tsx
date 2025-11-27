@@ -294,7 +294,7 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 				<div className="flex flex-wrap gap-2">
 				{activeTab !== "Bitacora" && (
 					<>
-					<AddRondinModal title="Crear Rondín" mode="create">
+					<AddRondinModal title="Crear Rondín" mode="create" folio={rondinSeleccionado?.folio}>
 						<Button className="w-full md:w-auto bg-blue-500 hover:bg-blue-600">
 						<Plus />
 						Crear Rondín
@@ -307,6 +307,7 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 						mode="edit"
 						rondinData={rondinSeleccionado}
 						rondinId={rondinSeleccionado._id}
+						folio={rondinSeleccionado?.folio}
 						>
 						<div />
 						</AddRondinModal>
@@ -595,7 +596,7 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 						<TabsContent value="rondiness">
 							<div className="p-2">
 							</div>
-							<RondinesBitacoraTable showTabs={false}/>
+							<RondinesBitacoraTable showTabs={false} ubicacion={"Planta Monterrey"}/>
 						</TabsContent>
 
 						<TabsContent value="incidentes">

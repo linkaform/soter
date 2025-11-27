@@ -30,9 +30,10 @@ export default function Home() {
 		if ( shift?.guard?.status_turn !== "Turno Cerrado") {
 			setCheckin_id(shift?.booth_status?.checkin_id);
       setEvidencia(shift?.booth_status?.fotografia_cierre_turno || [])
+      setNombreSuplente(shift?.booth_status?.nombre_suplente ||"" )
 		}else if (shift?.guard?.status_turn !== "Turno Abierto") {
       setEvidencia(shift?.booth_status?.fotografia_inicio_turno || [])
-
+      setNombreSuplente(shift?.booth_status?.nombre_suplente ||"" )
 		}
   }, [shift, setCheckin_id]);
 

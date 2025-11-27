@@ -19,7 +19,6 @@ import {
 import { ViewRondinesDetallePerimetroExt } from "@/components/modals/rondines-inspeccion-perimetro-exterior";
 import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useGetListBitacoraRondines } from "@/hooks/Rondines/useGetListBitacora";
-import { useShiftStore } from "@/store/useShiftStore";
 import { CarruselDetalleArea } from "@/components/carrousel-detalle-area";
 
 const EstadoIcono = ({ estado }: { estado: string }) => {
@@ -72,10 +71,9 @@ type Rondin = {
   categorias: Categoria[];
 };
 
-export const RondinesBitacoraTable = ({ showTabs }: { showTabs: boolean }) => {
-	const { location } = useShiftStore()
+export const RondinesBitacoraTable = ({ showTabs , ubicacion}: { showTabs: boolean, ubicacion:any }) => {
 	const { listBitacoraRondines:data, isLoadingListBitacoraRondines: isLoading } =
-	useGetListBitacoraRondines(location) as {
+	useGetListBitacoraRondines(ubicacion) as {
 		listBitacoraRondines?: Rondin[];
 		isLoadingListBitacoraRondines: boolean;
 	};
@@ -389,7 +387,6 @@ export const RondinesBitacoraTable = ({ showTabs }: { showTabs: boolean }) => {
 										{[...Array(dias)].map((_, i) => {
 											const isSunday = sundaysIndexes.includes(i);
 											const estadoDia = categoria.resumen?.[i];
-											console.log("ESTADODIA", estadoDia)
 											const area = categoria.areas.find((a) =>
 											a.estados.some((e) => e.dia === i + 1)
 											);

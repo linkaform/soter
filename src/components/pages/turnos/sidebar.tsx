@@ -128,7 +128,8 @@ const Sidebar = ({shift, nombreSuplente, setNombreSuplente, onSuplenteConfirmado
             Ingresar como suplente
           </Button>
 
-          <NombreSuplenteModal title={"Suplente"} nombreSuplente={nombreSuplente} setNombreSuplente={setNombreSuplente} onSuplenteConfirmado={onSuplenteConfirmado} open={openNombreSuplenteModal} setOpen={setOpenNombreSuplenteModal}/>
+          <NombreSuplenteModal title={"Suplente"} nombreSuplente={nombreSuplente} setNombreSuplente={setNombreSuplente} onSuplenteConfirmado={onSuplenteConfirmado} open={openNombreSuplenteModal} setOpen={setOpenNombreSuplenteModal}
+          mode={"create"}/>
 
           {nombreSuplente && shift?.guard?.status_turn !== "Turno Abierto" && (
             <SuplenteItem

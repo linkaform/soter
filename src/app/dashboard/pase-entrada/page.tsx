@@ -184,30 +184,6 @@ import { Switch } from "@/components/ui/switch";
 		}
 	}, []); 
 
-
-	// const [userIdSoter, setUserIdSoter] = useState<number | null>(null);
-	// const [userNameSoter, setUserNameSoter] = useState<string | null>(null);
-	// const [userEmailSoter, setUserEmailSoter] = useState<string | null>(null);
-
-	// useEffect(() => {
-	// if (typeof window !== "undefined") {
-	// 	const id = window.localStorage.getItem("userId_soter");
-	// 	const name = window.localStorage.getItem("userName_soter");
-	// 	const email = window.localStorage.getItem("userEmail_soter");
-
-	// 	setUserIdSoter(id ? Number(id) : null);
-	// 	setUserNameSoter(name ?? null);
-	// 	setUserEmailSoter(email ?? null);
-	// }
-	// if (typeof window !== "undefined" && typeof window?.location !== "undefined") {
-	// 	setHost(window?.location.host);
-	// 	setProtocol(window?.location.protocol);
-	// }
-	// }, []);
-
-
-
-
 	useEffect(() => {
 		if (ubicacionesDefaultFormatted) {
 			setUbicacionesSeleccionadas(ubicacionesDefaultFormatted)
@@ -290,9 +266,9 @@ import { Switch } from "@/components/ui/switch";
 
 	useEffect(()=>{
 		if ( selected ) {
-			form.setValue("nombre", selected.nombre || "");
-			form.setValue("email", selected.email || "");
-			form.setValue("telefono", selected.telefono || "");
+			form.setValue("nombre", selected?.nombre || "");
+			form.setValue("email", selected?.email || "");
+			form.setValue("telefono", selected?.telefono || "");
 			closeModalContactos()
 		}
 	}, [selected, form])
@@ -328,7 +304,7 @@ import { Switch } from "@/components/ui/switch";
 			email: data.email,
 			telefono: data.telefono,
 			ubicacion: ubicacionesSeleccionadas[0]?.id || "",
-			ubicaciones:ubicacionesSeleccionadas.map(u => u.id),
+			ubicaciones:ubicacionesSeleccionadas?.map(u => u.id) ?? [],
 			tema_cita: data.tema_cita,
 			descripcion: data.descripcion,
 			perfil_pase: data.perfil_pase,
@@ -491,14 +467,19 @@ return (
 						/>	
 
 						{selected && (
-							<><Image
+							<Image
 								className="dark:invert h-32 w-32 object-cover rounded-full bg-gray-300"
-								src={ selected.fotografia && selected.fotografia[0]?.file_url !== "" ? selected.fotografia[0]?.file_url 
-								: '/nouser.svg'}
-								alt="Next.js logo"
+								src={
+								selected?.fotografia &&
+								Array.isArray(selected.fotografia) &&
+								selected.fotografia[0]?.file_url?.trim()
+									? selected.fotografia[0].file_url
+									: "/nouser.svg"
+								}
+								alt="foto"
 								width={150}
 								height={50}
-							/></>
+							/>
 						)}
 
 						<FormField
@@ -592,8 +573,8 @@ return (
 						<div className="mt-0">
 							<div className="text-sm mb-2">Ubicaciones del pase: </div>
 							<Multiselect
-							options={ubicacionesFormatted} 
-							selectedValues={ubicacionesDefaultFormatted}
+							options={ubicacionesFormatted??[]} 
+							selectedValues={ubicacionesDefaultFormatted??[]}
 							onSelect={(selectedList) => {
 								setUbicacionesSeleccionadas(selectedList);
 							}}

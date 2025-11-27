@@ -37,7 +37,6 @@ export const StartShiftModal: React.FC<StartShiftModalProps> = ({
 
   const { startShiftMutation } = useGetShift(false);
 
-  console.log("nombreSuplente",nombreSuplente)
 
   const guardNames = selectedGuards
     ?.map((guardia: { name: string }) => guardia.name)
@@ -88,7 +87,7 @@ export const StartShiftModal: React.FC<StartShiftModalProps> = ({
                   })
                 );
 
-                startShiftMutation.mutate({ employee_list: formattedGuards ,fotografia:evidencia})
+                startShiftMutation.mutate({ employee_list: formattedGuards ,fotografia:evidencia, nombre_suplente:nombreSuplente })
               }}
             >
               Confirmar

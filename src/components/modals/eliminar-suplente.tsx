@@ -15,26 +15,28 @@ interface EliminarSuplenteModalProps {
   open:boolean
   setOpen: Dispatch<SetStateAction<boolean>>
   onDelete:()=>void;
+  isLoading:boolean;
 }
 
 export const EliminarSuplenteModal: React.FC<EliminarSuplenteModalProps> = ({
   title,
   open,
   setOpen,
-  onDelete
+  onDelete,
+  isLoading
 }) => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen} modal>
       <DialogContent className="max-w-xl">
         <DialogHeader>
-          <DialogTitle className="text-2xl text-center  font-bold my-5">
+          <DialogTitle className="text-2xl text-center  font-bold">
             {title}
           </DialogTitle>
         </DialogHeader>
 
-        <div className="px-16 mb-5">
-          <p className="text-center mb-5">
+        <div className="px-16 mb-5 flex flex-col items-center">
+          <p className="text-center">
             ¿Esta seguro que desea eliminar el guardia suplente?
           </p>
           <small>Una vez confirmada la accion no se podra deshacer.</small>
@@ -51,7 +53,7 @@ export const EliminarSuplenteModal: React.FC<EliminarSuplenteModalProps> = ({
             className="w-full  bg-blue-500 hover:bg-blue-600 text-white"
             onClick={()=>onDelete()}
           >
-            Confirmar
+           {isLoading? "Cargando...": "Confirmar"} 
           </Button>
         </div>
       </DialogContent>

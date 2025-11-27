@@ -32,6 +32,7 @@ import { useShiftStore } from "@/store/useShiftStore";
 import { useCatalogAreasRondin } from "@/hooks/Rondines/useCatalogAreasRondin";
 import { capitalizeFirstLetter } from "@/lib/utils";
 import { Switch } from "../ui/switch";
+import { useEditarRondin } from "@/hooks/Rondines/useEditarRondin";
 
 interface AddRondinModalProps {
   	title: string;
@@ -39,6 +40,7 @@ interface AddRondinModalProps {
 	mode:string;
 	rondinData?: any;
   	rondinId?: string;
+	folio?:string;
 }
   
   export type RondinPayload = {
@@ -113,7 +115,8 @@ const formSchema = z.object({
 	cron_config: z.string().regex(
 		cronRegex,
 		"Cron inválido. Ejemplo: */5 * * * *"
-	  )
+	  ).optional()
+	  .or(z.literal(""))
 });
 
 export const AddRondinModal: React.FC<AddRondinModalProps> = ({
@@ -121,12 +124,14 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
     children,
 	mode="create",
 	rondinData,
-	rondinId
+	rondinId,
+	folio=""
 }) => {
     const [isSuccess, setIsSuccess] = useState(false);
 	const { location } = useShiftStore()
 	const [areasSeleccionadas, setAreasSeleccionadas] = useState<any[]>([]);
-	const { createRondinMutation,updateRondinMutation, isLoading} = useRondines()
+	const { createRondinMutation, isLoading} = useRondines()
+	const { editarRondinMutation, isLoading:isLoadingEdit} = useEditarRondin()
 	const { data:catalogAreasRondin, isLoading:isLoadingAreas} = useCatalogAreasRondin("Planta Monterrey", isSuccess)
 	const [date, setDate] = useState<Date|"">("");
 	const [que_dias_de_la_semana , set_que_dias_de_la_semana] =useState<string[]>([])
@@ -136,7 +141,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 	const [todas_las_meses, set_todas_las_meses] =useState(false)
 	const [esRepetirCada, setEsRepetirCada] = useState<boolean | null>(null);
 	const [mostrarFrecuencia, setMostrarFrecuencia] = useState(false);
-
+	const [noRecurrente, setNoRecurrente] = useState(false)
 	const [dropdownOffset, setDropdownOffset] = useState({
 		distance: 40,
 		width: "100%",
@@ -184,7 +189,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 	// console.log(form.formState.errors);
 
 	useEffect(()=>{
-		if(isSuccess){
+		if(isSuccess && mode=="create"){
 			set_que_dias_de_la_semana([])
 			set_en_que_semana_sucede("")
 			set_todas_las_semanas(false)
@@ -253,8 +258,8 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 		  ...recurrenciaFiltrada
 		};
 		if (mode === "edit" && rondinId) {
-			updateRondinMutation.mutate(
-			  { rondin_id: rondinId, rondin_data: payload },
+			editarRondinMutation.mutate(
+			  { folio: folio, rondin_data: payload },
 			  {
 				onSuccess: () => {
 				  setIsSuccess(false);
@@ -281,7 +286,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 	})
 
 	useEffect(()=>{
-		set_que_dias_de_la_semana([])
+
 		set_en_que_semana_sucede("")
 		set_todas_las_semanas(false)
 		set_en_que_mes([])
@@ -416,7 +421,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 
 	useEffect(() => {
 		if (mode === "edit" && rondinData && isSuccess) {
-			
+			console.log("CONFIGURACION RONDIN", rondinData)
 			if (rondinData.fecha_hora_programada) {
 				setDate(new Date(rondinData.fecha_hora_programada));
 			}
@@ -428,20 +433,25 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 				console.log("areas", cat, catalogAreasRondin)
 				setAreasSeleccionadas(cat);
 			}
-			if (rondinData.que_dias_de_la_semana) {
+			if (rondinData?.que_dias_de_la_semana && rondinData?.que_dias_de_la_semana.length>0) {
+				console.log("que_dias_de_la_semana",rondinData.que_dias_de_la_semana)
 				set_que_dias_de_la_semana(
 				Array.isArray(rondinData.que_dias_de_la_semana) 
 					? rondinData.que_dias_de_la_semana 
 					: []
 				);
 			}
-			if (rondinData.en_que_semana_sucede) {
+			if (!("se_repite_cada" in rondinData)) {
+				setNoRecurrente(true);
+			}
+			
+			if (rondinData?.en_que_semana_sucede && rondinData?.en_que_semana_sucede.length>0) {
 				set_en_que_semana_sucede(rondinData.en_que_semana_sucede);
 				if (rondinData.en_que_semana_sucede !== "todas_las_semanas") {
-				set_todas_las_semanas(false);
+					set_todas_las_semanas(false);
 				}
 			}
-			if (rondinData.en_que_mes) {
+			if (rondinData?.en_que_mes && rondinData?.en_que_mes.length>0) {
 				const meses = Array.isArray(rondinData.en_que_mes) 
 				? rondinData.en_que_mes 
 				: [rondinData.en_que_mes];
@@ -452,6 +462,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 			}
 			if (rondinData.cada_cuantas_horas_se_repite) {
 				setMostrarFrecuencia(true);
+				form.setValue("cada_cuantas_horas_se_repite", rondinData.cada_cuantas_horas_se_repite);
 			}
 			if (rondinData.cada_cuantos_meses_se_repite) {
 				setEsRepetirCada(true);
@@ -550,7 +561,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 		<Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
 		<DialogTrigger asChild>{children}</DialogTrigger>
 
-		<DialogContent className="max-w-2xl max-h-[80vh] flex flex-col m-3 overflow-auto"   aria-describedby="" onInteractOutside={(e) => e.preventDefault()} >
+		<DialogContent className="max-w-2xl max-h-[80vh] flex flex-col m-3 "   aria-describedby="" onInteractOutside={(e) => e.preventDefault()} >
 			<DialogHeader className="flex-shrink-0">
 			<DialogTitle className="text-2xl text-center font-bold">
 				{title}
@@ -626,7 +637,11 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 							
 						</div>
 					</div>
-
+				{noRecurrente && 
+					<>
+					<div className=" font-bold">Rondin no recurrente</div>
+					</>
+				}
 					<FormField
 						control={form.control}
 						name="se_repite_cada"
@@ -1000,7 +1015,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 						onRemove={setAreasSeleccionadas}
 						displayValue="name"
 						selectedValues={areasSeleccionadas}
-						disable={isLoading}
+						disable={isLoadingAreas}
 						style={{
 							optionContainer: {
 							position: "absolute",
@@ -1017,7 +1032,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 							},
 							searchBox: {
 							position: "relative",
-							opacity: isLoading ? 0.5 : 1,
+							opacity: isLoadingAreas ? 0.5 : 1,
 							}
 						}}
 						/>
@@ -1038,13 +1053,15 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 				<Button
 					type="submit"
 					onClick={form.handleSubmit(onSubmit)}
-					className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={isLoading}
+					className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={isLoading || isLoadingEdit}
 				>
-					{isLoading? (
+					{isLoading || isLoadingEdit? (
 					<>
 						<Loader2 className="animate-spin"/> {"Creando rondin..."}
 					</>
-				):("Crear rondin")}
+				): <>
+				{ mode=="edit" ? "Guardar rondin": "Crear rondin" }
+				</>}
 				</Button>
 			</div>
 		</DialogContent>

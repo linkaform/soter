@@ -9,6 +9,7 @@ import {
 } from "../ui/dialog";
 import { Dispatch, SetStateAction } from "react";
 import { Input } from "../ui/input";
+import { useUpdateSuplenteTurnos } from "@/hooks/Rondines/useUpdateSuplente";
 
 interface NombreSuplenteModalProps {
     title: string;
@@ -17,6 +18,7 @@ interface NombreSuplenteModalProps {
     onSuplenteConfirmado: () => void;
     open: boolean;
     setOpen: Dispatch<SetStateAction<boolean>>;
+    mode:string;
 }
 
 export const NombreSuplenteModal: React.FC<NombreSuplenteModalProps> = ({
@@ -25,9 +27,10 @@ export const NombreSuplenteModal: React.FC<NombreSuplenteModalProps> = ({
   setNombreSuplente,
   onSuplenteConfirmado,
   open,
-  setOpen
+  setOpen,
+  mode
 }) => {
-    
+    const {updateSuplenteMutation, isLoading} = useUpdateSuplenteTurnos();
     return (
     <Dialog open={open} onOpenChange={setOpen} modal>
         <DialogContent className="max-w-xl">
@@ -55,11 +58,20 @@ export const NombreSuplenteModal: React.FC<NombreSuplenteModalProps> = ({
                 <Button
                     className="w-full  bg-blue-500 hover:bg-blue-600 text-white"
                     onClick={() => {
-                        setOpen(false); onSuplenteConfirmado();}}
-                    disabled={nombreSuplente.trim() === ""}
-
+                        if (mode == "Edit"){
+                            updateSuplenteMutation.mutate({ nombre_suplente:nombreSuplente },{
+                                onSuccess: () => {
+                                    setOpen(false); 
+                                }
+                            })
+                        }else{
+                            setOpen(false); 
+                            onSuplenteConfirmado();
+                        }
+                    }}
+                    disabled={nombreSuplente.trim() === "" || isLoading}
                 >
-                    Confirmar
+                   {isLoading? "Cargando...": "Confirmar"} 
                 </Button>
             </div>
         </div>
