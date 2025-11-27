@@ -35,11 +35,11 @@ import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from ".
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "../ui/form";
 import { Select } from "@radix-ui/react-select";
 import { SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { useIncidenciaRondin } from "@/hooks/Rondines/useRondinIncidencia";
 import { Textarea } from "../ui/textarea";
 import LoadImage from "../upload-Image";
 import LoadFile from "../upload-file";
 import { Button } from "../ui/button";
+import { useCreateIncidenciaRondin } from "@/hooks/Rondines/useCeateIncidenciaRondin";
 
 interface AddIncidenciaModalProps {
   	title: string;
@@ -204,7 +204,7 @@ export const AddIncidenciaRondinesModal: React.FC<AddIncidenciaModalProps> = ({
 
 	const[ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location)
 	const { dataAreas:areas, dataLocations:ubicaciones} = useCatalogoPaseAreaLocation(ubicacionSeleccionada, isSuccess,  location?true:false);
-	const { createIncidenciaMutation } = useIncidenciaRondin("", "");
+	const { createIncidenciaMutation } = useCreateIncidenciaRondin();
 
 	console.log(areas, ubicaciones)
 

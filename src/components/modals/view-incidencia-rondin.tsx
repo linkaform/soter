@@ -14,7 +14,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "..
 
 import { Loader2 } from "lucide-react";
 import { Dispatch, SetStateAction } from "react";
-import { useIncidenciaRondin } from "@/hooks/Rondines/useRondinIncidencia";
+import { useCreateIncidenciaRondin } from "@/hooks/Rondines/useCeateIncidenciaRondin";
 
 interface ViewFallaModalProps {
   title: string;
@@ -33,7 +33,7 @@ export const ViewIncidenciaRondin: React.FC<ViewFallaModalProps> = ({
   setIsSuccess,
   isSuccess,
 }) => {
-    const { createIncidenciaMutation , isLoading} = useIncidenciaRondin("", "");
+    const { createIncidenciaMutation , isLoading} = useCreateIncidenciaRondin();
 
 
 	function crearNuevaIncidencia(){

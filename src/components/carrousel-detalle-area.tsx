@@ -34,8 +34,8 @@ export const CarruselDetalleArea: React.FC<CarruselDetalleAreaProps> = ({
     );
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-[9999] bg-black/70">
-      <div className="relative w-full max-w-4xl mx-auto flex items-center justify-center">
+    <div className="fixed inset-0 flex items-center justify-center z-[9999] bg-black/70" onClick={onClose} >
+      <div className="relative w-full max-w-4xl mx-auto flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
 
         {areas &&  areas.length>1 &&
           <button
