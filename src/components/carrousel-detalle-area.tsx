@@ -37,7 +37,7 @@ export const CarruselDetalleArea: React.FC<CarruselDetalleAreaProps> = ({
     <div className="fixed inset-0 flex items-center justify-center z-[9999] bg-black/70" onClick={onClose} >
       <div className="relative w-full max-w-4xl mx-auto flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
 
-        {areas &&  areas.length>1 &&
+        {areas && areas.length > 1 &&
           <button
             onClick={prev}
             className="absolute left-[-50px] bg-white p-2 rounded-full shadow-lg"
@@ -71,12 +71,14 @@ export const CarruselDetalleArea: React.FC<CarruselDetalleAreaProps> = ({
                 key={index}
                 className={`
                   absolute transition-all 
-                  duration-[900ms]
-                  ease-[cubic-bezier(.25,.8,.25,1)]
                   ${position} ${zIndex}
                   w-[55%]
                   h-[600px]
                 `}
+                style={{
+                  transitionDuration: "900ms",
+                  transitionTimingFunction: "cubic-bezier(.25,.8,.25,1)",
+                }}
               >
                 <div className="relative bg-white rounded-xl shadow-xl p-4 border">
 
@@ -106,13 +108,13 @@ export const CarruselDetalleArea: React.FC<CarruselDetalleAreaProps> = ({
           })}
         </div>
 
-        {areas &&  areas.length>1 &&
-        <button
-          onClick={next}
-          className="absolute right-[-50px] bg-white p-2 rounded-full shadow-lg"
-        >
-          <ChevronRight size={28} />
-        </button>
+        {areas && areas.length > 1 &&
+          <button
+            onClick={next}
+            className="absolute right-[-50px] bg-white p-2 rounded-full shadow-lg"
+          >
+            <ChevronRight size={28} />
+          </button>
         }
       </div>
     </div>

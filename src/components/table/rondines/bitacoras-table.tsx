@@ -1,19 +1,17 @@
 import React, { useEffect, useState } from "react";
 import {
-  Circle,
-  CircleCheck,
-  Ban,
-  CircleChevronDown,
-  CircleChevronUp,
-  CircleSlash,
-  CircleAlert,
-  Calendar,
-  CircleDashed,
-  CircleX,
-  CalendarOff,
-  Search,
-  ChevronRight,
-  ChevronLeft,
+	Circle,
+	CircleCheck,
+	Ban,
+	CircleChevronDown,
+	CircleChevronUp,
+	CircleSlash,
+	CircleAlert,
+	Calendar,
+	CalendarOff,
+	Search,
+	ChevronRight,
+	ChevronLeft,
 } from "lucide-react";
 
 import { ViewRondinesDetallePerimetroExt } from "@/components/modals/rondines-inspeccion-perimetro-exterior";
@@ -21,37 +19,44 @@ import { TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useGetListBitacoraRondines } from "@/hooks/Rondines/useGetListBitacora";
 import { CarruselDetalleArea } from "@/components/carrousel-detalle-area";
 
+const ESTADOS_CONFIG: Record<string, { icon: React.ElementType; className: string }> = {
+	finalizado: { icon: CircleCheck, className: "text-white bg-green-600 rounded-xl" },
+	no_inspeccionada: { icon: CircleSlash, className: "text-white bg-amber-500 rounded-xl" },
+	cancelado: { icon: Ban, className: "text-slate-400" },
+	// en_progreso: { icon: CircleDashed, className: "text-blue-500 font-bold rounded-xl" },
+	// cerrado: { icon: CircleCheck, className: "text-white bg-gray-500 rounded-xl" },
+	incidencias: { icon: CircleAlert, className: "text-white bg-red-500 rounded-xl" },
+	programado: { icon: Calendar, className: "text-white bg-purple-500 rounded-xl p-0.5" },
+	no_aplica: { icon: CalendarOff, className: "text-white bg-gray-300 rounded-xl p-0.5" },
+	// Duplicate key 'cancelado' removed, assuming the first one or a specific one is desired. 
+	// The original code had two 'cancelado' cases. I'll keep the first one (Ban) as it seems more standard, 
+	// but I'll add a 'cancelado_x' for the second one if needed or just merge.
+	// Looking at the original code: 
+	// case "cancelado": return <Ban ... />
+	// case "cancelado": return <CircleX ... /> (lines 43-44)
+	// The second one was unreachable. I will use the first one.
+};
+
 const EstadoIcono = ({ estado }: { estado: string }) => {
-  const baseClass = "w-5 h-5";
-  switch (estado) {
-    case "finalizado":
-      return <CircleCheck className={`${baseClass} text-white bg-green-600 rounded-xl`} />;
-    case "no_inspeccionada":
-      return <CircleSlash className={`${baseClass} text-white bg-amber-500 rounded-xl`} />;
-    case "cancelado":
-      return <Ban className={`${baseClass} text-slate-400`} />;
-    case "en_progreso":
-      return <CircleDashed strokeWidth={2.75} className={`${baseClass} text-blue-500 font-bold rounded-xl`} />;
-    case "cerrado":
-      return <CircleCheck className={`${baseClass} text-white bg-gray-500 rounded-xl`} />;
-    case "incidencias":
-      return <CircleAlert className={`${baseClass} text-white bg-red-500 rounded-xl`} />;
-    case "programado":
-      return <Calendar className={`${baseClass} text-white bg-purple-500 rounded-xl p-0.5`} />;
-	case "no_aplica":
-      return <CalendarOff className={`${baseClass} text-white bg-gray-300 rounded-xl p-0.5`} />;
-	case "cancelado":
-      return <CircleX className={`${baseClass} text-white bg-gray-300 rounded-xl p-0.5`} />;
-    default:
-      return <Circle className={`${baseClass} text-slate-300`} />;
-  }
+	const baseClass = "w-5 h-5";
+	const config = ESTADOS_CONFIG[estado];
+
+	if (config) {
+		const Icon = config.icon;
+		// Special case for strokeWidth if needed, or just pass it.
+		// The original 'en_progreso' had strokeWidth={2.75}.
+		const extraProps = estado === "en_progreso" ? { strokeWidth: 2.75 } : {};
+		return <Icon {...extraProps} className={`${baseClass} ${config.className}`} />;
+	}
+
+	return <Circle className={`${baseClass} text-slate-300`} />;
 };
 
 type Estado = { dia: number; estado: string };
 
 type Area = {
-  nombre: string;
-  estados: Estado[];
+	nombre: string;
+	estados: Estado[];
 };
 
 type Bitacora = {
@@ -61,33 +66,42 @@ type Bitacora = {
 }
 
 type Categoria = {
-  titulo: string;
-  resumen?: Bitacora[];
-  areas: Area[];
+	titulo: string;
+	resumen?: Bitacora[];
+	areas: Area[];
 };
 
 type Rondin = {
-  hora: string;
-  categorias: Categoria[];
+	hora: string;
+	categorias: Categoria[];
 };
 
-export const RondinesBitacoraTable = ({ showTabs , ubicacion}: { showTabs: boolean, ubicacion:any }) => {
-	const { listBitacoraRondines:data, isLoadingListBitacoraRondines: isLoading } =
-	useGetListBitacoraRondines(ubicacion) as {
-		listBitacoraRondines?: Rondin[];
-		isLoadingListBitacoraRondines: boolean;
-	};
+export const RondinesBitacoraTable = ({ showTabs, ubicacion }: { showTabs: boolean, ubicacion: any }) => {
+	const { listBitacoraRondines: data, isLoadingListBitacoraRondines: isLoading } =
+		useGetListBitacoraRondines(ubicacion) as {
+			listBitacoraRondines?: Rondin[];
+			isLoadingListBitacoraRondines: boolean;
+		};
 	const [diaSelected, setDiaSelected] = useState(0);
 	const [estatus, setEstatus] = useState("");
 	const [modalOpenPerimetroExt, setModalOpenPerimetroExt] = useState(false);
 	const [selectedAreaIndex, setSelectedAreaIndex] = useState<number>(0);
 	const [selectedAreaData, setSelectedAreaData] = useState<any>(null);
-	const [selectedRondin,setSelectedRondin] = useState<any>(null)
+	const [selectedRondin, setSelectedRondin] = useState<any>(null)
 	const [expandedCategorias, setExpandedCategorias] = useState<string[]>([]);
 	const [globalFilter, setGlobalFilter] = React.useState("");
 	const [dias, setDias] = useState<number>(0);
 	const [carruselOpen, setCarruselOpen] = useState(false);
 	const abrirCarrusel = () => setCarruselOpen(true);
+	const [selectedEstados, setSelectedEstados] = useState<string[]>([]);
+
+	const toggleEstadoFilter = (estado: string) => {
+		setSelectedEstados((prev) =>
+			prev.includes(estado)
+				? prev.filter((e) => e !== estado)
+				: [...prev, estado]
+		);
+	};
 
 	useEffect(() => {
 		const now = new Date();
@@ -97,152 +111,168 @@ export const RondinesBitacoraTable = ({ showTabs , ubicacion}: { showTabs: boole
 
 	const [currentDate, setCurrentDate] = useState(new Date());
 	const [nombreMes, setNombreMes] = useState(
-	currentDate.toLocaleString("es-ES", { month: "long" })
+		currentDate.toLocaleString("es-ES", { month: "long" })
 	);
 
 	useEffect(() => {
-	const totalDias = new Date(
-		currentDate.getFullYear(),
-		currentDate.getMonth() + 1,
-		0
-	).getDate();
-	setDias(totalDias);
-	setNombreMes(
-		currentDate.toLocaleString("es-ES", { month: "long" })
-	);
+		const totalDias = new Date(
+			currentDate.getFullYear(),
+			currentDate.getMonth() + 1,
+			0
+		).getDate();
+		setDias(totalDias);
+		setNombreMes(
+			currentDate.toLocaleString("es-ES", { month: "long" })
+		);
 	}, [currentDate]);
 
 	const handlePrevMonth = () => {
-	setCurrentDate(
-		new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1)
-	);
+		setCurrentDate(
+			new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1)
+		);
 	};
 
 	const handleNextMonth = () => {
-	setCurrentDate(
-		new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1)
-	);
+		setCurrentDate(
+			new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1)
+		);
 	};
 
 	useEffect(() => {
-		if(data){
+		if (data) {
 			setExpandedCategorias([]);
 		}
 	}, [data]);
 
 	const toggleExpand = (key: string) => {
 		setExpandedCategorias((prev) =>
-		prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
+			prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
 		);
 	};
 
-  const sundaysIndexes = [...Array(dias)].reduce((acc, _, i) => {
-	const date = new Date();
-	date.setDate(i + 1);
-	if (date.getDay() === 0) acc.push(i);
-	return acc;
-  }, [] as number[]);
+	const sundaysIndexes = [...Array(dias)].reduce((acc, _, i) => {
+		const date = new Date();
+		date.setDate(i + 1);
+		if (date.getDay() === 0) acc.push(i);
+		return acc;
+	}, [] as number[]);
 
 	const renderArea = (area: Area, key: string, rondin: any, areaIndex: number) => (
 		<tr key={key} className="bg-transparent">
-		<td className="border p-2 pl-8">{area.nombre}</td>
-		{[...Array(dias)].map((_, i) => {
-			const estadoDia = area.estados.find((e) => e.dia === i + 1);
-			const isSunday = sundaysIndexes.includes(i);
-	
-			return (
-			<td
-				key={i}
-				className={`border pl-3 text-center cursor-pointer ${
-				isSunday ? "bg-blue-100" : ""
-				}`}
-			>
-				{estadoDia && (
-				<div
-					onClick={() => {
-					setSelectedAreaData({ area, estadoDia });
-					abrirCarrusel();
-					setDiaSelected(estadoDia.dia);
-					setEstatus(estadoDia.estado);
-					setSelectedRondin(rondin);
-					setSelectedAreaIndex(areaIndex); 
-					}}
-				>
-					<EstadoIcono estado={estadoDia.estado} />
-				</div>
-				)}
-			</td>
-			);
-		})}
+			<td className="border p-2 pl-8">{area.nombre}</td>
+			{[...Array(dias)].map((_, i) => {
+				const estadoDia = area.estados.find((e) => e.dia === i + 1);
+				const isSunday = sundaysIndexes.includes(i);
+
+				return (
+					<td
+						key={i}
+						className={`border pl-3 text-center cursor-pointer ${isSunday ? "bg-blue-100" : ""
+							}`}
+					>
+						{estadoDia && (
+							<div
+								onClick={() => {
+									setSelectedAreaData({ area, estadoDia });
+									abrirCarrusel();
+									setDiaSelected(estadoDia.dia);
+									setEstatus(estadoDia.estado);
+									setSelectedRondin(rondin);
+									setSelectedAreaIndex(areaIndex);
+								}}
+							>
+								<EstadoIcono estado={estadoDia.estado} />
+							</div>
+						)}
+					</td>
+				);
+			})}
 		</tr>
 	);
-  
+
 
 	const toggleExpandAllForHora = (hora: string, categorias: Categoria[]) => {
 		const allKeys = categorias.map(c => `${hora}-${c.titulo}`);
 		const areAllExpanded = allKeys.every(key => expandedCategorias.includes(key));
-	  
+
 		setExpandedCategorias(prev =>
-		  areAllExpanded
-			? prev.filter(k => !allKeys.includes(k)) 
-			: [...prev, ...allKeys.filter(k => !prev.includes(k))] 
+			areAllExpanded
+				? prev.filter(k => !allKeys.includes(k))
+				: [...prev, ...allKeys.filter(k => !prev.includes(k))]
 		);
-	  };
-	  
+	};
 
-	  useEffect(()=>{
-		if(selectedRondin) console.log("selectedRondin",selectedRondin.areas)
-	  },[selectedRondin])
 
-  return (
-    <div >
+	useEffect(() => {
+		if (selectedRondin) console.log("selectedRondin", selectedRondin.areas)
+	}, [selectedRondin])
+
+	return (
+		<div >
 			<div className="flex justify-between items-center my-2 ">
 				<div className="flex w-full justify-start gap-4 ">
 					{showTabs &&
 						<div className="flex justify-center items-center">
 							<TabsList className="bg-blue-500 text-white p-1 rounded-md ">
-							<TabsTrigger value="Rondines">Rondines</TabsTrigger>
-							<TabsTrigger value="Bitacora">Bitácora</TabsTrigger>
-							<TabsTrigger value="Incidencias">Incidencias</TabsTrigger>
-							<TabsTrigger value="Fotos">Fotos</TabsTrigger>
-							<TabsTrigger value="Calendario">Calendario</TabsTrigger>
+								<TabsTrigger value="Rondines">Rondines</TabsTrigger>
+								<TabsTrigger value="Bitacora">Bitácora</TabsTrigger>
+								<TabsTrigger value="Incidencias">Incidencias</TabsTrigger>
+								<TabsTrigger value="Fotos">Fotos</TabsTrigger>
+								<TabsTrigger value="Calendario">Calendario</TabsTrigger>
 							</TabsList>
-						</div> 
+						</div>
 					}
 					<div>
-					<div className="flex w-full max-w-sm items-center space-x-2">
-					<input
-						type="text"
-						placeholder="Buscar"
-						value={globalFilter || ''}
-						onChange={(e) => setGlobalFilter(e.target.value)}
-						className="border border-gray-300 rounded-md p-2 placeholder-gray-600 w-full" 
-					/>
-						<Search />
-					</div>
+						<div className="flex w-full max-w-sm items-center space-x-2">
+							<input
+								type="text"
+								placeholder="Buscar"
+								value={globalFilter || ''}
+								onChange={(e) => setGlobalFilter(e.target.value)}
+								className="border border-gray-300 rounded-md p-2 placeholder-gray-600 w-full"
+							/>
+							<Search />
+						</div>
 					</div>
 				</div>
 				<div className="flex items-center gap-3 text-2xl font-bold capitalize select-none">
-				<button
-					onClick={handlePrevMonth}
-					className="p-1 rounded-full hover:bg-gray-200 transition"
-				>
-					<ChevronLeft size={28} />
-				</button>
+					<button
+						onClick={handlePrevMonth}
+						className="p-1 rounded-full hover:bg-gray-200 transition"
+					>
+						<ChevronLeft size={28} />
+					</button>
 
-				<span className="w-40 text-center">{nombreMes}</span>
+					<span className="w-40 text-center">{nombreMes}</span>
 
-				<button
-					onClick={handleNextMonth}
-					className="p-1 rounded-full hover:bg-gray-200 transition"
-				>
-					<ChevronRight size={28} />
-				</button>
+					<button
+						onClick={handleNextMonth}
+						className="p-1 rounded-full hover:bg-gray-200 transition"
+					>
+						<ChevronRight size={28} />
+					</button>
 				</div>
 
 				<div className="flex w-full justify-end gap-3">
-					<div className="flex items-center w-48 gap-2"> 
-						
+					<div className="flex items-center gap-2 flex-wrap justify-end">
+						{Object.entries(ESTADOS_CONFIG).map(([estado, config]) => {
+							const Icon = config.icon;
+							const isSelected = selectedEstados.includes(estado);
+							return (
+								<button
+									key={estado}
+									onClick={() => toggleEstadoFilter(estado)}
+									className={`flex items-center gap-1 px-2 py-1 rounded-md border transition-all ${isSelected
+										? "bg-blue-100 border-blue-500 ring-1 ring-blue-500"
+										: "bg-white border-gray-200 hover:bg-gray-50"
+										}`}
+									title={estado.replace("_", " ")}
+								>
+									<Icon className={`w-4 h-4 ${config.className}`} />
+									<span className="text-xs capitalize">{estado.replace("_", " ")}</span>
+								</button>
+							);
+						})}
 					</div>
 				</div>
 			</div>
@@ -259,106 +289,140 @@ export const RondinesBitacoraTable = ({ showTabs , ubicacion}: { showTabs: boole
 					</div>
 				) : (
 					<table className="min-w-full border-collapse border">
-					<thead className="sticky top-0 z-10 bg-white">
-					<tr>
-						<th className="border p-2 bg-white">Rondines</th>
-						{[...Array(dias)].map((_, i) => {
-							const date = new Date();
-							date.setDate(i + 1);
-							const diaSemana = date
-							.toLocaleDateString("es-MX", { weekday: "short" })
-							.slice(0, 2);
-							const isSunday = date.getDay() === 0;
-
-							return (
-							<th
-							key={`label-${i}`}
-							className={`border p-1 text-center ${
-								isSunday ? "bg-blue-100" : "bg-white"
-							}`}
-							>
-							<div className="text-sm">{String(i + 1).padStart(2, "0")}</div>
-							<div className="text-xs font-medium capitalize text-gray-600">
-								{diaSemana}
-							</div>
-							</th>
-							);
-						})}
-					</tr>
-					</thead>
-
-					<tbody>
-						{data &&
-							data
-							.map((rondin) => {
-								const matchHora = rondin.hora.toLowerCase().includes(globalFilter.toLowerCase());
-
-								// Filtrar las categorías y áreas dentro del rondín
-								const categoriasFiltradas = rondin.categorias
-								.map((categoria) => {
-									const matchCategoria = categoria.titulo
-									.toLowerCase()
-									.includes(globalFilter.toLowerCase());
-
-									const areasFiltradas = categoria.areas.filter((area) =>
-									area.nombre.toLowerCase().includes(globalFilter.toLowerCase())
-									);
-
-									if (matchCategoria || areasFiltradas.length > 0) {
-									return { ...categoria, areas: areasFiltradas };
-									}
-
-									return null;
-								})
-								.filter((cat) => cat !== null) as Categoria[];
-
-								if (matchHora || categoriasFiltradas.length > 0) {
-								return { ...rondin, categorias: categoriasFiltradas };
-								}
-
-								return null;
-							})
-							.filter((r) => r !== null)
-							.map(({ hora, categorias }) => (
-								<React.Fragment key={hora}>
-								<tr>
-									<td className="font-bold flex items-center justify-start gap-2">
-									<button
-										className="ml-1 text-sm px-2 py-.5 bg-blue-500 text-white rounded hover:bg-blue-600"
-										onClick={() => toggleExpandAllForHora(hora, categorias)}
-									>
-										{categorias.every((c) =>
-										expandedCategorias.includes(`${hora}-${c.titulo}`)
-										)
-										? "-"
-										: "+"}
-									</button>
-									{hora}
-									</td>
-									{[...Array(dias)].map((_, i) => (
-									<td
-										key={i}
-										className={`border ${
-										sundaysIndexes.includes(i) ? "bg-blue-100" : ""
-										}`}
-									></td>
-									))}
-								</tr>
-
-								{categorias.map((categoria) => {
-									const catKey = `${hora}-${categoria.titulo}`;
-									const isExpanded = expandedCategorias.includes(catKey);
+						<thead className="sticky top-0 z-10 bg-white">
+							<tr>
+								<th className="border p-2 bg-white">Rondines</th>
+								{[...Array(dias)].map((_, i) => {
+									const date = new Date();
+									date.setDate(i + 1);
+									const diaSemana = date
+										.toLocaleDateString("es-MX", { weekday: "short" })
+										.slice(0, 2);
+									const isSunday = date.getDay() === 0;
 
 									return (
-									<React.Fragment key={catKey}>
-										<tr
-										className="cursor-pointer font-semibold text-sm bg-green-100"
-										onClick={(e) => {
-											e.stopPropagation();
-											toggleExpand(catKey);
-										}}
+										<th
+											key={`label-${i}`}
+											className={`border p-1 text-center ${isSunday ? "bg-blue-100" : "bg-white"
+												}`}
 										>
-											{/* {estadoDia && (
+											<div className="text-sm">{String(i + 1).padStart(2, "0")}</div>
+											<div className="text-xs font-medium capitalize text-gray-600">
+												{diaSemana}
+											</div>
+										</th>
+									);
+								})}
+							</tr>
+						</thead>
+
+						<tbody>
+							{data &&
+								data
+									.map((rondin) => {
+										const matchHora = rondin.hora.toLowerCase().includes(globalFilter.toLowerCase());
+
+										// Filtrar las categorías y áreas dentro del rondín
+										const categoriasFiltradas = rondin.categorias
+											.map((categoria) => {
+												const matchCategoria = categoria.titulo
+													.toLowerCase()
+													.includes(globalFilter.toLowerCase());
+
+												// Filter areas based on globalFilter AND selectedEstados
+												const areasFiltradas = categoria.areas.filter((area) => {
+													const matchesGlobal = area.nombre.toLowerCase().includes(globalFilter.toLowerCase());
+
+													// If no states selected, match all states. Otherwise check if area has ANY of the selected states.
+													const matchesEstado = selectedEstados.length === 0 || area.estados.some(e => selectedEstados.includes(e.estado));
+
+													return matchesGlobal && matchesEstado;
+												});
+
+												// Check if the category itself has any matching states in its summary (resumen)
+												// This is relevant if we want to show the category even if no areas match, 
+												// but usually we want to show categories that have matching areas OR matching summary items.
+												// Let's assume we want to show the category if it has matching areas OR if the category title matches AND there are some matching states in the summary?
+												// Actually, the previous logic was: matchCategoria || areasFiltradas.length > 0
+
+												// New logic:
+												// We need to check if the category's summary (resumen) matches the selected states too.
+												const matchesResumenEstado = selectedEstados.length === 0 || (categoria.resumen && categoria.resumen.some(r => selectedEstados.includes(r.estado)));
+
+												// If the category matches the text filter, we still need to respect the state filter.
+												// If selectedEstados is active, we only show things that match the state.
+
+												// If areasFiltradas > 0, we definitely keep the category.
+												// If areasFiltradas == 0, but matchCategoria is true... do we keep it? 
+												// Only if it also matches the state filter (via resumen).
+
+												if (areasFiltradas.length > 0) {
+													return { ...categoria, areas: areasFiltradas };
+												}
+
+												if (matchCategoria && matchesResumenEstado) {
+													return { ...categoria, areas: [] }; // Show category with no areas if it matches text & state
+												}
+
+												return null;
+											})
+											.filter((cat) => cat !== null) as Categoria[];
+
+										// Logic to decide if we show the hour row
+										// If we have matching categories, we show it.
+										// If we have NO matching categories:
+										//   - If we have an active state filter, we HIDE it (return null).
+										//   - If we have NO active state filter, we respect the text search (matchHora).
+
+										const hasActiveStateFilter = selectedEstados.length > 0;
+										const shouldShowHour = categoriasFiltradas.length > 0 || (matchHora && !hasActiveStateFilter);
+
+										if (shouldShowHour) {
+											return { ...rondin, categorias: categoriasFiltradas };
+										}
+
+										return null;
+									})
+									.filter((r) => r !== null)
+									.map(({ hora, categorias }) => (
+										<React.Fragment key={hora}>
+											<tr>
+												<td className="font-bold flex items-center justify-start gap-2">
+													<button
+														className="ml-1 text-sm px-2 py-.5 bg-blue-500 text-white rounded hover:bg-blue-600"
+														onClick={() => toggleExpandAllForHora(hora, categorias)}
+													>
+														{categorias.every((c) =>
+															expandedCategorias.includes(`${hora}-${c.titulo}`)
+														)
+															? "-"
+															: "+"}
+													</button>
+													{hora}
+												</td>
+												{[...Array(dias)].map((_, i) => (
+													<td
+														key={i}
+														className={`border ${sundaysIndexes.includes(i) ? "bg-blue-100" : ""
+															}`}
+													></td>
+												))}
+											</tr>
+
+											{categorias.map((categoria) => {
+												const catKey = `${hora}-${categoria.titulo}`;
+												const isExpanded = expandedCategorias.includes(catKey);
+
+												return (
+													<React.Fragment key={catKey}>
+														<tr
+															className="cursor-pointer font-semibold text-sm bg-green-100"
+															onClick={(e) => {
+																e.stopPropagation();
+																toggleExpand(catKey);
+															}}
+														>
+															{/* {estadoDia && (
 											<div
 												onClick={(e) => {
 												e.stopPropagation();
@@ -374,76 +438,75 @@ export const RondinesBitacoraTable = ({ showTabs , ubicacion}: { showTabs: boole
 											>
 												<EstadoIcono estado={estadoDia.estado} />
 											</div> */}
-										<td className="border text-sm flex p-2">
-											<span className="mr-2">
-											{isExpanded ? (
-												<CircleChevronUp size={20} />
-											) : (
-												<CircleChevronDown size={20} />
-											)}
-											</span>
-											{categoria.titulo}
-										</td>
-										{[...Array(dias)].map((_, i) => {
-											const isSunday = sundaysIndexes.includes(i);
-											const estadoDia = categoria.resumen?.[i];
-											const area = categoria.areas.find((a) =>
-											a.estados.some((e) => e.dia === i + 1)
-											);
+															<td className="border text-sm flex p-2">
+																<span className="mr-2">
+																	{isExpanded ? (
+																		<CircleChevronUp size={20} />
+																	) : (
+																		<CircleChevronDown size={20} />
+																	)}
+																</span>
+																{categoria.titulo}
+															</td>
+															{[...Array(dias)].map((_, i) => {
+																const isSunday = sundaysIndexes.includes(i);
+																const estadoDia = categoria.resumen?.[i];
+																const area = categoria.areas.find((a) =>
+																	a.estados.some((e) => e.dia === i + 1)
+																);
 
-											return (
-											<td
-												key={i}
-												className={`border ${
-												isSunday ? "bg-blue-200/50" : "bg-transparent"
-												}`}
-											>
-												<div className="flex justify-center items-center">
-												{estadoDia && (
-													<div
-													onClick={(e) => {
-														e.stopPropagation();
-														setSelectedAreaData({ area: area, estadoDia });
-														setDiaSelected(i + 1);
-														setModalOpenPerimetroExt(true);
-														setEstatus(estadoDia.estado);
-														setSelectedRondin(categoria);
-													}}
-													className="cursor-pointer"
-													>
-													<EstadoIcono estado={estadoDia.estado} />
-													</div>
-												)}
-												</div>
-											</td>
-											);
-										})}
-										</tr>
+																return (
+																	<td
+																		key={i}
+																		className={`border ${isSunday ? "bg-blue-200/50" : "bg-transparent"
+																			}`}
+																	>
+																		<div className="flex justify-center items-center">
+																			{estadoDia && (
+																				<div
+																					onClick={(e) => {
+																						e.stopPropagation();
+																						setSelectedAreaData({ area: area, estadoDia });
+																						setDiaSelected(i + 1);
+																						setModalOpenPerimetroExt(true);
+																						setEstatus(estadoDia.estado);
+																						setSelectedRondin(categoria);
+																					}}
+																					className="cursor-pointer"
+																				>
+																					<EstadoIcono estado={estadoDia.estado} />
+																				</div>
+																			)}
+																		</div>
+																	</td>
+																);
+															})}
+														</tr>
 
-										{isExpanded &&
-										categoria.areas.map((area, idx) =>
-											renderArea(area, `${catKey}-area-${idx}`, categoria, idx)
-										)}
-									</React.Fragment>
-									);
-								})}
-								</React.Fragment>
-							))}
+														{isExpanded &&
+															categoria.areas.map((area, idx) =>
+																renderArea(area, `${catKey}-area-${idx}`, categoria, idx)
+															)}
+													</React.Fragment>
+												);
+											})}
+										</React.Fragment>
+									))}
 						</tbody>
 
 					</table>
-					)}
+				)}
 				{modalOpenPerimetroExt && (
 					<ViewRondinesDetallePerimetroExt
-					title="Inspección del Perimetro Exterior"
-					isSuccess={modalOpenPerimetroExt}
-					setIsSuccess={setModalOpenPerimetroExt}
-					estatus={estatus}
-					diaSelected={diaSelected}
-					selectedRondin={selectedRondin}
-					areaSelected={selectedAreaData}
+						title="Inspección del Perimetro Exterior"
+						isSuccess={modalOpenPerimetroExt}
+						setIsSuccess={setModalOpenPerimetroExt}
+						estatus={estatus}
+						diaSelected={diaSelected}
+						selectedRondin={selectedRondin}
+						areaSelected={selectedAreaData}
 					>
-					<div></div>
+						<div></div>
 					</ViewRondinesDetallePerimetroExt>
 				)}
 
@@ -462,17 +525,17 @@ export const RondinesBitacoraTable = ({ showTabs , ubicacion}: { showTabs: boole
 				)} */}
 				{carruselOpen && (
 					<CarruselDetalleArea
-					areas={selectedRondin?.areas ?? []}
-					startIndex={selectedAreaIndex} 
-					diaSelected={diaSelected}
-					rondin={selectedRondin?.name}
-					estatus={estatus}
-					selectedRondin={selectedRondin}
-					onClose={() => setCarruselOpen(false)}
+						areas={selectedRondin?.areas ?? []}
+						startIndex={selectedAreaIndex}
+						diaSelected={diaSelected}
+						rondin={selectedRondin?.name}
+						estatus={estatus}
+						selectedRondin={selectedRondin}
+						onClose={() => setCarruselOpen(false)}
 					/>
 				)}
 			</div>
-	
-    </div>
-  );
+
+		</div>
+	);
 };

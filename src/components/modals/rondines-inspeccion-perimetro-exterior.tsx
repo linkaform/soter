@@ -187,7 +187,7 @@ export const ViewRondinesDetallePerimetroExt: React.FC<ViewRondinesDetalleAreaPr
                 <p className="font-bold">Áreas a inspeccionar</p>
                 <div>
                     <ul>
-                        {getBitacoraById?.areas_a_inspeccionar.map((area:any, index:number) => (
+                        {getBitacoraById?.areas_a_inspeccionar?.map((area:any, index:number) => (
                             <li className="py-2" key={index}>
                                 <div className="flex gap-3">
                                     <div className="w-1 h-12 bg-blue-500"></div>
@@ -205,7 +205,7 @@ export const ViewRondinesDetallePerimetroExt: React.FC<ViewRondinesDetalleAreaPr
                     <h2 className="text-base font-semibold ">Incidentes en recorrido</h2>
 
                     <div className="divide-y divide-gray-200">
-                        {getBitacoraById?.incidencias.map((i:any) => (
+                        {getBitacoraById?.incidencias?.map((i:any) => (
                         <div
                             key={Math.random().toString(36).substring(2, 9)}
                             className="flex justify-between items-center py-2 cursor-pointer hover:bg-gray-50 rounded-md px-1"
