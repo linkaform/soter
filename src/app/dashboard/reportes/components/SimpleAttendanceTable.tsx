@@ -46,13 +46,13 @@ interface EmployeeAttendance {
 }
 
 interface SimpleAttendanceTableProps {
-    data: EmployeeAttendance[];
-    daysInMonth: number;
-    groupByLocation?: boolean;
-    timeframe?: "mes" | "semana";
-    month?: number;
-    year?: number;
-    selectedStatus?: string[]; // <-- agrega esto
+  data: EmployeeAttendance[];
+  daysInMonth: number;
+  groupByLocation?: boolean;
+  timeframe?: "mes" | "semana";
+  month?: number;
+  year?: number;
+  selectedStatus?: string[]; // <-- agrega esto
 }
 
 function getWeeks(daysInMonth: number, month: number, year: number) {
@@ -147,7 +147,7 @@ export const SimpleAttendanceTable: React.FC<SimpleAttendanceTableProps> = ({
     return map;
   }, [statusFilteredData]);
 
-  
+
   const mergedData = useMemo(() => {
     if (groupByLocation) return statusFilteredData;
 
@@ -252,7 +252,7 @@ export const SimpleAttendanceTable: React.FC<SimpleAttendanceTableProps> = ({
         <thead>
           <tr>
             {groupByLocation && (
-              <th className="sticky left-0 bg-white z-10 p-2 border-b text-left min-w-[120px] w-[140px]">
+              <th className="sticky left-0 bg-white z-10 p-2 border-b-2 border-gray-300 text-left min-w-[120px] w-[140px]">
                 <div>
                   <span>Ubicación</span>
                   <input
@@ -266,7 +266,7 @@ export const SimpleAttendanceTable: React.FC<SimpleAttendanceTableProps> = ({
               </th>
             )}
             <th
-              className={`sticky ${groupByLocation ? "left-[120px]" : "left-0"} bg-white z-10 p-2 border-b text-left min-w-[180px] w-[200px]`}
+              className={`sticky ${groupByLocation ? "left-[120px]" : "left-0"} bg-white z-10 p-2 border-b-2 border-gray-300 text-left min-w-[180px] w-[200px]`}
             >
               <div>
                 <span>Empleado</span>
@@ -279,72 +279,45 @@ export const SimpleAttendanceTable: React.FC<SimpleAttendanceTableProps> = ({
                 />
               </div>
             </th>
-            {daysToShow.map((day, idx) => (
-              <th key={idx} className="p-2 border-b text-center">{day ? day : ""}</th>
-            ))}
-            <th className="p-2 border-b text-center">Asistencias</th>
-            <th className="p-2 border-b text-center">Retardos</th>
-            <th className="p-2 border-b text-center">Faltas</th>
+            {daysToShow.map((day, idx) => {
+              if (!day) return <th key={idx} className="p-2 border-b text-center"></th>;
+
+              const date = new Date(year, month - 1, day);
+              const dayOfWeek = date.getDay();
+              const dayNames = ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'];
+              const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
+              return (
+                <th key={idx} className={`p-1 border-b-2 border-gray-300 text-center min-w-[32px] max-w-[36px] ${isWeekend ? 'bg-blue-50' : 'bg-white'}`}>
+                  <div className="text-xs font-bold">{day.toString().padStart(2, '0')}</div>
+                  <div className="text-[10px]">{dayNames[dayOfWeek]}</div>
+                </th>
+              );
+            })}
+            <th className="px-1 py-2 border-b-2 border-gray-300 text-center bg-white min-w-[28px] max-w-[32px] text-xs">R</th>
+            <th className="px-1 py-2 border-b-2 border-gray-300 text-center bg-white min-w-[28px] max-w-[32px] text-xs">F</th>
+            <th className="px-1 py-2 border-b-2 border-gray-300 text-center bg-white min-w-[28px] max-w-[32px] text-xs">A</th>
           </tr>
         </thead>
         <tbody>
           {groupByLocation
             ? [...locationMap.entries()].map(([ubicacion, empleados]) =>
-                empleados.map((emp, empIdx) => (
-                  <tr key={emp.employee_id} className={empIdx % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                    {empIdx === 0 && (
-                      <td
-                        rowSpan={empleados.length}
-                        className="sticky left-0 bg-white z-10 p-2 border-b font-semibold align-top"
-                      >
-                        {ubicacion}
-                      </td>
-                    )}
-                    <td
-                      className={`sticky left-[120px] bg-white z-10 p-2 border-b font-medium align-top min-w-[180px] w-[200px]`}
-                    >
-                      {emp.nombre}
-                    </td>
-                    {daysToShow.map((day, i) => {
-                      if (!day) {
-                        return <td key={i} className="p-1 border-b text-center bg-gray-100"></td>;
-                      }
-                      const dayObj = emp.asistencia_mes.find(d => d.dia === day);
-                      const status = dayObj?.status || "sin_registro";
-                      const config = statusConfig[status] || statusConfig["sin_registro"];
-                      return (
-                        <td key={i} className="p-1 border-b text-center">
-                          <button
-                            type="button"
-                            className={`inline-flex items-center justify-center rounded-full w-7 h-7 ${config.color}`}
-                            title={config.label}
-                            onClick={() => {
-                              setSelectedNames([emp.nombre]);
-                              setSelectedDay(day);
-                              setSelectedUbicacion(emp.ubicacion);
-                              setModalOpen(true);
-                            }}
-                          >
-                            {config.icon}
-                          </button>
-                        </td>
-                      );
-                    })}
-                    <td className="p-2 border-b text-center">{emp.resumen.asistencias}</td>
-                    <td className="p-2 border-b text-center">{emp.resumen.retardos}</td>
-                    <td className="p-2 border-b text-center">{emp.resumen.faltas}</td>
-                  </tr>
-                ))
-              )
-            : mergedData.map((emp, empIdx) => (
+              empleados.map((emp, empIdx) => (
                 <tr key={emp.employee_id} className={empIdx % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                  {empIdx === 0 && (
+                    <td
+                      rowSpan={empleados.length}
+                      className="sticky left-0 bg-white z-10 p-2 border-b font-semibold align-top"
+                    >
+                      {ubicacion}
+                    </td>
+                  )}
                   <td
-                    className="sticky left-0 bg-white z-10 p-2 border-b font-medium align-top min-w-[180px] w-[200px]"
+                    className={`sticky left-[120px] bg-white z-10 p-2 border-b font-medium align-top min-w-[180px] w-[200px]`}
                   >
                     {emp.nombre}
                   </td>
                   {daysToShow.map((day, i) => {
-                    const isTodayCol = day === currentDay && selectedStatus.length > 0;
                     if (!day) {
                       return <td key={i} className="p-1 border-b text-center bg-gray-100"></td>;
                     }
@@ -352,10 +325,7 @@ export const SimpleAttendanceTable: React.FC<SimpleAttendanceTableProps> = ({
                     const status = dayObj?.status || "sin_registro";
                     const config = statusConfig[status] || statusConfig["sin_registro"];
                     return (
-                      <td
-                        key={i}
-                        className={`p-1 border-b text-center ${isTodayCol ? "bg-yellow-300" : ""}`}
-                      >
+                      <td key={i} className="p-1 border-b text-center">
                         <button
                           type="button"
                           className={`inline-flex items-center justify-center rounded-full w-7 h-7 ${config.color}`}
@@ -372,11 +342,53 @@ export const SimpleAttendanceTable: React.FC<SimpleAttendanceTableProps> = ({
                       </td>
                     );
                   })}
-                  <td className="p-2 border-b text-center">{emp.resumen.asistencias}</td>
-                  <td className="p-2 border-b text-center">{emp.resumen.retardos}</td>
-                  <td className="p-2 border-b text-center">{emp.resumen.faltas}</td>
+                  <td className="px-1 py-2 border-b border-gray-200 text-center font-semibold text-xs">{emp.resumen.asistencias}</td>
+                  <td className="px-1 py-2 border-b border-gray-200 text-center font-semibold text-xs">{emp.resumen.retardos}</td>
+                  <td className="px-1 py-2 border-b border-gray-200 text-center font-semibold text-xs">{emp.resumen.faltas}</td>
                 </tr>
-              ))}
+              ))
+            )
+            : mergedData.map((emp, empIdx) => (
+              <tr key={emp.employee_id} className={empIdx % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                <td
+                  className="sticky left-0 bg-white z-10 p-2 border-b font-medium align-top min-w-[180px] w-[200px]"
+                >
+                  {emp.nombre}
+                </td>
+                {daysToShow.map((day, i) => {
+                  const isTodayCol = day === currentDay && selectedStatus.length > 0;
+                  if (!day) {
+                    return <td key={i} className="p-1 border-b text-center bg-gray-100"></td>;
+                  }
+                  const dayObj = emp.asistencia_mes.find(d => d.dia === day);
+                  const status = dayObj?.status || "sin_registro";
+                  const config = statusConfig[status] || statusConfig["sin_registro"];
+                  return (
+                    <td
+                      key={i}
+                      className={`p-1 border-b text-center ${isTodayCol ? "bg-yellow-300" : ""}`}
+                    >
+                      <button
+                        type="button"
+                        className={`inline-flex items-center justify-center rounded-full w-7 h-7 ${config.color}`}
+                        title={config.label}
+                        onClick={() => {
+                          setSelectedNames([emp.nombre]);
+                          setSelectedDay(day);
+                          setSelectedUbicacion(emp.ubicacion);
+                          setModalOpen(true);
+                        }}
+                      >
+                        {config.icon}
+                      </button>
+                    </td>
+                  );
+                })}
+                <td className="px-1 py-2 border-b border-gray-200 text-center font-semibold text-xs">{emp.resumen.asistencias}</td>
+                <td className="px-1 py-2 border-b border-gray-200 text-center font-semibold text-xs">{emp.resumen.retardos}</td>
+                <td className="px-1 py-2 border-b border-gray-200 text-center font-semibold text-xs">{emp.resumen.faltas}</td>
+              </tr>
+            ))}
         </tbody>
       </table>
       <AttendanceDetailModal
