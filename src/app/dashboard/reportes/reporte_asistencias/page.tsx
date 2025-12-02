@@ -12,7 +12,8 @@ import {
 	Square,
 	ChevronLeft,
 	ChevronRight,
-	Sun
+	ShieldX,
+	ShieldCheck
 } from "lucide-react";
 import PageTitle from "@/components/page-title";
 import ChangeLocation from "@/components/changeLocation";
@@ -228,7 +229,7 @@ const ReportsPage = () => {
 									onClick={handleGroupByLocationToggle}
 									className={`flex items-center gap-2 ${groupByLocation ? 'bg-blue-100 border-blue-500 hover:bg-blue-200' : ''}`}
 								>
-									{groupByLocation ? <CheckSquare className="h-4 w-4" /> : <Square className="h-4 w-4" />}
+									Agrupar por Ubicación {groupByLocation ? <CheckSquare className="h-4 w-4" /> : <Square className="h-4 w-4" />}
 								</Button>
 							)}
 
@@ -248,7 +249,7 @@ const ReportsPage = () => {
 							<div className="flex gap-4">
 								<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100`}>
 									<div className="flex gap-6">
-										<Sun className="text-primary w-10 h-10" />
+										<ShieldX className="text-primary w-10 h-10" />
 										<span className="flex items-center font-bold text-4xl">
 											{totalFaltas}
 										</span>
@@ -261,7 +262,7 @@ const ReportsPage = () => {
 								</div>
 								<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100`}>
 									<div className="flex gap-6">
-										<Sun className="text-primary w-10 h-10" />
+										<ShieldCheck className="text-primary w-10 h-10" />
 										<span className="flex items-center font-bold text-4xl">
 											{totalRetardos}
 										</span>
