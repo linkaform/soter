@@ -35,6 +35,8 @@ interface LocationShiftAttendanceTableProps {
   month: number;
   year: number;
   timeframe?: "mes" | "semana";
+  selectedStatus?: string[];
+  onStatusChange?: (status: string[]) => void;
 }
 
 const dayNames = ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'];
@@ -116,7 +118,9 @@ const LocationShiftAttendanceTable: React.FC<LocationShiftAttendanceTableProps> 
   data,
   month,
   year,
+
   timeframe = "mes",
+  selectedStatus = [],
 }) => {
   // Estado para el modal y los nombres seleccionados
   const [modalOpen, setModalOpen] = useState(false);
@@ -168,6 +172,7 @@ const LocationShiftAttendanceTable: React.FC<LocationShiftAttendanceTableProps> 
 
   return (
     <div className="w-full overflow-x-auto">
+
       {timeframe === "semana" && (
         <div className="flex items-center justify-center gap-4 mb-4">
           <button
@@ -237,27 +242,31 @@ const LocationShiftAttendanceTable: React.FC<LocationShiftAttendanceTableProps> 
                   const asistencia = row.asistencia_mes?.find?.(a => a.dia === day.day);
                   const guardias: GuardiasPorDia[] = Array.isArray(asistencia?.empleados)
                     ? asistencia.empleados
-                        .filter(e => typeof e === "string" && e && e !== "sin_registro-sin_registro")
-                        .map(e => {
-                          const [nombre, status] = e.split("-");
-                          return { nombre, status };
-                        })
+                      .filter(e => typeof e === "string" && e && e !== "sin_registro-sin_registro")
+                      .map(e => {
+                        const [nombre, status] = e.split("-");
+                        return { nombre, status };
+                      })
                     : [];
+
+                  const filteredGuardias = selectedStatus.length > 0
+                    ? guardias.filter(g => selectedStatus.includes(g.status))
+                    : guardias;
                   return (
                     <td
                       key={`${row.turno_ref}-${day.day}`}
                       className={`border-b border-gray-200 text-center ${day.isWeekend ? 'bg-blue-50' : ''}`}
                     >
                       <GuardiasCircles
-                        guardias={guardias}
+                        guardias={filteredGuardias}
                         onGuardClick={
-                          guardias.length > 0
+                          filteredGuardias.length > 0
                             ? (names) => {
-                                setSelectedNames(names);
-                                setSelectedDay(day.day);
-                                setModalOpen(true);
-                                setSelectedUbicacion(ubicacion);
-                              }
+                              setSelectedNames(names);
+                              setSelectedDay(day.day);
+                              setModalOpen(true);
+                              setSelectedUbicacion(ubicacion);
+                            }
                             : undefined
                         }
                       />

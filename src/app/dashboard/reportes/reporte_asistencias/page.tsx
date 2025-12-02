@@ -9,14 +9,19 @@ import {
 	Play,
 	Download,
 	CheckSquare,
-	Square
+	Square,
+	ChevronLeft,
+	ChevronRight,
+	Sun
 } from "lucide-react";
+import PageTitle from "@/components/page-title";
+import ChangeLocation from "@/components/changeLocation";
+import { useShiftStore } from "@/store/useShiftStore";
 import {
 	Select,
 	SelectContent,
 	SelectGroup,
 	SelectItem,
-	SelectLabel,
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select"
@@ -36,6 +41,12 @@ import { SimpleAttendanceTable } from "../components/SimpleAttendanceTable";
 import AttendanceTableSymbology from "../components/AttendanceTableSymbology";
 
 const areFiltersEqual = (a: any, b: any) => JSON.stringify(a) === JSON.stringify(b);
+
+const getMonthName = (month: number) => {
+	const date = new Date();
+	date.setMonth(month - 1);
+	return date.toLocaleString('es-ES', { month: 'long' });
+};
 
 const ReportsPage = () => {
 	const [month, setMonth] = useState<number>(0);
@@ -63,6 +74,11 @@ const ReportsPage = () => {
 	const [groupByLocation, setGroupByLocation] = useState(false);
 	const [isExecuted, setIsExecuted] = useState(false);
 	const [selectedStatus, setSelectedStatus] = useState<string[]>([]);
+
+	// State for ChangeLocation (visual/global context)
+	const { location } = useShiftStore();
+	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState<string>(location);
+	const [areaSeleccionada, setAreaSeleccionada] = useState<string>("");
 
 	useEffect(() => {
 		const currentDate = new Date();
@@ -133,105 +149,182 @@ const ReportsPage = () => {
 		setGroupByLocation(prev => !prev);
 	};
 
+	const handlePrevMonth = () => {
+		if (month === 1) {
+			setMonth(12);
+			setYear(year - 1);
+		} else {
+			setMonth(month - 1);
+		}
+	};
+
+	const handleNextMonth = () => {
+		if (month === 12) {
+			setMonth(1);
+			setYear(year + 1);
+		} else {
+			setMonth(month + 1);
+		}
+	};
+
+	const totalFaltas = data.reduce((acc, row) => acc + ((row as any).resumen?.faltas || 0), 0);
+	const totalRetardos = data.reduce((acc, row) => acc + ((row as any).resumen?.retardos || 0), 0);
+
 	return (
 		<div className="min-h-screen pb-10">
-			<div className="flex justify-between w-11/12 m-auto mt-2 gap-4">
-				<div className="grid grid-cols-3 items-center w-full mx-auto mt-8 px-4">
-					<div className="justify-self-start"></div>
-					<div className="justify-self-center">
-						<h1 className="text-2xl sm:text-3xl font-semibold text-gray-800">
-							Reporte de Asistencias
-						</h1>
+			<div className="flex flex-col w-11/12 m-auto mt-2 gap-4">
+				{/* Header: Title */}
+
+				<div className="flex justify-between items-end">
+					<div className="flex gap-4 flex-col">
+						<div>
+							<div className="mt-8 px-4">
+								<PageTitle title="Reporte de Asistencias" />
+							</div>
+						</div>
+						<div className="flex gap-4">
+							<Select value={timeframe} onValueChange={handleTimeframeChange}>
+								<SelectTrigger className="w-[150px]">
+									<SelectValue placeholder="Periodo" />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectGroup>
+										<SelectItem value="semana">Semana</SelectItem>
+										<SelectItem value="mes">Mes</SelectItem>
+									</SelectGroup>
+								</SelectContent>
+							</Select>
+							<MultiSelect
+								values={selectedLocations}
+								onValuesChange={handleLocationChange}
+							>
+								<MultiSelectTrigger className="w-[250px] md:w-[300px]">
+									<MultiSelectValue placeholder="Ubicaciones" />
+								</MultiSelectTrigger>
+								<MultiSelectContent>
+									<MultiSelectGroup>
+										{reportLocations?.map((location: string) => (
+											<MultiSelectItem key={location} value={location}>
+												{location}
+											</MultiSelectItem>
+										))}
+									</MultiSelectGroup>
+								</MultiSelectContent>
+							</MultiSelect>
+							<Select value={groupingMode} onValueChange={handleGroupingChange}>
+								<SelectTrigger className="w-[150px]">
+									<SelectValue placeholder="Agrupación" />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectGroup>
+										<SelectItem value="employees">Empleados</SelectItem>
+										<SelectItem value="locations">Ubicaciones</SelectItem>
+									</SelectGroup>
+								</SelectContent>
+							</Select>
+							{groupingMode === "employees" && (
+								<Button
+									variant="outline"
+									onClick={handleGroupByLocationToggle}
+									className={`flex items-center gap-2 ${groupByLocation ? 'bg-blue-100 border-blue-500 hover:bg-blue-200' : ''}`}
+								>
+									{groupByLocation ? <CheckSquare className="h-4 w-4" /> : <Square className="h-4 w-4" />}
+								</Button>
+							)}
+
+						</div>
+
 					</div>
-					<div className="justify-self-end">
+					<div className="flex flex-col gap-4 items-end">
+						<div className="flex gap-4">
+							<div className="w-[200px]">
+								<ChangeLocation
+									ubicacionSeleccionada={ubicacionSeleccionada}
+									areaSeleccionada={areaSeleccionada}
+									setUbicacionSeleccionada={setUbicacionSeleccionada}
+									setAreaSeleccionada={setAreaSeleccionada}
+								/>
+							</div>
+							<div className="flex gap-4">
+								<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100`}>
+									<div className="flex gap-6">
+										<Sun className="text-primary w-10 h-10" />
+										<span className="flex items-center font-bold text-4xl">
+											{totalFaltas}
+										</span>
+									</div>
+									<div className="flex items-center space-x-0">
+										<div className="h-1 w-1/2 bg-cyan-100"></div>
+										<div className="h-1 w-1/2 bg-blue-500"></div>
+									</div>
+									<span className="text-md">Total Faltas</span>
+								</div>
+								<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100`}>
+									<div className="flex gap-6">
+										<Sun className="text-primary w-10 h-10" />
+										<span className="flex items-center font-bold text-4xl">
+											{totalRetardos}
+										</span>
+									</div>
+									<div className="flex items-center space-x-0">
+										<div className="h-1 w-1/2 bg-cyan-100"></div>
+										<div className="h-1 w-1/2 bg-blue-500"></div>
+									</div>
+									<span className="text-md">Total Retardos</span>
+								</div>
+							</div>
+						</div>
+
 					</div>
 				</div>
-			</div>
-			<div className="flex flex-col md:flex-row justify-between w-11/12 m-auto mt-6 gap-4">
-				<div className="flex flex-col md:flex-row gap-4 w-full md:w-auto">
-					<Select value={timeframe} onValueChange={handleTimeframeChange}>
-						<SelectTrigger className="w-full md:w-[180px]">
-							<SelectValue placeholder="Selecciona una fecha" />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectGroup>
-								<SelectLabel>Fechas</SelectLabel>
-								<SelectItem value="semana">Esta semana</SelectItem>
-								<SelectItem value="mes">Este mes</SelectItem>
-							</SelectGroup>
-						</SelectContent>
-					</Select>
-					<MultiSelect
-						values={selectedLocations}
-						onValuesChange={handleLocationChange}
-					>
-						<MultiSelectTrigger className="md:w-[500px]">
-							<MultiSelectValue placeholder="Selección de ubicaciones" />
-						</MultiSelectTrigger>
-						<MultiSelectContent>
-							<MultiSelectGroup>
-								{reportLocations?.map((location: string) => (
-									<MultiSelectItem key={location} value={location}>
-										{location}
-									</MultiSelectItem>
-								))}
-							</MultiSelectGroup>
-						</MultiSelectContent>
-					</MultiSelect>
-					<Select value={groupingMode} onValueChange={handleGroupingChange}>
-						<SelectTrigger className="w-full md:w-[200px]">
-							<SelectValue placeholder="Selecciona la agrupación" />
-						</SelectTrigger>
-						<SelectContent>
-							<SelectGroup>
-								<SelectLabel>Agrupación</SelectLabel>
-								<SelectItem value="employees">Empleados</SelectItem>
-								<SelectItem value="locations">Ubicaciones</SelectItem>
-							</SelectGroup>
-						</SelectContent>
-					</Select>
 
-					{groupingMode === "employees" && (
+				{/* Controls Row: Symbology | Month Nav | Buttons */}
+				<div className="flex flex-col lg:flex-row items-center justify-between px-4 mt-4 gap-4">
+					<div className="flex-1 w-full lg:w-auto">
+						<AttendanceTableSymbology
+							selectedStatus={selectedStatus}
+							onChange={setSelectedStatus}
+						/>
+					</div>
+
+					<div className="flex-1 flex justify-center">
+						<div className="flex items-center bg-white p-1">
+							<Button variant="ghost" size="icon" onClick={handlePrevMonth}>
+								<ChevronLeft className="h-4 w-4" />
+							</Button>
+							<div className="px-4 font-semibold min-w-[140px] text-center capitalize">
+								{getMonthName(month)} {year}
+							</div>
+							<Button variant="ghost" size="icon" onClick={handleNextMonth}>
+								<ChevronRight className="h-4 w-4" />
+							</Button>
+						</div>
+					</div>
+
+					<div className="flex-1 flex justify-end gap-2 w-full lg:w-auto">
+						<Button variant="outline" onClick={handleClear}><Eraser className="mr-1 h-4 w-4" />Limpiar</Button>
+						<Button disabled variant="outline" onClick={handleExport}><Download className="mr-1 h-4 w-4" />Exportar</Button>
 						<Button
-							variant="outline"
-							onClick={handleGroupByLocationToggle}
-							className={`flex items-center gap-2 ${groupByLocation ? 'bg-blue-100 border-blue-500 hover:bg-blue-200' : ''}`}
+							className="bg-blue-600"
+							onClick={handleExecute}
+							disabled={isLoadingReportAsistencias || isInitializing}
 						>
-							{groupByLocation ? (
+							{isLoadingReportAsistencias ? (
 								<>
-									<CheckSquare className="h-4 w-4" /> Agrupar por ubicación
+									<div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+									Cargando...
 								</>
 							) : (
 								<>
-									<Square className="h-4 w-4" /> Agrupar por ubicación
+									<Play className="mr-1 h-4 w-4" />Ejecutar
 								</>
 							)}
 						</Button>
-					)}
-				</div>
-				<div className="flex gap-2 mt-3 md:mt-0">
-					<Button variant="outline" onClick={handleClear}><Eraser className="mr-1" />Limpiar</Button>
-					<Button disabled variant="outline" onClick={handleExport}><Download className="mr-1" />Exportar</Button>
-					<Button
-						className="bg-blue-600"
-						onClick={handleExecute}
-						disabled={isLoadingReportAsistencias || isInitializing}
-					>
-						{isLoadingReportAsistencias ? (
-							<>
-								<div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
-								Cargando...
-							</>
-						) : (
-							<>
-								<Play className="mr-1" />Ejecutar
-							</>
-						)}
-					</Button>
+					</div>
 				</div>
 			</div>
 
-			<div className="w-11/12 mx-auto mt-8">
+			<div className="w-11/12 mx-auto mt-4">
 				{isInitializing ? (
 					<div className="flex justify-center items-center p-12">
 						<div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
@@ -261,10 +354,6 @@ const ReportsPage = () => {
 					<>
 						{groupingMode === "employees" && (
 							<div>
-								<AttendanceTableSymbology
-									selectedStatus={selectedStatus}
-									onChange={setSelectedStatus}
-								/>
 								<SimpleAttendanceTable
 									data={reportAsistencias}
 									daysInMonth={daysInMonth}
@@ -283,6 +372,8 @@ const ReportsPage = () => {
 									month={month}
 									year={year}
 									timeframe={timeframe}
+									selectedStatus={selectedStatus}
+									onStatusChange={setSelectedStatus}
 								/>
 							</div>
 						)}
