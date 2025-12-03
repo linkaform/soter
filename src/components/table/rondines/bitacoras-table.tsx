@@ -52,7 +52,7 @@ const EstadoIcono = ({ estado }: { estado: string }) => {
 	return <Circle className={`${baseClass} text-slate-300`} />;
 };
 
-type Estado = { dia: number; estado: string };
+type Estado = { dia: number; estado: string; record_id?: string };
 
 type Area = {
 	nombre: string;
@@ -505,6 +505,7 @@ export const RondinesBitacoraTable = ({ showTabs, ubicacion }: { showTabs: boole
 						diaSelected={diaSelected}
 						selectedRondin={selectedRondin}
 						areaSelected={selectedAreaData}
+						recordId={selectedAreaData?.estadoDia?.record_id}
 					>
 						<div></div>
 					</ViewRondinesDetallePerimetroExt>
