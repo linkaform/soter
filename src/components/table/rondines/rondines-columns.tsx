@@ -35,6 +35,7 @@ import { Eye, Pencil, Trash } from "lucide-react";
             mode="edit"
             rondinData={ row.original}
             rondinId={ row.original._id}
+            folio={ row.original.folio}
           >
             <div className="cursor-pointer" title="Editar Rondin">
               <Pencil />

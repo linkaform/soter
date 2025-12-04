@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
+
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -12,10 +13,10 @@ import { Dispatch, SetStateAction } from "react";
 
 interface EliminarSuplenteModalProps {
   title: string;
-  open:boolean
-  setOpen: Dispatch<SetStateAction<boolean>>
-  onDelete:()=>void;
-  isLoading:boolean;
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+  onDelete: () => void;
+  isLoading: boolean;
 }
 
 export const EliminarSuplenteModal: React.FC<EliminarSuplenteModalProps> = ({
@@ -23,23 +24,22 @@ export const EliminarSuplenteModal: React.FC<EliminarSuplenteModalProps> = ({
   open,
   setOpen,
   onDelete,
-  isLoading
+  isLoading,
 }) => {
-
   return (
     <Dialog open={open} onOpenChange={setOpen} modal>
       <DialogContent className="max-w-xl">
         <DialogHeader>
-          <DialogTitle className="text-2xl text-center  font-bold">
+          <DialogTitle className="text-2xl text-center font-bold">
             {title}
           </DialogTitle>
         </DialogHeader>
 
         <div className="px-16 mb-5 flex flex-col items-center">
           <p className="text-center">
-            ¿Esta seguro que desea eliminar el guardia suplente?
+            ¿Está seguro que desea eliminar el guardia suplente?
           </p>
-          <small>Una vez confirmada la accion no se podra deshacer.</small>
+          <small>Una vez confirmada la acción no se podrá deshacer.</small>
         </div>
 
         <div className="flex gap-5">
@@ -50,10 +50,14 @@ export const EliminarSuplenteModal: React.FC<EliminarSuplenteModalProps> = ({
           </DialogClose>
 
           <Button
-            className="w-full  bg-blue-500 hover:bg-blue-600 text-white"
-            onClick={()=>onDelete()}
+            className="w-full bg-blue-500 hover:bg-blue-600 text-white"
+            onClick={() => {
+              onDelete();      // Ejecuta la acción
+              setOpen(false);  // Cierra el modal automáticamente
+            }}
+            disabled={isLoading}
           >
-           {isLoading? "Cargando...": "Confirmar"} 
+            {isLoading ? "Cargando..." : "Confirmar"}
           </Button>
         </div>
       </DialogContent>

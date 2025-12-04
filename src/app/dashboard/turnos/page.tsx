@@ -23,17 +23,16 @@ export default function Home() {
 
   const [evidencia, setEvidencia]=useState<Imagen[]>([])
   const [identificacion, setIdentificacion]=useState<Imagen[]>([])
-  const [nombreSuplente, setNombreSuplente] = useState("")
+  const [nombreSuplente, setNombreSuplente] = useState(shift?.guard?.nombre_suplente ||"")
   const [forceOpenStartPhoto, setForceOpenStartPhoto] = useState(false);
 
 	useEffect(() => {
+    if(shift) setNombreSuplente(shift?.guard?.nombre_suplente )
 		if ( shift?.guard?.status_turn !== "Turno Cerrado") {
 			setCheckin_id(shift?.guard?._id);
-      setEvidencia(shift?.booth_status?.fotografia_cierre_turno || [])
-      setNombreSuplente(shift?.booth_status?.nombre_suplente ||"" )
+      setEvidencia(shift?.guard?.fotografia_cierre_turno || [])
 		}else if (shift?.guard?.status_turn !== "Turno Abierto") {
       setEvidencia(shift?.booth_status?.fotografia_inicio_turno || [])
-      setNombreSuplente(shift?.booth_status?.nombre_suplente ||"" )
 		}
   }, [shift, setCheckin_id]);
 
@@ -50,7 +49,7 @@ export default function Home() {
      <>
      <link rel="icon" href="/turnos.svg" type="image/svg+xml" /><div className="flex flex-col lg:flex-row">
           <div className="w-full lg:w-1/4 h-full px-6 py-6 border border-[#F0F2F5]">
-              <Sidebar key={shift?.location?.name} shift={shift} nombreSuplente={nombreSuplente} setNombreSuplente={setNombreSuplente} onSuplenteConfirmado={() => setForceOpenStartPhoto(true)}/>
+              <Sidebar key={shift?.location?.name} shift={shift} nombreSuplente={nombreSuplente} setNombreSuplente={setNombreSuplente} onSuplenteConfirmado={() => setForceOpenStartPhoto(true)} />
           </div>
           <div className="w-full lg:w-3/4 p-8 flex flex-col">
               <TurnStatus shift={shift} location={location} area={area} evidencia={evidencia} setEvidencia={setEvidencia} identificacion={identificacion} setIdentificacion={setIdentificacion} nombreSuplente={nombreSuplente}

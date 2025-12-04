@@ -1,58 +1,64 @@
 "use client";
 
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import { ViewDetalleArea } from "./modals/view-detalle-area-rondin";
 import { useState } from "react";
+import { ViewRondinesDetallePerimetroExt } from "./modals/rondines-inspeccion-perimetro-exterior";
 
-interface CarruselDetalleAreaProps {
-  areas: any[];
+interface CarruselDetalleRondinProps {
+  data: any
+  horaSeleccionada: string;
   diaSelected: number;
-  rondin: string;
   estatus: string;
-  selectedRondin: any;
   startIndex?: number;
   onClose: () => void;
 }
 
-export const CarruselDetalleArea: React.FC<CarruselDetalleAreaProps> = ({
-  areas,
+export const CarruselDetalleRondin: React.FC<CarruselDetalleRondinProps> = ({
+  data,
+  horaSeleccionada,
   diaSelected,
-  rondin,
   estatus,
-  selectedRondin,
   startIndex = 0,
   onClose,
 }) => {
+  // Filtramos los rondines de la hora seleccionada
+  const rondinesHora = data.find((h: { hora: string; }) => h.hora === horaSeleccionada)?.categorias ?? [];
+
   const [activeIndex, setActiveIndex] = useState(startIndex);
 
   const prev = () =>
-    setActiveIndex((prev: number) =>
-      prev === 0 ? areas.length - 1 : prev - 1
+    setActiveIndex((prev) =>
+      prev === 0 ? rondinesHora.length - 1 : prev - 1
     );
 
   const next = () =>
-    setActiveIndex((prev: number) =>
-      prev === areas.length - 1 ? 0 : prev + 1
+    setActiveIndex((prev) =>
+      prev === rondinesHora.length - 1 ? 0 : prev + 1
     );
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-[9999] bg-black/70" onClick={onClose} >
-      <div className="relative w-full max-w-4xl mx-auto flex items-center justify-center" onClick={(e) => e.stopPropagation()}>
-
-        {areas && areas.length > 1 &&
+    <div
+      className="fixed inset-0 flex items-center justify-center z-[9999] bg-black/70"
+      onClick={onClose}
+    >
+      <div
+        className="relative w-full max-w-4xl flex items-center justify-center"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {rondinesHora.length > 1 && (
           <button
             onClick={prev}
             className="absolute left-[-50px] bg-white p-2 rounded-full shadow-lg"
           >
             <ChevronLeft size={28} />
           </button>
-        }
-        <div className="relative flex items-center justify-center w-full h-[650px]">
+        )}
 
-          {areas.map((area, index) => {
+        <div className="relative flex items-center justify-center w-full h-[650px]">
+          {rondinesHora.map((rondin:any, index:number) => {
             const isActive = index === activeIndex;
-            const isLeft = index === (activeIndex - 1 + areas.length) % areas.length;
-            const isRight = index === (activeIndex + 1) % areas.length;
+            const isLeft = index === (activeIndex - 1 + rondinesHora.length) % rondinesHora.length;
+            const isRight = index === (activeIndex + 1) % rondinesHora.length;
 
             let position = "opacity-0 scale-75 translate-x-0 rotate-[0deg]";
             let zIndex = "z-0";
@@ -71,19 +77,9 @@ export const CarruselDetalleArea: React.FC<CarruselDetalleAreaProps> = ({
             return (
               <div
                 key={index}
-                className={`
-                  absolute transition-all 
-                  ${position} ${zIndex}
-                  w-[55%]
-                  h-[600px]
-                `}
-                style={{
-                  transitionDuration: "900ms",
-                  transitionTimingFunction: "cubic-bezier(.25,.8,.25,1)",
-                }}
+                className={`absolute transition-all duration-[900ms] ease-[cubic-bezier(.25,.8,.25,1)] ${position} ${zIndex} w-[55%] h-[600px]`}
               >
                 <div className="relative bg-white rounded-xl shadow-xl p-4 border">
-
                   {isActive && (
                     <button
                       onClick={onClose}
@@ -93,16 +89,17 @@ export const CarruselDetalleArea: React.FC<CarruselDetalleAreaProps> = ({
                     </button>
                   )}
 
-                  <ViewDetalleArea
-                    areaSelected={{
-                      area: area,
-                      estadoDia: area.estados?.find((e: { dia: number; }) => e.dia === diaSelected),
-                    }}
-                    diaSelected={diaSelected}
-                    rondin={rondin}
+                  <ViewRondinesDetallePerimetroExt
                     estatus={estatus}
-                    selectedRondin={selectedRondin}
-                    onClose={onClose}
+                    diaSelected={diaSelected}
+                    selectedRondin={rondin}
+                    areaSelected={{
+                      area: rondin.areas[0] || null, 
+                      estadoDia: rondin.areas[0]?.estados?.find(
+                        (e: { dia: number }) => e.dia === diaSelected
+                      ),
+                    }}
+                    activeIndex={activeIndex}
                   />
                 </div>
               </div>
@@ -110,14 +107,14 @@ export const CarruselDetalleArea: React.FC<CarruselDetalleAreaProps> = ({
           })}
         </div>
 
-        {areas && areas.length > 1 &&
+        {rondinesHora.length > 1 && (
           <button
             onClick={next}
             className="absolute right-[-50px] bg-white p-2 rounded-full shadow-lg"
           >
             <ChevronRight size={28} />
           </button>
-        }
+        )}
       </div>
     </div>
   );

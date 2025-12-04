@@ -316,7 +316,7 @@ export const PersonasInvolucradasModal: React.FC<IncidenciaModalProps> = ({
 															field.onChange(selectedOption ? selectedOption.value :"");
 														}}
 														isClearable
-														menuPortalTarget={document.body}
+														menuPortalTarget={typeof window !== "undefined" ? document.body : null}
 														styles={{
 															menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
 														}}

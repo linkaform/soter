@@ -45,27 +45,27 @@ export const useGetShift = (enableShift:boolean) => {
 		}});
 
   const startShiftMutation = useMutation({
-    mutationFn: async ({
-      employee_list, fotografia, nombre_suplente
-    }: {
-      employee_list?: { user_id: number; name: string }[], fotografia:Imagen[], nombre_suplente:string
-    }) => {
-      const response = await startShift({
-        area,
-        location,
-        employee_list,
-        fotografia,
-        nombre_suplente
-      });
+		mutationFn: async ({
+		employee_list, fotografia, nombre_suplente
+		}: {
+		employee_list?: { user_id: number; name: string }[], fotografia:Imagen[], nombre_suplente:string
+		}) => {
+		const response = await startShift({
+			area,
+			location,
+			employee_list,
+			fotografia,
+			nombre_suplente
+		});
 
-      if (!response.success) {
-        throw new Error(
-          response.error?.msg?.msg || "Hubo un error al Iniciar turno"
-        );
-      }
-
-      return response;
-    },
+		const hasError = (!response?.success) || (response?.response?.data?.status_code === 400 )
+		if (hasError) {
+			const textMsj = errorMsj(response)
+			throw new Error(`Error al iniciar turno, Error: ${textMsj?.text}`);
+		} else {
+			return response.response?.data
+		}
+		},
     onMutate: () => {
       setLoading(true);
     },
@@ -98,14 +98,13 @@ export const useGetShift = (enableShift:boolean) => {
       fotografia:Imagen[]
     }) => {
       const response = await closeShift({ area, location, checkin_id , fotografia});
-  
-      if (!response.success) {
-        throw new Error(
-          response.error?.msg?.msg || "Hubo un error al cerrar el turno"
-        );
-      }
-  
-      return response;
+  		const hasError = (!response?.success) || (response?.response?.data?.status_code === 400 )
+		if (hasError) {
+			const textMsj = errorMsj(response)
+			throw new Error(`Error al cerrar turno, Error: ${textMsj?.text}`);
+		} else {
+			return response.response?.data
+		}
     },
     onMutate: () => {
       setLoading(true);
@@ -127,14 +126,13 @@ export const useGetShift = (enableShift:boolean) => {
   const forceCloseShift = useMutation({
     mutationFn: async ({ area, location , checkin_id}: { area: string; location: string, checkin_id:string }) => {
       const response = await closeShift({ area, location, checkin_id });
-  
-      if (!response.success) {
-        throw new Error(
-          response.error?.msg?.msg || "Hubo un error al forzar el cierre del turno."
-        );
-      }
-  
-      return response;
+	  const hasError = (!response?.success) || (response?.response?.data?.status_code === 400 )
+	  if (hasError) {
+		  const textMsj = errorMsj(response)
+		  throw new Error(`Error al forzar cierre de turno, Error: ${textMsj?.text}`);
+	  } else {
+		  return response.response?.data
+	  }
     },
     onMutate: () => {
       setLoading(true);

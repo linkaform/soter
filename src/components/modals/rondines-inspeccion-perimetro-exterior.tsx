@@ -1,14 +1,8 @@
+"use client";
+
 import { Button } from "../ui/button";
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "../ui/dialog";
 import { capitalizeFirstLetter } from "@/lib/utils";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { AlarmClock, Building2, Calendar, Calendar1, ChevronLeft, ChevronRight, Clock, FileDown, Loader2, Repeat2, Route, Tag } from "lucide-react";
 import { Badge } from "../ui/badge";
 import DaysCarousel from "../daysCarousel";
@@ -18,15 +12,11 @@ import Image from "next/image";
 import { useBitacoraById } from "@/hooks/Rondines/useBitacoraById";
 
 interface ViewRondinesDetalleAreaProps {
-    title: string;
-    areaSelected: any
-    isSuccess: boolean;
-    setIsSuccess: Dispatch<SetStateAction<boolean>>;
-    children: React.ReactNode;
-    estatus: string
-    diaSelected: number
-    selectedRondin: any
-    recordId?: string
+  areaSelected:any
+  estatus:string
+  diaSelected: number
+  selectedRondin:any
+  activeIndex:number
 }
 // interface Incidente {
 //     id: number;
@@ -40,330 +30,318 @@ interface ViewRondinesDetalleAreaProps {
 
 
 export const ViewRondinesDetallePerimetroExt: React.FC<ViewRondinesDetalleAreaProps> = ({
-    title,
-    children,
-    setIsSuccess,
-    isSuccess,
-    estatus,
-    diaSelected,
-    selectedRondin,
-    areaSelected,
-    recordId
+  estatus,
+  diaSelected,
+  selectedRondin,
+  areaSelected,
+  activeIndex
 }) => {
-    console.log(title, estatus)
-    // const areasInspeccionar=[
-    //     "Caseta de vigilancia planta 1", "Área de rampa 24", "Cisterna", "Sub estación norte planta 3", "Cajas no enrampadas"
-    // ]
-    // const img=[{file_url:"/nouser.svg", file_name:"Imagen"},{file_url:"/nouser.svg", file_name:"Imagen"}]
-    const [checkSelected, setCheckSelected] = useState(recordId || "")
-    const { data: getBitacoraById, isLoadingRondin: isLoadingBitacoraById } = useBitacoraById(checkSelected);
-    const [incidenteSeleccionado, setIncidenteSeleccionado] = useState<any | null>(null);
+  const [checkSelected, setCheckSelected] = useState(selectedRondin?.resumen[activeIndex].record_id);
+  const { data: getBitacoraById, isLoadingRondin: isLoadingBitacoraById } = useBitacoraById(checkSelected);
+  const [incidenteSeleccionado, setIncidenteSeleccionado] = useState<any | null>(null);
 
-    const [view, setView] = useState<"lista" | "detalle">("lista");
-    const [diaSeleccionado, setDiaSeleccionado] = useState<number>(diaSelected || 0);
+  const [view, setView] = useState<"lista" | "detalle">("lista");
+  const [diaSeleccionado, setDiaSeleccionado] = useState<number>(diaSelected || 0);
 
     useEffect(() => {
-        if (recordId) {
-            setCheckSelected(recordId)
-        }
-    }, [recordId])
-
-    useEffect(() => {
-        console.log("dia seleccionadooO", diaSeleccionado, getBitacoraById);
-
-        if (!diaSeleccionado || !getBitacoraById) return;
+        // console.log("dia seleccionadooO", diaSeleccionado, getBitacoraById);
+      
+        if (!diaSeleccionado || !getBitacoraById) return; 
         const estadoFiltrado = getBitacoraById?.bitacoras_mes?.recorrido?.estados?.find(
             (e: any) => e.dia === diaSeleccionado
         );
-
-        console.log("estadoFiltrado?.record_id", estadoFiltrado?.record_id);
-
+      
+        // console.log("estadoFiltrado?.record_id", estadoFiltrado?.record_id);
+      
         if (estadoFiltrado?.record_id) {
             setCheckSelected(estadoFiltrado.record_id);
         }
     }, [diaSeleccionado, getBitacoraById]);
 
     return (
-        <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
-            <DialogTrigger asChild>{children}</DialogTrigger>
-            <DialogContent className="max-w-md overflow-y-auto max-h-[80vh] flex flex-col" onInteractOutside={(e) => e.preventDefault()} aria-describedby="">
+    // <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
+    //   <DialogTrigger asChild>{children}</DialogTrigger>
+    //   <DialogContent className="max-w-md overflow-y-auto max-h-[80vh] flex flex-col" onInteractOutside={(e) => e.preventDefault()} aria-describedby="">
 
+       
+        <div className=" overflow-y-auto  h-[550px]">
+            {view === "lista" && (
+                <>
+                    <div className="flex-shrink-0">
+                    <div className="text-2xl text-center font-bold">
+                        {selectedRondin?.titulo}
+                    </div>
+                    </div>
 
+          <DaysCarousel
+            data={{ area: areaSelected.area, estadoDia: { dia: diaSelected, estado: estatus } }}
+            selectedDay={diaSeleccionado}
+            onDaySelect={setDiaSeleccionado}
+          />
 
-                {view === "lista" && (
-                    <>
-                        <DialogHeader className="flex-shrink-0">
-                            <DialogTitle className="text-2xl text-center font-bold">
-                                {selectedRondin?.titulo}
-                            </DialogTitle>
-                        </DialogHeader>
-
-                        <DaysCarousel
-                            data={{ area: areaSelected.area, estadoDia: { dia: diaSelected, estado: estatus } }}
-                            selectedDay={diaSeleccionado}
-                            onDaySelect={setDiaSeleccionado}
-                        />
-
-                        {!isLoadingBitacoraById ? <>
-                            <div className="flex flex-col gap-y-3">
-                                <div className="flex gap-3">
-                                    <div className="bg-slate-200 p-3 rounded"><Calendar /> </div>
-                                    <div className="flex flex-col">
-                                        <p>Fecha y hora programada</p>
-                                        <p className="text-gray-500 text-sm">{getBitacoraById?.fecha_hora_programada || "No disponible"}</p>
-                                    </div>
-                                </div>
-
-                                <div className="flex gap-3">
-                                    <div className="bg-slate-200 p-3 rounded"><Calendar /> </div>
-                                    <div className="flex flex-col">
-                                        <p>Fecha inicio</p>
-                                        <p className="text-gray-500 text-sm">{getBitacoraById?.fecha_inicio || "No disponible"}</p>
-                                    </div>
-                                </div>
-
-                                <div className="flex gap-3">
-                                    <div className="bg-slate-200 p-3 rounded"><Calendar /> </div>
-                                    <div className="flex flex-col">
-                                        <p>Fecha fin</p>
-                                        <p className="text-gray-500 text-sm">{getBitacoraById?.fecha_fin || "No disponible"}</p>
-                                    </div>
-                                </div>
-
-                                <div className="flex gap-3">
-                                    <div className="bg-slate-200 p-3 rounded"><AlarmClock /> </div>
-                                    <div className="flex flex-col">
-                                        <p>Duración</p>
-                                        <p className="text-gray-500 text-sm">{getBitacoraById?.duracion || "No disponible"}</p>
-                                    </div>
-                                </div>
-
-                                <div className="flex gap-3">
-                                    <div className="bg-slate-200 p-3 rounded"><Tag /> </div>
-                                    <div className="flex flex-col">
-                                        <p>Estatus</p>
-                                        <div>
-                                            <Badge
-                                                className={`text-white text-sm ${getBitacoraById?.estatus == "finalizado"
-                                                    ? "bg-green-600"
-                                                    : getBitacoraById?.estatus == "cerrado"
-                                                        ? "bg-gray-600"
-                                                        : getBitacoraById?.estatus == "programado"
-                                                            ? "bg-purple-600"
-                                                            : getBitacoraById?.estatus == "en progreso"
-                                                                ? "bg-blue-600"
-                                                                : getBitacoraById?.estatus == "cancelado"
-                                                                    ? "bg-gray-400"
-                                                                    : "bg-gray-400"
-                                                    }`}
-                                            >
-                                                {capitalizeFirstLetter(getBitacoraById?.estatus)}
-                                            </Badge>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* <div className="flex gap-3">
-                        <div className="bg-slate-200 p-3 rounded"> <User/> </div>
-                        <div className="flex flex-col"> 
-                            <p>Asignado</p>
-                            <p className="text-gray-400">Roberto Pérez López</p>
-                        </div>
-                    </div> */}
-
-
-                                <div className="flex gap-3">
-                                    <div className="bg-slate-200 p-3 rounded"><Repeat2 /> </div>
-                                    <div className="flex flex-col">
-                                        <p>Recurrencia</p>
-                                        <p className="text-gray-400 text-sm">{getBitacoraById?.recurrencia || "No disponible"}</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="flex  justify-end">
-                                <Button
-                                    type="submit"
-                                    className="w-1/2  bg-blue-500 hover:bg-blue-600 text-white " disabled={false} onClick={() => { }}>
-                                    {false ? (<>
-                                        <> <Loader2 className="animate-spin" /> {"Descargando Reporte..."} </>
-                                    </>) : (<> <FileDown /> Descargar Reporte</>)}
-                                </Button>
-                            </div>
-
-                            <p className="font-bold">Áreas a inspeccionar</p>
-                            <div>
-                                <ul>
-                                    {getBitacoraById?.areas_a_inspeccionar?.map((area: any, index: number) => (
-                                        <li className="py-2" key={index}>
-                                            <div className="flex gap-3">
-                                                <div className="w-1 h-12 bg-blue-500"></div>
-                                                <div>
-                                                    <p>{area?.rondin_area}</p>
-                                                    <p className="text-gray-400">{"Fecha no disponible"}</p>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-
-                            <div className="animate-fadeIn mt-3">
-                                <h2 className="text-base font-semibold ">Incidentes en recorrido</h2>
-
-                                <div className="divide-y divide-gray-200">
-                                    {getBitacoraById?.incidencias?.map((i: any) => (
-                                        <div
-                                            key={Math.random().toString(36).substring(2, 9)}
-                                            className="flex justify-between items-center py-2 cursor-pointer hover:bg-gray-50 rounded-md px-1"
-                                            onClick={() => {
-                                                setIncidenteSeleccionado(i);
-                                                setView("detalle");
-                                            }}
-                                        >
-                                            <div>
-                                                <p className="text-sm font-medium text-gray-800">{i?.tipo_de_incidencia}</p>
-                                                <p className="text-xs text-gray-500">{i?.fecha_hora_incidente_bitacora}</p>
-                                            </div>
-                                            <ChevronRight size={18} className="text-gray-500" />
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </>
-                            :
-                            <div>
-                                <div className="flex flex-col justify-start place-items-center mt-20">
-                                    <div className="w-16 h-16 border-8  border-t-blue-500 rounded-full animate-spin"></div>
-                                    <span className="text-gray-500">
-                                        Cargando información...
-                                    </span>
-                                </div>
-                            </div>
-                        }
-                    </>
-                )}
-
-
-                {view === "detalle" && incidenteSeleccionado && (
-                    <>
-                        <DialogHeader className="flex-shrink-0">
-                            <DialogTitle className="text-2xl text-center font-bold">
-                                {incidenteSeleccionado?.tipo_de_incidencia}
-                            </DialogTitle>
-                        </DialogHeader>
-                        <div className="animate-fadeIn">
-                            <div className="flex items-center mb-3">
-                                <button
-                                    onClick={() => setView("lista")}
-                                    className="text-black hover:text-black mr-2"
-                                >
-                                    <ChevronLeft size={20} />
-                                </button>
-                                <h2 className="text-base font-semibold">Detalle del incidente</h2>
-
-                            </div>
-                            {incidenteSeleccionado?.incidente_evidencia.length ?
-                                <>
-                                    <div className="flex items-center justify-center">
-                                        <Carousel className="w-44">
-                                            <CarouselContent>
-                                                {incidenteSeleccionado?.incidente_evidencia.map((a: Imagen, index: number) => {
-                                                    const isVideo = a.file_url?.match(/\.(mp4|webm|ogg|mov|avi)$/i);
-
-                                                    return (
-                                                        <CarouselItem key={index}>
-                                                            <div className="p-1 relative">
-                                                                {isVideo ? (
-                                                                    <video
-                                                                        controls
-                                                                        className="w-full h-40 object-cover rounded-lg"
-                                                                    >
-                                                                        <source src={a.file_url} type="video/mp4" />
-                                                                        Tu navegador no soporta la reproducción de video.
-                                                                    </video>
-                                                                ) : (
-                                                                    <Image
-                                                                        height={160}
-                                                                        width={160}
-                                                                        src={a.file_url || "/mountain.svg"}
-                                                                        alt="Imagen"
-                                                                        className="w-full h-40 object-cover rounded-lg " />
-                                                                )}
-                                                            </div>
-                                                        </CarouselItem>
-                                                    );
-                                                })}
-                                            </CarouselContent>
-
-                                            {incidenteSeleccionado?.incidente_evidencia.length > 1 ? (
-                                                <>
-                                                    <CarouselPrevious type="button" />
-                                                    <CarouselNext type="button" />
-                                                </>
-                                            ) : null}
-                                        </Carousel>
-                                    </div>
-                                </>
-                                : (
-                                    <div className="w-full text-center py-8 text-gray-500 text-sm ">
-                                        No hay imágenes disponibles.
-                                    </div>
-                                )}
-
-
-                            <div className="flex flex-col gap-y-3">
-                                <div className="flex gap-3">
-                                    <div className="bg-slate-200 p-3 rounded"><Route /></div>
-                                    <div className="flex flex-col">
-                                        <p>Rondin</p>
-                                        <p className="text-gray-500 text-sm">{selectedRondin?.titulo}</p>
-                                    </div>
-                                </div>
-                                <div className="flex gap-3">
-                                    <div className="bg-slate-200 p-3 rounded"><Building2 /> </div>
-                                    <div className="flex flex-col">
-                                        <p>Ubicación</p>
-                                        <p className="text-gray-500 text-sm">{areaSelected.area.ubicacion || "No dispopnible"}</p>
-                                    </div>
-                                </div>
-                                <div className="flex gap-3">
-                                    <div className="bg-slate-200 p-3 rounded"> <Clock /> </div>
-                                    <div className="flex flex-col">
-                                        <p>Area</p>
-                                        <p className="text-gray-400">Demo</p>
-                                    </div>
-                                </div>
-                                <div className="flex gap-3">
-                                    <div className="bg-slate-200 p-3 rounded"><Calendar1 /> </div>
-                                    <div className="flex flex-col">
-                                        <p>Fecha y hora de registro</p>
-                                        <p className="text-gray-400">{incidenteSeleccionado?.fecha_hora_incidente_bitacora || "No disponible"}</p>
-                                    </div>
-                                </div>
-
-
-
-                            </div>
-                            <div className="flex gap-3 mt-3">
-                                <div className="">
-                                    <p className="text-base font-semibold">Comentarios</p>
-                                    <p className="text-gray-400">{incidenteSeleccionado?.comentario_incidente_bitacora}</p>
-                                </div>
-                            </div>
-                        </div>
-                    </>
-                )}
-
-                <div className="flex gap-1 my-5 col-span-2">
-                    <DialogClose asChild>
-                        <Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700">
-                            Cerrar
-                        </Button>
-                    </DialogClose>
+          {!isLoadingBitacoraById ? (
+            <>
+              {(!getBitacoraById || Object.keys(getBitacoraById).length === 0) ? (
+                <div className="flex flex-col items-center justify-between overflow-hidden">
+                  <div className="text-center text-xl mt-3 font-bold">
+                    Rondin no inspeccionado.
+                  </div>
+                  <small className="text-gray-500 italic mt-1 mb-3">
+                    Una vez inspeccionado, el detalle aparecerá aquí.
+                  </small>
+                  <Image
+                    height={100}
+                    width={400}
+                    src="/area_no_inspeccionada.jpg"
+                    alt="Imagen"
+                    className="object-cover rounded-lg p-0 "
+                  />
                 </div>
+              ) : (
+                <>
+                  <div className="flex flex-col gap-y-3">
+                    {/* Información general */}
+                    <div className="flex gap-3">
+                      <div className="bg-slate-200 p-3 rounded"><Calendar /></div>
+                      <div className="flex flex-col">
+                        <p>Fecha y hora programada</p>
+                        <p className="text-gray-500 text-sm">{getBitacoraById?.fecha_hora_programada || "No disponible"}</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-3">
+                      <div className="bg-slate-200 p-3 rounded"><Calendar /></div>
+                      <div className="flex flex-col">
+                        <p>Fecha inicio</p>
+                        <p className="text-gray-500 text-sm">{getBitacoraById?.fecha_inicio || "No disponible"}</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-3">
+                      <div className="bg-slate-200 p-3 rounded"><Calendar /></div>
+                      <div className="flex flex-col">
+                        <p>Fecha fin</p>
+                        <p className="text-gray-500 text-sm">{getBitacoraById?.fecha_fin || "No disponible"}</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-3">
+                      <div className="bg-slate-200 p-3 rounded"><AlarmClock /></div>
+                      <div className="flex flex-col">
+                        <p>Duración</p>
+                        <p className="text-gray-500 text-sm">{getBitacoraById?.duracion || "No disponible"}</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-3">
+                      <div className="bg-slate-200 p-3 rounded"><Tag /></div>
+                      <div className="flex flex-col">
+                        <p>Estatus</p>
+                        <div>
+                          <Badge
+                            className={`text-white text-sm ${
+                              getBitacoraById?.estatus === "finalizado"
+                                ? "bg-green-600"
+                                : getBitacoraById?.estatus === "cerrado"
+                                ? "bg-gray-600"
+                                : getBitacoraById?.estatus === "programado"
+                                ? "bg-purple-600"
+                                : getBitacoraById?.estatus === "en progreso"
+                                ? "bg-blue-600"
+                                : getBitacoraById?.estatus === "cancelado"
+                                ? "bg-gray-400"
+                                : "bg-gray-400"
+                            }`}
+                          >
+                            {capitalizeFirstLetter(getBitacoraById?.estatus)}
+                          </Badge>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex gap-3">
+                      <div className="bg-slate-200 p-3 rounded"><Repeat2 /></div>
+                      <div className="flex flex-col">
+                        <p>Recurrencia</p>
+                        <p className="text-gray-400 text-sm">{getBitacoraById?.recurrencia || "No disponible"}</p>
+                      </div>
+                    </div>
+                  </div>
 
-            </DialogContent>
-        </Dialog>
-    );
+                  <div className="flex justify-end">
+                    <Button
+                      type="submit"
+                      className="w-1/2 bg-blue-500 hover:bg-blue-600 text-white"
+                      disabled={false}
+                      onClick={() => {}}
+                    >
+                      {false ? (
+                        <>
+                          <Loader2 className="animate-spin" /> {"Descargando Reporte..."}
+                        </>
+                      ) : (
+                        <>
+                          <FileDown /> Descargar Reporte
+                        </>
+                      )}
+                    </Button>
+                  </div>
+
+                  <p className="font-bold">Áreas a inspeccionar</p>
+                  <div>
+                    <ul>
+                      {(getBitacoraById?.areas_a_inspeccionar ?? []).map((area: any, index: number) => (
+                        <li className="py-2" key={index}>
+                          <div className="flex gap-3">
+                            <div className="w-1 h-12 bg-blue-500"></div>
+                            <div>
+                              <p>{area?.rondin_area}</p>
+                              <p className="text-gray-400">{"Fecha no disponible"}</p>
+                            </div>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="animate-fadeIn mt-3">
+                    <h2 className="text-base font-semibold">Incidentes en recorrido</h2>
+
+                    <div className="divide-y divide-gray-200">
+                      {(getBitacoraById?.incidencias ?? []).map((i: any) => (
+                        <div
+                          key={i.id || Math.random().toString(36).substring(2, 9)}
+                          className="flex justify-between items-center py-2 cursor-pointer hover:bg-gray-50 rounded-md px-1"
+                          onClick={() => {
+                            setIncidenteSeleccionado(i);
+                            setView("detalle");
+                          }}
+                        >
+                          <div>
+                            <p className="text-sm font-medium text-gray-800">{i?.tipo_de_incidencia}</p>
+                            <p className="text-xs text-gray-500">{i?.fecha_hora_incidente_bitacora}</p>
+                          </div>
+                          <ChevronRight size={18} className="text-gray-500" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+            </>
+          ) : (
+            <div className="flex flex-col justify-start place-items-center mt-20">
+              <div className="w-16 h-16 border-8 border-t-blue-500 rounded-full animate-spin"></div>
+              <span className="text-gray-500">Cargando información...</span>
+            </div>
+          )}
+        </>
+      )}
+
+            {view === "detalle" && incidenteSeleccionado && (
+                <>
+                <div className="flex-shrink-0">
+                    <div className="text-2xl text-center font-bold">
+                        {incidenteSeleccionado?.tipo_de_incidencia}
+                    </div>
+                </div>
+                <div className="animate-fadeIn">
+                    <div className="flex items-center mb-3">
+                        <button
+                            onClick={() => setView("lista")}
+                            className="text-black hover:text-black mr-2"
+                        >
+                            <ChevronLeft size={20} />
+                        </button>
+                        <h2 className="text-base font-semibold">Detalle del incidente</h2>
+
+                    </div>
+                    {incidenteSeleccionado?.incidente_evidencia.length ?
+                    <>
+                        <div className="flex items-center justify-center">
+                            <Carousel className="w-44">
+                                <CarouselContent>
+                                    {incidenteSeleccionado?.incidente_evidencia.map((a: Imagen, index: number) => {
+                                        const isVideo = a.file_url?.match(/\.(mp4|webm|ogg|mov|avi)$/i);
+
+                                        return (
+                                            <CarouselItem key={index}>
+                                                <div className="p-1 relative">
+                                                    {isVideo ? (
+                                                        <video
+                                                            controls
+                                                            className="w-full h-40 object-cover rounded-lg"
+                                                        >
+                                                            <source src={a.file_url} type="video/mp4" />
+                                                            Tu navegador no soporta la reproducción de video.
+                                                        </video>
+                                                    ) : (
+                                                        <Image
+                                                            height={160}
+                                                            width={160}
+                                                            src={a.file_url || "/mountain.svg"}
+                                                            alt="Imagen"
+                                                            className="w-full h-40 object-cover rounded-lg " />
+                                                    )}
+                                                </div>
+                                            </CarouselItem>
+                                        );
+                                    })}
+                                </CarouselContent>
+
+                                {incidenteSeleccionado?.incidente_evidencia.length > 1 ? (
+                                    <>
+                                        <CarouselPrevious type="button" />
+                                        <CarouselNext type="button" />
+                                    </>
+                                ) : null}
+                            </Carousel>
+                        </div>
+                    </>    
+                :(
+                    <div className="w-full text-center py-8 text-gray-500 text-sm ">
+                        No hay imágenes disponibles.
+                    </div>
+                )}
+                
+
+                    <div className="flex flex-col gap-y-3">
+                        <div className="flex gap-3">
+                            <div className="bg-slate-200 p-3 rounded"><Route /></div>
+                            <div className="flex flex-col">
+                                <p>Rondin</p>
+                                <p className="text-gray-500 text-sm">{selectedRondin?.titulo}</p>
+                            </div>
+                        </div>
+                        <div className="flex gap-3">
+                            <div className="bg-slate-200 p-3 rounded"><Building2 /> </div>
+                            <div className="flex flex-col">
+                                <p>Ubicación</p>
+                                <p className="text-gray-500 text-sm">{areaSelected.area.ubicacion || "No dispopnible"}</p>
+                            </div>
+                        </div>
+                        <div className="flex gap-3">
+                            <div className="bg-slate-200 p-3 rounded"> <Clock /> </div>
+                            <div className="flex flex-col">
+                                <p>Area</p>
+                                <p className="text-gray-400">Demo</p>
+                            </div>
+                        </div>
+                        <div className="flex gap-3">
+                            <div className="bg-slate-200 p-3 rounded"><Calendar1 /> </div>
+                            <div className="flex flex-col">
+                                <p>Fecha y hora de registro</p>
+                                <p className="text-gray-400">{incidenteSeleccionado?.fecha_hora_incidente_bitacora || "No disponible"}</p>
+                            </div>
+                        </div>
+                        
+
+                        
+                    </div>
+                    <div className="flex gap-3 mt-3">
+                        <div className="">
+                            <p className="text-base font-semibold">Comentarios</p>
+                            <p className="text-gray-400">{incidenteSeleccionado?.comentario_incidente_bitacora}</p>
+                        </div>
+                    </div>
+                </div>
+                </>
+            )}
+        </div>
+  );
 };

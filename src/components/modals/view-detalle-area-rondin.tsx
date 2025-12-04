@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "../ui/button";
 import { useEffect, useState } from "react";
 import { Building2, Calendar1, ChevronLeft, ChevronRight, Clock, Loader2, Route } from "lucide-react";
@@ -37,11 +38,9 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
   onClose,
 }) => {
 
-    console.log("AREA", areaSelected)
-    const [checkSelected, setCheckSelected] = useState(areaSelected?.estadoDia?.record_id)
+    const [checkSelected, setCheckSelected] = useState(areaSelected?.estadoDia?.record_id ||"692719584c99eda82536ef55") //areaSelected?.estadoDia?.record_id
     const { data:getCheckById, isLoadingRondin:isLoadingCheckById} = useCheckById(checkSelected);
     const { createIncidenciaMutation , isLoading} = useCreateIncidenciaRondin();
- console.log("chek", getCheckById)
 
 	function crearNuevaIncidencia(data:any){
         const formatData ={
@@ -91,7 +90,7 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
     //   <DialogTrigger asChild>{children}</DialogTrigger>
     //   <DialogContent className="max-w-md overflow-y-auto max-h-[80vh] min-h-[60vh]  flex flex-col" onInteractOutside={(e) => e.preventDefault()} aria-describedby="">
        
-                <div className=" overflow-y-auto  h-[600px]">
+                <div className=" overflow-y-auto  h-[550px]">
                 {view === "lista" && (
                     <div>
                         <div className="flex-shrink-0">
@@ -110,9 +109,24 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
                             <>
 
                                 {(!getCheckById || Object.keys(getCheckById).length === 0) ? (
-                                    <div className="text-center text-red-600 p-4">
-                                        Area no inspeccionada.
-                                    </div>
+                                   <div className="flex flex-col items-center justify-between overflow-hidden">
+                                   <div className="text-center text-xl mt-3 font-bold">
+                                       Área no inspeccionada.
+                                   </div>
+                               
+                                   <small className="text-gray-500 italic mt-1 mb-3">
+                                       Una vez inspeccionada, el detalle aparecerá aquí.
+                                   </small>
+                               
+                                   <Image
+                                       height={100}
+                                       width={400}
+                                       src="/area_no_inspeccionada.jpg"
+                                       alt="Imagen"
+                                       className="object-cover rounded-lg p-0 "
+                                   />
+                               </div>
+                               
                                 ) : (
                                     <>
 
@@ -225,8 +239,6 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
                                                 </div>
                                             </div>
                                         }
-
-
                                     </>
                                 )}
                                
@@ -360,9 +372,7 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
                     </>) : (<> Generar Incidencia</>)}
                     </Button>
                     </>
-    
-    
-                  
+   
                 )}
                 </div>
     

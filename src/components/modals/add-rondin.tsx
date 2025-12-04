@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+"use client";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -87,7 +88,7 @@ const formSchema = z.object({
     nombre_rondin:z.string().optional(),
     duracion_estimada: z.string().optional(),
     ubicacion: z.string().optional(),
-    areas: z.array(z.string().optional()),
+    areas: z.array(z.string().optional()).optional(),
     grupo_asignado:z.string().optional(),
     fecha_hora_programada: z.string().optional(),
     programar_anticipacion: z.string().optional(),
@@ -142,6 +143,8 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 	const [esRepetirCada, setEsRepetirCada] = useState<boolean | null>(null);
 	const [mostrarFrecuencia, setMostrarFrecuencia] = useState(false);
 	const [noRecurrente, setNoRecurrente] = useState(false)
+
+	
 	const [dropdownOffset, setDropdownOffset] = useState({
 		distance: 40,
 		width: "100%",
@@ -149,7 +152,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 	  });
 	const multiselectRef = useRef<HTMLDivElement>(null);
 
-
+	  
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -257,16 +260,18 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 			se_repite_cada:values.se_repite_cada,
 		  ...recurrenciaFiltrada
 		};
-		if (mode === "edit" && rondinId) {
+	
+		if (mode == "edit" && folio) {
+			console.log("ediutarr", mode, folio, rondinId)
 			editarRondinMutation.mutate(
 			  { folio: folio, rondin_data: payload },
-			  {
-				onSuccess: () => {
-				  setIsSuccess(false);
-				},
-			  }
+			//   {
+			// 	onSuccess: () => {
+			// 	  setIsSuccess(false);
+			// 	},
+			//   }
 			);
-		  } else {
+		  } else if(mode == "create") {
 			createRondinMutation.mutate(
 			  { rondin_data: payload },
 			  {
@@ -276,7 +281,8 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 			  }
 			);
 		  }
-		}
+	}
+
 	const handleClose = () => {
 		setIsSuccess(false); 
 	};
@@ -338,12 +344,13 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 	function obtenerRecurrencia(
 		values: Record<string, any>,
 	): Record<string, any> {
+		console.log("SE REPITE CADA",values.se_repite_cada)
 		switch (values.se_repite_cada) {
 	  
 		  case "diario":
 			return {
 				que_dias_de_la_semana: que_dias_de_la_semana,
-				se_repite_cada: 'configurable',
+				se_repite_cada: "diario",
 				en_que_semana_sucede:'todas_las_semanas',
 				sucede_recurrencia:['dia_de_la_semana'],
 				cada_cuantas_horas_se_repite:values.cada_cuantas_horas_se_repite
@@ -351,7 +358,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 	  
 		  case "semana":
 			return {
-				se_repite_cada: 'configurable',
+				se_repite_cada: 'semana',
 				que_dias_de_la_semana: [date?obtenerDiaSemana(date):""],
 				...(!todas_las_semanas && {
 					en_que_semana_sucede: en_que_semana_sucede,
@@ -362,7 +369,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 			case "mes": {
 				if (esRepetirCada == false) {
 				  return {
-					se_repite_cada: "configurable",
+					se_repite_cada: "mes",
 					sucede_recurrencia: ["dia_del_mes"],
 					en_que_mes: en_que_mes,
 					cada_cuantos_meses_se_repite: values.cada_cuantos_meses_se_repite
@@ -422,6 +429,11 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 	useEffect(() => {
 		if (mode === "edit" && rondinData && isSuccess) {
 			console.log("CONFIGURACION RONDIN", rondinData)
+
+			const sucede = rondinData.sucede_recurrencia ?? [];			
+			form.setValue("sucede_recurrencia", sucede)
+
+
 			if (rondinData.fecha_hora_programada) {
 				setDate(new Date(rondinData.fecha_hora_programada));
 			}
@@ -479,6 +491,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 				que_dias_de_la_semana: rondinData.que_dias_de_la_semana || [],
 				en_que_semana_sucede: rondinData.en_que_semana_sucede || '',
 				en_que_mes: rondinData.en_que_mes || [],
+				sucede_recurrencia: rondinData.sucede_recurrencia || [],
 			});
 		}
 	}, [mode, rondinData, isSuccess, catalogAreasRondin, reset]);
@@ -571,7 +584,9 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 			
 			<div className="overflow-y-auto p-3">
 				<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-1 md:grid-cols-1 gap-5 ">
+				<form onSubmit={(e)=>{e.stopPropagation();
+					 form.handleSubmit(onSubmit)();
+					 }} className="grid grid-cols-1 md:grid-cols-1 gap-5 ">
 					<FormField
 						control={form.control}
 						name="nombre_rondin"
@@ -651,6 +666,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 								<FormControl> 
 								<Select {...field} className="input"
 									onValueChange={(value:string) => {
+									console.log("VALORRRRR",value)
 									field.onChange(value); 
 								}}
 								value={field.value} 
@@ -1051,13 +1067,21 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 
 				
 				<Button
-					type="submit"
+					type="button"
 					onClick={form.handleSubmit(onSubmit)}
 					className="w-full  bg-blue-500 hover:bg-blue-600 text-white " disabled={isLoading || isLoadingEdit}
 				>
 					{isLoading || isLoadingEdit? (
 					<>
-						<Loader2 className="animate-spin"/> {"Creando rondin..."}
+					{mode === "edit" ? (
+					<span className="flex items-center gap-2">
+						<Loader2 className="animate-spin" /> Actualizando rondin...
+					</span>
+					) : (
+					<span className="flex items-center gap-2">
+						<Loader2 className="animate-spin" /> Creando rondin...
+					</span>
+					)}
 					</>
 				): <>
 				{ mode=="edit" ? "Guardar rondin": "Crear rondin" }

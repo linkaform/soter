@@ -381,6 +381,7 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 						mode="edit"
 						rondinData={rondinSeleccionado}
 						rondinId={rondinSeleccionado?rondinSeleccionado._id:""}
+						folio={rondinSeleccionado?rondinSeleccionado.folio:""}
 						>
 						<Button className="bg-blue-500 hover:bg-blue-600 cursor-pointer p-2">
 							Editar

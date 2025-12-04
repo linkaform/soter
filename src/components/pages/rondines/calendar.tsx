@@ -1,3 +1,4 @@
+"use client";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import dynamic from 'next/dynamic'; 
 import dayGridPlugin from '@fullcalendar/daygrid'; 
@@ -102,11 +103,6 @@ export default function RondinesCalendar() {
       },
     },
   ];
-  
-
-
- 
-
 
 
   return (
@@ -164,8 +160,6 @@ function renderEventContent(eventInfo: any) {
     </div>
   );
 }
-
-
 
 
 const FullCalendar = dynamic(() => import('@fullcalendar/react'), { ssr: false });

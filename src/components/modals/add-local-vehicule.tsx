@@ -46,15 +46,12 @@ interface Props {
 
 
 const formSchema = z.object({
-  tipo: z.array(z.string()).nonempty({
-    message: "Debe seleccionar al menos un tipo.",
-  }),
-
-  marca: z.array(z.string()).optional(),
-  modelo: z.array(z.string()).optional(),
-  estado: z.array(z.string()).optional(),
-  placas: z.string().optional(),
-  color: z.array(z.string()).optional(),
+	tipo: z.array(z.string()).min(1, "Debe seleccionar un tipo."),
+	marca: z.array(z.string()).min(1, "Debe seleccionar una marca."),
+	modelo: z.array(z.string()).min(1, "Debe seleccionar un modelo."),
+	estado: z.array(z.string()).optional(),
+	placas: z.string().optional(),
+	color: z.array(z.string()).min(1, "Debe seleccionar un color."),
 })
 
 export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicles, setVehiculos, isAccesos , id="", fetch=false}) => {
@@ -180,15 +177,16 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
   };
 
   useEffect(() => {
-    if(!open)
-		form.setValue("tipo", [""])
-		form.setValue("marca", [""])
-		form.setValue("modelo", [""])
-		form.setValue("color", [""])
-		form.setValue("estado", [""])
-    	form.setValue("placas", "")
+	if (!open) {
+	  form.setValue("tipo", []);
+	  form.setValue("marca", []);
+	  form.setValue("modelo", []);
+	  form.setValue("color", []);
+	  form.setValue("estado", []);
+	  form.setValue("placas", "");
+	}
   }, [open]);
-
+  
 
 
   return (
@@ -207,35 +205,42 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
         <div className=" px-4"> 
 			<Form {...form}>
 				<form  className="space-y-8 ">
-					<FormField
-					control={form.control}
-					name="tipo"
-					render={({ field }) => (
-						<FormItem>
-						<FormLabel>* Tipo de vehículo</FormLabel>
+				<FormField
+				control={form.control}
+				name="tipo"
+				render={({ field }) => (
+					<FormItem>
+					<FormLabel>* Tipo de vehículo</FormLabel>
 
-						<Select
-							aria-labelledby="aria-label"
-							inputId="aria-example-input"
-							name="aria-live-color"
-							options={tiposCat}
-							onChange={(value:any) =>{
-								field.onChange([value.value]);
-								setCatalogSearch("marcas")
-								setTipoVehiculoState(value.value);
-								setMarcaState("")
-								setMarcasCat([])
-							}}
-							isClearable
-							// menuPortalTarget={document.body}
-							styles={{
-								menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
-							}}
-						/>
-						<FormMessage />
-						</FormItem>
-					)}
+					<Select
+						value={
+						field.value?.length
+							? { value: field.value[0], label: field.value[0] }
+							: null
+						}
+						options={tiposCat}
+						onChange={(value: any) => {
+						if (value) {
+							field.onChange([value.value]);  
+							setCatalogSearch("marcas");
+							setTipoVehiculoState(value.value);
+							setMarcaState("");
+							setMarcasCat([]);
+						} else {
+							field.onChange([]); 
+						}
+						}}
+						isClearable={false} 
+						styles={{
+						menuPortal: (base) => ({ ...base, zIndex: 9999 }),
+						}}
 					/>
+
+					<FormMessage />
+					</FormItem>
+				)}
+				/>
+
 
 					<FormField
 					control={form.control}
@@ -244,22 +249,23 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 						<FormItem>
 						<FormLabel>Marca</FormLabel>
 						<Select
-							aria-labelledby="aria-label"
-							inputId="aria-example-input"
-							name="aria-live-color"
 							options={marcasCat}
-							onChange={(value:any) =>{
-								field.onChange([value.value]);
-								setMarcaState(value.value);
-								setModelosCat([])
-								setCatalogSearch("modelos")
+							className="react-select-marca no-animation"
+							onChange={(value: any) => {
+								if (value) {
+									field.onChange([value.value]);
+									setMarcaState(value.value);
+									setModelosCat([]);
+									setCatalogSearch("modelos");
+								} else {
+									field.onChange([]);
+									setMarcaState("");
+									setModelosCat([]);
+								}
 							}}
 							isClearable
-							// menuPortalTarget={document.body}
-							styles={{
-								menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
-							}}
 						/>
+
 						<FormMessage />
 						</FormItem>
 					)}
@@ -273,16 +279,15 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 						<FormLabel>Modelo</FormLabel>
 
 						<Select
-							aria-labelledby="aria-label"
-							inputId="aria-example-input"
-							name="aria-live-color"
 							options={modelosCat}
-							onChange={(value:any) => field.onChange([value.value])}
-							isClearable
-							styles={{
-								menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
+							className="react-select-modelo"
+							onChange={(value: any) => {
+								field.onChange(value ? [value.value] : []); // ← array o vacío
 							}}
+							isSearchable
+							isClearable
 						/>
+
 						
 						<FormMessage />
 						</FormItem>
@@ -296,16 +301,14 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 						<FormItem>
 						<FormLabel> Estado</FormLabel>
 						<Select
-							aria-labelledby="aria-label"
-							inputId="aria-example-input"
-							name="aria-live-color"
 							options={catEstados}
-							onChange={(value:any) => field.onChange([value.value])}
-							isClearable
-							styles={{
-								menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
+							className="react-select-estado"
+							onChange={(value: any) => {
+								field.onChange(value ? [value.value] : []); // ← no "" ni undefined
 							}}
+							isClearable
 						/>
+
 						<FormMessage />
 						</FormItem>
 					)}
@@ -338,18 +341,15 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 					<FormItem>
 						<FormLabel> Color</FormLabel>
 						<Select
-							aria-labelledby="aria-label"
-							inputId="aria-example-input"
-							name="aria-live-color"
 							options={catColores}
+							className="react-select-color"
 							onChange={(selectedOption) => {
-							field.onChange(selectedOption ? [selectedOption.value] : "");
+								field.onChange(selectedOption ? [selectedOption.value] : []); 
 							}}
+							isSearchable
 							isClearable
-							styles={{
-								menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
-							}}
 						/>
+
 						<FormMessage />
 					</FormItem>
 					)}

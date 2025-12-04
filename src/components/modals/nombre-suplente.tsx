@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Input } from "../ui/input";
 import { useUpdateSuplenteTurnos } from "@/hooks/Rondines/useUpdateSuplente";
 
@@ -31,6 +31,14 @@ export const NombreSuplenteModal: React.FC<NombreSuplenteModalProps> = ({
   mode
 }) => {
     const {updateSuplenteMutation, isLoading} = useUpdateSuplenteTurnos();
+    const [localName, setLocalName] = useState(nombreSuplente|| "");
+
+    useEffect(() => {
+        if (open) {
+          setLocalName(nombreSuplente);
+        }
+      }, [open, nombreSuplente]);
+      
     return (
     <Dialog open={open} onOpenChange={setOpen} modal>
         <DialogContent className="max-w-xl">
@@ -44,8 +52,8 @@ export const NombreSuplenteModal: React.FC<NombreSuplenteModalProps> = ({
             <Input
             placeholder="Nombre del suplente"
             className="resize-none"
-            value={nombreSuplente}
-            onChange={(e) => setNombreSuplente(e.target.value)}
+            value={localName}
+            onChange={(e) => setLocalName(e.target.value)}
             />
                         
             <div className="flex gap-5 mt-5">
@@ -62,14 +70,16 @@ export const NombreSuplenteModal: React.FC<NombreSuplenteModalProps> = ({
                             updateSuplenteMutation.mutate({ nombre_suplente:nombreSuplente },{
                                 onSuccess: () => {
                                     setOpen(false); 
+                                    setNombreSuplente(localName)
                                 }
                             })
                         }else{
                             setOpen(false); 
+                            setNombreSuplente(localName)
                             onSuplenteConfirmado();
                         }
                     }}
-                    disabled={nombreSuplente.trim() === "" || isLoading}
+                    disabled={localName.trim() === "" || isLoading}
                 >
                    {isLoading? "Cargando...": "Confirmar"} 
                 </Button>

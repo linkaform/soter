@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 
 import RondinesTable from "@/components/table/rondines/table";
 import PageTitle from "@/components/page-title";
 import ChangeLocation from "@/components/changeLocation";
 import { useShiftStore } from "@/store/useShiftStore";
-import { arraysIguales } from "@/lib/utils";
+import { arraysIguales, dateToString } from "@/lib/utils";
 import { Ban, BookCheck, CalendarClock, CheckCircle, Flag, Play, Search, Sun } from "lucide-react";
 import { useGetStats } from "@/hooks/useGetStats";
 import { useGetListRondines } from "@/hooks/Rondines/useGetListRondines";
@@ -28,12 +28,14 @@ const RondinesPage = () => {
   const [dateFilter, setDateFilter] = useState<string>(filter)
   const [selectedTab, setSelectedTab] = useState<string>(tab ? tab: "Rondines"); 
   const { data: stats } = useGetStats(ubicacionSeleccionada&& areaSeleccionada?true:false,ubicacionSeleccionada, areaSeleccionada=="todas"?"":areaSeleccionada, 'Rondines')
-  const { listRondines } = useGetListRondines(true ,"","", 100,0 )
-
-  const [selectedRondin, setSelectedRondin]= useState<string[]|null>([]);
 
   const [date1, setDate1] = useState<Date|"">("")
   const [date2, setDate2] = useState<Date|"">("")
+  const [dates, setDates] = useState<string[]>([])
+  const { listRondines } = useGetListRondines(true ,dates[0],dates[1], 100,0 )
+
+  const [selectedRondin, setSelectedRondin]= useState<string[]|null>([]);
+
   const [activeTab, setActiveTab] = useState("Rondines");
 
   const [openModal, setOpenModal] = useState(false);
@@ -42,6 +44,10 @@ const RondinesPage = () => {
 
 
   const {listIncidenciasRondin} = useIncidenciaRondin("", "");
+
+  useEffect(()=>{
+	if(location) setUbicacionSeleccionada(location)
+  },[location])
 
   const handleTabChange = (tab:string, option:string[], filter="") => {
 		if(tab==selectedTab && arraysIguales(option, selectedOption) && filter == dateFilter){
@@ -57,11 +63,9 @@ const RondinesPage = () => {
   
 
 	const Filter = () => {
-		// const f1= dateToString(new Date(date1)) 
-		// const f2= dateToString(new Date(date2)) 
-		// setDatePrimera(f1)
-		// setDateSegunda(f2)
-		// setDates([f1,f2])
+		const f1= dateToString(new Date(date1))
+		const f2= dateToString(new Date(date2)) 
+		setDates([f1,f2])
 	};
 
 	const resetTableFilters = ()=>{
@@ -83,14 +87,12 @@ const RondinesPage = () => {
 						<PageTitle title="Registro y Seguimiento de Rondines" />	
 					</div>
 					<div className="flex w-1/2 items-center gap-10 justify-end">
-						<div className="w-2/12">
-							<ChangeLocation
-								ubicacionSeleccionada={ubicacionSeleccionada}
-								areaSeleccionada={areaSeleccionada}
-								setUbicacionSeleccionada={setUbicacionSeleccionada}
-								setAreaSeleccionada={setAreaSeleccionada}
-							/>
-						</div>
+						<ChangeLocation
+							ubicacionSeleccionada={ubicacionSeleccionada}
+							areaSeleccionada={areaSeleccionada}
+							setUbicacionSeleccionada={setUbicacionSeleccionada}
+							setAreaSeleccionada={setAreaSeleccionada}
+						/>
 
 						<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
 							dateFilter== "today" && selectedTab === 'Personal' &&  selectedOption[0]=="entrada" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} 

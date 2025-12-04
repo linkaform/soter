@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import * as React from 'react'
 import {
   ColumnFiltersState,
@@ -51,13 +51,6 @@ export const ListaNotasTable = ({ statusFilter, ubicacionSeleccionada, areaSelec
     }
   }, [statusFilter])
 
-  console.log("QUE PASA EN NOTAS",   areaSeleccionada,
-    ubicacionSeleccionada,
-    currentPage,
-    registersPage,
-    dateFromValue,
-    dateToValue,
-    statusFilter)
   const { data: notes, isLoadingListNotes, isFetching } = useNotes( true,
     areaSeleccionada,
     ubicacionSeleccionada,

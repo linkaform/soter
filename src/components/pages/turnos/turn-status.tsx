@@ -1,3 +1,4 @@
+"use client"
 import { CloseShiftModal } from "@/components/modals/close-shift-modal";
 import { StartShiftModal } from "@/components/modals/start-shift-modal";
 import TakePhotoGuard from "@/components/modals/take-photo-guard";

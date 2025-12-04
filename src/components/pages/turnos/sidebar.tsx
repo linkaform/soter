@@ -1,3 +1,4 @@
+"use client"
 import { ChangeBoothModal } from "@/components/modals/change-booth-modal";
 import { ForceCloseShift } from "@/components/modals/force-close-shift";
 import { NombreSuplenteModal } from "@/components/modals/nombre-suplente";
@@ -131,8 +132,9 @@ const Sidebar = ({shift, nombreSuplente, setNombreSuplente, onSuplenteConfirmado
           <NombreSuplenteModal title={"Suplente"} nombreSuplente={nombreSuplente} setNombreSuplente={setNombreSuplente} onSuplenteConfirmado={onSuplenteConfirmado} open={openNombreSuplenteModal} setOpen={setOpenNombreSuplenteModal}
           mode={"create"}/>
 
-          {nombreSuplente && shift?.guard?.status_turn !== "Turno Abierto" && (
+          { nombreSuplente && (
             <SuplenteItem
+              turno={shift?.guard?.status_turn}
               nombreSuplente={nombreSuplente}
               setNombreSuplente={setNombreSuplente}
             />

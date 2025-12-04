@@ -843,7 +843,7 @@ export const AddIncidenciaModal: React.FC<AddIncidenciaModalProps> = ({
 															setUbicacionSeleccionada(selectedOption?.value ?? ""); 
 														  }}
 														isClearable
-														menuPortalTarget={document.body}
+														menuPortalTarget={typeof window !== "undefined" ? document.body : null}
 														styles={{
 															menuPortal: (base) => ({ ...base, zIndex: 9999 ,pointerEvents: "auto",}),
 														}}

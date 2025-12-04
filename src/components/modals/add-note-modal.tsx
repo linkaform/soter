@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect } from 'react'
 import LoadImage from '../upload-Image'
 import LoadFile from '../upload-file'

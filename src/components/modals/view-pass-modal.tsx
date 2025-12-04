@@ -414,7 +414,7 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
         <div className="flex flex-col md:flex-row gap-2 my-5">
             <DialogClose asChild>
               <Button className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700">
-                Cancelar
+                  Cerrar
               </Button>
             </DialogClose>
               <Button className="w-full bg-slate-500 hover:bg-slate-600 text-white" onClick={() => {
