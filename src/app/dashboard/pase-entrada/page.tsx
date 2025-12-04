@@ -269,7 +269,7 @@ import { Switch } from "@/components/ui/switch";
 			form.setValue("nombre", selected?.nombre || "");
 			form.setValue("email", selected?.email || "");
 			form.setValue("telefono", selected?.telefono || "");
-			closeModalContactos()
+			setOpenModal(false)
 		}
 	}, [selected, form])
 
@@ -395,9 +395,6 @@ import { Switch } from "@/components/ui/switch";
 		setIsSuccess(false); 
 	};
 
-	const openModalContactos = () => setOpenModal(true);
-	const closeModalContactos = () => setOpenModal(false);
-
 return (
 	<div className="p-8">
 		<EntryPassModal
@@ -418,12 +415,12 @@ return (
 				<Button
 					className="bg-blue-500 text-white hover:text-white hover:bg-blue-600 w-40"
 					variant="outline"
-					onClick={openModalContactos}
+					onClick={()=>{setOpenModal(true)}}
 				>
 					<List size={36} />
 					Mis contactos
 				</Button>
-				<MisContactosModal title="Mis Contactos" setSelected={setSelected} isOpenModal={isOpenModal} closeModal={closeModalContactos} setOpenModal={setOpenModal}>
+				<MisContactosModal title="Mis Contactos" setSelected={setSelected} isOpenModal={isOpenModal} setOpenModal={setOpenModal}>
 				</MisContactosModal> 
 
 			</div>

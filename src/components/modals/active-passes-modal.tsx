@@ -19,47 +19,48 @@ import { usePasses } from "@/hooks/usePasses";
 interface ActivePassesModalProps {
   title: string;
   children: React.ReactNode;
-//   setPass: Dispatch<SetStateAction<string>>;
-//   pass:string;
-  setOpen:Dispatch<SetStateAction<boolean>>;
-  open:boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+  open: boolean;
   input: string;
 }
 
 export const ActivePassesModal: React.FC<ActivePassesModalProps> = ({
   title,
-  children, open, setOpen, input 
+  children,
+  open,
+  setOpen,
+  input,
 }) => {
   const { location } = useShiftStore();
-  const { setPassCode , passCode} = useAccessStore();
+  const { setPassCode, passCode } = useAccessStore();
   const [searchText, setSearchText] = useState("");
-  const { data: activePasses, isLoading } = usePasses(location);
+
+  const { data: activePasses, isLoadingPasses } = usePasses(location);
 
   useEffect(() => {
     if (open) {
       setSearchText(input);
     } else {
-      const timeout = setTimeout(() => {
-        setSearchText("");
-      }, 300); 
+      const timeout = setTimeout(() => setSearchText(""), 300);
       return () => clearTimeout(timeout);
     }
   }, [open, input]);
 
-  const filteredTemporaryPasses = (search:string) => {
-    return  (activePasses?.filter((item: any) =>
-      item.nombre?.toLowerCase().includes(search?.toLowerCase()) ))
-  }
+  const filteredTemporaryPasses = (search: string) =>
+    activePasses?.filter((item: any) =>
+      item.nombre?.toLowerCase().includes(search?.toLowerCase())
+    );
 
   const handleSelectPass = (item: any) => {
     if (esHexadecimal(item._id) && item._id !== passCode) {
-      	setPassCode(item._id); 
-        setSearchText("")
-        setOpen(false); 
-    }else{
-		toast.error("Escoge un pase diferente...")
-	}
+      setPassCode(item._id);
+      setSearchText("");
+      setOpen(false);
+    } else {
+      toast.error("Escoge un pase diferente...");
+    }
   };
+
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -67,57 +68,61 @@ export const ActivePassesModal: React.FC<ActivePassesModalProps> = ({
         {children}
       </DialogTrigger>
 
-      <DialogContent className="max-w-xl flex flex-col" >
+      <DialogContent className="max-w-xl flex flex-col">
         <DialogHeader>
           <DialogTitle className="text-2xl text-center font-bold my-5">
             {title}
           </DialogTitle>
         </DialogHeader>
 
-        {isLoading ? (
-          <div className="flex justify-center items-center min-h-[50vh]">
+        {isLoadingPasses ? (
+          <div className="flex flex-col justify-center items-center min-h-[50vh]">
+            <div className="mb-3 font-semibold text-gray-500">
+              Cargando información...
+            </div>
             <div className="w-16 h-16 border-8 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
           </div>
         ) : (
           <>
             <SearchInput
               value={searchText}
-              onChange={(e) =>{setSearchText(e.target.value);}}
+              onChange={(e) => setSearchText(e.target.value)}
             />
-            <div className="flex-1 overflow-y-auto max-h-[500px] space-y-0 border-t border-b mt-2">
-            {filteredTemporaryPasses(searchText)?.length === 0 ? (
-				<div className="text-center text-lg text-gray-500 py-10">
-					No hay resultados disponibles
-				</div>
-            ) : (
-              filteredTemporaryPasses(searchText)?.map((item: any) => {
-                const avatarUrl = item?.foto?.[0]?.file_url || "/nouser.svg";
 
-                return (
-                  <div
-                    key={item._id}
-                    className="flex items-center justify-between px-4 py-4 border-b hover:bg-gray-100 cursor-pointer transition-colors"
-                    onClick={() => handleSelectPass(item)}
-                  >
-                    <div className="flex items-center space-x-4">
-                      <div className="relative w-14 h-14 rounded-full overflow-hidden">
-                        <Image
-                          src={avatarUrl}
-                          alt={item.nombre || "Sin nombre"}
-                          fill
-                          sizes="56px"
-                          className="object-cover"
-                        />
-                      </div>
-                      <div>
-                        <p className="font-semibold">{item.nombre}</p>
+            <div className="flex-1 overflow-y-auto max-h-[500px] space-y-0 border-t border-b mt-2">
+              {filteredTemporaryPasses(searchText)?.length === 0 ? (
+                <div className="text-center text-lg text-gray-500 py-10">
+                  No hay resultados disponibles
+                </div>
+              ) : (
+                filteredTemporaryPasses(searchText)?.map((item: any) => {
+                  const avatarUrl =
+                    item?.foto?.[0]?.file_url || "/nouser.svg";
+
+                  return (
+                    <div
+                      key={item._id}
+                      className="flex items-center justify-between px-4 py-4 border-b hover:bg-gray-100 cursor-pointer transition-colors"
+                      onClick={() => handleSelectPass(item)}
+                    >
+                      <div className="flex items-center space-x-4">
+                        <div className="relative w-14 h-14 rounded-full overflow-hidden">
+                          <Image
+                            src={avatarUrl}
+                            alt={item.nombre || "Sin nombre"}
+                            fill
+                            sizes="56px"
+                            className="object-cover"
+                          />
+                        </div>
+                        <div>
+                          <p className="font-semibold">{item.nombre}</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })
-            )}
-
+                  );
+                })
+              )}
             </div>
           </>
         )}

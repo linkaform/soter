@@ -1,21 +1,18 @@
 import { getUserContacts } from "@/lib/get-user-contacts";
 import { useQuery } from "@tanstack/react-query";
 
-export const useGetUserContacts= () => {
+export const useGetUserContacts= (enabled=true) => {
   const { data, isLoading, error, isFetching, refetch } = useQuery<any[]>({
     queryKey: ["getUserContacts"], 
     queryFn: async () => {
+        if (!enabled) return []; 
         const data = await getUserContacts(); 
         return data.response?.data;
     },
-
-    refetchOnWindowFocus: true,
-    refetchInterval: 60000,
-    refetchOnReconnect: true,
-    staleTime: 1000 * 60 * 5,
-  
+    enabled,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
   });
-
   return {
     data,
     isLoading,

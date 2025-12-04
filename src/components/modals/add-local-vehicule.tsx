@@ -230,7 +230,7 @@ export const VehicleLocalPassModal: React.FC<Props> = ({ title, children, vehicl
 							field.onChange([]); 
 						}
 						}}
-						isClearable={false} 
+						isClearable
 						styles={{
 						menuPortal: (base) => ({ ...base, zIndex: 9999 }),
 						}}

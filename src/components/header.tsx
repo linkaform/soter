@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { DoorOpen, LogOut, Settings, StickyNote} from "lucide-react";
+import { LogOut, Settings, StickyNote} from "lucide-react";
 import useAuthStore from "@/store/useAuthStore";
 import { useMenuStore } from "@/store/useGetMenuStore";
 
@@ -190,20 +190,7 @@ export const Header = () => {
                   <DropdownMenuSeparator />
                   { currentPath !== "/" ? (
                     <>
-                    {labels?.length > 0 ? (
-                      <>
-                        { labels.includes("turnos")? (
-                          <>
-                            <Link href="/dashboard/turnos">
-                              <DropdownMenuItem>
-                                <DoorOpen />
-                                Turno
-                              </DropdownMenuItem>
-                            </Link>
-                          </>
-                        ): null}
-                      </>
-                    ):null}
+                   
                       
                     {labels?.length > 0 ? (
                       <>

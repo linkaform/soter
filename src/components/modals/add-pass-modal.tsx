@@ -186,7 +186,7 @@ export const EntryPassModal: React.FC<EntryPassUpdateModalProps> = ({
 };
 
   return (
-    <Dialog open={isSuccess}  modal >
+    <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal >
 		<DialogContent className="max-w-3xl overflow-y-auto max-h-[80vh] flex flex-col " aria-describedby="">
 			<DialogHeader className="flex-shrink-0">
 				<DialogTitle className="text-2xl text-center font-bold">

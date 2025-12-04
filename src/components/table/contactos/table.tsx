@@ -41,8 +41,9 @@ interface ContactsTableProps {
   setSelected?: Dispatch<SetStateAction<Contacto |null>>;
 }
 
-export const ContactsTable: React.FC<ContactsTableProps> = ({ setSelected }) => {
-  const { data, isLoading} = useGetUserContacts();
+export const ContactsTable: React.FC<ContactsTableProps> = ({ setSelected}) => {
+  
+  const { data, isLoading} = useGetUserContacts(true);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
