@@ -7,19 +7,23 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@/components/ui/carousel"; 
+} from "@/components/ui/carousel";
 interface EstadoDia {
   dia: number;
   estado: string;
 }
 
 interface DaysCarouselProps {
-  data: {
-    area: {
+  data?: {
+    area?: {
       nombre: string;
       estados: EstadoDia[];
     };
-    estadoDia: EstadoDia;
+    recorrido?: {
+      nombre: string;
+      estados: EstadoDia[];
+    };
+    estadoDia?: EstadoDia;
   };
   selectedDay: number | null;
   onDaySelect: Dispatch<SetStateAction<number>>
@@ -43,17 +47,15 @@ const DaysCarousel: React.FC<DaysCarouselProps> = ({
   selectedDay,
   onDaySelect,
 }) => {
-  const { area } = data;
   const carouselRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     if (!carouselRef.current || selectedDay == null) return;
 
     const button = carouselRef.current.querySelector<HTMLButtonElement>(
       `[data-dia='${selectedDay}']`
     );
-    
 
-    
     if (button) {
       button.scrollIntoView({
         behavior: "smooth",
@@ -62,7 +64,13 @@ const DaysCarousel: React.FC<DaysCarouselProps> = ({
       });
     }
   }, [selectedDay]);
-  
+
+  if (!data) return null;
+  const { area, recorrido } = data;
+  const source = area || recorrido;
+
+  if (!source) return null;
+
   return (
     <div className="flex justify-center  mb-2">
       <Carousel
@@ -72,38 +80,38 @@ const DaysCarousel: React.FC<DaysCarouselProps> = ({
         }}
         className="w-[300px] mx-auto"
       >
-         <CarouselContent className="px-4 py-2" ref={carouselRef}>
-         {area?.estados?.map?.(({ dia, estado }: EstadoDia) => {
-          const date = new Date(2025, 8, dia);
-          const dayOfWeek = date.getDay();
+        <CarouselContent className="px-4 py-2" ref={carouselRef}>
+          {source.estados.map(({ dia, estado }: EstadoDia) => {
+            const date = new Date(2025, 8, dia);
+            const dayOfWeek = date.getDay();
 
-          const isSelected = selectedDay === dia;
+            const isSelected = selectedDay === dia;
 
-          return (
-            <CarouselItem key={dia} className="basis-auto px-1">
-              <div className="flex flex-col items-center min-w-[30px]">
-                <button
-                  data-dia={dia}
-                  type="button"
-                  onClick={() => onDaySelect(dia)}
-                  className={`
+            return (
+              <CarouselItem key={dia} className="basis-auto px-1">
+                <div className="flex flex-col items-center min-w-[30px]">
+                  <button
+                    data-dia={dia}
+                    type="button"
+                    onClick={() => onDaySelect(dia)}
+                    className={`
                     flex items-center justify-center rounded-full h-8 w-8 font-bold text-xs
                     border shadow-sm
                     ${isSelected ? "ring-2 ring-blue-400 border-blue-600" : ""}
                     ${estadoColors[estado] ?? "bg-gray-100 text-gray-600"}
                   `}
-                  title={`Día ${dia}`}
-                >
-                  {dia}
-                </button>
+                    title={`Día ${dia}`}
+                  >
+                    {dia}
+                  </button>
 
-                <span className="text-[10px] text-gray-500 mt-[2px]">
-                  {dayNames[dayOfWeek]}
-                </span>
-              </div>
-            </CarouselItem>
-          );
-        })}
+                  <span className="text-[10px] text-gray-500 mt-[2px]">
+                    {dayNames[dayOfWeek]}
+                  </span>
+                </div>
+              </CarouselItem>
+            );
+          })}
 
         </CarouselContent>
         <CarouselPrevious />

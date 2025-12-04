@@ -55,7 +55,7 @@ export const CarruselDetalleRondin: React.FC<CarruselDetalleRondinProps> = ({
         )}
 
         <div className="relative flex items-center justify-center w-full h-[650px]">
-          {rondinesHora.map((rondin:any, index:number) => {
+          {rondinesHora.map((rondin: any, index: number) => {
             const isActive = index === activeIndex;
             const isLeft = index === (activeIndex - 1 + rondinesHora.length) % rondinesHora.length;
             const isRight = index === (activeIndex + 1) % rondinesHora.length;
@@ -77,7 +77,11 @@ export const CarruselDetalleRondin: React.FC<CarruselDetalleRondinProps> = ({
             return (
               <div
                 key={index}
-                className={`absolute transition-all duration-[900ms] ease-[cubic-bezier(.25,.8,.25,1)] ${position} ${zIndex} w-[55%] h-[600px]`}
+                className={`absolute transition-all ${position} ${zIndex} w-[55%] h-[600px]`}
+                style={{
+                  transitionDuration: "900ms",
+                  transitionTimingFunction: "cubic-bezier(.25,.8,.25,1)",
+                }}
               >
                 <div className="relative bg-white rounded-xl shadow-xl p-4 border">
                   {isActive && (
@@ -94,7 +98,7 @@ export const CarruselDetalleRondin: React.FC<CarruselDetalleRondinProps> = ({
                     diaSelected={diaSelected}
                     selectedRondin={rondin}
                     areaSelected={{
-                      area: rondin.areas[0] || null, 
+                      area: rondin.areas[0] || null,
                       estadoDia: rondin.areas[0]?.estados?.find(
                         (e: { dia: number }) => e.dia === diaSelected
                       ),
