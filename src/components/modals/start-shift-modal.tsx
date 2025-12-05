@@ -21,6 +21,7 @@ interface StartShiftModalProps {
   open: boolean;
   nombreSuplente:string;
   setOpen: Dispatch<SetStateAction<boolean>>;
+  checkin_id?: string;
 }
 
 export const StartShiftModal: React.FC<StartShiftModalProps> = ({
@@ -29,7 +30,8 @@ export const StartShiftModal: React.FC<StartShiftModalProps> = ({
   nombreSuplente,
   evidencia, 
   open,
-  setOpen
+  setOpen,
+  checkin_id
 }) => {
   const { area, location } = useShiftStore();
 
@@ -87,7 +89,7 @@ export const StartShiftModal: React.FC<StartShiftModalProps> = ({
                   })
                 );
 
-                startShiftMutation.mutate({ employee_list: formattedGuards ,fotografia:evidencia, nombre_suplente:nombreSuplente })
+                startShiftMutation.mutate({ employee_list: formattedGuards ,fotografia:evidencia, nombre_suplente:nombreSuplente, checkin_id })
               }}
             >
               Confirmar

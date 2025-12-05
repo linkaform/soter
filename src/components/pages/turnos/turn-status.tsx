@@ -38,6 +38,7 @@ const TurnStatus = ({
   
   	const [currentDateTime, setCurrentDateTime] = useState(new Date());
   	const turno =  capitalizeOnlyFirstLetter(shift?.guard.status_turn?? "")
+	const checkin_id = shift?.booth_status?.checkin_id
 	const {userNameSoter} = useAuthStore()
 
 	const [openStartShift, setOpenStartShift] = useState(false)
@@ -253,7 +254,7 @@ const TurnStatus = ({
 			</Button>
 		)}
 
-		<StartShiftModal title="Confirmación" evidencia={evidencia} open= {openStartShift} setOpen={setOpenStartShift} nombreSuplente={nombreSuplente}>
+		<StartShiftModal title="Confirmación" evidencia={evidencia} open= {openStartShift} setOpen={setOpenStartShift} nombreSuplente={nombreSuplente} checkin_id={checkin_id}>
 		</StartShiftModal>
        
 		{shift?.guard?.status_turn !== "Turno Cerrado" && (

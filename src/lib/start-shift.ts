@@ -6,6 +6,7 @@ interface GetShiftParams {
   employee_list?: { user_id: number; name: string }[]; 
   fotografia?:Imagen[];
   nombre_suplente?:string;
+  checkin_id?: string;
 }
 
   export const startShift = async ({
@@ -13,7 +14,8 @@ interface GetShiftParams {
     location = "Planta Monterrey",
     employee_list = [],
     fotografia= [],
-    nombre_suplente=""
+    nombre_suplente="",
+    checkin_id=""
 
   }: GetShiftParams = {}) => {
     const payload = {
@@ -23,7 +25,8 @@ interface GetShiftParams {
       script_name: "script_turnos.py",
       employee_list: employee_list ?? [],
       fotografia,
-      nombre_suplente
+      nombre_suplente,
+      checkin_id
     };
   
     const userJwt = localStorage.getItem("access_token"); 
