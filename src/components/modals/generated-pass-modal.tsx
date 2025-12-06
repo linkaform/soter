@@ -29,7 +29,7 @@ export const GeneratedPassModal: React.FC<GeneratedPassModalProps> = ({
 }) => {
   const router = useRouter(); 
   return (
-    <Dialog open={openGeneratedPass} onOpenChange={setOpenGeneratedPass} >
+    <Dialog open={openGeneratedPass} onOpenChange={setOpenGeneratedPass} modal>
       <DialogTrigger ></DialogTrigger>
 
       <DialogContent className="max-w-xl  overflow-y-auto max-h-[90vh] flex flex-col">

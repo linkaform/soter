@@ -36,11 +36,9 @@ import { z } from "zod";
 import { useEffect, useState } from "react";
 
 import { useSearchPass } from "@/hooks/useSearchPass";
-import { useShiftStore } from "@/store/useShiftStore";
-
-// import { Loader2 } from "lucide-react";
 import { Imagen } from "@/lib/update-pass-full";
 import LoadImage from "../upload-Image";
+import { useShiftStore } from "@/store/useShiftStore";
 
 interface Props {
 title: string;
@@ -76,13 +74,13 @@ status_pase: z.string().optional()
 });
 
 export const AddVisitModal: React.FC<Props> = ({ title, children }) => {
-const { location } = useShiftStore();
 const [openModal, setOpenModal] = useState(false);
 const [fotografia, setFotografia] = useState<Imagen[]>([]);
 const [identificacion, setIdentificacion] = useState<Imagen[]>([]);
 const [fotoError, setFotoError] = useState(false);
 const [idError, setIdError] = useState(false);
 const { assets, registerNewVisit } = useSearchPass(openModal);
+const {location} =useShiftStore()
 
 const form = useForm<z.infer<typeof formSchema>>({
 	resolver: zodResolver(formSchema),
@@ -99,6 +97,17 @@ const form = useForm<z.infer<typeof formSchema>>({
 });
 
 function onSubmit(data: z.infer<typeof formSchema>) {
+	const access_pass = {
+		nombre: data.nombre,
+		empresa: data.empresa,
+		// area:"",
+		visita_a: data.visita_a,
+		perfil_pase: data.perfil_pase,
+		foto: fotografia ,
+		identificacion: identificacion,
+		status_pase:"activo"
+	};
+
 	let valid = true;
 
 	if (fotografia.length === 0) {
@@ -116,19 +125,28 @@ function onSubmit(data: z.infer<typeof formSchema>) {
 	}
 	
 	if (!valid) return;
-
-	const access_pass = {
-		nombre: data.nombre,
-		empresa: data.empresa,
-		// area:"",
-		visita_a: data.visita_a,
-		perfil_pase: data.perfil_pase,
-		foto: fotografia ,
-		identificacion: identificacion,
-		status_pase:"activo"
-	};
 	registerNewVisit.mutate({ location, access_pass });
 }
+
+	useEffect(()=>{
+		if(openModal){
+
+		}
+	},[openModal])
+
+	useEffect(()=>{
+		if(fotografia.length>0){
+			setFotoError(false)
+		}else{
+			setFotoError(true)
+		}
+
+		if(identificacion.length>0){
+			setIdError(false)
+		}else{
+			setIdError(true)
+		}
+	},[fotografia, identificacion])
 
 useEffect(()=>{
 	console.log("errores", form.formState.errors)
@@ -172,7 +190,7 @@ return (
 					showArray={true}
 					limit={10}/>
 				
-				{fotografia.length<0 && (
+				{ fotoError && (
 				<div className="text-red-500 text-sm">Faltan campos por llenar</div>)}
 
 					<LoadImage
@@ -185,7 +203,7 @@ return (
 					showArray={true}
 					limit={10}/>
 
-				{identificacion.length<0 && (
+				{idError && (
 				<div className="text-red-500 text-sm">Faltan campos por llenar</div>)}
 
 			<FormField

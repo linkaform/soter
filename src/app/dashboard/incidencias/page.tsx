@@ -19,7 +19,7 @@ import { useShiftStore } from "@/store/useShiftStore";
 const IncidenciasPage = () => {
 
   const [isSuccess, setIsSuccess] = useState(false);
-  const {location} = useShiftStore()
+  const {location, filter} = useShiftStore()
   const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
   const [areaSeleccionada, setAreaSeleccionada] = useState("todas");
   const [isSuccessIncidencia, setIsSuccessIncidencia] = useState(false);
@@ -34,10 +34,11 @@ const IncidenciasPage = () => {
   const [dateSegunda, setDateSegunda] = useState<string>("")
   const [dateFilter, setDateFilter] = useState<string>("")
 
-  const [fallasStatus, setFallasStatus] = useState<string>("")
+  const [fallasStatus, setFallasStatus] = useState<string>(filter)
   const { data:dataFallas,isLoading:isLoadingFallas} = useGetFallas(ubicacionSeleccionada, areaSeleccionada == "todas" ? "" : areaSeleccionada ,fallasStatus,  datePrimera, dateSegunda, dateFilter);
   const { stats, listIncidencias, isLoadingListIncidencias} = useInciencias(ubicacionSeleccionada, areaSeleccionada == "todas" ? "" : areaSeleccionada, [], datePrimera, dateSegunda, dateFilter);
-  const [selectedTab, setSelectedTab] = useState<string>('Incidencias'); 
+  const { tab } = useShiftStore();
+  const [selectedTab, setSelectedTab] = useState<string>(tab); 
 
 	useEffect(()=>{
 		if(location){

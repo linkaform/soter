@@ -82,7 +82,7 @@ import {
   
 					return (
 					  <div
-					  key={crypto.randomUUID()}
+					  	key={Math.random()}
 						className="flex items-center justify-between px-4 py-4 border-b hover:bg-gray-100 cursor-pointer"
 						onClick={() => handleSelect(item)}
 					  >

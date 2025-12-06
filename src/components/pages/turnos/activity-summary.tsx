@@ -14,42 +14,48 @@ const ActivitySummary = (booth_stats:any) => {
       title: "Visitas Dentro",
       count: stats?.in_invitees || 0,
       link: "/dashboard/bitacoras",
-      tab:"Personal"
+      tab:"Personal",
+      filter:"today"
     },
     {
       icon: <TriangleAlert />,
       title: "Incidencias Pendientes",
       count: stats?.incidentes_pendites || 0,
       link: "/dashboard/incidencias",
-      tab:"Incidencias"
+      tab:"Incidencias",
+      filter:"today"
     },
     {
       icon: <Flame/>,
       title: "Fallas Pendientes",
       count: stats?.fallas_pendientes || 0,
       link: "/dashboard/incidencias",
-      tab:"Fallas"
+      tab:"Fallas",
+      filter:"today"
     },
     {
       icon: <FileBox />,
       title: "Articulos Concesionados",
       count: stats?.articulos_concesionados || 0,
       link: "/dashboard/articulos",
-      tab:"Concecionados"
+      tab:"Concecionados",
+      filter:"today"
     },
     {
       icon: <CarFront />,
       title: "Vehículos Dentro",
       count: stats?.total_vehiculos_dentro || 0,
       link: "/dashboard/bitacoras",
-      tab:"Vehiculos"
+      tab:"Vehiculos",
+      filter:"today"
     },
     {
       icon: <Wrench />,
       title: "Equipos Dentro",
       count: stats?.gafetes_pendientes || 0,
       link: "/dashboard/bitacoras",
-      tab:"Equipos"
+      tab:"Equipos",
+      filter:"today"
     },
   ];
 
@@ -67,7 +73,7 @@ const ActivitySummary = (booth_stats:any) => {
       {items.map((item, index) => (
         <Link key={index} href={item.link}>
           <div
-            onClick={() => setTabAndFilter(item.tab, "today")}
+            onClick={() => setTabAndFilter(item.tab, item.filter)}
             className="flex items-center space-x-4 rounded-md p-4 border cursor-pointer transition duration-100 hover:bg-gray-100 overflow-hidden"
           >
             <div className="bg-gray-100 p-3 rounded-lg ">{item.icon}</div>

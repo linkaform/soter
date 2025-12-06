@@ -282,7 +282,7 @@ export const RondinesBitacoraTable = ({ showTabs , ubicacion}: { showTabs: boole
 							</TabsList>
 						</div>
 					}
-					<div>
+					<div className="flex gap-1 items-center">
 						{/* <div className="flex w-full max-w-sm items-center space-x-2">
 						<input
 							type="text"
@@ -293,34 +293,40 @@ export const RondinesBitacoraTable = ({ showTabs , ubicacion}: { showTabs: boole
 						/>
 							<Search />
 						</div> */}
-						<div className="flex flex-wrap items-center border p-2 rounded w-full gap-1">
+					<div className="border p-2 rounded w-full">
+					<div className="flex items-center gap-1 overflow-x-auto whitespace-nowrap pr-1">
+						
 						{tags.map((tag, idx) => (
-							<span
+						<span
 							key={idx}
-							className="bg-blue-500 text-white px-2 py-0.5 rounded-full flex items-center gap-1"
-							>
+							className="bg-blue-500 text-white px-2 py-0.5 rounded-full inline-flex items-center gap-1"
+						>
 							{tag}
 							<button
-								type="button"
-								onClick={() => handleRemoveTag(tag)}
-								className="ml-1 text-white font-bold"
+							type="button"
+							onClick={() => handleRemoveTag(tag)}
+							className="ml-1 text-white font-bold"
 							>
-								×
+							×
 							</button>
-							</span>
+						</span>
 						))}
-						<div className="flex">
+
+						<div className="flex items-center">
 						<input
 							type="text"
 							value={inputValue}
 							onChange={(e) => setInputValue(e.target.value)}
 							onKeyDown={handleTagInputKeyDown}
 							placeholder="Buscar"
-							className="flex-1 outline-none"
+							className="outline-none"
 						/>
+						</div>
+					</div>
+					</div>
+
 						<Search />
-						</div>
-						</div>
+
 
 						{/* <div className="flex w-full max-w-sm items-center space-x-2">
 							<input

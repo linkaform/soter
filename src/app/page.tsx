@@ -25,7 +25,7 @@ export default function Home() {
 
     return (
         <MainLayout>
-            <link rel="icon" href="/menu.svg" type="image/svg+xml" />
+            <link rel="icon" href="/favicon.ico" type="image/svg+xml" />
             <div className="flex justify-center items-start min-h-screen">
                 {isLoadingMenu ? (
                     <div className="flex justify-center items-center h-screen">
