@@ -81,6 +81,7 @@ const [fotoError, setFotoError] = useState(false);
 const [idError, setIdError] = useState(false);
 const { assets, registerNewVisit } = useSearchPass(openModal);
 const {location} =useShiftStore()
+const [formSubmitted, setFormSubmitted] = useState(false);
 
 const form = useForm<z.infer<typeof formSchema>>({
 	resolver: zodResolver(formSchema),
@@ -95,6 +96,14 @@ const form = useForm<z.infer<typeof formSchema>>({
 	status_pase:"activo"
 	},
 });
+	useEffect(() => {
+		if (openModal) {
+			setFormSubmitted(false);
+			setFotoError(false);
+			setIdError(false);
+		}
+	}, [openModal]);
+	
 
 function onSubmit(data: z.infer<typeof formSchema>) {
 	const access_pass = {
@@ -146,11 +155,8 @@ function onSubmit(data: z.infer<typeof formSchema>) {
 		}else{
 			setIdError(true)
 		}
-	},[fotografia, identificacion])
+	},[formSubmitted, fotografia, identificacion])
 
-useEffect(()=>{
-	console.log("errores", form.formState.errors)
-},[form.formState.errors])
 
 return (
 	<Dialog open={openModal} onOpenChange={setOpenModal}>
@@ -305,6 +311,7 @@ return (
 
 			<Button
 				type="submit"
+				onClick={()=>{setFormSubmitted(true)}}
 				className="w-full  bg-blue-500 hover:bg-blue-600 text-white "
 			>
 				Agregar
