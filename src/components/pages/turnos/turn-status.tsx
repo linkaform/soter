@@ -270,7 +270,7 @@ const TurnStatus = ({
             </Button>
         )}
 
-     	<CloseShiftModal title="Confirmación" shift={shift} area={area} location={location} identificacion={identificacion} open={openCloseShift} setOpen={setOpenCloseShift}>
+     	<CloseShiftModal title="Confirmación" shift={shift} area={area} location={location} identificacion={identificacion} open={openCloseShift} setOpen={setOpenCloseShift} checkin_id={checkin_id}>
       	</CloseShiftModal>
 
 		<>

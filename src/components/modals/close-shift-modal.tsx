@@ -22,6 +22,7 @@ interface CloseShiftModalProps {
   identificacion: Imagen[];
   open:boolean
   setOpen: Dispatch<SetStateAction<boolean>>
+  checkin_id?: string;
 }
 
 export const CloseShiftModal: React.FC<CloseShiftModalProps> = ({
@@ -32,7 +33,8 @@ export const CloseShiftModal: React.FC<CloseShiftModalProps> = ({
   location,
   identificacion,
   open,
-  setOpen
+  setOpen,
+  checkin_id
 }) => {
   const { closeShiftMutation } = useGetShift( false);
   
@@ -79,7 +81,7 @@ export const CloseShiftModal: React.FC<CloseShiftModalProps> = ({
 
           <Button
             className="w-full  bg-blue-500 hover:bg-blue-600 text-white"
-            onClick={() => closeShiftMutation.mutate({fotografia:identificacion})}
+            onClick={() => closeShiftMutation.mutate({fotografia:identificacion, checkin_id})}
           >
             Confirmar
           </Button>

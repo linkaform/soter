@@ -17,7 +17,6 @@ export const useGetShift = (enableShift:boolean) => {
     setLoading,
     isLoading: loading,
     setCheckin_id,
-    checkin_id,
     setArea,
     setLocation,
     setTurno,
@@ -94,9 +93,9 @@ export const useGetShift = (enableShift:boolean) => {
 
   const closeShiftMutation = useMutation({
     mutationFn: async ({
-      fotografia
+      fotografia, checkin_id
     }: {
-      fotografia:Imagen[]
+      fotografia:Imagen[], checkin_id?: string
     }) => {
       const response = await closeShift({ area, location, checkin_id , fotografia});
   		const hasError = (!response?.success) || (response?.response?.data?.status_code === 400 )
