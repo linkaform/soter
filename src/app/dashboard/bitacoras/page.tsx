@@ -19,7 +19,7 @@ import { useGetStats } from "@/hooks/useGetStats";
 import useAuthStore from "@/store/useAuthStore";
 
 const BitacorasPage = () => {
-	const { tab, setTab, filter, setFilter, option, setOption} = useShiftStore()
+	const { tab, filter, option, setOption, from, setFrom} = useShiftStore()
   	const {location, area} = useShiftStore()
 	const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location );
 	const [areaSeleccionada, setAreaSeleccionada] = useState("todas");
@@ -40,18 +40,29 @@ const BitacorasPage = () => {
 	const userNameSoter = useAuthStore((state) => state.userNameSoter);
 
 	useEffect(() => {
-		if(tab){
-			setTab("")
-		}
-		if(filter){
-			setFilter("")
-		}
+		// if(tab){
+		// 	setTab("")
+		// }
+		// if(filter){
+		// 	setFilter("")
+		// }
 		if(location){
 			setUbicacionSeleccionada(location )
 		}else{
 			setUbicacionSeleccionada(location|| "Planta Monterrey" )
 		}
-	}, [area, location, userNameSoter, tab, filter, setTab, setFilter, option, setOption]); 
+	}, [area, location, userNameSoter, option, setOption]); 
+
+
+	useEffect(() => {
+		console.log("DATA QUE LLEGA FUERA",listBitacoras, filter, tab )
+		if (Array.isArray(listBitacoras) && listBitacoras.length > 0 && from === "turnos") {
+			console.log("DATA QUE LLEGA DENTRO",listBitacoras, filter, tab )
+			setDateFilter(filter);
+		  	setSelectedTab(tab)
+		  	setFrom("");
+		}
+	  }, [filter, from, listBitacoras, selectedTab, setFrom, tab]);
 
 
 	const processBitacorasE = (bitacoras: Bitacora_record[]) => {

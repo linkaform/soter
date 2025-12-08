@@ -454,7 +454,7 @@ const AccesosPage = () => {
 					</div>
 					</Link>
 					<Link  href={"/dashboard/bitacoras"}>
-					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100 `} onClick={() => setTabAndFilter("Salidas", "", ["salida"])}>
+					<div className={`border p-4 px-12 py-6 rounded-md cursor-pointer transition duration-100 `} onClick={() => {setTabAndFilter("Personal", "today", ["salida"]); }}>
 						<div className="flex gap-6"><DoorOpen className="text-primary w-14 h-14"/>
 							<span className="flex items-center font-bold text-5xl"> {stats?.salidas_registradas}</span>
 						</div>
