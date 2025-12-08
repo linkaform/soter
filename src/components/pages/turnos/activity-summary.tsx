@@ -7,7 +7,7 @@ import { CarFront, FileBox, Flame, TriangleAlert, Users, Wrench } from "lucide-r
 
 const ActivitySummary = (booth_stats:any) => {
   const stats= booth_stats.booth_stats
-  const { setTab, setFilter } = useShiftStore();
+  const { setTab, setFilter,setFrom } = useShiftStore();
   const items = [
     {
       icon: <Users />,
@@ -15,7 +15,7 @@ const ActivitySummary = (booth_stats:any) => {
       count: stats?.in_invitees || 0,
       link: "/dashboard/bitacoras",
       tab:"Personal",
-      filter:"today"
+      filter:"today",
     },
     {
       icon: <TriangleAlert />,
@@ -31,7 +31,7 @@ const ActivitySummary = (booth_stats:any) => {
       count: stats?.fallas_pendientes || 0,
       link: "/dashboard/incidencias",
       tab:"Fallas",
-      filter:"today"
+      filter:"abierto"
     },
     {
       icon: <FileBox />,
@@ -63,6 +63,7 @@ const ActivitySummary = (booth_stats:any) => {
   function setTabAndFilter(tab:string, filter:string){
     setTab(tab)
     setFilter(filter)
+    setFrom("turnos")
   }
 
   return (

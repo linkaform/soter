@@ -13,6 +13,7 @@ interface ShiftStore {
   filter:string;
   isFetching:boolean;
   option:string[]
+  from:string;
 
   setIsFetching: (isFetching: boolean) => void;
   setTab: (tab: string) => void;
@@ -25,6 +26,7 @@ interface ShiftStore {
   setTurno:(turno:boolean)=>void;
   clearShift: () => void;
   fetchShift: () => Promise<any>;
+  setFrom: (from:string)=>void;
 }
 
 export const useShiftStore = create(
@@ -39,6 +41,7 @@ export const useShiftStore = create(
 		filter:"",
 		option:[],
 		isFetching:false,
+		from:"",
 		setIsFetching:(isFetching) => set({isFetching}),
 
 		setTab:(tab) => set({tab}),
@@ -57,7 +60,7 @@ export const useShiftStore = create(
 			turno:false,
 			tab:""
 		}),
-		
+		setFrom:(from:string) => set({ from }),
 		fetchShift: async () => {
 			const { area, location, setArea, setLocation, setTurno, isFetching,setIsFetching } = get();
 			if (isFetching || (area && location)) return;

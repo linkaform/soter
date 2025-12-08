@@ -2,8 +2,10 @@
 "use client";
 
 import React, { useEffect } from "react";
-import Select from "react-select";  
 import { useAreasLocationStore } from "@/store/useGetAreaLocationByUser";
+
+import dynamic from "next/dynamic";
+const Select = dynamic(() => import("react-select"), { ssr: false });
 
 interface InputChangeLocation {
   ubicacionSeleccionada: string;
@@ -64,7 +66,7 @@ const ChangeLocation: React.FC<InputChangeLocation> = ({
         isClearable
         isDisabled={ubicacion === "accesos"}
         placeholder="Ubicación"
-        menuPortalTarget={typeof window !== "undefined" ? document.body : null}
+        // menuPortalTarget={typeof window !== "undefined" ? document.body : null}
         styles={{
           menuPortal: (base) => ({ 
             ...base, 
@@ -87,7 +89,7 @@ const ChangeLocation: React.FC<InputChangeLocation> = ({
         isClearable
         isDisabled={ubicacion === "accesos"}
         placeholder="Caseta"
-        menuPortalTarget={typeof window !== "undefined" ? document.body : null}
+        // menuPortalTarget={typeof window !== "undefined" ? document.body : null}
         styles={{
           menuPortal: (base) => ({ 
             ...base, 

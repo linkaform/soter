@@ -35,22 +35,25 @@ export const ViewRondinesDetallePerimetroExt: React.FC<ViewRondinesDetalleAreaPr
     areaSelected,
     activeIndex
 }) => {
-    const [checkSelected, setCheckSelected] = useState(selectedRondin?.resumen[activeIndex].record_id);
-    const { data: getBitacoraById, isLoadingRondin: isLoadingBitacoraById } = useBitacoraById(checkSelected);
+    const [checkSelected, setCheckSelected] = useState<string|null>(null);
+    const { data: getBitacoraById, isLoadingRondin: isLoadingBitacoraById } = useBitacoraById(checkSelected??"");
     const [incidenteSeleccionado, setIncidenteSeleccionado] = useState<any | null>(null);
 
     const [view, setView] = useState<"lista" | "detalle">("lista");
     const [diaSeleccionado, setDiaSeleccionado] = useState<number>(diaSelected || 0);
 
-    useEffect(() => {
-        // console.log("dia seleccionadooO", diaSeleccionado, getBitacoraById);
 
+    useEffect(() => {
+        const id = selectedRondin?.resumen?.[activeIndex]?.record_id;
+        if (id) setCheckSelected(id);
+    }, [selectedRondin, activeIndex]);
+
+
+    useEffect(() => {
         if (!diaSeleccionado || !getBitacoraById) return;
         const estadoFiltrado = getBitacoraById?.bitacoras_mes?.recorrido?.estados?.find(
             (e: any) => e.dia === diaSeleccionado
         );
-
-        // console.log("estadoFiltrado?.record_id", estadoFiltrado?.record_id);
 
         if (estadoFiltrado?.record_id) {
             setCheckSelected(estadoFiltrado.record_id);
@@ -58,10 +61,6 @@ export const ViewRondinesDetallePerimetroExt: React.FC<ViewRondinesDetalleAreaPr
     }, [diaSeleccionado, getBitacoraById]);
 
     return (
-        // <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
-        //   <DialogTrigger asChild>{children}</DialogTrigger>
-        //   <DialogContent className="max-w-md overflow-y-auto max-h-[80vh] flex flex-col" onInteractOutside={(e) => e.preventDefault()} aria-describedby="">
-
 
         <div className=" overflow-y-auto  h-[550px]">
             {view === "lista" && (
@@ -201,9 +200,9 @@ export const ViewRondinesDetallePerimetroExt: React.FC<ViewRondinesDetalleAreaPr
                                         <h2 className="text-base font-semibold">Incidentes en recorrido</h2>
 
                                         <div className="divide-y divide-gray-200">
-                                            {(getBitacoraById?.incidencias ?? []).map((i: any) => (
+                                            {(getBitacoraById?.incidencias ?? []).map((i: any, index:number) => (
                                                 <div
-                                                    key={i.id || Math.random().toString(36).substring(2, 9)}
+                                                    key={i.id || index}
                                                     className="flex justify-between items-center py-2 cursor-pointer hover:bg-gray-50 rounded-md px-1"
                                                     onClick={() => {
                                                         setIncidenteSeleccionado(i);

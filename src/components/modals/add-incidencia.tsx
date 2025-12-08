@@ -1,4 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+"use client"
 import { Button } from "../ui/button";
 import {
   Dialog,

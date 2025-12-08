@@ -19,7 +19,7 @@ import { useShiftStore } from "@/store/useShiftStore";
 const IncidenciasPage = () => {
 
   const [isSuccess, setIsSuccess] = useState(false);
-  const {location, filter} = useShiftStore()
+  const {location, filter, from, setFrom, tab} = useShiftStore()
   const [ubicacionSeleccionada, setUbicacionSeleccionada] = useState(location);
   const [areaSeleccionada, setAreaSeleccionada] = useState("todas");
   const [isSuccessIncidencia, setIsSuccessIncidencia] = useState(false);
@@ -34,17 +34,24 @@ const IncidenciasPage = () => {
   const [dateSegunda, setDateSegunda] = useState<string>("")
   const [dateFilter, setDateFilter] = useState<string>("")
 
-  const [fallasStatus, setFallasStatus] = useState<string>(filter)
+  const [fallasStatus, setFallasStatus] = useState<string>(filter || "")
   const { data:dataFallas,isLoading:isLoadingFallas} = useGetFallas(ubicacionSeleccionada, areaSeleccionada == "todas" ? "" : areaSeleccionada ,fallasStatus,  datePrimera, dateSegunda, dateFilter);
   const { stats, listIncidencias, isLoadingListIncidencias} = useInciencias(ubicacionSeleccionada, areaSeleccionada == "todas" ? "" : areaSeleccionada, [], datePrimera, dateSegunda, dateFilter);
-  const { tab } = useShiftStore();
-  const [selectedTab, setSelectedTab] = useState<string>(tab); 
+  const [selectedTab, setSelectedTab] = useState<string>(tab ||"Incidencias"); 
 
 	useEffect(()=>{
 		if(location){
 			setUbicacionSeleccionada(location)
 		}
 	},[location])
+
+	useEffect(() => {
+		if (Array.isArray(dataFallas) && dataFallas.length > 0 && from === "turnos") {
+		  setFallasStatus(filter);
+		  setSelectedTab(tab)
+		  setFrom("");
+		}
+	  }, [dataFallas, fallasStatus, filter, from, selectedTab, setFrom, tab]);
 
   
  	const closeModal = () => {
@@ -163,7 +170,7 @@ const IncidenciasPage = () => {
 				</div>
 
 				<div className={`border p-4 px-12 py-1 rounded-md cursor-pointer transition duration-100 ${
-						fallasStatus== "abierto" && selectedTab!=="Incidencias" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => handleTabChangeFallas("Fallas","abierto","")}>
+						fallasStatus== "abierto" && selectedTab=="Fallas" ? 'bg-blue-100' : 'hover:bg-gray-100'}`} onClick={() => handleTabChangeFallas("Fallas","abierto","")}>
 					<div className="flex gap-6"><UndoDot className="text-primary w-10 h-10"/>
 						<span className="flex items-center font-bold text-4xl"> {stats?.fallas_pendientes}</span>
 					</div>
