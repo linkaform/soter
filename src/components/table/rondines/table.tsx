@@ -105,8 +105,6 @@ interface ListProps {
 	data: any;
 	isLoading:boolean;
 	resetTableFilters: () => void;
-	setSelectedRondin:React.Dispatch<React.SetStateAction<string[]|null>>;
-	selectedRondin:string[]|null;
 
 	setDate1 :React.Dispatch<React.SetStateAction<Date | "">>;
 	setDate2 :React.Dispatch<React.SetStateAction<Date | "">>;
@@ -120,10 +118,9 @@ interface ListProps {
 }
 
 
-const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,selectedRondin,
+const RondinesTable:React.FC<ListProps> = ({ data, isLoading,
 	setDate1, setDate2, date1, date2, dateFilter, setDateFilter,Filter, resetTableFilters, setActiveTab, activeTab
  })=> {
-	console.log("Tabla rondines",data, setSelectedRondin, selectedRondin, activeTab)
 	const {playOrPauseRondinMutation, isLoading:isLoadingPlayOrPause }= usePlayOrPauseRondin();
 
 	const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -165,9 +162,9 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
   const [globalFilter, setGlobalFilter] = React.useState("");
   
   const columns = useMemo(() => {
-	if (isLoading) return [];
-	return getRondinesColumns(handleEliminar,handleVerRondin);
-}, [handleVerRondin, isLoading]);
+	return getRondinesColumns(handleEliminar, handleVerRondin);
+  }, [handleVerRondin]);
+  
 
 	const memoizedData = useMemo(() => data || [], [data]);
 
@@ -209,7 +206,6 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 			paused: true,
 		});
 	};
-	console.log("rondin?.areas", rondin?.areas)
 	const [areas, setAreas] = useState(rondin?.areas || [])
 
 	const handleGuardar = () => {
@@ -220,11 +216,6 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 		folio:rondinSeleccionado?rondinSeleccionado.folio:"",
 	  });
 	}
-
-	
-	React.useEffect(() => {
-	  console.log("AREAS:", areas);
-	}, [areas]);
 
   return (
   	<div className="w-full">
@@ -350,7 +341,6 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 			
 					<div className="grid grid-cols-[auto,1fr] gap-4 mb-6">
 					<div className="flex ">
-						{/* <span className="font-semibold min-w-[130px]">Descripcion:</span> */}
 					</div>
 
 					<div>
@@ -362,16 +352,7 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 					<div className="flex">
 						<span className="font-semibold">Recurrencia:</span>
 					</div>
-{/* 
-					<div className="flex justify-start gap-10">
-						<span >
-						{rondin?.recurrencia} 
-						</span>
-						<Button onClick={() => {setRondinSeleccionado(null);setVerRondin(false); setActiveTab("Rondines");}} className="bg-blue-500 hover:bg-blue-600 cursor-pointer p-2">
-							Editar
-						</Button>
-					</div> */}
-					
+
 					<div className="flex justify-start gap-10">
 						<span >
 						{rondin?.recurrencia} 
@@ -398,23 +379,6 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 						{rondin?.ubicacion|| "No disponible" } 
 						</span>
 					</div>
-					{/* <div className="w-1/2">
-							<SelectReact
-								aria-labelledby="aria-label"
-								inputId="select-categorias"
-								name="categoria"
-								options={[]}
-								value={null} 
-								isDisabled={false}
-							/>
-					</div> */}
-
-					{/* <div className="flex">
-						<span className="font-semibold min-w-[130px]">Geolocalizacion:</span>
-					</div>
-					<div className="flex gap-1">
-						<MapPin/>  Ver en Map
-					</div> */}
 
 					<div className="flex">
 						<span className="font-semibold min-w-[130px]">Estatus:</span>
@@ -500,7 +464,6 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,setSelectedRondin,s
 					</div>
 				
 				</div>
-
 
 				<div className="w-2/3 ml-4 p-4 border rounded-md bg-white shadow-md">	
 				<div className="mb-2 font-bold">Fotografías de áreas a inspeccionar: </div>

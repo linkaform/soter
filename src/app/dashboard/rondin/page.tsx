@@ -26,7 +26,6 @@ const RondinesPage = () => {
 
 	const [datePrimera, setDatePrimera] = useState<string>("")
 	const [dateSegunda, setDateSegunda] = useState<string>("")
-	const [selectedRondin, setSelectedRondin]= useState<string[]|null>([]);
 
 	const [date1, setDate1] = useState<Date|"">("")
 	const [date2, setDate2] = useState<Date|"">("")
@@ -428,7 +427,7 @@ const RondinesPage = () => {
                 <div className="flex">
                   <div className="w-1/4">
                     <div className="space-y-1">
-                      <GuardiasRondinesTable setSelectedRondin={setSelectedRondin} rest={()=>{setSelectedRondin(null); setSelectedTab("Rondines");}}/>
+                      <GuardiasRondinesTable />
                     </div>
                   </div>
 
@@ -442,7 +441,7 @@ const RondinesPage = () => {
                 <div className="flex">
                   <div className="">
                     <div className="space-y-1">
-                      <GuardiasRondinesTable setSelectedRondin={setSelectedRondin} rest={()=>{setSelectedRondin(null); setSelectedTab("Rondines");}}/>
+                      <GuardiasRondinesTable />
                     </div>
                   </div>
 
@@ -455,28 +454,28 @@ const RondinesPage = () => {
 
               <TabsContent value="Fotos">
                 <div >
-                  	<RondinesTable data={data} isLoading={false} setSelectedRondin={setSelectedRondin} selectedRondin={selectedRondin}
+                  	<RondinesTable data={data} isLoading={false} 
 						setDate1={setDate1} setDate2={setDate2} date1={date1} date2={date2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters} setActiveTab={setActiveTab} activeTab={""}/>
                 </div>
               </TabsContent>
 
               <TabsContent value="Rondines">
                 <div >
-					<RondinesTable data={data} isLoading={false} setSelectedRondin={setSelectedRondin} selectedRondin={selectedRondin}
+					<RondinesTable data={data} isLoading={false} 
 						setDate1={setDate1} setDate2={setDate2} date1={date1} date2={date2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters} setActiveTab={setActiveTab} activeTab={""}/>
                 </div>
               </TabsContent>
 
               <TabsContent value="Calendario">
                 <div >
-					<RondinesTable data={data} isLoading={false} setSelectedRondin={setSelectedRondin} selectedRondin={selectedRondin}
+					<RondinesTable data={data} isLoading={false} 
 						setDate1={setDate1} setDate2={setDate2} date1={date1} date2={date2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters} setActiveTab={setActiveTab} activeTab={""}/>
                 </div>
               </TabsContent>
 
               <TabsContent value="Incidencias">
                 <div >
-					<RondinesTable data={data} isLoading={false} setSelectedRondin={setSelectedRondin} selectedRondin={selectedRondin}
+					<RondinesTable data={data} isLoading={false} 
 						setDate1={setDate1} setDate2={setDate2} date1={date1} date2={date2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters} setActiveTab={setActiveTab} activeTab={""}/>
                 </div>
               </TabsContent>

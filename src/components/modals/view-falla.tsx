@@ -173,11 +173,6 @@ export const ViewFalla: React.FC<ViewFallaModalProps> = ({
 				</div>
 			</div>
 
-			<div className="flex justify-end items-center">
-				<div className="cursor-pointer  bg-blue-500 hover:bg-blue-600 text-white mr-5 rounded-sm p-1 w-1/4 text-center" onClick={()=>{setOpenModal(!openModal)}}>
-					Agregar seguimiento 
-				</div>
-			</div>
 			<SeguimientoFallaModal
 				title="Seguimiento Falla"
 				isSuccess={openModal}
@@ -305,7 +300,6 @@ export const ViewFalla: React.FC<ViewFallaModalProps> = ({
 			</>) : (<> <Loader2 className="animate-spin" /> {"Editar Falla..."} </>)}
 			</Button>
 
-
 		  	<Button
 			type="submit"
 			className="w-full  bg-yellow-500 hover:bg-yellow-600 text-white " disabled={false} onClick={()=>{toast.error("SERVICIO PENDIENTE...",{
@@ -317,6 +311,15 @@ export const ViewFalla: React.FC<ViewFallaModalProps> = ({
 			{true ? (<>
 				{("Descargar fallas")}
 			</>) : (<> <Loader2 className="animate-spin" /> {"Descargando fallas..."} </>)}
+			</Button>
+
+			<Button
+			onClick={()=>{setOpenModal(!openModal)}}
+			className="w-full  bg-green-500 hover:bg-green-600 text-white " disabled={false}
+			>
+			{true ? (<>
+				{("Seguimientos fallas")}
+			</>) : (<> <Loader2 className="animate-spin" /> {"Seguimientos fallas..."} </>)}
 			</Button>
 
         </div>
