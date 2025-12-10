@@ -34,7 +34,6 @@ const RondinesPage = () => {
   const [dates, setDates] = useState<string[]>([])
   const { listRondines } = useGetListRondines(true ,dates[0],dates[1], 100,0 )
 
-  const [selectedRondin, setSelectedRondin]= useState<string[]|null>([]);
 
   const [activeTab, setActiveTab] = useState("Rondines");
 
@@ -398,7 +397,7 @@ const RondinesPage = () => {
 
 					<TabsContent value="Rondines">
 						<div >
-							<RondinesTable data={listRondines} isLoading={false} setSelectedRondin={setSelectedRondin} selectedRondin={selectedRondin}
+							<RondinesTable data={listRondines} isLoading={false} 
 							setDate1={setDate1} setDate2={setDate2} date1={date1} date2={date2} dateFilter={dateFilter} setDateFilter={setDateFilter} Filter={Filter} resetTableFilters={resetTableFilters} setActiveTab={setActiveTab} activeTab={activeTab}/>
 						</div>
 					</TabsContent>

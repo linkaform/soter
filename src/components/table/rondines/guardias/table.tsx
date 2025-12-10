@@ -91,12 +91,7 @@ export type GuardiaRondines = {
   
 };
 
-export type ListProps={
-  setSelectedRondin: React.Dispatch<React.SetStateAction<any>>;
-  rest: () => void;
-}
-
-const GuardiasRondinesTable:React.FC<ListProps> =({
+const GuardiasRondinesTable = ({
  })=> {
 /*   const [guardias, setGuardias] =  React.useState<GuardiaRondines[]>(initialData);
  */

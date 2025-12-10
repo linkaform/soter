@@ -55,9 +55,7 @@ const BitacorasPage = () => {
 
 
 	useEffect(() => {
-		console.log("DATA QUE LLEGA FUERA",listBitacoras, filter, tab )
 		if (Array.isArray(listBitacoras) && listBitacoras.length > 0 && from === "turnos") {
-			console.log("DATA QUE LLEGA DENTRO",listBitacoras, filter, tab )
 			setDateFilter(filter);
 		  	setSelectedTab(tab)
 		  	setFrom("");

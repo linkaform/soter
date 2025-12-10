@@ -4,6 +4,7 @@ import {
   DialogClose,
   DialogContent,
   DialogHeader,
+  DialogOverlay,
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
@@ -206,8 +207,9 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={setOpen} modal>
+      <DialogOverlay className="pointer-events-none" />
           <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="max-w-3xl overflow-y-auto max-h-[90vh] flex flex-col"  onInteractOutside={(e) => e.preventDefault()} aria-describedby="">
+      <DialogContent className="max-w-3xl overflow-y-auto max-h-[90vh] flex flex-col pointer-events-auto"  onInteractOutside={(e) => e.preventDefault()} aria-describedby="">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="text-2xl text-center font-bold">
             {title}
@@ -417,18 +419,21 @@ export const ViewPassModal: React.FC<ViewPassModalProps> = ({
                   Cerrar
               </Button>
             </DialogClose>
-              <Button className="w-full bg-slate-500 hover:bg-slate-600 text-white" onClick={() => {
+              <Button className="w-full bg-slate-500 hover:bg-slate-600 text-white" 
+              onClick={() => {
                 navigator.clipboard.writeText(data?.link?.link).then(() => {
-                toast("¡Enlace copiado!", {
-                  description:
-                    "El enlace ha sido copiado correctamente al portapapeles.",
-                  action: {
-                    label: "Abrir enlace",
-                    onClick: () => window.open(data?.link?.link, "_blank"), // Abre el enlace en una nueva pestaña
-                  },
+                  toast("¡Enlace copiado!", {
+                    description:
+                      "El enlace ha sido copiado correctamente al portapapeles.",
+                    action: {
+                      label: "Abrir enlace",
+                      onClick: () => window.open(data?.link?.link, "_blank"), // Abre el enlace en una nueva pestaña
+                    },
+                  });
                 });
-              });
-              }}>
+                setOpen(false)
+              }}
+              >
                 Copiar Link
               </Button>
               <Button className="w-full  bg-blue-500 hover:bg-blue-600 text-white"  onClick={onEnviarCorreo} disabled={isLoadingCorreo}>

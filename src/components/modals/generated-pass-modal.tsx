@@ -68,7 +68,8 @@ export const GeneratedPassModal: React.FC<GeneratedPassModalProps> = ({
                 },
               });
             });
-            router.push(`/`); 
+            router.push(`/dashboard/pases`); 
+            window.open(link, "_blank")
           }}
         >
           <Copy className="mr-2" />
