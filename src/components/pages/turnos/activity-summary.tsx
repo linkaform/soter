@@ -52,7 +52,7 @@ const ActivitySummary = (booth_stats:any) => {
     {
       icon: <Wrench />,
       title: "Equipos Dentro",
-      count: stats?.gafetes_pendientes || 0,
+      count: stats?.total_equipos_dentro || 0,
       link: "/dashboard/bitacoras",
       tab:"Equipos",
       filter:"today"
