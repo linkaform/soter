@@ -181,7 +181,6 @@ export const pasesEntradaColumns: ColumnDef<PaseEntrada>[] = [
 
             <span className="text-blue-600 cursor-pointer ml-1 underline relative">
               +{row.original?.ubicacion.length - 1}
-              {/* Tooltip container */}
               <div className="absolute left-0 top-full z-10 mt-1 hidden w-max max-w-xs rounded bg-gray-800 px-2 py-1 text-sm text-white shadow-lg group-hover:block">
               {Array.isArray(row.original?.ubicacion) && row.original.ubicacion.length > 1 && (
                 row.original.ubicacion.slice(1).map((ubic:string, idx:number) => (

@@ -114,3 +114,6 @@ body {
 
 
 
+.generated-pass-modal [data-radix-dialog-close] {
+  display: none !important;
+}
