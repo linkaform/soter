@@ -22,6 +22,7 @@ import { CarruselDetalleRondin } from "@/components/carrousel-detalle-rondin";
 
 const ESTADOS_CONFIG: Record<string, { icon: React.ElementType; className: string }> = {
 	finalizado: { icon: CircleCheck, className: "text-white bg-green-600 rounded-xl" },
+	fuera_de_hora: { icon: CircleCheck, className: "text-white bg-red-600 rounded-xl" },
 	no_inspeccionada: { icon: CircleSlash, className: "text-white bg-amber-500 rounded-xl" },
 	cancelado: { icon: Ban, className: "text-slate-400" },
 	// en_progreso: { icon: CircleDashed, className: "text-blue-500 font-bold rounded-xl" },
