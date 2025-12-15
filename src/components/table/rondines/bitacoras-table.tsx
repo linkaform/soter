@@ -78,11 +78,11 @@ type Rondin = {
 	categorias: Categoria[];
 };
 
-export const RondinesBitacoraTable = ({ showTabs , ubicacion}: { showTabs: boolean, ubicacion:any }) => {
+export const RondinesBitacoraTable = ({ showTabs , ubicacion, nombre_rondin}: { showTabs: boolean, ubicacion:any, nombre_rondin?: string }) => {
 	
 
 	const { listBitacoraRondines:data, isLoadingListBitacoraRondines: isLoading } =
-	useGetListBitacoraRondines(ubicacion) as {
+	useGetListBitacoraRondines(ubicacion, nombre_rondin) as {
 		listBitacoraRondines?: Rondin[];
 		isLoadingListBitacoraRondines: boolean;
 	};

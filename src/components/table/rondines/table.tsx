@@ -560,7 +560,7 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,
 						<TabsContent value="rondiness">
 							<div className="p-2">
 							</div>
-							<RondinesBitacoraTable showTabs={false} ubicacion={"Planta Monterrey"}/>
+							<RondinesBitacoraTable showTabs={false} ubicacion={rondin?.ubicacion} nombre_rondin={rondin?.nombre_del_rondin}/>
 						</TabsContent>
 
 						<TabsContent value="incidentes">
