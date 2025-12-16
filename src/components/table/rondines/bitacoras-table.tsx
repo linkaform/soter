@@ -78,11 +78,11 @@ type Rondin = {
 	categorias: Categoria[];
 };
 
-export const RondinesBitacoraTable = ({ showTabs , ubicacion}: { showTabs: boolean, ubicacion:any }) => {
+export const RondinesBitacoraTable = ({ showTabs , ubicacion, nombre_rondin}: { showTabs: boolean, ubicacion:any, nombre_rondin?: string }) => {
 	
 
 	const { listBitacoraRondines:data, isLoadingListBitacoraRondines: isLoading } =
-	useGetListBitacoraRondines(ubicacion) as {
+	useGetListBitacoraRondines(ubicacion, nombre_rondin) as {
 		listBitacoraRondines?: Rondin[];
 		isLoadingListBitacoraRondines: boolean;
 	};
@@ -605,20 +605,6 @@ export const RondinesBitacoraTable = ({ showTabs , ubicacion}: { showTabs: boole
 
 					</table>
 					)}
-				{/* {modalOpenPerimetroExt && (
-					<ViewRondinesDetallePerimetroExt
-						title="Inspección del Perimetro Exterior"
-						isSuccess={modalOpenPerimetroExt}
-						setIsSuccess={setModalOpenPerimetroExt}
-						estatus={estatus}
-						diaSelected={diaSelected}
-						selectedRondin={selectedRondin}
-						areaSelected={selectedAreaData}
-						recordId={selectedAreaData?.estadoDia?.record_id}
-					>
-						<div></div>
-					</ViewRondinesDetallePerimetroExt>
-				)} */}
 
 				{carruselOpenRondin && (
 					<CarruselDetalleRondin
