@@ -51,8 +51,9 @@ import { Switch } from "@/components/ui/switch";
 		  message: "Por favor, ingresa un correo electrónico válido.",
 	}),
 	telefono: z.string().optional(),
-	ubicacion: z.string().optional(),
-	ubicaciones: z.array(z.string()),
+	ubicaciones: z
+  .array(z.string())
+  .min(1, "Selecciona al menos una ubicación"),
 	tema_cita: z.string().optional(),
 	descripcion: z.string().optional(),
 	perfil_pase: z.string().min(1),
@@ -220,7 +221,7 @@ import { Switch } from "@/components/ui/switch";
 			empresa:"",
 			email: "",
 			telefono: "",
-			ubicacion:"",
+			// ubicacion:"",
 			ubicaciones:[],
 			tema_cita:"",
 			descripcion:"",
@@ -262,7 +263,15 @@ import { Switch } from "@/components/ui/switch";
 		});
 		
 	};
-
+	useEffect(() => {
+		if (!ubicacionesSeleccionadas) return;
+	  
+		form.reset({
+		  ...form.getValues(),
+		  ubicaciones: ubicacionesSeleccionadas.map(u => u.id),
+		});
+	  }, [form, ubicacionesSeleccionadas]);
+	  
 
 	useEffect(()=>{
 		if ( selected ) {
@@ -298,6 +307,12 @@ import { Switch } from "@/components/ui/switch";
 	},[dataConfigLocation])
 
 	const onSubmit = (data: z.infer<typeof formSchema>) => {
+		if (!data.ubicaciones?.length) {
+			form.setError("ubicaciones", {
+			message: "Selecciona al menos una ubicación"
+			});
+		}
+
 		const formattedData = {
 			nombre: data.nombre,
 			empresa:data.empresa,
@@ -567,28 +582,35 @@ return (
 							)}
 						/>
 
-						<div className="mt-0">
-							<div className="text-sm mb-2">Ubicaciones del pase: </div>
+						<FormField
+						control={form.control}
+						name="ubicaciones"
+						render={() => (
+							<FormItem>
+							<FormLabel>
+								<span className="text-red-500">*</span> Ubicaciones del pase
+							</FormLabel>
+
 							<Multiselect
-							options={ubicacionesFormatted??[]} 
-							selectedValues={ubicacionesDefaultFormatted??[]}
-							onSelect={(selectedList) => {
-								setUbicacionesSeleccionadas(selectedList);
-							}}
-							onRemove={(selectedList) => {
-								setUbicacionesSeleccionadas(selectedList);
-							}}
-							displayValue="name"
+								options={ubicacionesFormatted ?? []}
+								selectedValues={ubicacionesSeleccionadas}
+								onSelect={setUbicacionesSeleccionadas}
+								onRemove={setUbicacionesSeleccionadas}
+								displayValue="name"
 							/>
-						</div>
-						
+
+							<FormMessage />
+							</FormItem>
+						)}
+						/>
+											
 						<FormField
 							control={form.control}
 							name="tema_cita"
 							render={({ field }:any) => (
 							<FormItem>
 								<FormLabel className="">
-									Tema cita:
+									Motivo de visita:
 								</FormLabel>{" "}
 								<FormControl>
 								<Input placeholder="" {...field}
@@ -1005,7 +1027,7 @@ return (
 					<Button
 						className="bg-blue-500 hover:bg-blue-600 text-white w-full sm:w-2/3 md:w-1/2 lg:w-1/2"
 						variant="secondary"
-						type="button"
+						type="submit"
 						onClick={(e)=>{e.preventDefault()
 							form.handleSubmit(onSubmit)()
 						}}
