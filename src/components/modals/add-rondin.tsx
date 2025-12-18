@@ -345,7 +345,6 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 	function obtenerRecurrencia(
 		values: Record<string, any>,
 	): Record<string, any> {
-		console.log("SE REPITE CADA",values.se_repite_cada)
 		switch (values.se_repite_cada) {
 	  
 		  case "diario":
