@@ -31,7 +31,7 @@ interface DaysCarouselProps {
 
 const estadoColors: Record<string, string> = {
   finalizado: "bg-green-600 text-white",
-  fuera_de_hora: "bg-red-600 text-white",
+  fuera_de_hora: "bg-pink-600 text-white",
   no_inspeccionada: "bg-amber-500 text-white",
   cancelado: "bg-slate-400 text-white",
   en_progreso: "bg-blue-500 text-white",

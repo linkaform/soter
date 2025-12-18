@@ -78,7 +78,7 @@ interface AddRondinModalProps {
   
 	la_recurrencia_cuenta_con_fecha_final?: string;
 	fecha_final_recurrencia?: string;
-	cron_id:string;
+	cron_conf:string;
 	accion_recurrencia: string;
   };
 
@@ -113,7 +113,7 @@ const formSchema = z.object({
     la_recurrencia_cuenta_con_fecha_final: z.string().optional(),
     fecha_final_recurrencia:z.string().optional(),
 	accion_recurrencia:z.string().optional(),
-	cron_id: z.string().regex(
+	cron_conf: z.string().regex(
 		cronRegex,
 		"Cron inválido. Ejemplo: */5 * * * *"
 	  ).optional()
@@ -184,7 +184,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
             la_recurrencia_cuenta_con_fecha_final: '',
             fecha_final_recurrencia: '',
             accion_recurrencia:'programar',
-			cron_id:''
+			cron_conf:''
 		},
 	});
 	const { reset } = form;
@@ -258,7 +258,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 			fecha_final_recurrencia: "",
 			accion_recurrencia: "programar",
 			se_repite_cada:values.se_repite_cada,
-			cron_id:'',
+			cron_conf:'',
 		  ...recurrenciaFiltrada
 		};
 	
@@ -394,7 +394,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 		  	case "configurable":
 			return {
 				se_repite_cada: 'configurable',
-				cron_id: values.cron_id ?? "",
+				cron_conf: values.cron_conf ?? "",
 			};
 	  
 		  default:
@@ -791,7 +791,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 						</div>
 						<div className="flex flex-wrap mt-2 mb-5">
 						{[
-							"Primera semana del mes",
+							"Primer semana del mes",
 							"Segunda semana del mes",
 							"Tercera semana del mes",
 							"Cuarta semana del mes",
@@ -992,7 +992,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 					{recurrencia === "configurable" && (
 					<FormField
 						control={form.control}
-						name="cron_id"
+						name="cron_conf"
 						render={({ field }) => (
 						<FormItem>
 							<FormLabel>Configuración Cron:</FormLabel>

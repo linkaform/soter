@@ -42,11 +42,16 @@ export const ViewRondinesDetallePerimetroExt: React.FC<ViewRondinesDetalleAreaPr
     const [view, setView] = useState<"lista" | "detalle">("lista");
     const [diaSeleccionado, setDiaSeleccionado] = useState<number>(diaSelected || 0);
 
-
+    console.log("SELECTED", selectedRondin)
     useEffect(() => {
-        const id = selectedRondin?.resumen?.[activeIndex]?.record_id;
+        // const id = selectedRondin?.resumen?.[activeIndex]?.record_id;
+        const id = selectedRondin?.resumen?.find((item: { dia: number; }) => item.dia === diaSelected)?.record_id;
+
+        console.log("seleccionado rondin", selectedRondin.resumen)
+        console.log("id", activeIndex)
+        console.log("id", id)
         if (id) setCheckSelected(id);
-    }, [selectedRondin, activeIndex]);
+    }, [selectedRondin, activeIndex, diaSelected]);
 
 
     useEffect(() => {
@@ -200,22 +205,33 @@ export const ViewRondinesDetallePerimetroExt: React.FC<ViewRondinesDetalleAreaPr
                                         <h2 className="text-base font-semibold">Incidentes en recorrido</h2>
 
                                         <div className="divide-y divide-gray-200">
-                                            {(getBitacoraById?.incidencias ?? []).map((i: any, index:number) => (
-                                                <div
-                                                    key={i.id || index}
-                                                    className="flex justify-between items-center py-2 cursor-pointer hover:bg-gray-50 rounded-md px-1"
-                                                    onClick={() => {
-                                                        setIncidenteSeleccionado(i);
-                                                        setView("detalle");
-                                                    }}
-                                                >
-                                                    <div>
-                                                        <p className="text-sm font-medium text-gray-800">{i?.tipo_de_incidencia}</p>
-                                                        <p className="text-xs text-gray-500">{i?.fecha_hora_incidente_bitacora}</p>
-                                                    </div>
-                                                    <ChevronRight size={18} className="text-gray-500" />
-                                                </div>
-                                            ))}
+                                        {getBitacoraById?.incidencias?.length > 0 ? (
+                                        getBitacoraById.incidencias.map((i: any, index: number) => (
+                                            <div
+                                            key={i.id ?? index}
+                                            className="flex justify-between items-center py-2 cursor-pointer hover:bg-gray-50 rounded-md px-1"
+                                            onClick={() => {
+                                                setIncidenteSeleccionado(i);
+                                                setView("detalle");
+                                            }}
+                                            >
+                                            <div>
+                                                <p className="text-sm font-medium text-gray-800">
+                                                {i?.tipo_de_incidencia}
+                                                </p>
+                                                <p className="text-xs text-gray-500">
+                                                {i?.fecha_hora_incidente_bitacora}
+                                                </p>
+                                            </div>
+                                            <ChevronRight size={18} className="text-gray-500" />
+                                            </div>
+                                        ))
+                                        ) : (
+                                        <p className="text-sm text-gray-400 py-2">
+                                            No hay incidencias registradas
+                                        </p>
+                                        )}
+
                                         </div>
                                     </div>
                                 </>

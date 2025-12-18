@@ -35,6 +35,7 @@ const formSchema =
 	const AreasItem: React.FC<AreasItemProps> = ({isCollapsed, onToggleCollapse, onDelete , 
 		catAreas, loadingCatAreas, areaRaw, updateArea
 	})=>  {
+
 			const area = formatArea(areaRaw)
 			const form = useForm<z.infer<typeof formSchema>>({
 				resolver: zodResolver(formSchema),
@@ -42,10 +43,15 @@ const formSchema =
 		});
 
 		useEffect(() => {
-			if(area){
-				loadNewArea(area)
+			if (areaRaw && catAreas) {
+			  const formatted = formatArea(areaRaw);
+			  form.reset({
+				nombre_area: formatted?.nombre_area || "",
+				commentario_area: formatted?.commentario_area || "",
+			  });
 			}
-		}, [area])
+		  }, [areaRaw]);
+		  
 
 		interface AreaConNoteBooth {
 			note_booth?: string;
@@ -59,10 +65,7 @@ const formSchema =
 				return {nombre_area: a.note_booth||"", commentario_area: a.commentario_area||""}
 			}
 		}
-		function loadNewArea(item:Areas){
-			form.setValue('nombre_area', item?.nombre_area||"")
-			form.setValue('commentario_area', item?.commentario_area||"")
-		}
+
 		
 		const handleInputChange = (value:string, fieldName: string) => {
 			if (value === "") {
@@ -73,6 +76,8 @@ const formSchema =
 			updateArea(value, fieldName);
 		};
 
+
+		
 return (
 	<div className="p-2">
 		<div className="flex justify-between">
@@ -95,19 +100,18 @@ return (
 				<form className="space-y-5">
 					{!isCollapsed && (
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-5 p-5 pt-2">
-						{/* Campo Área */}
 						<div className="form-item">
 							<Label htmlFor="nombre_area" className="text-sm">
 							Área:
 							</Label>
-							<Select 
-									onValueChange={(e) => {
-									form.setValue("nombre_area", e); // Actualiza el valor en react-hook-form
-									handleInputChange(e, "nombre_area"); // Función personalizada
-								  }}
-								  value={form.getValues("nombre_area")}
-								// value={field.value}
+							<Select
+							value={form.watch("nombre_area")}
+							onValueChange={(value) => {
+								form.setValue("nombre_area", value, { shouldDirty: true });
+								handleInputChange(value, "nombre_area");
+							}}
 							>
+
 							<SelectTrigger className="w-full">
 							{loadingCatAreas?(
 								<>
@@ -127,24 +131,18 @@ return (
 							))}
 							</SelectContent>
 							</Select>
-							{/* Puedes agregar un mensaje de error aquí si es necesario */}
 						</div>
 
-						{/* Campo Comentario */}
 						<div className="form-item">
 							<label htmlFor="commentario_area" className="text-sm"> Comentario: </label>
 							<Input
-								id="commentario_area"
-								// name="commentario_area"
 								placeholder="Comentario"
 								{...form.register("commentario_area")}
 								onChange={(e) => {
-									form.setValue("commentario_area", e.target.value); // Actualiza el valor en react-hook-form
-									handleInputChange(e.target.value, "commentario_area"); // Función personalizada
+									form.setValue("commentario_area", e.target.value, { shouldDirty: true });
+									handleInputChange(e.target.value, "commentario_area");
 								}}
-								value={form.getValues("commentario_area")}
-								className="input-class"
-							/>
+								/>
 						</div>
 						</div>
 					)}
