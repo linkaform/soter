@@ -22,7 +22,7 @@ import { CarruselDetalleRondin } from "@/components/carrousel-detalle-rondin";
 
 const ESTADOS_CONFIG: Record<string, { icon: React.ElementType; className: string }> = {
 	finalizado: { icon: CircleCheck, className: "text-white bg-green-600 rounded-xl" },
-	fuera_de_hora: { icon: CircleCheck, className: "text-white bg-pink-600 rounded-xl" },
+	fuera_de_hora: { icon: CircleCheck, className: "text-white bg-red-600 rounded-xl" },
 	no_inspeccionada: { icon: CircleSlash, className: "text-white bg-amber-500 rounded-xl" },
 	cancelado: { icon: Ban, className: "text-slate-400" },
 	// en_progreso: { icon: CircleDashed, className: "text-blue-500 font-bold rounded-xl" },
@@ -80,14 +80,9 @@ type Rondin = {
 
 export const RondinesBitacoraTable = ({ showTabs , ubicacion, nombre_rondin}: { showTabs: boolean, ubicacion:any, nombre_rondin?: string }) => {
 	
-	const [currentDate, setCurrentDate] = useState(new Date());
-	const [nombreMes, setNombreMes] = useState(
-		currentDate.toLocaleString("es-ES", { month: "long" })
-	);
-	const numeroMes = currentDate.getMonth() + 1;
 
 	const { listBitacoraRondines:data, isLoadingListBitacoraRondines: isLoading } =
-	useGetListBitacoraRondines(ubicacion, nombre_rondin, 2025,numeroMes) as {
+	useGetListBitacoraRondines(ubicacion, nombre_rondin) as {
 		listBitacoraRondines?: Rondin[];
 		isLoadingListBitacoraRondines: boolean;
 	};
@@ -174,6 +169,10 @@ export const RondinesBitacoraTable = ({ showTabs , ubicacion, nombre_rondin}: { 
 		setDias(totalDias);
 	}, []);
 
+	const [currentDate, setCurrentDate] = useState(new Date());
+	const [nombreMes, setNombreMes] = useState(
+		currentDate.toLocaleString("es-ES", { month: "long" })
+	);
 
 	useEffect(() => {
 		const totalDias = new Date(
@@ -396,7 +395,7 @@ export const RondinesBitacoraTable = ({ showTabs , ubicacion, nombre_rondin}: { 
 					</div>
 				) : (
 					<table className="min-w-full border-collapse border">
-						<thead className="sticky top-0 z-10 bg-white">
+						<thead className="sticky top-0 z-0 bg-white">
 							<tr>
 								<th className="border p-2 bg-white">Rondines</th>
 								{[...Array(dias)].map((_, i) => {
