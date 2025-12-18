@@ -52,7 +52,7 @@ interface AddRondinModalProps {
 	grupo_asignado: string;
 	fecha_hora_programada: string;
 	programar_anticipacion: string;
-	cuanto_tiempo_de_anticipacion: string;
+	cuanto_tiempo_de_anticipacion: number;
 	cuanto_tiempo_de_anticipacion_expresado_en: string;
 	tiempo_para_ejecutar_tarea: number;
 	tiempo_para_ejecutar_tarea_expresado_en: string;
@@ -78,7 +78,7 @@ interface AddRondinModalProps {
   
 	la_recurrencia_cuenta_con_fecha_final?: string;
 	fecha_final_recurrencia?: string;
-	cron_config:string;
+	cron_id:string;
 	accion_recurrencia: string;
   };
 
@@ -92,7 +92,7 @@ const formSchema = z.object({
     grupo_asignado:z.string().optional(),
     fecha_hora_programada: z.string().optional(),
     programar_anticipacion: z.string().optional(),
-    cuanto_tiempo_de_anticipacion:z.string().optional(),
+    cuanto_tiempo_de_anticipacion:z.number().optional(),
     cuanto_tiempo_de_anticipacion_expresado_en:z.string().optional(),
     tiempo_para_ejecutar_tarea:z.number().optional(),
     tiempo_para_ejecutar_tarea_expresado_en:z.string().optional(),
@@ -113,7 +113,7 @@ const formSchema = z.object({
     la_recurrencia_cuenta_con_fecha_final: z.string().optional(),
     fecha_final_recurrencia:z.string().optional(),
 	accion_recurrencia:z.string().optional(),
-	cron_config: z.string().regex(
+	cron_id: z.string().regex(
 		cronRegex,
 		"Cron inválido. Ejemplo: */5 * * * *"
 	  ).optional()
@@ -162,8 +162,8 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
             areas: [],
             grupo_asignado: '',
             fecha_hora_programada: '',
-            programar_anticipacion: '',
-            cuanto_tiempo_de_anticipacion: '',
+            programar_anticipacion: "",
+            cuanto_tiempo_de_anticipacion: 0,
             cuanto_tiempo_de_anticipacion_expresado_en: '',
             tiempo_para_ejecutar_tarea: 30,
             tiempo_para_ejecutar_tarea_expresado_en: '',
@@ -184,12 +184,12 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
             la_recurrencia_cuenta_con_fecha_final: '',
             fecha_final_recurrencia: '',
             accion_recurrencia:'programar',
-			cron_config:''
+			cron_id:''
 		},
 	});
 	const { reset } = form;
 	
-	// console.log(form.formState.errors);
+	console.log(form.formState.errors);
 
 	useEffect(()=>{
 		if(isSuccess && mode=="create"){
@@ -249,7 +249,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 			grupo_asignado: "",
 			fecha_hora_programada: formattedDate,
 			programar_anticipacion: "no",
-			cuanto_tiempo_de_anticipacio: "",
+			cuanto_tiempo_de_anticipacion: 0,
 			cuanto_tiempo_de_anticipacion_expresado_en: "",
 			tiempo_para_ejecutar_tarea: 30,
 			tiempo_para_ejecutar_tarea_expresado_en: "minutos",
@@ -258,6 +258,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 			fecha_final_recurrencia: "",
 			accion_recurrencia: "programar",
 			se_repite_cada:values.se_repite_cada,
+			cron_id:'',
 		  ...recurrenciaFiltrada
 		};
 	
@@ -393,7 +394,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 		  	case "configurable":
 			return {
 				se_repite_cada: 'configurable',
-				cron_config: values.cron_config ?? "",
+				cron_id: values.cron_id ?? "",
 			};
 	  
 		  default:
@@ -906,24 +907,29 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 						control={form.control}
 						name="cada_cuantos_meses_se_repite"
 						render={({ field }) => (
-								<div className="mt-3">
-								<label className="text-sm font-medium mb-1 block">
-									Se repetirá cada:
-								</label>
-						
-								<Input
-									type="number"
-									min={1}
-									max={10}
-									className="w-32 px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
-									{...field}
-									value={field.value} 
-								/>
-						
-								<span className="ml-2 text-sm text-gray-600">mes(es)</span>
-								</div>
-							)}
-						/>
+						  <div className="mt-3">
+							<label className="text-sm font-medium mb-1 block">
+							  Se repetirá cada:
+							</label>
+					  
+							<Input
+							  type="number"
+							  min={1}
+							  max={12}
+							  className="w-32 px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+							  value={field.value ?? ""}
+							  onChange={(e) =>
+								field.onChange(
+								  e.target.value === "" ? undefined : Number(e.target.value)
+								)
+							  }
+							/>
+					  
+							<span className="ml-2 text-sm text-gray-600">mes(es)</span>
+						  </div>
+						)}
+					  />
+					  
 						)}
 
 						{esRepetirCada === false &&
@@ -986,7 +992,7 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 					{recurrencia === "configurable" && (
 					<FormField
 						control={form.control}
-						name="cron_config"
+						name="cron_id"
 						render={({ field }) => (
 						<FormItem>
 							<FormLabel>Configuración Cron:</FormLabel>
