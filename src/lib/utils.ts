@@ -169,10 +169,17 @@ export function formatEquiposToBitacora(arr:Equipo[]): Equipo_bitacora[] {
 }
 
 export function errorMsj(data:any, title = "Error", type="warning"){
-	if (data.hasOwnProperty("error")){
+    if (Array.isArray(data?.response?.data?.json?.msg)) {
+      return {
+        title: title,
+        text: data?.response?.data?.json?.label +" "+ data.response.data.json.msg.join(", "),
+        type,
+      };
+    }
+	  if (data.hasOwnProperty("error")){
 		let res=undefined
 			const error= data.error
-
+     
       if (error.hasOwnProperty("exception") && error.exception.msg) {
         const ex = error.exception;
         const text = Array.isArray(ex.msg) ? ex.msg.join(", ") : ex.msg;
