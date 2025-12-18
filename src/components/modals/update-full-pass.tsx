@@ -142,16 +142,22 @@ import { useShiftStore } from "@/store/useShiftStore";
 		children: React.ReactNode;
 	}
 
-	function formatArea(arr: any[]) {
-		return arr.map(a => {
-			if ('nombre_area' in a) {
-				return a;
-			} else if ('note_booth' in a) {
-				return { nombre_area: a.note_booth, commentario_area: a.commentario_area };
-			}
-			return a; 
-		});
-	}
+	// function formatArea(arr: any[]) {
+	// 	return arr.map(a => {
+	// 		if ('nombre_area' in a) {
+	// 			return a;
+	// 		} else if ('note_booth' in a) {
+	// 			return { nombre_area: a.note_booth, commentario_area: a.commentario_area };
+	// 		}
+	// 		return a; 
+	// 	});
+	// }
+	interface AreaAcceso {
+		incidente_area: string;
+		commentario_area: string;
+	  }
+	  
+	  
 const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, children }) => {
 	const [open, setOpen] = useState(false)
 	const { location } = useShiftStore()
@@ -171,7 +177,15 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
 	const [formatedDocs, setFormatedDocs] = useState<string[]>([])
 	const [isActiveRangoFecha, setIsActiveRangoFecha] = useState(dataPass.tipo_visita_pase||"rango_de_fechas");
 	const [comentariosList, setComentariosList] = useState<Comentarios[]>(dataPass.comentarios);
-	const [areasList, setAreasList] = useState<Areas[]>(formatArea(dataPass.areas));
+
+	const areasFormateadas = dataPass?.areas?.map(
+		({ incidente_area, commentario_area }: AreaAcceso) => ({
+			nombre_area: incidente_area,
+			commentario_area,
+		})
+	);
+	  
+	const [areasList, setAreasList] = useState<Areas[]>(areasFormateadas);
 	const [isActiveFechaFija, setIsActiveFechaFija] = useState(dataPass.tipo_visita_pase=="fecha_fija");
 	const [isActivelimitarDias, setIsActiveLimitarDias] = useState(dataPass.config_limitar_acceso >0 ? true: false);
 	const [isActiveCualquierDia, setIsActiveCualquierDia] = useState(true);
@@ -223,6 +237,13 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
 			},
 		},
 	});
+
+	useEffect(()=>{
+		if(dataPass){
+			setAreasList(areasFormateadas)
+		}
+	},[dataPass])
+
 
 	const toggleDia = (dia: string) => {
 		set_config_dias_acceso((prev) => {
@@ -383,6 +404,8 @@ const UpdateFullPassModal: React.FC<updatedFullPassModalProps> = ({ dataPass, ch
 	const closeModal = () => {
 		setIsSuccess(false); 
 	};
+
+
 
 return (
 	<Dialog open={open} onOpenChange={setOpen} modal >

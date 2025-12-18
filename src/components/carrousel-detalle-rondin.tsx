@@ -25,7 +25,6 @@ export const CarruselDetalleRondin: React.FC<CarruselDetalleRondinProps> = ({
   const rondinesHora = data.find((h: { hora: string; }) => h.hora === horaSeleccionada)?.categorias ?? [];
 
   const [activeIndex, setActiveIndex] = useState(startIndex);
-
   const prev = () =>
     setActiveIndex((prev) =>
       prev === 0 ? rondinesHora.length - 1 : prev - 1
@@ -73,7 +72,7 @@ export const CarruselDetalleRondin: React.FC<CarruselDetalleRondinProps> = ({
               position = "opacity-50 scale-[0.8] translate-x-[230px]";
               zIndex = "z-10";
             }
-
+            console.log("RONDIN", rondin)
             return (
               <div
                 key={index}

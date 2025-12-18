@@ -55,7 +55,7 @@ export type Access_pass={
 
 export const useCreateAccessPase = (location: string, access_pass: Access_pass|null, enviar_pre_sms: enviar_pre_sms|null) => {
   const { data, isLoading, error, isFetching, refetch } = useQuery<any>({
-    queryKey: ["useCreateAccessPase", location, access_pass, enviar_pre_sms], // Agregamos los parámetros necesarios aquí
+    queryKey: ["useCreateAccessPase", location, access_pass, enviar_pre_sms],
     enabled:false,
     queryFn: async () => {
       const data = await createPase({

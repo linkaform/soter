@@ -63,7 +63,7 @@ const AreasList:React.FC<AreasListProps> = ({ areas, setAreas, catAreas, loading
     };
 
     const handleDeleteArea = (index: number) => {
-        setAreas((prevState) => prevState.filter((_, i) => i !== index)); // Elimina el vehículo en el índice especificado
+        setAreas((prevState) => prevState.filter((_, i) => i !== index)); 
       };
 
 
@@ -102,7 +102,7 @@ const AreasList:React.FC<AreasListProps> = ({ areas, setAreas, catAreas, loading
   return (
     <div >
       {areas.map((area, index) => 
-      { 
+      { console.log("AREASa",area)
         return(
         <div key={index} className="border rounded mt-2">
           <AreasItem
@@ -121,50 +121,49 @@ const AreasList:React.FC<AreasListProps> = ({ areas, setAreas, catAreas, loading
       <div className="border p-7 pb-4 pt-2 rounded mt-2">
         <div className="font-bold text-lg mb-2">Agregar área</div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5" >
-            <FormField
-              control={form.control}
-              name="nombre_area"
-              render={({ field }:any) => (
-                <FormItem>
-                  <FormLabel>Área:</FormLabel>
-                  <FormControl>
-                    <Select {...field} className="input"
-                        onValueChange={(value:string) => {
-                        field.onChange(value); 
-                      }}
-                      value={field.value}
-                    >
-                      <SelectTrigger className="w-full">
-                      {loadingCatAreas?(
-                        <>
-                        <SelectValue placeholder="Cargando áreas..." />
-                        </>
-                      ): (
-                        <>
-                        { catAreas?.length > 0 ? 
-                        <SelectValue placeholder="Selecciona una área" />:
-                        <SelectValue placeholder="Selecciona un ubicación para ver las opciones" />}
-                        </>
-                      )}
-                      </SelectTrigger>
-                      <SelectContent>
-                      {catAreas?.length >0 ? (
-                        <>
-                          {catAreas?.map((area:string, index:number) => {
-                          return(
-                            <SelectItem key={index} value={area}>
-                              {area}
-                            </SelectItem>
-                          )})} 
-                        </>
-                      ):<SelectItem key={"1"} value={"1"} disabled>No hay opciones disponibles.</SelectItem>}
-                      </SelectContent>
-                    </Select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <FormField
+          control={form.control}
+          name="nombre_area"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Área:</FormLabel>
+              <FormControl>
+                <Select
+                  value={field.value}
+                  onValueChange={field.onChange}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue
+                      placeholder={
+                        loadingCatAreas
+                          ? "Cargando áreas..."
+                          : catAreas?.length > 0
+                          ? "Selecciona una área"
+                          : "Selecciona una ubicación para ver opciones"
+                      }
+                    />
+                  </SelectTrigger>
+
+                  <SelectContent>
+                    {catAreas?.length > 0 ? (
+                      catAreas.map((area, index) => (
+                        <SelectItem key={index} value={area}>
+                          {area}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <SelectItem value="no-options" disabled>
+                        No hay opciones disponibles
+                      </SelectItem>
+                    )}
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
 
             {/* Comentario */}
             <FormField
