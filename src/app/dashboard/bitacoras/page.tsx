@@ -132,14 +132,14 @@ const BitacorasPage = () => {
 
 	const handleTabChange = (tab:string, option:string[], filter="") => {
 		if(tab==selectedTab && arraysIguales(option, selectedOption) && filter == dateFilter){
-			console.log("JHBJ")
 				setSelectedOption([]);
 				setSelectedTab(selectedTab)  
-				if(selectedTab === "Equipos")
+				if(selectedTab === "Equipos"){
+					setSelectedOption([])
 					setSelectedTab("Personal")
+				}
 				setDateFilter("")
 		}else{
-			console.log("JHBKUHJ")
 			setDateFilter( filter=="today"? filter:"")
 			setSelectedOption(option); 
 			setSelectedTab(tab)
