@@ -134,8 +134,8 @@ const ChecksImagesSection: React.FC<ChecksImagesSectionProps> = ({
             <>
             {showTabs &&
             <TabsList className="bg-blue-500 text-white p-1 rounded-md">
-                <TabsTrigger value="Rondines">Rondines</TabsTrigger>
                 <TabsTrigger value="Bitacora">Bitácora</TabsTrigger>
+                <TabsTrigger value="Rondines">Rondines</TabsTrigger>
                 <TabsTrigger value="Incidencias">Incidencias</TabsTrigger>
                 <TabsTrigger value="Fotos">Fotos</TabsTrigger>
                 <TabsTrigger value="Calendario">Calendario</TabsTrigger>
@@ -153,8 +153,8 @@ const ChecksImagesSection: React.FC<ChecksImagesSectionProps> = ({
             <>
             {showTabs &&
             <TabsList className="bg-blue-500 text-white p-1 rounded-md">
-                <TabsTrigger value="Rondines">Rondines</TabsTrigger>
                 <TabsTrigger value="Bitacora">Bitácora</TabsTrigger>
+                <TabsTrigger value="Rondines">Rondines</TabsTrigger>
                 <TabsTrigger value="Incidencias">Incidencias</TabsTrigger>
                 <TabsTrigger value="Fotos">Fotos</TabsTrigger>
                 <TabsTrigger value="Calendario">Calendario</TabsTrigger>
@@ -174,8 +174,8 @@ const ChecksImagesSection: React.FC<ChecksImagesSectionProps> = ({
         <div className="space-y-6">
             {showTabs &&
             <TabsList className="bg-blue-500 text-white p-1 rounded-md">
-                <TabsTrigger value="Rondines">Rondines</TabsTrigger>
                 <TabsTrigger value="Bitacora">Bitácora</TabsTrigger>
+                <TabsTrigger value="Rondines">Rondines</TabsTrigger>
                 <TabsTrigger value="Incidencias">Incidencias</TabsTrigger>
                 <TabsTrigger value="Fotos">Fotos</TabsTrigger>
                 <TabsTrigger value="Calendario">Calendario</TabsTrigger>

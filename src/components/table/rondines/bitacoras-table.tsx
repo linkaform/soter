@@ -275,8 +275,8 @@ export const RondinesBitacoraTable = ({ showTabs , ubicacion, nombre_rondin}: { 
 					{showTabs &&
 						<div className="flex justify-center items-center">
 							<TabsList className="bg-blue-500 text-white p-1 rounded-md ">
-								<TabsTrigger value="Rondines">Rondines</TabsTrigger>
 								<TabsTrigger value="Bitacora">Bitácora</TabsTrigger>
+								<TabsTrigger value="Rondines">Rondines</TabsTrigger>
 								<TabsTrigger value="Incidencias">Incidencias</TabsTrigger>
 								<TabsTrigger value="Fotos">Fotos</TabsTrigger>
 								<TabsTrigger value="Calendario">Calendario</TabsTrigger>
@@ -428,7 +428,6 @@ export const RondinesBitacoraTable = ({ showTabs , ubicacion, nombre_rondin}: { 
 								filteredData
 									.map((rondin) => {
 										const matchHora = rondin.hora.toLowerCase().includes(globalFilter.toLowerCase());
-
 										// Filtrar las categorías y áreas dentro del rondín
 										const categoriasFiltradas = rondin.categorias
 											.map((categoria) => {
@@ -519,16 +518,15 @@ export const RondinesBitacoraTable = ({ showTabs , ubicacion, nombre_rondin}: { 
 								{categorias.map((categoria, index:number) => {
 									const catKey = `${hora}-${categoria?.titulo}`;
 									const isExpanded = expandedCategorias.includes(catKey);
-
-												return (
-													<React.Fragment key={catKey}>
-														<tr
-															className="cursor-pointer font-semibold text-sm bg-green-100"
-															onClick={(e) => {
-																e.stopPropagation();
-																toggleExpand(catKey);
-															}}
-														>
+									return (
+										<React.Fragment key={catKey}>
+											<tr
+												className="cursor-pointer font-semibold text-sm bg-green-100"
+												onClick={(e) => {
+													e.stopPropagation();
+													toggleExpand(catKey);
+												}}
+											>
 															{/* {estadoDia && (
 											<div
 												onClick={(e) => {
@@ -572,6 +570,8 @@ export const RondinesBitacoraTable = ({ showTabs , ubicacion, nombre_rondin}: { 
 														{estadoDia && (
 															<div
 																onClick={(e) => {
+																console.log("RONDIN SELECIONADO", categoria, index)
+
 																	e.stopPropagation();
 																	setDiaSelected(i + 1);
 																	abrirCarruselRondin();
@@ -608,12 +608,11 @@ export const RondinesBitacoraTable = ({ showTabs , ubicacion, nombre_rondin}: { 
 
 				{carruselOpenRondin && (
 					<CarruselDetalleRondin
-					data={data}
+					rondinesHoraSeleccionada={ data?.find((h: { hora: string; }) => h.hora === horaSeleccionada)?.categorias ?? []}
 					startIndex={selectedAreaIndex} 
 					diaSelected={diaSelected}
 					estatus={estatus}
 					onClose={() => setCarruselOpenRondin(false)}
-					horaSeleccionada={horaSeleccionada}
 					/>
 				)} 
 
