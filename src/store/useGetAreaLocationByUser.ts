@@ -28,13 +28,20 @@ export const useAreasLocationStore = create(
       clearAreasLocation: () => set({ areas: [], locations: [] }),
 
       fetchAreas: async (location: string) => {
-        // const { areas } = get();
           set({ loading: true });
           try {
             const fetched = await getCatalogoPasesArea({ location });
             const error = errorMsj(fetched);
             if (error) throw new Error(error.text);
-            set({ areas:fetched? fetched?.response?.data.areas_by_location : [] });
+            
+            const orderedAreas = (
+              fetched?.response?.data?.areas_by_location ?? []
+            ).slice().sort((a: string, b: any) =>
+              a.localeCompare(b, 'es', { sensitivity: 'base' })
+            );
+
+            
+            set({ areas:fetched? orderedAreas : [] });
           } catch (err) {
             toast.error("Ocurrio un error al cargar las areas: " + err)
           } finally {
@@ -48,7 +55,16 @@ export const useAreasLocationStore = create(
           set({ loading: true });
           try {
             const fetched = await getCatalogoPasesLocation();
-            set({ locations: fetched? fetched?.response?.data.ubicaciones_user : [] });
+
+               
+            const orderedLocation = (
+              fetched?.response?.data?.ubicaciones_user ?? []
+            ).slice().sort((a: string, b: any) =>
+              a.localeCompare(b, 'es', { sensitivity: 'base' })
+            );
+
+
+            set({ locations: fetched? orderedLocation : [] });
           } catch (err) {
             toast.error("Ocurrio un error al cargar las ubicaciones: " + err)
           } finally {
