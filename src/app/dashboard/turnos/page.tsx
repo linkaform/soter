@@ -19,15 +19,19 @@ export default function Home() {
     location,
     area,
     setCheckin_id,
+    setLocation
   } = useShiftStore()
 
   const [evidencia, setEvidencia] = useState<Imagen[]>([])
   const [identificacion, setIdentificacion] = useState<Imagen[]>([])
   const [nombreSuplente, setNombreSuplente] = useState(shift?.guard?.nombre_suplente || "")
   const [forceOpenStartPhoto, setForceOpenStartPhoto] = useState(false);
-
+  console.log("shift?.location?.name", shift?.location?.name, location)
   useEffect(() => {
-    if (shift) setNombreSuplente(shift?.guard?.nombre_suplente || "")
+    if (shift) {
+      setNombreSuplente(shift?.guard?.nombre_suplente || "")
+      // setLocation(shift?.location?.name)
+    }
     if (shift?.guard?.status_turn !== "Turno Cerrado") {
       setCheckin_id(shift?.guard?._id);
       setEvidencia(shift?.guard?.fotografia_cierre_turno || [])

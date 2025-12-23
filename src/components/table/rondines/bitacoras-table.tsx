@@ -424,7 +424,16 @@ export const RondinesBitacoraTable = ({ showTabs , ubicacion, nombre_rondin}: { 
 					</thead>
 
 						<tbody>
-							{filteredData &&
+							{filteredData && filteredData.length === 0 ? (
+								<tr>
+								<td
+								  colSpan={dias + 1}
+								  className="text-center py-10 text-gray-500 font-bold"
+								>
+								  No hay registros para mostrar
+								</td>
+							  </tr>
+							  ) : (
 								filteredData
 									.map((rondin) => {
 										const matchHora = rondin.hora.toLowerCase().includes(globalFilter.toLowerCase());
@@ -599,7 +608,8 @@ export const RondinesBitacoraTable = ({ showTabs , ubicacion, nombre_rondin}: { 
 									);
 								})}
 								</React.Fragment>
-							))}
+								))
+							)}
 														
 						</tbody>
 

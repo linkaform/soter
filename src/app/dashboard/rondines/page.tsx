@@ -22,6 +22,7 @@ import { RondinesBitacoraTable } from "@/components/table/rondines/bitacoras-tab
 const RondinesPage = () => {
   const [selectedOption, setSelectedOption] = useState<string[]>([]);
   const {location} = useShiftStore()
+  console.log("UBICACION", location)
   const [ubicacionSeleccionada, setUbicacionSeleccionada]= useState<string>(location)
   const [areaSeleccionada, setAreaSeleccionada]= useState<string>("")
   const { tab, filter} = useShiftStore()
