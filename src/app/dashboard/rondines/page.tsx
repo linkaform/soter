@@ -389,7 +389,6 @@ const RondinesPage = () => {
 						<div>
 							<ChecksImagesSection
 								location={ubicacionSeleccionada}
-								area={areaSeleccionada}
 								showTabs={true}
 							/>
 						</div>

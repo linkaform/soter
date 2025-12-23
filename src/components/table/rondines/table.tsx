@@ -576,7 +576,6 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,
 						<div>
 							<ChecksImagesSection
 								location={location}
-								area={""}
 								showTabs={false}
 							/>
 						</div>
