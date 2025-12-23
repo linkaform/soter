@@ -79,8 +79,9 @@ export const ChangeBoothModal: React.FC<ChangeBoothProps> = ({
                       changeBoothMutation.mutate({
                         area: item?.area,
                         location: item?.location,
-                      })
-                    }
+                        })
+                      }
+                    
                   >
                     <div className="mr-4 bg-gray-100 p-4 rounded-lg">
                       <Flag />

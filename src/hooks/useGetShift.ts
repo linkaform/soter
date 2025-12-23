@@ -39,6 +39,9 @@ export const useGetShift = (enableShift:boolean) => {
           const textMsj = errorMsj(data)
           toast.error(`Error al obtener load shift, Error: ${textMsj?.text}`);
       } else {
+          setLocation(data.response?.data.location.name)
+          setArea(data.response?.data.location.area)
+          setTurno(data.response?.data.booth_status.status == "Abierta")
           return data.response?.data
       }
 		}});
