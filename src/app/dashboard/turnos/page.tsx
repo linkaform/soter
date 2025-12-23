@@ -19,7 +19,6 @@ export default function Home() {
     location,
     area,
     setCheckin_id,
-    setLocation
   } = useShiftStore()
 
   const [evidencia, setEvidencia] = useState<Imagen[]>([])
