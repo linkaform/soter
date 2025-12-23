@@ -136,7 +136,7 @@ import { Switch } from "@/components/ui/switch";
   });
 
   const PaseEntradaPage = () =>  {
-	const [tipoVisita, setTipoVisita] = useState("fecha_fija");
+	const [tipoVisita, setTipoVisita] = useState("rango_de_fechas");
 	const { location } = useShiftStore()
 	const [config_dias_acceso, set_config_dias_acceso] = useState<string[]>([]);
 	const [config_dia_de_acceso, set_config_dia_de_acceso] = useState("cualquier_día");
@@ -145,7 +145,6 @@ import { Switch } from "@/components/ui/switch";
 	const { dataAreas:catAreas, dataLocations:ubicaciones, ubicacionesDefaultFormatted, isLoadingAreas:loadingCatAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(location, true, location?true:false);
 	const [ubicacionesSeleccionadas, setUbicacionesSeleccionadas] = useState<any[]>(ubicacionesDefaultFormatted??[]);
 	const pickerRef = useRef<any>(null);
-
 	useEffect(() => {
 	  const picker = pickerRef.current;
 	  if (picker) {
@@ -202,8 +201,8 @@ import { Switch } from "@/components/ui/switch";
 	const [areasList, setAreasList] = useState<Areas[]>([]);
 	// const [isActive, setIsActive] = useState(false);
 	// const [isActiveSMS, setIsActiveSMS] = useState(false);
-	const [isActiveFechaFija, setIsActiveFechaFija] = useState(true);
-	const [isActiveRangoFecha, setIsActiveRangoFecha] = useState(false);
+	const [isActiveFechaFija, setIsActiveFechaFija] = useState(false);
+	const [isActiveRangoFecha, setIsActiveRangoFecha] = useState(true);
 	const [isActivelimitarDias, setIsActiveLimitarDias] = useState(true);
 	const [isActiveCualquierDia, setIsActiveCualquierDia] = useState(true);
 	const [isActivelimitarDiasSemana, setIsActiveLimitarDiasSemana] = useState(false);
@@ -702,28 +701,12 @@ return (
 
 					<h1 className="font-bold text-xl">Sobre vigencia y acceso</h1>
 					<div className="flex items-center flex-wrap gap-5">
-						<FormLabel>Visita de: </FormLabel>
+						<FormLabel>Vigencia: </FormLabel>
 						<Controller
 							control={form.control}
 							name="tipo_visita_pase"
 							render={() => (
 								<FormItem>
-								<Button
-									type="button"
-									onClick={()=>{handleToggleTipoVisitaPase("fecha_fija")}}
-									className={`px-4 py-2 rounded-md transition-all duration-300 ${
-									isActiveFechaFija ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
-									} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)] mr-2`}
-								>
-									<div className="flex flex-wrap items-center">
-									{isActiveFechaFija ? (
-										<><div className="">Fecha Fija</div></>
-									):(
-										<><div className="text-blue-600">Fecha Fija</div></>
-									)}
-										
-									</div>
-								</Button>
 								<Button
 									type="button"
 									onClick={()=>{handleToggleTipoVisitaPase("rango_de_fechas")}}
@@ -740,6 +723,23 @@ return (
 										
 									</div>
 								</Button>
+								<Button
+									type="button"
+									onClick={()=>{handleToggleTipoVisitaPase("fecha_fija")}}
+									className={`px-4 py-2 rounded-md transition-all duration-300 ${
+									isActiveFechaFija ? "bg-blue-600 text-white" : "border-2 border-blue-400 bg-transparent"
+									} hover:bg-trasparent hover:shadow-[0_3px_6px_rgba(0,0,0,0.2)] mr-2`}
+								>
+									<div className="flex flex-wrap items-center">
+									{isActiveFechaFija ? (
+										<><div className="">Fecha Fija</div></>
+									):(
+										<><div className="text-blue-600">Fecha Fija</div></>
+									)}
+										
+									</div>
+								</Button>
+						
 								{tipoVisita === "rango_de_fechas" && (
 									<Button
 									type="button"

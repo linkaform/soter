@@ -38,16 +38,15 @@ export const ViewRondinesDetallePerimetroExt: React.FC<ViewRondinesDetalleAreaPr
     const [checkSelected, setCheckSelected] = useState<string|null>(null);
     const { data: getBitacoraById, isLoadingRondin: isLoadingBitacoraById } = useBitacoraById(checkSelected??"");
     const [incidenteSeleccionado, setIncidenteSeleccionado] = useState<any | null>(null);
-
+    console.log("seleccionado rondin", selectedRondin)
     const [view, setView] = useState<"lista" | "detalle">("lista");
     const [diaSeleccionado, setDiaSeleccionado] = useState<number>(diaSelected || 0);
 
-    console.log("SELECTED", selectedRondin)
     useEffect(() => {
         // const id = selectedRondin?.resumen?.[activeIndex]?.record_id;
         const id = selectedRondin?.resumen?.find((item: { dia: number; }) => item.dia === diaSelected)?.record_id;
 
-        console.log("seleccionado rondin", selectedRondin.resumen)
+       
         console.log("id", activeIndex)
         console.log("id", id)
         if (id) setCheckSelected(id);
@@ -72,7 +71,7 @@ export const ViewRondinesDetallePerimetroExt: React.FC<ViewRondinesDetalleAreaPr
                 <>
                     <div className="flex-shrink-0">
                         <div className="text-2xl text-center font-bold">
-                            {selectedRondin?.titulo}
+                            {selectedRondin?.titulo} 
                         </div>
                     </div>
 

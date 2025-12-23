@@ -177,6 +177,14 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
                                                 No hay imágenes disponibles.
                                             </div>
                                         )}
+
+                                        <div className="flex gap-3 mt-3 mb-3">
+                                            <div className=""> 
+                                                <p className="text-base font-semibold">Comentarios</p>
+                                                <p className="text-gray-400">{getCheckById?.comentarios || "No hay comentarios disponibles."}</p>
+                                            </div>
+                                        </div>
+
                                         <div className="flex flex-col gap-y-3">
                                             <div className="flex gap-3">
                                                 <div className="bg-slate-200 p-3 rounded"><Route /></div>
@@ -208,12 +216,7 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="flex gap-3 mt-3">
-                                            <div className=""> 
-                                                <p className="text-base font-semibold">Comentarios</p>
-                                                <p className="text-gray-400">{getCheckById?.comentarios || "No hay comentarios disponibles."}</p>
-                                            </div>
-                                        </div>
+                                  
             
                                         {estatus=== "incidencias" && 
                                             <div className="animate-fadeIn mt-3">
@@ -323,6 +326,13 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
                                 No hay imágenes disponibles.
                             </div>
                         )}
+                           <div className="flex gap-3 mt-3">
+                            <div className="">
+                                <p className="text-base font-semibold">Comentarios</p>
+                                <p className="text-gray-400">{incidenteSeleccionado?.comentarios || "No hay comentarios disponibles" }</p>
+                            </div>
+                        </div>
+                        
                         <div className="flex flex-col gap-y-3">
                             <div className="flex gap-3">
                                 <div className="bg-slate-200 p-3 rounded"><Route /></div>
@@ -356,12 +366,7 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
     
                             
                         </div>
-                        <div className="flex gap-3 mt-3">
-                            <div className="">
-                                <p className="text-base font-semibold">Comentarios</p>
-                                <p className="text-gray-400">{incidenteSeleccionado?.comentarios || "No hay comentarios disponibles" }</p>
-                            </div>
-                        </div>
+                     
                     </div>
     
                     <Button

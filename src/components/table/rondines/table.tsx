@@ -223,8 +223,8 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,
 			<div className="flex w-full justify-start gap-4 ">
 				<div className="flex justify-center items-center">
 					<TabsList className="bg-blue-500 text-white p-1 rounded-md ">
-						<TabsTrigger value="Rondines">Rondines</TabsTrigger>
 						<TabsTrigger value="Bitacora">Bitácora</TabsTrigger>
+						<TabsTrigger value="Rondines">Rondines</TabsTrigger>
 						<TabsTrigger value="Incidencias">Incidencias</TabsTrigger>
 						<TabsTrigger value="Fotos">Fotos</TabsTrigger>
 						<TabsTrigger value="Calendario">Calendario</TabsTrigger>
@@ -576,7 +576,6 @@ const RondinesTable:React.FC<ListProps> = ({ data, isLoading,
 						<div>
 							<ChecksImagesSection
 								location={location}
-								area={""}
 								showTabs={false}
 							/>
 						</div>

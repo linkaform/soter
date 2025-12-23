@@ -204,11 +204,10 @@ export const getListRondin  = async (date1:string, date2:string, limit:number, o
     return data;
   };
 
-export const getRondinesImages  = async (location: string, area: string, dateFrom:string, dateTo:string, limit:number, offset:number ) => {
-    if (area == 'todas') area = '';
+export const getRondinesImages  = async (location: string, areas: string[], dateFrom:string, dateTo:string, limit:number, offset:number ) => {
     const payload = {
         "ubicacion": location,
-        area,
+        areas,
         "date_from": dateFrom,
         "date_to": dateTo,
         limit,
