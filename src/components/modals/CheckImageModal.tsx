@@ -40,20 +40,22 @@ export type CheckData = {
   fotos_check: CheckImage[];
 };
 
+export type GalleryItem = CheckImage & { parentCheck: CheckData };
+
 interface CheckImageModalProps {
   open: boolean;
   onClose: () => void;
-  check: CheckData;
+  images: GalleryItem[];
   initialIndex?: number;
 }
 
 const CheckImageModal: React.FC<CheckImageModalProps> = ({
   open,
   onClose,
-  check,
+  images,
   initialIndex = 0,
 }) => {
-  const total = check?.fotos_check?.length || 0;
+  const total = images?.length;
   const [api, setApi] = React.useState<CarouselApi | null>(null);
   const [current, setCurrent] = React.useState(initialIndex);
 
@@ -69,6 +71,9 @@ const CheckImageModal: React.FC<CheckImageModalProps> = ({
       api.off("select", onSelect);
     };
   }, [api, initialIndex, open]);
+
+  const currentItem = images[current];
+  const currentCheck = currentItem?.parentCheck;
 
   return (
     <Dialog open={open} onOpenChange={(o) => (!o ? onClose() : undefined)}>
@@ -86,7 +91,7 @@ const CheckImageModal: React.FC<CheckImageModalProps> = ({
               className="w-full"
             >
               <CarouselContent>
-                {check?.fotos_check?.map((img, i) => (
+                {images.map((img, i) => (
                   <CarouselItem key={i} className="basis-full">
                     <div className="w-full h-full flex items-center justify-center">
                       {img?.file_url ? (
@@ -125,79 +130,85 @@ const CheckImageModal: React.FC<CheckImageModalProps> = ({
 
           {/* Detalles */}
           <div className="flex-[2] bg-white rounded-lg border p-4 overflow-y-auto">
-            <div className="space-y-3 text-sm">
-              <div className="flex items-start gap-3">
-                <MapPin className="w-4 h-4 text-blue-600 mt-0.5" />
-                <div>
-                  <div className="text-gray-500">Ubicación</div>
-                  <div className="font-medium">{check.ubicacion || "—"}</div>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <div className="w-4 h-4 rounded bg-blue-600 text-white text-[10px] flex items-center justify-center mt-0.5">
-                  R
-                </div>
-                <div>
-                  <div className="text-gray-500">Recorrido</div>
-                  <div className="font-medium">{check.nombre_recorrido || "—"}</div>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <div className="w-4 h-4 rounded bg-gray-700 text-white text-[10px] flex items-center justify-center mt-0.5">
-                  A
-                </div>
-                <div>
-                  <div className="text-gray-500">Área</div>
-                  <div className="font-medium">{check.nombre_area || "—"}</div>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <Calendar className="w-4 h-4 text-green-600 mt-0.5" />
-                <div>
-                  <div className="text-gray-500">Fecha y hora</div>
-                  <div className="font-medium">{check.fecha_y_hora_check || "—"}</div>
-                </div>
-              </div>
-
-              {check.folio && (
+            {currentCheck ? (
+              <div className="space-y-3 text-sm">
                 <div className="flex items-start gap-3">
-                  <div className="w-4 h-4 rounded bg-gray-500 text-white text-[10px] flex items-center justify-center mt-0.5">
-                    F
+                  <MapPin className="w-4 h-4 text-blue-600 mt-0.5" />
+                  <div>
+                    <div className="text-gray-500">Ubicación</div>
+                    <div className="font-medium">{currentCheck.ubicacion || "—"}</div>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="w-4 h-4 rounded bg-blue-600 text-white text-[10px] flex items-center justify-center mt-0.5">
+                    R
                   </div>
                   <div>
-                    <div className="text-gray-500">Folio</div>
-                    <div className="font-medium">{check.folio}</div>
+                    <div className="text-gray-500">Recorrido</div>
+                    <div className="font-medium">{currentCheck.nombre_recorrido || "—"}</div>
                   </div>
                 </div>
-              )}
 
-              {check.comentario_check && (
-                <div className="pt-2">
-                  <div className="flex items-start gap-2 mb-1">
-                    <MessageSquare className="w-4 h-4 text-yellow-600 mt-0.5" />
-                    <div className="text-gray-500">Comentario</div>
+                <div className="flex items-start gap-3">
+                  <div className="w-4 h-4 rounded bg-gray-700 text-white text-[10px] flex items-center justify-center mt-0.5">
+                    A
                   </div>
-                  <div className="bg-yellow-50 border border-yellow-200 rounded p-2 text-gray-800">
-                    {check.comentario_check}
+                  <div>
+                    <div className="text-gray-500">Área</div>
+                    <div className="font-medium">{currentCheck.nombre_area || "—"}</div>
                   </div>
                 </div>
-              )}
 
-              {check.url_check && (
-                <a
-                  href={check.url_check}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-2 text-blue-600 hover:underline mt-2"
-                >
-                  <LinkIcon className="w-4 h-4" />
-                  Ver detalle en Linkaform
-                </a>
-              )}
-            </div>
+                <div className="flex items-start gap-3">
+                  <Calendar className="w-4 h-4 text-green-600 mt-0.5" />
+                  <div>
+                    <div className="text-gray-500">Fecha y hora</div>
+                    <div className="font-medium">{currentCheck.fecha_y_hora_check || "—"}</div>
+                  </div>
+                </div>
+
+                {currentCheck.folio && (
+                  <div className="flex items-start gap-3">
+                    <div className="w-4 h-4 rounded bg-gray-500 text-white text-[10px] flex items-center justify-center mt-0.5">
+                      F
+                    </div>
+                    <div>
+                      <div className="text-gray-500">Folio</div>
+                      <div className="font-medium">{currentCheck.folio}</div>
+                    </div>
+                  </div>
+                )}
+
+                {currentCheck.comentario_check && (
+                  <div className="pt-2">
+                    <div className="flex items-start gap-2 mb-1">
+                      <MessageSquare className="w-4 h-4 text-yellow-600 mt-0.5" />
+                      <div className="text-gray-500">Comentario</div>
+                    </div>
+                    <div className="bg-yellow-50 border border-yellow-200 rounded p-2 text-gray-800">
+                      {currentCheck.comentario_check}
+                    </div>
+                  </div>
+                )}
+
+                {currentCheck.url_check && (
+                  <a
+                    href={currentCheck.url_check}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-2 text-blue-600 hover:underline mt-2"
+                  >
+                    <LinkIcon className="w-4 h-4" />
+                    Ver detalle en Linkaform
+                  </a>
+                )}
+              </div>
+            ) : (
+              <div className="text-center text-gray-500 mt-10">
+                Seleccione una imagen para ver los detalles
+              </div>
+            )}
           </div>
         </div>
       </DialogContent>
