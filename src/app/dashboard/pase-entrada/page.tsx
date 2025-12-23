@@ -212,6 +212,7 @@ import { Switch } from "@/components/ui/switch";
 	const [selected, setSelected] = useState<Contacto |null>(null);
 	const [isOpenModal, setOpenModal] = useState(false);
 	const [todasAreas,setTodasAreas] = useState(false)
+	const today = new Date().toISOString().split("T")[0];
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
@@ -237,7 +238,7 @@ import { Switch } from "@/components/ui/switch";
 			enviar_correo_pre_registro:enviar_correo_pre_registro??[], 
 			tipo_visita_pase: "fecha_fija",
 			fechaFija: "",
-			fecha_desde_visita: "",
+			fecha_desde_visita:today ,
 			fecha_desde_hasta: "",
 			config_dia_de_acceso: "cualquier_día",
 			config_dias_acceso: config_dias_acceso??[],
@@ -716,9 +717,9 @@ return (
 								>
 									<div className="flex flex-wrap items-center">
 									{isActiveRangoFecha ? (
-										<><div className="">Rango de Fechas</div></>
+										<><div className="">Vigencia</div></>
 									):(
-										<><div className="text-blue-600">Rango de Fechas</div></>
+										<><div className="text-blue-600">Fecha Fija</div></>
 									)}
 										
 									</div>
@@ -750,9 +751,9 @@ return (
 									>
 									<div className="flex flex-wrap items-center">
 										{isActivelimitarDias ? (
-										<><div className="">Limitar Días</div></>
+										<><div className="">Limitar Accesos</div></>
 										):(
-										<><div className="text-blue-600">Limitar Días</div></>
+										<><div className="text-blue-600">Limitar Accesos</div></>
 										)}
 										
 									</div>
@@ -798,8 +799,7 @@ return (
 								render={({ field }:any) => (
 								<FormItem>
 									<FormLabel>
-									<span className="text-red-500">*</span> Fecha y Hora
-									de Visita:
+									<span className="text-red-500">*</span> Fecha desde:
 									</FormLabel>
 									<FormControl>
 									<Input
@@ -822,15 +822,13 @@ return (
 								render={({ field }:any) => (
 								<FormItem>
 									<FormLabel>
-									<span className="text-red-500">*</span> Fecha y Hora
-									Hasta:
+									<span className="text-red-500">*</span> Vigencia:
 									</FormLabel>
 									<FormControl>
 									<Input
 										type="date"
 										{...field}
 										min={fechaDesde ? getNextDay(fechaDesde) : new Date().toISOString().split('T')[0]}
-										disabled={!fechaDesde}
 										onChange={(e) => {
 										field.onChange(e); 
 										}}
