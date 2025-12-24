@@ -245,7 +245,7 @@ const AccesosPage = () => {
   }
   if (!turno && isAuth) {
 	return (
-		<div className="flex justify-center items-center overflow-hidden">
+		<div className="flex justify-center items-center overflow-hidden mt-32">
 		  <div className="flex items-center flex-col gap-2">
 			  <Image
                 src="/guardia1.png"
