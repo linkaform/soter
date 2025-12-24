@@ -41,7 +41,7 @@ export const useGetShift = (enableShift:boolean) => {
       } else {
           setLocation(data.response?.data.location.name)
           setArea(data.response?.data.location.area)
-          setTurno(data.response?.data.booth_status.status == "Abierta")
+          setTurno(data.response?.data.guard.status_turn == "Turno Abierto")
           return data.response?.data
       }
 		}});
