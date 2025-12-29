@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { getAreasByLocations } from "@/lib/endpoints";
 import { getCatalogoPasesAreaNoApi } from "@/lib/get-catalogos-pase-area";
 import { getCatalogoPasesLocationNoApi } from "@/lib/get-catalogos-pase-location";
 import { errorMsj } from "@/lib/utils";
@@ -68,4 +69,33 @@ export const useCatalogoPaseAreaLocation = (location:string, enableLocation:bool
     refetchLocations,
 
   };
+};
+
+export const useGetAreasByLocations = (enable: boolean, locations: string[]) => {
+  const { setAreas } = useAreasLocationStore();
+  const { data, isLoading, error, isFetching, refetch } = useQuery<any>({
+    queryKey: ["useGetAreasByLocations", locations],
+    enabled: enable,
+    queryFn: async () => {
+      if (!locations || locations.length === 0) return [];
+      const data = await getAreasByLocations(locations);
+      const textMsj = errorMsj(data)
+      if (textMsj) {
+        throw new Error(`Error al obtener catalogo de areas, Error: ${data.error}`);
+      } else {
+        setAreas(data?.response?.data?.areas_by_location)
+        return data?.response?.data?.areas_by_location
+      }
+    },
+    refetchOnWindowFocus: true,
+    refetchOnReconnect: true,
+  });
+
+  return {
+    data,
+    isLoading,
+    error,
+    isFetching,
+    refetch,
+  }
 };

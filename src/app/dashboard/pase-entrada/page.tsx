@@ -28,7 +28,7 @@ import ComentariosList from "@/components/comentarios-list";
 import { MisContactosModal } from "@/components/modals/user-contacts";
 import Image from "next/image";
 import { Contacto } from "@/lib/get-user-contacts";
-import { useCatalogoPaseAreaLocation } from "@/hooks/useCatalogoPaseAreaLocation";
+import { useCatalogoPaseAreaLocation, useGetAreasByLocations } from "@/hooks/useCatalogoPaseAreaLocation";
 import { usePaseEntrada } from "@/hooks/usePaseEntrada";
 import { useShiftStore } from "@/store/useShiftStore";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -142,7 +142,7 @@ import { Switch } from "@/components/ui/switch";
 	const [config_dia_de_acceso, set_config_dia_de_acceso] = useState("cualquier_día");
 	const [isSuccess, setIsSuccess] = useState(false);
 	const [modalData, setModalData] = useState<any>(null);
-	const { dataAreas:catAreas, dataLocations:ubicaciones, ubicacionesDefaultFormatted, isLoadingAreas:loadingCatAreas, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(location, true, location?true:false);
+	const { dataLocations:ubicaciones, ubicacionesDefaultFormatted, isLoadingLocations:loadingUbicaciones} = useCatalogoPaseAreaLocation(location, true, location?true:false);
 	const [ubicacionesSeleccionadas, setUbicacionesSeleccionadas] = useState<any[]>(ubicacionesDefaultFormatted??[]);
 	const pickerRef = useRef<any>(null);
 	useEffect(() => {
@@ -193,6 +193,7 @@ import { Switch } from "@/components/ui/switch";
 
 	const ubicacionesSeleccionadasLista = ubicacionesSeleccionadas?.map((u: any) => (u.name));
 	const { dataConfigLocation, isLoadingConfigLocation } = usePaseEntrada(ubicacionesSeleccionadasLista ?? [])
+	const { data: catAreas, isLoading: loadingCatAreas } = useGetAreasByLocations(true, ubicacionesSeleccionadasLista ?? [])
 
 	const [enviar_correo_pre_registro] = useState<string[]>([]);
 	const [formatedDocs, setFormatedDocs] = useState<string[]>([])
