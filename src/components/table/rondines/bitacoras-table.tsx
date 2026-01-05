@@ -80,9 +80,15 @@ type Rondin = {
 
 export const RondinesBitacoraTable = ({ showTabs , ubicacion, nombre_rondin}: { showTabs: boolean, ubicacion:any, nombre_rondin?: string }) => {
 	
+	const [currentDate, setCurrentDate] = useState(new Date());
+	const [nombreMes, setNombreMes] = useState(
+		currentDate.toLocaleString("es-ES", { month: "long" })
+	);
+	const numeroMes = currentDate.getMonth() + 1;
+	const numeroAno = currentDate.getFullYear();
 
 	const { listBitacoraRondines:data, isLoadingListBitacoraRondines: isLoading } =
-	useGetListBitacoraRondines(ubicacion, nombre_rondin) as {
+	useGetListBitacoraRondines(ubicacion, nombre_rondin, numeroAno, numeroMes) as {
 		listBitacoraRondines?: Rondin[];
 		isLoadingListBitacoraRondines: boolean;
 	};
@@ -169,10 +175,7 @@ export const RondinesBitacoraTable = ({ showTabs , ubicacion, nombre_rondin}: { 
 		setDias(totalDias);
 	}, []);
 
-	const [currentDate, setCurrentDate] = useState(new Date());
-	const [nombreMes, setNombreMes] = useState(
-		currentDate.toLocaleString("es-ES", { month: "long" })
-	);
+
 
 	useEffect(() => {
 		const totalDias = new Date(
@@ -191,6 +194,8 @@ export const RondinesBitacoraTable = ({ showTabs , ubicacion, nombre_rondin}: { 
 			new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1)
 		);
 	};
+
+
 
 	const handleNextMonth = () => {
 		setCurrentDate(
@@ -263,10 +268,6 @@ export const RondinesBitacoraTable = ({ showTabs , ubicacion, nombre_rondin}: { 
 		);
 	};
 
-
-	useEffect(() => {
-		if (selectedRondin) console.log("selectedRondin", selectedRondin.areas)
-	}, [selectedRondin])
 
 	return (
 		<div >
@@ -579,8 +580,6 @@ export const RondinesBitacoraTable = ({ showTabs , ubicacion, nombre_rondin}: { 
 														{estadoDia && (
 															<div
 																onClick={(e) => {
-																console.log("RONDIN SELECIONADO", categoria, index)
-
 																	e.stopPropagation();
 																	setDiaSelected(i + 1);
 																	abrirCarruselRondin();
@@ -631,7 +630,7 @@ export const RondinesBitacoraTable = ({ showTabs , ubicacion, nombre_rondin}: { 
 						areas={selectedRondin?.areas ?? []}
 						startIndex={selectedAreaIndex}
 						diaSelected={diaSelected}
-						rondin={selectedRondin?.name}
+						rondinName={selectedRondin?.name}
 						estatus={estatus}
 						selectedRondin={selectedRondin}
 						onClose={() => setCarruselOpen(false)}

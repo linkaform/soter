@@ -428,7 +428,6 @@ export const AddRondinModal: React.FC<AddRondinModalProps> = ({
 
 	useEffect(() => {
 		if (mode === "edit" && rondinData && isSuccess) {
-			console.log("CONFIGURACION RONDIN", rondinData)
 
 			const sucede = rondinData.sucede_recurrencia ?? [];			
 			form.setValue("sucede_recurrencia", sucede)

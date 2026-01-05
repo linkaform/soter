@@ -2,7 +2,7 @@
 
 import { Button } from "../ui/button";
 import { capitalizeFirstLetter } from "@/lib/utils";
-import { useEffect, useState } from "react";
+import {useState } from "react";
 import { AlarmClock, Building2, Calendar, Calendar1, ChevronLeft, ChevronRight, Clock, FileDown, Loader2, Repeat2, Route, Tag } from "lucide-react";
 import { Badge } from "../ui/badge";
 import DaysCarousel from "../daysCarousel";
@@ -13,10 +13,10 @@ import { useBitacoraById } from "@/hooks/Rondines/useBitacoraById";
 
 interface ViewRondinesDetalleAreaProps {
     areaSelected: any
-    estatus: string
     diaSelected: number
     selectedRondin: any
     activeIndex: number
+    estatus:string
 }
 // interface Incidente {
 //     id: number;
@@ -33,36 +33,21 @@ export const ViewRondinesDetallePerimetroExt: React.FC<ViewRondinesDetalleAreaPr
     diaSelected,
     selectedRondin,
     areaSelected,
-    activeIndex
 }) => {
-    const [checkSelected, setCheckSelected] = useState<string|null>(null);
-    const { data: getBitacoraById, isLoadingRondin: isLoadingBitacoraById } = useBitacoraById(checkSelected??"");
     const [incidenteSeleccionado, setIncidenteSeleccionado] = useState<any | null>(null);
-    console.log("seleccionado rondin", selectedRondin)
     const [view, setView] = useState<"lista" | "detalle">("lista");
     const [diaSeleccionado, setDiaSeleccionado] = useState<number>(diaSelected || 0);
+    
+    const recordId = selectedRondin?.resumen?.find(
+        (item: { dia: number }) => item.dia === diaSeleccionado
+      )?.record_id;
+      
+      const estatus = selectedRondin?.resumen?.find(
+        (item: { dia: number }) => item.dia === diaSeleccionado
+      )?.estado;
 
-    useEffect(() => {
-        // const id = selectedRondin?.resumen?.[activeIndex]?.record_id;
-        const id = selectedRondin?.resumen?.find((item: { dia: number; }) => item.dia === diaSelected)?.record_id;
-
-       
-        console.log("id", activeIndex)
-        console.log("id", id)
-        if (id) setCheckSelected(id);
-    }, [selectedRondin, activeIndex, diaSelected]);
-
-
-    useEffect(() => {
-        if (!diaSeleccionado || !getBitacoraById) return;
-        const estadoFiltrado = getBitacoraById?.bitacoras_mes?.recorrido?.estados?.find(
-            (e: any) => e.dia === diaSeleccionado
-        );
-
-        if (estadoFiltrado?.record_id) {
-            setCheckSelected(estadoFiltrado.record_id);
-        }
-    }, [diaSeleccionado, getBitacoraById]);
+      const { data: getBitacoraById, isLoadingRondin:isLoadingBitacoraById } =
+        useBitacoraById(recordId ?? "");
 
     return (
 
@@ -76,7 +61,7 @@ export const ViewRondinesDetallePerimetroExt: React.FC<ViewRondinesDetalleAreaPr
                     </div>
 
                     <DaysCarousel
-                        data={getBitacoraById?.bitacoras_mes}
+                        resumen={selectedRondin?.resumen}
                         selectedDay={diaSeleccionado}
                         onDaySelect={setDiaSeleccionado}
                     />
@@ -137,20 +122,30 @@ export const ViewRondinesDetallePerimetroExt: React.FC<ViewRondinesDetalleAreaPr
                                                 <p>Estatus</p>
                                                 <div>
                                                     <Badge
-                                                        className={`text-white text-sm ${getBitacoraById?.estatus === "finalizado"
-                                                            ? "bg-green-600"
-                                                            : getBitacoraById?.estatus === "cerrado"
-                                                                ? "bg-gray-600"
-                                                                : getBitacoraById?.estatus === "programado"
-                                                                    ? "bg-purple-600"
-                                                                    : getBitacoraById?.estatus === "en progreso"
-                                                                        ? "bg-blue-600"
-                                                                        : getBitacoraById?.estatus === "cancelado"
-                                                                            ? "bg-gray-400"
-                                                                            : "bg-gray-400"
-                                                            }`}
+                                                      className={`text-white text-sm ${
+                                                        estatus === "finalizado" ||
+                                                        estatus === "realizado"
+                                                          ? "bg-green-600 hover:bg-green-600"
+                                                          : estatus === "cerrado"
+                                                          ? "bg-gray-600 hover:bg-gray-600"
+                                                          : estatus === "programado"
+                                                          ? "bg-purple-600 hover:bg-purple-600"
+                                                          : estatus === "en_proceso"
+                                                          ? "bg-blue-600 hover:bg-blue-600"
+                                                            : estatus === "incidencias"
+                                                          ? "bg-red-600 hover:bg-red-600"
+                                                             : estatus === "fuera_de_hora"
+                                                          ? "bg-pink-600 hover:bg-pink-600"
+                                                              : estatus === "no_inspeccionada"
+                                                          ? "bg-yellow-600 hover:bg-yellow-600"
+                                                             : estatus === "no_aplica"
+                                                          ? "bg-gray-400 hover:bg-gray-400"
+                                                          : estatus === "cancelado"
+                                                          ? "bg-gray-400 hover:bg-gray-400"
+                                                          : "bg-gray-400 hover:bg-gray-400"
+                                                      }`}
                                                     >
-                                                        {capitalizeFirstLetter(getBitacoraById?.estatus)}
+                                                        {capitalizeFirstLetter(estatus).replace(/_/g, " ")}  
                                                     </Badge>
                                                 </div>
                                             </div>

@@ -14,7 +14,6 @@ export const useGetRondinById= (record_id:string) => {
             if (textMsj){
               throw new Error (`Error al obtener el rondin, Error: ${data.error}`);
             }else {
-                console.log("response", data.response.data)
               return data.response?.data ??[];
             }
         },

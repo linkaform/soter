@@ -7,7 +7,7 @@ import { useState } from "react";
 interface CarruselDetalleAreaProps {
   areas: any[];
   diaSelected: number;
-  rondin: string;
+  rondinName: string;
   estatus: string;
   selectedRondin: any;
   startIndex?: number;
@@ -17,7 +17,7 @@ interface CarruselDetalleAreaProps {
 export const CarruselDetalleArea: React.FC<CarruselDetalleAreaProps> = ({
   areas,
   diaSelected,
-  rondin,
+  rondinName,
   estatus,
   selectedRondin,
   startIndex = 0,
@@ -99,7 +99,7 @@ export const CarruselDetalleArea: React.FC<CarruselDetalleAreaProps> = ({
                       estadoDia: area.estados?.find((e: { dia: number; }) => e.dia === diaSelected),
                     }}
                     diaSelected={diaSelected}
-                    rondin={rondin}
+                    rondinName={rondinName}
                     estatus={estatus}
                     selectedRondin={selectedRondin}
                     onClose={onClose}

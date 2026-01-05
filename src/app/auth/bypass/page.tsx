@@ -53,7 +53,6 @@ export default function LoginPage() {
       const response = await getLogin(values.username, values.password, values.bypass_user);
 
       if (response.success) {
-        console.log("response.user.thumb ",response.user.thumb )
         setAuth(response.jwt, response.session_id, response.user.name, response.user.email, response.user.id, response.user.thumb );
 
         router.push("/");

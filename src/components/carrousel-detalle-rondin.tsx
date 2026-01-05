@@ -19,8 +19,6 @@ export const CarruselDetalleRondin: React.FC<CarruselDetalleRondinProps> = ({
   startIndex = 0,
   onClose,
 }) => {
-  // Filtramos los rondines de la hora seleccionada
-
   const [activeIndex, setActiveIndex] = useState(startIndex);
   const prev = () =>
     setActiveIndex((prev) =>
@@ -31,9 +29,6 @@ export const CarruselDetalleRondin: React.FC<CarruselDetalleRondinProps> = ({
     setActiveIndex((prev) =>
       prev === rondinesHoraSeleccionada.length - 1 ? 0 : prev + 1
     );
-
-  console.log("TODOS LOS RONDINES???", rondinesHoraSeleccionada)
-
 
   return (
     <div
@@ -72,10 +67,9 @@ export const CarruselDetalleRondin: React.FC<CarruselDetalleRondinProps> = ({
               position = "opacity-50 scale-[0.8] translate-x-[230px]";
               zIndex = "z-10";
             }
-            console.log("RONDIN", rondin)
             return (
               <div
-                key={index}
+                key={`${rondin.titulo}-${rondin.fecha_hora_programada}`}
                 className={`absolute transition-all ${position} ${zIndex} w-[55%] h-[600px]`}
                 style={{
                   transitionDuration: "900ms",
@@ -93,7 +87,6 @@ export const CarruselDetalleRondin: React.FC<CarruselDetalleRondinProps> = ({
                   )}
 
                   <ViewRondinesDetallePerimetroExt
-                    estatus={estatus}
                     diaSelected={diaSelected}
                     selectedRondin={rondin}
                     areaSelected={{
@@ -102,6 +95,7 @@ export const CarruselDetalleRondin: React.FC<CarruselDetalleRondinProps> = ({
                         (e: { dia: number }) => e.dia === diaSelected
                       ),
                     }}
+                    estatus={estatus}
                     activeIndex={activeIndex}
                   />
                 </div>

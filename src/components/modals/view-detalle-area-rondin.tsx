@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "../ui/button";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Building2, Calendar1, ChevronLeft, ChevronRight, Clock, Loader2, Route } from "lucide-react";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "../ui/carousel";
 import Image from "next/image";
@@ -12,7 +12,7 @@ import { useCreateIncidenciaRondin } from "@/hooks/Rondines/useCeateIncidenciaRo
 interface ViewRondinesDetalleAreaProps {
   areaSelected:any
   diaSelected: number
-  rondin:string
+  rondinName:string
   estatus:string
   selectedRondin:any
   onClose: ()=>void;
@@ -32,14 +32,14 @@ type Incidente = {
 export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
   areaSelected,
   diaSelected,
-  rondin,
+  rondinName,
   estatus,
   selectedRondin,
   onClose,
 }) => {
-
-    const [checkSelected, setCheckSelected] = useState(areaSelected?.estadoDia?.record_id ||"692719584c99eda82536ef55") //areaSelected?.estadoDia?.record_id
-    const { data:getCheckById, isLoadingRondin:isLoadingCheckById} = useCheckById(checkSelected);
+    console.log("AAREAS",areaSelected)
+    // const [checkSelected, setCheckSelected] = useState(areaSelected?.estadoDia?.record_id ||"692719584c99eda82536ef55") //areaSelected?.estadoDia?.record_id
+    // const { data:getCheckById, isLoadingRondin:isLoadingCheckById} = useCheckById(checkSelected);
     const { createIncidenciaMutation , isLoading} = useCreateIncidenciaRondin();
 
 	function crearNuevaIncidencia(data:any){
@@ -71,19 +71,29 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
     const [diaSeleccionado, setDiaSeleccionado] = useState<number>(diaSelected ||0);
     const [view, setView] = useState<"lista" | "detalle">("lista");
     
+    const estadoDiaSeleccionado = areaSelected?.area?.estados?.find(
+        (e: any) => e.dia === diaSeleccionado
+      );
+      
+      const recordId = estadoDiaSeleccionado?.record_id ?? "";
+    //   const estatusDia = estadoDiaSeleccionado?.estado;
+      
+    const { data: getCheckById, isLoadingRondin: isLoadingCheckById } =
+        useCheckById(recordId);
 
-    useEffect(() => {
-        if (!getCheckById || !diaSeleccionado) return; 
+
+    // useEffect(() => {
+    //     if (!getCheckById || !diaSeleccionado) return; 
       
-        const estadoFiltrado = getCheckById?.checks_mes?.area?.estados?.find(
-          (e: any) => e.dia === diaSeleccionado
-        );
-        console.log("estadoFiltrado?.record_id", estadoFiltrado?.record_id);
+    //     const estadoFiltrado = getCheckById?.checks_mes?.area?.estados?.find(
+    //       (e: any) => e.dia === diaSeleccionado
+    //     );
+    //     console.log("estadoFiltrado?.record_id", estadoFiltrado?.record_id);
       
-        if (estadoFiltrado?.record_id) {
-          setCheckSelected(estadoFiltrado.record_id);
-        }
-      }, [diaSeleccionado, getCheckById]);
+    //     if (estadoFiltrado?.record_id) {
+    //       setCheckSelected(estadoFiltrado.record_id);
+    //     }
+    //   }, [diaSeleccionado, getCheckById]);
 
     return (
     // <Dialog open={isSuccess} onOpenChange={setIsSuccess} modal>
@@ -338,7 +348,7 @@ export const ViewDetalleArea: React.FC<ViewRondinesDetalleAreaProps> = ({
                                 <div className="bg-slate-200 p-3 rounded"><Route /></div>
                                 <div className="flex flex-col">
                                     <p>Rondin</p>
-                                    <p className="text-gray-400">{rondin}</p>
+                                    <p className="text-gray-400">{rondinName}</p>
                                 </div>
                             </div>
                             <div className="flex gap-3">

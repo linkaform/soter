@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Dispatch, SetStateAction, useEffect, useRef } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import {
   Carousel,
   CarouselContent,
@@ -25,8 +25,15 @@ interface DaysCarouselProps {
     };
     estadoDia?: EstadoDia;
   };
+  resumen?: DiaCarrusel[];
   selectedDay: number | null;
   onDaySelect: Dispatch<SetStateAction<number>>
+}
+
+interface DiaCarrusel {
+  dia: number;
+  estado: string;
+  record_id?: string;
 }
 
 const estadoColors: Record<string, string> = {
@@ -45,47 +52,51 @@ const dayNames = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 
 const DaysCarousel: React.FC<DaysCarouselProps> = ({
   data,
+  resumen,
   selectedDay,
   onDaySelect,
 }) => {
   const carouselRef = useRef<HTMLDivElement>(null);
+  const [api, setApi] = useState<any>(null);
+  const dias: DiaCarrusel[] = (() => {
+    if (Array.isArray(resumen)) return resumen;
+    if (data?.area?.estados) return data.area.estados;
+    if (data?.recorrido?.estados) return data.recorrido.estados;
+    return [];
+  })();
 
   useEffect(() => {
-    if (!carouselRef.current || selectedDay == null) return;
+    if (!api || selectedDay == null || dias.length === 0) return;
+  
+    const index = dias.findIndex(d => d.dia === selectedDay);
+    if (index < 0) return;
+  
+    const scroll = () => api.scrollTo(index);
+    api.on("init", scroll);
+    requestAnimationFrame(scroll);
+    return () => {
+      api.off("init", scroll);
+    };
+  }, [api, selectedDay, dias]);
+  
+  
 
-    const button = carouselRef.current.querySelector<HTMLButtonElement>(
-      `[data-dia='${selectedDay}']`
-    );
-
-    if (button) {
-      button.scrollIntoView({
-        behavior: "smooth",
-        inline: "center",
-        block: "nearest",
-      });
-    }
-  }, [selectedDay]);
-
-  if (!data) return null;
-  const { area, recorrido } = data;
-  const source = area || recorrido;
-
-  if (!source) return null;
+  if (dias.length === 0) return null;
+          
 
   return (
     <div className="flex justify-center  mb-2">
       <Carousel
+        setApi={setApi}
         opts={{
-          align: "start",
-          slidesToScroll: 5,
+          align: "center",
         }}
         className="w-[300px] mx-auto"
       >
         <CarouselContent className="px-4 py-2" ref={carouselRef}>
-          {source.estados.map(({ dia, estado }: EstadoDia) => {
+          {dias.map(({ dia, estado }: EstadoDia) => {
             const date = new Date(2025, 8, dia);
             const dayOfWeek = date.getDay();
-
             const isSelected = selectedDay === dia;
 
             return (
@@ -94,7 +105,7 @@ const DaysCarousel: React.FC<DaysCarouselProps> = ({
                   <button
                     data-dia={dia}
                     type="button"
-                    onClick={() => onDaySelect(dia)}
+                    onClick={() => {onDaySelect(dia); console.log("diaaaa",dia,estado);}}
                     className={`
                     flex items-center justify-center rounded-full h-8 w-8 font-bold text-xs
                     border shadow-sm
