@@ -37,7 +37,7 @@ import { optionsCuatri, optionsCuatriDefecto } from '../data/consts'
 import ProgressBar from "../components/ProgressBar";
 import FallaBadge from "../components/FallaBadge";
 import Multiselect from "multiselect-react-dropdown";
-import { useGetAvancesInspecciones, useGetHoteles, useReportFallas } from "../hooks/useReportFallas";
+import { useGetAvancesInspecciones, useGetHoteles, useReportBackgroundCommentsAndImages, useReportBackgroundGraphs, useReportFallas } from "../hooks/useReportFallas";
 import { formatNumber } from "../utils/formatNumber";
 import { exportStatsSimple } from "../utils/exportUtils";
 
@@ -81,20 +81,22 @@ const ReportsPage = () => {
 		hoteles: []
 	});
 	const { reportFallas, isLoadingReportFallas, errorReportFallas, refetchReportFallas } = useReportFallas(filters);
+	const { reportBackgroundGraphs } = useReportBackgroundGraphs(filters);
+	const { reportBackgroundCommentsAndImages } = useReportBackgroundCommentsAndImages(filters);
 	const { hotelesFallas, isLoadingHotelesFallas, errorHotelesFallas } = useGetHoteles(true);
 	const hoteles = hotelesFallas?.hoteles ?? [];
 	const cards = reportFallas?.cards ?? {};
 	const porcentaje = reportFallas?.porcentaje_propiedades_inspeccionadas ?? 0;
-	const calificacionXHotelGraph = reportFallas?.calificacion_x_hotel_grafica ?? [];
+	const calificacionXHotelGraph = reportBackgroundGraphs?.calificacion_x_hotel_grafica ?? [];
 	const tagsFallas = reportFallas?.fallas?.totales ?? [];
 	const fallasXHotelGraph = reportFallas?.fallas?.por_hotel ?? [];
 	const tableHabitacionesInspeccionadas = reportFallas?.table_habitaciones_inspeccionadas ?? [];
 	const bubbleChart = reportFallas?.table_habitaciones_inspeccionadas ?? [];
 	const mejorHabitacion = reportFallas?.mejor_y_peor_habitacion?.mejor_habitacion ?? {};
 	const peorHabitacion = reportFallas?.mejor_y_peor_habitacion?.habitacion_mas_fallas ?? {};
-	const radarData = reportFallas?.graph_radar?.radar_data ?? [];
-	const hotelesFotografias = reportFallas?.rooms_details ?? [];
-	const hotelesComentarios = reportFallas?.rooms_details ?? [];
+	const radarData = reportBackgroundGraphs?.graph_radar?.radar_data ?? [];
+	const hotelesFotografias = reportBackgroundCommentsAndImages?.rooms_details ?? [];
+	const hotelesComentarios = reportBackgroundCommentsAndImages?.rooms_details ?? [];
 	const [hotelHabitaciones, setHotelHabitaciones] = useState<any[]>([]);
 	const [isExportingStats, setIsExportingStats] = useState(false); // ✅ Agregar estado
 	const [hotelHabitacion, setHotelHabitacion] = useState<any>();

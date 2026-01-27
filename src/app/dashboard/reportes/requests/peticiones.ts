@@ -2,14 +2,6 @@ import { toast } from "sonner";
 import { reportFalla, useHotelHabitacionesProps } from "../hooks/useReportFallas"
 
 export const getHoteles = async () => {
-    toast.loading("Obteniendo hoteles...", {
-        style: {
-            background: "#000",
-            color: "#fff",
-            border: 'none'
-        },
-    });
-
     try {
         const payload = {
             option: "get_hoteles",
@@ -26,26 +18,9 @@ export const getHoteles = async () => {
             body: JSON.stringify(payload),
         });
 
-        toast.dismiss();
-        toast.success("Hoteles obtenidos correctamente.", {
-            style: {
-                background: "#000",
-                color: "#fff",
-                border: 'none'
-            },
-        });
-
         const data = await response.json();
         return data;
     } catch (error) {
-        toast.dismiss();
-        toast.error(`${error}` || "Hubo un error al obtener tus hoteles.", {
-            style: {
-                background: "#000",
-                color: "#fff",
-                border: 'none'
-            },
-        });
         console.error("Error al ejecutar el reporte:", error);
         throw error;
     }
@@ -412,6 +387,62 @@ export const getAvancesInspecciones = async ({ anio, cuatrimestres, hoteles }: r
             },
         });
         console.error("Error al ejecutar la grafica:", error);
+        throw error;
+    }
+}
+
+export const getBackgroundGraphs = async ({ anio, cuatrimestres, hoteles }: reportFalla) => {
+    try {
+        const payload = {
+            option: "get_background_graphs",
+            script_name: "reporte_fallas_hoteleria.py",
+            anio,
+            cuatrimestres,
+            hoteles
+        };
+
+        const userJwt = localStorage.getItem("access_token");
+        const response = await fetch(`https://app.linkaform.com/api/infosync/scripts/run/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${userJwt}`,
+            },
+            body: JSON.stringify(payload),
+        });
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error al ejecutar el reporte:", error);
+        throw error;
+    }
+}
+
+export const getBackgroundCommentsAndImages = async ({ anio, cuatrimestres, hoteles }: reportFalla) => {
+    try {
+        const payload = {
+            option: "get_background_comments_and_images",
+            script_name: "reporte_fallas_hoteleria.py",
+            anio,
+            cuatrimestres,
+            hoteles
+        };
+
+        const userJwt = localStorage.getItem("access_token");
+        const response = await fetch(`https://app.linkaform.com/api/infosync/scripts/run/`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${userJwt}`,
+            },
+            body: JSON.stringify(payload),
+        });
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error al ejecutar el reporte:", error);
         throw error;
     }
 }

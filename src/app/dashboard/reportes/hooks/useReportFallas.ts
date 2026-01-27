@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getAvancesInspecciones, getHoteles, getHotelesAvances, getHotelHabitaciones, getReportAvances, getReportFallas } from "../requests/peticiones";
+import { getAvancesInspecciones, getBackgroundCommentsAndImages, getBackgroundGraphs, getHoteles, getHotelesAvances, getHotelHabitaciones, getReportAvances, getReportFallas } from "../requests/peticiones";
 import { errorMsj } from "@/lib/utils";
 
 export interface reportFalla {
@@ -197,7 +197,6 @@ export const useGetAvancesInspecciones = ({ enabled = false, anio, cuatrimestres
             if (textMsj) {
                 throw new Error(`Error al obtener avances de inspecciones: ${data.error}`);
             } else {
-                console.log('==========', data.response?.data)
                 return data.response?.data ?? [];
             }
         },
@@ -210,5 +209,75 @@ export const useGetAvancesInspecciones = ({ enabled = false, anio, cuatrimestres
         isLoadingAvancesInspecciones,
         errorAvancesInspecciones,
         refetchAvancesInspecciones,
+    };
+};
+
+export const useReportBackgroundGraphs = ({ enabled = false, anio, cuatrimestres, hoteles }: reportFalla) => {
+
+    anio = anio ? Number.parseInt(anio as any, 10) : undefined;
+    cuatrimestres = cuatrimestres?.map((item: any) => item.id);
+    hoteles = hoteles?.map((item: any) => item.nombre_hotel);
+
+    const {
+        data: reportFallas,
+        isLoading: isLoadingReportFallas,
+        error: errorReportFallas,
+        refetch: refetchReportFallas,
+    } = useQuery<any>({
+        queryKey: ["getBackgroundGraphs"],
+        enabled,
+        queryFn: async () => {
+            const data = await getBackgroundGraphs({ anio, cuatrimestres, hoteles });
+            const textMsj = errorMsj?.(data);
+            if (textMsj) {
+                throw new Error(`Error al obtener reporte de fallas: ${data.error}`);
+            } else {
+                return data.response?.data ?? [];
+            }
+        },
+        refetchOnWindowFocus: false,
+        retry: 1,
+    });
+
+    return {
+        reportBackgroundGraphs: reportFallas,
+        isLoadingReportBackgroundGraphs: isLoadingReportFallas,
+        errorReportBackgroundGraphs: errorReportFallas,
+        refetchReportBackgroundGraphs: refetchReportFallas,
+    };
+};
+
+export const useReportBackgroundCommentsAndImages = ({ enabled = false, anio, cuatrimestres, hoteles }: reportFalla) => {
+
+    anio = anio ? Number.parseInt(anio as any, 10) : undefined;
+    cuatrimestres = cuatrimestres?.map((item: any) => item.id);
+    hoteles = hoteles?.map((item: any) => item.nombre_hotel);
+
+    const {
+        data: reportFallas,
+        isLoading: isLoadingReportFallas,
+        error: errorReportFallas,
+        refetch: refetchReportFallas,
+    } = useQuery<any>({
+        queryKey: ["getBackgroundCommentsAndImages"],
+        enabled,
+        queryFn: async () => {
+            const data = await getBackgroundCommentsAndImages({ anio, cuatrimestres, hoteles });
+            const textMsj = errorMsj?.(data);
+            if (textMsj) {
+                throw new Error(`Error al obtener reporte de fallas: ${data.error}`);
+            } else {
+                return data.response?.data ?? [];
+            }
+        },
+        refetchOnWindowFocus: false,
+        retry: 1,
+    });
+
+    return {
+        reportBackgroundCommentsAndImages: reportFallas,
+        isLoadingReportBackgroundCommentsAndImages: isLoadingReportFallas,
+        errorReportBackgroundCommentsAndImages: errorReportFallas,
+        refetchReportBackgroundCommentsAndImages: refetchReportFallas,
     };
 };
