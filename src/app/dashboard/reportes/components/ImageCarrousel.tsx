@@ -13,7 +13,7 @@ interface ImageCarrouselProps {
     cols?: string;
 }
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 121;
 
 const ImageCarrousel = ({ images, cols = '6' }: ImageCarrouselProps) => {
     const [page, setPage] = useState(1);
