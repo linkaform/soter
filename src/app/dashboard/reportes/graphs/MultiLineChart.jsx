@@ -3,11 +3,33 @@ import Chart from 'chart.js';
 
 const COLORS = ['#8cd610', '#efc600', '#e71831', '#1e90ff'];
 
+const getQuarterInfo = () => {
+  const date = new Date();
+  const month = date.getMonth(); // 0-11
+  let currentQuarter;
+
+  if (month <= 3) currentQuarter = 1;
+  else if (month <= 7) currentQuarter = 2;
+  else currentQuarter = 3;
+
+  let labels, ids;
+  if (currentQuarter === 1) {
+    ids = [2, 3, 1];
+    labels = ['C2', 'C3', 'C1'];
+  } else if (currentQuarter === 2) {
+    ids = [3, 1, 2];
+    labels = ['C3', 'C1', 'C2'];
+  } else {
+    ids = [1, 2, 3];
+    labels = ['C1', 'C2', 'C3'];
+  }
+  return { ids, labels };
+};
+
 const MultiLineChart = ({ data = [] }) => {
-  const cuatriLabels = useMemo(() => ['C3', 'C1', 'C2'], []);
+  const { labels: cuatriLabels, ids: cuatriIds } = useMemo(() => getQuarterInfo(), []);
 
   const datasets = useMemo(() => {
-    const cuatriIds = [3, 1, 2];
     return data.map((hotel, idx) => {
       const cuatriMap = {};
       hotel.cuatrimestres.forEach(c => {
@@ -26,7 +48,7 @@ const MultiLineChart = ({ data = [] }) => {
         lineTension: 0,
       };
     });
-  }, [data]);
+  }, [data, cuatriIds]);
 
   const chartRef = useRef(null);
   const chartInstanceRef = useRef(null);

@@ -81,8 +81,8 @@ const ReportsPage = () => {
 		hoteles: []
 	});
 	const { reportFallas, isLoadingReportFallas, errorReportFallas, refetchReportFallas } = useReportFallas(filters);
-	const { reportBackgroundGraphs } = useReportBackgroundGraphs(filters);
-	const { reportBackgroundCommentsAndImages } = useReportBackgroundCommentsAndImages(filters);
+	const { reportBackgroundGraphs, refetchReportBackgroundGraphs } = useReportBackgroundGraphs(filters);
+	const { reportBackgroundCommentsAndImages, refetchReportBackgroundCommentsAndImages } = useReportBackgroundCommentsAndImages(filters);
 	const { hotelesFallas, isLoadingHotelesFallas, errorHotelesFallas } = useGetHoteles(true);
 	const hoteles = hotelesFallas?.hoteles ?? [];
 	const cards = reportFallas?.cards ?? {};
@@ -317,6 +317,8 @@ const ReportsPage = () => {
 	useEffect(() => {
 		if (filters.enabled) {
 			refetchReportFallas();
+			refetchReportBackgroundGraphs();
+			refetchReportBackgroundCommentsAndImages();
 		}
 	}, [filters]);
 
