@@ -268,6 +268,8 @@ const ReportsPage = () => {
 				const data = await getHotelHabitaciones({
 					hotel: hotel,
 					fallas: normalizedFallas,
+					anio: selectedYear,
+					cuatrimestres: selectedCuatri
 				});
 				const hotelHabitaciones = data?.response?.data?.habitaciones ?? [];
 				setHotelHabitaciones(hotelHabitaciones);

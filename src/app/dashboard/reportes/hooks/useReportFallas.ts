@@ -13,6 +13,8 @@ export interface useHotelHabitacionesProps {
     enabled?: boolean;
     hotel?: string | null;
     fallas?: string[];
+    anio?: string | null | number;
+    cuatrimestres?: any[];
 }
 
 export const useReportFallas = ({ enabled = false, anio, cuatrimestres, hoteles }: reportFalla) => {

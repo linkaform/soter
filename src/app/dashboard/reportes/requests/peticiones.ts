@@ -79,7 +79,13 @@ export const getReportFallas = async ({ anio, cuatrimestres, hoteles }: reportFa
     }
 }
 
-export const getHotelHabitaciones = async ({ hotel, fallas }: useHotelHabitacionesProps) => {
+export const getHotelHabitaciones = async ({ hotel, fallas, anio, cuatrimestres }: useHotelHabitacionesProps) => {
+    if (cuatrimestres) {
+        cuatrimestres = cuatrimestres?.map((item: any) => item.id);
+    }
+    if (anio) {
+        anio = anio ? Number.parseInt(anio as any, 10) : undefined;
+    }
     toast.loading("Obteniendo habitaciones...", {
         style: {
             background: "#000",
@@ -94,6 +100,8 @@ export const getHotelHabitaciones = async ({ hotel, fallas }: useHotelHabitacion
             script_name: "reporte_fallas_hoteleria.py",
             hotel_name: hotel,
             fallas,
+            anio,
+            cuatrimestres
         };
 
         const userJwt = localStorage.getItem("access_token");
