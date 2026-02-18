@@ -191,34 +191,6 @@ const HotelProgressTable: React.FC<HotelProgressTableProps> = ({
 
             {/* ✅ Resumen estadístico actualizado con información de inspecciones */}
             <div className="mt-4 space-y-4">
-                {/* ✅ Estadísticas por categoría */}
-                <div className="grid grid-cols-4 gap-4 text-sm">
-                    <div className="bg-green-50 p-3 rounded-lg text-center">
-                        <div className="font-semibold text-green-800">Excelentes (≥90%)</div>
-                        <div className="text-green-600">
-                            {hoteles.filter(h => h.porcentaje_inspeccion >= 90).length} hoteles
-                        </div>
-                    </div>
-                    <div className="bg-yellow-50 p-3 rounded-lg text-center">
-                        <div className="font-semibold text-yellow-800">Buenos (≥70%)</div>
-                        <div className="text-yellow-600">
-                            {hoteles.filter(h => h.porcentaje_inspeccion >= 70 && h.porcentaje_inspeccion < 90).length} hoteles
-                        </div>
-                    </div>
-                    <div className="bg-orange-50 p-3 rounded-lg text-center">
-                        <div className="font-semibold text-orange-800">Regulares (≥50%)</div>
-                        <div className="text-orange-600">
-                            {hoteles.filter(h => h.porcentaje_inspeccion >= 50 && h.porcentaje_inspeccion < 70).length} hoteles
-                        </div>
-                    </div>
-                    <div className="bg-red-50 p-3 rounded-lg text-center">
-                        <div className="font-semibold text-red-800">Críticos (&lt;50%)</div>
-                        <div className="text-red-600">
-                            {hoteles.filter(h => h.porcentaje_inspeccion < 50).length} hoteles
-                        </div>
-                    </div>
-                </div>
-
                 {/* ✅ Nuevo resumen de inspecciones totales */}
                 <div className="grid grid-cols-3 gap-4 text-sm bg-gray-50 p-4 rounded-lg">
                     <div className="text-center">

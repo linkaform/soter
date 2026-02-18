@@ -1,7 +1,7 @@
 ####################################
 # Image for develop                #
 ####################################
-FROM node:23.2.0-bullseye-slim as develop
+FROM node:22-bullseye-slim as develop
 
 RUN apt-get update && \
     apt-get -y install \
@@ -22,6 +22,5 @@ RUN yarn
 # Image for Production                #
 ####################################
 FROM linkaform/soter:develop as prod
-
 
 USER node

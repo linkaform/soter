@@ -641,7 +641,10 @@ const ReportsPage = () => {
 								) : avancesInspecciones?.agrupado_por_hotel ? (
 									<div>
 										{/* ✅ Usar el nuevo componente con zoom */}
-										<MultiLineChartZoom data={avancesInspecciones.agrupado_por_hotel} />
+										<MultiLineChartZoom
+											data={avancesInspecciones.agrupado_por_hotel}
+											filters={filters}
+										/>
 									</div>
 								) : (
 									<div className="flex items-center justify-center h-40 text-gray-400">
