@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 export function YearSelect({ value, onChange }: { value: string | null, onChange: (v: string) => void }) {
     const currentYear = new Date().getFullYear()
-    const years = Array.from({ length: 5 }, (_, i) => (currentYear - i).toString())
+    const years = Array.from({ length: 2 }, (_, i) => (currentYear - i).toString())
 
     return (
         <Select value={value ?? undefined} onValueChange={onChange}>
