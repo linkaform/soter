@@ -73,8 +73,8 @@ export const RegisterIncomeModal: React.FC<RegisterIncomeModalProps> = ({
           <div className="flex justify-center my-5">
             <Image
               className="dark:invert"
-              src="/logo.svg"
-              alt="Next.js logo"
+						  src="/company_pic_7742.jpg"
+              alt="Company logo"
               width={150}
               height={50}
               priority

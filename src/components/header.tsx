@@ -29,9 +29,9 @@ export const Header = () => {
           <div className="flex lg:mb-0 justify-center items-center">
             <Link href="/">
               <Image
-                className="dark:invert"
-                src="/logo.svg"
-                alt="Next.js logo"
+                className="dark:invert h-14 max-w-48"
+						    src="/company_pic_7742.jpg"
+                alt="Company logo"
                 width={150}
                 height={50}
                 priority
